@@ -335,131 +335,131 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, 'plus'],
 	[9, 'star'],
 	[10, 'qmark'],
-	[11, 'block_keyword'],
-	[12, 'expr_keyword'],
-	[13, 'expr_2021_keyword'],
-	[14, 'ident_keyword'],
-	[15, 'item_keyword'],
-	[16, 'lifetime_keyword'],
-	[17, 'literal_keyword'],
-	[18, 'meta_keyword'],
-	[19, 'pat_keyword'],
-	[20, 'pat_param_keyword'],
-	[21, 'path_keyword'],
-	[22, 'stmt_keyword'],
-	[23, 'tt_keyword'],
-	[24, 'ty_keyword'],
-	[25, 'vis_keyword'],
-	[26, 'pound'],
-	[27, 'lbrack'],
-	[28, 'rbrack'],
-	[29, 'bang'],
-	[30, 'lbrace'],
-	[31, 'rbrace'],
-	[32, 'union_keyword'],
-	[33, 'enum_keyword'],
-	[34, 'extern_keyword'],
-	[35, 'const_keyword'],
-	[36, 'type_keyword'],
-	[37, 'eq'],
-	[38, 'fn_keyword'],
-	[39, 'where_keyword'],
-	[40, 'trait_keyword'],
-	[41, 'for_keyword'],
-	[42, 'lt'],
-	[43, 'gt'],
-	[44, 'let_keyword'],
-	[45, 'use_keyword'],
-	[46, 'colon_colon'],
-	[47, 'as_keyword'],
-	[48, 'dot_dot_dot'],
-	[49, 'squote'],
-	[50, 'default_keyword'],
-	[51, 'gen_keyword'],
-	[52, 'raw_keyword'],
-	[53, 'lt2'],
-	[54, 'amp'],
-	[55, 'impl_keyword'],
-	[56, 'dyn_keyword'],
-	[57, 'mutable_specifier'],
-	[58, 'u8_keyword'],
-	[59, 'i8_keyword'],
-	[60, 'u16_keyword'],
-	[61, 'i16_keyword'],
-	[62, 'u32_keyword'],
-	[63, 'i32_keyword'],
-	[64, 'u64_keyword'],
-	[65, 'i64_keyword'],
-	[66, 'u128_keyword'],
-	[67, 'i128_keyword'],
-	[68, 'isize_keyword'],
-	[69, 'usize_keyword'],
-	[70, 'f32_keyword'],
-	[71, 'f64_keyword'],
-	[72, 'bool_keyword'],
-	[73, 'str_keyword'],
-	[74, 'char_keyword'],
-	[75, 'dash'],
-	[76, 'amp_amp'],
-	[77, 'pipe_pipe'],
-	[78, 'pipe'],
-	[79, 'caret'],
-	[80, 'eq_eq'],
-	[81, 'bang_eq'],
-	[82, 'lt_eq'],
-	[83, 'gt_eq'],
-	[84, 'lt_lt'],
-	[85, 'gt_gt'],
-	[86, 'slash'],
-	[87, 'percent'],
-	[88, 'plus_eq'],
-	[89, 'dash_eq'],
-	[90, 'star_eq'],
-	[91, 'slash_eq'],
-	[92, 'percent_eq'],
-	[93, 'amp_eq'],
-	[94, 'pipe_eq'],
-	[95, 'caret_eq'],
-	[96, 'lt_lt_eq'],
-	[97, 'gt_gt_eq'],
-	[98, 'return_keyword'],
-	[99, 'yield_keyword'],
-	[100, 'dot_dot'],
-	[101, 'if_keyword'],
-	[102, 'else_keyword'],
-	[103, 'match_keyword'],
-	[104, 'while_keyword'],
-	[105, 'loop_keyword'],
-	[106, 'in_keyword'],
-	[107, 'break_keyword'],
-	[108, 'continue_keyword'],
-	[109, 'dot'],
-	[110, 'await_keyword'],
-	[111, 'unsafe_keyword'],
-	[112, 'async_keyword'],
-	[113, 'try_keyword'],
-	[114, 'ref_keyword'],
-	[115, 'at'],
-	[116, 'true_keyword'],
-	[117, 'false_keyword'],
-	[118, 'slash_slash'],
-	[119, 'bang2'],
-	[120, 'slash2'],
-	[121, 'slash_star'],
-	[122, 'star_slash'],
-	[123, 'shebang'],
-	[124, 'self'],
-	[125, 'super'],
-	[126, 'crate'],
-	[127, 'metavariable'],
-	[128, 'static_keyword'],
-	[129, 'move_keyword'],
-	[130, 'comma'],
-	[131, 'dash_gt'],
-	[132, 'token_repetition_pattern_text'],
-	[133, 'string_open'],
-	[134, 'line_comment_text1'],
-	[135, 'line_comment_text2'],
+	[11, 'token_repetition_pattern_text'],
+	[12, 'block_keyword'],
+	[13, 'expr_keyword'],
+	[14, 'expr_2021_keyword'],
+	[15, 'ident_keyword'],
+	[16, 'item_keyword'],
+	[17, 'lifetime_keyword'],
+	[18, 'literal_keyword'],
+	[19, 'meta_keyword'],
+	[20, 'pat_keyword'],
+	[21, 'pat_param_keyword'],
+	[22, 'path_keyword'],
+	[23, 'stmt_keyword'],
+	[24, 'tt_keyword'],
+	[25, 'ty_keyword'],
+	[26, 'vis_keyword'],
+	[27, 'pound'],
+	[28, 'lbrack'],
+	[29, 'rbrack'],
+	[30, 'bang'],
+	[31, 'lbrace'],
+	[32, 'rbrace'],
+	[33, 'union_keyword'],
+	[34, 'enum_keyword'],
+	[35, 'extern_keyword'],
+	[36, 'const_keyword'],
+	[37, 'type_keyword'],
+	[38, 'eq'],
+	[39, 'fn_keyword'],
+	[40, 'where_keyword'],
+	[41, 'trait_keyword'],
+	[42, 'for_keyword'],
+	[43, 'lt'],
+	[44, 'gt'],
+	[45, 'let_keyword'],
+	[46, 'use_keyword'],
+	[47, 'colon_colon'],
+	[48, 'as_keyword'],
+	[49, 'dot_dot_dot'],
+	[50, 'squote'],
+	[51, 'default_keyword'],
+	[52, 'gen_keyword'],
+	[53, 'raw_keyword'],
+	[54, 'lt2'],
+	[55, 'amp'],
+	[56, 'impl_keyword'],
+	[57, 'dyn_keyword'],
+	[58, 'mutable_specifier'],
+	[59, 'u8_keyword'],
+	[60, 'i8_keyword'],
+	[61, 'u16_keyword'],
+	[62, 'i16_keyword'],
+	[63, 'u32_keyword'],
+	[64, 'i32_keyword'],
+	[65, 'u64_keyword'],
+	[66, 'i64_keyword'],
+	[67, 'u128_keyword'],
+	[68, 'i128_keyword'],
+	[69, 'isize_keyword'],
+	[70, 'usize_keyword'],
+	[71, 'f32_keyword'],
+	[72, 'f64_keyword'],
+	[73, 'bool_keyword'],
+	[74, 'str_keyword'],
+	[75, 'char_keyword'],
+	[76, 'dash'],
+	[77, 'amp_amp'],
+	[78, 'pipe_pipe'],
+	[79, 'pipe'],
+	[80, 'caret'],
+	[81, 'eq_eq'],
+	[82, 'bang_eq'],
+	[83, 'lt_eq'],
+	[84, 'gt_eq'],
+	[85, 'lt_lt'],
+	[86, 'gt_gt'],
+	[87, 'slash'],
+	[88, 'percent'],
+	[89, 'plus_eq'],
+	[90, 'dash_eq'],
+	[91, 'star_eq'],
+	[92, 'slash_eq'],
+	[93, 'percent_eq'],
+	[94, 'amp_eq'],
+	[95, 'pipe_eq'],
+	[96, 'caret_eq'],
+	[97, 'lt_lt_eq'],
+	[98, 'gt_gt_eq'],
+	[99, 'return_keyword'],
+	[100, 'yield_keyword'],
+	[101, 'dot_dot'],
+	[102, 'if_keyword'],
+	[103, 'else_keyword'],
+	[104, 'match_keyword'],
+	[105, 'while_keyword'],
+	[106, 'loop_keyword'],
+	[107, 'in_keyword'],
+	[108, 'break_keyword'],
+	[109, 'continue_keyword'],
+	[110, 'dot'],
+	[111, 'await_keyword'],
+	[112, 'unsafe_keyword'],
+	[113, 'async_keyword'],
+	[114, 'try_keyword'],
+	[115, 'ref_keyword'],
+	[116, 'at'],
+	[117, 'string_open'],
+	[118, 'true_keyword'],
+	[119, 'false_keyword'],
+	[120, 'slash_slash'],
+	[121, 'line_comment_text1'],
+	[122, 'line_comment_text2'],
+	[123, 'bang2'],
+	[124, 'slash2'],
+	[125, 'slash_star'],
+	[126, 'star_slash'],
+	[127, 'shebang'],
+	[128, 'self'],
+	[129, 'super'],
+	[130, 'crate'],
+	[131, 'metavariable'],
+	[132, 'static_keyword'],
+	[133, 'move_keyword'],
+	[134, 'comma'],
+	[135, 'dash_gt'],
 	[136, 'underscore'],
 	[137, 'dot_dot_eq'],
 	[138, 'mod_keyword'],
@@ -824,131 +824,131 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, '+'],
 	[9, '*'],
 	[10, '?'],
-	[11, 'block'],
-	[12, 'expr'],
-	[13, 'expr_2021'],
-	[14, 'ident'],
-	[15, 'item'],
-	[16, 'lifetime'],
-	[17, 'literal'],
-	[18, 'meta'],
-	[19, 'pat'],
-	[20, 'pat_param'],
-	[21, 'path'],
-	[22, 'stmt'],
-	[23, 'tt'],
-	[24, 'ty'],
-	[25, 'vis'],
-	[26, '#'],
-	[27, '['],
-	[28, ']'],
-	[29, '!'],
-	[30, '{'],
-	[31, '}'],
-	[32, 'union'],
-	[33, 'enum'],
-	[34, 'extern'],
-	[35, 'const'],
-	[36, 'type'],
-	[37, '='],
-	[38, 'fn'],
-	[39, 'where'],
-	[40, 'trait'],
-	[41, 'for'],
-	[42, '<'],
-	[43, '>'],
-	[44, 'let'],
-	[45, 'use'],
-	[46, '::'],
-	[47, 'as'],
-	[48, '...'],
-	[49, "'"],
-	[50, 'default'],
-	[51, 'gen'],
-	[52, 'raw'],
-	[53, '<'],
-	[54, '&'],
-	[55, 'impl'],
-	[56, 'dyn'],
-	[57, 'mutable_specifier'],
-	[58, 'u8'],
-	[59, 'i8'],
-	[60, 'u16'],
-	[61, 'i16'],
-	[62, 'u32'],
-	[63, 'i32'],
-	[64, 'u64'],
-	[65, 'i64'],
-	[66, 'u128'],
-	[67, 'i128'],
-	[68, 'isize'],
-	[69, 'usize'],
-	[70, 'f32'],
-	[71, 'f64'],
-	[72, 'bool'],
-	[73, 'str'],
-	[74, 'char'],
-	[75, '-'],
-	[76, '&&'],
-	[77, '||'],
-	[78, '|'],
-	[79, '^'],
-	[80, '=='],
-	[81, '!='],
-	[82, '<='],
-	[83, '>='],
-	[84, '<<'],
-	[85, '>>'],
-	[86, '/'],
-	[87, '%'],
-	[88, '+='],
-	[89, '-='],
-	[90, '*='],
-	[91, '/='],
-	[92, '%='],
-	[93, '&='],
-	[94, '|='],
-	[95, '^='],
-	[96, '<<='],
-	[97, '>>='],
-	[98, 'return'],
-	[99, 'yield'],
-	[100, '..'],
-	[101, 'if'],
-	[102, 'else'],
-	[103, 'match'],
-	[104, 'while'],
-	[105, 'loop'],
-	[106, 'in'],
-	[107, 'break'],
-	[108, 'continue'],
-	[109, '.'],
-	[110, 'await'],
-	[111, 'unsafe'],
-	[112, 'async'],
-	[113, 'try'],
-	[114, 'ref'],
-	[115, '@'],
-	[116, 'true'],
-	[117, 'false'],
-	[118, '//'],
-	[119, '!'],
-	[120, '/'],
-	[121, '/*'],
-	[122, '*/'],
-	[123, 'shebang'],
-	[124, 'self'],
-	[125, 'super'],
-	[126, 'crate'],
-	[127, 'metavariable'],
-	[128, 'static'],
-	[129, 'move'],
-	[130, ','],
-	[131, '->'],
-	[132, 'token_repetition_pattern_text'],
-	[133, 'string_open'],
-	[134, 'line_comment_text1'],
-	[135, 'line_comment_text2'],
+	[11, 'token_repetition_pattern_text'],
+	[12, 'block'],
+	[13, 'expr'],
+	[14, 'expr_2021'],
+	[15, 'ident'],
+	[16, 'item'],
+	[17, 'lifetime'],
+	[18, 'literal'],
+	[19, 'meta'],
+	[20, 'pat'],
+	[21, 'pat_param'],
+	[22, 'path'],
+	[23, 'stmt'],
+	[24, 'tt'],
+	[25, 'ty'],
+	[26, 'vis'],
+	[27, '#'],
+	[28, '['],
+	[29, ']'],
+	[30, '!'],
+	[31, '{'],
+	[32, '}'],
+	[33, 'union'],
+	[34, 'enum'],
+	[35, 'extern'],
+	[36, 'const'],
+	[37, 'type'],
+	[38, '='],
+	[39, 'fn'],
+	[40, 'where'],
+	[41, 'trait'],
+	[42, 'for'],
+	[43, '<'],
+	[44, '>'],
+	[45, 'let'],
+	[46, 'use'],
+	[47, '::'],
+	[48, 'as'],
+	[49, '...'],
+	[50, "'"],
+	[51, 'default'],
+	[52, 'gen'],
+	[53, 'raw'],
+	[54, '<'],
+	[55, '&'],
+	[56, 'impl'],
+	[57, 'dyn'],
+	[58, 'mutable_specifier'],
+	[59, 'u8'],
+	[60, 'i8'],
+	[61, 'u16'],
+	[62, 'i16'],
+	[63, 'u32'],
+	[64, 'i32'],
+	[65, 'u64'],
+	[66, 'i64'],
+	[67, 'u128'],
+	[68, 'i128'],
+	[69, 'isize'],
+	[70, 'usize'],
+	[71, 'f32'],
+	[72, 'f64'],
+	[73, 'bool'],
+	[74, 'str'],
+	[75, 'char'],
+	[76, '-'],
+	[77, '&&'],
+	[78, '||'],
+	[79, '|'],
+	[80, '^'],
+	[81, '=='],
+	[82, '!='],
+	[83, '<='],
+	[84, '>='],
+	[85, '<<'],
+	[86, '>>'],
+	[87, '/'],
+	[88, '%'],
+	[89, '+='],
+	[90, '-='],
+	[91, '*='],
+	[92, '/='],
+	[93, '%='],
+	[94, '&='],
+	[95, '|='],
+	[96, '^='],
+	[97, '<<='],
+	[98, '>>='],
+	[99, 'return'],
+	[100, 'yield'],
+	[101, '..'],
+	[102, 'if'],
+	[103, 'else'],
+	[104, 'match'],
+	[105, 'while'],
+	[106, 'loop'],
+	[107, 'in'],
+	[108, 'break'],
+	[109, 'continue'],
+	[110, '.'],
+	[111, 'await'],
+	[112, 'unsafe'],
+	[113, 'async'],
+	[114, 'try'],
+	[115, 'ref'],
+	[116, '@'],
+	[117, 'string_open'],
+	[118, 'true'],
+	[119, 'false'],
+	[120, '//'],
+	[121, 'line_comment_text1'],
+	[122, 'line_comment_text2'],
+	[123, '!'],
+	[124, '/'],
+	[125, '/*'],
+	[126, '*/'],
+	[127, 'shebang'],
+	[128, 'self'],
+	[129, 'super'],
+	[130, 'crate'],
+	[131, 'metavariable'],
+	[132, 'static'],
+	[133, 'move'],
+	[134, ','],
+	[135, '->'],
 	[136, '_'],
 	[137, '..='],
 	[138, 'mod'],
@@ -1326,6 +1326,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Star;
 		case 'qmark':
 			return TSKindId.Qmark;
+		case 'token_repetition_pattern_text':
+			return TSKindId.TokenRepetitionPatternText;
 		case 'block_keyword':
 			return TSKindId.BlockKeyword;
 		case 'expr_keyword':
@@ -1536,12 +1538,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RefKeyword;
 		case 'at':
 			return TSKindId.At;
+		case 'string_open':
+			return TSKindId.StringOpen;
 		case 'true_keyword':
 			return TSKindId.TrueKeyword;
 		case 'false_keyword':
 			return TSKindId.FalseKeyword;
 		case 'slash_slash':
 			return TSKindId.SlashSlash;
+		case 'line_comment_text1':
+			return TSKindId.LineCommentText1;
+		case 'line_comment_text2':
+			return TSKindId.LineCommentText2;
 		case 'bang2':
 			return TSKindId.Bang2;
 		case 'slash2':
@@ -1568,14 +1576,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Comma;
 		case 'dash_gt':
 			return TSKindId.DashGt;
-		case 'token_repetition_pattern_text':
-			return TSKindId.TokenRepetitionPatternText;
-		case 'string_open':
-			return TSKindId.StringOpen;
-		case 'line_comment_text1':
-			return TSKindId.LineCommentText1;
-		case 'line_comment_text2':
-			return TSKindId.LineCommentText2;
 		case 'underscore':
 			return TSKindId.Underscore;
 		case 'dot_dot_eq':
@@ -11772,6 +11772,7 @@ export interface SignatureMethodDeclaration {
 
 // Leaf node types
 export type EmptyStatement = TSKindId.EmptyStatement;
+export type TokenRepetitionPatternText = Terminal<TSKindId.TokenRepetitionPatternText, string>;
 export type FragmentSpecifier =
 	| TSKindId.BlockKeyword
 	| TSKindId.ExprKeyword
@@ -11793,6 +11794,7 @@ export type NeverType = TSKindId.NeverType;
 export type MutableSpecifier = TSKindId.MutableSpecifier;
 export type UnitExpression = TSKindId.UnitExpression;
 export type RemainingFieldPattern = TSKindId.RemainingFieldPattern;
+export type StringOpen = Terminal<TSKindId.StringOpen, string>;
 export type BooleanLiteral = TSKindId.TrueKeyword | TSKindId.FalseKeyword;
 export type InnerLineDocCommentMarker = TSKindId.InnerLineDocCommentMarker;
 export type OuterLineDocCommentMarker = TSKindId.OuterLineDocCommentMarker;
@@ -11818,8 +11820,6 @@ export type PrimitiveType =
 	| TSKindId.BoolKeyword
 	| TSKindId.StrKeyword
 	| TSKindId.CharKeyword;
-export type TokenRepetitionPatternText = Terminal<TSKindId.TokenRepetitionPatternText, string>;
-export type StringOpen = Terminal<TSKindId.StringOpen, string>;
 export type TokenTreePunctuation =
 	| TSKindId.Plus
 	| TSKindId.Dash
@@ -19078,7 +19078,6 @@ export interface CrateVisibilityModifierNs extends KeywordNs<
 	'crate',
 	TSKindId.CrateVisibilityModifier
 > {}
-export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface TokenRepetitionPatternTextNs extends LeafNs<
 	TokenRepetitionPatternText,
 	string,
@@ -19086,6 +19085,7 @@ export interface TokenRepetitionPatternTextNs extends LeafNs<
 	TSKindId.TokenRepetitionPatternText
 > {}
 export interface StringOpenNs extends LeafNs<StringOpen, string, StringOpen.Bound, TSKindId.StringOpen> {}
+export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface CharLiteralEmptyNs extends LeafNs<
 	CharLiteralEmpty,
 	string,
@@ -19398,9 +19398,9 @@ export interface NamespaceMap {
 	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.SelfModule]: SelfModuleNs;
 	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifierNs;
-	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternTextNs;
 	[TSKindId.StringOpen]: StringOpenNs;
+	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.CharLiteralEmpty]: CharLiteralEmptyNs;
 	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashesNs;
 	[TSKindId.LineCommentRegular]: LineCommentRegularNs;
@@ -19653,9 +19653,9 @@ export interface BoundByKindId {
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Bound;
 	[TSKindId.MethodDeclaration]: MethodDeclaration.Bound;
 	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclaration.Bound;
-	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Bound;
 	[TSKindId.StringOpen]: StringOpen.Bound;
+	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.CharLiteralEmpty]: CharLiteralEmpty.Bound;
 	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashes.Bound;
 	[TSKindId.LineCommentRegular]: LineCommentRegular.Bound;
@@ -19908,9 +19908,9 @@ export interface ParsedByKindId {
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Parsed;
 	[TSKindId.MethodDeclaration]: MethodDeclaration.Parsed;
 	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclaration.Parsed;
-	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Parsed;
 	[TSKindId.StringOpen]: StringOpen.Parsed;
+	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.CharLiteralEmpty]: CharLiteralEmpty.Parsed;
 	[TSKindId.LineCommentExtraSlashes]: LineCommentExtraSlashes.Parsed;
 	[TSKindId.LineCommentRegular]: LineCommentRegular.Parsed;
@@ -20345,9 +20345,9 @@ export interface TypeKeyOf {
 	[TSKindId.Dedent]: 'dedent';
 	[TSKindId.SelfModule]: 'selfModule';
 	[TSKindId.CrateVisibilityModifier]: 'crateVisibilityModifier';
-	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.TokenRepetitionPatternText]: 'tokenRepetitionPatternText';
 	[TSKindId.StringOpen]: 'stringOpen';
+	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.CharLiteralEmpty]: 'charLiteralEmpty';
 	[TSKindId.LineCommentExtraSlashes]: 'lineCommentExtraSlashes';
 	[TSKindId.LineCommentRegular]: 'lineCommentRegular';
@@ -27996,22 +27996,6 @@ export namespace CrateVisibilityModifier {
 	export type LooseArgs = CrateVisibilityModifierNs['LooseArgs'];
 	export type Kind = TSKindId.CrateVisibilityModifier;
 }
-export namespace Identifier {
-	export type Config = IdentifierNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.Identifier;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.Identifier;
-		$text(): string;
-	}
-	export type Loose = IdentifierNs['Loose'];
-	export type LooseConfig = IdentifierNs['LooseConfig'];
-	export type BuildArgs = IdentifierNs['BuildArgs'];
-	export type LooseArgs = IdentifierNs['LooseArgs'];
-	export type Kind = TSKindId.Identifier;
-}
 export namespace TokenRepetitionPatternText {
 	export type Config = TokenRepetitionPatternTextNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
@@ -28043,6 +28027,22 @@ export namespace StringOpen {
 	export type BuildArgs = StringOpenNs['BuildArgs'];
 	export type LooseArgs = StringOpenNs['LooseArgs'];
 	export type Kind = TSKindId.StringOpen;
+}
+export namespace Identifier {
+	export type Config = IdentifierNs['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.Identifier;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.Identifier;
+		$text(): string;
+	}
+	export type Loose = IdentifierNs['Loose'];
+	export type LooseConfig = IdentifierNs['LooseConfig'];
+	export type BuildArgs = IdentifierNs['BuildArgs'];
+	export type LooseArgs = IdentifierNs['LooseArgs'];
+	export type Kind = TSKindId.Identifier;
 }
 export namespace CharLiteralEmpty {
 	export type Config = CharLiteralEmptyNs['Config'];

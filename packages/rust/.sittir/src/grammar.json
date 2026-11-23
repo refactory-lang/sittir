@@ -509,6 +509,10 @@
         }
       ]
     },
+    "token_repetition_pattern_text": {
+      "type": "PATTERN",
+      "value": "[^+*?]+"
+    },
     "fragment_specifier": {
       "type": "CHOICE",
       "members": [
@@ -8278,6 +8282,10 @@
         }
       ]
     },
+    "string_literal_text": {
+      "type": "PATTERN",
+      "value": "[bc]?\""
+    },
     "raw_string_literal": {
       "type": "SEQ",
       "members": [
@@ -8516,6 +8524,21 @@
           ]
         }
       ]
+    },
+    "line_comment_text1": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 2,
+        "content": {
+          "type": "PATTERN",
+          "value": "\\/\\/"
+        }
+      }
+    },
+    "line_comment_text2": {
+      "type": "PATTERN",
+      "value": ".*"
     },
     "_inner_line_doc_comment_marker": {
       "type": "IMMEDIATE_TOKEN",
@@ -10506,29 +10529,6 @@
     "_kw_const": {
       "type": "STRING",
       "value": "const"
-    },
-    "token_repetition_pattern_text": {
-      "type": "PATTERN",
-      "value": "[^+*?]+"
-    },
-    "string_literal_text": {
-      "type": "PATTERN",
-      "value": "[bc]?\""
-    },
-    "line_comment_text1": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 2,
-        "content": {
-          "type": "PATTERN",
-          "value": "\\/\\/"
-        }
-      }
-    },
-    "line_comment_text2": {
-      "type": "PATTERN",
-      "value": ".*"
     },
     "_token_tree_punctuation": {
       "type": "CHOICE",

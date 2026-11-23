@@ -201,142 +201,142 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, 'dquote'],
 	[9, 'dquote_dquote_dquote'],
 	[10, 'string_fragment'],
-	[11, 'bslash_lbrace'],
-	[12, 'rbrace'],
-	[13, 'null_literal'],
-	[14, 'lparen'],
-	[15, 'amp'],
-	[16, 'rparen'],
-	[17, 'eq'],
-	[18, 'plus_eq'],
-	[19, 'dash_eq'],
-	[20, 'star_eq'],
-	[21, 'slash_eq'],
-	[22, 'amp_eq'],
-	[23, 'pipe_eq'],
-	[24, 'caret_eq'],
-	[25, 'percent_eq'],
-	[26, 'lt_lt_eq'],
-	[27, 'gt_gt_eq'],
-	[28, 'gt_gt_gt_eq'],
-	[29, 'gt'],
-	[30, 'lt'],
-	[31, 'gt_eq'],
-	[32, 'lt_eq'],
-	[33, 'eq_eq'],
-	[34, 'bang_eq'],
-	[35, 'amp_amp'],
-	[36, 'pipe_pipe'],
-	[37, 'plus'],
-	[38, 'dash'],
-	[39, 'star'],
-	[40, 'slash'],
-	[41, 'pipe'],
-	[42, 'caret'],
-	[43, 'percent'],
-	[44, 'lt_lt'],
-	[45, 'gt_gt'],
-	[46, 'gt_gt_gt'],
-	[47, 'instanceof_keyword'],
-	[48, 'dash_gt'],
-	[49, 'comma'],
-	[50, 'qmark'],
-	[51, 'colon'],
-	[52, 'bang'],
-	[53, 'tilde'],
-	[54, 'new_keyword'],
-	[55, 'lbrack'],
-	[56, 'rbrack'],
-	[57, 'dot'],
-	[58, 'class_keyword'],
-	[59, 'colon_colon'],
-	[60, 'extends_keyword'],
-	[61, 'switch_keyword'],
-	[62, 'lbrace'],
-	[63, 'default_keyword'],
-	[64, 'underscore_pattern'],
-	[65, 'when_keyword'],
-	[66, 'semi'],
-	[67, 'assert_keyword'],
-	[68, 'do_keyword'],
-	[69, 'while_keyword'],
-	[70, 'break_keyword'],
-	[71, 'continue_keyword'],
-	[72, 'return_keyword'],
-	[73, 'yield_keyword'],
-	[74, 'synchronized_keyword'],
-	[75, 'throw_keyword'],
-	[76, 'catch_keyword'],
-	[77, 'finally_keyword'],
-	[78, 'try_keyword'],
-	[79, 'if_keyword'],
-	[80, 'for_keyword'],
-	[81, 'at'],
-	[82, 'module_keyword'],
-	[83, 'requires_keyword'],
-	[84, 'transitive_keyword'],
-	[85, 'static_keyword'],
-	[86, 'exports_keyword'],
-	[87, 'opens_keyword'],
-	[88, 'uses_keyword'],
-	[89, 'provides_keyword'],
-	[90, 'with_keyword'],
-	[91, 'package_keyword'],
-	[92, 'import_keyword'],
-	[93, 'enum_keyword'],
-	[94, 'implements_keyword'],
-	[95, 'permits_keyword'],
-	[96, 'record_keyword'],
-	[97, 'atinterface'],
-	[98, 'interface_keyword'],
-	[99, 'byte_keyword'],
-	[100, 'short_keyword'],
-	[101, 'int_keyword'],
-	[102, 'long_keyword'],
-	[103, 'char_keyword'],
-	[104, 'float_keyword'],
-	[105, 'double_keyword'],
-	[106, 'boolean_type'],
-	[107, 'void_type'],
-	[108, 'dot_dot_dot'],
-	[109, 'throws_keyword'],
-	[110, 'open_keyword'],
-	[111, 'sealed_keyword'],
-	[112, 'this'],
-	[113, 'super'],
-	[114, 'line_comment'],
-	[115, 'block_comment'],
-	[116, 'final_keyword'],
-	[117, 'decimal_integer_literal_arm1'],
-	[118, 'decimal_integer_literal_arm2'],
-	[119, 'decimal_floating_point_literal_arm1'],
-	[120, 'decimal_floating_point_literal_arm2'],
-	[121, 'decimal_floating_point_literal_arm3_arm1'],
-	[122, 'decimal_floating_point_literal_arm3_arm2'],
-	[123, 'decimal_floating_point_literal_arm4_arm1'],
-	[124, 'decimal_floating_point_literal_arm4_arm2'],
-	[125, 'hex_floating_point_literal_arm1'],
-	[126, 'hex_floating_point_literal_arm2'],
-	[127, 'escape_sequence_arm1'],
-	[128, 'escape_sequence_arm2'],
-	[129, 'escape_sequence_arm3'],
-	[130, 'escape_sequence_arm4'],
-	[131, 'escape_sequence_arm5'],
-	[132, 'else_keyword'],
-	[133, 'to_keyword'],
-	[134, 'case_keyword'],
-	[135, 'public_keyword'],
-	[136, 'protected_keyword'],
-	[137, 'private_keyword'],
-	[138, 'abstract_keyword'],
-	[139, 'strictfp_keyword'],
-	[140, 'native_keyword'],
-	[141, 'transient_keyword'],
-	[142, 'volatile_keyword'],
-	[143, 'non_dashsealed'],
-	[144, 'multiline_string_fragment_text1'],
-	[145, 'multiline_string_fragment_text2'],
-	[146, 'escape_sequence_text'],
+	[11, 'multiline_string_fragment_text1'],
+	[12, 'multiline_string_fragment_text2'],
+	[13, 'bslash_lbrace'],
+	[14, 'rbrace'],
+	[15, 'escape_sequence_text'],
+	[16, 'null_literal'],
+	[17, 'lparen'],
+	[18, 'amp'],
+	[19, 'rparen'],
+	[20, 'eq'],
+	[21, 'plus_eq'],
+	[22, 'dash_eq'],
+	[23, 'star_eq'],
+	[24, 'slash_eq'],
+	[25, 'amp_eq'],
+	[26, 'pipe_eq'],
+	[27, 'caret_eq'],
+	[28, 'percent_eq'],
+	[29, 'lt_lt_eq'],
+	[30, 'gt_gt_eq'],
+	[31, 'gt_gt_gt_eq'],
+	[32, 'gt'],
+	[33, 'lt'],
+	[34, 'gt_eq'],
+	[35, 'lt_eq'],
+	[36, 'eq_eq'],
+	[37, 'bang_eq'],
+	[38, 'amp_amp'],
+	[39, 'pipe_pipe'],
+	[40, 'plus'],
+	[41, 'dash'],
+	[42, 'star'],
+	[43, 'slash'],
+	[44, 'pipe'],
+	[45, 'caret'],
+	[46, 'percent'],
+	[47, 'lt_lt'],
+	[48, 'gt_gt'],
+	[49, 'gt_gt_gt'],
+	[50, 'instanceof_keyword'],
+	[51, 'dash_gt'],
+	[52, 'comma'],
+	[53, 'qmark'],
+	[54, 'colon'],
+	[55, 'bang'],
+	[56, 'tilde'],
+	[57, 'new_keyword'],
+	[58, 'lbrack'],
+	[59, 'rbrack'],
+	[60, 'dot'],
+	[61, 'class_keyword'],
+	[62, 'colon_colon'],
+	[63, 'extends_keyword'],
+	[64, 'switch_keyword'],
+	[65, 'lbrace'],
+	[66, 'default_keyword'],
+	[67, 'underscore_pattern'],
+	[68, 'when_keyword'],
+	[69, 'semi'],
+	[70, 'assert_keyword'],
+	[71, 'do_keyword'],
+	[72, 'while_keyword'],
+	[73, 'break_keyword'],
+	[74, 'continue_keyword'],
+	[75, 'return_keyword'],
+	[76, 'yield_keyword'],
+	[77, 'synchronized_keyword'],
+	[78, 'throw_keyword'],
+	[79, 'catch_keyword'],
+	[80, 'finally_keyword'],
+	[81, 'try_keyword'],
+	[82, 'if_keyword'],
+	[83, 'for_keyword'],
+	[84, 'at'],
+	[85, 'module_keyword'],
+	[86, 'requires_keyword'],
+	[87, 'transitive_keyword'],
+	[88, 'static_keyword'],
+	[89, 'exports_keyword'],
+	[90, 'opens_keyword'],
+	[91, 'uses_keyword'],
+	[92, 'provides_keyword'],
+	[93, 'with_keyword'],
+	[94, 'package_keyword'],
+	[95, 'import_keyword'],
+	[96, 'enum_keyword'],
+	[97, 'implements_keyword'],
+	[98, 'permits_keyword'],
+	[99, 'record_keyword'],
+	[100, 'atinterface'],
+	[101, 'interface_keyword'],
+	[102, 'byte_keyword'],
+	[103, 'short_keyword'],
+	[104, 'int_keyword'],
+	[105, 'long_keyword'],
+	[106, 'char_keyword'],
+	[107, 'float_keyword'],
+	[108, 'double_keyword'],
+	[109, 'boolean_type'],
+	[110, 'void_type'],
+	[111, 'dot_dot_dot'],
+	[112, 'throws_keyword'],
+	[113, 'open_keyword'],
+	[114, 'sealed_keyword'],
+	[115, 'this'],
+	[116, 'super'],
+	[117, 'line_comment'],
+	[118, 'block_comment'],
+	[119, 'final_keyword'],
+	[120, 'decimal_integer_literal_arm1'],
+	[121, 'decimal_integer_literal_arm2'],
+	[122, 'decimal_floating_point_literal_arm1'],
+	[123, 'decimal_floating_point_literal_arm2'],
+	[124, 'decimal_floating_point_literal_arm3_arm1'],
+	[125, 'decimal_floating_point_literal_arm3_arm2'],
+	[126, 'decimal_floating_point_literal_arm4_arm1'],
+	[127, 'decimal_floating_point_literal_arm4_arm2'],
+	[128, 'hex_floating_point_literal_arm1'],
+	[129, 'hex_floating_point_literal_arm2'],
+	[130, 'escape_sequence_arm1'],
+	[131, 'escape_sequence_arm2'],
+	[132, 'escape_sequence_arm3'],
+	[133, 'escape_sequence_arm4'],
+	[134, 'escape_sequence_arm5'],
+	[135, 'else_keyword'],
+	[136, 'to_keyword'],
+	[137, 'case_keyword'],
+	[138, 'public_keyword'],
+	[139, 'protected_keyword'],
+	[140, 'private_keyword'],
+	[141, 'abstract_keyword'],
+	[142, 'strictfp_keyword'],
+	[143, 'native_keyword'],
+	[144, 'transient_keyword'],
+	[145, 'volatile_keyword'],
+	[146, 'non_dashsealed'],
 	[147, 'plus_plus'],
 	[148, 'dash_dash'],
 	[149, '_tight'],
@@ -577,142 +577,142 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, '"'],
 	[9, '"""'],
 	[10, 'string_fragment'],
-	[11, '\\{'],
-	[12, '}'],
-	[13, 'null_literal'],
-	[14, '('],
-	[15, '&'],
-	[16, ')'],
-	[17, '='],
-	[18, '+='],
-	[19, '-='],
-	[20, '*='],
-	[21, '/='],
-	[22, '&='],
-	[23, '|='],
-	[24, '^='],
-	[25, '%='],
-	[26, '<<='],
-	[27, '>>='],
-	[28, '>>>='],
-	[29, '>'],
-	[30, '<'],
-	[31, '>='],
-	[32, '<='],
-	[33, '=='],
-	[34, '!='],
-	[35, '&&'],
-	[36, '||'],
-	[37, '+'],
-	[38, '-'],
-	[39, '*'],
-	[40, '/'],
-	[41, '|'],
-	[42, '^'],
-	[43, '%'],
-	[44, '<<'],
-	[45, '>>'],
-	[46, '>>>'],
-	[47, 'instanceof'],
-	[48, '->'],
-	[49, ','],
-	[50, '?'],
-	[51, ':'],
-	[52, '!'],
-	[53, '~'],
-	[54, 'new'],
-	[55, '['],
-	[56, ']'],
-	[57, '.'],
-	[58, 'class'],
-	[59, '::'],
-	[60, 'extends'],
-	[61, 'switch'],
-	[62, '{'],
-	[63, 'default'],
-	[64, 'underscore_pattern'],
-	[65, 'when'],
-	[66, ';'],
-	[67, 'assert'],
-	[68, 'do'],
-	[69, 'while'],
-	[70, 'break'],
-	[71, 'continue'],
-	[72, 'return'],
-	[73, 'yield'],
-	[74, 'synchronized'],
-	[75, 'throw'],
-	[76, 'catch'],
-	[77, 'finally'],
-	[78, 'try'],
-	[79, 'if'],
-	[80, 'for'],
-	[81, '@'],
-	[82, 'module'],
-	[83, 'requires'],
-	[84, 'transitive'],
-	[85, 'static'],
-	[86, 'exports'],
-	[87, 'opens'],
-	[88, 'uses'],
-	[89, 'provides'],
-	[90, 'with'],
-	[91, 'package'],
-	[92, 'import'],
-	[93, 'enum'],
-	[94, 'implements'],
-	[95, 'permits'],
-	[96, 'record'],
-	[97, '@interface'],
-	[98, 'interface'],
-	[99, 'byte'],
-	[100, 'short'],
-	[101, 'int'],
-	[102, 'long'],
-	[103, 'char'],
-	[104, 'float'],
-	[105, 'double'],
-	[106, 'boolean_type'],
-	[107, 'void_type'],
-	[108, '...'],
-	[109, 'throws'],
-	[110, 'open'],
-	[111, 'sealed'],
-	[112, 'this'],
-	[113, 'super'],
-	[114, 'line_comment'],
-	[115, 'block_comment'],
-	[116, 'final'],
-	[117, 'decimal_integer_literal_arm1'],
-	[118, 'decimal_integer_literal_arm2'],
-	[119, 'decimal_floating_point_literal_arm1'],
-	[120, 'decimal_floating_point_literal_arm2'],
-	[121, 'decimal_floating_point_literal_arm3_arm1'],
-	[122, 'decimal_floating_point_literal_arm3_arm2'],
-	[123, 'decimal_floating_point_literal_arm4_arm1'],
-	[124, 'decimal_floating_point_literal_arm4_arm2'],
-	[125, 'hex_floating_point_literal_arm1'],
-	[126, 'hex_floating_point_literal_arm2'],
-	[127, 'escape_sequence_arm1'],
-	[128, 'escape_sequence_arm2'],
-	[129, 'escape_sequence_arm3'],
-	[130, 'escape_sequence_arm4'],
-	[131, 'escape_sequence_arm5'],
-	[132, 'else'],
-	[133, 'to'],
-	[134, 'case'],
-	[135, 'public'],
-	[136, 'protected'],
-	[137, 'private'],
-	[138, 'abstract'],
-	[139, 'strictfp'],
-	[140, 'native'],
-	[141, 'transient'],
-	[142, 'volatile'],
-	[143, 'non-sealed'],
-	[144, 'multiline_string_fragment_text1'],
-	[145, 'multiline_string_fragment_text2'],
-	[146, 'escape_sequence_text'],
+	[11, 'multiline_string_fragment_text1'],
+	[12, 'multiline_string_fragment_text2'],
+	[13, '\\{'],
+	[14, '}'],
+	[15, 'escape_sequence_text'],
+	[16, 'null_literal'],
+	[17, '('],
+	[18, '&'],
+	[19, ')'],
+	[20, '='],
+	[21, '+='],
+	[22, '-='],
+	[23, '*='],
+	[24, '/='],
+	[25, '&='],
+	[26, '|='],
+	[27, '^='],
+	[28, '%='],
+	[29, '<<='],
+	[30, '>>='],
+	[31, '>>>='],
+	[32, '>'],
+	[33, '<'],
+	[34, '>='],
+	[35, '<='],
+	[36, '=='],
+	[37, '!='],
+	[38, '&&'],
+	[39, '||'],
+	[40, '+'],
+	[41, '-'],
+	[42, '*'],
+	[43, '/'],
+	[44, '|'],
+	[45, '^'],
+	[46, '%'],
+	[47, '<<'],
+	[48, '>>'],
+	[49, '>>>'],
+	[50, 'instanceof'],
+	[51, '->'],
+	[52, ','],
+	[53, '?'],
+	[54, ':'],
+	[55, '!'],
+	[56, '~'],
+	[57, 'new'],
+	[58, '['],
+	[59, ']'],
+	[60, '.'],
+	[61, 'class'],
+	[62, '::'],
+	[63, 'extends'],
+	[64, 'switch'],
+	[65, '{'],
+	[66, 'default'],
+	[67, 'underscore_pattern'],
+	[68, 'when'],
+	[69, ';'],
+	[70, 'assert'],
+	[71, 'do'],
+	[72, 'while'],
+	[73, 'break'],
+	[74, 'continue'],
+	[75, 'return'],
+	[76, 'yield'],
+	[77, 'synchronized'],
+	[78, 'throw'],
+	[79, 'catch'],
+	[80, 'finally'],
+	[81, 'try'],
+	[82, 'if'],
+	[83, 'for'],
+	[84, '@'],
+	[85, 'module'],
+	[86, 'requires'],
+	[87, 'transitive'],
+	[88, 'static'],
+	[89, 'exports'],
+	[90, 'opens'],
+	[91, 'uses'],
+	[92, 'provides'],
+	[93, 'with'],
+	[94, 'package'],
+	[95, 'import'],
+	[96, 'enum'],
+	[97, 'implements'],
+	[98, 'permits'],
+	[99, 'record'],
+	[100, '@interface'],
+	[101, 'interface'],
+	[102, 'byte'],
+	[103, 'short'],
+	[104, 'int'],
+	[105, 'long'],
+	[106, 'char'],
+	[107, 'float'],
+	[108, 'double'],
+	[109, 'boolean_type'],
+	[110, 'void_type'],
+	[111, '...'],
+	[112, 'throws'],
+	[113, 'open'],
+	[114, 'sealed'],
+	[115, 'this'],
+	[116, 'super'],
+	[117, 'line_comment'],
+	[118, 'block_comment'],
+	[119, 'final'],
+	[120, 'decimal_integer_literal_arm1'],
+	[121, 'decimal_integer_literal_arm2'],
+	[122, 'decimal_floating_point_literal_arm1'],
+	[123, 'decimal_floating_point_literal_arm2'],
+	[124, 'decimal_floating_point_literal_arm3_arm1'],
+	[125, 'decimal_floating_point_literal_arm3_arm2'],
+	[126, 'decimal_floating_point_literal_arm4_arm1'],
+	[127, 'decimal_floating_point_literal_arm4_arm2'],
+	[128, 'hex_floating_point_literal_arm1'],
+	[129, 'hex_floating_point_literal_arm2'],
+	[130, 'escape_sequence_arm1'],
+	[131, 'escape_sequence_arm2'],
+	[132, 'escape_sequence_arm3'],
+	[133, 'escape_sequence_arm4'],
+	[134, 'escape_sequence_arm5'],
+	[135, 'else'],
+	[136, 'to'],
+	[137, 'case'],
+	[138, 'public'],
+	[139, 'protected'],
+	[140, 'private'],
+	[141, 'abstract'],
+	[142, 'strictfp'],
+	[143, 'native'],
+	[144, 'transient'],
+	[145, 'volatile'],
+	[146, 'non-sealed'],
 	[147, '++'],
 	[148, '--'],
 	[149, '_tight'],
@@ -966,10 +966,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DquoteDquoteDquote;
 		case 'string_fragment':
 			return TSKindId.StringFragment;
+		case 'multiline_string_fragment_text1':
+			return TSKindId.MultilineStringFragmentText1;
+		case 'multiline_string_fragment_text2':
+			return TSKindId.MultilineStringFragmentText2;
 		case 'bslash_lbrace':
 			return TSKindId.BslashLbrace;
 		case 'rbrace':
 			return TSKindId.Rbrace;
+		case 'escape_sequence_text':
+			return TSKindId.EscapeSequenceText;
 		case 'null_literal':
 			return TSKindId.NullLiteral;
 		case 'lparen':
@@ -1232,12 +1238,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.VolatileKeyword;
 		case 'non_dashsealed':
 			return TSKindId.NonDashsealed;
-		case 'multiline_string_fragment_text1':
-			return TSKindId.MultilineStringFragmentText1;
-		case 'multiline_string_fragment_text2':
-			return TSKindId.MultilineStringFragmentText2;
-		case 'escape_sequence_text':
-			return TSKindId.EscapeSequenceText;
 		case 'plus_plus':
 			return TSKindId.PlusPlus;
 		case 'dash_dash':
@@ -2257,6 +2257,18 @@ export interface MultilineStringLiteralArm1 {
 		readonly content: SlotHint<T.EscapeSequenceText | T.EscapeSequence>;
 	};
 	readonly content: () => EscapeSequenceText | EscapeSequence;
+}
+
+export interface EscapeSequenceText {
+	readonly $type: TSKindId.EscapeSequenceText;
+	readonly _content: string;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<string>;
+	};
+	readonly content: () => string;
 }
 
 export interface CastExpression {
@@ -6847,18 +6859,6 @@ export interface ForStatementArm {
 	readonly inits: () => readonly Expression[];
 }
 
-export interface EscapeSequenceText {
-	readonly $type: TSKindId.EscapeSequenceText;
-	readonly _content: string;
-	readonly __slotNames__?: {
-		readonly _content: 'content';
-	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<string>;
-	};
-	readonly content: () => string;
-}
-
 export interface FormalParametersReceiver {
 	readonly $type: TSKindId.FormalParametersReceiver;
 	readonly _receiver_parameter: ReceiverParameter;
@@ -9779,6 +9779,20 @@ export interface MultilineStringLiteralArm1Ns extends NodeNs<
 	readonly BuildArgs: MultilineStringLiteralArm1.BuildArgs;
 	readonly LooseArgs: MultilineStringLiteralArm1.LooseArgs;
 }
+export interface EscapeSequenceTextNs extends NodeNs<
+	EscapeSequenceText,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	EscapeSequenceText.Bound,
+	'content',
+	TSKindId.EscapeSequenceText,
+	EscapeSequenceText.Parsed,
+	never
+> {
+	readonly BuildArgs: EscapeSequenceText.BuildArgs;
+	readonly LooseArgs: EscapeSequenceText.LooseArgs;
+}
 export interface CastExpressionNs extends NodeNs<
 	CastExpression,
 	LeafScalarMap,
@@ -11767,20 +11781,6 @@ export interface ForStatementArmNs extends NodeNs<
 	readonly BuildArgs: ForStatementArm.BuildArgs;
 	readonly LooseArgs: ForStatementArm.LooseArgs;
 }
-export interface EscapeSequenceTextNs extends NodeNs<
-	EscapeSequenceText,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	EscapeSequenceText.Bound,
-	'content',
-	TSKindId.EscapeSequenceText,
-	EscapeSequenceText.Parsed,
-	never
-> {
-	readonly BuildArgs: EscapeSequenceText.BuildArgs;
-	readonly LooseArgs: EscapeSequenceText.LooseArgs;
-}
 export interface FormalParametersReceiverNs extends NodeNs<
 	FormalParametersReceiver,
 	LeafScalarMap,
@@ -11983,6 +11983,7 @@ export interface NamespaceMap {
 	[TSKindId.CharacterLiteral]: CharacterLiteralNs;
 	[TSKindId.StringInterpolation]: StringInterpolationNs;
 	[TSKindId.MultilineStringLiteralArm1]: MultilineStringLiteralArm1Ns;
+	[TSKindId.EscapeSequenceText]: EscapeSequenceTextNs;
 	[TSKindId.CastExpression]: CastExpressionNs;
 	[TSKindId.AssignmentExpression]: AssignmentExpressionNs;
 	[TSKindId.BinaryExpression]: BinaryExpressionNs;
@@ -12125,7 +12126,6 @@ export interface NamespaceMap {
 	[TSKindId.AssertStatementArm]: AssertStatementArmNs;
 	[TSKindId.ResourceArm]: ResourceArmNs;
 	[TSKindId.ForStatementArm]: ForStatementArmNs;
-	[TSKindId.EscapeSequenceText]: EscapeSequenceTextNs;
 	[TSKindId.FormalParametersReceiver]: FormalParametersReceiverNs;
 	[TSKindId.FormalParametersList]: FormalParametersListNs;
 	[TSKindId.StringLiteralLine]: StringLiteralLineNs;
@@ -12172,6 +12172,7 @@ export interface BoundByKindId {
 	[TSKindId.CharacterLiteral]: CharacterLiteral.Bound;
 	[TSKindId.StringInterpolation]: StringInterpolation.Bound;
 	[TSKindId.MultilineStringLiteralArm1]: MultilineStringLiteralArm1.Bound;
+	[TSKindId.EscapeSequenceText]: EscapeSequenceText.Bound;
 	[TSKindId.CastExpression]: CastExpression.Bound;
 	[TSKindId.AssignmentExpression]: AssignmentExpression.Bound;
 	[TSKindId.BinaryExpression]: BinaryExpression.Bound;
@@ -12314,7 +12315,6 @@ export interface BoundByKindId {
 	[TSKindId.AssertStatementArm]: AssertStatementArm.Bound;
 	[TSKindId.ResourceArm]: ResourceArm.Bound;
 	[TSKindId.ForStatementArm]: ForStatementArm.Bound;
-	[TSKindId.EscapeSequenceText]: EscapeSequenceText.Bound;
 	[TSKindId.FormalParametersReceiver]: FormalParametersReceiver.Bound;
 	[TSKindId.FormalParametersList]: FormalParametersList.Bound;
 	[TSKindId.StringLiteralLine]: StringLiteralLine.Bound;
@@ -12344,6 +12344,7 @@ export interface ParsedByKindId {
 	[TSKindId.CharacterLiteral]: CharacterLiteral.Parsed;
 	[TSKindId.StringInterpolation]: StringInterpolation.Parsed;
 	[TSKindId.MultilineStringLiteralArm1]: MultilineStringLiteralArm1.Parsed;
+	[TSKindId.EscapeSequenceText]: EscapeSequenceText.Parsed;
 	[TSKindId.CastExpression]: CastExpression.Parsed;
 	[TSKindId.AssignmentExpression]: AssignmentExpression.Parsed;
 	[TSKindId.BinaryExpression]: BinaryExpression.Parsed;
@@ -12486,7 +12487,6 @@ export interface ParsedByKindId {
 	[TSKindId.AssertStatementArm]: AssertStatementArm.Parsed;
 	[TSKindId.ResourceArm]: ResourceArm.Parsed;
 	[TSKindId.ForStatementArm]: ForStatementArm.Parsed;
-	[TSKindId.EscapeSequenceText]: EscapeSequenceText.Parsed;
 	[TSKindId.FormalParametersReceiver]: FormalParametersReceiver.Parsed;
 	[TSKindId.FormalParametersList]: FormalParametersList.Parsed;
 	[TSKindId.StringLiteralLine]: StringLiteralLine.Parsed;
@@ -12648,6 +12648,7 @@ export interface TypeKeyOf {
 	[TSKindId.CharacterLiteral]: 'characterLiteral';
 	[TSKindId.StringInterpolation]: 'stringInterpolation';
 	[TSKindId.MultilineStringLiteralArm1]: 'multilineStringLiteralArm1';
+	[TSKindId.EscapeSequenceText]: 'escapeSequenceText';
 	[TSKindId.CastExpression]: 'castExpression';
 	[TSKindId.AssignmentExpression]: 'assignmentExpression';
 	[TSKindId.BinaryExpression]: 'binaryExpression';
@@ -12790,7 +12791,6 @@ export interface TypeKeyOf {
 	[TSKindId.AssertStatementArm]: 'assertStatementArm';
 	[TSKindId.ResourceArm]: 'resourceArm';
 	[TSKindId.ForStatementArm]: 'forStatementArm';
-	[TSKindId.EscapeSequenceText]: 'escapeSequenceText';
 	[TSKindId.FormalParametersReceiver]: 'formalParametersReceiver';
 	[TSKindId.FormalParametersList]: 'formalParametersList';
 	[TSKindId.StringLiteralLine]: 'stringLiteralLine';
@@ -13061,6 +13061,31 @@ export namespace MultilineStringLiteralArm1 {
 	export type BuildArgs = [value: Admit<T.EscapeSequenceText | T.EscapeSequence>];
 	export type LooseArgs = [value: T.MultilineStringLiteralArm1.Loose];
 	export type Kind = TSKindId.MultilineStringLiteralArm1;
+}
+export namespace EscapeSequenceText {
+	export type Config = ConfigFor<TSKindId.EscapeSequenceText>;
+	export interface Bound extends BoundOf<T.EscapeSequenceText, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.EscapeSequenceText['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.EscapeSequenceText, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.EscapeSequenceText['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.EscapeSequenceText['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.EscapeSequenceText>;
+	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceText>;
+	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
+	export type Kind = TSKindId.EscapeSequenceText;
 }
 export namespace CastExpression {
 	export type Config = ConfigFor<TSKindId.CastExpression>;
@@ -17245,31 +17270,6 @@ export namespace ForStatementArm {
 		  ]
 		| [children: Readonly<LooseValue<T.Expression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
 	export type Kind = TSKindId.ForStatementArm;
-}
-export namespace EscapeSequenceText {
-	export type Config = ConfigFor<TSKindId.EscapeSequenceText>;
-	export interface Bound extends BoundOf<T.EscapeSequenceText, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.EscapeSequenceText['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.EscapeSequenceText, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.EscapeSequenceText['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.EscapeSequenceText['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.EscapeSequenceText>;
-	export type LooseConfig = LooseConfigFor<TSKindId.EscapeSequenceText>;
-	export type BuildArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
-	export type LooseArgs = [content: string, affix?: true] | [text: `\\${string}`, affix: false];
-	export type Kind = TSKindId.EscapeSequenceText;
 }
 export namespace FormalParametersReceiver {
 	export type Config = ConfigFor<TSKindId.FormalParametersReceiver>;

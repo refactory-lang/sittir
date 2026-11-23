@@ -111,9 +111,9 @@ export const _reservedWordList_buildIdentifier = [
 export type _ReservedWord_buildIdentifier = (typeof _reservedWordList_buildIdentifier)[number];
 export const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWordList_buildIdentifier);
 export const _leafRe_buildImportPrefix = /^(?:(?:\.)+)$/u;
+export const _leafRe_buildFormatSpecifierText = /^(?:(?:[^{}\n]+))$/u;
 export const _leafRe_buildTypeConversion = /^(?:(?:![a-z]))$/u;
 export const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
-export const _leafRe_buildFormatSpecifierText = /^(?:(?:[^{}\n]+))$/u;
 export const _leafRe_buildIntegerDecimalImaginary = /^(?:(?:(?:[0-9]+_?))+(?:[jJ]))$/u;
 export const _leafRe_buildIntegerDecimalPlain = /^(?:(?:(?:[0-9]+_?))+)$/u;
 export const _leafRe_buildLineContinuationNewline = /^(?:\\(?:\r)?\n)$/u;
@@ -5249,8 +5249,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
-				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 70, 71,
+				72, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -8479,6 +8479,29 @@ function buildFormatSpecifier$with$elements(this: Received<Held>, ...args: unkno
 	return buildFormatSpecifier$with(receiverOf(this, '$with.elements'), 'elements', args);
 }
 
+export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
+	if (typeof text !== 'string') throw new Error(`format_specifier_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
+	if (!_leafRe_buildFormatSpecifierText.test(text))
+		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.FormatSpecifierText as const,
+		$_layout: undefined,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.FormatSpecifierText.Bound;
+}
+
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 	if (typeof text !== 'string') throw new Error(`type_conversion: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`);
@@ -9736,29 +9759,6 @@ function buildSliceGroup$with(node: Held, setter: string, args: readonly unknown
 }
 function buildSliceGroup$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildSliceGroup$with(receiverOf(this, '$with.expression'), 'expression', args);
-}
-
-export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
-	if (typeof text !== 'string') throw new Error(`format_specifier_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
-	if (!_leafRe_buildFormatSpecifierText.test(text))
-		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.FormatSpecifierText as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.FormatSpecifierText.Bound;
 }
 
 export function buildTypeParams<V extends Admit<T.TypeParamsItems>>(
@@ -15489,6 +15489,7 @@ export type FluentKindMap = {
 	interpolation: T.Interpolation.Bound;
 	not_escape_sequence: T.NotEscapeSequence;
 	format_specifier: T.FormatSpecifier.Bound;
+	format_specifier_text: T.FormatSpecifierText;
 	type_conversion: T.TypeConversion;
 	identifier: T.Identifier;
 	true: T.True;
@@ -15508,7 +15509,6 @@ export type FluentKindMap = {
 	subscripts: T.Subscripts.Bound;
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
-	format_specifier_text: T.FormatSpecifierText;
 	type_params: T.TypeParams.Bound;
 	type_params_items: T.TypeParamsItems.Bound;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
@@ -15703,6 +15703,7 @@ export const _factoryMap = {
 	interpolation: buildInterpolation,
 	not_escape_sequence: buildNotEscapeSequence,
 	format_specifier: buildFormatSpecifier,
+	format_specifier_text: buildFormatSpecifierText,
 	type_conversion: buildTypeConversion,
 	identifier: buildIdentifier,
 	true: buildTrue,
@@ -15722,7 +15723,6 @@ export const _factoryMap = {
 	subscripts: buildSubscripts,
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
-	format_specifier_text: buildFormatSpecifierText,
 	type_params: buildTypeParams,
 	type_params_items: buildTypeParamsItems,
 	tuple_pattern_elements: buildTuplePatternElements,

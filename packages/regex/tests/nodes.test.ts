@@ -802,6 +802,24 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('character_class_escape_text1', () => {
+		it('factory produces correct type', () => {
+			const node = ir.characterClassEscapeText1('\\d');
+			expect(node.$type).toBe(TSKindId.CharacterClassEscapeText1);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe('\\d');
+		});
+	});
+
+	describe('character_class_escape_text2', () => {
+		it('factory produces correct type', () => {
+			const node = ir.characterClassEscapeText2('\\p');
+			expect(node.$type).toBe(TSKindId.CharacterClassEscapeText2);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe('\\p');
+		});
+	});
+
 	describe('unicode_character_escape', () => {
 		it('factory produces correct type', () => {
 			const node = ir.unicodeCharacterEscape('\\u0000');
@@ -903,24 +921,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('lazy', () => {
 		it('is the kind id', () => {
 			expect(ir.lazy).toBe(TSKindId.Lazy);
-		});
-	});
-
-	describe('character_class_escape_text1', () => {
-		it('factory produces correct type', () => {
-			const node = ir.characterClassEscapeText1('\\d');
-			expect(node.$type).toBe(TSKindId.CharacterClassEscapeText1);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('\\d');
-		});
-	});
-
-	describe('character_class_escape_text2', () => {
-		it('factory produces correct type', () => {
-			const node = ir.characterClassEscapeText2('\\p');
-			expect(node.$type).toBe(TSKindId.CharacterClassEscapeText2);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('\\p');
 		});
 	});
 

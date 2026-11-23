@@ -207,13 +207,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [235, 'contents'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 233, 234, 236, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -230,19 +230,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -263,13 +263,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [310, 'items'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 233, 234, 238, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -295,19 +295,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -371,19 +371,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [260, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -427,9 +427,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [201, 'switchLabelArm'],
-									kinds: [63, 320],
+									kinds: [66, 320],
 									tokens: {
-										default: 63
+										default: 66
 									},
 									within: [
 										{
@@ -456,13 +456,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -477,19 +477,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -547,9 +547,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [201, 'switchLabelArm'],
-									kinds: [63, 320],
+									kinds: [66, 320],
 									tokens: {
-										default: 63
+										default: 66
 									},
 									within: [
 										{
@@ -574,24 +574,24 @@ export const build: PortableBuildTable = {
 								{
 									at: [199, 'statements'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									many: true
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -606,19 +606,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -638,13 +638,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -659,19 +659,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -774,19 +774,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [261, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -831,19 +831,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [263, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -930,19 +930,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [263, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -1073,7 +1073,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 115,
+					kind: 118,
 					builder: 'blockComment',
 					slots: [],
 					presets: [],
@@ -1088,7 +1088,7 @@ export const build: PortableBuildTable = {
 						multiple: false,
 						seats: [
 							{
-								at: [115, 'content'],
+								at: [118, 'content'],
 								kinds: [],
 								text: true,
 								pattern: {
@@ -1111,7 +1111,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 115,
+					kind: 118,
 					builder: 'blockComment',
 					slots: [],
 					presets: [],
@@ -1126,7 +1126,7 @@ export const build: PortableBuildTable = {
 						multiple: false,
 						seats: [
 							{
-								at: [115, 'content'],
+								at: [118, 'content'],
 								kinds: [],
 								text: true,
 								pattern: {
@@ -1149,7 +1149,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 114,
+					kind: 117,
 					builder: 'lineComment',
 					slots: [],
 					presets: [],
@@ -1164,7 +1164,7 @@ export const build: PortableBuildTable = {
 						multiple: false,
 						seats: [
 							{
-								at: [114, 'content'],
+								at: [117, 'content'],
 								kinds: [],
 								text: true,
 								pattern: {
@@ -1218,19 +1218,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [281, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -1302,19 +1302,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [281, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -1353,7 +1353,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 137
+							kind: 140
 						}
 					],
 					flags: {},
@@ -1400,19 +1400,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [281, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -1451,7 +1451,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 135
+							kind: 138
 						}
 					],
 					flags: {},
@@ -1646,19 +1646,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -1816,19 +1816,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -1872,7 +1872,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 137
+							kind: 140
 						}
 					],
 					flags: {},
@@ -2000,19 +2000,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2056,7 +2056,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 136
+							kind: 139
 						}
 					],
 					flags: {},
@@ -2184,19 +2184,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2240,7 +2240,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 135
+							kind: 138
 						}
 					],
 					flags: {},
@@ -2317,13 +2317,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [191, 'expressions'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2340,19 +2340,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2392,9 +2392,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [265, 'classBodyDeclarations'],
-									kinds: [66, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
+									kinds: [69, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									within: [
 										{
@@ -2438,19 +2438,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2492,7 +2492,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -2536,19 +2536,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2587,7 +2587,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 137
+							kind: 140
 						}
 					],
 					flags: {
@@ -2604,7 +2604,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -2648,19 +2648,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2699,7 +2699,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 136
+							kind: 139
 						}
 					],
 					flags: {
@@ -2716,7 +2716,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -2760,19 +2760,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [272, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -2811,7 +2811,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 135
+							kind: 138
 						}
 					],
 					flags: {
@@ -2828,7 +2828,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -2917,19 +2917,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3032,19 +3032,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3092,7 +3092,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -3183,19 +3183,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3298,19 +3298,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3355,7 +3355,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 137
+							kind: 140
 						}
 					],
 					flags: {
@@ -3372,7 +3372,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -3463,19 +3463,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3578,19 +3578,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3635,7 +3635,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 136
+							kind: 139
 						}
 					],
 					flags: {
@@ -3652,7 +3652,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -3743,19 +3743,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3858,19 +3858,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -3915,7 +3915,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 135
+							kind: 138
 						}
 					],
 					flags: {
@@ -3932,7 +3932,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -4024,19 +4024,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -4139,19 +4139,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -4183,7 +4183,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -4275,19 +4275,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [302, 'returnType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -4390,19 +4390,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [300, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -4431,7 +4431,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 138
+							kind: 141
 						}
 					],
 					flags: {
@@ -4448,7 +4448,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 85
+									kind: 88
 								}
 							]
 						}
@@ -4546,9 +4546,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [240, 'open'],
-									kinds: [110],
+									kinds: [113],
 									tokens: {
-										open: 110
+										open: 113
 									}
 								}
 							]
@@ -4650,19 +4650,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [297, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -4683,11 +4683,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [297, 'name'],
-									kinds: [1, 64],
+									kinds: [1, 67],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										_: 64
+										_: 67
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -4773,19 +4773,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [298, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -4864,19 +4864,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [299, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -5040,19 +5040,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [263, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -5087,9 +5087,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [265, 'classBodyDeclarations'],
-									kinds: [66, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
+									kinds: [69, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									within: [
 										{
@@ -5118,7 +5118,7 @@ export const build: PortableBuildTable = {
 											key: 'elements'
 										}
 									],
-									kind: 138
+									kind: 141
 								}
 							]
 						}
@@ -5257,9 +5257,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [265, 'classBodyDeclarations'],
-									kinds: [66, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
+									kinds: [69, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									within: [
 										{
@@ -5480,7 +5480,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 137
+							kind: 140
 						}
 					],
 					flags: {},
@@ -5583,7 +5583,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 135
+							kind: 138
 						}
 					],
 					flags: {},
@@ -5705,19 +5705,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [263, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -5752,9 +5752,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [280, 'elements'],
-									kinds: [66, 252, 256, 273, 274, 278, 281, 302],
+									kinds: [69, 252, 256, 273, 274, 278, 281, 302],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									within: [
 										{
@@ -5890,19 +5890,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [301, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -5976,19 +5976,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [301, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6028,7 +6028,7 @@ export const build: PortableBuildTable = {
 									key: 'elements'
 								}
 							],
-							kind: 116
+							kind: 119
 						}
 					],
 					flags: {},
@@ -6082,20 +6082,20 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [172, 'operator'],
-									kinds: [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+									kinds: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
 									tokens: {
-										'%=': 25,
-										'&=': 22,
-										'*=': 20,
-										'+=': 18,
-										'-=': 19,
-										'/=': 21,
-										'<<=': 26,
-										'=': 17,
-										'>>=': 27,
-										'>>>=': 28,
-										'^=': 24,
-										'|=': 23
+										'%=': 28,
+										'&=': 25,
+										'*=': 23,
+										'+=': 21,
+										'-=': 22,
+										'/=': 24,
+										'<<=': 29,
+										'=': 20,
+										'>>=': 30,
+										'>>>=': 31,
+										'^=': 27,
+										'|=': 26
 									}
 								}
 							]
@@ -6113,13 +6113,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6128,19 +6128,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6212,13 +6212,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6227,19 +6227,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6265,7 +6265,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 18
+							kind: 21
 						}
 					],
 					flags: {},
@@ -6320,13 +6320,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6335,19 +6335,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6373,7 +6373,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 22
+							kind: 25
 						}
 					],
 					flags: {},
@@ -6428,13 +6428,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6443,19 +6443,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6481,7 +6481,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 23
+							kind: 26
 						}
 					],
 					flags: {},
@@ -6536,13 +6536,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6551,19 +6551,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6589,7 +6589,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 24
+							kind: 27
 						}
 					],
 					flags: {},
@@ -6644,13 +6644,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6659,19 +6659,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6697,7 +6697,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 21
+							kind: 24
 						}
 					],
 					flags: {},
@@ -6752,13 +6752,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6767,19 +6767,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6805,7 +6805,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 25
+							kind: 28
 						}
 					],
 					flags: {},
@@ -6860,13 +6860,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6875,19 +6875,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6913,7 +6913,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 20
+							kind: 23
 						}
 					],
 					flags: {},
@@ -6968,13 +6968,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -6983,19 +6983,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7021,7 +7021,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 26
+							kind: 29
 						}
 					],
 					flags: {},
@@ -7076,13 +7076,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7091,19 +7091,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7129,7 +7129,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 27
+							kind: 30
 						}
 					],
 					flags: {},
@@ -7184,13 +7184,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7199,19 +7199,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7237,7 +7237,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 28
+							kind: 31
 						}
 					],
 					flags: {},
@@ -7292,13 +7292,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [172, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7307,19 +7307,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7345,7 +7345,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 19
+							kind: 22
 						}
 					],
 					flags: {},
@@ -7382,13 +7382,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7397,19 +7397,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7440,13 +7440,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7455,163 +7455,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 37
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.arithmetic.divide': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7650,7 +7506,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'expression.binary.arithmetic.modulo': {
+		'expression.binary.arithmetic.divide': {
 			root: true,
 			arms: [
 				{
@@ -7670,13 +7526,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7685,19 +7541,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7728,13 +7584,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7743,19 +7599,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7794,6 +7650,150 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'expression.binary.arithmetic.modulo': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 46
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
 		'expression.binary.arithmetic.multiply': {
 			root: true,
 			arms: [
@@ -7814,13 +7814,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7829,19 +7829,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7872,13 +7872,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -7887,595 +7887,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 39
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.arithmetic.subtract': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 38
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.bitwise.and': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 15
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.bitwise.or': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 41
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.bitwise.xor': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -8514,6 +7938,582 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'expression.binary.arithmetic.subtract': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 41
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.bitwise.and': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 18
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.bitwise.or': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 44
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.bitwise.xor': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 45
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
 		'expression.binary.comparison.equal': {
 			root: true,
 			arms: [
@@ -8534,13 +8534,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -8549,19 +8549,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -8592,13 +8592,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -8607,1027 +8607,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 33
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.greater': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 29
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.greater_equal': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 31
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.less': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 30
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.less_equal': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 32
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.not_equal': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 34
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.logical.and': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 35
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.logical.or': {
-			root: true,
-			arms: [
-				{
-					kind: 173,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'left'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'classLiteral',
-											key: 'unannotatedType'
-										}
-									]
-								}
-							],
-							takers: {
-								integer: 'literal.number.integer'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [173, 'right'],
-									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
-										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										this: 112
-									},
-									pattern: {
-										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
-										flags: 'u'
-									}
-								},
-								{
-									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
-									leaf: 'identifier',
-									texts: [1, 370],
-									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9666,6 +8658,1014 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'expression.binary.comparison.greater': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 32
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.greater_equal': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 34
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.less': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 33
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.less_equal': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 35
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.not_equal': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 37
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.logical.and': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 38
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.logical.or': {
+			root: true,
+			arms: [
+				{
+					kind: 173,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'left'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [173, 'right'],
+									kinds: [
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										this: 115
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									}
+								},
+								{
+									at: [184, 'unannotatedType'],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
+									leaf: 'identifier',
+									texts: [1, 370],
+									tokens: {
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
+									},
+									pattern: {
+										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'classLiteral',
+											key: 'unannotatedType'
+										}
+									]
+								}
+							],
+							takers: {
+								integer: 'literal.number.integer'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 39
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
 		'expression.binary.membership.instanceof': {
 			root: true,
 			arms: [
@@ -9686,13 +9686,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [174, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9701,19 +9701,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9743,9 +9743,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [174, 'final'],
-									kinds: [116],
+									kinds: [119],
 									tokens: {
-										final: 116
+										final: 119
 									}
 								}
 							]
@@ -9796,13 +9796,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9811,19 +9811,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9853,13 +9853,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9868,19 +9868,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9906,7 +9906,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 44
+							kind: 47
 						}
 					],
 					flags: {},
@@ -9938,13 +9938,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9953,19 +9953,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -9995,13 +9995,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10010,19 +10010,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10048,7 +10048,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 45
+							kind: 48
 						}
 					],
 					flags: {},
@@ -10080,13 +10080,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'left'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10095,19 +10095,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10137,13 +10137,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [173, 'right'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10152,19 +10152,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10190,7 +10190,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 46
+							kind: 49
 						}
 					],
 					flags: {},
@@ -10249,13 +10249,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [191, 'expressions'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10272,19 +10272,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10438,19 +10438,21 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [193, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 194, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [
+										102, 103, 104, 105, 106, 107, 108, 109, 110, 194, 286, 287, 288, 289, 290, 291, 292, 293, 370
+									],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10478,19 +10480,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [186, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 289, 290, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 289, 290, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10516,13 +10518,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [191, 'expressions'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10539,19 +10541,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10591,9 +10593,9 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [265, 'classBodyDeclarations'],
-									kinds: [66, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
+									kinds: [69, 209, 252, 256, 266, 267, 272, 273, 274, 278, 302, 303],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									within: [
 										{
@@ -10660,13 +10662,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [191, 'expressions'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10683,19 +10685,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10763,13 +10765,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [188, 'templateProcessor'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 180, 181, 183, 185, 187, 188, 189,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 180, 181, 183, 185, 187, 188, 189,
 										190, 192, 327, 328
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10778,19 +10780,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10855,19 +10857,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [171, 'types'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 286, 287, 288, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10890,13 +10892,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [171, 'value'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 175, 180, 181, 183, 185, 187, 188,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 175, 180, 181, 183, 185, 187, 188,
 										189, 190, 192, 327, 328
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10905,19 +10907,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -10983,13 +10985,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [314, 'items'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 285, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11005,19 +11007,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11086,19 +11088,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [181, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 289, 290, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 289, 290, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11201,13 +11203,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [177, 'condition'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11216,19 +11218,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11259,13 +11261,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [177, 'consequence'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11274,19 +11276,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11317,13 +11319,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [177, 'alternative'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11332,19 +11334,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11394,13 +11396,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [167, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11409,19 +11411,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11521,13 +11523,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [175, 'body'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 209, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11536,19 +11538,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11599,14 +11601,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [187, 'object'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 113, 117, 118, 159, 160, 161, 162, 163, 180, 181, 183, 185, 187, 188,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 116, 120, 121, 159, 160, 161, 162, 163, 180, 181, 183, 185, 187, 188,
 										189, 190, 192, 327, 328
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										super: 113,
-										this: 112
+										super: 116,
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11615,19 +11617,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11657,9 +11659,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [187, 'super'],
-									kinds: [113],
+									kinds: [116],
 									tokens: {
-										super: 113
+										super: 116
 									}
 								}
 							]
@@ -11675,11 +11677,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [187, 'field'],
-									kinds: [1, 112],
+									kinds: [1, 115],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11721,13 +11723,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [183, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11736,19 +11738,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11797,13 +11799,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [189, 'array'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 180, 181, 183, 185, 187, 188, 189,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 180, 181, 183, 185, 187, 188, 189,
 										190, 192, 327, 328
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11812,19 +11814,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11855,13 +11857,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [189, 'index'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11870,19 +11872,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11936,13 +11938,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [178, 'operand'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11951,19 +11953,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -11989,7 +11991,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 53
+							kind: 56
 						}
 					],
 					flags: {},
@@ -12021,13 +12023,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [178, 'operand'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12036,19 +12038,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12074,7 +12076,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 38
+							kind: 41
 						}
 					],
 					flags: {},
@@ -12106,13 +12108,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [178, 'operand'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12121,19 +12123,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12159,7 +12161,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 52
+							kind: 55
 						}
 					],
 					flags: {},
@@ -12191,13 +12193,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [178, 'operand'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12206,19 +12208,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12244,7 +12246,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 37
+							kind: 40
 						}
 					],
 					flags: {},
@@ -12281,13 +12283,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [332, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12296,19 +12298,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12365,13 +12367,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [331, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12380,19 +12382,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12455,13 +12457,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [332, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12470,19 +12472,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12539,13 +12541,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [331, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12554,19 +12556,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12630,24 +12632,24 @@ export const build: PortableBuildTable = {
 								{
 									at: [157, 'toplevelStatements'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 302, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									many: true
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12662,19 +12664,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12694,13 +12696,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -12715,19 +12717,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -13109,7 +13111,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 112,
+					kind: 115,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -13121,7 +13123,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 113,
+					kind: 116,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -13200,7 +13202,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 13,
+					kind: 16,
 					literal: {},
 					slots: [],
 					presets: [],
@@ -13253,7 +13255,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [161, 'content'],
-									kinds: [119, 120, 121, 122, 123, 124, 305, 306]
+									kinds: [122, 123, 124, 125, 126, 127, 305, 306]
 								}
 							]
 						}
@@ -13282,7 +13284,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [162, 'content'],
-									kinds: [125, 126]
+									kinds: [128, 129]
 								}
 							]
 						}
@@ -13302,7 +13304,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 118,
+					kind: 121,
 					builder: 'decimalIntegerLiteral.arm2',
 					digits: {
 						base: 10,
@@ -13320,7 +13322,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 117,
+					kind: 120,
 					builder: 'decimalIntegerLiteral.arm1',
 					slots: [],
 					presets: [],
@@ -13334,7 +13336,7 @@ export const build: PortableBuildTable = {
 				}
 			],
 			builds: {
-				integer: 118
+				integer: 121
 			}
 		},
 		'literal.number.integer.binary': {
@@ -13483,7 +13485,7 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [327, 'elements'],
-									kinds: [10, 127, 128, 129, 130, 131, 167, 169],
+									kinds: [10, 130, 131, 132, 133, 134, 167, 169],
 									leaf: 'stringFragment',
 									texts: [10],
 									pattern: {
@@ -13533,7 +13535,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [168, 'content'],
-									kinds: [127, 128, 129, 130, 131, 146, 169],
+									kinds: [15, 130, 131, 132, 133, 134, 169],
 									within: [
 										{
 											builder: 'multilineStringLiteralArm1',
@@ -13559,120 +13561,8 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 127,
-					builder: 'escapeSequenceArm1',
-					slots: [],
-					presets: [],
-					flags: {},
-					content: {
-						name: '$value',
-						steps: [
-							{
-								key: 'content'
-							}
-						],
-						multiple: false,
-						seats: [
-							{
-								at: [127, 'content'],
-								kinds: [],
-								text: true,
-								pattern: {
-									source: '^(?:(?:[^xu0-7]))$',
-									flags: 'u'
-								}
-							}
-						]
-					},
-					when: [
-						{
-							variant: 'escape_sequence',
-							value: 127,
-							default: true
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
-					kind: 128,
-					builder: 'escapeSequenceArm2',
-					slots: [],
-					presets: [],
-					flags: {},
-					content: {
-						name: '$value',
-						steps: [
-							{
-								key: 'content'
-							}
-						],
-						multiple: false,
-						seats: [
-							{
-								at: [128, 'content'],
-								kinds: [],
-								text: true,
-								pattern: {
-									source: '^(?:(?:[0-7]{1,3}))$',
-									flags: 'u'
-								}
-							}
-						]
-					},
-					when: [
-						{
-							variant: 'escape_sequence',
-							value: 128
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
-					kind: 129,
-					builder: 'escapeSequenceArm3',
-					slots: [],
-					presets: [],
-					flags: {},
-					content: {
-						name: '$value',
-						steps: [
-							{
-								key: 'content'
-							}
-						],
-						multiple: false,
-						seats: [
-							{
-								at: [129, 'content'],
-								kinds: [],
-								text: true,
-								pattern: {
-									source: '^(?:(?:x[0-9a-fA-F]{2}))$',
-									flags: 'u'
-								}
-							}
-						]
-					},
-					when: [
-						{
-							variant: 'escape_sequence',
-							value: 129
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
 					kind: 130,
-					builder: 'escapeSequenceArm4',
+					builder: 'escapeSequenceArm1',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -13690,7 +13580,7 @@ export const build: PortableBuildTable = {
 								kinds: [],
 								text: true,
 								pattern: {
-									source: '^(?:(?:u[0-9a-fA-F]{4}))$',
+									source: '^(?:(?:[^xu0-7]))$',
 									flags: 'u'
 								}
 							}
@@ -13699,7 +13589,8 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'escape_sequence',
-							value: 130
+							value: 130,
+							default: true
 						},
 						{
 							absent: [],
@@ -13709,7 +13600,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 131,
-					builder: 'escapeSequenceArm5',
+					builder: 'escapeSequenceArm2',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -13727,7 +13618,7 @@ export const build: PortableBuildTable = {
 								kinds: [],
 								text: true,
 								pattern: {
-									source: '^(?:(?:u\\{[0-9a-fA-F]+\\}))$',
+									source: '^(?:(?:[0-7]{1,3}))$',
 									flags: 'u'
 								}
 							}
@@ -13737,6 +13628,117 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'escape_sequence',
 							value: 131
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
+					kind: 132,
+					builder: 'escapeSequenceArm3',
+					slots: [],
+					presets: [],
+					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [132, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source: '^(?:(?:x[0-9a-fA-F]{2}))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
+					when: [
+						{
+							variant: 'escape_sequence',
+							value: 132
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
+					kind: 133,
+					builder: 'escapeSequenceArm4',
+					slots: [],
+					presets: [],
+					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [133, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source: '^(?:(?:u[0-9a-fA-F]{4}))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
+					when: [
+						{
+							variant: 'escape_sequence',
+							value: 133
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
+					kind: 134,
+					builder: 'escapeSequenceArm5',
+					slots: [],
+					presets: [],
+					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [134, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source: '^(?:(?:u\\{[0-9a-fA-F]+\\}))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
+					when: [
+						{
+							variant: 'escape_sequence',
+							value: 134
 						},
 						{
 							absent: [],
@@ -13777,7 +13779,7 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [168, 'content'],
-									kinds: [127, 128, 129, 130, 131, 146, 169],
+									kinds: [15, 130, 131, 132, 133, 134, 169],
 									within: [
 										{
 											builder: 'multilineStringLiteralArm1',
@@ -13846,22 +13848,22 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [257, 'elements'],
-									kinds: [63, 74, 85, 111, 116, 135, 136, 137, 138, 139, 140, 141, 142, 143, 233, 234],
+									kinds: [66, 77, 88, 114, 119, 138, 139, 140, 141, 142, 143, 144, 145, 146, 233, 234],
 									tokens: {
-										abstract: 138,
-										default: 63,
-										final: 116,
-										native: 140,
-										'non-sealed': 143,
-										private: 137,
-										protected: 136,
-										public: 135,
-										sealed: 111,
-										static: 85,
-										strictfp: 139,
-										synchronized: 74,
-										transient: 141,
-										volatile: 142
+										abstract: 141,
+										default: 66,
+										final: 119,
+										native: 143,
+										'non-sealed': 146,
+										private: 140,
+										protected: 139,
+										public: 138,
+										sealed: 114,
+										static: 88,
+										strictfp: 142,
+										synchronized: 77,
+										transient: 144,
+										volatile: 145
 									},
 									many: true
 								}
@@ -13999,9 +14001,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [206, 'content'],
-									kinds: [64, 321],
+									kinds: [67, 321],
 									tokens: {
-										_: 64
+										_: 67
 									}
 								}
 							]
@@ -14023,7 +14025,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 64,
+					kind: 67,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -14050,13 +14052,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [212, 'content'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 322, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14065,19 +14067,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14128,24 +14130,24 @@ export const build: PortableBuildTable = {
 								{
 									at: [209, 'statements'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									},
 									many: true
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14160,19 +14162,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14192,13 +14194,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14213,19 +14215,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14364,23 +14366,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [228, 'consequence'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14395,19 +14397,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14427,13 +14429,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14448,19 +14450,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14496,23 +14498,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [228, 'alternative'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14527,19 +14529,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14559,13 +14561,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14580,19 +14582,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14645,9 +14647,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [250, 'static'],
-									kinds: [85],
+									kinds: [88],
 									tokens: {
-										static: 85
+										static: 88
 									}
 								}
 							]
@@ -14745,23 +14747,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [211, 'statement'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14776,19 +14778,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14808,13 +14810,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14829,19 +14831,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14896,13 +14898,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'condition'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14911,19 +14913,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14954,13 +14956,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'updates'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -14970,19 +14972,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15012,23 +15014,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'body'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15043,19 +15045,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15075,13 +15077,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15096,19 +15098,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15174,13 +15176,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [324, 'inits'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15202,19 +15204,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15256,13 +15258,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'condition'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15271,19 +15273,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15314,13 +15316,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'updates'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15330,19 +15332,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15372,23 +15374,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [230, 'body'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15403,19 +15405,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15435,13 +15437,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15456,19 +15458,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15521,23 +15523,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [213, 'body'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15552,19 +15554,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15584,13 +15586,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15605,19 +15607,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15702,19 +15704,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [231, 'type'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15734,11 +15736,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [231, 'name'],
-									kinds: [1, 64],
+									kinds: [1, 67],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										_: 64
+										_: 67
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15788,13 +15790,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [231, 'value'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15803,19 +15805,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15845,23 +15847,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [231, 'body'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15876,19 +15878,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15908,13 +15910,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -15929,19 +15931,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16012,23 +16014,23 @@ export const build: PortableBuildTable = {
 								{
 									at: [229, 'body'],
 									kinds: [
-										66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
+										69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240,
 										249, 250, 252, 256, 273, 274, 278, 301, 329, 330
 									],
 									tokens: {
-										';': 66
+										';': 69
 									}
 								},
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16043,19 +16045,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16075,13 +16077,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16096,19 +16098,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16248,13 +16250,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [216, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16263,19 +16265,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16383,13 +16385,13 @@ export const build: PortableBuildTable = {
 								{
 									at: [219, 'expression'],
 									kinds: [
-										1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
+										1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177,
 										178, 179, 180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										this: 112
+										this: 115
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16398,19 +16400,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [184, 'unannotatedType'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16472,19 +16474,19 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [291, 'element'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370],
+									kinds: [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16577,19 +16579,21 @@ export const build: PortableBuildTable = {
 								},
 								{
 									at: [193, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 106, 107, 194, 286, 287, 288, 289, 290, 291, 292, 293, 370],
+									kinds: [
+										102, 103, 104, 105, 106, 107, 108, 109, 110, 194, 286, 287, 288, 289, 290, 291, 292, 293, 370
+									],
 									leaf: 'identifier',
 									texts: [1, 370],
 									tokens: {
-										boolean: 106,
-										byte: 99,
-										char: 103,
-										double: 105,
-										float: 104,
-										int: 101,
-										long: 102,
-										short: 100,
-										void: 107
+										boolean: 109,
+										byte: 102,
+										char: 106,
+										double: 108,
+										float: 107,
+										int: 104,
+										long: 105,
+										short: 103,
+										void: 110
 									},
 									pattern: {
 										source: '^(?:(?:[\\p{XID_Start}_$][\\p{XID_Continue}\\u00A2_$]*))$',
@@ -16622,7 +16626,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 106,
+					kind: 109,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16634,7 +16638,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 103,
+					kind: 106,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16646,7 +16650,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 104,
+					kind: 107,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16657,7 +16661,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 105,
+					kind: 108,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16673,7 +16677,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 104,
+					kind: 107,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16685,7 +16689,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 105,
+					kind: 108,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16697,7 +16701,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 99,
+					kind: 102,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16708,7 +16712,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 100,
+					kind: 103,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16719,7 +16723,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 101,
+					kind: 104,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16730,7 +16734,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 102,
+					kind: 105,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16741,7 +16745,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 103,
+					kind: 106,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16758,7 +16762,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 100,
+					kind: 103,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16771,7 +16775,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 101,
+					kind: 104,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16784,7 +16788,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 102,
+					kind: 105,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16797,7 +16801,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 99,
+					kind: 102,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -16810,7 +16814,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 107,
+					kind: 110,
 					slots: [],
 					presets: [],
 					flags: {},

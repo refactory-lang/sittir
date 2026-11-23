@@ -50,6 +50,10 @@
         }
       ]
     },
+    "source_file_text": {
+      "type": "PATTERN",
+      "value": "\\n"
+    },
     "_top_level_declaration": {
       "type": "CHOICE",
       "members": [
@@ -9535,10 +9539,6 @@
           }
         }
       ]
-    },
-    "source_file_text": {
-      "type": "PATTERN",
-      "value": "\\n"
     },
     "channel_type_bidirectional": {
       "type": "PREC_LEFT",

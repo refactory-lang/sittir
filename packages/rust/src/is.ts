@@ -1526,6 +1526,9 @@ export interface IsGuards {
 		| TSKindId.Dedent
 	>;
 	emptyStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EmptyStatement>;
+	tokenRepetitionPatternText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenRepetitionPatternText };
 	fragmentSpecifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, KindMembers[TSKindId.FragmentSpecifier]>;
@@ -1536,6 +1539,9 @@ export interface IsGuards {
 	remainingFieldPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.RemainingFieldPattern>;
+	stringOpen<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringOpen };
 	booleanLiteral<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, KindMembers[TSKindId.BooleanLiteral]>;
@@ -1554,12 +1560,6 @@ export interface IsGuards {
 	primitiveType<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, KindMembers[TSKindId.PrimitiveType]>;
-	tokenRepetitionPatternText<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TokenRepetitionPatternText };
-	stringOpen<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringOpen };
 	tokenTreePunctuation<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, KindMembers[TSKindId.TokenTreePunctuation]>;
@@ -1628,13 +1628,13 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	263, 484, 255, 252, 127, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 58, 59, 60, 61, 62, 63, 64,
-	65, 66, 67, 68, 69, 70, 71, 72, 73, 74
+	263, 484, 255, 252, 131, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
+	66, 67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
-	263, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 116,
-	117, 141, 142, 143, 144, 162, 1, 124, 245, 307, 308, 435, 436, 280, 259, 281, 304, 305, 306, 127, 369, 370, 279, 282,
+	263, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 118,
+	119, 141, 142, 143, 144, 162, 1, 128, 245, 307, 308, 435, 436, 280, 259, 281, 304, 305, 306, 131, 369, 370, 279, 282,
 	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([411, 412, 413]);
@@ -1644,17 +1644,17 @@ const _supertype_arrayExpression_ids = new Set<number>([435, 436]);
 const _supertype_matchArm_ids = new Set<number>([397, 398]);
 const _supertype_closureExpression_ids = new Set<number>([369, 370]);
 const _supertype_pattern_ids = new Set<number>([
-	263, 332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 315, 316, 318, 319, 324, 317,
+	263, 332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162, 330, 1, 315, 316, 318, 319, 324, 317,
 	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 ]);
 const _supertype_fieldPattern_ids = new Set<number>([414, 415]);
 const _supertype_rangePattern_ids = new Set<number>([422, 419]);
 const _supertype_orPattern_ids = new Set<number>([386, 387]);
 const _supertype_literal_ids = new Set<number>([
-	332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162
+	332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162
 ]);
 const _supertype_literalPattern_ids = new Set<number>([
-	332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330
+	332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162, 330
 ]);
 const _supertype_integerLiteral_ids = new Set<number>([141, 142, 143, 144]);
 const _supertype_charLiteral_ids = new Set<number>([147, 148, 149, 150, 145, 146]);
@@ -1699,21 +1699,21 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.CharLiteral, _supertype_charLiteral_ids],
 	[TSKindId.EscapeSequence, _supertype_escapeSequence_ids],
 	[TSKindId.CharLiteralEscaped, _supertype_charLiteralEscaped_ids],
-	[TSKindId.FragmentSpecifier, new Set<number>([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25])],
-	[TSKindId.BooleanLiteral, new Set<number>([116, 117])],
-	[TSKindId.PrimitiveType, new Set<number>([58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74])],
+	[TSKindId.FragmentSpecifier, new Set<number>([12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26])],
+	[TSKindId.BooleanLiteral, new Set<number>([118, 119])],
+	[TSKindId.PrimitiveType, new Set<number>([59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75])],
 	[
 		TSKindId.TokenTreePunctuation,
 		new Set<number>([
-			8, 75, 9, 86, 87, 79, 29, 54, 78, 76, 77, 84, 85, 88, 89, 90, 91, 92, 95, 93, 94, 96, 97, 37, 80, 81, 43, 42, 83,
-			82, 115, 136, 109, 100, 48, 137, 130, 2, 4, 46, 131, 3, 26, 10
+			8, 76, 9, 87, 88, 80, 30, 55, 79, 77, 78, 85, 86, 89, 90, 91, 92, 93, 96, 94, 95, 97, 98, 38, 81, 82, 44, 43, 84,
+			83, 116, 136, 110, 101, 49, 137, 134, 2, 4, 47, 135, 3, 27, 10
 		])
 	],
 	[
 		TSKindId.TokenKeywords,
 		new Set<number>([
-			49, 47, 112, 110, 107, 35, 108, 50, 33, 38, 41, 51, 101, 55, 44, 105, 103, 138, 139, 98, 128, 140, 40, 36, 32,
-			111, 45, 39, 104
+			50, 48, 113, 111, 108, 36, 109, 51, 34, 39, 42, 52, 102, 56, 45, 106, 104, 138, 139, 99, 132, 140, 41, 37, 33,
+			112, 46, 40, 105
 		])
 	]
 ]);
@@ -2023,17 +2023,17 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ShorthandFieldIdentifier_guard = _g(TSKindId.ShorthandFieldIdentifier);
 	const _kind_MethodDeclaration_guard = _g(TSKindId.MethodDeclaration);
 	const _kind_SignatureMethodDeclaration_guard = _g(TSKindId.SignatureMethodDeclaration);
+	const _kind_TokenRepetitionPatternText_guard = _g(TSKindId.TokenRepetitionPatternText);
 	const _kind_FragmentSpecifier_guard = _mg(TSKindId.FragmentSpecifier);
 	const _kind_UnitType_guard = _mg(TSKindId.UnitType);
 	const _kind_NeverType_guard = _mg(TSKindId.NeverType);
 	const _kind_UnitExpression_guard = _mg(TSKindId.UnitExpression);
 	const _kind_RemainingFieldPattern_guard = _mg(TSKindId.RemainingFieldPattern);
+	const _kind_StringOpen_guard = _g(TSKindId.StringOpen);
 	const _kind_BooleanLiteral_guard = _mg(TSKindId.BooleanLiteral);
 	const _kind_InnerLineDocCommentMarker_guard = _mg(TSKindId.InnerLineDocCommentMarker);
 	const _kind_OuterLineDocCommentMarker_guard = _mg(TSKindId.OuterLineDocCommentMarker);
 	const _kind_PrimitiveType_guard = _mg(TSKindId.PrimitiveType);
-	const _kind_TokenRepetitionPatternText_guard = _g(TSKindId.TokenRepetitionPatternText);
-	const _kind_StringOpen_guard = _g(TSKindId.StringOpen);
 	const _kind_TokenTreePunctuation_guard = _mg(TSKindId.TokenTreePunctuation);
 	const _kind_TokenKeywords_guard = _mg(TSKindId.TokenKeywords);
 	const _kind_ImplItemUnsafeMarker_guard = _mg(TSKindId.ImplItemUnsafeMarker);
@@ -2501,12 +2501,14 @@ export function guardsWith(test: KindTest): IsGuards {
 		charLiteralEscaped: _supertype_charLiteralEscaped_guard,
 		layout: _sg(_supertype_layout_ids),
 		emptyStatement: _kind_EmptyStatement_guard,
+		tokenRepetitionPatternText: _kind_TokenRepetitionPatternText_guard,
 		fragmentSpecifier: _kind_FragmentSpecifier_guard,
 		unitType: _kind_UnitType_guard,
 		neverType: _kind_NeverType_guard,
 		mutableSpecifier: _kind_MutableSpecifier_guard,
 		unitExpression: _kind_UnitExpression_guard,
 		remainingFieldPattern: _kind_RemainingFieldPattern_guard,
+		stringOpen: _kind_StringOpen_guard,
 		booleanLiteral: _kind_BooleanLiteral_guard,
 		innerLineDocCommentMarker: _kind_InnerLineDocCommentMarker_guard,
 		outerLineDocCommentMarker: _kind_OuterLineDocCommentMarker_guard,
@@ -2515,8 +2517,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		super: _kind_Super_guard,
 		crate: _kind_Crate_guard,
 		primitiveType: _kind_PrimitiveType_guard,
-		tokenRepetitionPatternText: _kind_TokenRepetitionPatternText_guard,
-		stringOpen: _kind_StringOpen_guard,
 		tokenTreePunctuation: _kind_TokenTreePunctuation_guard,
 		tokenKeywords: _kind_TokenKeywords_guard,
 		implItemUnsafeMarker: _kind_ImplItemUnsafeMarker_guard,

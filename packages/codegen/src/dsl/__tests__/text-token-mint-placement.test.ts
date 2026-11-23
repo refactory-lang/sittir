@@ -41,6 +41,14 @@ describe('the text-token mint runs in enrich', () => {
 	});
 });
 
+describe('a minted token in rule order', () => {
+	it('keeps the rank its inline pattern had against a later token of the same length', async () => {
+		const names = Object.keys((await evaluatePackage(grammarPackage('c'))).rules);
+		expect(names.indexOf('preproc_if_text1')).toBeGreaterThan(names.indexOf('preproc_if'));
+		expect(names.indexOf('preproc_if_text1')).toBeLessThan(names.indexOf('preproc_directive'));
+	}, FULL_PIPELINE_TIMEOUT);
+});
+
 describe('a variant() over a sole reference', () => {
 	it('mints the variant rule when the reference names a hidden terminal', () => {
 		const raw = rust;

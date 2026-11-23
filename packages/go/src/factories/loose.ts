@@ -7,6 +7,7 @@ import type * as T from '../types.js';
 
 export {
 	coerceToSourceFile as buildSourceFile,
+	coerceToSourceFileText as buildSourceFileText,
 	coerceToPackageClause as buildPackageClause,
 	coerceToImportDeclaration as buildImportDeclaration,
 	coerceToImportSpec as buildImportSpec,
@@ -168,7 +169,6 @@ export {
 	coerceToStatementListArm as buildStatementListArm,
 	coerceToReceiveStatementGroup as buildReceiveStatementGroup,
 	coerceToSpecialArgumentListGroup as buildSpecialArgumentListGroup,
-	coerceToSourceFileText as buildSourceFileText,
 	coerceToChannelTypeBidirectional as buildChannelTypeBidirectional,
 	coerceToChannelTypeSendOnly as buildChannelTypeSendOnly,
 	coerceToChannelTypeReceiveOnly as buildChannelTypeReceiveOnly,

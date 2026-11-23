@@ -156,128 +156,128 @@ export type LeafStringMap = {
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
-	[2, 'package_keyword'],
-	[3, 'import_keyword'],
-	[4, 'dot_punctuation'],
-	[5, 'blank_identifier'],
-	[6, 'lparen'],
-	[7, 'rparen'],
-	[8, 'const_keyword'],
-	[9, 'comma'],
-	[10, 'var_keyword'],
-	[11, 'eq'],
-	[12, 'semi'],
-	[13, 'null'],
-	[14, 'func_keyword'],
-	[15, 'lbrack'],
-	[16, 'rbrack'],
-	[17, 'dot_dot_dot'],
-	[18, 'type_keyword'],
-	[19, 'star'],
-	[20, 'struct_keyword'],
-	[21, 'tilde'],
-	[22, 'lbrace'],
-	[23, 'rbrace'],
-	[24, 'interface_keyword'],
-	[25, 'pipe'],
-	[26, 'map_keyword'],
-	[27, 'lt_dash'],
-	[28, 'plus_plus'],
-	[29, 'dash_dash'],
-	[30, 'colon_eq'],
-	[31, 'colon'],
-	[32, 'fallthrough_keyword'],
-	[33, 'break_keyword'],
-	[34, 'continue_keyword'],
-	[35, 'goto_keyword'],
-	[36, 'return_keyword'],
-	[37, 'go_keyword'],
-	[38, 'defer_keyword'],
-	[39, 'if_keyword'],
-	[40, 'for_keyword'],
-	[41, 'range_keyword'],
-	[42, 'switch_keyword'],
-	[43, 'case_keyword'],
-	[44, 'default_keyword'],
-	[45, 'select_keyword'],
-	[46, 'new_keyword'],
-	[47, 'make_keyword'],
-	[48, 'plus'],
-	[49, 'dash'],
-	[50, 'bang'],
-	[51, 'caret'],
-	[52, 'amp'],
-	[53, 'slash'],
-	[54, 'percent'],
-	[55, 'lt_lt'],
-	[56, 'gt_gt'],
-	[57, 'amp_caret'],
-	[58, 'eq_eq'],
-	[59, 'bang_eq'],
-	[60, 'lt'],
-	[61, 'lt_eq'],
-	[62, 'gt'],
-	[63, 'gt_eq'],
-	[64, 'amp_amp'],
-	[65, 'pipe_pipe'],
-	[66, 'bquote'],
-	[67, 'dquote'],
-	[68, 'dquote2'],
-	[69, 'nil'],
-	[70, 'true'],
-	[71, 'false'],
-	[72, 'iota'],
-	[73, 'raw_string_literal_content'],
-	[74, 'interpreted_string_literal_content'],
-	[75, 'escape_sequence_arm1'],
-	[76, 'escape_sequence_arm2'],
-	[77, 'escape_sequence_arm3'],
-	[78, 'escape_sequence_arm4'],
-	[79, 'escape_sequence_arm5'],
-	[80, 'int_literal_arm1'],
-	[81, 'int_literal_arm2'],
-	[82, 'int_literal_arm3'],
-	[83, 'int_literal_arm4'],
-	[84, 'int_literal_arm5'],
-	[85, 'float_literal_arm1'],
-	[86, 'float_literal_arm2'],
-	[87, 'float_literal_arm3'],
-	[88, 'float_literal_arm4_arm1'],
-	[89, 'float_literal_arm4_arm2'],
-	[90, 'float_literal_arm4_arm3'],
-	[91, 'imaginary_literal_arm1'],
-	[92, 'imaginary_literal_arm2'],
-	[93, 'imaginary_literal_arm3'],
-	[94, 'imaginary_literal_arm4'],
-	[95, 'imaginary_literal_arm5'],
-	[96, 'imaginary_literal_arm6'],
-	[97, 'imaginary_literal_arm7'],
-	[98, 'imaginary_literal_arm8'],
-	[99, 'imaginary_literal_arm9'],
-	[100, 'imaginary_literal_arm10_arm1'],
-	[101, 'imaginary_literal_arm10_arm2'],
-	[102, 'imaginary_literal_arm10_arm3'],
-	[103, 'rune_literal_arm1'],
-	[104, 'rune_literal_arm2_arm1'],
-	[105, 'rune_literal_arm2_arm2'],
-	[106, 'rune_literal_arm2_arm3'],
-	[107, 'rune_literal_arm2_arm4'],
-	[108, 'rune_literal_arm2_arm5'],
-	[109, 'comment_arm1'],
-	[110, 'comment_arm2'],
-	[111, 'else_keyword'],
-	[112, 'star_eq'],
-	[113, 'slash_eq'],
-	[114, 'percent_eq'],
-	[115, 'lt_lt_eq'],
-	[116, 'gt_gt_eq'],
-	[117, 'amp_eq'],
-	[118, 'amp_caret_eq'],
-	[119, 'plus_eq'],
-	[120, 'dash_eq'],
-	[121, 'pipe_eq'],
-	[122, 'caret_eq'],
-	[123, 'source_file_text'],
+	[2, 'source_file_text'],
+	[3, 'package_keyword'],
+	[4, 'import_keyword'],
+	[5, 'dot_punctuation'],
+	[6, 'blank_identifier'],
+	[7, 'lparen'],
+	[8, 'rparen'],
+	[9, 'const_keyword'],
+	[10, 'comma'],
+	[11, 'var_keyword'],
+	[12, 'eq'],
+	[13, 'semi'],
+	[14, 'null'],
+	[15, 'func_keyword'],
+	[16, 'lbrack'],
+	[17, 'rbrack'],
+	[18, 'dot_dot_dot'],
+	[19, 'type_keyword'],
+	[20, 'star'],
+	[21, 'struct_keyword'],
+	[22, 'tilde'],
+	[23, 'lbrace'],
+	[24, 'rbrace'],
+	[25, 'interface_keyword'],
+	[26, 'pipe'],
+	[27, 'map_keyword'],
+	[28, 'lt_dash'],
+	[29, 'plus_plus'],
+	[30, 'dash_dash'],
+	[31, 'colon_eq'],
+	[32, 'colon'],
+	[33, 'fallthrough_keyword'],
+	[34, 'break_keyword'],
+	[35, 'continue_keyword'],
+	[36, 'goto_keyword'],
+	[37, 'return_keyword'],
+	[38, 'go_keyword'],
+	[39, 'defer_keyword'],
+	[40, 'if_keyword'],
+	[41, 'for_keyword'],
+	[42, 'range_keyword'],
+	[43, 'switch_keyword'],
+	[44, 'case_keyword'],
+	[45, 'default_keyword'],
+	[46, 'select_keyword'],
+	[47, 'new_keyword'],
+	[48, 'make_keyword'],
+	[49, 'plus'],
+	[50, 'dash'],
+	[51, 'bang'],
+	[52, 'caret'],
+	[53, 'amp'],
+	[54, 'slash'],
+	[55, 'percent'],
+	[56, 'lt_lt'],
+	[57, 'gt_gt'],
+	[58, 'amp_caret'],
+	[59, 'eq_eq'],
+	[60, 'bang_eq'],
+	[61, 'lt'],
+	[62, 'lt_eq'],
+	[63, 'gt'],
+	[64, 'gt_eq'],
+	[65, 'amp_amp'],
+	[66, 'pipe_pipe'],
+	[67, 'bquote'],
+	[68, 'dquote'],
+	[69, 'dquote2'],
+	[70, 'nil'],
+	[71, 'true'],
+	[72, 'false'],
+	[73, 'iota'],
+	[74, 'raw_string_literal_content'],
+	[75, 'interpreted_string_literal_content'],
+	[76, 'escape_sequence_arm1'],
+	[77, 'escape_sequence_arm2'],
+	[78, 'escape_sequence_arm3'],
+	[79, 'escape_sequence_arm4'],
+	[80, 'escape_sequence_arm5'],
+	[81, 'int_literal_arm1'],
+	[82, 'int_literal_arm2'],
+	[83, 'int_literal_arm3'],
+	[84, 'int_literal_arm4'],
+	[85, 'int_literal_arm5'],
+	[86, 'float_literal_arm1'],
+	[87, 'float_literal_arm2'],
+	[88, 'float_literal_arm3'],
+	[89, 'float_literal_arm4_arm1'],
+	[90, 'float_literal_arm4_arm2'],
+	[91, 'float_literal_arm4_arm3'],
+	[92, 'imaginary_literal_arm1'],
+	[93, 'imaginary_literal_arm2'],
+	[94, 'imaginary_literal_arm3'],
+	[95, 'imaginary_literal_arm4'],
+	[96, 'imaginary_literal_arm5'],
+	[97, 'imaginary_literal_arm6'],
+	[98, 'imaginary_literal_arm7'],
+	[99, 'imaginary_literal_arm8'],
+	[100, 'imaginary_literal_arm9'],
+	[101, 'imaginary_literal_arm10_arm1'],
+	[102, 'imaginary_literal_arm10_arm2'],
+	[103, 'imaginary_literal_arm10_arm3'],
+	[104, 'rune_literal_arm1'],
+	[105, 'rune_literal_arm2_arm1'],
+	[106, 'rune_literal_arm2_arm2'],
+	[107, 'rune_literal_arm2_arm3'],
+	[108, 'rune_literal_arm2_arm4'],
+	[109, 'rune_literal_arm2_arm5'],
+	[110, 'comment_arm1'],
+	[111, 'comment_arm2'],
+	[112, 'else_keyword'],
+	[113, 'star_eq'],
+	[114, 'slash_eq'],
+	[115, 'percent_eq'],
+	[116, 'lt_lt_eq'],
+	[117, 'gt_gt_eq'],
+	[118, 'amp_eq'],
+	[119, 'amp_caret_eq'],
+	[120, 'plus_eq'],
+	[121, 'dash_eq'],
+	[122, 'pipe_eq'],
+	[123, 'caret_eq'],
 	[124, 'chan_keyword'],
 	[125, '_tight'],
 	[126, '_space'],
@@ -460,128 +460,128 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 /** Parser display label of each kind id — the spelling of an anonymous token the reader sends without text, and the label validator bridging matches. Never use for wrapNode dispatch. */
 export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[1, 'identifier'],
-	[2, 'package'],
-	[3, 'import'],
-	[4, '.'],
-	[5, 'blank_identifier'],
-	[6, '('],
-	[7, ')'],
-	[8, 'const'],
-	[9, ','],
-	[10, 'var'],
-	[11, '='],
-	[12, ';'],
-	[13, '\u0000'],
-	[14, 'func'],
-	[15, '['],
-	[16, ']'],
-	[17, '...'],
-	[18, 'type'],
-	[19, '*'],
-	[20, 'struct'],
-	[21, '~'],
-	[22, '{'],
-	[23, '}'],
-	[24, 'interface'],
-	[25, '|'],
-	[26, 'map'],
-	[27, '<-'],
-	[28, '++'],
-	[29, '--'],
-	[30, ':='],
-	[31, ':'],
-	[32, 'fallthrough'],
-	[33, 'break'],
-	[34, 'continue'],
-	[35, 'goto'],
-	[36, 'return'],
-	[37, 'go'],
-	[38, 'defer'],
-	[39, 'if'],
-	[40, 'for'],
-	[41, 'range'],
-	[42, 'switch'],
-	[43, 'case'],
-	[44, 'default'],
-	[45, 'select'],
-	[46, 'identifier'],
+	[2, 'source_file_text'],
+	[3, 'package'],
+	[4, 'import'],
+	[5, '.'],
+	[6, 'blank_identifier'],
+	[7, '('],
+	[8, ')'],
+	[9, 'const'],
+	[10, ','],
+	[11, 'var'],
+	[12, '='],
+	[13, ';'],
+	[14, '\u0000'],
+	[15, 'func'],
+	[16, '['],
+	[17, ']'],
+	[18, '...'],
+	[19, 'type'],
+	[20, '*'],
+	[21, 'struct'],
+	[22, '~'],
+	[23, '{'],
+	[24, '}'],
+	[25, 'interface'],
+	[26, '|'],
+	[27, 'map'],
+	[28, '<-'],
+	[29, '++'],
+	[30, '--'],
+	[31, ':='],
+	[32, ':'],
+	[33, 'fallthrough'],
+	[34, 'break'],
+	[35, 'continue'],
+	[36, 'goto'],
+	[37, 'return'],
+	[38, 'go'],
+	[39, 'defer'],
+	[40, 'if'],
+	[41, 'for'],
+	[42, 'range'],
+	[43, 'switch'],
+	[44, 'case'],
+	[45, 'default'],
+	[46, 'select'],
 	[47, 'identifier'],
-	[48, '+'],
-	[49, '-'],
-	[50, '!'],
-	[51, '^'],
-	[52, '&'],
-	[53, '/'],
-	[54, '%'],
-	[55, '<<'],
-	[56, '>>'],
-	[57, '&^'],
-	[58, '=='],
-	[59, '!='],
-	[60, '<'],
-	[61, '<='],
-	[62, '>'],
-	[63, '>='],
-	[64, '&&'],
-	[65, '||'],
-	[66, '`'],
-	[67, '"'],
+	[48, 'identifier'],
+	[49, '+'],
+	[50, '-'],
+	[51, '!'],
+	[52, '^'],
+	[53, '&'],
+	[54, '/'],
+	[55, '%'],
+	[56, '<<'],
+	[57, '>>'],
+	[58, '&^'],
+	[59, '=='],
+	[60, '!='],
+	[61, '<'],
+	[62, '<='],
+	[63, '>'],
+	[64, '>='],
+	[65, '&&'],
+	[66, '||'],
+	[67, '`'],
 	[68, '"'],
-	[69, 'nil'],
-	[70, 'true'],
-	[71, 'false'],
-	[72, 'iota'],
-	[73, 'raw_string_literal_content'],
-	[74, 'interpreted_string_literal_content'],
-	[75, 'escape_sequence_arm1'],
-	[76, 'escape_sequence_arm2'],
-	[77, 'escape_sequence_arm3'],
-	[78, 'escape_sequence_arm4'],
-	[79, 'escape_sequence_arm5'],
-	[80, 'int_literal_arm1'],
-	[81, 'int_literal_arm2'],
-	[82, 'int_literal_arm3'],
-	[83, 'int_literal_arm4'],
-	[84, 'int_literal_arm5'],
-	[85, 'float_literal_arm1'],
-	[86, 'float_literal_arm2'],
-	[87, 'float_literal_arm3'],
-	[88, 'float_literal_arm4_arm1'],
-	[89, 'float_literal_arm4_arm2'],
-	[90, 'float_literal_arm4_arm3'],
-	[91, 'imaginary_literal_arm1'],
-	[92, 'imaginary_literal_arm2'],
-	[93, 'imaginary_literal_arm3'],
-	[94, 'imaginary_literal_arm4'],
-	[95, 'imaginary_literal_arm5'],
-	[96, 'imaginary_literal_arm6'],
-	[97, 'imaginary_literal_arm7'],
-	[98, 'imaginary_literal_arm8'],
-	[99, 'imaginary_literal_arm9'],
-	[100, 'imaginary_literal_arm10_arm1'],
-	[101, 'imaginary_literal_arm10_arm2'],
-	[102, 'imaginary_literal_arm10_arm3'],
-	[103, 'rune_literal_arm1'],
-	[104, 'rune_literal_arm2_arm1'],
-	[105, 'rune_literal_arm2_arm2'],
-	[106, 'rune_literal_arm2_arm3'],
-	[107, 'rune_literal_arm2_arm4'],
-	[108, 'rune_literal_arm2_arm5'],
-	[109, 'comment_arm1'],
-	[110, 'comment_arm2'],
-	[111, 'else'],
-	[112, '*='],
-	[113, '/='],
-	[114, '%='],
-	[115, '<<='],
-	[116, '>>='],
-	[117, '&='],
-	[118, '&^='],
-	[119, '+='],
-	[120, '-='],
-	[121, '|='],
-	[122, '^='],
-	[123, 'source_file_text'],
+	[69, '"'],
+	[70, 'nil'],
+	[71, 'true'],
+	[72, 'false'],
+	[73, 'iota'],
+	[74, 'raw_string_literal_content'],
+	[75, 'interpreted_string_literal_content'],
+	[76, 'escape_sequence_arm1'],
+	[77, 'escape_sequence_arm2'],
+	[78, 'escape_sequence_arm3'],
+	[79, 'escape_sequence_arm4'],
+	[80, 'escape_sequence_arm5'],
+	[81, 'int_literal_arm1'],
+	[82, 'int_literal_arm2'],
+	[83, 'int_literal_arm3'],
+	[84, 'int_literal_arm4'],
+	[85, 'int_literal_arm5'],
+	[86, 'float_literal_arm1'],
+	[87, 'float_literal_arm2'],
+	[88, 'float_literal_arm3'],
+	[89, 'float_literal_arm4_arm1'],
+	[90, 'float_literal_arm4_arm2'],
+	[91, 'float_literal_arm4_arm3'],
+	[92, 'imaginary_literal_arm1'],
+	[93, 'imaginary_literal_arm2'],
+	[94, 'imaginary_literal_arm3'],
+	[95, 'imaginary_literal_arm4'],
+	[96, 'imaginary_literal_arm5'],
+	[97, 'imaginary_literal_arm6'],
+	[98, 'imaginary_literal_arm7'],
+	[99, 'imaginary_literal_arm8'],
+	[100, 'imaginary_literal_arm9'],
+	[101, 'imaginary_literal_arm10_arm1'],
+	[102, 'imaginary_literal_arm10_arm2'],
+	[103, 'imaginary_literal_arm10_arm3'],
+	[104, 'rune_literal_arm1'],
+	[105, 'rune_literal_arm2_arm1'],
+	[106, 'rune_literal_arm2_arm2'],
+	[107, 'rune_literal_arm2_arm3'],
+	[108, 'rune_literal_arm2_arm4'],
+	[109, 'rune_literal_arm2_arm5'],
+	[110, 'comment_arm1'],
+	[111, 'comment_arm2'],
+	[112, 'else'],
+	[113, '*='],
+	[114, '/='],
+	[115, '%='],
+	[116, '<<='],
+	[117, '>>='],
+	[118, '&='],
+	[119, '&^='],
+	[120, '+='],
+	[121, '-='],
+	[122, '|='],
+	[123, '^='],
 	[124, 'chan'],
 	[125, '_tight'],
 	[126, '_space'],
@@ -763,15 +763,17 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
 export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([
-	[123, 'source_file_text'],
-	[12, ';'],
-	[13, '\u0000']
+	[2, 'source_file_text'],
+	[13, ';'],
+	[14, '\u0000']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
 	switch (kindName) {
 		case 'identifier':
 			return TSKindId.Identifier;
+		case 'source_file_text':
+			return TSKindId.SourceFileText;
 		case 'package_keyword':
 			return TSKindId.PackageKeyword;
 		case 'import_keyword':
@@ -1014,8 +1016,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PipeEq;
 		case 'caret_eq':
 			return TSKindId.CaretEq;
-		case 'source_file_text':
-			return TSKindId.SourceFileText;
 		case 'chan_keyword':
 			return TSKindId.ChanKeyword;
 		case '_tight':
@@ -4939,6 +4939,7 @@ export interface LabelName {
 }
 
 // Leaf node types
+export type SourceFileText = Terminal<TSKindId.SourceFileText, string>;
 export type Dot = TSKindId.Dot;
 export type BlankIdentifier = TSKindId.BlankIdentifier;
 export type EmptyStatement = TSKindId.EmptyStatement;
@@ -4958,7 +4959,6 @@ export type IntLiteralArm5 = Terminal<TSKindId.IntLiteralArm5, string>;
 export type FloatLiteralArm2 = Terminal<TSKindId.FloatLiteralArm2, string>;
 export type ImaginaryLiteralArm3 = TSKindId.ImaginaryLiteralArm3;
 export type ImportSpecListArm = Terminal<TSKindId.ImportSpecListArm, string>;
-export type SourceFileText = Terminal<TSKindId.SourceFileText, string>;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;
 export type Tab = TSKindId.Tab;
@@ -8945,6 +8945,12 @@ export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKin
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface SourceFileTextNs extends LeafNs<
+	SourceFileText,
+	string,
+	SourceFileText.Bound,
+	TSKindId.SourceFileText
+> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface RawStringLiteralContentNs extends LeafNs<
 	RawStringLiteralContent,
@@ -8993,12 +8999,6 @@ export interface ImportSpecListArmNs extends LeafNs<
 	string,
 	ImportSpecListArm.Bound,
 	TSKindId.ImportSpecListArm
-> {}
-export interface SourceFileTextNs extends LeafNs<
-	SourceFileText,
-	string,
-	SourceFileText.Bound,
-	TSKindId.SourceFileText
 > {}
 
 export interface NamespaceMap {
@@ -9172,6 +9172,7 @@ export interface NamespaceMap {
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
+	[TSKindId.SourceFileText]: SourceFileTextNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContentNs;
 	[TSKindId.InterpretedStringLiteralContent]: InterpretedStringLiteralContentNs;
@@ -9181,7 +9182,6 @@ export interface NamespaceMap {
 	[TSKindId.IntLiteralArm5]: IntLiteralArm5Ns;
 	[TSKindId.FloatLiteralArm2]: FloatLiteralArm2Ns;
 	[TSKindId.ImportSpecListArm]: ImportSpecListArmNs;
-	[TSKindId.SourceFileText]: SourceFileTextNs;
 }
 
 export interface BoundByKindId {
@@ -9337,6 +9337,7 @@ export interface BoundByKindId {
 	[TSKindId.TypeConstraint]: TypeConstraint.Bound;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Bound;
 	[TSKindId.LabelName]: LabelName.Bound;
+	[TSKindId.SourceFileText]: SourceFileText.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Bound;
 	[TSKindId.InterpretedStringLiteralContent]: InterpretedStringLiteralContent.Bound;
@@ -9346,7 +9347,6 @@ export interface BoundByKindId {
 	[TSKindId.IntLiteralArm5]: IntLiteralArm5.Bound;
 	[TSKindId.FloatLiteralArm2]: FloatLiteralArm2.Bound;
 	[TSKindId.ImportSpecListArm]: ImportSpecListArm.Bound;
-	[TSKindId.SourceFileText]: SourceFileText.Bound;
 }
 
 export interface ParsedByKindId {
@@ -9502,6 +9502,7 @@ export interface ParsedByKindId {
 	[TSKindId.TypeConstraint]: TypeConstraint.Parsed;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Parsed;
 	[TSKindId.LabelName]: LabelName.Parsed;
+	[TSKindId.SourceFileText]: SourceFileText.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.RawStringLiteralContent]: RawStringLiteralContent.Parsed;
 	[TSKindId.InterpretedStringLiteralContent]: InterpretedStringLiteralContent.Parsed;
@@ -9511,7 +9512,6 @@ export interface ParsedByKindId {
 	[TSKindId.IntLiteralArm5]: IntLiteralArm5.Parsed;
 	[TSKindId.FloatLiteralArm2]: FloatLiteralArm2.Parsed;
 	[TSKindId.ImportSpecListArm]: ImportSpecListArm.Parsed;
-	[TSKindId.SourceFileText]: SourceFileText.Parsed;
 }
 
 export interface PortableReads {}
@@ -9780,6 +9780,7 @@ export interface TypeKeyOf {
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
+	[TSKindId.SourceFileText]: 'sourceFileText';
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.RawStringLiteralContent]: 'rawStringLiteralContent';
 	[TSKindId.InterpretedStringLiteralContent]: 'interpretedStringLiteralContent';
@@ -9789,7 +9790,6 @@ export interface TypeKeyOf {
 	[TSKindId.IntLiteralArm5]: 'intLiteralArm5';
 	[TSKindId.FloatLiteralArm2]: 'floatLiteralArm2';
 	[TSKindId.ImportSpecListArm]: 'importSpecListArm';
-	[TSKindId.SourceFileText]: 'sourceFileText';
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -14227,6 +14227,22 @@ export namespace Dedent {
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Kind = TSKindId.Dedent;
 }
+export namespace SourceFileText {
+	export type Config = SourceFileTextNs['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.SourceFileText;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.SourceFileText;
+		$text(): string;
+	}
+	export type Loose = SourceFileTextNs['Loose'];
+	export type LooseConfig = SourceFileTextNs['LooseConfig'];
+	export type BuildArgs = SourceFileTextNs['BuildArgs'];
+	export type LooseArgs = SourceFileTextNs['LooseArgs'];
+	export type Kind = TSKindId.SourceFileText;
+}
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
@@ -14370,22 +14386,6 @@ export namespace ImportSpecListArm {
 	export type BuildArgs = ImportSpecListArmNs['BuildArgs'];
 	export type LooseArgs = ImportSpecListArmNs['LooseArgs'];
 	export type Kind = TSKindId.ImportSpecListArm;
-}
-export namespace SourceFileText {
-	export type Config = SourceFileTextNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.SourceFileText;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.SourceFileText;
-		$text(): string;
-	}
-	export type Loose = SourceFileTextNs['Loose'];
-	export type LooseConfig = SourceFileTextNs['LooseConfig'];
-	export type BuildArgs = SourceFileTextNs['BuildArgs'];
-	export type LooseArgs = SourceFileTextNs['LooseArgs'];
-	export type Kind = TSKindId.SourceFileText;
 }
 
 export interface GoTypeMap extends GrammarTypeMap {

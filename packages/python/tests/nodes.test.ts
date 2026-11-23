@@ -3862,6 +3862,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('format_specifier_text', () => {
+		it('factory produces correct type', () => {
+			const node = ir.formatSpecifierText('test');
+			expect(node.$type).toBe(TSKindId.FormatSpecifierText);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe('test');
+		});
+	});
+
 	describe('type_conversion', () => {
 		it('factory produces correct type', () => {
 			const node = ir.typeConversion('!a');
@@ -4120,15 +4129,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 				]
 			);
 			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('format_specifier_text', () => {
-		it('factory produces correct type', () => {
-			const node = ir.formatSpecifierText('test');
-			expect(node.$type).toBe(TSKindId.FormatSpecifierText);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('test');
 		});
 	});
 

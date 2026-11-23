@@ -44,14 +44,14 @@ export const _leafRe_buildPosixClassName = /^(?:(?:[a-zA-Z]+))$/u;
 export const _leafRe_buildClassCharacter = /^(?:(?:[^\\\]-]))$/u;
 export const _leafRe_buildFlags = _leafRe_buildPosixClassName;
 export const _leafRe_buildDecimalEscape = /^(?:(?:\\[1-9][0-9]*))$/u;
+export const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
+export const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
 export const _leafRe_buildUnicodeCharacterEscape = /^(?:(?:(?:\\u[0-9a-fA-F]{4})|(?:\\u\{[0-9a-fA-F]{1,6}\})))$/u;
 export const _leafRe_buildUnicodePropertyValue = /^(?:(?:[a-zA-Z_0-9]+))$/u;
 export const _leafRe_buildControlEscape = /^(?:(?:(?:\\[bfnrtv0])|(?:\\x[0-9a-fA-F]{2})))$/u;
 export const _leafRe_buildControlLetterEscape = /^(?:(?:\\c[a-zA-Z]))$/u;
 export const _leafRe_buildGroupName = /^(?:(?:[A-Za-z_][A-Za-z0-9_]*))$/u;
 export const _leafRe_buildDecimalDigits = /^(?:(?:[0-9]+))$/u;
-export const _leafRe_buildCharacterClassEscapeText1 = /^(?:(?:\\[dDsSwW]))$/u;
-export const _leafRe_buildCharacterClassEscapeText2 = /^(?:(?:\\[pP]))$/u;
 export const _leafRe_buildUnicodePropertyName = _leafRe_buildUnicodePropertyValue;
 export const _slotRe_buildIdentityEscape_content = /^(?:(?:[^kdDsSpPwWbfnrtv0-9]))$/u;
 
@@ -1230,6 +1230,54 @@ function buildCharacterClassEscape$with$content(this: Received<Held>, ...args: u
 	return buildCharacterClassEscape$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
+export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`character_class_escape_text1: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`character_class_escape_text1: text must be non-empty`);
+	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
+		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CharacterClassEscapeText1 as const,
+		$_layout: undefined,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.CharacterClassEscapeText1.Bound;
+}
+
+export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`character_class_escape_text2: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`character_class_escape_text2: text must be non-empty`);
+	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
+		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CharacterClassEscapeText2 as const,
+		$_layout: undefined,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.CharacterClassEscapeText2.Bound;
+}
+
 export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEscape.Bound {
 	if (typeof text !== 'string')
 		throw new Error(`unicode_character_escape: text must be a string: ${describeValue(text)}`);
@@ -1819,54 +1867,6 @@ function buildUnicodePropertyValueExpressionGroup$with$unicodePropertyName(
 	);
 }
 
-export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`character_class_escape_text1: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`character_class_escape_text1: text must be non-empty`);
-	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
-		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.CharacterClassEscapeText1 as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.CharacterClassEscapeText1.Bound;
-}
-
-export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`character_class_escape_text2: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`character_class_escape_text2: text must be non-empty`);
-	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
-		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.CharacterClassEscapeText2 as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.CharacterClassEscapeText2.Bound;
-}
-
 export const buildNegation: TSKindId.Negation = TSKindId.Negation;
 
 export function buildInlineFlagsGroupEnable<
@@ -2175,6 +2175,8 @@ export type FluentKindMap = {
 	named_group_backreference: T.NamedGroupBackreference.Bound;
 	decimal_escape: T.DecimalEscape;
 	character_class_escape: T.CharacterClassEscape.Bound;
+	character_class_escape_text1: T.CharacterClassEscapeText1;
+	character_class_escape_text2: T.CharacterClassEscapeText2;
 	unicode_character_escape: T.UnicodeCharacterEscape;
 	unicode_property_value_expression: T.UnicodePropertyValueExpression.Bound;
 	unicode_property_value: T.UnicodePropertyValue;
@@ -2189,8 +2191,6 @@ export type FluentKindMap = {
 	count_quantifier_arm: T.CountQuantifierArm.Bound;
 	character_class_escape_arm: T.CharacterClassEscapeArm.Bound;
 	unicode_property_value_expression_group: T.UnicodePropertyValueExpressionGroup.Bound;
-	character_class_escape_text1: T.CharacterClassEscapeText1;
-	character_class_escape_text2: T.CharacterClassEscapeText2;
 	negation: T.Negation;
 	inline_flags_group_enable: T.InlineFlagsGroupEnable.Bound;
 	inline_flags_group_toggle: T.InlineFlagsGroupToggle.Bound;
@@ -2232,6 +2232,8 @@ export const _factoryMap = {
 	named_group_backreference: buildNamedGroupBackreference,
 	decimal_escape: buildDecimalEscape,
 	character_class_escape: buildCharacterClassEscape,
+	character_class_escape_text1: buildCharacterClassEscapeText1,
+	character_class_escape_text2: buildCharacterClassEscapeText2,
 	unicode_character_escape: buildUnicodeCharacterEscape,
 	unicode_property_value_expression: buildUnicodePropertyValueExpression,
 	unicode_property_value: buildUnicodePropertyValue,
@@ -2246,8 +2248,6 @@ export const _factoryMap = {
 	count_quantifier_arm: buildCountQuantifierArm,
 	character_class_escape_arm: buildCharacterClassEscapeArm,
 	unicode_property_value_expression_group: buildUnicodePropertyValueExpressionGroup,
-	character_class_escape_text1: buildCharacterClassEscapeText1,
-	character_class_escape_text2: buildCharacterClassEscapeText2,
 	negation: buildNegation,
 	inline_flags_group_enable: buildInlineFlagsGroupEnable,
 	inline_flags_group_toggle: buildInlineFlagsGroupToggle,

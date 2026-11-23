@@ -32657,9 +32657,9 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.MethodDeclaration]: (d, t) => wrapMethodDeclaration(d as unknown as T.MethodDeclaration, t),
 	[TSKindId.SignatureMethodDeclaration]: (d, t) =>
 		wrapSignatureMethodDeclaration(d as unknown as T.SignatureMethodDeclaration, t),
-	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.TokenRepetitionPatternText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringOpen]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.CharLiteralEmpty]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.LineCommentExtraSlashes]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.LineCommentRegular]: (d, t) => wrapInteriorLeaf(d, t),

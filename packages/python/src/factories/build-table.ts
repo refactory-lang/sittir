@@ -3631,9 +3631,9 @@ export interface Ir<Table extends AnyTable> {
 	readonly escapeSequenceSimple: typeof F.buildEscapeSequenceSimple;
 	readonly escapeSequenceNamed: typeof F.buildEscapeSequenceNamed;
 	readonly importPrefix: typeof F.buildImportPrefix;
+	readonly formatSpecifierText: typeof F.buildFormatSpecifierText;
 	readonly typeConversion: typeof F.buildTypeConversion;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly formatSpecifierText: typeof F.buildFormatSpecifierText;
 	readonly stringFragment: typeof F.buildStringFragment;
 	readonly escapeInterpolation: typeof F.buildEscapeInterpolation;
 	readonly statement: {
@@ -6196,9 +6196,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		escapeSequenceSimple: F.buildEscapeSequenceSimple,
 		escapeSequenceNamed: F.buildEscapeSequenceNamed,
 		importPrefix: F.buildImportPrefix,
+		formatSpecifierText: F.buildFormatSpecifierText,
 		typeConversion: F.buildTypeConversion,
 		identifier: F.buildIdentifier,
-		formatSpecifierText: F.buildFormatSpecifierText,
 		stringFragment: F.buildStringFragment,
 		escapeInterpolation: F.buildEscapeInterpolation,
 		statement: Object.freeze({

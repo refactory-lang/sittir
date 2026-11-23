@@ -45,6 +45,7 @@ interface _LeafEntry {
 	readonly factory: (text: string) => AnyUntypedNode | number;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
+	source_file_text: { pattern: F._leafRe_buildSourceFileText, factory: F.buildSourceFileText },
 	dot: { values: ['.'], factory: () => F.buildDot },
 	blank_identifier: { values: ['_'], factory: () => F.buildBlankIdentifier },
 	empty_statement: { values: [';'], factory: () => F.buildEmptyStatement },
@@ -117,7 +118,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	comment_arm1: { factory: (content: string) => _resolveByKind('comment_arm1', content) },
 	comment_arm2: { factory: (content: string) => _resolveByKind('comment_arm2', content) },
 	import_spec_list_arm: { pattern: F._leafRe_buildImportSpecListArm, factory: F.buildImportSpecListArm },
-	source_file_text: { pattern: F._leafRe_buildSourceFileText, factory: F.buildSourceFileText },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -173,6 +173,7 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'comment_arm2'
 ]);
 const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
+	'source_file_text',
 	'dot',
 	'blank_identifier',
 	'empty_statement',
@@ -192,7 +193,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'float_literal_arm2',
 	'imaginary_literal_arm3',
 	'import_spec_list_arm',
-	'source_file_text',
 	'_tight',
 	'_space',
 	'_tab',
@@ -230,6 +230,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'true',
 	'false',
 	'iota',
+	'source_file_text',
 	'import_spec_list_arm',
 	'fallthrough_statement',
 	'field_identifier',
@@ -244,8 +245,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'float_literal_arm1',
 	'float_literal_arm2',
 	'imaginary_literal_arm3',
-	'rune_literal_arm2_arm5',
-	'source_file_text'
+	'rune_literal_arm2_arm5'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
@@ -389,9 +389,9 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'label_name'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
-	33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-	64, 65, 66, 67, 69, 70, 71, 72, 81, 93, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 124, 125, 126,
+	3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33,
+	34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64,
+	65, 66, 67, 68, 70, 71, 72, 73, 82, 94, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126,
 	127, 128, 129, 130, 131, 132, 137, 177, 188
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
@@ -420,16 +420,16 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	block: new Set([1, 175, 187, 263, 296]),
 	statement_list: new Set([1, 187, 263, 296]),
 	expression_statement: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	inc_statement: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	dec_statement: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	empty_labeled_statement: new Set([1, 296]),
 	break_statement: new Set([1, 296]),
@@ -437,41 +437,41 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	goto_statement: new Set([1, 296]),
 	return_statement: new Set([155]),
 	go_statement: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	defer_statement: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	default_case: new Set([1, 175, 187, 263, 296]),
 	parenthesized_expression: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	call_expression: new Set([247, 248]),
 	variadic_argument: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247, 248
 	]),
 	special_argument_list: new Set([265]),
 	argument_list: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
 		248, 249
 	]),
 	literal_value: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
 		228, 247, 248, 251
 	]),
 	literal_element: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
 		228, 247, 248, 251
 	]),
-	raw_string_literal: new Set([73]),
-	import_specs: new Set([73, 136, 227, 228]),
+	raw_string_literal: new Set([74]),
+	import_specs: new Set([74, 136, 227, 228]),
 	type_parameter_declarations: new Set([148]),
 	parameter_list_elements: new Set([150, 151]),
 	type_declaration_elements: new Set([152, 154]),
@@ -479,20 +479,20 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declarations: new Set([167]),
 	interface_elems: new Set([169, 170]),
 	statements: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 140, 141, 142, 143, 144, 152, 153, 154, 155, 174, 175, 177, 179, 180, 182, 183,
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 140, 141, 142, 143, 144, 152, 153, 154, 155, 174, 175, 177, 179, 180, 182, 183,
 		184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 199, 202, 205, 208, 209, 213, 214, 215, 216, 217,
 		218, 219, 223, 224, 225, 227, 228, 247, 248, 254, 257, 258, 263, 296
 	]),
 	argument_list_elements: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228, 247,
 		248
 	]),
 	types: new Set([1, 156, 158, 160, 161, 163, 164, 165, 166, 168, 171, 173, 226, 259, 261, 266, 267, 268, 299]),
 	literal_value_elements: new Set([
-		1, 69, 70, 71, 72, 73, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-		102, 103, 104, 105, 106, 107, 108, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
+		1, 70, 71, 72, 73, 74, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+		103, 104, 105, 106, 107, 108, 109, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 227,
 		228, 247, 248, 251
 	]),
 	const_declaration_arm: new Set([141]),
@@ -1396,6 +1396,13 @@ export const coerceToSourceFile: EmptyForm<
 		topLevelDeclaration: resolveSourceFile_topLevelDeclaration(input?.topLevelDeclaration)
 	});
 });
+
+export const coerceToSourceFileText: ConfigSeat<T.SourceFileText.Loose, ReturnType<typeof F.buildSourceFileText>> = (
+	input: T.SourceFileText.Loose
+): ReturnType<typeof F.buildSourceFileText> => {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildSourceFileText>;
+	return F.buildSourceFileText(input as Parameters<typeof F.buildSourceFileText>[0]);
+};
 
 export function resolvePackageClause_packageIdentifier(
 	value: T.PackageClause.LooseConfig['packageIdentifier']
@@ -5623,13 +5630,6 @@ export function coerceToSpecialArgumentListGroup(
 	);
 }
 
-export const coerceToSourceFileText: ConfigSeat<T.SourceFileText.Loose, ReturnType<typeof F.buildSourceFileText>> = (
-	input: T.SourceFileText.Loose
-): ReturnType<typeof F.buildSourceFileText> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildSourceFileText>;
-	return F.buildSourceFileText(input as Parameters<typeof F.buildSourceFileText>[0]);
-};
-
 export function resolveChannelTypeBidirectional_value(
 	value: T.ChannelTypeBidirectional.LooseConfig['value']
 ): Admit<T.ChannelTypeBidirectional['_value']> {
@@ -5834,6 +5834,7 @@ export const coerceToLabelName: ConfigSeat<T.LabelName.Loose, ReturnType<typeof 
 
 export interface _FromMap {
 	readonly source_file: typeof coerceToSourceFile;
+	readonly source_file_text: typeof coerceToSourceFileText;
 	readonly package_clause: typeof coerceToPackageClause;
 	readonly import_declaration: typeof coerceToImportDeclaration;
 	readonly import_spec: typeof coerceToImportSpec;
@@ -5995,7 +5996,6 @@ export interface _FromMap {
 	readonly statement_list_arm: typeof coerceToStatementListArm;
 	readonly receive_statement_group: typeof coerceToReceiveStatementGroup;
 	readonly special_argument_list_group: typeof coerceToSpecialArgumentListGroup;
-	readonly source_file_text: typeof coerceToSourceFileText;
 	readonly channel_type_bidirectional: typeof coerceToChannelTypeBidirectional;
 	readonly channel_type_send_only: typeof coerceToChannelTypeSendOnly;
 	readonly channel_type_receive_only: typeof coerceToChannelTypeReceiveOnly;
@@ -6016,6 +6016,7 @@ export interface _FromMap {
 }
 export const _fromMap: _FromMap = {
 	source_file: coerceToSourceFile,
+	source_file_text: coerceToSourceFileText,
 	package_clause: coerceToPackageClause,
 	import_declaration: coerceToImportDeclaration,
 	import_spec: coerceToImportSpec,
@@ -6177,7 +6178,6 @@ export const _fromMap: _FromMap = {
 	statement_list_arm: coerceToStatementListArm,
 	receive_statement_group: coerceToReceiveStatementGroup,
 	special_argument_list_group: coerceToSpecialArgumentListGroup,
-	source_file_text: coerceToSourceFileText,
 	channel_type_bidirectional: coerceToChannelTypeBidirectional,
 	channel_type_send_only: coerceToChannelTypeSendOnly,
 	channel_type_receive_only: coerceToChannelTypeReceiveOnly,

@@ -645,6 +645,14 @@
         }
       ]
     },
+    "multiline_string_fragment_text1": {
+      "type": "PATTERN",
+      "value": "[^\"\\\\]+"
+    },
+    "multiline_string_fragment_text2": {
+      "type": "PATTERN",
+      "value": "\"([^\"\\\\]|\\\\\")*"
+    },
     "string_interpolation": {
       "type": "SEQ",
       "members": [
@@ -696,6 +704,22 @@
           }
         }
       ]
+    },
+    "escape_sequence_text": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "\\"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^bfnrts'\\\"\\\\]"
+          }
+        ]
+      }
     },
     "escape_sequence": {
       "type": "CHOICE",
@@ -10371,30 +10395,6 @@
     "_kw_semi": {
       "type": "STRING",
       "value": ";"
-    },
-    "multiline_string_fragment_text1": {
-      "type": "PATTERN",
-      "value": "[^\"\\\\]+"
-    },
-    "multiline_string_fragment_text2": {
-      "type": "PATTERN",
-      "value": "\"([^\"\\\\]|\\\\\")*"
-    },
-    "escape_sequence_text": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "\\"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^bfnrts'\\\"\\\\]"
-          }
-        ]
-      }
     },
     "formal_parameters_receiver": {
       "type": "SEQ",

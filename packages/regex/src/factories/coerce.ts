@@ -48,14 +48,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	class_character: { pattern: F._leafRe_buildClassCharacter, factory: F.buildClassCharacter },
 	flags: { pattern: F._leafRe_buildFlags, factory: F.buildFlags },
 	decimal_escape: { pattern: F._leafRe_buildDecimalEscape, factory: F.buildDecimalEscape },
-	unicode_character_escape: { pattern: F._leafRe_buildUnicodeCharacterEscape, factory: F.buildUnicodeCharacterEscape },
-	unicode_property_value: { pattern: F._leafRe_buildUnicodePropertyValue, factory: F.buildUnicodePropertyValue },
-	control_escape: { pattern: F._leafRe_buildControlEscape, factory: F.buildControlEscape },
-	control_letter_escape: { pattern: F._leafRe_buildControlLetterEscape, factory: F.buildControlLetterEscape },
-	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
-	group_name: { pattern: F._leafRe_buildGroupName, factory: F.buildGroupName },
-	decimal_digits: { pattern: F._leafRe_buildDecimalDigits, factory: F.buildDecimalDigits },
-	lazy: { values: ['?'], factory: () => F.buildLazy },
 	character_class_escape_text1: {
 		pattern: F._leafRe_buildCharacterClassEscapeText1,
 		factory: F.buildCharacterClassEscapeText1
@@ -64,6 +56,14 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: F._leafRe_buildCharacterClassEscapeText2,
 		factory: F.buildCharacterClassEscapeText2
 	},
+	unicode_character_escape: { pattern: F._leafRe_buildUnicodeCharacterEscape, factory: F.buildUnicodeCharacterEscape },
+	unicode_property_value: { pattern: F._leafRe_buildUnicodePropertyValue, factory: F.buildUnicodePropertyValue },
+	control_escape: { pattern: F._leafRe_buildControlEscape, factory: F.buildControlEscape },
+	control_letter_escape: { pattern: F._leafRe_buildControlLetterEscape, factory: F.buildControlLetterEscape },
+	identity_escape: { factory: (content: string) => _resolveByKind('identity_escape', content) },
+	group_name: { pattern: F._leafRe_buildGroupName, factory: F.buildGroupName },
+	decimal_digits: { pattern: F._leafRe_buildDecimalDigits, factory: F.buildDecimalDigits },
+	lazy: { values: ['?'], factory: () => F.buildLazy },
 	negation: { values: ['^'], factory: () => F.buildNegation },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_newline: { values: ['\n'], factory: () => F.buildNewline },
@@ -83,6 +83,8 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'class_character',
 	'flags',
 	'decimal_escape',
+	'character_class_escape_text1',
+	'character_class_escape_text2',
 	'unicode_character_escape',
 	'unicode_property_value',
 	'control_escape',
@@ -90,8 +92,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'group_name',
 	'decimal_digits',
 	'lazy',
-	'character_class_escape_text1',
-	'character_class_escape_text2',
 	'negation',
 	'_tight',
 	'_newline',
@@ -125,15 +125,15 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'class_character',
 	'flags',
 	'decimal_escape',
+	'character_class_escape_text1',
+	'character_class_escape_text2',
 	'unicode_character_escape',
 	'unicode_property_value',
 	'unicode_property_name',
 	'control_escape',
 	'control_letter_escape',
 	'group_name',
-	'decimal_digits',
-	'character_class_escape_text1',
-	'character_class_escape_text2'
+	'decimal_digits'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {};
@@ -245,7 +245,7 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'unicode_property_value_expression_group'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 40, 47,
+	2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 19, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 46, 47,
 	48, 49, 50, 54, 77, 83
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
@@ -254,10 +254,10 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	posix_character_class: new Set([60]),
 	anonymous_capturing_group: new Set([51, 52, 53]),
 	non_capturing_group: new Set([51, 52, 53]),
-	backreference_escape: new Set([38]),
-	named_group_backreference: new Set([38]),
-	character_class_escape: new Set([41, 74, 81]),
-	count_quantifier_group: new Set([39]),
+	backreference_escape: new Set([44]),
+	named_group_backreference: new Set([44]),
+	character_class_escape: new Set([35, 74, 81]),
+	count_quantifier_group: new Set([45]),
 	unicode_property_value_expression_group: new Set([90])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {};
@@ -1123,6 +1123,22 @@ export const coerceToCharacterClassEscape: ConfigSeat<
 	);
 };
 
+export const coerceToCharacterClassEscapeText1: ConfigSeat<
+	T.CharacterClassEscapeText1.Loose,
+	ReturnType<typeof F.buildCharacterClassEscapeText1>
+> = (input: T.CharacterClassEscapeText1.Loose): ReturnType<typeof F.buildCharacterClassEscapeText1> => {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText1>;
+	return F.buildCharacterClassEscapeText1(input as Parameters<typeof F.buildCharacterClassEscapeText1>[0]);
+};
+
+export const coerceToCharacterClassEscapeText2: ConfigSeat<
+	T.CharacterClassEscapeText2.Loose,
+	ReturnType<typeof F.buildCharacterClassEscapeText2>
+> = (input: T.CharacterClassEscapeText2.Loose): ReturnType<typeof F.buildCharacterClassEscapeText2> => {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText2>;
+	return F.buildCharacterClassEscapeText2(input as Parameters<typeof F.buildCharacterClassEscapeText2>[0]);
+};
+
 export const coerceToUnicodeCharacterEscape: ConfigSeat<
 	T.UnicodeCharacterEscape.Loose,
 	ReturnType<typeof F.buildUnicodeCharacterEscape>
@@ -1398,22 +1414,6 @@ export const coerceToUnicodePropertyValueExpressionGroup: ConfigSeat<
 	);
 };
 
-export const coerceToCharacterClassEscapeText1: ConfigSeat<
-	T.CharacterClassEscapeText1.Loose,
-	ReturnType<typeof F.buildCharacterClassEscapeText1>
-> = (input: T.CharacterClassEscapeText1.Loose): ReturnType<typeof F.buildCharacterClassEscapeText1> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText1>;
-	return F.buildCharacterClassEscapeText1(input as Parameters<typeof F.buildCharacterClassEscapeText1>[0]);
-};
-
-export const coerceToCharacterClassEscapeText2: ConfigSeat<
-	T.CharacterClassEscapeText2.Loose,
-	ReturnType<typeof F.buildCharacterClassEscapeText2>
-> = (input: T.CharacterClassEscapeText2.Loose): ReturnType<typeof F.buildCharacterClassEscapeText2> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCharacterClassEscapeText2>;
-	return F.buildCharacterClassEscapeText2(input as Parameters<typeof F.buildCharacterClassEscapeText2>[0]);
-};
-
 export function coerceToNegation(_input?: T.Negation.Loose): typeof F.buildNegation {
 	return F.buildNegation;
 }
@@ -1569,6 +1569,8 @@ export interface _FromMap {
 	readonly named_group_backreference: typeof coerceToNamedGroupBackreference;
 	readonly decimal_escape: typeof coerceToDecimalEscape;
 	readonly character_class_escape: typeof coerceToCharacterClassEscape;
+	readonly character_class_escape_text1: typeof coerceToCharacterClassEscapeText1;
+	readonly character_class_escape_text2: typeof coerceToCharacterClassEscapeText2;
 	readonly unicode_character_escape: typeof coerceToUnicodeCharacterEscape;
 	readonly unicode_property_value_expression: typeof coerceToUnicodePropertyValueExpression;
 	readonly unicode_property_value: typeof coerceToUnicodePropertyValue;
@@ -1583,8 +1585,6 @@ export interface _FromMap {
 	readonly count_quantifier_arm: typeof coerceToCountQuantifierArm;
 	readonly character_class_escape_arm: typeof coerceToCharacterClassEscapeArm;
 	readonly unicode_property_value_expression_group: typeof coerceToUnicodePropertyValueExpressionGroup;
-	readonly character_class_escape_text1: typeof coerceToCharacterClassEscapeText1;
-	readonly character_class_escape_text2: typeof coerceToCharacterClassEscapeText2;
 	readonly negation: typeof coerceToNegation;
 	readonly inline_flags_group_enable: typeof coerceToInlineFlagsGroupEnable;
 	readonly inline_flags_group_toggle: typeof coerceToInlineFlagsGroupToggle;
@@ -1625,6 +1625,8 @@ export const _fromMap: _FromMap = {
 	named_group_backreference: coerceToNamedGroupBackreference,
 	decimal_escape: coerceToDecimalEscape,
 	character_class_escape: coerceToCharacterClassEscape,
+	character_class_escape_text1: coerceToCharacterClassEscapeText1,
+	character_class_escape_text2: coerceToCharacterClassEscapeText2,
 	unicode_character_escape: coerceToUnicodeCharacterEscape,
 	unicode_property_value_expression: coerceToUnicodePropertyValueExpression,
 	unicode_property_value: coerceToUnicodePropertyValue,
@@ -1639,8 +1641,6 @@ export const _fromMap: _FromMap = {
 	count_quantifier_arm: coerceToCountQuantifierArm,
 	character_class_escape_arm: coerceToCharacterClassEscapeArm,
 	unicode_property_value_expression_group: coerceToUnicodePropertyValueExpressionGroup,
-	character_class_escape_text1: coerceToCharacterClassEscapeText1,
-	character_class_escape_text2: coerceToCharacterClassEscapeText2,
 	negation: coerceToNegation,
 	inline_flags_group_enable: coerceToInlineFlagsGroupEnable,
 	inline_flags_group_toggle: coerceToInlineFlagsGroupToggle,

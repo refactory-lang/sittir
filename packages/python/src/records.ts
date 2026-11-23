@@ -423,6 +423,7 @@ export const records = {
 		format_specifier: { word: 10, width: 3, inline: 3, forms: 8, built: 5 }
 	},
 	FormatSpecifierNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	FormatSpecifierTextNode: { words: 2, builtWords: 2 },
 	TypeConversionNode: { words: 2, builtWords: 2 },
 	IdentifierNode: { words: 2, builtWords: 2 },
 	AwaitNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
@@ -442,7 +443,6 @@ export const records = {
 	SubscriptsNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	DictionaryElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	SliceGroupNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
-	FormatSpecifierTextNode: { words: 2, builtWords: 2 },
 	TypeParamsNode: { words: 5, builtWords: 3, items: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
 	TypeParamsItemsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	TuplePatternElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },

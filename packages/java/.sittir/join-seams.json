@@ -1,7 +1,7 @@
 {
 	"parser": {
-		"source": "79c5d0c2daba94c32344238a7fd239ecbb5b148fa9f41964e48cf7cbc6077e06",
-		"wasm": "6ec2a3fbee8c34eac32fc1f0dca53a708191fda5fea654226d207b66a6dc3e89"
+		"source": "d521da341f3dff554a97a2750b5bb71311e10e6d963aa1c577d6250eeaf55592",
+		"wasm": "5570f88f7daf784a891e01685f226d06b76e480d0dd7f78a2a515fbc9613531c"
 	},
 	"inputs": "5d203b996016f9326c2a4e754d6c06c99cc1f4729a9eab665b9c46b5dda1bd02",
 	"seams": [

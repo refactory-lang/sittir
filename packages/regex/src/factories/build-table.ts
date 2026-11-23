@@ -646,14 +646,14 @@ export interface Ir<Table extends AnyTable> {
 	readonly classCharacter: typeof F.buildClassCharacter;
 	readonly flags: typeof F.buildFlags;
 	readonly decimalEscape: typeof F.buildDecimalEscape;
+	readonly characterClassEscapeText1: typeof F.buildCharacterClassEscapeText1;
+	readonly characterClassEscapeText2: typeof F.buildCharacterClassEscapeText2;
 	readonly unicodeCharacterEscape: typeof F.buildUnicodeCharacterEscape;
 	readonly unicodePropertyValue: typeof F.buildUnicodePropertyValue;
 	readonly controlEscape: typeof F.buildControlEscape;
 	readonly controlLetterEscape: typeof F.buildControlLetterEscape;
 	readonly groupName: typeof F.buildGroupName;
 	readonly decimalDigits: typeof F.buildDecimalDigits;
-	readonly characterClassEscapeText1: typeof F.buildCharacterClassEscapeText1;
-	readonly characterClassEscapeText2: typeof F.buildCharacterClassEscapeText2;
 	readonly unicodePropertyName: typeof F.buildUnicodePropertyName;
 	readonly layout: {
 		readonly tight: typeof F.buildTight;
@@ -991,14 +991,14 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		classCharacter: F.buildClassCharacter,
 		flags: F.buildFlags,
 		decimalEscape: F.buildDecimalEscape,
+		characterClassEscapeText1: F.buildCharacterClassEscapeText1,
+		characterClassEscapeText2: F.buildCharacterClassEscapeText2,
 		unicodeCharacterEscape: F.buildUnicodeCharacterEscape,
 		unicodePropertyValue: F.buildUnicodePropertyValue,
 		controlEscape: F.buildControlEscape,
 		controlLetterEscape: F.buildControlLetterEscape,
 		groupName: F.buildGroupName,
 		decimalDigits: F.buildDecimalDigits,
-		characterClassEscapeText1: F.buildCharacterClassEscapeText1,
-		characterClassEscapeText2: F.buildCharacterClassEscapeText2,
 		unicodePropertyName: F.buildUnicodePropertyName,
 		layout: Object.freeze({
 			tight: F.buildTight,

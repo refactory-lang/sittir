@@ -71,6 +71,8 @@ export const records = {
 		builtWords: 3,
 		content: { word: 2, width: 16, inline: 15, forms: 9, built: 2 }
 	},
+	CharacterClassEscapeText1Node: { words: 2, builtWords: 2 },
+	CharacterClassEscapeText2Node: { words: 2, builtWords: 2 },
 	UnicodeCharacterEscapeNode: { words: 2, builtWords: 2 },
 	UnicodePropertyValueExpressionNode: {
 		words: 10,
@@ -113,8 +115,6 @@ export const records = {
 		builtWords: 3,
 		unicode_property_name: { word: 2, width: 3, forms: 1, built: 2 }
 	},
-	CharacterClassEscapeText1Node: { words: 2, builtWords: 2 },
-	CharacterClassEscapeText2Node: { words: 2, builtWords: 2 },
 	InlineFlagsGroupEnableNode: {
 		words: 10,
 		builtWords: 4,

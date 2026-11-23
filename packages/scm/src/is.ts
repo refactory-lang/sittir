@@ -171,12 +171,12 @@ export interface IsGuards {
 	immediateIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImmediateIdentifier };
-	predicateType<T extends { readonly $type: number } | number>(
-		v: T
-	): v is NarrowTo<T, KindMembers[TSKindId.PredicateType]>;
 	stringContentText<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringContentText };
+	predicateType<T extends { readonly $type: number } | number>(
+		v: T
+	): v is NarrowTo<T, KindMembers[TSKindId.PredicateType]>;
 	anchor<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Anchor>;
 }
 
@@ -192,7 +192,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ListElement, _supertype_listElement_ids],
 	[TSKindId.NamedNodeGroup, _supertype_namedNodeGroup_ids],
 	[TSKindId.Quantifier, new Set<number>([2, 3, 4])],
-	[TSKindId.PredicateType, new Set<number>([4, 18])]
+	[TSKindId.PredicateType, new Set<number>([4, 19])]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -252,8 +252,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Quantifier_guard = _mg(TSKindId.Quantifier);
 	const _kind_Identifier_guard = _g(TSKindId.Identifier);
 	const _kind_ImmediateIdentifier_guard = _g(TSKindId.ImmediateIdentifier);
-	const _kind_PredicateType_guard = _mg(TSKindId.PredicateType);
 	const _kind_StringContentText_guard = _g(TSKindId.StringContentText);
+	const _kind_PredicateType_guard = _mg(TSKindId.PredicateType);
 	const _kind_Anchor_guard = _mg(TSKindId.Anchor);
 	const _form_StringContent_guard = _vg(_g(TSKindId.StringContent), { escapeSequence: _kind_EscapeSequence_guard });
 	const _supertype_namedNode_guard = _vg(_mg(48), {
@@ -310,8 +310,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		quantifier: _kind_Quantifier_guard,
 		identifier: _kind_Identifier_guard,
 		immediateIdentifier: _kind_ImmediateIdentifier_guard,
-		predicateType: _kind_PredicateType_guard,
 		stringContentText: _kind_StringContentText_guard,
+		predicateType: _kind_PredicateType_guard,
 		anchor: _kind_Anchor_guard
 	}) as unknown as IsGuards;
 }

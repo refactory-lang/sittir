@@ -1200,6 +1200,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly this: typeof F.buildThis;
 	readonly super: typeof F.buildSuper;
 	readonly characterLiteral: typeof F.buildCharacterLiteral;
+	readonly escapeSequenceText: typeof F.buildEscapeSequenceText;
 	readonly lineComment: typeof F.buildLineComment;
 	readonly blockComment: typeof F.buildBlockComment;
 	readonly escapeSequenceArm1: typeof F.buildEscapeSequenceArm1;
@@ -1207,7 +1208,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly escapeSequenceArm3: typeof F.buildEscapeSequenceArm3;
 	readonly escapeSequenceArm4: typeof F.buildEscapeSequenceArm4;
 	readonly escapeSequenceArm5: typeof F.buildEscapeSequenceArm5;
-	readonly escapeSequenceText: typeof F.buildEscapeSequenceText;
 	readonly hexIntegerLiteral: typeof F.buildHexIntegerLiteral;
 	readonly stringFragment: typeof F.buildStringFragment;
 	readonly multilineStringFragment: typeof F.buildMultilineStringFragment;
@@ -2059,6 +2059,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		this: F.buildThis,
 		super: F.buildSuper,
 		characterLiteral: F.buildCharacterLiteral,
+		escapeSequenceText: F.buildEscapeSequenceText,
 		lineComment: F.buildLineComment,
 		blockComment: F.buildBlockComment,
 		escapeSequenceArm1: F.buildEscapeSequenceArm1,
@@ -2066,7 +2067,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		escapeSequenceArm3: F.buildEscapeSequenceArm3,
 		escapeSequenceArm4: F.buildEscapeSequenceArm4,
 		escapeSequenceArm5: F.buildEscapeSequenceArm5,
-		escapeSequenceText: F.buildEscapeSequenceText,
 		hexIntegerLiteral: F.buildHexIntegerLiteral,
 		stringFragment: F.buildStringFragment,
 		multilineStringFragment: F.buildMultilineStringFragment,

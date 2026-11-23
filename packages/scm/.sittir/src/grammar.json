@@ -330,6 +330,17 @@
         ]
       }
     },
+    "string_content_text": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 2,
+        "content": {
+          "type": "PATTERN",
+          "value": "[^\"\\\\\\n]+"
+        }
+      }
+    },
     "parameters": {
       "type": "FIELD",
       "name": "elements",
@@ -897,17 +908,6 @@
           }
         }
       ]
-    },
-    "string_content_text": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 2,
-        "content": {
-          "type": "PATTERN",
-          "value": "[^\"\\\\\\n]+"
-        }
-      }
     },
     "_layout": {
       "type": "CHOICE",

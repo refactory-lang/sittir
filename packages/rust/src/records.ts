@@ -32,6 +32,7 @@ export const records = {
 		separator: { word: 3, width: 3, forms: 1, built: 3 },
 		operator: { word: 6, width: 1, forms: 2, built: 4 }
 	},
+	TokenRepetitionPatternTextNode: { words: 2, builtWords: 2 },
 	TokenRepetitionNode: {
 		words: 7,
 		builtWords: 5,
@@ -574,6 +575,7 @@ export const records = {
 		string_open: { word: 2, width: 3, forms: 1, built: 2 },
 		elements: { word: 5, width: 1, run: 3, forms: 1, built: 3 }
 	},
+	StringOpenNode: { words: 2, builtWords: 2 },
 	RawStringLiteralNode: {
 		words: 19,
 		builtWords: 5,
@@ -626,8 +628,6 @@ export const records = {
 	PatternsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	StructPatternElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	UseWildcardGroupNode: { words: 6, builtWords: 3, path: { word: 2, width: 4, forms: 3, built: 2 } },
-	TokenRepetitionPatternTextNode: { words: 2, builtWords: 2 },
-	StringOpenNode: { words: 2, builtWords: 2 },
 	AttributedElementNode: {
 		words: 7,
 		builtWords: 4,

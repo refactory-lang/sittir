@@ -24,9 +24,9 @@ export const triviaFacts = Object.freeze({
 	]),
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
-		75, 76, 77, 78, 79, 85, 87, 88, 89, 90, 91, 92, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108,
-		109, 110, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 253, 254, 255, 256, 257, 258,
-		259, 261, 262, 263, 264, 265, 266, 267, 268, 295, 296, 297, 298, 299
+		76, 77, 78, 79, 80, 86, 88, 89, 90, 91, 92, 93, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108,
+		109, 110, 111, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 253, 254, 255, 256, 257,
+		258, 259, 261, 262, 263, 264, 265, 266, 267, 268, 295, 296, 297, 298, 299
 	]),
 	listKinds: new Set<number>([144, 239, 240, 241, 242, 243, 244, 245, 246, 249, 250, 251, 254]),
 	layout: new Set<number>([125, 126, 127, 128, 129, 130, 131, 132]),
@@ -47,7 +47,7 @@ export const triviaFacts = Object.freeze({
 		[254, ['_const_spec']],
 		[258, ['_type_declaration_group']]
 	]),
-	namedUnits: new Set<number>([5, 69, 70, 71, 72, 81, 93, 137, 177, 188]),
+	namedUnits: new Set<number>([6, 70, 71, 72, 73, 82, 94, 137, 177, 188]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\x09-\x0D\x20]))+)$/u,
 		kindIdByText: Object.freeze({ '': 125, ' ': 126, '\t': 127, '\n': 128, '\n\n': 129, '\n\n\n': 130 })
@@ -55,20 +55,16 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
-	75: [['content', 0, undefined, '_content']],
 	76: [['content', 0, undefined, '_content']],
 	77: [['content', 0, undefined, '_content']],
 	78: [['content', 0, undefined, '_content']],
 	79: [['content', 0, undefined, '_content']],
-	85: [
+	80: [['content', 0, undefined, '_content']],
+	86: [
 		['content', 0, undefined, '_content'],
 		['content2', 1, undefined, '_content2']
 	],
-	87: [['content', 0, undefined, '_content']],
-	88: [
-		['prefix', 0, undefined, '_prefix'],
-		['content', 1, undefined, '_content']
-	],
+	88: [['content', 0, undefined, '_content']],
 	89: [
 		['prefix', 0, undefined, '_prefix'],
 		['content', 1, undefined, '_content']
@@ -77,9 +73,12 @@ export const querySlots: QuerySlots = Object.freeze({
 		['prefix', 0, undefined, '_prefix'],
 		['content', 1, undefined, '_content']
 	],
-	91: [['content', 0, undefined, '_content']],
+	91: [
+		['prefix', 0, undefined, '_prefix'],
+		['content', 1, undefined, '_content']
+	],
 	92: [['content', 0, undefined, '_content']],
-	94: [['content', 0, undefined, '_content']],
+	93: [['content', 0, undefined, '_content']],
 	95: [['content', 0, undefined, '_content']],
 	96: [['content', 0, undefined, '_content']],
 	97: [['content', 0, undefined, '_content']],
@@ -96,6 +95,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	108: [['content', 0, undefined, '_content']],
 	109: [['content', 0, undefined, '_content']],
 	110: [['content', 0, undefined, '_content']],
+	111: [['content', 0, undefined, '_content']],
 	133: [
 		['elements', 0, undefined, '_elements'],
 		['topLevelDeclaration', 1, undefined, '_top_level_declaration']
@@ -418,32 +418,32 @@ export const querySlots: QuerySlots = Object.freeze({
 });
 
 export const structure: StructureTable = Object.freeze({
-	75: {
+	76: {
 		kind: 'escape_sequence_arm1',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm1.content']]
 	},
-	76: {
+	77: {
 		kind: 'escape_sequence_arm2',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm2.content']]
 	},
-	77: {
+	78: {
 		kind: 'escape_sequence_arm3',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm3.content']]
 	},
-	78: {
+	79: {
 		kind: 'escape_sequence_arm4',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm4.content']]
 	},
-	79: {
+	80: {
 		kind: 'escape_sequence_arm5',
 		required: [['_content', 'content']],
 		single: [['_content', 'EscapeSequenceArm5.content']]
 	},
-	85: {
+	86: {
 		kind: 'float_literal_arm1',
 		required: [
 			['_content', 'content'],
@@ -455,12 +455,12 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['content', 'content2']
 	},
-	87: {
+	88: {
 		kind: 'float_literal_arm3',
 		required: [['_content', 'content']],
 		single: [['_content', 'FloatLiteralArm3.content']]
 	},
-	88: {
+	89: {
 		kind: 'float_literal_arm4_arm1',
 		required: [
 			['_prefix', 'prefix'],
@@ -470,7 +470,7 @@ export const structure: StructureTable = Object.freeze({
 		texts: [['_prefix', 'FloatLiteralArm4Arm1.prefix', ['x', 'X']]],
 		config: ['prefix', 'content']
 	},
-	89: {
+	90: {
 		kind: 'float_literal_arm4_arm2',
 		required: [
 			['_prefix', 'prefix'],
@@ -480,7 +480,7 @@ export const structure: StructureTable = Object.freeze({
 		texts: [['_prefix', 'FloatLiteralArm4Arm2.prefix', ['x', 'X']]],
 		config: ['prefix', 'content']
 	},
-	90: {
+	91: {
 		kind: 'float_literal_arm4_arm3',
 		required: [
 			['_prefix', 'prefix'],
@@ -490,93 +490,93 @@ export const structure: StructureTable = Object.freeze({
 		texts: [['_prefix', 'FloatLiteralArm4Arm3.prefix', ['x', 'X']]],
 		config: ['prefix', 'content']
 	},
-	91: {
+	92: {
 		kind: 'imaginary_literal_arm1',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm1.content']]
 	},
-	92: {
+	93: {
 		kind: 'imaginary_literal_arm2',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm2.content']]
 	},
-	94: {
+	95: {
 		kind: 'imaginary_literal_arm4',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm4.content']]
 	},
-	95: {
+	96: {
 		kind: 'imaginary_literal_arm5',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm5.content']]
 	},
-	96: {
+	97: {
 		kind: 'imaginary_literal_arm6',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm6.content']]
 	},
-	97: {
+	98: {
 		kind: 'imaginary_literal_arm7',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm7.content']]
 	},
-	98: {
+	99: {
 		kind: 'imaginary_literal_arm8',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm8.content']]
 	},
-	99: {
+	100: {
 		kind: 'imaginary_literal_arm9',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm9.content']]
 	},
-	100: {
+	101: {
 		kind: 'imaginary_literal_arm10_arm1',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm10Arm1.content']]
 	},
-	101: {
+	102: {
 		kind: 'imaginary_literal_arm10_arm2',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm10Arm2.content']]
 	},
-	102: {
+	103: {
 		kind: 'imaginary_literal_arm10_arm3',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImaginaryLiteralArm10Arm3.content']]
 	},
-	103: {
+	104: {
 		kind: 'rune_literal_arm1',
 		required: [['_content', 'content']],
 		single: [['_content', 'RuneLiteralArm1.content']]
 	},
-	104: {
+	105: {
 		kind: 'rune_literal_arm2_arm1',
 		required: [['_content', 'content']],
 		single: [['_content', 'RuneLiteralArm2Arm1.content']]
 	},
-	105: {
+	106: {
 		kind: 'rune_literal_arm2_arm2',
 		required: [['_content', 'content']],
 		single: [['_content', 'RuneLiteralArm2Arm2.content']]
 	},
-	106: {
+	107: {
 		kind: 'rune_literal_arm2_arm3',
 		required: [['_content', 'content']],
 		single: [['_content', 'RuneLiteralArm2Arm3.content']]
 	},
-	107: {
+	108: {
 		kind: 'rune_literal_arm2_arm4',
 		required: [['_content', 'content']],
 		single: [['_content', 'RuneLiteralArm2Arm4.content']]
 	},
-	108: {
+	109: {
 		kind: 'rune_literal_arm2_arm5',
 		required: [['_content', 'content']],
 		texts: [['_content', 'RuneLiteralArm2Arm5.content', ['a', 'b', 'f', 'n', 'r', 't', 'v', '\\', "'", '"']]]
 	},
-	109: { kind: 'comment_arm1', required: [['_content', 'content']], single: [['_content', 'CommentArm1.content']] },
-	110: { kind: 'comment_arm2', required: [['_content', 'content']], single: [['_content', 'CommentArm2.content']] },
+	110: { kind: 'comment_arm1', required: [['_content', 'content']], single: [['_content', 'CommentArm1.content']] },
+	111: { kind: 'comment_arm2', required: [['_content', 'content']], single: [['_content', 'CommentArm2.content']] },
 	133: {
 		kind: 'source_file',
 		single: [['_top_level_declaration', 'SourceFile.topLevelDeclaration']],
@@ -612,7 +612,7 @@ export const structure: StructureTable = Object.freeze({
 			['_path', 'ImportSpec.path']
 		],
 		nodeOnly: [
-			['_name', 'ImportSpec.name', 'a built PackageIdentifier', [5, 137, 297]],
+			['_name', 'ImportSpec.name', 'a built PackageIdentifier', [6, 137, 297]],
 			['_path', 'ImportSpec.path', 'a built RawStringLiteral / InterpretedStringLiteral', [227, 228]]
 		],
 		config: ['name', 'path']
@@ -1152,7 +1152,7 @@ export const structure: StructureTable = Object.freeze({
 			['_right', 'AssignmentStatement.right', 'a built ExpressionList', [155]]
 		],
 		kindIds: [
-			['_operator', 'AssignmentStatement.operator', [11, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122]]
+			['_operator', 'AssignmentStatement.operator', [12, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123]]
 		],
 		hoisted: [
 			['left', 'AssignmentStatement.left', 'a built ExpressionList', [155, 207]],
@@ -1514,7 +1514,7 @@ export const structure: StructureTable = Object.freeze({
 			],
 			['_operand', 'TypeConversionExpression.operand', 'a built Expression', [207]]
 		],
-		kindIds: [['_trailing_comma', 'TypeConversionExpression.trailingComma', [0, 9]]],
+		kindIds: [['_trailing_comma', 'TypeConversionExpression.trailingComma', [0, 10]]],
 		config: ['type', 'operand', 'trailingComma'],
 		options: ['trailingComma']
 	},
@@ -1620,7 +1620,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		single: [['_operand', 'UnaryExpression.operand']],
 		nodeOnly: [['_operand', 'UnaryExpression.operand', 'a built Expression', [207]]],
-		kindIds: [['_operator', 'UnaryExpression.operator', [19, 27, 48, 49, 50, 51, 52]]],
+		kindIds: [['_operator', 'UnaryExpression.operator', [20, 28, 49, 50, 51, 52, 53]]],
 		config: ['operator', 'operand']
 	},
 	225: {
@@ -1642,7 +1642,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_operator',
 				'BinaryExpression.operator',
-				[19, 25, 48, 49, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65]
+				[20, 26, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66]
 			]
 		],
 		config: ['left', 'operator', 'right']
@@ -1672,14 +1672,14 @@ export const structure: StructureTable = Object.freeze({
 				'_raw_string_literal_content',
 				'RawStringLiteral.rawStringLiteralContent',
 				'buildRawStringLiteralContent(…)',
-				[73]
+				[74]
 			]
 		]
 	},
 	228: {
 		kind: 'interpreted_string_literal',
 		nodeOnly: [
-			['_elements', 'InterpretedStringLiteral.elements', 'buildInterpretedStringLiteralContent(…)', [74, 229]]
+			['_elements', 'InterpretedStringLiteral.elements', 'buildInterpretedStringLiteralContent(…)', [75, 229]]
 		],
 		lists: [['elements', false, 0]]
 	},
@@ -1695,7 +1695,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_statement', 'SourceFileArm1.statement', 'a built Statement', [176]],
-			['_source_file_text', 'SourceFileArm1.sourceFileText', 'buildSourceFileText(…)', [123]]
+			['_source_file_text', 'SourceFileArm1.sourceFileText', 'buildSourceFileText(…)', [2]]
 		],
 		config: ['statement', 'sourceFileText']
 	},
@@ -1716,7 +1716,7 @@ export const structure: StructureTable = Object.freeze({
 				'a built PackageClause / FunctionDeclaration / MethodDeclaration / ImportDeclaration',
 				[134, 135, 145, 146]
 			],
-			['_source_file_text', 'SourceFileArm2.sourceFileText', 'buildSourceFileText(…)', [123]]
+			['_source_file_text', 'SourceFileArm2.sourceFileText', 'buildSourceFileText(…)', [2]]
 		],
 		config: ['topLevelDeclaration', 'sourceFileText']
 	},
@@ -1967,7 +1967,7 @@ export const structure: StructureTable = Object.freeze({
 			['_empty_labeled_statement', 'StatementListGroup.emptyLabeledStatement']
 		],
 		nodeOnly: [
-			['_source_file_text', 'StatementListGroup.sourceFileText', 'buildSourceFileText(…)', [123]],
+			['_source_file_text', 'StatementListGroup.sourceFileText', 'buildSourceFileText(…)', [2]],
 			['_empty_labeled_statement', 'StatementListGroup.emptyLabeledStatement', 'a built EmptyLabeledStatement', [187]]
 		],
 		hoisted: [
@@ -2002,7 +2002,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		single: [['_left', 'ReceiveStatementGroup.left']],
 		nodeOnly: [['_left', 'ReceiveStatementGroup.left', 'a built ExpressionList', [155]]],
-		kindIds: [['_operator', 'ReceiveStatementGroup.operator', [11, 30]]],
+		kindIds: [['_operator', 'ReceiveStatementGroup.operator', [12, 31]]],
 		hoisted: [['left', 'ReceiveStatementGroup.left', 'a built ExpressionList', [155, 207]]],
 		config: ['left', 'operator']
 	},
@@ -2019,7 +2019,7 @@ export const structure: StructureTable = Object.freeze({
 			],
 			['_expression', 'SpecialArgumentListGroup.expressions', 'a built Expression', [207]]
 		],
-		kindIds: [['_trailing_comma', 'SpecialArgumentListGroup.trailingComma', [0, 9]]],
+		kindIds: [['_trailing_comma', 'SpecialArgumentListGroup.trailingComma', [0, 10]]],
 		config: ['type', 'expressions', 'trailingComma'],
 		lists: [['expressions', false, 'key']],
 		options: ['trailingComma']

@@ -37,7 +37,7 @@ export const triviaFacts = Object.freeze({
 
 export const querySlots: QuerySlots = Object.freeze({
 	1: [['content', 0, undefined, '_content']],
-	11: [['content', 0, undefined, '_content']],
+	12: [['content', 0, undefined, '_content']],
 	33: [['definitions', 0, undefined, '_definitions']],
 	39: [['name', 0, undefined, '_name']],
 	40: [['stringContent', 0, undefined, '_string_content']],
@@ -108,7 +108,7 @@ export const querySlots: QuerySlots = Object.freeze({
 
 export const structure: StructureTable = Object.freeze({
 	1: { kind: 'escape_sequence', required: [['_content', 'content']], single: [['_content', 'EscapeSequence.content']] },
-	11: { kind: 'comment', required: [['_content', 'content']], single: [['_content', 'Comment.content']] },
+	12: { kind: 'comment', required: [['_content', 'content']], single: [['_content', 'Comment.content']] },
 	33: {
 		kind: 'program',
 		nodeOnly: [['_definitions', 'Program.definitions', 'a built Definition', [34]]],
@@ -124,18 +124,18 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'string',
 		single: [['_string_content', 'String.stringContent']],
 		nodeOnly: [['_string_content', 'String.stringContent', 'a built StringContent', [42]]],
-		hoisted: [['stringContent', 'String.stringContent', 'a built StringContent', [1, 23, 42]]]
+		hoisted: [['stringContent', 'String.stringContent', 'a built StringContent', [1, 11, 42]]]
 	},
 	41: {
 		kind: 'immediate_string',
 		single: [['_string_content', 'ImmediateString.stringContent']],
 		nodeOnly: [['_string_content', 'ImmediateString.stringContent', 'a built StringContent', [42]]],
-		hoisted: [['stringContent', 'ImmediateString.stringContent', 'a built StringContent', [1, 23, 42]]]
+		hoisted: [['stringContent', 'ImmediateString.stringContent', 'a built StringContent', [1, 11, 42]]]
 	},
 	42: {
 		kind: 'string_content',
 		nonEmpty: [['_content', 'string_content.children']],
-		nodeOnly: [['_content', 'StringContent.contents', 'buildStringContentText(…)', [1, 23]]],
+		nodeOnly: [['_content', 'StringContent.contents', 'buildStringContentText(…)', [1, 11]]],
 		lists: [['contents', false, 0]]
 	},
 	43: {
@@ -229,8 +229,8 @@ export const structure: StructureTable = Object.freeze({
 			['_parameters', 'Predicate.parameters', 'a built Parameters', [43]]
 		],
 		kindIds: [
-			['_prefix', 'Predicate.prefix', [19, 20]],
-			['_type', 'Predicate.type', [4, 18]]
+			['_prefix', 'Predicate.prefix', [20, 21]],
+			['_type', 'Predicate.type', [4, 19]]
 		],
 		hoisted: [['parameters', 'Predicate.parameters', 'a built Parameters', [5, 39, 40, 43]]],
 		config: ['prefix', 'name', 'type', 'parameters']

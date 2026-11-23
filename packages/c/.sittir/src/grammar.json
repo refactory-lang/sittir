@@ -305,6 +305,17 @@
         }
       ]
     },
+    "preproc_include_text1": {
+      "type": "PATTERN",
+      "value": "#[ \t]*include"
+    },
+    "preproc_include_text2": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "\\r?\\n"
+      }
+    },
     "preproc_def": {
       "type": "SEQ",
       "members": [
@@ -346,6 +357,10 @@
           "name": "preproc_include_text2"
         }
       ]
+    },
+    "preproc_def_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*define"
     },
     "preproc_function_def": {
       "type": "SEQ",
@@ -543,6 +558,14 @@
         ]
       }
     },
+    "preproc_if_text1": {
+      "type": "PATTERN",
+      "value": "#[ \t]*if"
+    },
+    "preproc_if_text2": {
+      "type": "PATTERN",
+      "value": "#[ \t]*endif"
+    },
     "preproc_ifdef": {
       "type": "PREC",
       "value": 0,
@@ -641,6 +664,14 @@
         ]
       }
     },
+    "preproc_ifdef_text1": {
+      "type": "PATTERN",
+      "value": "#[ \t]*ifdef"
+    },
+    "preproc_ifdef_text2": {
+      "type": "PATTERN",
+      "value": "#[ \t]*ifndef"
+    },
     "preproc_else": {
       "type": "PREC",
       "value": 0,
@@ -672,6 +703,10 @@
           }
         ]
       }
+    },
+    "preproc_else_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*else"
     },
     "preproc_elif": {
       "type": "PREC",
@@ -745,6 +780,10 @@
           }
         ]
       }
+    },
+    "preproc_elif_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*elif"
     },
     "preproc_elifdef": {
       "type": "PREC",
@@ -834,6 +873,14 @@
           }
         ]
       }
+    },
+    "preproc_elifdef_text1": {
+      "type": "PATTERN",
+      "value": "#[ \t]*elifdef"
+    },
+    "preproc_elifdef_text2": {
+      "type": "PATTERN",
+      "value": "#[ \t]*elifndef"
     },
     "preproc_if_in_field_declaration_list": {
       "type": "PREC",
@@ -13862,53 +13909,6 @@
     "_kw_short": {
       "type": "STRING",
       "value": "short"
-    },
-    "preproc_include_text1": {
-      "type": "PATTERN",
-      "value": "#[ \t]*include"
-    },
-    "preproc_include_text2": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "\\r?\\n"
-      }
-    },
-    "preproc_def_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*define"
-    },
-    "preproc_if_text1": {
-      "type": "PATTERN",
-      "value": "#[ \t]*if"
-    },
-    "preproc_if_text2": {
-      "type": "PATTERN",
-      "value": "#[ \t]*endif"
-    },
-    "preproc_ifdef_text1": {
-      "type": "PATTERN",
-      "value": "#[ \t]*ifdef"
-    },
-    "preproc_ifdef_text2": {
-      "type": "PATTERN",
-      "value": "#[ \t]*ifndef"
-    },
-    "preproc_else_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*else"
-    },
-    "preproc_elif_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*elif"
-    },
-    "preproc_elifdef_text1": {
-      "type": "PATTERN",
-      "value": "#[ \t]*elifdef"
-    },
-    "preproc_elifdef_text2": {
-      "type": "PATTERN",
-      "value": "#[ \t]*elifndef"
     },
     "_layout": {
       "type": "CHOICE",

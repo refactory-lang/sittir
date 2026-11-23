@@ -6090,6 +6090,17 @@
         }
       ]
     },
+    "format_specifier_text": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "PATTERN",
+          "value": "[^{}\\n]+"
+        }
+      }
+    },
     "type_conversion": {
       "type": "PATTERN",
       "value": "![a-z]"
@@ -7170,17 +7181,6 @@
           }
         }
       ]
-    },
-    "format_specifier_text": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 1,
-        "content": {
-          "type": "PATTERN",
-          "value": "[^{}\\n]+"
-        }
-      }
     },
     "type_param": {
       "type": "CHOICE",

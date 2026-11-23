@@ -72,30 +72,30 @@ pub const LAMBDA_KEYWORD: KindId = KindId(61);
 pub const YIELD_KEYWORD: KindId = KindId(62);
 pub const ELLIPSIS: KindId = KindId(63);
 pub const BSLASH: KindId = KindId(64);
-pub const TYPE_CONVERSION: KindId = KindId(65);
-pub const PRINT_KEYWORD: KindId = KindId(66);
-pub const ASYNC_KEYWORD: KindId = KindId(67);
-pub const AWAIT_KEYWORD: KindId = KindId(68);
-pub const TRUE: KindId = KindId(69);
-pub const FALSE: KindId = KindId(70);
-pub const NONE: KindId = KindId(71);
-pub const COMMENT: KindId = KindId(72);
-pub const SEMI: KindId = KindId(73);
-pub const DASH_GT: KindId = KindId(74);
-pub const PLUS_EQ: KindId = KindId(75);
-pub const DASH_EQ: KindId = KindId(76);
-pub const STAR_EQ: KindId = KindId(77);
-pub const SLASH_EQ: KindId = KindId(78);
-pub const AT_EQ: KindId = KindId(79);
-pub const SLASH_SLASH_EQ: KindId = KindId(80);
-pub const PERCENT_EQ: KindId = KindId(81);
-pub const STAR_STAR_EQ: KindId = KindId(82);
-pub const GT_GT_EQ: KindId = KindId(83);
-pub const LT_LT_EQ: KindId = KindId(84);
-pub const AMP_EQ: KindId = KindId(85);
-pub const CARET_EQ: KindId = KindId(86);
-pub const PIPE_EQ: KindId = KindId(87);
-pub const FORMAT_SPECIFIER_TEXT: KindId = KindId(88);
+pub const FORMAT_SPECIFIER_TEXT: KindId = KindId(65);
+pub const TYPE_CONVERSION: KindId = KindId(66);
+pub const PRINT_KEYWORD: KindId = KindId(67);
+pub const ASYNC_KEYWORD: KindId = KindId(68);
+pub const AWAIT_KEYWORD: KindId = KindId(69);
+pub const TRUE: KindId = KindId(70);
+pub const FALSE: KindId = KindId(71);
+pub const NONE: KindId = KindId(72);
+pub const COMMENT: KindId = KindId(73);
+pub const SEMI: KindId = KindId(74);
+pub const DASH_GT: KindId = KindId(75);
+pub const PLUS_EQ: KindId = KindId(76);
+pub const DASH_EQ: KindId = KindId(77);
+pub const STAR_EQ: KindId = KindId(78);
+pub const SLASH_EQ: KindId = KindId(79);
+pub const AT_EQ: KindId = KindId(80);
+pub const SLASH_SLASH_EQ: KindId = KindId(81);
+pub const PERCENT_EQ: KindId = KindId(82);
+pub const STAR_STAR_EQ: KindId = KindId(83);
+pub const GT_GT_EQ: KindId = KindId(84);
+pub const LT_LT_EQ: KindId = KindId(85);
+pub const AMP_EQ: KindId = KindId(86);
+pub const CARET_EQ: KindId = KindId(87);
+pub const PIPE_EQ: KindId = KindId(88);
 pub const UNDERSCORE: KindId = KindId(89);
 pub const INTEGER_HEX_LONG: KindId = KindId(90);
 pub const INTEGER_HEX_PLAIN: KindId = KindId(91);
@@ -381,7 +381,7 @@ const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[KindId(141), KindId(186), KindId(198), KindId(199), KindId(223), KindId(248), KindId(265), KindId(266), KindId(267), KindId(268), KindId(269), KindId(270), KindId(271), KindId(272), KindId(273), KindId(278), KindId(279), KindId(280), KindId(281), KindId(285), KindId(286), KindId(305), KindId(306), KindId(362)],
-    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(30), KindId(31), KindId(32), KindId(33), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53), KindId(54), KindId(55), KindId(56), KindId(57), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(66), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(74), KindId(75), KindId(76), KindId(77), KindId(78), KindId(79), KindId(80), KindId(81), KindId(82), KindId(83), KindId(84), KindId(85), KindId(86), KindId(87), KindId(89), KindId(112), KindId(113), KindId(114), KindId(115), KindId(116), KindId(117), KindId(118), KindId(119), KindId(120), KindId(121), KindId(122), KindId(123), KindId(128), KindId(129), KindId(130), KindId(131), KindId(132), KindId(143), KindId(153), KindId(154), KindId(155), KindId(216), KindId(217), KindId(258), KindId(263), KindId(264), KindId(289)],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(30), KindId(31), KindId(32), KindId(33), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53), KindId(54), KindId(55), KindId(56), KindId(57), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(72), KindId(75), KindId(76), KindId(77), KindId(78), KindId(79), KindId(80), KindId(81), KindId(82), KindId(83), KindId(84), KindId(85), KindId(86), KindId(87), KindId(88), KindId(89), KindId(112), KindId(113), KindId(114), KindId(115), KindId(116), KindId(117), KindId(118), KindId(119), KindId(120), KindId(121), KindId(122), KindId(123), KindId(128), KindId(129), KindId(130), KindId(131), KindId(132), KindId(143), KindId(153), KindId(154), KindId(155), KindId(216), KindId(217), KindId(258), KindId(263), KindId(264), KindId(289)],
     layout: &[KindId(111), KindId(112)],
     indent: KindId(122),
     dedent: KindId(123),
@@ -392,7 +392,7 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
 pub const ROOT_KINDS: &[KindId] = &[KindId(133)];
 
 /// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.
-pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(39), KindId(66), KindId(38), KindId(67), KindId(68), KindId(22), KindId(120)];
+pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(39), KindId(67), KindId(38), KindId(68), KindId(69), KindId(22), KindId(120)];
 
 /// The display ids that stand for the word rule (an alias of it) and the keyword tokens aliased to each.
 pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[];
@@ -472,30 +472,30 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         62 => "yield", // "yield_keyword"
         63 => "ellipsis", // "ellipsis"
         64 => "\\", // "bslash"
-        65 => "type_conversion", // "type_conversion"
-        66 => "print", // "print_keyword"
-        67 => "async", // "async_keyword"
-        68 => "await", // "await_keyword"
-        69 => "true", // "true"
-        70 => "false", // "false"
-        71 => "none", // "none"
-        72 => "comment", // "comment"
-        73 => ";", // "semi"
-        74 => "->", // "dash_gt"
-        75 => "+=", // "plus_eq"
-        76 => "-=", // "dash_eq"
-        77 => "*=", // "star_eq"
-        78 => "/=", // "slash_eq"
-        79 => "@=", // "at_eq"
-        80 => "//=", // "slash_slash_eq"
-        81 => "%=", // "percent_eq"
-        82 => "**=", // "star_star_eq"
-        83 => ">>=", // "gt_gt_eq"
-        84 => "<<=", // "lt_lt_eq"
-        85 => "&=", // "amp_eq"
-        86 => "^=", // "caret_eq"
-        87 => "|=", // "pipe_eq"
-        88 => "format_specifier_text", // "format_specifier_text"
+        65 => "format_specifier_text", // "format_specifier_text"
+        66 => "type_conversion", // "type_conversion"
+        67 => "print", // "print_keyword"
+        68 => "async", // "async_keyword"
+        69 => "await", // "await_keyword"
+        70 => "true", // "true"
+        71 => "false", // "false"
+        72 => "none", // "none"
+        73 => "comment", // "comment"
+        74 => ";", // "semi"
+        75 => "->", // "dash_gt"
+        76 => "+=", // "plus_eq"
+        77 => "-=", // "dash_eq"
+        78 => "*=", // "star_eq"
+        79 => "/=", // "slash_eq"
+        80 => "@=", // "at_eq"
+        81 => "//=", // "slash_slash_eq"
+        82 => "%=", // "percent_eq"
+        83 => "**=", // "star_star_eq"
+        84 => ">>=", // "gt_gt_eq"
+        85 => "<<=", // "lt_lt_eq"
+        86 => "&=", // "amp_eq"
+        87 => "^=", // "caret_eq"
+        88 => "|=", // "pipe_eq"
         89 => "_", // "underscore"
         90 => "integer_hex_long", // "integer_hex_long"
         91 => "integer_hex_plain", // "integer_hex_plain"

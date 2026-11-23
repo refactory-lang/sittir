@@ -803,12 +803,12 @@
                   "$type": 79,
                   "_decimal_digits": {
                     "$text": "2",
-                    "$type": 39
+                    "$type": 45
                   }
                 },
                 "_decimal_digits": {
                   "$text": "1",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": true
@@ -835,12 +835,12 @@
                   "$type": 79,
                   "_decimal_digits": {
                     "$text": "2",
-                    "$type": 39
+                    "$type": 45
                   }
                 },
                 "_decimal_digits": {
                   "$text": "1",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -855,7 +855,7 @@
                 "$type": 80,
                 "_decimal_digits": {
                   "$text": "3",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -876,7 +876,7 @@
                 },
                 "_decimal_digits": {
                   "$text": "4",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -919,12 +919,12 @@
                 "$type": 79,
                 "_decimal_digits": {
                   "$text": "2",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_decimal_digits": {
                 "$text": "1",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": true
@@ -951,12 +951,12 @@
                 "$type": 79,
                 "_decimal_digits": {
                   "$text": "2",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_decimal_digits": {
                 "$text": "1",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -971,7 +971,7 @@
               "$type": 80,
               "_decimal_digits": {
                 "$text": "3",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -992,7 +992,7 @@
               },
               "_decimal_digits": {
                 "$text": "4",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -1031,12 +1031,12 @@
             "$type": 79,
             "_decimal_digits": {
               "$text": "2",
-              "$type": 39
+              "$type": 45
             }
           },
           "_decimal_digits": {
             "$text": "1",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": true
@@ -1097,12 +1097,12 @@
             "$type": 79,
             "_decimal_digits": {
               "$text": "2",
-              "$type": 39
+              "$type": 45
             }
           },
           "_decimal_digits": {
             "$text": "1",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -1134,7 +1134,7 @@
           "$type": 80,
           "_decimal_digits": {
             "$text": "3",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -1172,7 +1172,7 @@
           },
           "_decimal_digits": {
             "$text": "4",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -1203,12 +1203,12 @@
           "$type": 79,
           "_decimal_digits": {
             "$text": "2",
-            "$type": 39
+            "$type": 45
           }
         },
         "_decimal_digits": {
           "$text": "1",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": true
@@ -1238,12 +1238,12 @@
           "$type": 79,
           "_decimal_digits": {
             "$text": "2",
-            "$type": 39
+            "$type": 45
           }
         },
         "_decimal_digits": {
           "$text": "1",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -1271,7 +1271,7 @@
         "$type": 80,
         "_decimal_digits": {
           "$text": "3",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -1302,7 +1302,7 @@
         },
         "_decimal_digits": {
           "$text": "4",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -1330,12 +1330,12 @@
         "$type": 79,
         "_decimal_digits": {
           "$text": "2",
-          "$type": 39
+          "$type": 45
         }
       },
       "_decimal_digits": {
         "$text": "1",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -1361,12 +1361,12 @@
         "$type": 79,
         "_decimal_digits": {
           "$text": "2",
-          "$type": 39
+          "$type": 45
         }
       },
       "_decimal_digits": {
         "$text": "1",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -1390,7 +1390,7 @@
       "$type": 80,
       "_decimal_digits": {
         "$text": "3",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -1417,7 +1417,7 @@
       },
       "_decimal_digits": {
         "$text": "4",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -1441,7 +1441,7 @@
       "$type": 79,
       "_decimal_digits": {
         "$text": "2",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -1465,7 +1465,7 @@
       "$type": 79,
       "_decimal_digits": {
         "$text": "2",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -7579,11 +7579,11 @@
               "$type": 58,
               "_class_atoms": [
                 {
-                  "$type": 37,
+                  "$type": 43,
                   "_content": "-"
                 },
                 {
-                  "$type": 37,
+                  "$type": 43,
                   "_content": "."
                 }
               ],
@@ -7621,11 +7621,11 @@
             "$type": 58,
             "_class_atoms": [
               {
-                "$type": 37,
+                "$type": 43,
                 "_content": "-"
               },
               {
-                "$type": 37,
+                "$type": 43,
                 "_content": "."
               }
             ],
@@ -7659,11 +7659,11 @@
         "$type": 58,
         "_class_atoms": [
           {
-            "$type": 37,
+            "$type": 43,
             "_content": "-"
           },
           {
-            "$type": 37,
+            "$type": 43,
             "_content": "."
           }
         ],
@@ -7693,11 +7693,11 @@
       "$type": 58,
       "_class_atoms": [
         {
-          "$type": 37,
+          "$type": 43,
           "_content": "-"
         },
         {
-          "$type": 37,
+          "$type": 43,
           "_content": "."
         }
       ],
@@ -7723,7 +7723,7 @@
     "expectedOutput": "\\-",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "-"
     },
     "kind": "render",
@@ -7744,7 +7744,7 @@
     "expectedOutput": "\\.",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "."
     },
     "kind": "render",
@@ -7773,7 +7773,7 @@
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "a"
             }
           },
@@ -7784,7 +7784,7 @@
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "c"
             }
           },
@@ -7794,56 +7794,56 @@
               "$type": 73,
               "_content": {
                 "$text": "\\d",
-                "$type": 41
+                "$type": 35
               }
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "\\"
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "{"
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "("
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "["
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "]"
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": ")"
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "}"
             }
           }
@@ -7873,7 +7873,7 @@
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "a"
           }
         },
@@ -7884,7 +7884,7 @@
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "c"
           }
         },
@@ -7894,56 +7894,56 @@
             "$type": 73,
             "_content": {
               "$text": "\\d",
-              "$type": 41
+              "$type": 35
             }
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "\\"
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "{"
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "("
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "["
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "]"
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": ")"
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "}"
           }
         }
@@ -7969,7 +7969,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "a"
       }
     },
@@ -8014,7 +8014,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "c"
       }
     },
@@ -8041,7 +8041,7 @@
         "$type": 73,
         "_content": {
           "$text": "\\d",
-          "$type": 41
+          "$type": 35
         }
       }
     },
@@ -8065,7 +8065,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "\\"
       }
     },
@@ -8089,7 +8089,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "{"
       }
     },
@@ -8113,7 +8113,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "("
       }
     },
@@ -8137,7 +8137,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "["
       }
     },
@@ -8161,7 +8161,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "]"
       }
     },
@@ -8185,7 +8185,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": ")"
       }
     },
@@ -8209,7 +8209,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "}"
       }
     },
@@ -8231,7 +8231,7 @@
     "expectedOutput": "\\a",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "a"
     },
     "kind": "render",
@@ -8252,7 +8252,7 @@
     "expectedOutput": "\\c",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "c"
     },
     "kind": "render",
@@ -8273,7 +8273,7 @@
     "expectedOutput": "\\\\",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "\\"
     },
     "kind": "render",
@@ -8294,7 +8294,7 @@
     "expectedOutput": "\\{",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "{"
     },
     "kind": "render",
@@ -8315,7 +8315,7 @@
     "expectedOutput": "\\(",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "("
     },
     "kind": "render",
@@ -8336,7 +8336,7 @@
     "expectedOutput": "\\[",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "["
     },
     "kind": "render",
@@ -8357,7 +8357,7 @@
     "expectedOutput": "\\]",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "]"
     },
     "kind": "render",
@@ -8378,7 +8378,7 @@
     "expectedOutput": "\\)",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": ")"
     },
     "kind": "render",
@@ -8399,7 +8399,7 @@
     "expectedOutput": "\\}",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "}"
     },
     "kind": "render",
@@ -8423,7 +8423,7 @@
       "$type": 73,
       "_content": {
         "$text": "\\d",
-        "$type": 41
+        "$type": 35
       }
     },
     "kind": "render",
@@ -9119,7 +9119,7 @@
               "$type": 73,
               "_content": {
                 "$text": "\\S",
-                "$type": 41
+                "$type": 35
               }
             }
           },
@@ -9129,7 +9129,7 @@
               "$type": 73,
               "_content": {
                 "$text": "\\w",
-                "$type": 41
+                "$type": 35
               }
             }
           },
@@ -9137,7 +9137,7 @@
             "$type": 78,
             "_content": {
               "$text": "\\cZ",
-              "$type": 36
+              "$type": 42
             }
           }
         ]
@@ -9169,7 +9169,7 @@
             "$type": 73,
             "_content": {
               "$text": "\\S",
-              "$type": 41
+              "$type": 35
             }
           }
         },
@@ -9179,7 +9179,7 @@
             "$type": 73,
             "_content": {
               "$text": "\\w",
-              "$type": 41
+              "$type": 35
             }
           }
         },
@@ -9187,7 +9187,7 @@
           "$type": 78,
           "_content": {
             "$text": "\\cZ",
-            "$type": 36
+            "$type": 42
           }
         }
       ]
@@ -9215,7 +9215,7 @@
         "$type": 73,
         "_content": {
           "$text": "\\S",
-          "$type": 41
+          "$type": 35
         }
       }
     },
@@ -9242,7 +9242,7 @@
         "$type": 73,
         "_content": {
           "$text": "\\w",
-          "$type": 41
+          "$type": 35
         }
       }
     },
@@ -9267,7 +9267,7 @@
       "$type": 78,
       "_content": {
         "$text": "\\cZ",
-        "$type": 36
+        "$type": 42
       }
     },
     "kind": "render",
@@ -9291,7 +9291,7 @@
       "$type": 73,
       "_content": {
         "$text": "\\S",
-        "$type": 41
+        "$type": 35
       }
     },
     "kind": "render",
@@ -9315,7 +9315,7 @@
       "$type": 73,
       "_content": {
         "$text": "\\w",
-        "$type": 41
+        "$type": 35
       }
     },
     "kind": "render",
@@ -9711,13 +9711,13 @@
                 "$type": 81,
                 "_character_class_escape_text2": {
                   "$text": "\\p",
-                  "$type": 42
+                  "$type": 36
                 },
                 "_unicode_property_value_expression": {
                   "$type": 75,
                   "_unicode_property_value": {
                     "$text": "Decimal_Number",
-                    "$type": 35
+                    "$type": 39
                   },
                   "_unicode_property_value_expression_group": {
                     "$type": 82,
@@ -9761,13 +9761,13 @@
               "$type": 81,
               "_character_class_escape_text2": {
                 "$text": "\\p",
-                "$type": 42
+                "$type": 36
               },
               "_unicode_property_value_expression": {
                 "$type": 75,
                 "_unicode_property_value": {
                   "$text": "Decimal_Number",
-                  "$type": 35
+                  "$type": 39
                 },
                 "_unicode_property_value_expression_group": {
                   "$type": 82,
@@ -9807,13 +9807,13 @@
           "$type": 81,
           "_character_class_escape_text2": {
             "$text": "\\p",
-            "$type": 42
+            "$type": 36
           },
           "_unicode_property_value_expression": {
             "$type": 75,
             "_unicode_property_value": {
               "$text": "Decimal_Number",
-              "$type": 35
+              "$type": 39
             },
             "_unicode_property_value_expression_group": {
               "$type": 82,
@@ -9849,13 +9849,13 @@
         "$type": 81,
         "_character_class_escape_text2": {
           "$text": "\\p",
-          "$type": 42
+          "$type": 36
         },
         "_unicode_property_value_expression": {
           "$type": 75,
           "_unicode_property_value": {
             "$text": "Decimal_Number",
-            "$type": 35
+            "$type": 39
           },
           "_unicode_property_value_expression_group": {
             "$type": 82,
@@ -9888,13 +9888,13 @@
       "$type": 81,
       "_character_class_escape_text2": {
         "$text": "\\p",
-        "$type": 42
+        "$type": 36
       },
       "_unicode_property_value_expression": {
         "$type": 75,
         "_unicode_property_value": {
           "$text": "Decimal_Number",
-          "$type": 35
+          "$type": 39
         },
         "_unicode_property_value_expression_group": {
           "$type": 82,
@@ -9926,7 +9926,7 @@
       "$type": 75,
       "_unicode_property_value": {
         "$text": "Decimal_Number",
-        "$type": 35
+        "$type": 39
       },
       "_unicode_property_value_expression_group": {
         "$type": 82,
@@ -9991,13 +9991,13 @@
                 "$type": 81,
                 "_character_class_escape_text2": {
                   "$text": "\\p",
-                  "$type": 42
+                  "$type": 36
                 },
                 "_unicode_property_value_expression": {
                   "$type": 75,
                   "_unicode_property_value": {
                     "$text": "Decimal_Number",
-                    "$type": 35
+                    "$type": 39
                   }
                 }
               }
@@ -10034,13 +10034,13 @@
               "$type": 81,
               "_character_class_escape_text2": {
                 "$text": "\\p",
-                "$type": 42
+                "$type": 36
               },
               "_unicode_property_value_expression": {
                 "$type": 75,
                 "_unicode_property_value": {
                   "$text": "Decimal_Number",
-                  "$type": 35
+                  "$type": 39
                 }
               }
             }
@@ -10073,13 +10073,13 @@
           "$type": 81,
           "_character_class_escape_text2": {
             "$text": "\\p",
-            "$type": 42
+            "$type": 36
           },
           "_unicode_property_value_expression": {
             "$type": 75,
             "_unicode_property_value": {
               "$text": "Decimal_Number",
-              "$type": 35
+              "$type": 39
             }
           }
         }
@@ -10108,13 +10108,13 @@
         "$type": 81,
         "_character_class_escape_text2": {
           "$text": "\\p",
-          "$type": 42
+          "$type": 36
         },
         "_unicode_property_value_expression": {
           "$type": 75,
           "_unicode_property_value": {
             "$text": "Decimal_Number",
-            "$type": 35
+            "$type": 39
           }
         }
       }
@@ -10140,13 +10140,13 @@
       "$type": 81,
       "_character_class_escape_text2": {
         "$text": "\\p",
-        "$type": 42
+        "$type": 36
       },
       "_unicode_property_value_expression": {
         "$type": 75,
         "_unicode_property_value": {
           "$text": "Decimal_Number",
-          "$type": 35
+          "$type": 39
         }
       }
     },
@@ -10171,7 +10171,7 @@
       "$type": 75,
       "_unicode_property_value": {
         "$text": "Decimal_Number",
-        "$type": 35
+        "$type": 39
       }
     },
     "kind": "render",
@@ -10697,7 +10697,7 @@
               "$type": 63,
               "_group_name": {
                 "$text": "the_world",
-                "$type": 38
+                "$type": 44
               },
               "_operator": 11,
               "_pattern": {
@@ -10731,7 +10731,7 @@
               "$type": 63,
               "_group_name": {
                 "$text": "python",
-                "$type": 38
+                "$type": 44
               },
               "_operator": 22,
               "_pattern": {
@@ -10847,7 +10847,7 @@
             "$type": 63,
             "_group_name": {
               "$text": "the_world",
-              "$type": 38
+              "$type": 44
             },
             "_operator": 11,
             "_pattern": {
@@ -10881,7 +10881,7 @@
             "$type": 63,
             "_group_name": {
               "$text": "python",
-              "$type": 38
+              "$type": 44
             },
             "_operator": 22,
             "_pattern": {
@@ -10987,7 +10987,7 @@
         "$type": 63,
         "_group_name": {
           "$text": "the_world",
-          "$type": 38
+          "$type": 44
         },
         "_operator": 11,
         "_pattern": {
@@ -11056,7 +11056,7 @@
         "$type": 63,
         "_group_name": {
           "$text": "python",
-          "$type": 38
+          "$type": 44
         },
         "_operator": 22,
         "_pattern": {
@@ -11123,7 +11123,7 @@
       "$type": 63,
       "_group_name": {
         "$text": "the_world",
-        "$type": 38
+        "$type": 44
       },
       "_operator": 11,
       "_pattern": {
@@ -11164,7 +11164,7 @@
       "$type": 63,
       "_group_name": {
         "$text": "python",
-        "$type": 38
+        "$type": 44
       },
       "_operator": 22,
       "_pattern": {
@@ -11255,7 +11255,7 @@
               "$type": 63,
               "_group_name": {
                 "$text": "the_world",
-                "$type": 38
+                "$type": 44
               },
               "_operator": 11,
               "_pattern": {
@@ -11282,7 +11282,7 @@
               "$type": 71,
               "_group_name": {
                 "$text": "the_world",
-                "$type": 38
+                "$type": 44
               }
             }
           },
@@ -11299,7 +11299,7 @@
               "$type": 63,
               "_group_name": {
                 "$text": "python",
-                "$type": 38
+                "$type": 44
               },
               "_operator": 22,
               "_pattern": {
@@ -11326,7 +11326,7 @@
               "$type": 72,
               "_group_name": {
                 "$text": "python",
-                "$type": 38
+                "$type": 44
               }
             }
           }
@@ -11425,7 +11425,7 @@
             "$type": 63,
             "_group_name": {
               "$text": "the_world",
-              "$type": 38
+              "$type": 44
             },
             "_operator": 11,
             "_pattern": {
@@ -11452,7 +11452,7 @@
             "$type": 71,
             "_group_name": {
               "$text": "the_world",
-              "$type": 38
+              "$type": 44
             }
           }
         },
@@ -11469,7 +11469,7 @@
             "$type": 63,
             "_group_name": {
               "$text": "python",
-              "$type": 38
+              "$type": 44
             },
             "_operator": 22,
             "_pattern": {
@@ -11496,7 +11496,7 @@
             "$type": 72,
             "_group_name": {
               "$text": "python",
-              "$type": 38
+              "$type": 44
             }
           }
         }
@@ -11585,7 +11585,7 @@
         "$type": 63,
         "_group_name": {
           "$text": "the_world",
-          "$type": 38
+          "$type": 44
         },
         "_operator": 11,
         "_pattern": {
@@ -11654,7 +11654,7 @@
         "$type": 71,
         "_group_name": {
           "$text": "the_world",
-          "$type": 38
+          "$type": 44
         }
       }
     },
@@ -11681,7 +11681,7 @@
         "$type": 63,
         "_group_name": {
           "$text": "python",
-          "$type": 38
+          "$type": 44
         },
         "_operator": 22,
         "_pattern": {
@@ -11750,7 +11750,7 @@
         "$type": 72,
         "_group_name": {
           "$text": "python",
-          "$type": 38
+          "$type": 44
         }
       }
     },
@@ -11775,7 +11775,7 @@
       "$type": 63,
       "_group_name": {
         "$text": "the_world",
-        "$type": 38
+        "$type": 44
       },
       "_operator": 11,
       "_pattern": {
@@ -11816,7 +11816,7 @@
       "$type": 63,
       "_group_name": {
         "$text": "python",
-        "$type": 38
+        "$type": 44
       },
       "_operator": 22,
       "_pattern": {
@@ -11899,7 +11899,7 @@
       "$type": 71,
       "_group_name": {
         "$text": "the_world",
-        "$type": 38
+        "$type": 44
       }
     },
     "kind": "render",
@@ -11923,7 +11923,7 @@
       "$type": 72,
       "_group_name": {
         "$text": "python",
-        "$type": 38
+        "$type": 44
       }
     },
     "kind": "render",
@@ -11955,7 +11955,7 @@
               "$type": 63,
               "_group_name": {
                 "$text": "year",
-                "$type": 38
+                "$type": 44
               },
               "_operator": 11,
               "_pattern": {
@@ -11990,7 +11990,7 @@
                           "$type": 80,
                           "_decimal_digits": {
                             "$text": "4",
-                            "$type": 39
+                            "$type": 45
                           }
                         },
                         "_lazy": false
@@ -12014,7 +12014,7 @@
               "$type": 63,
               "_group_name": {
                 "$text": "month",
-                "$type": 38
+                "$type": 44
               },
               "_operator": 11,
               "_pattern": {
@@ -12049,7 +12049,7 @@
                           "$type": 80,
                           "_decimal_digits": {
                             "$text": "2",
-                            "$type": 39
+                            "$type": 45
                           }
                         },
                         "_lazy": false
@@ -12073,7 +12073,7 @@
               "$type": 63,
               "_group_name": {
                 "$text": "day",
-                "$type": 38
+                "$type": 44
               },
               "_operator": 11,
               "_pattern": {
@@ -12108,7 +12108,7 @@
                           "$type": 80,
                           "_decimal_digits": {
                             "$text": "2",
-                            "$type": 39
+                            "$type": 45
                           }
                         },
                         "_lazy": false
@@ -12171,7 +12171,7 @@
                 "$type": 80,
                 "_decimal_digits": {
                   "$text": "4",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -12229,7 +12229,7 @@
                 "$type": 80,
                 "_decimal_digits": {
                   "$text": "2",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -12287,7 +12287,7 @@
                 "$type": 80,
                 "_decimal_digits": {
                   "$text": "2",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -12322,7 +12322,7 @@
             "$type": 63,
             "_group_name": {
               "$text": "year",
-              "$type": 38
+              "$type": 44
             },
             "_operator": 11,
             "_pattern": {
@@ -12357,7 +12357,7 @@
                         "$type": 80,
                         "_decimal_digits": {
                           "$text": "4",
-                          "$type": 39
+                          "$type": 45
                         }
                       },
                       "_lazy": false
@@ -12381,7 +12381,7 @@
             "$type": 63,
             "_group_name": {
               "$text": "month",
-              "$type": 38
+              "$type": 44
             },
             "_operator": 11,
             "_pattern": {
@@ -12416,7 +12416,7 @@
                         "$type": 80,
                         "_decimal_digits": {
                           "$text": "2",
-                          "$type": 39
+                          "$type": 45
                         }
                       },
                       "_lazy": false
@@ -12440,7 +12440,7 @@
             "$type": 63,
             "_group_name": {
               "$text": "day",
-              "$type": 38
+              "$type": 44
             },
             "_operator": 11,
             "_pattern": {
@@ -12475,7 +12475,7 @@
                         "$type": 80,
                         "_decimal_digits": {
                           "$text": "2",
-                          "$type": 39
+                          "$type": 45
                         }
                       },
                       "_lazy": false
@@ -12535,7 +12535,7 @@
               "$type": 80,
               "_decimal_digits": {
                 "$text": "4",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -12590,7 +12590,7 @@
               "$type": 80,
               "_decimal_digits": {
                 "$text": "2",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -12645,7 +12645,7 @@
               "$type": 80,
               "_decimal_digits": {
                 "$text": "2",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -12676,7 +12676,7 @@
         "$type": 63,
         "_group_name": {
           "$text": "year",
-          "$type": 38
+          "$type": 44
         },
         "_operator": 11,
         "_pattern": {
@@ -12711,7 +12711,7 @@
                     "$type": 80,
                     "_decimal_digits": {
                       "$text": "4",
-                      "$type": 39
+                      "$type": 45
                     }
                   },
                   "_lazy": false
@@ -12766,7 +12766,7 @@
           "$type": 80,
           "_decimal_digits": {
             "$text": "4",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -12819,7 +12819,7 @@
         "$type": 63,
         "_group_name": {
           "$text": "month",
-          "$type": 38
+          "$type": 44
         },
         "_operator": 11,
         "_pattern": {
@@ -12854,7 +12854,7 @@
                     "$type": 80,
                     "_decimal_digits": {
                       "$text": "2",
-                      "$type": 39
+                      "$type": 45
                     }
                   },
                   "_lazy": false
@@ -12909,7 +12909,7 @@
           "$type": 80,
           "_decimal_digits": {
             "$text": "2",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -12962,7 +12962,7 @@
         "$type": 63,
         "_group_name": {
           "$text": "day",
-          "$type": 38
+          "$type": 44
         },
         "_operator": 11,
         "_pattern": {
@@ -12997,7 +12997,7 @@
                     "$type": 80,
                     "_decimal_digits": {
                       "$text": "2",
-                      "$type": 39
+                      "$type": 45
                     }
                   },
                   "_lazy": false
@@ -13052,7 +13052,7 @@
           "$type": 80,
           "_decimal_digits": {
             "$text": "2",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -13079,7 +13079,7 @@
       "$type": 63,
       "_group_name": {
         "$text": "year",
-        "$type": 38
+        "$type": 44
       },
       "_operator": 11,
       "_pattern": {
@@ -13114,7 +13114,7 @@
                   "$type": 80,
                   "_decimal_digits": {
                     "$text": "4",
-                    "$type": 39
+                    "$type": 45
                   }
                 },
                 "_lazy": false
@@ -13145,7 +13145,7 @@
       "$type": 63,
       "_group_name": {
         "$text": "month",
-        "$type": 38
+        "$type": 44
       },
       "_operator": 11,
       "_pattern": {
@@ -13180,7 +13180,7 @@
                   "$type": 80,
                   "_decimal_digits": {
                     "$text": "2",
-                    "$type": 39
+                    "$type": 45
                   }
                 },
                 "_lazy": false
@@ -13211,7 +13211,7 @@
       "$type": 63,
       "_group_name": {
         "$text": "day",
-        "$type": 38
+        "$type": 44
       },
       "_operator": 11,
       "_pattern": {
@@ -13246,7 +13246,7 @@
                   "$type": 80,
                   "_decimal_digits": {
                     "$text": "2",
-                    "$type": 39
+                    "$type": 45
                   }
                 },
                 "_lazy": false
@@ -13471,7 +13471,7 @@
         "$type": 80,
         "_decimal_digits": {
           "$text": "4",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -13499,7 +13499,7 @@
         "$type": 80,
         "_decimal_digits": {
           "$text": "2",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -13527,7 +13527,7 @@
         "$type": 80,
         "_decimal_digits": {
           "$text": "2",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -13553,7 +13553,7 @@
       "$type": 80,
       "_decimal_digits": {
         "$text": "4",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -13577,7 +13577,7 @@
       "$type": 80,
       "_decimal_digits": {
         "$text": "2",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -13601,7 +13601,7 @@
       "$type": 80,
       "_decimal_digits": {
         "$text": "2",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -13686,7 +13686,7 @@
                   "$type": 20
                 },
                 {
-                  "$type": 37,
+                  "$type": 43,
                   "_content": "+"
                 },
                 {
@@ -13714,12 +13714,12 @@
                   "$type": 79,
                   "_decimal_digits": {
                     "$text": "256",
-                    "$type": 39
+                    "$type": 45
                   }
                 },
                 "_decimal_digits": {
                   "$text": "2",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -13735,7 +13735,7 @@
             },
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "."
             }
           },
@@ -13768,12 +13768,12 @@
                   "$type": 79,
                   "_decimal_digits": {
                     "$text": "6",
-                    "$type": 39
+                    "$type": 45
                   }
                 },
                 "_decimal_digits": {
                   "$text": "2",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_lazy": false
@@ -13857,7 +13857,7 @@
                             "$type": 20
                           },
                           {
-                            "$type": 37,
+                            "$type": 43,
                             "_content": "+"
                           },
                           {
@@ -13987,7 +13987,7 @@
                   "$type": 20
                 },
                 {
-                  "$type": 37,
+                  "$type": 43,
                   "_content": "+"
                 },
                 {
@@ -14114,7 +14114,7 @@
                 "$type": 20
               },
               {
-                "$type": 37,
+                "$type": 43,
                 "_content": "+"
               },
               {
@@ -14142,12 +14142,12 @@
                 "$type": 79,
                 "_decimal_digits": {
                   "$text": "256",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_decimal_digits": {
                 "$text": "2",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -14163,7 +14163,7 @@
           },
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "."
           }
         },
@@ -14196,12 +14196,12 @@
                 "$type": 79,
                 "_decimal_digits": {
                   "$text": "6",
-                  "$type": 39
+                  "$type": 45
                 }
               },
               "_decimal_digits": {
                 "$text": "2",
-                "$type": 39
+                "$type": 45
               }
             },
             "_lazy": false
@@ -14285,7 +14285,7 @@
                           "$type": 20
                         },
                         {
-                          "$type": 37,
+                          "$type": 43,
                           "_content": "+"
                         },
                         {
@@ -14412,7 +14412,7 @@
                 "$type": 20
               },
               {
-                "$type": 37,
+                "$type": 43,
                 "_content": "+"
               },
               {
@@ -14535,7 +14535,7 @@
             "$type": 20
           },
           {
-            "$type": 37,
+            "$type": 43,
             "_content": "+"
           },
           {
@@ -14563,12 +14563,12 @@
             "$type": 79,
             "_decimal_digits": {
               "$text": "256",
-              "$type": 39
+              "$type": 45
             }
           },
           "_decimal_digits": {
             "$text": "2",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -14594,7 +14594,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "."
       }
     },
@@ -14644,12 +14644,12 @@
             "$type": 79,
             "_decimal_digits": {
               "$text": "6",
-              "$type": 39
+              "$type": 45
             }
           },
           "_decimal_digits": {
             "$text": "2",
-            "$type": 39
+            "$type": 45
           }
         },
         "_lazy": false
@@ -14767,7 +14767,7 @@
                       "$type": 20
                     },
                     {
-                      "$type": 37,
+                      "$type": 43,
                       "_content": "+"
                     },
                     {
@@ -14889,7 +14889,7 @@
             "$type": 20
           },
           {
-            "$type": 37,
+            "$type": 43,
             "_content": "+"
           },
           {
@@ -15008,7 +15008,7 @@
           "$type": 20
         },
         {
-          "$type": 37,
+          "$type": 43,
           "_content": "+"
         },
         {
@@ -15134,7 +15134,7 @@
           "$type": 20
         },
         {
-          "$type": 37,
+          "$type": 43,
           "_content": "+"
         },
         {
@@ -15388,7 +15388,7 @@
     "expectedOutput": "\\+",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "+"
     },
     "kind": "render",
@@ -15409,7 +15409,7 @@
     "expectedOutput": "\\.",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "."
     },
     "kind": "render",
@@ -15430,7 +15430,7 @@
     "expectedOutput": "\\+",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "+"
     },
     "kind": "render",
@@ -15458,12 +15458,12 @@
           "$type": 79,
           "_decimal_digits": {
             "$text": "256",
-            "$type": 39
+            "$type": 45
           }
         },
         "_decimal_digits": {
           "$text": "2",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -15493,12 +15493,12 @@
           "$type": 79,
           "_decimal_digits": {
             "$text": "6",
-            "$type": 39
+            "$type": 45
           }
         },
         "_decimal_digits": {
           "$text": "2",
-          "$type": 39
+          "$type": 45
         }
       },
       "_lazy": false
@@ -15526,12 +15526,12 @@
         "$type": 79,
         "_decimal_digits": {
           "$text": "256",
-          "$type": 39
+          "$type": 45
         }
       },
       "_decimal_digits": {
         "$text": "2",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -15557,12 +15557,12 @@
         "$type": 79,
         "_decimal_digits": {
           "$text": "6",
-          "$type": 39
+          "$type": 45
         }
       },
       "_decimal_digits": {
         "$text": "2",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -15586,7 +15586,7 @@
       "$type": 79,
       "_decimal_digits": {
         "$text": "256",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -15610,7 +15610,7 @@
       "$type": 79,
       "_decimal_digits": {
         "$text": "6",
-        "$type": 39
+        "$type": 45
       }
     },
     "kind": "render",
@@ -15702,7 +15702,7 @@
                     "$type": 20
                   },
                   {
-                    "$type": 37,
+                    "$type": 43,
                     "_content": "+"
                   },
                   {
@@ -16498,14 +16498,14 @@
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "u"
             }
           },
           {
             "$type": 78,
             "_content": {
-              "$type": 37,
+              "$type": 43,
               "_content": "?"
             }
           }
@@ -16600,14 +16600,14 @@
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "u"
           }
         },
         {
           "$type": 78,
           "_content": {
-            "$type": 37,
+            "$type": 43,
             "_content": "?"
           }
         }
@@ -16762,7 +16762,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "u"
       }
     },
@@ -16792,7 +16792,7 @@
     "input": {
       "$type": 78,
       "_content": {
-        "$type": 37,
+        "$type": 43,
         "_content": "?"
       }
     },
@@ -16850,7 +16850,7 @@
     "expectedOutput": "\\u",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "u"
     },
     "kind": "render",
@@ -16877,7 +16877,7 @@
     "expectedOutput": "\\?",
     "grammar": "regex",
     "input": {
-      "$type": 37,
+      "$type": 43,
       "_content": "?"
     },
     "kind": "render",

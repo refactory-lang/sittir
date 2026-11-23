@@ -18116,6 +18116,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.TypeConstraint]: (d, t) => wrapTypeConstraint(d as unknown as T.TypeConstraint, t),
 	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(d as unknown as T.TypeIdentifier, t),
 	[TSKindId.LabelName]: (d, t) => wrapLabelName(d as unknown as T.LabelName, t),
+	[TSKindId.SourceFileText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralContent]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.InterpretedStringLiteralContent]: (d, t) => wrapLeaf(d, t),
@@ -18125,7 +18126,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.IntLiteralArm5]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.FloatLiteralArm2]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.ImportSpecListArm]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.SourceFileText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Error]: (d, t) => wrapLeaf(d, t)
 };
 

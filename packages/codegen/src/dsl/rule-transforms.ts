@@ -129,6 +129,7 @@ export function mintInlineTextTokens<R extends AnyRule>(rules: Record<string, R>
 	const bodyKey = (site: AnyRule): string => tokenBodyKey(bodyOf(site));
 	const nonTerminal = <T extends AnyRule>(bag: Readonly<Record<string, T>>): [string, T][] => Object.entries(bag).filter(([, rule]) => !isTerminalRootRule(rule));
 	const nameOf = new Map<string, string>();
+	const namedAfter = new Map<string, string>();
 	const nameSites = (bag: Readonly<Record<string, AnyRule>>): void => {
 		for (const [owner, rule] of nonTerminal(bag)) {
 			const fresh: string[] = [];
@@ -144,6 +145,7 @@ export function mintInlineTextTokens<R extends AnyRule>(rules: Record<string, R>
 				const name = fresh.length === 1 ? base : `${base}${i + 1}`;
 				if (Object.hasOwn(rules, name)) throw new Error(`mintInlineTextTokens: '${owner}' mints '${name}', which the grammar already names`);
 				nameOf.set(key, name);
+				namedAfter.set(name, owner);
 			});
 		}
 	};
@@ -168,8 +170,12 @@ export function mintInlineTextTokens<R extends AnyRule>(rules: Record<string, R>
 		if (holds) out[owner] = rewritten;
 	}
 	const mintedNames = [...new Set(nameOf.values())].filter((name) => bodies.has(name));
-	for (const name of mintedNames) out[name] = bodies.get(name)!;
-	return { rules: out, mintedNames, owners: ownersOf };
+	const placedAfter = Map.groupBy(mintedNames, (name) => {
+		const named = namedAfter.get(name)!;
+		return Object.hasOwn(out, named) ? named : ownersOf[name]![0]!;
+	});
+	const placed = Object.fromEntries(Object.entries(out).flatMap(([name, rule]) => [[name, rule] as const, ...(placedAfter.get(name) ?? []).map((minted) => [minted, bodies.get(minted)!] as const)]));
+	return { rules: placed, mintedNames, owners: ownersOf };
 }
 
 export interface WordDisplayCtx {

@@ -9846,6 +9846,10 @@
         }
       ]
     },
+    "interpolation_format_clause_text": {
+      "type": "PATTERN",
+      "value": "[^}\"]+"
+    },
     "member_access_expression": {
       "type": "PREC",
       "value": 18,
@@ -11416,6 +11420,10 @@
         }
       ]
     },
+    "raw_string_literal_text": {
+      "type": "PATTERN",
+      "value": "(u|U)8"
+    },
     "boolean_literal": {
       "type": "CHOICE",
       "members": [
@@ -11725,6 +11733,18 @@
         ]
       }
     },
+    "preproc_if_text1": {
+      "type": "PATTERN",
+      "value": "#[ \t]*if"
+    },
+    "preproc_if_text2": {
+      "type": "PATTERN",
+      "value": "\\n"
+    },
+    "preproc_if_text3": {
+      "type": "PATTERN",
+      "value": "#[ \t]*endif"
+    },
     "preproc_else": {
       "type": "PREC",
       "value": 0,
@@ -11756,6 +11776,10 @@
           }
         ]
       }
+    },
+    "preproc_else_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*else"
     },
     "preproc_elif": {
       "type": "PREC",
@@ -11825,6 +11849,10 @@
           }
         ]
       }
+    },
+    "preproc_elif_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*elif"
     },
     "preproc_if_in_top_level": {
       "type": "PREC",
@@ -12920,6 +12948,10 @@
         }
       ]
     },
+    "preproc_region_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*region"
+    },
     "preproc_endregion": {
       "type": "SEQ",
       "members": [
@@ -12953,6 +12985,10 @@
           "name": "preproc_if_text2"
         }
       ]
+    },
+    "preproc_endregion_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*endregion"
     },
     "preproc_line": {
       "type": "SEQ",
@@ -13013,6 +13049,10 @@
         }
       ]
     },
+    "preproc_line_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*line"
+    },
     "preproc_pragma": {
       "type": "SEQ",
       "members": [
@@ -13057,6 +13097,10 @@
           "name": "preproc_if_text2"
         }
       ]
+    },
+    "preproc_pragma_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*pragma"
     },
     "preproc_nullable": {
       "type": "SEQ",
@@ -13128,6 +13172,10 @@
         }
       ]
     },
+    "preproc_nullable_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*nullable"
+    },
     "preproc_error": {
       "type": "SEQ",
       "members": [
@@ -13156,6 +13204,10 @@
           "name": "preproc_if_text2"
         }
       ]
+    },
+    "preproc_error_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*error"
     },
     "preproc_warning": {
       "type": "SEQ",
@@ -13186,6 +13238,10 @@
         }
       ]
     },
+    "preproc_warning_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*warning"
+    },
     "preproc_define": {
       "type": "SEQ",
       "members": [
@@ -13215,6 +13271,10 @@
         }
       ]
     },
+    "preproc_define_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*define"
+    },
     "preproc_undef": {
       "type": "SEQ",
       "members": [
@@ -13243,6 +13303,10 @@
           "name": "preproc_if_text2"
         }
       ]
+    },
+    "preproc_undef_text": {
+      "type": "PATTERN",
+      "value": "#[ \t]*undef"
     },
     "shebang_directive": {
       "type": "TOKEN",
@@ -15990,70 +16054,6 @@
           }
         }
       ]
-    },
-    "interpolation_format_clause_text": {
-      "type": "PATTERN",
-      "value": "[^}\"]+"
-    },
-    "raw_string_literal_text": {
-      "type": "PATTERN",
-      "value": "(u|U)8"
-    },
-    "preproc_if_text1": {
-      "type": "PATTERN",
-      "value": "#[ \t]*if"
-    },
-    "preproc_if_text2": {
-      "type": "PATTERN",
-      "value": "\\n"
-    },
-    "preproc_if_text3": {
-      "type": "PATTERN",
-      "value": "#[ \t]*endif"
-    },
-    "preproc_else_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*else"
-    },
-    "preproc_elif_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*elif"
-    },
-    "preproc_region_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*region"
-    },
-    "preproc_endregion_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*endregion"
-    },
-    "preproc_line_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*line"
-    },
-    "preproc_pragma_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*pragma"
-    },
-    "preproc_nullable_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*nullable"
-    },
-    "preproc_error_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*error"
-    },
-    "preproc_warning_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*warning"
-    },
-    "preproc_define_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*define"
-    },
-    "preproc_undef_text": {
-      "type": "PATTERN",
-      "value": "#[ \t]*undef"
     },
     "_layout": {
       "type": "CHOICE",

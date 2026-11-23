@@ -7,6 +7,7 @@ import type * as T from '../types.js';
 
 export {
 	buildSourceFile,
+	buildSourceFileText,
 	buildPackageClause,
 	buildImportDeclaration,
 	buildImportSpec,
@@ -168,7 +169,6 @@ export {
 	buildStatementListArm,
 	buildReceiveStatementGroup,
 	buildSpecialArgumentListGroup,
-	buildSourceFileText,
 	buildChannelTypeBidirectional,
 	buildChannelTypeSendOnly,
 	buildChannelTypeReceiveOnly,

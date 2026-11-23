@@ -231,6 +231,19 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('escape_sequence_text', () => {
+		it('factory produces correct type', () => {
+			const node = ir.escapeSequenceText('a');
+			expect(node.$type).toBe(TSKindId.EscapeSequenceText);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.escapeSequenceText('a');
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
 	describe('null_literal', () => {
 		it('is the kind id', () => {
 			expect(ir.nullLiteral).toBe(TSKindId.NullLiteral);
@@ -3148,19 +3161,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.variableInitializers(...[TSKindId.This as never]);
 			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('escape_sequence_text', () => {
-		it('factory produces correct type', () => {
-			const node = ir.escapeSequenceText('a');
-			expect(node.$type).toBe(TSKindId.EscapeSequenceText);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.escapeSequenceText('a');
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 

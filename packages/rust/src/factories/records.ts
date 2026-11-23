@@ -70,9 +70,9 @@ import {
 import type { BuiltText, BuiltViews, LeafSite, RecordHandle, TreeHandle } from '@sittir/common/utils';
 
 import {
-	_leafRe_buildIdentifier,
 	_leafRe_buildTokenRepetitionPatternText,
 	_leafRe_buildStringOpen,
+	_leafRe_buildIdentifier,
 	_leafRe_buildCharLiteralEmpty,
 	_leafRe_buildLineCommentExtraSlashes,
 	_leafRe_buildLineCommentRegular,
@@ -654,6 +654,39 @@ function withTokenRepetitionPattern(node: object, setter: string, args: readonly
 			);
 	}
 	throw new Error(`token_repetition_pattern has no $with.${setter}`);
+}
+
+export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`token_repetition_pattern_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
+	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
+		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(
+		leafTokenRepetitionPatternText,
+		text
+	) as unknown as T.TokenRepetitionPatternText.Bound;
+}
+
+function leafTokenRepetitionPatternText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.TokenRepetitionPatternText as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
 }
 
 export function buildTokenRepetition<
@@ -13406,7 +13439,7 @@ export function buildClosureParameters(
 	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
 		[
 			[
-				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
 				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 			],
 			(v: unknown) => buildClosureParameter(v as never)
@@ -13432,7 +13465,7 @@ function buildClosureParameters$patch(
 	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
 		[
 			[
-				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
 				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 			],
 			(v: unknown) => buildClosureParameter(v as never)
@@ -15310,6 +15343,35 @@ function withStringLiteral(node: object, setter: string, args: readonly unknown[
 			);
 	}
 	throw new Error(`string_literal has no $with.${setter}`);
+}
+
+export function buildStringOpen(text: string): T.StringOpen.Bound {
+	if (typeof text !== 'string') throw new Error(`string_open: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
+	if (!_leafRe_buildStringOpen.test(text))
+		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(leafStringOpen, text) as unknown as T.StringOpen.Bound;
+}
+
+function leafStringOpen(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.StringOpen as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
 }
 
 export function buildRawStringLiteral<
@@ -18416,68 +18478,6 @@ function withUseWildcardGroup(node: object, setter: string, args: readonly unkno
 			);
 	}
 	throw new Error(`use_wildcard_group has no $with.${setter}`);
-}
-
-export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`token_repetition_pattern_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
-	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
-		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(
-		leafTokenRepetitionPatternText,
-		text
-	) as unknown as T.TokenRepetitionPatternText.Bound;
-}
-
-function leafTokenRepetitionPatternText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.TokenRepetitionPatternText as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
-}
-
-export function buildStringOpen(text: string): T.StringOpen.Bound {
-	if (typeof text !== 'string') throw new Error(`string_open: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
-	if (!_leafRe_buildStringOpen.test(text))
-		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafStringOpen, text) as unknown as T.StringOpen.Bound;
-}
-
-function leafStringOpen(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.StringOpen as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
 }
 
 export function buildAttributedElement<
@@ -29712,6 +29712,7 @@ export type FluentKindMap = {
 	macro_rule: T.MacroRule.Bound;
 	token_binding_pattern: T.TokenBindingPattern.Bound;
 	token_repetition_pattern: T.TokenRepetitionPattern.Bound;
+	token_repetition_pattern_text: T.TokenRepetitionPatternText;
 	token_repetition: T.TokenRepetition.Bound;
 	non_special_token: T.NonSpecialToken.Bound;
 	attribute_item: T.AttributeItem.Bound;
@@ -29833,6 +29834,7 @@ export type FluentKindMap = {
 	reference_pattern: T.ReferencePattern.Bound;
 	negative_literal: T.NegativeLiteral.Bound;
 	string_literal: T.StringLiteral.Bound;
+	string_open: T.StringOpen;
 	raw_string_literal: T.RawStringLiteral.Bound;
 	line_comment: T.LineComment.Bound;
 	inner_line_doc_comment_marker: T.InnerLineDocCommentMarker;
@@ -29862,8 +29864,6 @@ export type FluentKindMap = {
 	patterns: T.Patterns.Bound;
 	struct_pattern_elements: T.StructPatternElements.Bound;
 	use_wildcard_group: T.UseWildcardGroup.Bound;
-	token_repetition_pattern_text: T.TokenRepetitionPatternText;
-	string_open: T.StringOpen;
 	attributed_element: T.AttributedElement.Bound;
 	array_expression_list_elements: T.ArrayExpressionListElements.Bound;
 	tuple_expression_elements: T.TupleExpressionElements.Bound;
@@ -29992,6 +29992,7 @@ export const _factoryMap = {
 	macro_rule: buildMacroRule,
 	token_binding_pattern: buildTokenBindingPattern,
 	token_repetition_pattern: buildTokenRepetitionPattern,
+	token_repetition_pattern_text: buildTokenRepetitionPatternText,
 	token_repetition: buildTokenRepetition,
 	non_special_token: buildNonSpecialToken,
 	attribute_item: buildAttributeItem,
@@ -30113,6 +30114,7 @@ export const _factoryMap = {
 	reference_pattern: buildReferencePattern,
 	negative_literal: buildNegativeLiteral,
 	string_literal: buildStringLiteral,
+	string_open: buildStringOpen,
 	raw_string_literal: buildRawStringLiteral,
 	line_comment: buildLineComment,
 	inner_line_doc_comment_marker: buildInnerLineDocCommentMarker,
@@ -30142,8 +30144,6 @@ export const _factoryMap = {
 	patterns: buildPatterns,
 	struct_pattern_elements: buildStructPatternElements,
 	use_wildcard_group: buildUseWildcardGroup,
-	token_repetition_pattern_text: buildTokenRepetitionPatternText,
-	string_open: buildStringOpen,
 	attributed_element: buildAttributedElement,
 	array_expression_list_elements: buildArrayExpressionListElements,
 	tuple_expression_elements: buildTupleExpressionElements,
@@ -30268,8 +30268,8 @@ export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
-		123: withShebang,
-		127: withMetavariable,
+		127: withShebang,
+		131: withMetavariable,
 		141: withIntegerLiteralDecimal,
 		142: withIntegerLiteralHex,
 		143: withIntegerLiteralBinary,
@@ -30509,8 +30509,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		484: withTypeIdentifier
 	}),
 	words: Object.freeze({
-		123: 4,
 		127: 4,
+		131: 4,
 		141: 5,
 		142: 5,
 		143: 5,
@@ -30750,8 +30750,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		484: 3
 	}),
 	cells: Object.freeze({
-		123: 2,
 		127: 2,
+		131: 2,
 		141: 2,
 		142: 2,
 		143: 2,
@@ -30991,8 +30991,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		484: 2
 	}),
 	places: Object.freeze({
-		123: [[2, 2, 2, 4, 0, 0]],
 		127: [[2, 2, 2, 4, 0, 0]],
+		131: [[2, 2, 2, 4, 0, 0]],
 		141: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
@@ -31762,8 +31762,8 @@ export const builtViews: BuiltViews = Object.freeze({
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
-		132: leafTokenRepetitionPatternText,
-		133: leafStringOpen,
+		11: leafTokenRepetitionPatternText,
+		117: leafStringOpen,
 		146: leafCharLiteralEmpty,
 		155: leafLineCommentRegular,
 		157: leafStringContent,

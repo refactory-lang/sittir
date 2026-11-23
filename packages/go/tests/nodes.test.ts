@@ -132,6 +132,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('source_file_text', () => {
+		it('factory produces correct type', () => {
+			const node = ir.sourceFileText('\n');
+			expect(node.$type).toBe(TSKindId.SourceFileText);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe('\n');
+		});
+	});
+
 	describe('package_clause', () => {
 		it('factory produces correct type', () => {
 			const node = ir.packageClause({ $type: TSKindId.PackageIdentifier, text: 'test' } as never);
@@ -3194,15 +3203,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 			expect(rendered).toContain('test');
-		});
-	});
-
-	describe('source_file_text', () => {
-		it('factory produces correct type', () => {
-			const node = ir.sourceFileText('\n');
-			expect(node.$type).toBe(TSKindId.SourceFileText);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('\n');
 		});
 	});
 

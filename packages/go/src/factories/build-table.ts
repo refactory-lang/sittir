@@ -824,11 +824,11 @@ export interface Ir<Table extends AnyTable> {
 	readonly runeLiteralArm2Arm4: typeof F.buildRuneLiteralArm2Arm4;
 	readonly commentArm1: typeof F.buildCommentArm1;
 	readonly commentArm2: typeof F.buildCommentArm2;
+	readonly sourceFileText: typeof F.buildSourceFileText;
 	readonly identifier: typeof F.buildIdentifier;
 	readonly rawStringLiteralContent: typeof F.buildRawStringLiteralContent;
 	readonly interpretedStringLiteralContent: typeof F.buildInterpretedStringLiteralContent;
 	readonly importSpecListArm: typeof F.buildImportSpecListArm;
-	readonly sourceFileText: typeof F.buildSourceFileText;
 	readonly statement: {
 		readonly const: Routes<Table>['constDeclaration'];
 		readonly type: Routes<Table>['typeDeclaration'];
@@ -1459,11 +1459,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		runeLiteralArm2Arm4: F.buildRuneLiteralArm2Arm4,
 		commentArm1: F.buildCommentArm1,
 		commentArm2: F.buildCommentArm2,
+		sourceFileText: F.buildSourceFileText,
 		identifier: F.buildIdentifier,
 		rawStringLiteralContent: F.buildRawStringLiteralContent,
 		interpretedStringLiteralContent: F.buildInterpretedStringLiteralContent,
 		importSpecListArm: F.buildImportSpecListArm,
-		sourceFileText: F.buildSourceFileText,
 		statement: Object.freeze({
 			const: constDeclaration,
 			type: typeDeclaration,

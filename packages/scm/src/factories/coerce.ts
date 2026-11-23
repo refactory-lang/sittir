@@ -40,8 +40,8 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence: { factory: (content: string) => _resolveByKind('escape_sequence', content) },
 	identifier: { pattern: F._leafRe_buildIdentifier, factory: F.buildIdentifier },
 	_immediate_identifier: { pattern: F._leafRe_buildImmediateIdentifier, factory: F.buildImmediateIdentifier },
-	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	string_content_text: { pattern: F._leafRe_buildStringContentText, factory: F.buildStringContentText },
+	comment: { factory: (content: string) => _resolveByKind('comment', content) },
 	anchor: { values: ['.'], factory: () => F.buildAnchor },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
@@ -178,7 +178,7 @@ const _KEYWORD_BRANCH_BUILD: Record<string, (() => AnyUntypedNode | number) | un
 const _KEYWORD_BRANCH_BY_KIND_ID: Record<number, string | undefined> = {};
 const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set(['capture', 'negated_field']);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	2, 3, 4, 7, 8, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 24, 25, 26, 27, 28, 29, 30, 31, 32, 37, 53, 60
+	2, 3, 4, 7, 8, 9, 13, 14, 15, 16, 17, 18, 19, 20, 21, 24, 25, 26, 27, 28, 29, 30, 31, 32, 37, 53, 60
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	capture: new Set([6]),
@@ -191,7 +191,7 @@ const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
 	2: ['quantifier'],
 	3: ['quantifier'],
 	4: ['quantifier', 'predicate_type'],
-	18: ['predicate_type']
+	19: ['predicate_type']
 };
 
 function _resolveOne<T>(
@@ -672,6 +672,14 @@ export const coerceToStringContent: Seat<T.StringContent.LooseArgs, ReturnType<t
 	);
 };
 
+export const coerceToStringContentText: ConfigSeat<
+	T.StringContentText.Loose,
+	ReturnType<typeof F.buildStringContentText>
+> = (input: T.StringContentText.Loose): ReturnType<typeof F.buildStringContentText> => {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContentText>;
+	return F.buildStringContentText(input as Parameters<typeof F.buildStringContentText>[0]);
+};
+
 export const coerceToParameters: Seat<T.Parameters.LooseArgs, ReturnType<typeof F.buildParameters>> = (
 	...input: T.Parameters.LooseArgs
 ): ReturnType<typeof F.buildParameters> => {
@@ -1002,14 +1010,6 @@ export const coerceToGroupingGroup: ConfigSeat<T.GroupingGroup.Loose, ReturnType
 	});
 };
 
-export const coerceToStringContentText: ConfigSeat<
-	T.StringContentText.Loose,
-	ReturnType<typeof F.buildStringContentText>
-> = (input: T.StringContentText.Loose): ReturnType<typeof F.buildStringContentText> => {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringContentText>;
-	return F.buildStringContentText(input as Parameters<typeof F.buildStringContentText>[0]);
-};
-
 export function coerceToAnchor(_input?: T.Anchor.Loose): typeof F.buildAnchor {
 	return F.buildAnchor;
 }
@@ -1191,6 +1191,7 @@ export interface _FromMap {
 	readonly string: typeof coerceToString;
 	readonly immediate_string: typeof coerceToImmediateString;
 	readonly string_content: typeof coerceToStringContent;
+	readonly string_content_text: typeof coerceToStringContentText;
 	readonly parameters: typeof coerceToParameters;
 	readonly comment: typeof coerceToComment;
 	readonly list: typeof coerceToList;
@@ -1204,7 +1205,6 @@ export interface _FromMap {
 	readonly group_expression_arm: typeof coerceToGroupExpressionArm;
 	readonly named_node_expression_arm: typeof coerceToNamedNodeExpressionArm;
 	readonly grouping_group: typeof coerceToGroupingGroup;
-	readonly string_content_text: typeof coerceToStringContentText;
 	readonly anchor: typeof coerceToAnchor;
 	readonly named_node_plain: typeof coerceToNamedNodePlain;
 	readonly named_node_supertyped: typeof coerceToNamedNodeSupertyped;
@@ -1228,6 +1228,7 @@ export const _fromMap: _FromMap = {
 	string: coerceToString,
 	immediate_string: coerceToImmediateString,
 	string_content: coerceToStringContent,
+	string_content_text: coerceToStringContentText,
 	parameters: coerceToParameters,
 	comment: coerceToComment,
 	list: coerceToList,
@@ -1241,7 +1242,6 @@ export const _fromMap: _FromMap = {
 	group_expression_arm: coerceToGroupExpressionArm,
 	named_node_expression_arm: coerceToNamedNodeExpressionArm,
 	grouping_group: coerceToGroupingGroup,
-	string_content_text: coerceToStringContentText,
 	anchor: coerceToAnchor,
 	named_node_plain: coerceToNamedNodePlain,
 	named_node_supertyped: coerceToNamedNodeSupertyped,

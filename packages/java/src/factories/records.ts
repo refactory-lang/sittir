@@ -81,6 +81,7 @@ import {
 	_slotRe_buildBinaryIntegerLiteral_content,
 	_slotRe_buildBinaryIntegerLiteral_suffix,
 	_slotRe_buildCharacterLiteral_content,
+	_slotRe_buildEscapeSequenceText_content,
 	_slotRe_buildLineComment_content,
 	_slotRe_buildBlockComment_content,
 	_slotRe_buildDecimalFloatingPointLiteralArm1_content,
@@ -100,7 +101,6 @@ import {
 	_slotRe_buildEscapeSequenceArm3_content,
 	_slotRe_buildEscapeSequenceArm4_content,
 	_slotRe_buildEscapeSequenceArm5_content,
-	_slotRe_buildEscapeSequenceText_content,
 	_delimited_buildBlockComment,
 	_delimited_buildStringLiteralTextBlock
 } from './objects.js';
@@ -847,6 +847,70 @@ function withMultilineStringLiteralArm1(node: object, setter: string, args: read
 			);
 	}
 	throw new Error(`multiline_string_literal_arm1 has no $with.${setter}`);
+}
+
+export function buildEscapeSequenceText(content: string, affix?: true): T.EscapeSequenceText.Bound;
+export function buildEscapeSequenceText(text: `\\${string}`, affix: false): T.EscapeSequenceText.Bound;
+export function buildEscapeSequenceText(input: string, affix: boolean = true): T.EscapeSequenceText.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_text');
+	}
+	const _content = value;
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceText_content.test(_content))
+		throw new Error(`escape_sequence_text.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence_text', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.EscapeSequenceText as const, { _content });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.EscapeSequenceText as const);
+		storeCell(arena, record, 2, 2, _content);
+		const node = arena.view(record);
+		return node as unknown as T.EscapeSequenceText.Bound;
+	});
+}
+
+function buildEscapeSequenceText$patch(
+	source: object,
+	input: string,
+	affix: boolean = true
+): T.EscapeSequenceText.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_text');
+	}
+	const _content = value;
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceText_content.test(_content))
+		throw new Error(`escape_sequence_text.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence_text', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.EscapeSequenceText as const, { _content });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.EscapeSequenceText as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+		const node = arena.view(record);
+		return node as unknown as T.EscapeSequenceText.Bound;
+	});
+}
+function withEscapeSequenceText(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) =>
+				rebuilt(node, handle, () => buildEscapeSequenceText$patch(node, value))
+			);
+	}
+	throw new Error(`escape_sequence_text has no $with.${setter}`);
 }
 
 export const buildNullLiteral: TSKindId.NullLiteral = TSKindId.NullLiteral;
@@ -17747,70 +17811,6 @@ function withForStatementArm(node: object, setter: string, args: readonly unknow
 	throw new Error(`for_statement_arm has no $with.${setter}`);
 }
 
-export function buildEscapeSequenceText(content: string, affix?: true): T.EscapeSequenceText.Bound;
-export function buildEscapeSequenceText(text: `\\${string}`, affix: false): T.EscapeSequenceText.Bound;
-export function buildEscapeSequenceText(input: string, affix: boolean = true): T.EscapeSequenceText.Bound {
-	let value = input;
-	if (!affix) {
-		if (typeof input !== 'string')
-			throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '\\', '', 'escape_sequence_text');
-	}
-	const _content = value;
-	if (typeof _content !== 'string')
-		throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildEscapeSequenceText_content.test(_content))
-		throw new Error(`escape_sequence_text.content: text does not match pattern: ${describeValue(_content)}`);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'escape_sequence_text', { content: _content });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.EscapeSequenceText as const, { _content });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.EscapeSequenceText as const);
-		storeCell(arena, record, 2, 2, _content);
-		const node = arena.view(record);
-		return node as unknown as T.EscapeSequenceText.Bound;
-	});
-}
-
-function buildEscapeSequenceText$patch(
-	source: object,
-	input: string,
-	affix: boolean = true
-): T.EscapeSequenceText.Bound {
-	let value = input;
-	if (!affix) {
-		if (typeof input !== 'string')
-			throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '\\', '', 'escape_sequence_text');
-	}
-	const _content = value;
-	if (typeof _content !== 'string')
-		throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildEscapeSequenceText_content.test(_content))
-		throw new Error(`escape_sequence_text.content: text does not match pattern: ${describeValue(_content)}`);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'escape_sequence_text', { content: _content });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.EscapeSequenceText as const, { _content });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.EscapeSequenceText as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
-		const node = arena.view(record);
-		return node as unknown as T.EscapeSequenceText.Bound;
-	});
-}
-function withEscapeSequenceText(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string>) =>
-				rebuilt(node, handle, () => buildEscapeSequenceText$patch(node, value))
-			);
-	}
-	throw new Error(`escape_sequence_text has no $with.${setter}`);
-}
-
 export function buildFormalParametersReceiver<V extends Admit<T.ReceiverParameter>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildFormalParametersReceiver>;
@@ -18747,6 +18747,7 @@ export type FluentKindMap = {
 	multiline_string_fragment: T.MultilineStringFragment;
 	string_interpolation: T.StringInterpolation.Bound;
 	multiline_string_literal_arm1: T.MultilineStringLiteralArm1.Bound;
+	escape_sequence_text: T.EscapeSequenceText.Bound;
 	null_literal: T.NullLiteral;
 	cast_expression: T.CastExpression.Bound;
 	assignment_expression: T.AssignmentExpression.Bound;
@@ -18902,7 +18903,6 @@ export type FluentKindMap = {
 	assert_statement_arm: T.AssertStatementArm.Bound;
 	resource_arm: T.ResourceArm.Bound;
 	for_statement_arm: T.ForStatementArm.Bound;
-	escape_sequence_text: T.EscapeSequenceText.Bound;
 	formal_parameters_receiver: T.FormalParametersReceiver.Bound;
 	formal_parameters_list: T.FormalParametersList.Bound;
 	string_literal_line: T.StringLiteralLine.Bound;
@@ -18936,6 +18936,7 @@ export const _factoryMap = {
 	multiline_string_fragment: buildMultilineStringFragment,
 	string_interpolation: buildStringInterpolation,
 	multiline_string_literal_arm1: buildMultilineStringLiteralArm1,
+	escape_sequence_text: buildEscapeSequenceText,
 	null_literal: buildNullLiteral,
 	cast_expression: buildCastExpression,
 	assignment_expression: buildAssignmentExpression,
@@ -19091,7 +19092,6 @@ export const _factoryMap = {
 	assert_statement_arm: buildAssertStatementArm,
 	resource_arm: buildResourceArm,
 	for_statement_arm: buildForStatementArm,
-	escape_sequence_text: buildEscapeSequenceText,
 	formal_parameters_receiver: buildFormalParametersReceiver,
 	formal_parameters_list: buildFormalParametersList,
 	string_literal_line: buildStringLiteralLine,
@@ -19117,19 +19117,19 @@ export const builtViews: BuiltViews = Object.freeze({
 		3: withOctalIntegerLiteral,
 		4: withBinaryIntegerLiteral,
 		7: withCharacterLiteral,
-		114: withLineComment,
-		115: withBlockComment,
-		119: withDecimalFloatingPointLiteralArm1,
-		120: withDecimalFloatingPointLiteralArm2,
-		121: withDecimalFloatingPointLiteralArm3Arm1,
-		122: withDecimalFloatingPointLiteralArm3Arm2,
-		126: withHexFloatingPointLiteralArm2,
-		127: withEscapeSequenceArm1,
-		128: withEscapeSequenceArm2,
-		129: withEscapeSequenceArm3,
-		130: withEscapeSequenceArm4,
-		131: withEscapeSequenceArm5,
-		146: withEscapeSequenceText,
+		15: withEscapeSequenceText,
+		117: withLineComment,
+		118: withBlockComment,
+		122: withDecimalFloatingPointLiteralArm1,
+		123: withDecimalFloatingPointLiteralArm2,
+		124: withDecimalFloatingPointLiteralArm3Arm1,
+		125: withDecimalFloatingPointLiteralArm3Arm2,
+		129: withHexFloatingPointLiteralArm2,
+		130: withEscapeSequenceArm1,
+		131: withEscapeSequenceArm2,
+		132: withEscapeSequenceArm3,
+		133: withEscapeSequenceArm4,
+		134: withEscapeSequenceArm5,
 		157: withProgram,
 		161: withDecimalFloatingPointLiteral,
 		162: withHexFloatingPointLiteral,
@@ -19279,19 +19279,19 @@ export const builtViews: BuiltViews = Object.freeze({
 		3: 6,
 		4: 6,
 		7: 4,
-		114: 4,
-		115: 4,
-		119: 5,
-		120: 4,
-		121: 6,
-		122: 6,
-		126: 6,
-		127: 4,
-		128: 4,
-		129: 4,
+		15: 4,
+		117: 4,
+		118: 4,
+		122: 5,
+		123: 4,
+		124: 6,
+		125: 6,
+		129: 6,
 		130: 4,
 		131: 4,
-		146: 4,
+		132: 4,
+		133: 4,
+		134: 4,
 		157: 3,
 		161: 3,
 		162: 3,
@@ -19441,19 +19441,19 @@ export const builtViews: BuiltViews = Object.freeze({
 		3: 2,
 		4: 2,
 		7: 2,
-		114: 2,
-		115: 2,
-		119: 2,
-		120: 2,
-		121: 2,
+		15: 2,
+		117: 2,
+		118: 2,
 		122: 2,
-		126: 2,
-		127: 2,
-		128: 2,
+		123: 2,
+		124: 2,
+		125: 2,
 		129: 2,
 		130: 2,
 		131: 2,
-		146: 2,
+		132: 2,
+		133: 2,
+		134: 2,
 		157: 2,
 		161: 2,
 		162: 2,
@@ -19611,34 +19611,34 @@ export const builtViews: BuiltViews = Object.freeze({
 			[6, 4, 2, 4, 0, 0]
 		],
 		7: [[2, 2, 2, 4, 0, 0]],
-		114: [[2, 2, 2, 4, 0, 0]],
-		115: [[2, 2, 2, 4, 0, 0]],
-		119: [
+		15: [[2, 2, 2, 4, 0, 0]],
+		117: [[2, 2, 2, 4, 0, 0]],
+		118: [[2, 2, 2, 4, 0, 0]],
+		122: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		120: [[2, 2, 2, 4, 0, 0]],
-		121: [
+		123: [[2, 2, 2, 4, 0, 0]],
+		124: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0]
 		],
-		122: [
+		125: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0]
 		],
-		126: [
+		129: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0]
 		],
-		127: [[2, 2, 2, 4, 0, 0]],
-		128: [[2, 2, 2, 4, 0, 0]],
-		129: [[2, 2, 2, 4, 0, 0]],
 		130: [[2, 2, 2, 4, 0, 0]],
 		131: [[2, 2, 2, 4, 0, 0]],
-		146: [[2, 2, 2, 4, 0, 0]],
+		132: [[2, 2, 2, 4, 0, 0]],
+		133: [[2, 2, 2, 4, 0, 0]],
+		134: [[2, 2, 2, 4, 0, 0]],
 		157: [[2, 2, 1, 3, 0, 4]],
 		161: [[2, 2, 11, 9, 10, 0]],
 		162: [[2, 2, 11, 9, 10, 0]],
@@ -20125,11 +20125,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		1: leafIdentifier,
 		2: leafHexIntegerLiteral,
 		10: leafStringFragment,
-		117: leafDecimalIntegerLiteralArm1,
-		118: leafDecimalIntegerLiteralArm2,
-		123: leafDecimalFloatingPointLiteralArm4Arm1,
-		124: leafDecimalFloatingPointLiteralArm4Arm2,
-		125: leafHexFloatingPointLiteralArm1,
+		120: leafDecimalIntegerLiteralArm1,
+		121: leafDecimalIntegerLiteralArm2,
+		126: leafDecimalFloatingPointLiteralArm4Arm1,
+		127: leafDecimalFloatingPointLiteralArm4Arm2,
+		128: leafHexFloatingPointLiteralArm1,
 		166: leafMultilineStringFragment
 	})
 });

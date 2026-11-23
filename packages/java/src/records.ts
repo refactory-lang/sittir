@@ -48,6 +48,12 @@ export const records = {
 		builtWords: 3,
 		content: { word: 2, width: 6, inline: 6, forms: 8, built: 2 }
 	},
+	EscapeSequenceTextNode: {
+		words: 6,
+		builtWords: 4,
+		content: { word: 2, width: 2, forms: 4, built: 2 },
+		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
+	},
 	CastExpressionNode: {
 		words: 10,
 		builtWords: 5,
@@ -758,12 +764,6 @@ export const records = {
 		value: { word: 16, width: 4, forms: 3, built: 6 }
 	},
 	ForStatementArmNode: { words: 3, builtWords: 3, init: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
-	EscapeSequenceTextNode: {
-		words: 6,
-		builtWords: 4,
-		content: { word: 2, width: 2, forms: 4, built: 2 },
-		verbatim: { word: 4, width: 2, forms: 4, built: 3 }
-	},
 	FormalParametersReceiverNode: {
 		words: 10,
 		builtWords: 3,

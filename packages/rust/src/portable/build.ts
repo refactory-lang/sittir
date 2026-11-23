@@ -163,46 +163,46 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('clause.bounds.removed.type', value);
 	}
@@ -211,7 +211,7 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -655,7 +655,7 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -686,7 +686,7 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -1333,7 +1333,7 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -1350,7 +1350,7 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -1612,22 +1612,22 @@ const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) 
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 263])) return value;
+		if (seated(value, [1, 131, 263])) return value;
 		return unseated('clause.import.alias.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 263, 481])) return value;
 		return unseated('clause.import.alias.name', value);
 	}
 	switch (value.$path) {
@@ -1689,22 +1689,22 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 226, 227, 228, 229, 263])) return value;
+		if (seated(value, [1, 131, 226, 227, 228, 229, 263])) return value;
 		return unseated('clause.import.list.useClauses', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 226, 227, 228, 229, 263, 481])) return value;
 		return unseated('clause.import.list.useClauses', value);
 	}
 	switch (value.$path) {
@@ -1755,22 +1755,22 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 263])) return value;
+		if (seated(value, [1, 131, 263])) return value;
 		return unseated('clause.import.list.scoped.path', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 263, 481])) return value;
 		return unseated('clause.import.list.scoped.path', value);
 	}
 	switch (value.$path) {
@@ -1895,7 +1895,7 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -2182,7 +2182,7 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -2199,7 +2199,7 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -2635,7 +2635,7 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -2652,7 +2652,7 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
 					373, 374, 390, 391, 392, 393, 435, 436
@@ -3090,7 +3090,7 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -3107,7 +3107,7 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 292, 297, 298, 299, 300, 301,
 					304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373,
 					374, 390, 391, 392, 393, 435, 436
@@ -3498,39 +3498,39 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -3540,7 +3540,7 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 		if (
 			seated(
 				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
 			)
 		)
 			return value;
@@ -3551,7 +3551,7 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 217, 218, 236, 239, 240, 242, 243,
 					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -3649,39 +3649,39 @@ const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -3696,7 +3696,7 @@ const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 217, 239, 240, 243, 246, 252, 253, 265,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 217, 239, 240, 243, 246, 252, 253, 265,
 					341, 388, 389, 484
 				]
 			)
@@ -3822,46 +3822,46 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('declaration.constant.type', value);
 	}
@@ -3870,7 +3870,7 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -4097,7 +4097,7 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -4114,7 +4114,7 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -4798,7 +4798,7 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -4815,7 +4815,7 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -6074,46 +6074,46 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('declaration.parameter.receiver.type', value);
 	}
@@ -6122,7 +6122,7 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -6262,7 +6262,7 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -6438,39 +6438,39 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -6480,7 +6480,7 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 		if (
 			seated(
 				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
 			)
 		)
 			return value;
@@ -6491,7 +6491,7 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 217, 218, 236, 239, 240, 242, 243,
 					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -6607,46 +6607,46 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('declaration.type_parameter.default', value);
 	}
@@ -6655,7 +6655,7 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -6797,39 +6797,39 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -6839,7 +6839,7 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 		if (
 			seated(
 				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
 			)
 		)
 			return value;
@@ -6850,7 +6850,7 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 217, 218, 236, 239, 240, 242, 243,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 217, 218, 236, 239, 240, 242, 243,
 					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -6967,7 +6967,7 @@ const declaration_type_parameter_value$220_default = (value: declaration_type_pa
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 313, 328, 330, 331, 332, 333, 334, 336,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 313, 328, 330, 331, 332, 333, 334, 336,
 					367
 				]
 			)
@@ -7130,46 +7130,46 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('declaration.type_parameter.value.type', value);
 	}
@@ -7178,7 +7178,7 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -7447,46 +7447,46 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('declaration.variable.type', value);
 	}
@@ -7495,7 +7495,7 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -7722,7 +7722,7 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -7739,7 +7739,7 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -8098,7 +8098,7 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -8270,46 +8270,46 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('declaration.variable.type', value);
 	}
@@ -8318,7 +8318,7 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -8545,7 +8545,7 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -8562,7 +8562,7 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -9006,7 +9006,7 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -9023,7 +9023,7 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -9291,35 +9291,35 @@ const element_macro_token_binding$184_fragment = (value: element_macro_token_bin
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'block':
-				return 11;
-			case 'expr':
 				return 12;
-			case 'expr_2021':
+			case 'expr':
 				return 13;
-			case 'ident':
+			case 'expr_2021':
 				return 14;
-			case 'item':
+			case 'ident':
 				return 15;
-			case 'lifetime':
+			case 'item':
 				return 16;
-			case 'literal':
+			case 'lifetime':
 				return 17;
-			case 'meta':
+			case 'literal':
 				return 18;
-			case 'pat':
+			case 'meta':
 				return 19;
-			case 'pat_param':
+			case 'pat':
 				return 20;
-			case 'path':
+			case 'pat_param':
 				return 21;
-			case 'stmt':
+			case 'path':
 				return 22;
-			case 'tt':
+			case 'stmt':
 				return 23;
-			case 'ty':
+			case 'tt':
 				return 24;
-			case 'vis':
+			case 'ty':
 				return 25;
+			case 'vis':
+				return 26;
 			default:
 				return untexted('element.macro.token_binding.fragment', value);
 		}
@@ -9329,7 +9329,7 @@ const element_macro_token_binding$184_fragment = (value: element_macro_token_bin
 		return unseated('element.macro.token_binding.fragment', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 186])) return value;
+		if (seated(value, [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 186])) return value;
 		return unseated('element.macro.token_binding.fragment', value);
 	}
 	throw new Error('element.macro.token_binding.fragment takes no structure');
@@ -9339,11 +9339,11 @@ type element_macro_token_binding$184_name$Item =
 	| RustMap['nodes']['identifier.metavariable'];
 const element_macro_token_binding$184_name = (value: element_macro_token_binding$184_name$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [127])) return value;
+		if (seated(value, [131])) return value;
 		return unseated('element.macro.token_binding.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [127])) return value;
+		if (seated(value, [131])) return value;
 		return unseated('element.macro.token_binding.name', value);
 	}
 	switch (value.$path) {
@@ -9383,11 +9383,11 @@ const element_macro_token_repetition$188_separator = (value: element_macro_token
 		return b.tokenRepetitionPatternText(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [132])) return value;
+		if (seated(value, [11])) return value;
 		return unseated('element.macro.token_repetition.separator', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [132])) return value;
+		if (seated(value, [11])) return value;
 		return unseated('element.macro.token_repetition.separator', value);
 	}
 	throw new Error('element.macro.token_repetition.separator takes no structure');
@@ -9549,193 +9549,193 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -9749,15 +9749,15 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (seated(value, [131, 187, 188, 408, 409, 410])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -9866,11 +9866,11 @@ const element_macro_token_repetition_pattern$185_separator = (
 		return b.tokenRepetitionPatternText(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [132])) return value;
+		if (seated(value, [11])) return value;
 		return unseated('element.macro.token_repetition.pattern.separator', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [132])) return value;
+		if (seated(value, [11])) return value;
 		return unseated('element.macro.token_repetition.pattern.separator', value);
 	}
 	throw new Error('element.macro.token_repetition.pattern.separator takes no structure');
@@ -10036,193 +10036,193 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -10236,15 +10236,15 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (seated(value, [131, 183, 184, 185, 405, 406, 407])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -10478,193 +10478,193 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -10678,15 +10678,15 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (seated(value, [131, 187, 188, 408, 409, 410])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -10918,193 +10918,193 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -11118,15 +11118,15 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (seated(value, [131, 187, 188, 408, 409, 410])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -11358,193 +11358,193 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -11558,15 +11558,15 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (seated(value, [131, 187, 188, 408, 409, 410])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -11798,193 +11798,193 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -11998,15 +11998,15 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (seated(value, [131, 187, 188, 408, 409, 410])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -12238,193 +12238,193 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -12438,15 +12438,15 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (seated(value, [131, 187, 188, 408, 409, 410])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -12677,193 +12677,193 @@ const element_macro_token_tree_delimited$411_tokens = (value: element_macro_toke
 			case '$':
 				return 5;
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -12882,10 +12882,10 @@ const element_macro_token_tree_delimited$411_tokens = (value: element_macro_toke
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -13112,193 +13112,193 @@ const element_macro_token_tree_delimited$412_tokens = (value: element_macro_toke
 			case '$':
 				return 5;
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -13317,10 +13317,10 @@ const element_macro_token_tree_delimited$412_tokens = (value: element_macro_toke
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -13547,193 +13547,193 @@ const element_macro_token_tree_delimited$413_tokens = (value: element_macro_toke
 			case '$':
 				return 5;
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -13752,10 +13752,10 @@ const element_macro_token_tree_delimited$413_tokens = (value: element_macro_toke
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -13984,193 +13984,193 @@ const element_macro_token_tree_delimited_brace$413_tokens = (
 			case '$':
 				return 5;
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -14189,10 +14189,10 @@ const element_macro_token_tree_delimited_brace$413_tokens = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -14421,193 +14421,193 @@ const element_macro_token_tree_delimited_bracket$412_tokens = (
 			case '$':
 				return 5;
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -14626,10 +14626,10 @@ const element_macro_token_tree_delimited_bracket$412_tokens = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -14858,193 +14858,193 @@ const element_macro_token_tree_delimited_paren$411_tokens = (
 			case '$':
 				return 5;
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -15063,10 +15063,10 @@ const element_macro_token_tree_delimited_paren$411_tokens = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -15294,193 +15294,193 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -15494,15 +15494,15 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
+		if (seated(value, [131, 187, 188, 408, 409, 410])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -15736,193 +15736,193 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -15936,15 +15936,15 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (seated(value, [131, 183, 184, 185, 405, 406, 407])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -16180,193 +16180,193 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -16380,15 +16380,15 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (seated(value, [131, 183, 184, 185, 405, 406, 407])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -16624,193 +16624,193 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -16824,15 +16824,15 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (seated(value, [131, 183, 184, 185, 405, 406, 407])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -17070,193 +17070,193 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -17270,15 +17270,15 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (seated(value, [131, 183, 184, 185, 405, 406, 407])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -17516,193 +17516,193 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -17716,15 +17716,15 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (seated(value, [131, 183, 184, 185, 405, 406, 407])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -17962,193 +17962,193 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
-				return b.nonSpecialToken(29);
+				return b.nonSpecialToken(30);
 			case '!=':
-				return b.nonSpecialToken(81);
+				return b.nonSpecialToken(82);
 			case '#':
-				return b.nonSpecialToken(26);
+				return b.nonSpecialToken(27);
 			case '%':
-				return b.nonSpecialToken(87);
+				return b.nonSpecialToken(88);
 			case '%=':
-				return b.nonSpecialToken(92);
-			case '&':
-				return b.nonSpecialToken(54);
-			case '&&':
-				return b.nonSpecialToken(76);
-			case '&=':
 				return b.nonSpecialToken(93);
+			case '&':
+				return b.nonSpecialToken(55);
+			case '&&':
+				return b.nonSpecialToken(77);
+			case '&=':
+				return b.nonSpecialToken(94);
 			case "'":
-				return b.nonSpecialToken(49);
+				return b.nonSpecialToken(50);
 			case '*':
 				return b.nonSpecialToken(9);
 			case '*=':
-				return b.nonSpecialToken(90);
+				return b.nonSpecialToken(91);
 			case '+':
 				return b.nonSpecialToken(8);
 			case '+=':
-				return b.nonSpecialToken(88);
-			case ',':
-				return b.nonSpecialToken(130);
-			case '-':
-				return b.nonSpecialToken(75);
-			case '-=':
 				return b.nonSpecialToken(89);
+			case ',':
+				return b.nonSpecialToken(134);
+			case '-':
+				return b.nonSpecialToken(76);
+			case '-=':
+				return b.nonSpecialToken(90);
 			case '->':
-				return b.nonSpecialToken(131);
+				return b.nonSpecialToken(135);
 			case '.':
-				return b.nonSpecialToken(109);
+				return b.nonSpecialToken(110);
 			case '..':
-				return b.nonSpecialToken(100);
+				return b.nonSpecialToken(101);
 			case '...':
-				return b.nonSpecialToken(48);
+				return b.nonSpecialToken(49);
 			case '..=':
 				return b.nonSpecialToken(137);
 			case '/':
-				return b.nonSpecialToken(86);
+				return b.nonSpecialToken(87);
 			case '/=':
-				return b.nonSpecialToken(91);
+				return b.nonSpecialToken(92);
 			case ':':
 				return b.nonSpecialToken(4);
 			case '::':
-				return b.nonSpecialToken(46);
+				return b.nonSpecialToken(47);
 			case ';':
 				return b.nonSpecialToken(2);
 			case '<':
-				return b.nonSpecialToken(42);
+				return b.nonSpecialToken(43);
 			case '<<':
-				return b.nonSpecialToken(84);
+				return b.nonSpecialToken(85);
 			case '<<=':
-				return b.nonSpecialToken(96);
+				return b.nonSpecialToken(97);
 			case '<=':
-				return b.nonSpecialToken(82);
+				return b.nonSpecialToken(83);
 			case '=':
-				return b.nonSpecialToken(37);
+				return b.nonSpecialToken(38);
 			case '==':
-				return b.nonSpecialToken(80);
+				return b.nonSpecialToken(81);
 			case '=>':
 				return b.nonSpecialToken(3);
 			case '>':
-				return b.nonSpecialToken(43);
+				return b.nonSpecialToken(44);
 			case '>=':
-				return b.nonSpecialToken(83);
+				return b.nonSpecialToken(84);
 			case '>>':
-				return b.nonSpecialToken(85);
+				return b.nonSpecialToken(86);
 			case '>>=':
-				return b.nonSpecialToken(97);
+				return b.nonSpecialToken(98);
 			case '?':
 				return b.nonSpecialToken(10);
 			case '@':
-				return b.nonSpecialToken(115);
+				return b.nonSpecialToken(116);
 			case '^':
-				return b.nonSpecialToken(79);
+				return b.nonSpecialToken(80);
 			case '^=':
-				return b.nonSpecialToken(95);
+				return b.nonSpecialToken(96);
 			case '_':
 				return b.nonSpecialToken(136);
 			case 'as':
-				return b.nonSpecialToken(47);
+				return b.nonSpecialToken(48);
 			case 'async':
-				return b.nonSpecialToken(112);
+				return b.nonSpecialToken(113);
 			case 'await':
-				return b.nonSpecialToken(110);
+				return b.nonSpecialToken(111);
 			case 'bool':
-				return b.nonSpecialToken(72);
+				return b.nonSpecialToken(73);
 			case 'break':
-				return b.nonSpecialToken(107);
-			case 'char':
-				return b.nonSpecialToken(74);
-			case 'const':
-				return b.nonSpecialToken(35);
-			case 'continue':
 				return b.nonSpecialToken(108);
+			case 'char':
+				return b.nonSpecialToken(75);
+			case 'const':
+				return b.nonSpecialToken(36);
+			case 'continue':
+				return b.nonSpecialToken(109);
 			case 'crate':
-				return b.nonSpecialToken(126);
+				return b.nonSpecialToken(130);
 			case 'default':
-				return b.nonSpecialToken(50);
-			case 'enum':
-				return b.nonSpecialToken(33);
-			case 'f32':
-				return b.nonSpecialToken(70);
-			case 'f64':
-				return b.nonSpecialToken(71);
-			case 'fn':
-				return b.nonSpecialToken(38);
-			case 'for':
-				return b.nonSpecialToken(41);
-			case 'gen':
 				return b.nonSpecialToken(51);
+			case 'enum':
+				return b.nonSpecialToken(34);
+			case 'f32':
+				return b.nonSpecialToken(71);
+			case 'f64':
+				return b.nonSpecialToken(72);
+			case 'fn':
+				return b.nonSpecialToken(39);
+			case 'for':
+				return b.nonSpecialToken(42);
+			case 'gen':
+				return b.nonSpecialToken(52);
 			case 'i128':
-				return b.nonSpecialToken(67);
-			case 'i16':
-				return b.nonSpecialToken(61);
-			case 'i32':
-				return b.nonSpecialToken(63);
-			case 'i64':
-				return b.nonSpecialToken(65);
-			case 'i8':
-				return b.nonSpecialToken(59);
-			case 'if':
-				return b.nonSpecialToken(101);
-			case 'impl':
-				return b.nonSpecialToken(55);
-			case 'isize':
 				return b.nonSpecialToken(68);
+			case 'i16':
+				return b.nonSpecialToken(62);
+			case 'i32':
+				return b.nonSpecialToken(64);
+			case 'i64':
+				return b.nonSpecialToken(66);
+			case 'i8':
+				return b.nonSpecialToken(60);
+			case 'if':
+				return b.nonSpecialToken(102);
+			case 'impl':
+				return b.nonSpecialToken(56);
+			case 'isize':
+				return b.nonSpecialToken(69);
 			case 'let':
-				return b.nonSpecialToken(44);
+				return b.nonSpecialToken(45);
 			case 'loop':
-				return b.nonSpecialToken(105);
+				return b.nonSpecialToken(106);
 			case 'match':
-				return b.nonSpecialToken(103);
+				return b.nonSpecialToken(104);
 			case 'mod':
 				return b.nonSpecialToken(138);
 			case 'mut':
-				return b.nonSpecialToken(57);
+				return b.nonSpecialToken(58);
 			case 'pub':
 				return b.nonSpecialToken(139);
 			case 'return':
-				return b.nonSpecialToken(98);
+				return b.nonSpecialToken(99);
 			case 'self':
-				return b.nonSpecialToken(124);
-			case 'static':
 				return b.nonSpecialToken(128);
+			case 'static':
+				return b.nonSpecialToken(132);
 			case 'str':
-				return b.nonSpecialToken(73);
+				return b.nonSpecialToken(74);
 			case 'struct':
 				return b.nonSpecialToken(140);
 			case 'super':
-				return b.nonSpecialToken(125);
+				return b.nonSpecialToken(129);
 			case 'trait':
-				return b.nonSpecialToken(40);
+				return b.nonSpecialToken(41);
 			case 'type':
-				return b.nonSpecialToken(36);
+				return b.nonSpecialToken(37);
 			case 'u128':
-				return b.nonSpecialToken(66);
+				return b.nonSpecialToken(67);
 			case 'u16':
-				return b.nonSpecialToken(60);
+				return b.nonSpecialToken(61);
 			case 'u32':
-				return b.nonSpecialToken(62);
+				return b.nonSpecialToken(63);
 			case 'u64':
-				return b.nonSpecialToken(64);
+				return b.nonSpecialToken(65);
 			case 'u8':
-				return b.nonSpecialToken(58);
+				return b.nonSpecialToken(59);
 			case 'union':
-				return b.nonSpecialToken(32);
+				return b.nonSpecialToken(33);
 			case 'unsafe':
-				return b.nonSpecialToken(111);
+				return b.nonSpecialToken(112);
 			case 'use':
-				return b.nonSpecialToken(45);
+				return b.nonSpecialToken(46);
 			case 'usize':
-				return b.nonSpecialToken(69);
+				return b.nonSpecialToken(70);
 			case 'where':
-				return b.nonSpecialToken(39);
+				return b.nonSpecialToken(40);
 			case 'while':
-				return b.nonSpecialToken(104);
+				return b.nonSpecialToken(105);
 			case '|':
-				return b.nonSpecialToken(78);
+				return b.nonSpecialToken(79);
 			case '|=':
-				return b.nonSpecialToken(94);
+				return b.nonSpecialToken(95);
 			case '||':
-				return b.nonSpecialToken(77);
+				return b.nonSpecialToken(78);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.nonSpecialToken(b.identifier(value));
@@ -18162,15 +18162,15 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
 	if (isNode(value)) {
-		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
+		if (seated(value, [131, 183, 184, 185, 405, 406, 407])) return value;
 		if (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 8, 9, 10, 26, 29, 32, 33, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 54,
-					55, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
-					83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 100, 101, 103, 104, 105, 107, 108, 109, 110,
-					111, 112, 115, 116, 117, 124, 125, 126, 128, 130, 131, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+					1, 2, 3, 4, 8, 9, 10, 27, 30, 33, 34, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55,
+					56, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+					84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 111,
+					112, 113, 116, 118, 119, 128, 129, 130, 132, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
 					147, 148, 149, 150, 162, 328, 331, 332, 333, 334, 336, 341, 360, 361, 367
 				]
 			)
@@ -18432,7 +18432,7 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -18449,7 +18449,7 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -18989,7 +18989,7 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -19006,7 +19006,7 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -19347,46 +19347,46 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('element.type_binding.type', value);
 	}
@@ -19395,7 +19395,7 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -19636,7 +19636,7 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -19653,7 +19653,7 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -20085,7 +20085,7 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -20102,7 +20102,7 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -20534,7 +20534,7 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -20551,7 +20551,7 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -20983,7 +20983,7 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -21000,7 +21000,7 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -21434,7 +21434,7 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -21451,7 +21451,7 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -21885,7 +21885,7 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -21902,7 +21902,7 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -22336,7 +22336,7 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -22353,7 +22353,7 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -22787,7 +22787,7 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -22804,7 +22804,7 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -23238,7 +23238,7 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -23255,7 +23255,7 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -23689,7 +23689,7 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -23706,7 +23706,7 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -24138,7 +24138,7 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -24155,7 +24155,7 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -24589,7 +24589,7 @@ const expression_assignment_compound_divide$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -24606,7 +24606,7 @@ const expression_assignment_compound_divide$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -25038,7 +25038,7 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -25055,7 +25055,7 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -25489,7 +25489,7 @@ const expression_assignment_compound_modulo$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -25506,7 +25506,7 @@ const expression_assignment_compound_modulo$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -25940,7 +25940,7 @@ const expression_assignment_compound_multiply$272_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -25957,7 +25957,7 @@ const expression_assignment_compound_multiply$272_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -26391,7 +26391,7 @@ const expression_assignment_compound_multiply$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -26408,7 +26408,7 @@ const expression_assignment_compound_multiply$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -26842,7 +26842,7 @@ const expression_assignment_compound_shift_left$272_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -26859,7 +26859,7 @@ const expression_assignment_compound_shift_left$272_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -27293,7 +27293,7 @@ const expression_assignment_compound_shift_left$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -27310,7 +27310,7 @@ const expression_assignment_compound_shift_left$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -27744,7 +27744,7 @@ const expression_assignment_compound_shift_right$272_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -27761,7 +27761,7 @@ const expression_assignment_compound_shift_right$272_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -28195,7 +28195,7 @@ const expression_assignment_compound_shift_right$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -28212,7 +28212,7 @@ const expression_assignment_compound_shift_right$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -28646,7 +28646,7 @@ const expression_assignment_compound_subtract$272_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -28663,7 +28663,7 @@ const expression_assignment_compound_subtract$272_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -29097,7 +29097,7 @@ const expression_assignment_compound_subtract$272_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -29114,7 +29114,7 @@ const expression_assignment_compound_subtract$272_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -29546,7 +29546,7 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -29563,7 +29563,7 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -29995,7 +29995,7 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -30012,7 +30012,7 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -30444,7 +30444,7 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -30461,7 +30461,7 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -30893,7 +30893,7 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -30910,7 +30910,7 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -31342,7 +31342,7 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -31359,7 +31359,7 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -31791,7 +31791,7 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -31808,7 +31808,7 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -32240,7 +32240,7 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -32257,7 +32257,7 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -32689,7 +32689,7 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -32706,7 +32706,7 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -33140,7 +33140,7 @@ const expression_binary_arithmetic_multiply$270_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -33157,7 +33157,7 @@ const expression_binary_arithmetic_multiply$270_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -33589,7 +33589,7 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -33606,7 +33606,7 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -34040,7 +34040,7 @@ const expression_binary_arithmetic_subtract$270_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -34057,7 +34057,7 @@ const expression_binary_arithmetic_subtract$270_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -34489,7 +34489,7 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -34506,7 +34506,7 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -34938,7 +34938,7 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -34955,7 +34955,7 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -35387,7 +35387,7 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -35404,7 +35404,7 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -35836,7 +35836,7 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -35853,7 +35853,7 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -36285,7 +36285,7 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -36302,7 +36302,7 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -36734,7 +36734,7 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -36751,7 +36751,7 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -37183,7 +37183,7 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -37200,7 +37200,7 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -37632,7 +37632,7 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -37649,7 +37649,7 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -38081,7 +38081,7 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -38098,7 +38098,7 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -38530,7 +38530,7 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -38547,7 +38547,7 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -38981,7 +38981,7 @@ const expression_binary_comparison_greater_equal$270_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -38998,7 +38998,7 @@ const expression_binary_comparison_greater_equal$270_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -39432,7 +39432,7 @@ const expression_binary_comparison_greater_equal$270_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -39449,7 +39449,7 @@ const expression_binary_comparison_greater_equal$270_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -39881,7 +39881,7 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -39898,7 +39898,7 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -40330,7 +40330,7 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -40347,7 +40347,7 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -40781,7 +40781,7 @@ const expression_binary_comparison_less_equal$270_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -40798,7 +40798,7 @@ const expression_binary_comparison_less_equal$270_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -41232,7 +41232,7 @@ const expression_binary_comparison_less_equal$270_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -41249,7 +41249,7 @@ const expression_binary_comparison_less_equal$270_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -41683,7 +41683,7 @@ const expression_binary_comparison_not_equal$270_left = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -41700,7 +41700,7 @@ const expression_binary_comparison_not_equal$270_left = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -42134,7 +42134,7 @@ const expression_binary_comparison_not_equal$270_right = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -42151,7 +42151,7 @@ const expression_binary_comparison_not_equal$270_right = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -42583,7 +42583,7 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -42600,7 +42600,7 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -43032,7 +43032,7 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -43049,7 +43049,7 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -43481,7 +43481,7 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -43498,7 +43498,7 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -43930,7 +43930,7 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -43947,7 +43947,7 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -44379,7 +44379,7 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -44396,7 +44396,7 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -44828,7 +44828,7 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -44845,7 +44845,7 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -45277,7 +45277,7 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -45294,7 +45294,7 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -45726,7 +45726,7 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -45743,7 +45743,7 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -46231,7 +46231,7 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -46248,7 +46248,7 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -46565,46 +46565,46 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('expression.cast.conversion.type', value);
 	}
@@ -46613,7 +46613,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -46842,7 +46842,7 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -46859,7 +46859,7 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 363, 367, 369, 370, 371, 372, 373,
 					374, 390, 391, 392, 393, 435, 436
@@ -47293,7 +47293,7 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -47310,7 +47310,7 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -47742,7 +47742,7 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -47759,7 +47759,7 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -48249,7 +48249,7 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -48266,7 +48266,7 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 363, 367, 369, 370, 371, 372, 373,
 					374, 390, 391, 392, 393, 435, 436
@@ -48690,46 +48690,46 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('expression.lambda.returnType', value);
 	}
@@ -48738,7 +48738,7 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -49153,7 +49153,7 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -49184,7 +49184,7 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -49816,7 +49816,7 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -49833,7 +49833,7 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -50266,7 +50266,7 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			case '_':
 				return 136;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -50283,7 +50283,7 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266,
+					1, 118, 119, 128, 131, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266,
 					267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301,
 					304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373,
 					374, 390, 391, 392, 393, 435, 436
@@ -50958,7 +50958,7 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -50989,7 +50989,7 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -51621,7 +51621,7 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -51638,7 +51638,7 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -52070,7 +52070,7 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -52087,7 +52087,7 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -52562,7 +52562,7 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -52579,7 +52579,7 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -53011,7 +53011,7 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -53028,7 +53028,7 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -53460,7 +53460,7 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -53477,7 +53477,7 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -53909,7 +53909,7 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -53926,7 +53926,7 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -54358,7 +54358,7 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -54375,7 +54375,7 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -54807,7 +54807,7 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -54824,7 +54824,7 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -55256,7 +55256,7 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -55273,7 +55273,7 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -55705,7 +55705,7 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -55722,7 +55722,7 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -56154,7 +56154,7 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -56171,7 +56171,7 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -56603,7 +56603,7 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -56620,7 +56620,7 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -57052,7 +57052,7 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -57069,7 +57069,7 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -57501,7 +57501,7 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -57518,7 +57518,7 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -57950,7 +57950,7 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -57967,7 +57967,7 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -58399,7 +58399,7 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -58416,7 +58416,7 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -58848,7 +58848,7 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -58865,7 +58865,7 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -59297,7 +59297,7 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -59314,7 +59314,7 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -59746,7 +59746,7 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -59763,7 +59763,7 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -60195,7 +60195,7 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -60212,7 +60212,7 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -60644,7 +60644,7 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -60661,7 +60661,7 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -61093,7 +61093,7 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -61110,7 +61110,7 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -61542,7 +61542,7 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -61559,7 +61559,7 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -61991,7 +61991,7 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -62008,7 +62008,7 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -62312,7 +62312,7 @@ const identifier_qualified$263_name = (value: identifier_qualified$263_name$Item
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -62323,7 +62323,7 @@ const identifier_qualified$263_name = (value: identifier_qualified$263_name$Item
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125])) return value;
+		if (seated(value, [1, 129])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -62354,22 +62354,22 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 237, 247, 263])) return value;
+		if (seated(value, [1, 131, 237, 247, 263])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 237, 247, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 237, 247, 263, 481])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
@@ -62435,22 +62435,22 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 247, 263])) return value;
+		if (seated(value, [1, 131, 247, 263])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 247, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 247, 263, 481])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
@@ -62516,22 +62516,22 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 237, 246, 247, 263])) return value;
+		if (seated(value, [1, 131, 237, 246, 247, 263])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 237, 246, 247, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 237, 246, 247, 263, 481])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
@@ -62915,7 +62915,7 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -63158,7 +63158,7 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -63358,7 +63358,7 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -63558,7 +63558,7 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -63758,7 +63758,7 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -63958,7 +63958,7 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -64110,11 +64110,11 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64131,7 +64131,7 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 			seated(
 				value,
 				[
-					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
 					333, 334, 336, 367, 481
 				]
 			)
@@ -64252,11 +64252,11 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64273,7 +64273,7 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 			seated(
 				value,
 				[
-					1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
 					333, 334, 336, 367, 481
 				]
 			)
@@ -64442,7 +64442,7 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -64642,7 +64642,7 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -64949,7 +64949,7 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -65149,7 +65149,7 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -65383,7 +65383,7 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 301, 314, 315, 316, 317,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 301, 314, 315, 316, 317,
 					318, 319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 369, 370, 386, 387, 419,
 					422, 426
 				]
@@ -65896,7 +65896,7 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -65927,7 +65927,7 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -66559,7 +66559,7 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -66576,7 +66576,7 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -67196,7 +67196,7 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -67227,7 +67227,7 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -67859,7 +67859,7 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -67876,7 +67876,7 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -68496,7 +68496,7 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -68527,7 +68527,7 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -69159,7 +69159,7 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -69176,7 +69176,7 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -69796,7 +69796,7 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -69827,7 +69827,7 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -70461,7 +70461,7 @@ const statement_block_generator$311_trailingExpression = (
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -70478,7 +70478,7 @@ const statement_block_generator$311_trailingExpression = (
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -71098,7 +71098,7 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -71129,7 +71129,7 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -71761,7 +71761,7 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -71778,7 +71778,7 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -72398,7 +72398,7 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -72429,7 +72429,7 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -73061,7 +73061,7 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -73078,7 +73078,7 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -73510,7 +73510,7 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -73527,7 +73527,7 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -73999,7 +73999,7 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -74016,7 +74016,7 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
 					373, 374, 390, 391, 392, 393, 435, 436
@@ -74640,7 +74640,7 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -74671,7 +74671,7 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -75303,7 +75303,7 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -75320,7 +75320,7 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -75590,22 +75590,22 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
-				return 126;
+				return 130;
 			case 'self':
 				return 481;
 			case 'super':
-				return 125;
+				return 129;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 226, 227, 228, 229, 263])) return value;
+		if (seated(value, [1, 131, 226, 227, 228, 229, 263])) return value;
 		return unseated('statement.import.argument', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 226, 227, 228, 229, 263, 481])) return value;
 		return unseated('statement.import.argument', value);
 	}
 	switch (value.$path) {
@@ -76060,7 +76060,7 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -76091,7 +76091,7 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -76723,7 +76723,7 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -76740,7 +76740,7 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -77099,7 +77099,7 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			seated(
 				value,
 				[
-					1, 116, 117, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
+					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
 					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
 				]
 			)
@@ -77386,7 +77386,7 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -77403,7 +77403,7 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -78023,7 +78023,7 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -78054,7 +78054,7 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -78686,7 +78686,7 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -78703,7 +78703,7 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -79139,7 +79139,7 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -79156,7 +79156,7 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
 					373, 374, 390, 391, 392, 393, 435, 436
@@ -79794,7 +79794,7 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			case '()':
 				return b.expressionStatement.withSemi(281);
 			case 'self':
-				return b.expressionStatement.withSemi(124);
+				return b.expressionStatement.withSemi(128);
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value))
 					return b.expressionStatement.withSemi(b.identifier(value));
@@ -79825,7 +79825,7 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
 					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
 				]
@@ -80457,7 +80457,7 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -80474,7 +80474,7 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -80906,7 +80906,7 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -80923,7 +80923,7 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -81240,46 +81240,46 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.array.element', value);
 	}
@@ -81288,7 +81288,7 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -81515,7 +81515,7 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			case '()':
 				return 281;
 			case 'self':
-				return 124;
+				return 128;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -81532,7 +81532,7 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			seated(
 				value,
 				[
-					1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
+					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
 					390, 391, 392, 393, 435, 436
@@ -81853,39 +81853,39 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -81895,7 +81895,7 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 		if (
 			seated(
 				value,
-				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
 			)
 		)
 			return value;
@@ -81906,7 +81906,7 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 239, 240, 242, 243, 244,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 239, 240, 242, 243, 244,
 					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -82026,39 +82026,39 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -82068,7 +82068,7 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 		if (
 			seated(
 				value,
-				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
 			)
 		)
 			return value;
@@ -82079,7 +82079,7 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 239, 240, 242, 243, 244,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 239, 240, 242, 243, 244,
 					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -82197,46 +82197,46 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 238, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 238, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.bracketed.type', value);
 	}
@@ -82245,7 +82245,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 238, 240, 242, 243, 244,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 238, 240, 242, 243, 244,
 					246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -82489,46 +82489,46 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.pointer.type', value);
 	}
@@ -82537,7 +82537,7 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -82649,46 +82649,46 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.pointer.type', value);
 	}
@@ -82697,7 +82697,7 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -82809,46 +82809,46 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.qualified.alias', value);
 	}
@@ -82857,7 +82857,7 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -82969,46 +82969,46 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.qualified.type', value);
 	}
@@ -83017,7 +83017,7 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -83143,46 +83143,46 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.reference.type', value);
 	}
@@ -83191,7 +83191,7 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -83303,46 +83303,46 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 			case '()':
 				return 244;
 			case 'bool':
-				return 72;
-			case 'char':
-				return 74;
-			case 'f32':
-				return 70;
-			case 'f64':
-				return 71;
-			case 'i128':
-				return 67;
-			case 'i16':
-				return 61;
-			case 'i32':
-				return 63;
-			case 'i64':
-				return 65;
-			case 'i8':
-				return 59;
-			case 'isize':
-				return 68;
-			case 'str':
 				return 73;
-			case 'u128':
-				return 66;
-			case 'u16':
-				return 60;
-			case 'u32':
+			case 'char':
+				return 75;
+			case 'f32':
+				return 71;
+			case 'f64':
+				return 72;
+			case 'i128':
+				return 68;
+			case 'i16':
 				return 62;
-			case 'u64':
+			case 'i32':
 				return 64;
-			case 'u8':
-				return 58;
-			case 'usize':
+			case 'i64':
+				return 66;
+			case 'i8':
+				return 60;
+			case 'isize':
 				return 69;
+			case 'str':
+				return 74;
+			case 'u128':
+				return 67;
+			case 'u16':
+				return 61;
+			case 'u32':
+				return 63;
+			case 'u64':
+				return 65;
+			case 'u8':
+				return 59;
+			case 'usize':
+				return 70;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
 			return value;
 		return unseated('type.tuple.types', value);
 	}
@@ -83351,7 +83351,7 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 			seated(
 				value,
 				[
-					58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 127, 218, 236, 240, 242, 243, 244, 246,
+					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
 					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
 				]
 			)
@@ -84063,7 +84063,7 @@ const expression_assignment_compound_add$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_add$272_left(input.left),
 		right: expression_assignment_compound_add$272_right(input.right),
-		operator: 88
+		operator: 89
 	});
 };
 const expression_assignment_compound_bitwise_and$272 = (
@@ -84074,7 +84074,7 @@ const expression_assignment_compound_bitwise_and$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_bitwise_and$272_left(input.left),
 		right: expression_assignment_compound_bitwise_and$272_right(input.right),
-		operator: 93
+		operator: 94
 	});
 };
 const expression_assignment_compound_bitwise_or$272 = (
@@ -84085,7 +84085,7 @@ const expression_assignment_compound_bitwise_or$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_bitwise_or$272_left(input.left),
 		right: expression_assignment_compound_bitwise_or$272_right(input.right),
-		operator: 94
+		operator: 95
 	});
 };
 const expression_assignment_compound_bitwise_xor$272 = (
@@ -84096,7 +84096,7 @@ const expression_assignment_compound_bitwise_xor$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_bitwise_xor$272_left(input.left),
 		right: expression_assignment_compound_bitwise_xor$272_right(input.right),
-		operator: 95
+		operator: 96
 	});
 };
 const expression_assignment_compound_divide$272 = (
@@ -84107,7 +84107,7 @@ const expression_assignment_compound_divide$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_divide$272_left(input.left),
 		right: expression_assignment_compound_divide$272_right(input.right),
-		operator: 91
+		operator: 92
 	});
 };
 const expression_assignment_compound_modulo$272 = (
@@ -84118,7 +84118,7 @@ const expression_assignment_compound_modulo$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_modulo$272_left(input.left),
 		right: expression_assignment_compound_modulo$272_right(input.right),
-		operator: 92
+		operator: 93
 	});
 };
 const expression_assignment_compound_multiply$272 = (
@@ -84129,7 +84129,7 @@ const expression_assignment_compound_multiply$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_multiply$272_left(input.left),
 		right: expression_assignment_compound_multiply$272_right(input.right),
-		operator: 90
+		operator: 91
 	});
 };
 const expression_assignment_compound_shift_left$272 = (
@@ -84140,7 +84140,7 @@ const expression_assignment_compound_shift_left$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_shift_left$272_left(input.left),
 		right: expression_assignment_compound_shift_left$272_right(input.right),
-		operator: 96
+		operator: 97
 	});
 };
 const expression_assignment_compound_shift_right$272 = (
@@ -84151,7 +84151,7 @@ const expression_assignment_compound_shift_right$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_shift_right$272_left(input.left),
 		right: expression_assignment_compound_shift_right$272_right(input.right),
-		operator: 97
+		operator: 98
 	});
 };
 const expression_assignment_compound_subtract$272 = (
@@ -84162,7 +84162,7 @@ const expression_assignment_compound_subtract$272 = (
 	return b.compoundAssignmentExpr({
 		left: expression_assignment_compound_subtract$272_left(input.left),
 		right: expression_assignment_compound_subtract$272_right(input.right),
-		operator: 89
+		operator: 90
 	});
 };
 const expression_await$307 = (input: PathInput<RustMap, 'expression.await'>): ReturnType<typeof b.awaitExpression> => {
@@ -84201,7 +84201,7 @@ const expression_binary_arithmetic_divide$270 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.divide.right')
 				: expression_binary_arithmetic_divide$270_right(input.right),
-		operator: 86
+		operator: 87
 	});
 };
 const expression_binary_arithmetic_modulo$270 = (
@@ -84218,7 +84218,7 @@ const expression_binary_arithmetic_modulo$270 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.modulo.right')
 				: expression_binary_arithmetic_modulo$270_right(input.right),
-		operator: 87
+		operator: 88
 	});
 };
 const expression_binary_arithmetic_multiply$270 = (
@@ -84252,7 +84252,7 @@ const expression_binary_arithmetic_subtract$270 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.subtract.right')
 				: expression_binary_arithmetic_subtract$270_right(input.right),
-		operator: 75
+		operator: 76
 	});
 };
 const expression_binary_bitwise_and$270 = (
@@ -84269,7 +84269,7 @@ const expression_binary_bitwise_and$270 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.and.right')
 				: expression_binary_bitwise_and$270_right(input.right),
-		operator: 54
+		operator: 55
 	});
 };
 const expression_binary_bitwise_or$270 = (
@@ -84286,7 +84286,7 @@ const expression_binary_bitwise_or$270 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.or.right')
 				: expression_binary_bitwise_or$270_right(input.right),
-		operator: 78
+		operator: 79
 	});
 };
 const expression_binary_bitwise_xor$270 = (
@@ -84303,7 +84303,7 @@ const expression_binary_bitwise_xor$270 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.xor.right')
 				: expression_binary_bitwise_xor$270_right(input.right),
-		operator: 79
+		operator: 80
 	});
 };
 const expression_binary_comparison_equal$270 = (
@@ -84320,7 +84320,7 @@ const expression_binary_comparison_equal$270 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.equal.right')
 				: expression_binary_comparison_equal$270_right(input.right),
-		operator: 80
+		operator: 81
 	});
 };
 const expression_binary_comparison_greater$270 = (
@@ -84337,7 +84337,7 @@ const expression_binary_comparison_greater$270 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.greater.right')
 				: expression_binary_comparison_greater$270_right(input.right),
-		operator: 43
+		operator: 44
 	});
 };
 const expression_binary_comparison_greater_equal$270 = (
@@ -84354,7 +84354,7 @@ const expression_binary_comparison_greater_equal$270 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.greater_equal.right')
 				: expression_binary_comparison_greater_equal$270_right(input.right),
-		operator: 83
+		operator: 84
 	});
 };
 const expression_binary_comparison_less$270 = (
@@ -84371,7 +84371,7 @@ const expression_binary_comparison_less$270 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.less.right')
 				: expression_binary_comparison_less$270_right(input.right),
-		operator: 42
+		operator: 43
 	});
 };
 const expression_binary_comparison_less_equal$270 = (
@@ -84388,7 +84388,7 @@ const expression_binary_comparison_less_equal$270 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.less_equal.right')
 				: expression_binary_comparison_less_equal$270_right(input.right),
-		operator: 82
+		operator: 83
 	});
 };
 const expression_binary_comparison_not_equal$270 = (
@@ -84405,7 +84405,7 @@ const expression_binary_comparison_not_equal$270 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.not_equal.right')
 				: expression_binary_comparison_not_equal$270_right(input.right),
-		operator: 81
+		operator: 82
 	});
 };
 const expression_binary_logical_and$270 = (
@@ -84422,7 +84422,7 @@ const expression_binary_logical_and$270 = (
 			input.right === undefined
 				? missing('expression.binary.logical.and.right')
 				: expression_binary_logical_and$270_right(input.right),
-		operator: 76
+		operator: 77
 	});
 };
 const expression_binary_logical_or$270 = (
@@ -84439,7 +84439,7 @@ const expression_binary_logical_or$270 = (
 			input.right === undefined
 				? missing('expression.binary.logical.or.right')
 				: expression_binary_logical_or$270_right(input.right),
-		operator: 77
+		operator: 78
 	});
 };
 const expression_binary_shift_left$270 = (
@@ -84456,7 +84456,7 @@ const expression_binary_shift_left$270 = (
 			input.count === undefined
 				? missing('expression.binary.shift.left.count')
 				: expression_binary_shift_left$270_count(input.count),
-		operator: 84
+		operator: 85
 	});
 };
 const expression_binary_shift_right$270 = (
@@ -84473,7 +84473,7 @@ const expression_binary_shift_right$270 = (
 			input.count === undefined
 				? missing('expression.binary.shift.right.count')
 				: expression_binary_shift_right$270_count(input.count),
-		operator: 85
+		operator: 86
 	});
 };
 const expression_call_macro$259 = (
@@ -84717,7 +84717,7 @@ const expression_range_exclusive$390 = (
 			input.end === undefined
 				? missing('expression.range.exclusive.end')
 				: expression_range_exclusive$390_end(input.end),
-		operator: 100
+		operator: 101
 	});
 };
 const expression_range_exclusive$391 = (
@@ -84778,7 +84778,7 @@ const expression_range_inclusive_legacy$390 = (
 			input.end === undefined
 				? missing('expression.range.inclusive.legacy.end')
 				: expression_range_inclusive_legacy$390_end(input.end),
-		operator: 48
+		operator: 49
 	});
 };
 const expression_reference$371 = (
@@ -84840,14 +84840,14 @@ const expression_unary_negation$267 = (
 ): ReturnType<typeof b.unaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['argument']);
 	if (unroutedSlot !== undefined) return unrouted('expression.unary.negation', unroutedSlot);
-	return b.unaryExpression({ argument: expression_unary_negation$267_argument(input.argument), operator: 75 });
+	return b.unaryExpression({ argument: expression_unary_negation$267_argument(input.argument), operator: 76 });
 };
 const expression_unary_not$267 = (
 	input: PathInput<RustMap, 'expression.unary.not'>
 ): ReturnType<typeof b.unaryExpression> => {
 	const unroutedSlot = unroutedIn(input, ['argument']);
 	if (unroutedSlot !== undefined) return unrouted('expression.unary.not', unroutedSlot);
-	return b.unaryExpression({ argument: expression_unary_not$267_argument(input.argument), operator: 29 });
+	return b.unaryExpression({ argument: expression_unary_not$267_argument(input.argument), operator: 30 });
 };
 const expression_yield$275 = (input: PathInput<RustMap, 'expression.yield'>): ReturnType<typeof b.yieldExpression> => {
 	const unroutedSlot = unroutedIn(input, ['expression']);
@@ -85070,7 +85070,7 @@ const pattern_range_exclusive$419 = (
 			input.right === undefined
 				? missing('pattern.range.exclusive.right')
 				: pattern_range_exclusive$419_right(input.right),
-		operator: 100
+		operator: 101
 	});
 };
 const pattern_range_inclusive$419 = (

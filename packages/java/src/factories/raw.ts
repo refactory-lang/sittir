@@ -20,6 +20,7 @@ export const buildStringFragment = dispatched(() => backend().buildStringFragmen
 export const buildMultilineStringFragment = dispatched(() => backend().buildMultilineStringFragment);
 export const buildStringInterpolation = dispatched(() => backend().buildStringInterpolation);
 export const buildMultilineStringLiteralArm1 = dispatched(() => backend().buildMultilineStringLiteralArm1);
+export const buildEscapeSequenceText = dispatched(() => backend().buildEscapeSequenceText);
 export const buildNullLiteral = O.buildNullLiteral;
 export const buildCastExpression = dispatched(() => backend().buildCastExpression);
 export const buildAssignmentExpression = dispatched(() => backend().buildAssignmentExpression);
@@ -189,7 +190,6 @@ export const buildRecordPatternComponentArm = dispatched(() => backend().buildRe
 export const buildAssertStatementArm = dispatched(() => backend().buildAssertStatementArm);
 export const buildResourceArm = dispatched(() => backend().buildResourceArm);
 export const buildForStatementArm = dispatched(() => backend().buildForStatementArm);
-export const buildEscapeSequenceText = dispatched(() => backend().buildEscapeSequenceText);
 export const buildFormalParametersReceiver = dispatched(() => backend().buildFormalParametersReceiver);
 export const buildFormalParametersList = dispatched(() => backend().buildFormalParametersList);
 export const buildStringLiteralLine = dispatched(() => backend().buildStringLiteralLine);
@@ -222,6 +222,7 @@ export const _factoryMap = {
 	multiline_string_fragment: buildMultilineStringFragment,
 	string_interpolation: buildStringInterpolation,
 	multiline_string_literal_arm1: buildMultilineStringLiteralArm1,
+	escape_sequence_text: buildEscapeSequenceText,
 	null_literal: buildNullLiteral,
 	cast_expression: buildCastExpression,
 	assignment_expression: buildAssignmentExpression,
@@ -377,7 +378,6 @@ export const _factoryMap = {
 	assert_statement_arm: buildAssertStatementArm,
 	resource_arm: buildResourceArm,
 	for_statement_arm: buildForStatementArm,
-	escape_sequence_text: buildEscapeSequenceText,
 	formal_parameters_receiver: buildFormalParametersReceiver,
 	formal_parameters_list: buildFormalParametersList,
 	string_literal_line: buildStringLiteralLine,

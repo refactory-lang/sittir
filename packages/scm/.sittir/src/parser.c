@@ -30,19 +30,19 @@ enum ts_symbol_identifiers {
   anon_sym_AT = 8,
   anon_sym_DQUOTE = 9,
   anon_sym_DQUOTE2 = 10,
-  sym_comment = 11,
-  anon_sym_LBRACK = 12,
-  anon_sym_RBRACK = 13,
-  anon_sym_LPAREN = 14,
-  anon_sym_RPAREN = 15,
-  anon_sym_MISSING = 16,
-  anon_sym_COLON = 17,
-  anon_sym_BANG = 18,
-  anon_sym_POUND = 19,
-  anon_sym_DOT = 20,
-  anon_sym_QMARK2 = 21,
-  anon_sym_BANG2 = 22,
-  sym_string_content_text = 23,
+  sym_string_content_text = 11,
+  sym_comment = 12,
+  anon_sym_LBRACK = 13,
+  anon_sym_RBRACK = 14,
+  anon_sym_LPAREN = 15,
+  anon_sym_RPAREN = 16,
+  anon_sym_MISSING = 17,
+  anon_sym_COLON = 18,
+  anon_sym_BANG = 19,
+  anon_sym_POUND = 20,
+  anon_sym_DOT = 21,
+  anon_sym_QMARK2 = 22,
+  anon_sym_BANG2 = 23,
   anon_sym_SLASH = 24,
   sym__tight = 25,
   sym__space = 26,
@@ -104,6 +104,7 @@ static const char * const ts_symbol_names[] = {
   [anon_sym_AT] = "@",
   [anon_sym_DQUOTE] = "\"",
   [anon_sym_DQUOTE2] = "\"",
+  [sym_string_content_text] = "string_content_text",
   [sym_comment] = "comment",
   [anon_sym_LBRACK] = "[",
   [anon_sym_RBRACK] = "]",
@@ -116,7 +117,6 @@ static const char * const ts_symbol_names[] = {
   [anon_sym_DOT] = ".",
   [anon_sym_QMARK2] = "\?",
   [anon_sym_BANG2] = "!",
-  [sym_string_content_text] = "string_content_text",
   [anon_sym_SLASH] = "/",
   [sym__tight] = "_tight",
   [sym__space] = "_space",
@@ -178,6 +178,7 @@ static const TSSymbol ts_symbol_map[] = {
   [anon_sym_AT] = anon_sym_AT,
   [anon_sym_DQUOTE] = anon_sym_DQUOTE,
   [anon_sym_DQUOTE2] = anon_sym_DQUOTE,
+  [sym_string_content_text] = sym_string_content_text,
   [sym_comment] = sym_comment,
   [anon_sym_LBRACK] = anon_sym_LBRACK,
   [anon_sym_RBRACK] = anon_sym_RBRACK,
@@ -190,7 +191,6 @@ static const TSSymbol ts_symbol_map[] = {
   [anon_sym_DOT] = anon_sym_DOT,
   [anon_sym_QMARK2] = anon_sym_QMARK,
   [anon_sym_BANG2] = anon_sym_BANG,
-  [sym_string_content_text] = sym_string_content_text,
   [anon_sym_SLASH] = anon_sym_SLASH,
   [sym__tight] = sym__tight,
   [sym__space] = sym__space,
@@ -285,6 +285,10 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = false,
   },
+  [sym_string_content_text] = {
+    .visible = true,
+    .named = true,
+  },
   [sym_comment] = {
     .visible = true,
     .named = true,
@@ -332,10 +336,6 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
   [anon_sym_BANG2] = {
     .visible = true,
     .named = false,
-  },
-  [sym_string_content_text] = {
-    .visible = true,
-    .named = true,
   },
   [anon_sym_SLASH] = {
     .visible = true,
@@ -826,23 +826,23 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 0:
       if (eof) ADVANCE(11);
       ADVANCE_MAP(
-        '!', 39,
+        '!', 41,
         '"', 27,
-        '#', 36,
-        '(', 31,
-        ')', 32,
+        '#', 38,
+        '(', 33,
+        ')', 34,
         '*', 13,
         '+', 14,
-        '.', 37,
+        '.', 39,
         '/', 42,
-        ':', 34,
-        ';', 28,
-        '?', 38,
+        ':', 36,
+        ';', 30,
+        '?', 40,
         '@', 25,
         'M', 17,
-        '[', 29,
+        '[', 31,
         '\\', 7,
-        ']', 30,
+        ']', 32,
         '_', 24,
       );
       if (('\t' <= lookahead && lookahead <= '\r') ||
@@ -854,23 +854,23 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 1:
       if (lookahead == '\n') SKIP(6);
       if (lookahead == '"') ADVANCE(27);
-      if (lookahead == ';') ADVANCE(41);
+      if (lookahead == ';') ADVANCE(29);
       if (lookahead == '\\') ADVANCE(7);
       if (('\t' <= lookahead && lookahead <= '\r') ||
-          lookahead == ' ') ADVANCE(40);
-      if (lookahead != 0) ADVANCE(41);
+          lookahead == ' ') ADVANCE(28);
+      if (lookahead != 0) ADVANCE(29);
       END_STATE();
     case 2:
       ADVANCE_MAP(
-        '!', 39,
+        '!', 41,
         '"', 26,
-        '#', 36,
-        '(', 31,
-        '.', 37,
-        ';', 28,
-        '?', 38,
+        '#', 38,
+        '(', 33,
+        '.', 39,
+        ';', 30,
+        '?', 40,
         'M', 17,
-        '[', 29,
+        '[', 31,
         '_', 24,
       );
       if (('\t' <= lookahead && lookahead <= '\r') ||
@@ -882,7 +882,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 3:
       if (lookahead == '"') ADVANCE(27);
-      if (lookahead == ';') ADVANCE(28);
+      if (lookahead == ';') ADVANCE(30);
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(6);
       if (lookahead == '-' ||
@@ -894,12 +894,12 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 4:
       ADVANCE_MAP(
         '"', 26,
-        '#', 36,
-        '(', 31,
-        '.', 37,
-        ';', 28,
+        '#', 38,
+        '(', 33,
+        '.', 39,
+        ';', 30,
         'M', 17,
-        '[', 29,
+        '[', 31,
         '_', 24,
       );
       if (('\t' <= lookahead && lookahead <= '\r') ||
@@ -911,8 +911,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 5:
       if (lookahead == '"') ADVANCE(26);
-      if (lookahead == ')') ADVANCE(32);
-      if (lookahead == ';') ADVANCE(28);
+      if (lookahead == ')') ADVANCE(34);
+      if (lookahead == ';') ADVANCE(30);
       if (lookahead == '@') ADVANCE(25);
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(5);
@@ -923,7 +923,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(22);
       END_STATE();
     case 6:
-      if (lookahead == ';') ADVANCE(28);
+      if (lookahead == ';') ADVANCE(30);
       if (('\t' <= lookahead && lookahead <= '\r') ||
           lookahead == ' ') SKIP(6);
       END_STATE();
@@ -934,21 +934,21 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 8:
       if (eof) ADVANCE(11);
       ADVANCE_MAP(
-        '!', 35,
+        '!', 37,
         '"', 26,
-        '#', 36,
-        '(', 31,
-        ')', 32,
+        '#', 38,
+        '(', 33,
+        ')', 34,
         '*', 13,
         '+', 14,
-        '.', 37,
-        ':', 34,
-        ';', 28,
+        '.', 39,
+        ':', 36,
+        ';', 30,
         '?', 15,
         '@', 25,
         'M', 17,
-        '[', 29,
-        ']', 30,
+        '[', 31,
+        ']', 32,
         '_', 24,
       );
       if (('\t' <= lookahead && lookahead <= '\r') ||
@@ -961,20 +961,20 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 9:
       if (eof) ADVANCE(11);
       ADVANCE_MAP(
-        '!', 35,
+        '!', 37,
         '"', 26,
-        '(', 31,
-        ')', 32,
+        '(', 33,
+        ')', 34,
         '*', 13,
         '+', 14,
-        '.', 37,
+        '.', 39,
         '/', 42,
-        ':', 34,
-        ';', 28,
+        ':', 36,
+        ';', 30,
         '?', 15,
         '@', 25,
-        '[', 29,
-        ']', 30,
+        '[', 31,
+        ']', 32,
         '_', 24,
       );
       if (('\t' <= lookahead && lookahead <= '\r') ||
@@ -986,19 +986,19 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
     case 10:
       if (eof) ADVANCE(11);
       ADVANCE_MAP(
-        '!', 35,
+        '!', 37,
         '"', 26,
-        '(', 31,
-        ')', 32,
+        '(', 33,
+        ')', 34,
         '*', 13,
         '+', 14,
-        '.', 37,
-        ':', 34,
-        ';', 28,
+        '.', 39,
+        ':', 36,
+        ';', 30,
         '?', 15,
         '@', 25,
-        '[', 29,
-        ']', 30,
+        '[', 31,
+        ']', 32,
         '_', 24,
       );
       if (('\t' <= lookahead && lookahead <= '\r') ||
@@ -1025,7 +1025,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 16:
       ACCEPT_TOKEN(sym_identifier);
-      if (lookahead == 'G') ADVANCE(33);
+      if (lookahead == 'G') ADVANCE(35);
       if (lookahead == '-' ||
           lookahead == '.' ||
           ('0' <= lookahead && lookahead <= '9') ||
@@ -1120,23 +1120,41 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(anon_sym_DQUOTE2);
       END_STATE();
     case 28:
-      ACCEPT_TOKEN(sym_comment);
+      ACCEPT_TOKEN(sym_string_content_text);
+      if (lookahead == ';') ADVANCE(29);
+      if (lookahead == '\t' ||
+          (0x0b <= lookahead && lookahead <= '\r') ||
+          lookahead == ' ') ADVANCE(28);
       if (lookahead != 0 &&
-          lookahead != '\n') ADVANCE(28);
+          (lookahead < '\t' || '\r' < lookahead) &&
+          lookahead != '"' &&
+          lookahead != '\\') ADVANCE(29);
       END_STATE();
     case 29:
-      ACCEPT_TOKEN(anon_sym_LBRACK);
+      ACCEPT_TOKEN(sym_string_content_text);
+      if (lookahead != 0 &&
+          lookahead != '\n' &&
+          lookahead != '"' &&
+          lookahead != '\\') ADVANCE(29);
       END_STATE();
     case 30:
-      ACCEPT_TOKEN(anon_sym_RBRACK);
+      ACCEPT_TOKEN(sym_comment);
+      if (lookahead != 0 &&
+          lookahead != '\n') ADVANCE(30);
       END_STATE();
     case 31:
-      ACCEPT_TOKEN(anon_sym_LPAREN);
+      ACCEPT_TOKEN(anon_sym_LBRACK);
       END_STATE();
     case 32:
-      ACCEPT_TOKEN(anon_sym_RPAREN);
+      ACCEPT_TOKEN(anon_sym_RBRACK);
       END_STATE();
     case 33:
+      ACCEPT_TOKEN(anon_sym_LPAREN);
+      END_STATE();
+    case 34:
+      ACCEPT_TOKEN(anon_sym_RPAREN);
+      END_STATE();
+    case 35:
       ACCEPT_TOKEN(anon_sym_MISSING);
       if (lookahead == '-' ||
           lookahead == '.' ||
@@ -1145,41 +1163,23 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead == '_' ||
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(22);
       END_STATE();
-    case 34:
+    case 36:
       ACCEPT_TOKEN(anon_sym_COLON);
       END_STATE();
-    case 35:
+    case 37:
       ACCEPT_TOKEN(anon_sym_BANG);
       END_STATE();
-    case 36:
+    case 38:
       ACCEPT_TOKEN(anon_sym_POUND);
       END_STATE();
-    case 37:
+    case 39:
       ACCEPT_TOKEN(anon_sym_DOT);
       END_STATE();
-    case 38:
+    case 40:
       ACCEPT_TOKEN(anon_sym_QMARK2);
       END_STATE();
-    case 39:
-      ACCEPT_TOKEN(anon_sym_BANG2);
-      END_STATE();
-    case 40:
-      ACCEPT_TOKEN(sym_string_content_text);
-      if (lookahead == ';') ADVANCE(41);
-      if (lookahead == '\t' ||
-          (0x0b <= lookahead && lookahead <= '\r') ||
-          lookahead == ' ') ADVANCE(40);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != '"' &&
-          lookahead != '\\') ADVANCE(41);
-      END_STATE();
     case 41:
-      ACCEPT_TOKEN(sym_string_content_text);
-      if (lookahead != 0 &&
-          lookahead != '\n' &&
-          lookahead != '"' &&
-          lookahead != '\\') ADVANCE(41);
+      ACCEPT_TOKEN(anon_sym_BANG2);
       END_STATE();
     case 42:
       ACCEPT_TOKEN(anon_sym_SLASH);

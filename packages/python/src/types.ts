@@ -238,30 +238,30 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[62, 'yield_keyword'],
 	[63, 'ellipsis'],
 	[64, 'bslash'],
-	[65, 'type_conversion'],
-	[66, 'print_keyword'],
-	[67, 'async_keyword'],
-	[68, 'await_keyword'],
-	[69, 'true'],
-	[70, 'false'],
-	[71, 'none'],
-	[72, 'comment'],
-	[73, 'semi'],
-	[74, 'dash_gt'],
-	[75, 'plus_eq'],
-	[76, 'dash_eq'],
-	[77, 'star_eq'],
-	[78, 'slash_eq'],
-	[79, 'at_eq'],
-	[80, 'slash_slash_eq'],
-	[81, 'percent_eq'],
-	[82, 'star_star_eq'],
-	[83, 'gt_gt_eq'],
-	[84, 'lt_lt_eq'],
-	[85, 'amp_eq'],
-	[86, 'caret_eq'],
-	[87, 'pipe_eq'],
-	[88, 'format_specifier_text'],
+	[65, 'format_specifier_text'],
+	[66, 'type_conversion'],
+	[67, 'print_keyword'],
+	[68, 'async_keyword'],
+	[69, 'await_keyword'],
+	[70, 'true'],
+	[71, 'false'],
+	[72, 'none'],
+	[73, 'comment'],
+	[74, 'semi'],
+	[75, 'dash_gt'],
+	[76, 'plus_eq'],
+	[77, 'dash_eq'],
+	[78, 'star_eq'],
+	[79, 'slash_eq'],
+	[80, 'at_eq'],
+	[81, 'slash_slash_eq'],
+	[82, 'percent_eq'],
+	[83, 'star_star_eq'],
+	[84, 'gt_gt_eq'],
+	[85, 'lt_lt_eq'],
+	[86, 'amp_eq'],
+	[87, 'caret_eq'],
+	[88, 'pipe_eq'],
 	[89, 'underscore'],
 	[90, 'integer_hex_long'],
 	[91, 'integer_hex_plain'],
@@ -607,30 +607,30 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[62, 'yield'],
 	[63, 'ellipsis'],
 	[64, '\\'],
-	[65, 'type_conversion'],
-	[66, 'print'],
-	[67, 'async'],
-	[68, 'await'],
-	[69, 'true'],
-	[70, 'false'],
-	[71, 'none'],
-	[72, 'comment'],
-	[73, ';'],
-	[74, '->'],
-	[75, '+='],
-	[76, '-='],
-	[77, '*='],
-	[78, '/='],
-	[79, '@='],
-	[80, '//='],
-	[81, '%='],
-	[82, '**='],
-	[83, '>>='],
-	[84, '<<='],
-	[85, '&='],
-	[86, '^='],
-	[87, '|='],
-	[88, 'format_specifier_text'],
+	[65, 'format_specifier_text'],
+	[66, 'type_conversion'],
+	[67, 'print'],
+	[68, 'async'],
+	[69, 'await'],
+	[70, 'true'],
+	[71, 'false'],
+	[72, 'none'],
+	[73, 'comment'],
+	[74, ';'],
+	[75, '->'],
+	[76, '+='],
+	[77, '-='],
+	[78, '*='],
+	[79, '/='],
+	[80, '@='],
+	[81, '//='],
+	[82, '%='],
+	[83, '**='],
+	[84, '>>='],
+	[85, '<<='],
+	[86, '&='],
+	[87, '^='],
+	[88, '|='],
 	[89, '_'],
 	[90, 'integer_hex_long'],
 	[91, 'integer_hex_plain'],
@@ -1043,6 +1043,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Ellipsis;
 		case 'bslash':
 			return TSKindId.Bslash;
+		case 'format_specifier_text':
+			return TSKindId.FormatSpecifierText;
 		case 'type_conversion':
 			return TSKindId.TypeConversion;
 		case 'print_keyword':
@@ -1089,8 +1091,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CaretEq;
 		case 'pipe_eq':
 			return TSKindId.PipeEq;
-		case 'format_specifier_text':
-			return TSKindId.FormatSpecifierText;
 		case 'underscore':
 			return TSKindId.Underscore;
 		case 'integer_hex_long':
@@ -6500,6 +6500,7 @@ export type BreakStatement = TSKindId.BreakStatement;
 export type ContinueStatement = TSKindId.ContinueStatement;
 export type Ellipsis = TSKindId.Ellipsis;
 export type NotEscapeSequence = TSKindId.NotEscapeSequence;
+export type FormatSpecifierText = Terminal<TSKindId.FormatSpecifierText, string>;
 export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type True = TSKindId.True;
@@ -6507,7 +6508,6 @@ export type False = TSKindId.False;
 export type None = TSKindId.None;
 export type PositionalSeparator = TSKindId.PositionalSeparator;
 export type KeywordSeparator = TSKindId.KeywordSeparator;
-export type FormatSpecifierText = Terminal<TSKindId.FormatSpecifierText, string>;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
 export type IntegerDecimalPlain = Terminal<TSKindId.IntegerDecimalPlain, string>;
@@ -11726,6 +11726,12 @@ export interface NewlineNs extends KeywordNs<TSKindId.Newline, '\n', TSKindId.Ne
 export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKindId.Blankline> {}
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface ImportPrefixNs extends LeafNs<ImportPrefix, string, ImportPrefix.Bound, TSKindId.ImportPrefix> {}
+export interface FormatSpecifierTextNs extends LeafNs<
+	FormatSpecifierText,
+	string,
+	FormatSpecifierText.Bound,
+	TSKindId.FormatSpecifierText
+> {}
 export interface TypeConversionNs extends LeafNs<
 	TypeConversion,
 	string,
@@ -11733,12 +11739,6 @@ export interface TypeConversionNs extends LeafNs<
 	TSKindId.TypeConversion
 > {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
-export interface FormatSpecifierTextNs extends LeafNs<
-	FormatSpecifierText,
-	string,
-	FormatSpecifierText.Bound,
-	TSKindId.FormatSpecifierText
-> {}
 export interface IntegerDecimalImaginaryNs extends LeafNs<
 	IntegerDecimalImaginary,
 	string,
@@ -11974,9 +11974,9 @@ export interface NamespaceMap {
 	[TSKindId.Blankline]: BlanklineNs;
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.ImportPrefix]: ImportPrefixNs;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierTextNs;
 	[TSKindId.TypeConversion]: TypeConversionNs;
 	[TSKindId.Identifier]: IdentifierNs;
-	[TSKindId.FormatSpecifierText]: FormatSpecifierTextNs;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginaryNs;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlainNs;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewlineNs;
@@ -12167,9 +12167,9 @@ export interface BoundByKindId {
 	[TSKindId.FormatExpression]: FormatExpression.Bound;
 	[TSKindId.MethodDeclaration]: MethodDeclaration.Bound;
 	[TSKindId.ImportPrefix]: ImportPrefix.Bound;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Bound;
 	[TSKindId.TypeConversion]: TypeConversion.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
-	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Bound;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Bound;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Bound;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewline.Bound;
@@ -12360,9 +12360,9 @@ export interface ParsedByKindId {
 	[TSKindId.FormatExpression]: FormatExpression.Parsed;
 	[TSKindId.MethodDeclaration]: MethodDeclaration.Parsed;
 	[TSKindId.ImportPrefix]: ImportPrefix.Parsed;
+	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Parsed;
 	[TSKindId.TypeConversion]: TypeConversion.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
-	[TSKindId.FormatSpecifierText]: FormatSpecifierText.Parsed;
 	[TSKindId.IntegerDecimalImaginary]: IntegerDecimalImaginary.Parsed;
 	[TSKindId.IntegerDecimalPlain]: IntegerDecimalPlain.Parsed;
 	[TSKindId.LineContinuationNewline]: LineContinuationNewline.Parsed;
@@ -12685,9 +12685,9 @@ export interface TypeKeyOf {
 	[TSKindId.Blankline]: 'blankline';
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.ImportPrefix]: 'importPrefix';
+	[TSKindId.FormatSpecifierText]: 'formatSpecifierText';
 	[TSKindId.TypeConversion]: 'typeConversion';
 	[TSKindId.Identifier]: 'identifier';
-	[TSKindId.FormatSpecifierText]: 'formatSpecifierText';
 	[TSKindId.IntegerDecimalImaginary]: 'integerDecimalImaginary';
 	[TSKindId.IntegerDecimalPlain]: 'integerDecimalPlain';
 	[TSKindId.LineContinuationNewline]: 'lineContinuationNewline';
@@ -18536,6 +18536,22 @@ export namespace ImportPrefix {
 	export type LooseArgs = ImportPrefixNs['LooseArgs'];
 	export type Kind = TSKindId.ImportPrefix;
 }
+export namespace FormatSpecifierText {
+	export type Config = FormatSpecifierTextNs['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.FormatSpecifierText;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.FormatSpecifierText;
+		$text(): string;
+	}
+	export type Loose = FormatSpecifierTextNs['Loose'];
+	export type LooseConfig = FormatSpecifierTextNs['LooseConfig'];
+	export type BuildArgs = FormatSpecifierTextNs['BuildArgs'];
+	export type LooseArgs = FormatSpecifierTextNs['LooseArgs'];
+	export type Kind = TSKindId.FormatSpecifierText;
+}
 export namespace TypeConversion {
 	export type Config = TypeConversionNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
@@ -18567,22 +18583,6 @@ export namespace Identifier {
 	export type BuildArgs = IdentifierNs['BuildArgs'];
 	export type LooseArgs = IdentifierNs['LooseArgs'];
 	export type Kind = TSKindId.Identifier;
-}
-export namespace FormatSpecifierText {
-	export type Config = FormatSpecifierTextNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.FormatSpecifierText;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.FormatSpecifierText;
-		$text(): string;
-	}
-	export type Loose = FormatSpecifierTextNs['Loose'];
-	export type LooseConfig = FormatSpecifierTextNs['LooseConfig'];
-	export type BuildArgs = FormatSpecifierTextNs['BuildArgs'];
-	export type LooseArgs = FormatSpecifierTextNs['LooseArgs'];
-	export type Kind = TSKindId.FormatSpecifierText;
 }
 export namespace IntegerDecimalImaginary {
 	export type Config = IntegerDecimalImaginaryNs['Config'];

@@ -451,6 +451,35 @@ function withStringContent(node: object, setter: string, args: readonly unknown[
 	throw new Error(`string_content has no $with.${setter}`);
 }
 
+export function buildStringContentText(text: string): T.StringContentText.Bound {
+	if (typeof text !== 'string') throw new Error(`string_content_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
+	if (!_leafRe_buildStringContentText.test(text))
+		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(leafStringContentText, text) as unknown as T.StringContentText.Bound;
+}
+
+function leafStringContentText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.StringContentText as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
+}
+
 export function buildParameters<A extends NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Parameters.Bound;
@@ -1561,35 +1590,6 @@ function withGroupingGroup(node: object, setter: string, args: readonly unknown[
 	throw new Error(`grouping_group has no $with.${setter}`);
 }
 
-export function buildStringContentText(text: string): T.StringContentText.Bound {
-	if (typeof text !== 'string') throw new Error(`string_content_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
-	if (!_leafRe_buildStringContentText.test(text))
-		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafStringContentText, text) as unknown as T.StringContentText.Bound;
-}
-
-function leafStringContentText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.StringContentText as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
-}
-
 export const buildAnchor: TSKindId.Anchor = TSKindId.Anchor;
 
 export function buildNamedNodePlain<
@@ -2179,6 +2179,7 @@ export type FluentKindMap = {
 	string: T.String.Bound;
 	immediate_string: T.ImmediateString.Bound;
 	string_content: T.StringContent.Bound;
+	string_content_text: T.StringContentText;
 	parameters: T.Parameters.Bound;
 	comment: T.Comment.Bound;
 	list: T.List.Bound;
@@ -2192,7 +2193,6 @@ export type FluentKindMap = {
 	group_expression_arm: T.GroupExpressionArm.Bound;
 	named_node_expression_arm: T.NamedNodeExpressionArm.Bound;
 	grouping_group: T.GroupingGroup.Bound;
-	string_content_text: T.StringContentText;
 	anchor: T.Anchor;
 	named_node_plain: T.NamedNodePlain.Bound;
 	named_node_supertyped: T.NamedNodeSupertyped.Bound;
@@ -2217,6 +2217,7 @@ export const _factoryMap = {
 	string: buildString,
 	immediate_string: buildImmediateString,
 	string_content: buildStringContent,
+	string_content_text: buildStringContentText,
 	parameters: buildParameters,
 	comment: buildComment,
 	list: buildList,
@@ -2230,7 +2231,6 @@ export const _factoryMap = {
 	group_expression_arm: buildGroupExpressionArm,
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,
-	string_content_text: buildStringContentText,
 	anchor: buildAnchor,
 	named_node_plain: buildNamedNodePlain,
 	named_node_supertyped: buildNamedNodeSupertyped,
@@ -2250,7 +2250,7 @@ export type _FactoryMap = typeof _factoryMap;
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
 		1: withEscapeSequence,
-		11: withComment,
+		12: withComment,
 		33: withProgram,
 		39: withCapture,
 		40: withString,
@@ -2275,7 +2275,7 @@ export const builtViews: BuiltViews = Object.freeze({
 	}),
 	words: Object.freeze({
 		1: 4,
-		11: 4,
+		12: 4,
 		33: 3,
 		39: 3,
 		40: 3,
@@ -2300,7 +2300,7 @@ export const builtViews: BuiltViews = Object.freeze({
 	}),
 	cells: Object.freeze({
 		1: 2,
-		11: 2,
+		12: 2,
 		33: 2,
 		39: 2,
 		40: 2,
@@ -2325,7 +2325,7 @@ export const builtViews: BuiltViews = Object.freeze({
 	}),
 	places: Object.freeze({
 		1: [[2, 2, 2, 4, 0, 0]],
-		11: [[2, 2, 2, 4, 0, 0]],
+		12: [[2, 2, 2, 4, 0, 0]],
 		33: [[2, 2, 1, 1, 0, 3]],
 		39: [[2, 2, 3, 1, 0, 0]],
 		40: [[2, 2, 3, 8, 3, 0]],
@@ -2393,5 +2393,5 @@ export const builtViews: BuiltViews = Object.freeze({
 			[4, 4, 3, 1, 0, 0]
 		]
 	} as const),
-	leaves: Object.freeze({ 5: leafIdentifier, 6: leafImmediateIdentifier, 23: leafStringContentText })
+	leaves: Object.freeze({ 5: leafIdentifier, 6: leafImmediateIdentifier, 11: leafStringContentText })
 });

@@ -3317,14 +3317,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -6558,9 +6558,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [136, 'name'],
-									kinds: [5],
+									kinds: [6],
 									tokens: {
-										_: 5
+										_: 6
 									}
 								}
 							]
@@ -6696,7 +6696,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 110,
+					kind: 111,
 					builder: 'commentArm2',
 					slots: [],
 					presets: [],
@@ -6711,7 +6711,7 @@ export const build: PortableBuildTable = {
 						multiple: false,
 						seats: [
 							{
-								at: [110, 'content'],
+								at: [111, 'content'],
 								kinds: [],
 								text: true,
 								pattern: {
@@ -6734,7 +6734,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 109,
+					kind: 110,
 					builder: 'commentArm1',
 					slots: [],
 					presets: [],
@@ -6749,7 +6749,7 @@ export const build: PortableBuildTable = {
 						multiple: false,
 						seats: [
 							{
-								at: [109, 'content'],
+								at: [110, 'content'],
 								kinds: [],
 								text: true,
 								pattern: {
@@ -67529,14 +67529,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -67591,14 +67591,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -67635,14 +67635,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -67731,14 +67731,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -67817,14 +67817,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -67881,14 +67881,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [221, 'content'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -67944,14 +67944,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [221, 'content'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -68022,14 +68022,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [210, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -68079,14 +68079,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -68116,20 +68116,20 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [184, 'operator'],
-									kinds: [11, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122],
+									kinds: [12, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123],
 									tokens: {
-										'%=': 114,
-										'&=': 117,
-										'&^=': 118,
-										'*=': 112,
-										'+=': 119,
-										'-=': 120,
-										'/=': 113,
-										'<<=': 115,
-										'=': 11,
-										'>>=': 116,
-										'^=': 122,
-										'|=': 121
+										'%=': 115,
+										'&=': 118,
+										'&^=': 119,
+										'*=': 113,
+										'+=': 120,
+										'-=': 121,
+										'/=': 114,
+										'<<=': 116,
+										'=': 12,
+										'>>=': 117,
+										'^=': 123,
+										'|=': 122
 									}
 								}
 							]
@@ -68153,14 +68153,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -68217,14 +68217,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -68262,1076 +68262,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 119
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.bitwise_and': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 117
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.bitwise_or': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 121
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.bitwise_xor': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 122
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.divide': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 113
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.modulo': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 114
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.multiply': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 112
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.shift_left': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 115
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.shift_right': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 116
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.assignment.compound.subtract': {
-			root: true,
-			arms: [
-				{
-					kind: 184,
-					builder: 'assignmentStatement',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left',
-									stored: '_left'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'left'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'expressionList',
-											key: 'expressions'
-										}
-									],
-									many: true
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right',
-									stored: '_right'
-								}
-							],
-							multiple: false,
-							nonEmpty: true,
-							list: false,
-							seats: [
-								{
-									at: [184, 'right'],
-									kinds: []
-								},
-								{
-									at: [155, 'expressions'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -69371,6 +68309,1068 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'expression.assignment.compound.bitwise_and': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 118
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.bitwise_or': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 122
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.bitwise_xor': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 123
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.divide': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 114
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.modulo': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 115
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.multiply': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 113
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.shift_left': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 116
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.shift_right': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 117
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.assignment.compound.subtract': {
+			root: true,
+			arms: [
+				{
+					kind: 184,
+					builder: 'assignmentStatement',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left',
+									stored: '_left'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'left'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right',
+									stored: '_right'
+								}
+							],
+							multiple: false,
+							nonEmpty: true,
+							list: false,
+							seats: [
+								{
+									at: [184, 'right'],
+									kinds: []
+								},
+								{
+									at: [155, 'expressions'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
+									within: [
+										{
+											builder: 'expressionList',
+											key: 'expressions'
+										}
+									],
+									many: true
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 121
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
 		'expression.binary': {
 			root: true,
 			arms: [
@@ -69391,14 +69391,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'left'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -69422,27 +69422,27 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [225, 'operator'],
-									kinds: [19, 25, 48, 49, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65],
+									kinds: [20, 26, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66],
 									tokens: {
-										'!=': 59,
-										'%': 54,
-										'&': 52,
-										'&&': 64,
-										'&^': 57,
-										'*': 19,
-										'+': 48,
-										'-': 49,
-										'/': 53,
-										'<': 60,
-										'<<': 55,
-										'<=': 61,
-										'==': 58,
-										'>': 62,
-										'>=': 63,
-										'>>': 56,
-										'^': 51,
-										'|': 25,
-										'||': 65
+										'!=': 60,
+										'%': 55,
+										'&': 53,
+										'&&': 65,
+										'&^': 58,
+										'*': 20,
+										'+': 49,
+										'-': 50,
+										'/': 54,
+										'<': 61,
+										'<<': 56,
+										'<=': 62,
+										'==': 59,
+										'>': 63,
+										'>=': 64,
+										'>>': 57,
+										'^': 52,
+										'|': 26,
+										'||': 66
 									}
 								}
 							]
@@ -69460,14 +69460,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'right'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -69511,14 +69511,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'left'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -69543,382 +69543,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'right'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 48
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.arithmetic.divide': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 53
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.arithmetic.modulo': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 54
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.arithmetic.multiply': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 19
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.arithmetic.subtract': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -69951,7 +69583,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'expression.binary.bitwise.and': {
+		'expression.binary.arithmetic.divide': {
 			root: true,
 			arms: [
 				{
@@ -69971,14 +69603,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'left'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -70003,14 +69635,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'right'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -70030,7 +69662,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 52
+							kind: 54
 						}
 					],
 					flags: {},
@@ -70043,7 +69675,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'expression.binary.bitwise.or': {
+		'expression.binary.arithmetic.modulo': {
 			root: true,
 			arms: [
 				{
@@ -70063,14 +69695,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'left'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -70095,932 +69727,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'right'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 25
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.bitwise.xor': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 51
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.equal': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 58
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.greater': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 62
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.greater_equal': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 63
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.less': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 60
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.less_equal': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 61
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.comparison.not_equal': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 59
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.logical.and': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 64
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.logical.or': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 65
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
-		},
-		'expression.binary.shift.left': {
-			root: true,
-			arms: [
-				{
-					kind: 225,
-					builder: 'binaryExpression',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [225, 'left'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [225, 'right'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -71053,7 +69767,1203 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'expression.binary.shift.right': {
+		'expression.binary.arithmetic.multiply': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 20
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.arithmetic.subtract': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 50
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.bitwise.and': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 53
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.bitwise.or': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 26
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.bitwise.xor': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 52
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.equal': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 59
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.greater': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 63
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.greater_equal': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 64
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.less': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 61
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.less_equal': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 62
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.comparison.not_equal': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 60
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.logical.and': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 65
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.logical.or': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 66
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.shift.left': {
 			root: true,
 			arms: [
 				{
@@ -71072,14 +70982,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'left'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -71103,14 +71013,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [225, 'right'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -71131,6 +71041,96 @@ export const build: PortableBuildTable = {
 								}
 							],
 							kind: 56
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['left', 'right']
+						}
+					]
+				}
+			]
+		},
+		'expression.binary.shift.right': {
+			root: true,
+			arms: [
+				{
+					kind: 225,
+					builder: 'binaryExpression',
+					slots: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [225, 'left'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [225, 'right'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 57
 						}
 					],
 					flags: {},
@@ -71203,14 +71203,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [216, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -77398,14 +77398,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [217, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -77429,9 +77429,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [217, 'trailingComma'],
-									kinds: [9],
+									kinds: [10],
 									tokens: {
-										',': 9
+										',': 10
 									}
 								}
 							]
@@ -77504,14 +77504,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [221, 'content'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220,
 										223, 224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -77614,14 +77614,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [221, 'content'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220,
 										223, 224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -77721,14 +77721,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [221, 'content'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 220,
 										223, 224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87646,14 +87646,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [213, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87719,14 +87719,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [208, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87769,14 +87769,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [224, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87796,7 +87796,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 52
+							kind: 53
 						}
 					],
 					flags: {},
@@ -87829,14 +87829,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [215, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87862,14 +87862,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [215, 'start'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87894,14 +87894,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [215, 'end'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87926,14 +87926,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [215, 'capacity'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -87976,14 +87976,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [214, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88008,14 +88008,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [214, 'index'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88058,15 +88058,15 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [224, 'operator'],
-									kinds: [19, 27, 48, 49, 50, 51, 52],
+									kinds: [20, 28, 49, 50, 51, 52, 53],
 									tokens: {
-										'!': 50,
-										'&': 52,
-										'*': 19,
-										'+': 48,
-										'-': 49,
-										'<-': 27,
-										'^': 51
+										'!': 51,
+										'&': 53,
+										'*': 20,
+										'+': 49,
+										'-': 50,
+										'<-': 28,
+										'^': 52
 									}
 								}
 							]
@@ -88083,14 +88083,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [224, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88133,14 +88133,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [224, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88160,7 +88160,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 51
+							kind: 52
 						}
 					],
 					flags: {},
@@ -88192,14 +88192,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [224, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88219,7 +88219,7 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 19
+							kind: 20
 						}
 					],
 					flags: {},
@@ -88251,73 +88251,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [224, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								float: 'literal.number.integer.imaginary'
-							}
-						}
-					],
-					presets: [
-						{
-							steps: [
-								{
-									key: 'operator'
-								}
-							],
-							kind: 49
-						}
-					],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['operand']
-						}
-					]
-				}
-			]
-		},
-		'expression.unary.not': {
-			root: true,
-			arms: [
-				{
-					kind: 224,
-					builder: 'unaryExpression',
-					slots: [
-						{
-							name: 'operand',
-							steps: [
-								{
-									key: 'operand'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [224, 'operand'],
-									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
-										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88350,7 +88291,7 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
-		'expression.unary.plus': {
+		'expression.unary.not': {
 			root: true,
 			arms: [
 				{
@@ -88369,14 +88310,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [224, 'operand'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88396,7 +88337,66 @@ export const build: PortableBuildTable = {
 									key: 'operator'
 								}
 							],
-							kind: 48
+							kind: 51
+						}
+					],
+					flags: {},
+					when: [
+						{
+							absent: [],
+							required: ['operand']
+						}
+					]
+				}
+			]
+		},
+		'expression.unary.plus': {
+			root: true,
+			arms: [
+				{
+					kind: 224,
+					builder: 'unaryExpression',
+					slots: [
+						{
+							name: 'operand',
+							steps: [
+								{
+									key: 'operand'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [224, 'operand'],
+									kinds: [
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
+									],
+									leaf: 'identifier',
+									texts: [1],
+									tokens: {
+										iota: 73
+									},
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							],
+							takers: {
+								float: 'literal.number.integer.imaginary'
+							}
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 49
 						}
 					],
 					flags: {},
@@ -88428,14 +88428,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [183, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88479,14 +88479,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [182, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -88808,7 +88808,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 71,
+					kind: 72,
 					literal: {},
 					slots: [],
 					presets: [],
@@ -88821,7 +88821,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 70,
+					kind: 71,
 					literal: {},
 					slots: [],
 					presets: [],
@@ -88834,48 +88834,8 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 103,
-					builder: 'runeLiteralArm1',
-					slots: [
-						{
-							name: 'content',
-							steps: [
-								{
-									key: 'content'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [103, 'content'],
-									kinds: [],
-									text: true,
-									pattern: {
-										source: "^(?:(?:[^'\\\\]))$",
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							variant: 'rune_literal',
-							value: 103,
-							default: true
-						},
-						{
-							absent: [],
-							required: ['content']
-						}
-					]
-				},
-				{
 					kind: 104,
-					builder: 'runeLiteralArm2Arm1',
+					builder: 'runeLiteralArm1',
 					slots: [
 						{
 							name: 'content',
@@ -88892,7 +88852,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:\\\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$',
+										source: "^(?:(?:[^'\\\\]))$",
 										flags: 'u'
 									}
 								}
@@ -88904,7 +88864,8 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'rune_literal',
-							value: 104
+							value: 104,
+							default: true
 						},
 						{
 							absent: [],
@@ -88914,7 +88875,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 105,
-					builder: 'runeLiteralArm2Arm2',
+					builder: 'runeLiteralArm2Arm1',
 					slots: [
 						{
 							name: 'content',
@@ -88931,7 +88892,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:\\\\(?:[0-7])(?:[0-7])(?:[0-7]))$',
+										source: '^(?:\\\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$',
 										flags: 'u'
 									}
 								}
@@ -88953,7 +88914,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 106,
-					builder: 'runeLiteralArm2Arm3',
+					builder: 'runeLiteralArm2Arm2',
 					slots: [
 						{
 							name: 'content',
@@ -88970,7 +88931,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source: '^(?:\\\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$',
+										source: '^(?:\\\\(?:[0-7])(?:[0-7])(?:[0-7]))$',
 										flags: 'u'
 									}
 								}
@@ -88992,7 +88953,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 107,
-					builder: 'runeLiteralArm2Arm4',
+					builder: 'runeLiteralArm2Arm3',
 					slots: [
 						{
 							name: 'content',
@@ -89009,8 +88970,7 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
-										source:
-											'^(?:\\\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$',
+										source: '^(?:\\\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$',
 										flags: 'u'
 									}
 								}
@@ -89032,7 +88992,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 108,
-					builder: 'runeLiteralArm2Arm5',
+					builder: 'runeLiteralArm2Arm4',
 					slots: [
 						{
 							name: 'content',
@@ -89049,6 +89009,46 @@ export const build: PortableBuildTable = {
 									kinds: [],
 									text: true,
 									pattern: {
+										source:
+											'^(?:\\\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: [
+						{
+							variant: 'rune_literal',
+							value: 108
+						},
+						{
+							absent: [],
+							required: ['content']
+						}
+					]
+				},
+				{
+					kind: 109,
+					builder: 'runeLiteralArm2Arm5',
+					slots: [
+						{
+							name: 'content',
+							steps: [
+								{
+									key: 'content'
+								}
+							],
+							multiple: false,
+							list: false,
+							seats: [
+								{
+									at: [109, 'content'],
+									kinds: [],
+									text: true,
+									pattern: {
 										source: '^(?:a|b|f|n|r|t|v|\\\\|\'|")$',
 										flags: 'u'
 									}
@@ -89062,7 +89062,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'rune_literal',
-							value: 108
+							value: 109
 						},
 						{
 							absent: [],
@@ -89077,7 +89077,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 69,
+					kind: 70,
 					literal: {},
 					slots: [],
 					presets: [],
@@ -89090,7 +89090,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 85,
+					kind: 86,
 					builder: 'floatLiteralArm1',
 					numeric: [],
 					slots: [],
@@ -89100,7 +89100,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'float_literal',
-							value: 85
+							value: 86
 						},
 						{
 							absent: [],
@@ -89109,7 +89109,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 87,
+					kind: 88,
 					builder: 'floatLiteralArm3',
 					numeric: [],
 					slots: [],
@@ -89124,7 +89124,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 89,
+					kind: 90,
 					builder: 'floatLiteralArm4Arm2',
 					slots: [],
 					presets: [],
@@ -89132,7 +89132,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'float_literal_arm4',
-							value: 89,
+							value: 90,
 							default: true
 						},
 						{
@@ -89142,7 +89142,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 88,
+					kind: 89,
 					builder: 'floatLiteralArm4Arm1',
 					slots: [],
 					presets: [],
@@ -89150,7 +89150,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'float_literal_arm4',
-							value: 88
+							value: 89
 						},
 						{
 							absent: ['$value'],
@@ -89159,7 +89159,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 90,
+					kind: 91,
 					builder: 'floatLiteralArm4Arm3',
 					slots: [],
 					presets: [],
@@ -89167,7 +89167,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'float_literal_arm4',
-							value: 90
+							value: 91
 						},
 						{
 							absent: ['$value'],
@@ -89176,7 +89176,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 86,
+					kind: 87,
 					builder: 'floatLiteral.arm2',
 					numeric: [],
 					slots: [],
@@ -89186,7 +89186,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'float_literal',
-							value: 86,
+							value: 87,
 							default: true
 						},
 						{
@@ -89201,7 +89201,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 81,
+					kind: 82,
 					literal: {},
 					slots: [],
 					presets: [],
@@ -89213,7 +89213,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 82,
+					kind: 83,
 					builder: 'intLiteral.arm3',
 					digits: {
 						base: 10,
@@ -89226,7 +89226,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'int_literal',
-							value: 82,
+							value: 83,
 							default: true
 						},
 						{
@@ -89236,7 +89236,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 80,
+					kind: 81,
 					builder: 'intLiteral.arm1',
 					digits: {
 						base: 2,
@@ -89249,29 +89249,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'int_literal',
-							value: 80
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
-					kind: 83,
-					builder: 'intLiteral.arm4',
-					digits: {
-						base: 8,
-						affix: '0o'
-					},
-					slots: [],
-					presets: [],
-					flags: {},
-					scalar: 'integer',
-					when: [
-						{
-							variant: 'int_literal',
-							value: 83
+							value: 81
 						},
 						{
 							absent: [],
@@ -89281,10 +89259,10 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 84,
-					builder: 'intLiteral.arm5',
+					builder: 'intLiteral.arm4',
 					digits: {
-						base: 16,
-						affix: '0x'
+						base: 8,
+						affix: '0o'
 					},
 					slots: [],
 					presets: [],
@@ -89300,6 +89278,28 @@ export const build: PortableBuildTable = {
 							required: ['$value']
 						}
 					]
+				},
+				{
+					kind: 85,
+					builder: 'intLiteral.arm5',
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
+					slots: [],
+					presets: [],
+					flags: {},
+					scalar: 'integer',
+					when: [
+						{
+							variant: 'int_literal',
+							value: 85
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
 				}
 			]
 		},
@@ -89307,7 +89307,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 80,
+					kind: 81,
 					builder: 'intLiteral.arm1',
 					digits: {
 						base: 2,
@@ -89326,14 +89326,14 @@ export const build: PortableBuildTable = {
 				}
 			],
 			builds: {
-				integer: 80
+				integer: 81
 			}
 		},
 		'literal.number.integer.hex': {
 			root: true,
 			arms: [
 				{
-					kind: 84,
+					kind: 85,
 					builder: 'intLiteral.arm5',
 					digits: {
 						base: 16,
@@ -89352,14 +89352,14 @@ export const build: PortableBuildTable = {
 				}
 			],
 			builds: {
-				integer: 84
+				integer: 85
 			}
 		},
 		'literal.number.integer.imaginary': {
 			root: true,
 			arms: [
 				{
-					kind: 93,
+					kind: 94,
 					literal: {},
 					slots: [],
 					presets: [],
@@ -89371,7 +89371,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 91,
+					kind: 92,
 					builder: 'imaginaryLiteralArm1',
 					numeric: ['content'],
 					digits: {
@@ -89385,7 +89385,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'imaginary_literal',
-							value: 91,
+							value: 92,
 							default: true
 						},
 						{
@@ -89395,7 +89395,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 92,
+					kind: 93,
 					builder: 'imaginaryLiteralArm2',
 					numeric: ['content'],
 					digits: {
@@ -89409,30 +89409,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'imaginary_literal',
-							value: 92
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
-					kind: 94,
-					builder: 'imaginaryLiteralArm4',
-					numeric: ['content'],
-					digits: {
-						base: 10,
-						affix: ''
-					},
-					slots: [],
-					presets: [],
-					flags: {},
-					scalar: 'integer',
-					when: [
-						{
-							variant: 'imaginary_literal',
-							value: 94
+							value: 93
 						},
 						{
 							absent: [],
@@ -89442,11 +89419,11 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 95,
-					builder: 'imaginaryLiteralArm5',
+					builder: 'imaginaryLiteralArm4',
 					numeric: ['content'],
 					digits: {
-						base: 8,
-						affix: '0o'
+						base: 10,
+						affix: ''
 					},
 					slots: [],
 					presets: [],
@@ -89465,11 +89442,11 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 96,
-					builder: 'imaginaryLiteralArm6',
+					builder: 'imaginaryLiteralArm5',
 					numeric: ['content'],
 					digits: {
-						base: 16,
-						affix: '0x'
+						base: 8,
+						affix: '0o'
 					},
 					slots: [],
 					presets: [],
@@ -89488,6 +89465,29 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 97,
+					builder: 'imaginaryLiteralArm6',
+					numeric: ['content'],
+					digits: {
+						base: 16,
+						affix: '0x'
+					},
+					slots: [],
+					presets: [],
+					flags: {},
+					scalar: 'integer',
+					when: [
+						{
+							variant: 'imaginary_literal',
+							value: 97
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
+					kind: 98,
 					builder: 'imaginaryLiteralArm7',
 					numeric: ['content'],
 					slots: [],
@@ -89502,7 +89502,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 98,
+					kind: 99,
 					builder: 'imaginaryLiteralArm8',
 					numeric: ['content'],
 					slots: [],
@@ -89517,7 +89517,7 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 99,
+					kind: 100,
 					builder: 'imaginaryLiteralArm9',
 					numeric: ['content'],
 					slots: [],
@@ -89532,69 +89532,8 @@ export const build: PortableBuildTable = {
 					]
 				},
 				{
-					kind: 101,
-					builder: 'imaginaryLiteralArm10Arm2',
-					slots: [],
-					presets: [],
-					flags: {},
-					content: {
-						name: '$value',
-						steps: [
-							{
-								key: 'content'
-							}
-						],
-						multiple: false,
-						list: false,
-						seats: [
-							{
-								at: [101, 'content'],
-								kinds: [],
-								text: true
-							}
-						]
-					},
-					when: [
-						{
-							variant: 'imaginary_literal_arm10',
-							value: 101,
-							default: true
-						}
-					]
-				},
-				{
-					kind: 100,
-					builder: 'imaginaryLiteralArm10Arm1',
-					slots: [],
-					presets: [],
-					flags: {},
-					content: {
-						name: '$value',
-						steps: [
-							{
-								key: 'content'
-							}
-						],
-						multiple: false,
-						list: false,
-						seats: [
-							{
-								at: [100, 'content'],
-								kinds: [],
-								text: true
-							}
-						]
-					},
-					when: [
-						{
-							variant: 'imaginary_literal_arm10',
-							value: 100
-						}
-					]
-				},
-				{
 					kind: 102,
-					builder: 'imaginaryLiteralArm10Arm3',
+					builder: 'imaginaryLiteralArm10Arm2',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -89618,21 +89557,82 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'imaginary_literal_arm10',
-							value: 102
+							value: 102,
+							default: true
+						}
+					]
+				},
+				{
+					kind: 101,
+					builder: 'imaginaryLiteralArm10Arm1',
+					slots: [],
+					presets: [],
+					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						list: false,
+						seats: [
+							{
+								at: [101, 'content'],
+								kinds: [],
+								text: true
+							}
+						]
+					},
+					when: [
+						{
+							variant: 'imaginary_literal_arm10',
+							value: 101
+						}
+					]
+				},
+				{
+					kind: 103,
+					builder: 'imaginaryLiteralArm10Arm3',
+					slots: [],
+					presets: [],
+					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						list: false,
+						seats: [
+							{
+								at: [103, 'content'],
+								kinds: [],
+								text: true
+							}
+						]
+					},
+					when: [
+						{
+							variant: 'imaginary_literal_arm10',
+							value: 103
 						}
 					]
 				}
 			],
 			builds: {
-				integer: 91,
-				float: 97
+				integer: 92,
+				float: 98
 			}
 		},
 		'literal.number.integer.octal': {
 			root: true,
 			arms: [
 				{
-					kind: 83,
+					kind: 84,
 					builder: 'intLiteral.arm4',
 					digits: {
 						base: 8,
@@ -89651,7 +89651,7 @@ export const build: PortableBuildTable = {
 				}
 			],
 			builds: {
-				integer: 83
+				integer: 84
 			}
 		},
 		'literal.string': {
@@ -89674,9 +89674,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [228, 'elements'],
-									kinds: [74, 75, 76, 77, 78, 79, 229],
+									kinds: [75, 76, 77, 78, 79, 80, 229],
 									leaf: 'interpretedStringLiteralContent',
-									texts: [74],
+									texts: [75],
 									pattern: {
 										source: '^(?:(?:[^"\\n\\\\]+))$',
 										flags: 'u'
@@ -89696,46 +89696,8 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 75,
-					builder: 'escapeSequenceArm1',
-					slots: [],
-					presets: [],
-					flags: {},
-					content: {
-						name: '$value',
-						steps: [
-							{
-								key: 'content'
-							}
-						],
-						multiple: false,
-						seats: [
-							{
-								at: [75, 'content'],
-								kinds: [],
-								text: true,
-								pattern: {
-									source: '^(?:(?:[^xuU]))$',
-									flags: 'u'
-								}
-							}
-						]
-					},
-					when: [
-						{
-							variant: 'escape_sequence',
-							value: 75,
-							default: true
-						},
-						{
-							absent: [],
-							required: ['$value']
-						}
-					]
-				},
-				{
 					kind: 76,
-					builder: 'escapeSequenceArm2',
+					builder: 'escapeSequenceArm1',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -89753,7 +89715,7 @@ export const build: PortableBuildTable = {
 								kinds: [],
 								text: true,
 								pattern: {
-									source: '^(?:(?:[0-9]{2,3}))$',
+									source: '^(?:(?:[^xuU]))$',
 									flags: 'u'
 								}
 							}
@@ -89762,7 +89724,8 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							variant: 'escape_sequence',
-							value: 76
+							value: 76,
+							default: true
 						},
 						{
 							absent: [],
@@ -89772,7 +89735,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 77,
-					builder: 'escapeSequenceArm3',
+					builder: 'escapeSequenceArm2',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -89790,7 +89753,7 @@ export const build: PortableBuildTable = {
 								kinds: [],
 								text: true,
 								pattern: {
-									source: '^(?:(?:x[0-9a-fA-F]{2,}))$',
+									source: '^(?:(?:[0-9]{2,3}))$',
 									flags: 'u'
 								}
 							}
@@ -89809,7 +89772,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 78,
-					builder: 'escapeSequenceArm4',
+					builder: 'escapeSequenceArm3',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -89827,7 +89790,7 @@ export const build: PortableBuildTable = {
 								kinds: [],
 								text: true,
 								pattern: {
-									source: '^(?:(?:u[0-9a-fA-F]{4}))$',
+									source: '^(?:(?:x[0-9a-fA-F]{2,}))$',
 									flags: 'u'
 								}
 							}
@@ -89846,7 +89809,7 @@ export const build: PortableBuildTable = {
 				},
 				{
 					kind: 79,
-					builder: 'escapeSequenceArm5',
+					builder: 'escapeSequenceArm4',
 					slots: [],
 					presets: [],
 					flags: {},
@@ -89864,7 +89827,7 @@ export const build: PortableBuildTable = {
 								kinds: [],
 								text: true,
 								pattern: {
-									source: '^(?:(?:U[0-9a-fA-F]{8}))$',
+									source: '^(?:(?:u[0-9a-fA-F]{4}))$',
 									flags: 'u'
 								}
 							}
@@ -89874,6 +89837,43 @@ export const build: PortableBuildTable = {
 						{
 							variant: 'escape_sequence',
 							value: 79
+						},
+						{
+							absent: [],
+							required: ['$value']
+						}
+					]
+				},
+				{
+					kind: 80,
+					builder: 'escapeSequenceArm5',
+					slots: [],
+					presets: [],
+					flags: {},
+					content: {
+						name: '$value',
+						steps: [
+							{
+								key: 'content'
+							}
+						],
+						multiple: false,
+						seats: [
+							{
+								at: [80, 'content'],
+								kinds: [],
+								text: true,
+								pattern: {
+									source: '^(?:(?:U[0-9a-fA-F]{8}))$',
+									flags: 'u'
+								}
+							}
+						]
+					},
+					when: [
+						{
+							variant: 'escape_sequence',
+							value: 80
 						},
 						{
 							absent: [],
@@ -89901,9 +89901,9 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [227, 'rawStringLiteralContent'],
-									kinds: [73],
+									kinds: [74],
 									leaf: 'rawStringLiteralContent',
-									texts: [73],
+									texts: [74],
 									pattern: {
 										source: '^(?:(?:[^`]*))$',
 										flags: 'u'
@@ -89943,9 +89943,9 @@ export const build: PortableBuildTable = {
 						seats: [
 							{
 								at: [227, 'rawStringLiteralContent'],
-								kinds: [73],
+								kinds: [74],
 								leaf: 'rawStringLiteralContent',
-								texts: [73],
+								texts: [74],
 								pattern: {
 									source: '^(?:(?:[^`]*))$',
 									flags: 'u'
@@ -89966,7 +89966,7 @@ export const build: PortableBuildTable = {
 			root: false,
 			arms: [
 				{
-					kind: 74,
+					kind: 75,
 					builder: 'interpretedStringLiteralContent',
 					slots: [],
 					presets: [],
@@ -89980,7 +89980,7 @@ export const build: PortableBuildTable = {
 					holders: [[228, 'elements']]
 				},
 				{
-					kind: 73,
+					kind: 74,
 					builder: 'rawStringLiteralContent',
 					slots: [],
 					presets: [],
@@ -89999,7 +89999,7 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 5,
+					kind: 6,
 					slots: [],
 					presets: [],
 					flags: {},
@@ -90178,14 +90178,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [179, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90216,14 +90216,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [195, 'condition'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90446,14 +90446,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [179, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90469,14 +90469,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [193, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90492,14 +90492,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [194, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90577,14 +90577,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [196, 'content'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90750,14 +90750,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90807,14 +90807,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [179, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90846,14 +90846,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [199, 'value'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90913,14 +90913,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [179, 'expression'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90956,14 +90956,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [155, 'expressions'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -90995,14 +90995,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [202, 'value'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
@@ -97271,14 +97271,14 @@ export const build: PortableBuildTable = {
 								{
 									at: [161, 'length'],
 									kinds: [
-										1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
-										100, 101, 102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
+										1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+										101, 102, 103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223,
 										224, 225, 227, 228, 230, 231, 232, 233, 234, 235, 236
 									],
 									leaf: 'identifier',
 									texts: [1],
 									tokens: {
-										iota: 72
+										iota: 73
 									},
 									pattern: {
 										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',

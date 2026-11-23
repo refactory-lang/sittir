@@ -1,7 +1,7 @@
 {
 	"parser": {
-		"source": "adb832ad16ad0df8a894a4af0c4da6d55bcb88e6e51b4ca785f66fd4b9be9778",
-		"wasm": "8153a061d9fd8dc9c45a8f2313df71cf5a5d1ce47699383f38859143291e82d8"
+		"source": "40f92d7768dd460e733812d12722689b20217353cdd61cf6c2b05acc4ef9df0f",
+		"wasm": "ee3ff451b792a5156e79d563dec71936ee528836f233b50c61433e1ea5cf0b77"
 	},
 	"inputs": "3e47d5e00a6794a6eb166860f7f0a8c118ab7c32e1cdf71f53cc441746eba3f8",
 	"seams": [
@@ -394,9 +394,9 @@
 		{"seam":"type_arguments:members.1","state":1347,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
 		{"seam":"type_arguments:members.1","state":1358,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
 		{"seam":"type_arguments:members.1","state":1359,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
-		{"seam":"type_arguments:members.1","state":1638,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
 		{"seam":"type_arguments:members.1","state":1644,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
-		{"seam":"type_arguments:members.1","state":1653,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
-		{"seam":"type_arguments:members.1","state":1655,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"}
+		{"seam":"type_arguments:members.1","state":1650,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
+		{"seam":"type_arguments:members.1","state":1656,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"},
+		{"seam":"type_arguments:members.1","state":1658,"previous":"<","next":"<","reason":"the target is a fork state; the instance lexed the token in another state"}
 	]
 }

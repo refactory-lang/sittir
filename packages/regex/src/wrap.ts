@@ -3292,14 +3292,14 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ClassCharacter]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Flags]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.DecimalEscape]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.CharacterClassEscapeText1]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.UnicodeCharacterEscape]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.UnicodePropertyValue]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.ControlEscape]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.ControlLetterEscape]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.GroupName]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.DecimalDigits]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.CharacterClassEscapeText1]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.UnicodePropertyName]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Error]: (d, t) => wrapLeaf(d, t)
 };

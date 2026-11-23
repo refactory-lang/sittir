@@ -597,6 +597,54 @@ function wrapMultilineStringLiteralArm1$with$content(this: Received<Held>, ...ar
 	return wrapMultilineStringLiteralArm1$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
+export function wrapEscapeSequenceText(data: T.EscapeSequenceText, tree: TreeHandle): T.EscapeSequenceText.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.EscapeSequenceText as const,
+		content() {
+			return hydrateSlot<string>(this, '_content', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: wrapEscapeSequenceText$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.EscapeSequenceText.Parsed;
+}
+function wrapEscapeSequenceText$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.EscapeSequenceText;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.EscapeSequenceText['_content']>) =>
+				rebuilt(node, handle, () =>
+					wrapEscapeSequenceText(
+						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_text', 'content', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`escape_sequence_text has no $with.${setter}`);
+}
+function wrapEscapeSequenceText$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapEscapeSequenceText$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
 export function wrapCastExpression(data: T.CastExpression, tree: TreeHandle): T.CastExpression.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -12236,54 +12284,6 @@ function wrapForStatementArm$with$inits(this: Received<Held>, ...args: unknown[]
 	return wrapForStatementArm$with(receiverOf(this, '$with.inits'), 'inits', args);
 }
 
-export function wrapEscapeSequenceText(data: T.EscapeSequenceText, tree: TreeHandle): T.EscapeSequenceText.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.EscapeSequenceText as const,
-		content() {
-			return hydrateSlot<string>(this, '_content', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { content: wrapEscapeSequenceText$with$content, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.EscapeSequenceText.Parsed;
-}
-function wrapEscapeSequenceText$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.EscapeSequenceText;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.EscapeSequenceText['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapEscapeSequenceText(
-						{ ...$edited(data), _content: admitSlot(handle, 'escape_sequence_text', 'content', v) },
-						tree
-					)
-				)
-			);
-	}
-	throw new Error(`escape_sequence_text has no $with.${setter}`);
-}
-function wrapEscapeSequenceText$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapEscapeSequenceText$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
 export function wrapFormalParametersReceiver(
 	data: T.FormalParametersReceiver,
 	tree: TreeHandle
@@ -13215,6 +13215,35 @@ function viewMultilineStringLiteralArm1(data: RecordPosition, tree: TreeHandle):
 	node.$with = { content: $with$content, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.MultilineStringLiteralArm1.Parsed;
+}
+
+function viewEscapeSequenceText$content(this: RecordHandle) {
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
+}
+function viewEscapeSequenceText(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceText.Parsed {
+	const node = {
+		$type: TSKindId.EscapeSequenceText as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		$verbatim: undefined as string | undefined,
+		content: viewEscapeSequenceText$content,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { content: $with$content, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
+	return node as unknown as T.EscapeSequenceText.Parsed;
 }
 
 function viewCastExpression$types(this: RecordHandle) {
@@ -18813,35 +18842,6 @@ function viewForStatementArm(data: RecordPosition, tree: TreeHandle): T.ForState
 	return node as unknown as T.ForStatementArm.Parsed;
 }
 
-function viewEscapeSequenceText$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 2, 4, 0, 2);
-}
-function viewEscapeSequenceText(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceText.Parsed {
-	const node = {
-		$type: TSKindId.EscapeSequenceText as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		$verbatim: undefined as string | undefined,
-		content: viewEscapeSequenceText$content,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { content: $with$content, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	node.$verbatim = viewSlot<string | undefined>(node, 4, 2, 4, 0, 3);
-	return node as unknown as T.EscapeSequenceText.Parsed;
-}
-
 function viewFormalParametersReceiver$receiverParameter(this: RecordHandle) {
 	return viewSlot<T.ReceiverParameter>(this, 2, 8, 8, 8, 2);
 }
@@ -19495,6 +19495,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.StringInterpolation]: (d, t) => wrapStringInterpolation(d as unknown as T.StringInterpolation, t),
 	[TSKindId.MultilineStringLiteralArm1]: (d, t) =>
 		wrapMultilineStringLiteralArm1(d as unknown as T.MultilineStringLiteralArm1, t),
+	[TSKindId.EscapeSequenceText]: (d, t) => wrapEscapeSequenceText(d as unknown as T.EscapeSequenceText, t),
 	[TSKindId.CastExpression]: (d, t) => wrapCastExpression(d as unknown as T.CastExpression, t),
 	[TSKindId.AssignmentExpression]: (d, t) => wrapAssignmentExpression(d as unknown as T.AssignmentExpression, t),
 	[TSKindId.BinaryExpression]: (d, t) => wrapBinaryExpression(d as unknown as T.BinaryExpression, t),
@@ -19663,7 +19664,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.AssertStatementArm]: (d, t) => wrapAssertStatementArm(d as unknown as T.AssertStatementArm, t),
 	[TSKindId.ResourceArm]: (d, t) => wrapResourceArm(d as unknown as T.ResourceArm, t),
 	[TSKindId.ForStatementArm]: (d, t) => wrapForStatementArm(d as unknown as T.ForStatementArm, t),
-	[TSKindId.EscapeSequenceText]: (d, t) => wrapEscapeSequenceText(d as unknown as T.EscapeSequenceText, t),
 	[TSKindId.FormalParametersReceiver]: (d, t) =>
 		wrapFormalParametersReceiver(d as unknown as T.FormalParametersReceiver, t),
 	[TSKindId.FormalParametersList]: (d, t) => wrapFormalParametersList(d as unknown as T.FormalParametersList, t),
@@ -19696,6 +19696,7 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.CharacterLiteral]: viewCharacterLiteral,
 	[TSKindId.StringInterpolation]: viewStringInterpolation,
 	[TSKindId.MultilineStringLiteralArm1]: viewMultilineStringLiteralArm1,
+	[TSKindId.EscapeSequenceText]: viewEscapeSequenceText,
 	[TSKindId.CastExpression]: viewCastExpression,
 	[TSKindId.AssignmentExpression]: viewAssignmentExpression,
 	[TSKindId.BinaryExpression]: viewBinaryExpression,
@@ -19838,7 +19839,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.AssertStatementArm]: viewAssertStatementArm,
 	[TSKindId.ResourceArm]: viewResourceArm,
 	[TSKindId.ForStatementArm]: viewForStatementArm,
-	[TSKindId.EscapeSequenceText]: viewEscapeSequenceText,
 	[TSKindId.FormalParametersReceiver]: viewFormalParametersReceiver,
 	[TSKindId.FormalParametersList]: viewFormalParametersList,
 	[TSKindId.StringLiteralLine]: viewStringLiteralLine,

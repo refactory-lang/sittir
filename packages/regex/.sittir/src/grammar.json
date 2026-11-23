@@ -843,6 +843,14 @@
         }
       ]
     },
+    "character_class_escape_text1": {
+      "type": "PATTERN",
+      "value": "\\\\[dDsSwW]"
+    },
+    "character_class_escape_text2": {
+      "type": "PATTERN",
+      "value": "\\\\[pP]"
+    },
     "unicode_character_escape": {
       "type": "CHOICE",
       "members": [
@@ -861,6 +869,14 @@
           }
         }
       ]
+    },
+    "unicode_character_escape_text1": {
+      "type": "PATTERN",
+      "value": "\\\\u[0-9a-fA-F]{4}"
+    },
+    "unicode_character_escape_text2": {
+      "type": "PATTERN",
+      "value": "\\\\u\\{[0-9a-fA-F]{1,6}\\}"
     },
     "unicode_property_value_expression": {
       "type": "SEQ",
@@ -942,6 +958,14 @@
           }
         }
       ]
+    },
+    "control_escape_text1": {
+      "type": "PATTERN",
+      "value": "\\\\[bfnrtv0]"
+    },
+    "control_escape_text2": {
+      "type": "PATTERN",
+      "value": "\\\\x[0-9a-fA-F]{2}"
     },
     "control_letter_escape": {
       "type": "PATTERN",
@@ -1293,30 +1317,6 @@
       "annotations": {
         "hoisted": true
       }
-    },
-    "character_class_escape_text1": {
-      "type": "PATTERN",
-      "value": "\\\\[dDsSwW]"
-    },
-    "character_class_escape_text2": {
-      "type": "PATTERN",
-      "value": "\\\\[pP]"
-    },
-    "unicode_character_escape_text1": {
-      "type": "PATTERN",
-      "value": "\\\\u[0-9a-fA-F]{4}"
-    },
-    "unicode_character_escape_text2": {
-      "type": "PATTERN",
-      "value": "\\\\u\\{[0-9a-fA-F]{1,6}\\}"
-    },
-    "control_escape_text1": {
-      "type": "PATTERN",
-      "value": "\\\\[bfnrtv0]"
-    },
-    "control_escape_text2": {
-      "type": "PATTERN",
-      "value": "\\\\x[0-9a-fA-F]{2}"
     },
     "_layout": {
       "type": "CHOICE",

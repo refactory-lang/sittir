@@ -12,6 +12,7 @@ export const records = {
 		elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
 		top_level_declaration: { word: 3, width: 42, inline: 42, forms: 8, built: 3 }
 	},
+	SourceFileTextNode: { words: 2, builtWords: 2 },
 	PackageClauseNode: {
 		words: 7,
 		builtWords: 3,
@@ -661,7 +662,6 @@ export const records = {
 		expression: { word: 5, width: 1, run: 4, forms: 3, built: 3 },
 		trailing_comma: { word: 6, width: 1, forms: 18, built: 4 }
 	},
-	SourceFileTextNode: { words: 2, builtWords: 2 },
 	ChannelTypeBidirectionalNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },
 	ChannelTypeSendOnlyNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },
 	ChannelTypeReceiveOnlyNode: { words: 5, builtWords: 3, value: { word: 2, width: 3, forms: 1, built: 2 } },

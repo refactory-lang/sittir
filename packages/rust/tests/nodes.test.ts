@@ -206,6 +206,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('token_repetition_pattern_text', () => {
+		it('factory produces correct type', () => {
+			const node = ir.tokenRepetitionPatternText('test');
+			expect(node.$type).toBe(TSKindId.TokenRepetitionPatternText);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe('test');
+		});
+	});
+
 	describe('token_repetition', () => {
 		it('factory produces correct type', () => {
 			const node = ir.tokenRepetition({ operator: '+' });
@@ -2402,6 +2411,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('string_open', () => {
+		it('factory produces correct type', () => {
+			const node = ir.stringOpen('"');
+			expect(node.$type).toBe(TSKindId.StringOpen);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe('"');
+		});
+	});
+
 	describe('raw_string_literal', () => {
 		it('factory produces correct type', () => {
 			const node = ir.rawStringLiteral({
@@ -2907,24 +2925,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('render produces non-empty string', () => {
 			const node = ir.structPatternElements(...[TSKindId.RemainingFieldPattern as never]);
 			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('token_repetition_pattern_text', () => {
-		it('factory produces correct type', () => {
-			const node = ir.tokenRepetitionPatternText('test');
-			expect(node.$type).toBe(TSKindId.TokenRepetitionPatternText);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('test');
-		});
-	});
-
-	describe('string_open', () => {
-		it('factory produces correct type', () => {
-			const node = ir.stringOpen('"');
-			expect(node.$type).toBe(TSKindId.StringOpen);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('"');
 		});
 	});
 

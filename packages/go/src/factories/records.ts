@@ -67,6 +67,7 @@ import {
 	_reservedWordList_buildIdentifier,
 	type _ReservedWord_buildIdentifier,
 	_reservedWords_buildIdentifier,
+	_leafRe_buildSourceFileText,
 	_leafRe_buildIdentifier,
 	_leafRe_buildRawStringLiteralContent,
 	_leafRe_buildInterpretedStringLiteralContent,
@@ -76,7 +77,6 @@ import {
 	_leafRe_buildIntLiteralArm5,
 	_leafRe_buildFloatLiteralArm2,
 	_leafRe_buildImportSpecListArm,
-	_leafRe_buildSourceFileText,
 	_slotRe_buildEscapeSequenceArm1_content,
 	_slotRe_buildEscapeSequenceArm2_content,
 	_slotRe_buildEscapeSequenceArm3_content,
@@ -212,6 +212,35 @@ function withSourceFile(node: object, setter: string, args: readonly unknown[]):
 			);
 	}
 	throw new Error(`source_file has no $with.${setter}`);
+}
+
+export function buildSourceFileText(text: string): T.SourceFileText.Bound {
+	if (typeof text !== 'string') throw new Error(`source_file_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`source_file_text: text must be non-empty`);
+	if (!_leafRe_buildSourceFileText.test(text))
+		throw new Error(`source_file_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(leafSourceFileText, text) as unknown as T.SourceFileText.Bound;
+}
+
+function leafSourceFileText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.SourceFileText as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
 }
 
 export function buildPackageClause<V extends Admit<T.PackageIdentifier | T.PackageIdentifier.Types>>(
@@ -15132,35 +15161,6 @@ function withSpecialArgumentListGroup(node: object, setter: string, args: readon
 	throw new Error(`special_argument_list_group has no $with.${setter}`);
 }
 
-export function buildSourceFileText(text: string): T.SourceFileText.Bound {
-	if (typeof text !== 'string') throw new Error(`source_file_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`source_file_text: text must be non-empty`);
-	if (!_leafRe_buildSourceFileText.test(text))
-		throw new Error(`source_file_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafSourceFileText, text) as unknown as T.SourceFileText.Bound;
-}
-
-function leafSourceFileText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.SourceFileText as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
-}
-
 export function buildChannelTypeBidirectional<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
 	value: V & RefuseUndeclared<V>
 ): T.ChannelTypeBidirectional.Bound;
@@ -15593,6 +15593,7 @@ function withLabelName(node: object, setter: string, args: readonly unknown[]): 
 
 export type FluentKindMap = {
 	source_file: T.SourceFile.Bound;
+	source_file_text: T.SourceFileText;
 	package_clause: T.PackageClause.Bound;
 	import_declaration: T.ImportDeclaration.Bound;
 	import_spec: T.ImportSpec.Bound;
@@ -15754,7 +15755,6 @@ export type FluentKindMap = {
 	statement_list_arm: T.StatementListArm.Bound;
 	receive_statement_group: T.ReceiveStatementGroup.Bound;
 	special_argument_list_group: T.SpecialArgumentListGroup.Bound;
-	source_file_text: T.SourceFileText;
 	channel_type_bidirectional: T.ChannelTypeBidirectional.Bound;
 	channel_type_send_only: T.ChannelTypeSendOnly.Bound;
 	channel_type_receive_only: T.ChannelTypeReceiveOnly.Bound;
@@ -15776,6 +15776,7 @@ export type FluentKindMap = {
 
 export const _factoryMap = {
 	source_file: buildSourceFile,
+	source_file_text: buildSourceFileText,
 	package_clause: buildPackageClause,
 	import_declaration: buildImportDeclaration,
 	import_spec: buildImportSpec,
@@ -15937,7 +15938,6 @@ export const _factoryMap = {
 	statement_list_arm: buildStatementListArm,
 	receive_statement_group: buildReceiveStatementGroup,
 	special_argument_list_group: buildSpecialArgumentListGroup,
-	source_file_text: buildSourceFileText,
 	channel_type_bidirectional: buildChannelTypeBidirectional,
 	channel_type_send_only: buildChannelTypeSendOnly,
 	channel_type_receive_only: buildChannelTypeReceiveOnly,
@@ -15960,35 +15960,35 @@ export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
-		75: withEscapeSequenceArm1,
-		76: withEscapeSequenceArm2,
-		77: withEscapeSequenceArm3,
-		78: withEscapeSequenceArm4,
-		79: withEscapeSequenceArm5,
-		85: withFloatLiteralArm1,
-		87: withFloatLiteralArm3,
-		88: withFloatLiteralArm4Arm1,
-		89: withFloatLiteralArm4Arm2,
-		90: withFloatLiteralArm4Arm3,
-		91: withImaginaryLiteralArm1,
-		92: withImaginaryLiteralArm2,
-		94: withImaginaryLiteralArm4,
-		95: withImaginaryLiteralArm5,
-		96: withImaginaryLiteralArm6,
-		97: withImaginaryLiteralArm7,
-		98: withImaginaryLiteralArm8,
-		99: withImaginaryLiteralArm9,
-		100: withImaginaryLiteralArm10Arm1,
-		101: withImaginaryLiteralArm10Arm2,
-		102: withImaginaryLiteralArm10Arm3,
-		103: withRuneLiteralArm1,
-		104: withRuneLiteralArm2Arm1,
-		105: withRuneLiteralArm2Arm2,
-		106: withRuneLiteralArm2Arm3,
-		107: withRuneLiteralArm2Arm4,
-		108: withRuneLiteralArm2Arm5,
-		109: withCommentArm1,
-		110: withCommentArm2,
+		76: withEscapeSequenceArm1,
+		77: withEscapeSequenceArm2,
+		78: withEscapeSequenceArm3,
+		79: withEscapeSequenceArm4,
+		80: withEscapeSequenceArm5,
+		86: withFloatLiteralArm1,
+		88: withFloatLiteralArm3,
+		89: withFloatLiteralArm4Arm1,
+		90: withFloatLiteralArm4Arm2,
+		91: withFloatLiteralArm4Arm3,
+		92: withImaginaryLiteralArm1,
+		93: withImaginaryLiteralArm2,
+		95: withImaginaryLiteralArm4,
+		96: withImaginaryLiteralArm5,
+		97: withImaginaryLiteralArm6,
+		98: withImaginaryLiteralArm7,
+		99: withImaginaryLiteralArm8,
+		100: withImaginaryLiteralArm9,
+		101: withImaginaryLiteralArm10Arm1,
+		102: withImaginaryLiteralArm10Arm2,
+		103: withImaginaryLiteralArm10Arm3,
+		104: withRuneLiteralArm1,
+		105: withRuneLiteralArm2Arm1,
+		106: withRuneLiteralArm2Arm2,
+		107: withRuneLiteralArm2Arm3,
+		108: withRuneLiteralArm2Arm4,
+		109: withRuneLiteralArm2Arm5,
+		110: withCommentArm1,
+		111: withCommentArm2,
 		133: withSourceFile,
 		134: withPackageClause,
 		135: withImportDeclaration,
@@ -16114,19 +16114,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		299: withTypeIdentifier
 	}),
 	words: Object.freeze({
-		75: 4,
 		76: 4,
 		77: 4,
 		78: 4,
 		79: 4,
-		85: 5,
-		87: 4,
-		88: 5,
+		80: 4,
+		86: 5,
+		88: 4,
 		89: 5,
 		90: 5,
-		91: 4,
+		91: 5,
 		92: 4,
-		94: 4,
+		93: 4,
 		95: 4,
 		96: 4,
 		97: 4,
@@ -16143,6 +16142,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		108: 4,
 		109: 4,
 		110: 4,
+		111: 4,
 		133: 4,
 		134: 3,
 		135: 3,
@@ -16268,19 +16268,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		299: 3
 	}),
 	cells: Object.freeze({
-		75: 2,
 		76: 2,
 		77: 2,
 		78: 2,
 		79: 2,
-		85: 2,
-		87: 2,
+		80: 2,
+		86: 2,
 		88: 2,
 		89: 2,
 		90: 2,
 		91: 2,
 		92: 2,
-		94: 2,
+		93: 2,
 		95: 2,
 		96: 2,
 		97: 2,
@@ -16297,6 +16296,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		108: 2,
 		109: 2,
 		110: 2,
+		111: 2,
 		133: 2,
 		134: 2,
 		135: 2,
@@ -16422,20 +16422,16 @@ export const builtViews: BuiltViews = Object.freeze({
 		299: 2
 	}),
 	places: Object.freeze({
-		75: [[2, 2, 2, 4, 0, 0]],
 		76: [[2, 2, 2, 4, 0, 0]],
 		77: [[2, 2, 2, 4, 0, 0]],
 		78: [[2, 2, 2, 4, 0, 0]],
 		79: [[2, 2, 2, 4, 0, 0]],
-		85: [
+		80: [[2, 2, 2, 4, 0, 0]],
+		86: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		87: [[2, 2, 2, 4, 0, 0]],
-		88: [
-			[2, 2, 2, 4, 0, 0],
-			[4, 3, 2, 4, 0, 0]
-		],
+		88: [[2, 2, 2, 4, 0, 0]],
 		89: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
@@ -16444,9 +16440,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		91: [[2, 2, 2, 4, 0, 0]],
+		91: [
+			[2, 2, 2, 4, 0, 0],
+			[4, 3, 2, 4, 0, 0]
+		],
 		92: [[2, 2, 2, 4, 0, 0]],
-		94: [[2, 2, 2, 4, 0, 0]],
+		93: [[2, 2, 2, 4, 0, 0]],
 		95: [[2, 2, 2, 4, 0, 0]],
 		96: [[2, 2, 2, 4, 0, 0]],
 		97: [[2, 2, 2, 4, 0, 0]],
@@ -16463,6 +16462,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		108: [[2, 2, 2, 4, 0, 0]],
 		109: [[2, 2, 2, 4, 0, 0]],
 		110: [[2, 2, 2, 4, 0, 0]],
+		111: [[2, 2, 2, 4, 0, 0]],
 		133: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 42, 8, 42, 0]
@@ -16824,14 +16824,14 @@ export const builtViews: BuiltViews = Object.freeze({
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
-		73: leafRawStringLiteralContent,
-		74: leafInterpretedStringLiteralContent,
-		80: leafIntLiteralArm1,
-		82: leafIntLiteralArm3,
-		83: leafIntLiteralArm4,
-		84: leafIntLiteralArm5,
-		86: leafFloatLiteralArm2,
-		123: leafSourceFileText,
+		2: leafSourceFileText,
+		74: leafRawStringLiteralContent,
+		75: leafInterpretedStringLiteralContent,
+		81: leafIntLiteralArm1,
+		83: leafIntLiteralArm3,
+		84: leafIntLiteralArm4,
+		85: leafIntLiteralArm5,
+		87: leafFloatLiteralArm2,
 		252: leafImportSpecListArm
 	})
 });

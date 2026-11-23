@@ -63,6 +63,18 @@ describe('mintInlineTextTokens', () => {
 		expect(rules.comment_arm1).toEqual(seq(sym('comment_text1'), sym('comment_text2')));
 	});
 
+	it('places a minted rule right after the rule it is named after, keeping its lexical order', () => {
+		const { rules } = mintInlineTextTokens({ root: sym('a'), a: seq(pattern('#if'), pattern('#endif')), directive: pattern('#[a-z]+') }, { symbol: sym });
+		expect(Object.keys(rules)).toEqual(['root', 'a', 'a_text1', 'a_text2', 'directive']);
+	});
+
+	it('places a site a hoist moved after the rule that held it in the naming rules', () => {
+		const upstream = { comment: seq(str('//'), pattern('a')), other: pattern('z') };
+		const lifted = { comment: seq(str('//'), sym('comment_arm1')), other: pattern('z'), comment_arm1: seq(pattern('a'), str(';')) };
+		const { rules } = mintInlineTextTokens(lifted, { symbol: sym, namingRules: upstream });
+		expect(Object.keys(rules)).toEqual(['comment', 'comment_text', 'other', 'comment_arm1']);
+	});
+
 	it('refuses a minted name the grammar already has', () => {
 		expect(() => mintInlineTextTokens({ esc: seq(pattern('a')), esc_text: str('x') }, { symbol: sym })).toThrow(/esc_text/);
 	});

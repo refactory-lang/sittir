@@ -2598,7 +2598,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block: arm 115 builds its text through a content slot"
+    "message": "comment.block: arm 118 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2606,7 +2606,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block.doc: arm 115 builds its text through a content slot"
+    "message": "comment.block.doc: arm 118 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2614,7 +2614,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line: arm 114 builds its text through a content slot"
+    "message": "comment.line: arm 117 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -3022,7 +3022,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.receiver: arm 112 builds through its holder"
+    "message": "identifier.receiver: arm 115 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3030,7 +3030,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.super: arm 113 builds through its holder"
+    "message": "identifier.super: arm 116 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3054,7 +3054,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.null: arm 13 builds through its holder"
+    "message": "literal.null: arm 16 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3062,7 +3062,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.escape: arm 127 builds its text through a content slot"
+    "message": "literal.string.escape: arm 130 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -3102,7 +3102,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.wildcard: arm 64 builds through its holder"
+    "message": "pattern.wildcard: arm 67 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3206,7 +3206,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.boolean: arm 106 builds through its holder"
+    "message": "type.primitive.boolean: arm 109 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3214,7 +3214,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.character: arm 103 builds through its holder"
+    "message": "type.primitive.character: arm 106 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3222,7 +3222,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.floating: arm 104 builds through its holder"
+    "message": "type.primitive.floating: arm 107 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3230,7 +3230,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.floating.float32: arm 104 builds through its holder"
+    "message": "type.primitive.floating.float32: arm 107 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3238,7 +3238,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.floating.float64: arm 105 builds through its holder"
+    "message": "type.primitive.floating.float64: arm 108 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3246,7 +3246,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral: arm 99 builds through its holder"
+    "message": "type.primitive.integral: arm 102 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3254,7 +3254,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int16: arm 100 builds through its holder"
+    "message": "type.primitive.integral.int16: arm 103 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3262,7 +3262,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int32: arm 101 builds through its holder"
+    "message": "type.primitive.integral.int32: arm 104 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3270,7 +3270,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int64: arm 102 builds through its holder"
+    "message": "type.primitive.integral.int64: arm 105 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3278,7 +3278,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int8: arm 99 builds through its holder"
+    "message": "type.primitive.integral.int8: arm 102 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3286,6 +3286,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.void: arm 107 builds through its holder"
+    "message": "type.primitive.void: arm 110 builds through its holder"
   }
 ]

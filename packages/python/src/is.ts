@@ -1299,6 +1299,9 @@ export interface IsGuards {
 	continueStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ContinueStatement>;
 	ellipsis<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Ellipsis>;
 	notEscapeSequence<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.NotEscapeSequence>;
+	formatSpecifierText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifierText };
 	typeConversion<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeConversion };
@@ -1312,9 +1315,6 @@ export interface IsGuards {
 		v: T
 	): v is NarrowTo<T, TSKindId.PositionalSeparator>;
 	keywordSeparator<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.KeywordSeparator>;
-	formatSpecifierText<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifierText };
 	wildcardPattern<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardPattern>;
 	stringFragment<T extends { readonly $type: number } | number>(
 		v: T
@@ -1338,11 +1338,11 @@ const _supertype_splatPattern_ids = new Set<number>([206, 207, 300, 301]);
 const _supertype_parameter_ids = new Set<number>([206, 207, 1, 230, 204, 205, 202, 264, 263]);
 const _supertype_pattern_ids = new Set<number>([206, 1, 227, 226, 202, 203]);
 const _supertype_expression_ids = new Set<number>([
-	219, 218, 212, 213, 206, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
-	71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 251, 148, 208
+	219, 218, 212, 213, 206, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 70, 71,
+	72, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 251, 148, 208
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	206, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70, 71, 215, 226, 227,
+	206, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 70, 71, 72, 215, 226, 227,
 	229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63
 ]);
 const _supertype_assignment_ids = new Set<number>([302, 303, 304]);
@@ -1638,8 +1638,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_MethodDeclaration_guard = _g(TSKindId.MethodDeclaration);
 	const _kind_ImportPrefix_guard = _g(TSKindId.ImportPrefix);
 	const _kind_NotEscapeSequence_guard = _mg(TSKindId.NotEscapeSequence);
-	const _kind_TypeConversion_guard = _g(TSKindId.TypeConversion);
 	const _kind_FormatSpecifierText_guard = _g(TSKindId.FormatSpecifierText);
+	const _kind_TypeConversion_guard = _g(TSKindId.TypeConversion);
 	const _kind_StringFragment_guard = _g(TSKindId.StringFragment);
 	const _kind_EscapeInterpolation_guard = _g(TSKindId.EscapeInterpolation);
 	const _kind_Indent_guard = _mg(TSKindId.Indent);
@@ -2096,6 +2096,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		continueStatement: _kind_ContinueStatement_guard,
 		ellipsis: _kind_Ellipsis_guard,
 		notEscapeSequence: _kind_NotEscapeSequence_guard,
+		formatSpecifierText: _kind_FormatSpecifierText_guard,
 		typeConversion: _kind_TypeConversion_guard,
 		identifier: _kind_Identifier_guard,
 		true: _kind_True_guard,
@@ -2103,7 +2104,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		none: _kind_None_guard,
 		positionalSeparator: _kind_PositionalSeparator_guard,
 		keywordSeparator: _kind_KeywordSeparator_guard,
-		formatSpecifierText: _kind_FormatSpecifierText_guard,
 		wildcardPattern: _kind_WildcardPattern_guard,
 		stringFragment: _kind_StringFragment_guard,
 		escapeInterpolation: _kind_EscapeInterpolation_guard,

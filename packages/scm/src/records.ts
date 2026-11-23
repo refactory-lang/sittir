@@ -23,6 +23,7 @@ export const records = {
 		string_content: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
 	StringContentNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	StringContentTextNode: { words: 2, builtWords: 2 },
 	ParametersNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	CommentNode: {
 		words: 6,
@@ -88,7 +89,6 @@ export const records = {
 		group_expression: { word: 3, width: 3, forms: 1, built: 3 },
 		anchor: { word: 2, bit: 0 }
 	},
-	StringContentTextNode: { words: 2, builtWords: 2 },
 	NamedNodePlainNode: {
 		words: 10,
 		builtWords: 5,

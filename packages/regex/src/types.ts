@@ -117,18 +117,18 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[32, 'lt'],
 	[33, 'lparen_qmarkP_eq'],
 	[34, 'decimal_escape'],
-	[35, 'unicode_property_value'],
-	[36, 'control_letter_escape'],
-	[37, 'identity_escape'],
-	[38, 'group_name'],
-	[39, 'decimal_digits'],
-	[40, 'colon'],
-	[41, 'character_class_escape_text1'],
-	[42, 'character_class_escape_text2'],
-	[43, 'unicode_character_escape_text1'],
-	[44, 'unicode_character_escape_text2'],
-	[45, 'control_escape_text1'],
-	[46, 'control_escape_text2'],
+	[35, 'character_class_escape_text1'],
+	[36, 'character_class_escape_text2'],
+	[37, 'unicode_character_escape_text1'],
+	[38, 'unicode_character_escape_text2'],
+	[39, 'unicode_property_value'],
+	[40, 'control_escape_text1'],
+	[41, 'control_escape_text2'],
+	[42, 'control_letter_escape'],
+	[43, 'identity_escape'],
+	[44, 'group_name'],
+	[45, 'decimal_digits'],
+	[46, 'colon'],
 	[47, '_tight'],
 	[48, '_newline'],
 	[49, '_blankline'],
@@ -212,18 +212,18 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[32, '<'],
 	[33, '(?P='],
 	[34, 'decimal_escape'],
-	[35, 'unicode_property_value'],
-	[36, 'control_letter_escape'],
-	[37, 'identity_escape'],
-	[38, 'group_name'],
-	[39, 'decimal_digits'],
-	[40, ':'],
-	[41, 'character_class_escape_text1'],
-	[42, 'character_class_escape_text2'],
-	[43, 'unicode_character_escape_text1'],
-	[44, 'unicode_character_escape_text2'],
-	[45, 'control_escape_text1'],
-	[46, 'control_escape_text2'],
+	[35, 'character_class_escape_text1'],
+	[36, 'character_class_escape_text2'],
+	[37, 'unicode_character_escape_text1'],
+	[38, 'unicode_character_escape_text2'],
+	[39, 'unicode_property_value'],
+	[40, 'control_escape_text1'],
+	[41, 'control_escape_text2'],
+	[42, 'control_letter_escape'],
+	[43, 'identity_escape'],
+	[44, 'group_name'],
+	[45, 'decimal_digits'],
+	[46, ':'],
 	[47, '_tight'],
 	[48, '_newline'],
 	[49, '_blankline'],
@@ -344,8 +344,20 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LparenQmarkPEq;
 		case 'decimal_escape':
 			return TSKindId.DecimalEscape;
+		case 'character_class_escape_text1':
+			return TSKindId.CharacterClassEscapeText1;
+		case 'character_class_escape_text2':
+			return TSKindId.CharacterClassEscapeText2;
+		case 'unicode_character_escape_text1':
+			return TSKindId.UnicodeCharacterEscapeText1;
+		case 'unicode_character_escape_text2':
+			return TSKindId.UnicodeCharacterEscapeText2;
 		case 'unicode_property_value':
 			return TSKindId.UnicodePropertyValue;
+		case 'control_escape_text1':
+			return TSKindId.ControlEscapeText1;
+		case 'control_escape_text2':
+			return TSKindId.ControlEscapeText2;
 		case 'control_letter_escape':
 			return TSKindId.ControlLetterEscape;
 		case 'identity_escape':
@@ -356,18 +368,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DecimalDigits;
 		case 'colon':
 			return TSKindId.Colon;
-		case 'character_class_escape_text1':
-			return TSKindId.CharacterClassEscapeText1;
-		case 'character_class_escape_text2':
-			return TSKindId.CharacterClassEscapeText2;
-		case 'unicode_character_escape_text1':
-			return TSKindId.UnicodeCharacterEscapeText1;
-		case 'unicode_character_escape_text2':
-			return TSKindId.UnicodeCharacterEscapeText2;
-		case 'control_escape_text1':
-			return TSKindId.ControlEscapeText1;
-		case 'control_escape_text2':
-			return TSKindId.ControlEscapeText2;
 		case '_tight':
 			return TSKindId.Tight;
 		case '_newline':
@@ -1151,6 +1151,8 @@ export type PosixClassName = Terminal<TSKindId.PosixClassName, string>;
 export type ClassCharacter = Terminal<TSKindId.ClassCharacter, string>;
 export type Flags = Terminal<TSKindId.Flags, string>;
 export type DecimalEscape = Terminal<TSKindId.DecimalEscape, string>;
+export type CharacterClassEscapeText1 = Terminal<TSKindId.CharacterClassEscapeText1, string>;
+export type CharacterClassEscapeText2 = Terminal<TSKindId.CharacterClassEscapeText2, string>;
 export type UnicodeCharacterEscape = Terminal<TSKindId.UnicodeCharacterEscape, string>;
 export type UnicodePropertyValue = Terminal<TSKindId.UnicodePropertyValue, string>;
 export type ControlEscape = Terminal<TSKindId.ControlEscape, string>;
@@ -1158,8 +1160,6 @@ export type ControlLetterEscape = Terminal<TSKindId.ControlLetterEscape, string>
 export type GroupName = Terminal<TSKindId.GroupName, string>;
 export type DecimalDigits = Terminal<TSKindId.DecimalDigits, string>;
 export type Lazy = TSKindId.Lazy;
-export type CharacterClassEscapeText1 = Terminal<TSKindId.CharacterClassEscapeText1, string>;
-export type CharacterClassEscapeText2 = Terminal<TSKindId.CharacterClassEscapeText2, string>;
 export type Negation = TSKindId.Negation;
 export type Tight = TSKindId.Tight;
 export type Newline = TSKindId.Newline;
@@ -1945,6 +1945,18 @@ export interface ClassCharacterNs extends LeafNs<
 > {}
 export interface FlagsNs extends LeafNs<Flags, string, Flags.Bound, TSKindId.Flags> {}
 export interface DecimalEscapeNs extends LeafNs<DecimalEscape, string, DecimalEscape.Bound, TSKindId.DecimalEscape> {}
+export interface CharacterClassEscapeText1Ns extends LeafNs<
+	CharacterClassEscapeText1,
+	string,
+	CharacterClassEscapeText1.Bound,
+	TSKindId.CharacterClassEscapeText1
+> {}
+export interface CharacterClassEscapeText2Ns extends LeafNs<
+	CharacterClassEscapeText2,
+	string,
+	CharacterClassEscapeText2.Bound,
+	TSKindId.CharacterClassEscapeText2
+> {}
 export interface UnicodeCharacterEscapeNs extends LeafNs<
 	UnicodeCharacterEscape,
 	string,
@@ -1970,18 +1982,6 @@ export interface DecimalDigitsNs extends LeafNs<
 	string | number | bigint,
 	DecimalDigits.Bound,
 	TSKindId.DecimalDigits
-> {}
-export interface CharacterClassEscapeText1Ns extends LeafNs<
-	CharacterClassEscapeText1,
-	string,
-	CharacterClassEscapeText1.Bound,
-	TSKindId.CharacterClassEscapeText1
-> {}
-export interface CharacterClassEscapeText2Ns extends LeafNs<
-	CharacterClassEscapeText2,
-	string,
-	CharacterClassEscapeText2.Bound,
-	TSKindId.CharacterClassEscapeText2
 > {}
 export interface UnicodePropertyNameNs extends LeafNs<
 	UnicodePropertyName,
@@ -2036,14 +2036,14 @@ export interface NamespaceMap {
 	[TSKindId.ClassCharacter]: ClassCharacterNs;
 	[TSKindId.Flags]: FlagsNs;
 	[TSKindId.DecimalEscape]: DecimalEscapeNs;
+	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1Ns;
+	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2Ns;
 	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscapeNs;
 	[TSKindId.UnicodePropertyValue]: UnicodePropertyValueNs;
 	[TSKindId.ControlEscape]: ControlEscapeNs;
 	[TSKindId.ControlLetterEscape]: ControlLetterEscapeNs;
 	[TSKindId.GroupName]: GroupNameNs;
 	[TSKindId.DecimalDigits]: DecimalDigitsNs;
-	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1Ns;
-	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2Ns;
 	[TSKindId.UnicodePropertyName]: UnicodePropertyNameNs;
 }
 
@@ -2082,14 +2082,14 @@ export interface BoundByKindId {
 	[TSKindId.ClassCharacter]: ClassCharacter.Bound;
 	[TSKindId.Flags]: Flags.Bound;
 	[TSKindId.DecimalEscape]: DecimalEscape.Bound;
+	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Bound;
+	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Bound;
 	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscape.Bound;
 	[TSKindId.UnicodePropertyValue]: UnicodePropertyValue.Bound;
 	[TSKindId.ControlEscape]: ControlEscape.Bound;
 	[TSKindId.ControlLetterEscape]: ControlLetterEscape.Bound;
 	[TSKindId.GroupName]: GroupName.Bound;
 	[TSKindId.DecimalDigits]: DecimalDigits.Bound;
-	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Bound;
-	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Bound;
 	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Bound;
 }
 
@@ -2128,14 +2128,14 @@ export interface ParsedByKindId {
 	[TSKindId.ClassCharacter]: ClassCharacter.Parsed;
 	[TSKindId.Flags]: Flags.Parsed;
 	[TSKindId.DecimalEscape]: DecimalEscape.Parsed;
+	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Parsed;
+	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Parsed;
 	[TSKindId.UnicodeCharacterEscape]: UnicodeCharacterEscape.Parsed;
 	[TSKindId.UnicodePropertyValue]: UnicodePropertyValue.Parsed;
 	[TSKindId.ControlEscape]: ControlEscape.Parsed;
 	[TSKindId.ControlLetterEscape]: ControlLetterEscape.Parsed;
 	[TSKindId.GroupName]: GroupName.Parsed;
 	[TSKindId.DecimalDigits]: DecimalDigits.Parsed;
-	[TSKindId.CharacterClassEscapeText1]: CharacterClassEscapeText1.Parsed;
-	[TSKindId.CharacterClassEscapeText2]: CharacterClassEscapeText2.Parsed;
 	[TSKindId.UnicodePropertyName]: UnicodePropertyName.Parsed;
 }
 
@@ -2225,14 +2225,14 @@ export interface TypeKeyOf {
 	[TSKindId.ClassCharacter]: 'classCharacter';
 	[TSKindId.Flags]: 'flags';
 	[TSKindId.DecimalEscape]: 'decimalEscape';
+	[TSKindId.CharacterClassEscapeText1]: 'characterClassEscapeText1';
+	[TSKindId.CharacterClassEscapeText2]: 'characterClassEscapeText2';
 	[TSKindId.UnicodeCharacterEscape]: 'unicodeCharacterEscape';
 	[TSKindId.UnicodePropertyValue]: 'unicodePropertyValue';
 	[TSKindId.ControlEscape]: 'controlEscape';
 	[TSKindId.ControlLetterEscape]: 'controlLetterEscape';
 	[TSKindId.GroupName]: 'groupName';
 	[TSKindId.DecimalDigits]: 'decimalDigits';
-	[TSKindId.CharacterClassEscapeText1]: 'characterClassEscapeText1';
-	[TSKindId.CharacterClassEscapeText2]: 'characterClassEscapeText2';
 	[TSKindId.UnicodePropertyName]: 'unicodePropertyName';
 }
 
@@ -3174,6 +3174,38 @@ export namespace DecimalEscape {
 	export type LooseArgs = DecimalEscapeNs['LooseArgs'];
 	export type Kind = TSKindId.DecimalEscape;
 }
+export namespace CharacterClassEscapeText1 {
+	export type Config = CharacterClassEscapeText1Ns['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.CharacterClassEscapeText1;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.CharacterClassEscapeText1;
+		$text(): string;
+	}
+	export type Loose = CharacterClassEscapeText1Ns['Loose'];
+	export type LooseConfig = CharacterClassEscapeText1Ns['LooseConfig'];
+	export type BuildArgs = CharacterClassEscapeText1Ns['BuildArgs'];
+	export type LooseArgs = CharacterClassEscapeText1Ns['LooseArgs'];
+	export type Kind = TSKindId.CharacterClassEscapeText1;
+}
+export namespace CharacterClassEscapeText2 {
+	export type Config = CharacterClassEscapeText2Ns['Config'];
+	export interface Bound extends NodeMethodsOf, HoldsSource {
+		readonly $type: TSKindId.CharacterClassEscapeText2;
+		$text(): string;
+	}
+	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: TSKindId.CharacterClassEscapeText2;
+		$text(): string;
+	}
+	export type Loose = CharacterClassEscapeText2Ns['Loose'];
+	export type LooseConfig = CharacterClassEscapeText2Ns['LooseConfig'];
+	export type BuildArgs = CharacterClassEscapeText2Ns['BuildArgs'];
+	export type LooseArgs = CharacterClassEscapeText2Ns['LooseArgs'];
+	export type Kind = TSKindId.CharacterClassEscapeText2;
+}
 export namespace UnicodeCharacterEscape {
 	export type Config = UnicodeCharacterEscapeNs['Config'];
 	export interface Bound extends NodeMethodsOf, HoldsSource {
@@ -3269,38 +3301,6 @@ export namespace DecimalDigits {
 	export type BuildArgs = DecimalDigitsNs['BuildArgs'];
 	export type LooseArgs = DecimalDigitsNs['LooseArgs'];
 	export type Kind = TSKindId.DecimalDigits;
-}
-export namespace CharacterClassEscapeText1 {
-	export type Config = CharacterClassEscapeText1Ns['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.CharacterClassEscapeText1;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.CharacterClassEscapeText1;
-		$text(): string;
-	}
-	export type Loose = CharacterClassEscapeText1Ns['Loose'];
-	export type LooseConfig = CharacterClassEscapeText1Ns['LooseConfig'];
-	export type BuildArgs = CharacterClassEscapeText1Ns['BuildArgs'];
-	export type LooseArgs = CharacterClassEscapeText1Ns['LooseArgs'];
-	export type Kind = TSKindId.CharacterClassEscapeText1;
-}
-export namespace CharacterClassEscapeText2 {
-	export type Config = CharacterClassEscapeText2Ns['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
-		readonly $type: TSKindId.CharacterClassEscapeText2;
-		$text(): string;
-	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: TSKindId.CharacterClassEscapeText2;
-		$text(): string;
-	}
-	export type Loose = CharacterClassEscapeText2Ns['Loose'];
-	export type LooseConfig = CharacterClassEscapeText2Ns['LooseConfig'];
-	export type BuildArgs = CharacterClassEscapeText2Ns['BuildArgs'];
-	export type LooseArgs = CharacterClassEscapeText2Ns['LooseArgs'];
-	export type Kind = TSKindId.CharacterClassEscapeText2;
 }
 export namespace UnicodePropertyName {
 	export type Config = UnicodePropertyNameNs['Config'];

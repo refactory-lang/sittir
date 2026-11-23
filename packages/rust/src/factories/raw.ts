@@ -13,6 +13,7 @@ export const buildExpressionStatement = dispatched(() => backend().buildExpressi
 export const buildMacroRule = dispatched(() => backend().buildMacroRule);
 export const buildTokenBindingPattern = dispatched(() => backend().buildTokenBindingPattern);
 export const buildTokenRepetitionPattern = dispatched(() => backend().buildTokenRepetitionPattern);
+export const buildTokenRepetitionPatternText = dispatched(() => backend().buildTokenRepetitionPatternText);
 export const buildTokenRepetition = dispatched(() => backend().buildTokenRepetition);
 export const buildNonSpecialToken = dispatched(() => backend().buildNonSpecialToken);
 export const buildAttributeItem = dispatched(() => backend().buildAttributeItem);
@@ -136,6 +137,7 @@ export const buildCapturedPattern = dispatched(() => backend().buildCapturedPatt
 export const buildReferencePattern = dispatched(() => backend().buildReferencePattern);
 export const buildNegativeLiteral = dispatched(() => backend().buildNegativeLiteral);
 export const buildStringLiteral = dispatched(() => backend().buildStringLiteral);
+export const buildStringOpen = dispatched(() => backend().buildStringOpen);
 export const buildRawStringLiteral = dispatched(() => backend().buildRawStringLiteral);
 export const buildLineComment = dispatched(() => backend().buildLineComment);
 export const buildInnerLineDocCommentMarker = O.buildInnerLineDocCommentMarker;
@@ -167,8 +169,6 @@ export const buildTuplePatternElements = dispatched(() => backend().buildTuplePa
 export const buildPatterns = dispatched(() => backend().buildPatterns);
 export const buildStructPatternElements = dispatched(() => backend().buildStructPatternElements);
 export const buildUseWildcardGroup = dispatched(() => backend().buildUseWildcardGroup);
-export const buildTokenRepetitionPatternText = dispatched(() => backend().buildTokenRepetitionPatternText);
-export const buildStringOpen = dispatched(() => backend().buildStringOpen);
 export const buildAttributedElement = dispatched(() => backend().buildAttributedElement);
 export const buildArrayExpressionListElements = dispatched(() => backend().buildArrayExpressionListElements);
 export const buildTupleExpressionElements = dispatched(() => backend().buildTupleExpressionElements);
@@ -296,6 +296,7 @@ export const _factoryMap = {
 	macro_rule: buildMacroRule,
 	token_binding_pattern: buildTokenBindingPattern,
 	token_repetition_pattern: buildTokenRepetitionPattern,
+	token_repetition_pattern_text: buildTokenRepetitionPatternText,
 	token_repetition: buildTokenRepetition,
 	non_special_token: buildNonSpecialToken,
 	attribute_item: buildAttributeItem,
@@ -417,6 +418,7 @@ export const _factoryMap = {
 	reference_pattern: buildReferencePattern,
 	negative_literal: buildNegativeLiteral,
 	string_literal: buildStringLiteral,
+	string_open: buildStringOpen,
 	raw_string_literal: buildRawStringLiteral,
 	line_comment: buildLineComment,
 	inner_line_doc_comment_marker: buildInnerLineDocCommentMarker,
@@ -446,8 +448,6 @@ export const _factoryMap = {
 	patterns: buildPatterns,
 	struct_pattern_elements: buildStructPatternElements,
 	use_wildcard_group: buildUseWildcardGroup,
-	token_repetition_pattern_text: buildTokenRepetitionPatternText,
-	string_open: buildStringOpen,
 	attributed_element: buildAttributedElement,
 	array_expression_list_elements: buildArrayExpressionListElements,
 	tuple_expression_elements: buildTupleExpressionElements,

@@ -121,6 +121,7 @@ export const buildStringContent = dispatched(() => backend().buildStringContent)
 export const buildInterpolation = dispatched(() => backend().buildInterpolation);
 export const buildNotEscapeSequence = O.buildNotEscapeSequence;
 export const buildFormatSpecifier = dispatched(() => backend().buildFormatSpecifier);
+export const buildFormatSpecifierText = dispatched(() => backend().buildFormatSpecifierText);
 export const buildTypeConversion = dispatched(() => backend().buildTypeConversion);
 export const buildIdentifier = dispatched(() => backend().buildIdentifier);
 export const buildTrue = O.buildTrue;
@@ -140,7 +141,6 @@ export const buildDictPatternElements = dispatched(() => backend().buildDictPatt
 export const buildSubscripts = dispatched(() => backend().buildSubscripts);
 export const buildDictionaryElements = dispatched(() => backend().buildDictionaryElements);
 export const buildSliceGroup = dispatched(() => backend().buildSliceGroup);
-export const buildFormatSpecifierText = dispatched(() => backend().buildFormatSpecifierText);
 export const buildTypeParams = dispatched(() => backend().buildTypeParams);
 export const buildTypeParamsItems = dispatched(() => backend().buildTypeParamsItems);
 export const buildTuplePatternElements = dispatched(() => backend().buildTuplePatternElements);
@@ -336,6 +336,7 @@ export const _factoryMap = {
 	interpolation: buildInterpolation,
 	not_escape_sequence: buildNotEscapeSequence,
 	format_specifier: buildFormatSpecifier,
+	format_specifier_text: buildFormatSpecifierText,
 	type_conversion: buildTypeConversion,
 	identifier: buildIdentifier,
 	true: buildTrue,
@@ -355,7 +356,6 @@ export const _factoryMap = {
 	subscripts: buildSubscripts,
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
-	format_specifier_text: buildFormatSpecifierText,
 	type_params: buildTypeParams,
 	type_params_items: buildTypeParamsItems,
 	tuple_pattern_elements: buildTuplePatternElements,

@@ -223,6 +223,9 @@ export interface IsGuards {
 	multilineStringLiteralArm1<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MultilineStringLiteralArm1 };
+	escapeSequenceText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceText };
 	readonly castExpression: {
 		<T extends { readonly $type: number } | number>(
 			v: T
@@ -746,9 +749,6 @@ export interface IsGuards {
 	forStatementArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForStatementArm };
-	escapeSequenceText<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EscapeSequenceText };
 	formalParametersReceiver<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersReceiver };
@@ -1103,33 +1103,33 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.HexFloatingPointLiteralArm1 };
 }
 
-const _supertype_literal_ids = new Set<number>([161, 117, 118, 2, 3, 4, 162, 5, 6, 7, 327, 328, 13]);
-const _supertype_decimalIntegerLiteral_ids = new Set<number>([117, 118]);
+const _supertype_literal_ids = new Set<number>([161, 120, 121, 2, 3, 4, 162, 5, 6, 7, 327, 328, 16]);
+const _supertype_decimalIntegerLiteral_ids = new Set<number>([120, 121]);
 const _supertype_stringLiteral_ids = new Set<number>([327, 328]);
-const _supertype_escapeSequence_ids = new Set<number>([127, 128, 129, 130, 131]);
+const _supertype_escapeSequence_ids = new Set<number>([130, 131, 132, 133, 134]);
 const _supertype_expression_ids = new Set<number>([
-	172, 173, 174, 175, 177, 331, 332, 161, 117, 118, 2, 3, 4, 162, 5, 6, 7, 327, 328, 13, 184, 112, 1, 183, 185, 187,
+	172, 173, 174, 175, 177, 331, 332, 161, 120, 121, 2, 3, 4, 162, 5, 6, 7, 327, 328, 16, 184, 115, 1, 183, 185, 187,
 	189, 190, 192, 181, 188, 178, 171, 197
 ]);
 const _supertype_updateExpression_ids = new Set<number>([331, 332]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	161, 117, 118, 2, 3, 4, 162, 5, 6, 7, 327, 328, 13, 184, 112, 1, 183, 185, 187, 189, 190, 192, 181, 188
+	161, 120, 121, 2, 3, 4, 162, 5, 6, 7, 327, 328, 16, 184, 115, 1, 183, 185, 187, 189, 190, 192, 181, 188
 ]);
 const _supertype_statement_ids = new Set<number>([
-	240, 249, 250, 256, 273, 278, 274, 252, 210, 211, 228, 229, 230, 231, 209, 66, 212, 213, 214, 215, 216, 217, 197, 218,
+	240, 249, 250, 256, 273, 278, 274, 252, 210, 211, 228, 229, 230, 231, 209, 69, 212, 213, 214, 215, 216, 217, 197, 218,
 	301, 219, 329, 330, 225
 ]);
 const _supertype_tryStatement_ids = new Set<number>([329, 330]);
 const _supertype_declaration_ids = new Set<number>([240, 249, 250, 256, 273, 278, 274, 252]);
 const _supertype_moduleDirective_ids = new Set<number>([243, 245, 246, 247, 248]);
-const _supertype_type_ids = new Set<number>([370, 107, 99, 100, 101, 102, 103, 104, 105, 106, 289, 290, 291, 288]);
+const _supertype_type_ids = new Set<number>([370, 110, 102, 103, 104, 105, 106, 107, 108, 109, 289, 290, 291, 288]);
 const _supertype_unannotatedType_ids = new Set<number>([
-	370, 107, 99, 100, 101, 102, 103, 104, 105, 106, 289, 290, 291
+	370, 110, 102, 103, 104, 105, 106, 107, 108, 109, 289, 290, 291
 ]);
-const _supertype_simpleType_ids = new Set<number>([370, 107, 99, 100, 101, 102, 103, 104, 105, 106, 289, 290]);
+const _supertype_simpleType_ids = new Set<number>([370, 110, 102, 103, 104, 105, 106, 107, 108, 109, 289, 290]);
 const _supertype_formalParameters_ids = new Set<number>([325, 326]);
-const _supertype_decimalFloatingPointLiteralArm3_ids = new Set<number>([121, 122]);
-const _supertype_decimalFloatingPointLiteralArm4_ids = new Set<number>([123, 124]);
+const _supertype_decimalFloatingPointLiteralArm3_ids = new Set<number>([124, 125]);
+const _supertype_decimalFloatingPointLiteralArm4_ids = new Set<number>([126, 127]);
 const _supertype_layout_ids = new Set<number>([149, 150, 151, 152, 153, 154, 155, 156]);
 
 const _members = new Map<number, ReadonlySet<number>>([
@@ -1149,9 +1149,9 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.FormalParameters, _supertype_formalParameters_ids],
 	[TSKindId.DecimalFloatingPointLiteralArm3, _supertype_decimalFloatingPointLiteralArm3_ids],
 	[TSKindId.DecimalFloatingPointLiteralArm4, _supertype_decimalFloatingPointLiteralArm4_ids],
-	[TSKindId.RequiresModifier, new Set<number>([84, 85])],
-	[TSKindId.IntegralType, new Set<number>([99, 100, 101, 102, 103])],
-	[TSKindId.FloatingPointType, new Set<number>([104, 105])]
+	[TSKindId.RequiresModifier, new Set<number>([87, 88])],
+	[TSKindId.IntegralType, new Set<number>([102, 103, 104, 105, 106])],
+	[TSKindId.FloatingPointType, new Set<number>([107, 108])]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -1281,6 +1281,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Program_guard = _g(TSKindId.Program);
 	const _kind_StringInterpolation_guard = _g(TSKindId.StringInterpolation);
 	const _kind_MultilineStringLiteralArm1_guard = _g(TSKindId.MultilineStringLiteralArm1);
+	const _kind_EscapeSequenceText_guard = _g(TSKindId.EscapeSequenceText);
 	const _kind_InferredParameters_guard = _g(TSKindId.InferredParameters);
 	const _kind_DimensionsExpr_guard = _g(TSKindId.DimensionsExpr);
 	const _kind_ArgumentList_guard = _g(TSKindId.ArgumentList);
@@ -1378,7 +1379,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ElementValues_guard = _g(TSKindId.ElementValues);
 	const _kind_EnumConstants_guard = _g(TSKindId.EnumConstants);
 	const _kind_VariableInitializers_guard = _g(TSKindId.VariableInitializers);
-	const _kind_EscapeSequenceText_guard = _g(TSKindId.EscapeSequenceText);
 	const _kind_StringFragment_guard = _g(TSKindId.StringFragment);
 	const _kind_MultilineStringFragment_guard = _g(TSKindId.MultilineStringFragment);
 	const _kind_RequiresModifier_guard = _mg(TSKindId.RequiresModifier);
@@ -1595,6 +1595,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		characterLiteral: _kind_CharacterLiteral_guard,
 		stringInterpolation: _kind_StringInterpolation_guard,
 		multilineStringLiteralArm1: _kind_MultilineStringLiteralArm1_guard,
+		escapeSequenceText: _kind_EscapeSequenceText_guard,
 		castExpression: _form_CastExpression_guard,
 		assignmentExpression: _kind_AssignmentExpression_guard,
 		binaryExpression: _kind_BinaryExpression_guard,
@@ -1735,7 +1736,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		assertStatementArm: _kind_AssertStatementArm_guard,
 		resourceArm: _kind_ResourceArm_guard,
 		forStatementArm: _kind_ForStatementArm_guard,
-		escapeSequenceText: _kind_EscapeSequenceText_guard,
 		formalParametersReceiver: _kind_FormalParametersReceiver_guard,
 		formalParametersList: _kind_FormalParametersList_guard,
 		stringLiteralLine: _kind_StringLiteralLine_guard,

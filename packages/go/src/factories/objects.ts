@@ -98,6 +98,7 @@ export const _reservedWordList_buildIdentifier = [
 ] as const;
 export type _ReservedWord_buildIdentifier = (typeof _reservedWordList_buildIdentifier)[number];
 export const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWordList_buildIdentifier);
+export const _leafRe_buildSourceFileText = /^(?:(?:\n))$/u;
 export const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[^`]*))$/u;
 export const _leafRe_buildInterpretedStringLiteralContent = /^(?:(?:[^"\n\\]+))$/u;
@@ -108,7 +109,6 @@ export const _leafRe_buildIntLiteralArm5 = /^(?:0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:
 export const _leafRe_buildFloatLiteralArm2 =
 	/^(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
 export const _leafRe_buildImportSpecListArm = /^(?:(?:(?:\n)|;|\0))$/u;
-export const _leafRe_buildSourceFileText = /^(?:(?:\n))$/u;
 export const _slotRe_buildEscapeSequenceArm1_content = /^(?:(?:[^xuU]))$/u;
 export const _slotRe_buildEscapeSequenceArm2_content = /^(?:(?:[0-9]{2,3}))$/u;
 export const _slotRe_buildEscapeSequenceArm3_content = /^(?:(?:x[0-9a-fA-F]{2,}))$/u;
@@ -231,6 +231,29 @@ function buildSourceFile$with$elements(this: Received<Held>, ...args: unknown[])
 }
 function buildSourceFile$with$topLevelDeclaration(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildSourceFile$with(receiverOf(this, '$with.topLevelDeclaration'), 'topLevelDeclaration', args);
+}
+
+export function buildSourceFileText(text: string): T.SourceFileText.Bound {
+	if (typeof text !== 'string') throw new Error(`source_file_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`source_file_text: text must be non-empty`);
+	if (!_leafRe_buildSourceFileText.test(text))
+		throw new Error(`source_file_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SourceFileText as const,
+		$_layout: undefined,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.SourceFileText.Bound;
 }
 
 export function buildPackageClause<V extends Admit<T.PackageIdentifier | T.PackageIdentifier.Types>>(
@@ -11539,29 +11562,6 @@ function buildSpecialArgumentListGroup$with$trailingComma(this: Received<Held>, 
 	return buildSpecialArgumentListGroup$with(receiverOf(this, '$with.trailingComma'), 'trailingComma', args);
 }
 
-export function buildSourceFileText(text: string): T.SourceFileText.Bound {
-	if (typeof text !== 'string') throw new Error(`source_file_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`source_file_text: text must be non-empty`);
-	if (!_leafRe_buildSourceFileText.test(text))
-		throw new Error(`source_file_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.SourceFileText as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.SourceFileText.Bound;
-}
-
 export function buildChannelTypeBidirectional<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
 	value: V & RefuseUndeclared<V>
 ): T.ChannelTypeBidirectional.Bound;
@@ -11964,6 +11964,7 @@ function buildLabelName$with$content(this: Received<Held>, ...args: unknown[]): 
 
 export type FluentKindMap = {
 	source_file: T.SourceFile.Bound;
+	source_file_text: T.SourceFileText;
 	package_clause: T.PackageClause.Bound;
 	import_declaration: T.ImportDeclaration.Bound;
 	import_spec: T.ImportSpec.Bound;
@@ -12125,7 +12126,6 @@ export type FluentKindMap = {
 	statement_list_arm: T.StatementListArm.Bound;
 	receive_statement_group: T.ReceiveStatementGroup.Bound;
 	special_argument_list_group: T.SpecialArgumentListGroup.Bound;
-	source_file_text: T.SourceFileText;
 	channel_type_bidirectional: T.ChannelTypeBidirectional.Bound;
 	channel_type_send_only: T.ChannelTypeSendOnly.Bound;
 	channel_type_receive_only: T.ChannelTypeReceiveOnly.Bound;
@@ -12147,6 +12147,7 @@ export type FluentKindMap = {
 
 export const _factoryMap = {
 	source_file: buildSourceFile,
+	source_file_text: buildSourceFileText,
 	package_clause: buildPackageClause,
 	import_declaration: buildImportDeclaration,
 	import_spec: buildImportSpec,
@@ -12308,7 +12309,6 @@ export const _factoryMap = {
 	statement_list_arm: buildStatementListArm,
 	receive_statement_group: buildReceiveStatementGroup,
 	special_argument_list_group: buildSpecialArgumentListGroup,
-	source_file_text: buildSourceFileText,
 	channel_type_bidirectional: buildChannelTypeBidirectional,
 	channel_type_send_only: buildChannelTypeSendOnly,
 	channel_type_receive_only: buildChannelTypeReceiveOnly,

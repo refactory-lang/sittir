@@ -86,6 +86,7 @@ export const _slotRe_buildBinaryIntegerLiteral_prefix = /^(?:0b|0B)$/u;
 export const _slotRe_buildBinaryIntegerLiteral_content = /^(?:(?:(?:[01]+))+)$/u;
 export const _slotRe_buildBinaryIntegerLiteral_suffix = _slotRe_buildOctalIntegerLiteral_suffix;
 export const _slotRe_buildCharacterLiteral_content = /^(?:(?:(?:(?:[^\\'\n])|(?:\\[^\x0A])|(?:\\\n)))+)$/u;
+export const _slotRe_buildEscapeSequenceText_content = /^(?:(?:[^bfnrts'"\\]))$/u;
 export const _slotRe_buildLineComment_content = /^(?:(?:[^\n]*))$/u;
 export const _slotRe_buildBlockComment_content = /^(?:(?:[^*]*\*+([^/*][^*]*\*+)*))$/u;
 export const _slotRe_buildDecimalFloatingPointLiteralArm1_content = /^(?:(?:(?:[0-9]+))+)$/u;
@@ -111,7 +112,6 @@ export const _slotRe_buildEscapeSequenceArm2_content = /^(?:(?:[0-7]{1,3}))$/u;
 export const _slotRe_buildEscapeSequenceArm3_content = /^(?:(?:x[0-9a-fA-F]{2}))$/u;
 export const _slotRe_buildEscapeSequenceArm4_content = /^(?:(?:u[0-9a-fA-F]{4}))$/u;
 export const _slotRe_buildEscapeSequenceArm5_content = /^(?:(?:u\{[0-9a-fA-F]+\}))$/u;
-export const _slotRe_buildEscapeSequenceText_content = /^(?:(?:[^bfnrts'"\\]))$/u;
 export const _delimited_buildBlockComment: DelimitedSpec = {
 	kind: 'block_comment',
 	id: TSKindId.BlockComment as const,
@@ -677,6 +677,54 @@ function buildMultilineStringLiteralArm1$with(node: Held, setter: string, args: 
 }
 function buildMultilineStringLiteralArm1$with$content(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildMultilineStringLiteralArm1$with(receiverOf(this, '$with.content'), 'content', args);
+}
+
+export function buildEscapeSequenceText(content: string, affix?: true): T.EscapeSequenceText.Bound;
+export function buildEscapeSequenceText(text: `\\${string}`, affix: false): T.EscapeSequenceText.Bound;
+export function buildEscapeSequenceText(input: string, affix: boolean = true): T.EscapeSequenceText.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence_text');
+	}
+	const _content = value;
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequenceText_content.test(_content))
+		throw new Error(`escape_sequence_text.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence_text', { content: _content });
+	const node = {
+		$type: TSKindId.EscapeSequenceText as const,
+		_content,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { content: buildEscapeSequenceText$with$content, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.EscapeSequenceText.Bound;
+}
+
+function buildEscapeSequenceText$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceText(value)));
+	}
+	throw new Error(`escape_sequence_text has no $with.${setter}`);
+}
+function buildEscapeSequenceText$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildEscapeSequenceText$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export const buildNullLiteral: TSKindId.NullLiteral = TSKindId.NullLiteral;
@@ -12140,54 +12188,6 @@ function buildForStatementArm$with$inits(this: Received<Held>, ...args: unknown[
 	return buildForStatementArm$with(receiverOf(this, '$with.inits'), 'inits', args);
 }
 
-export function buildEscapeSequenceText(content: string, affix?: true): T.EscapeSequenceText.Bound;
-export function buildEscapeSequenceText(text: `\\${string}`, affix: false): T.EscapeSequenceText.Bound;
-export function buildEscapeSequenceText(input: string, affix: boolean = true): T.EscapeSequenceText.Bound {
-	let value = input;
-	if (!affix) {
-		if (typeof input !== 'string')
-			throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(input)}`);
-		value = unaffixed(input, '\\', '', 'escape_sequence_text');
-	}
-	const _content = value;
-	if (typeof _content !== 'string')
-		throw new Error(`escape_sequence_text.content: text must be a string: ${describeValue(_content)}`);
-	if (!_slotRe_buildEscapeSequenceText_content.test(_content))
-		throw new Error(`escape_sequence_text.content: text does not match pattern: ${describeValue(_content)}`);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'escape_sequence_text', { content: _content });
-	const node = {
-		$type: TSKindId.EscapeSequenceText as const,
-		_content,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		content: () => hydrateStoredSlot(node, '_content'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = { content: buildEscapeSequenceText$with$content, [RECEIVER]: node };
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.EscapeSequenceText.Bound;
-}
-
-function buildEscapeSequenceText$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequenceText(value)));
-	}
-	throw new Error(`escape_sequence_text has no $with.${setter}`);
-}
-function buildEscapeSequenceText$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildEscapeSequenceText$with(receiverOf(this, '$with.content'), 'content', args);
-}
-
 export function buildFormalParametersReceiver<V extends Admit<T.ReceiverParameter>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildFormalParametersReceiver>;
@@ -12844,6 +12844,7 @@ export type FluentKindMap = {
 	multiline_string_fragment: T.MultilineStringFragment;
 	string_interpolation: T.StringInterpolation.Bound;
 	multiline_string_literal_arm1: T.MultilineStringLiteralArm1.Bound;
+	escape_sequence_text: T.EscapeSequenceText.Bound;
 	null_literal: T.NullLiteral;
 	cast_expression: T.CastExpression.Bound;
 	assignment_expression: T.AssignmentExpression.Bound;
@@ -12999,7 +13000,6 @@ export type FluentKindMap = {
 	assert_statement_arm: T.AssertStatementArm.Bound;
 	resource_arm: T.ResourceArm.Bound;
 	for_statement_arm: T.ForStatementArm.Bound;
-	escape_sequence_text: T.EscapeSequenceText.Bound;
 	formal_parameters_receiver: T.FormalParametersReceiver.Bound;
 	formal_parameters_list: T.FormalParametersList.Bound;
 	string_literal_line: T.StringLiteralLine.Bound;
@@ -13033,6 +13033,7 @@ export const _factoryMap = {
 	multiline_string_fragment: buildMultilineStringFragment,
 	string_interpolation: buildStringInterpolation,
 	multiline_string_literal_arm1: buildMultilineStringLiteralArm1,
+	escape_sequence_text: buildEscapeSequenceText,
 	null_literal: buildNullLiteral,
 	cast_expression: buildCastExpression,
 	assignment_expression: buildAssignmentExpression,
@@ -13188,7 +13189,6 @@ export const _factoryMap = {
 	assert_statement_arm: buildAssertStatementArm,
 	resource_arm: buildResourceArm,
 	for_statement_arm: buildForStatementArm,
-	escape_sequence_text: buildEscapeSequenceText,
 	formal_parameters_receiver: buildFormalParametersReceiver,
 	formal_parameters_list: buildFormalParametersList,
 	string_literal_line: buildStringLiteralLine,

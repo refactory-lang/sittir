@@ -8,6 +8,7 @@ export * from './objects.js';
 const backend = (): typeof O => recordBuilders<typeof O>() ?? O;
 
 export const buildSourceFile = dispatched(() => backend().buildSourceFile);
+export const buildSourceFileText = dispatched(() => backend().buildSourceFileText);
 export const buildPackageClause = dispatched(() => backend().buildPackageClause);
 export const buildImportDeclaration = dispatched(() => backend().buildImportDeclaration);
 export const buildImportSpec = dispatched(() => backend().buildImportSpec);
@@ -169,7 +170,6 @@ export const buildStatementListGroup = dispatched(() => backend().buildStatement
 export const buildStatementListArm = dispatched(() => backend().buildStatementListArm);
 export const buildReceiveStatementGroup = dispatched(() => backend().buildReceiveStatementGroup);
 export const buildSpecialArgumentListGroup = dispatched(() => backend().buildSpecialArgumentListGroup);
-export const buildSourceFileText = dispatched(() => backend().buildSourceFileText);
 export const buildChannelTypeBidirectional = dispatched(() => backend().buildChannelTypeBidirectional);
 export const buildChannelTypeSendOnly = dispatched(() => backend().buildChannelTypeSendOnly);
 export const buildChannelTypeReceiveOnly = dispatched(() => backend().buildChannelTypeReceiveOnly);
@@ -190,6 +190,7 @@ export const buildLabelName = dispatched(() => backend().buildLabelName);
 
 export const _factoryMap = {
 	source_file: buildSourceFile,
+	source_file_text: buildSourceFileText,
 	package_clause: buildPackageClause,
 	import_declaration: buildImportDeclaration,
 	import_spec: buildImportSpec,
@@ -351,7 +352,6 @@ export const _factoryMap = {
 	statement_list_arm: buildStatementListArm,
 	receive_statement_group: buildReceiveStatementGroup,
 	special_argument_list_group: buildSpecialArgumentListGroup,
-	source_file_text: buildSourceFileText,
 	channel_type_bidirectional: buildChannelTypeBidirectional,
 	channel_type_send_only: buildChannelTypeSendOnly,
 	channel_type_receive_only: buildChannelTypeReceiveOnly,

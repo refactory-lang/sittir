@@ -82,19 +82,19 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, 'at'],
 	[9, 'dquote'],
 	[10, 'dquote2'],
-	[11, 'comment'],
-	[12, 'lbrack'],
-	[13, 'rbrack'],
-	[14, 'lparen'],
-	[15, 'rparen'],
-	[16, 'MISSING_keyword'],
-	[17, 'colon'],
-	[18, 'bang'],
-	[19, 'pound'],
-	[20, 'dot'],
-	[21, 'qmark2'],
-	[22, 'bang2'],
-	[23, 'string_content_text'],
+	[11, 'string_content_text'],
+	[12, 'comment'],
+	[13, 'lbrack'],
+	[14, 'rbrack'],
+	[15, 'lparen'],
+	[16, 'rparen'],
+	[17, 'MISSING_keyword'],
+	[18, 'colon'],
+	[19, 'bang'],
+	[20, 'pound'],
+	[21, 'dot'],
+	[22, 'qmark2'],
+	[23, 'bang2'],
 	[24, 'slash'],
 	[25, '_tight'],
 	[26, '_space'],
@@ -157,19 +157,19 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[8, '@'],
 	[9, '"'],
 	[10, '"'],
-	[11, 'comment'],
-	[12, '['],
-	[13, ']'],
-	[14, '('],
-	[15, ')'],
-	[16, 'MISSING'],
-	[17, ':'],
-	[18, '!'],
-	[19, '#'],
-	[20, '.'],
-	[21, '?'],
-	[22, '!'],
-	[23, 'string_content_text'],
+	[11, 'string_content_text'],
+	[12, 'comment'],
+	[13, '['],
+	[14, ']'],
+	[15, '('],
+	[16, ')'],
+	[17, 'MISSING'],
+	[18, ':'],
+	[19, '!'],
+	[20, '#'],
+	[21, '.'],
+	[22, '?'],
+	[23, '!'],
 	[24, '/'],
 	[25, '_tight'],
 	[26, '_space'],
@@ -245,6 +245,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Dquote;
 		case 'dquote2':
 			return TSKindId.Dquote2;
+		case 'string_content_text':
+			return TSKindId.StringContentText;
 		case 'comment':
 			return TSKindId.Comment;
 		case 'lbrack':
@@ -269,8 +271,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Qmark2;
 		case 'bang2':
 			return TSKindId.Bang2;
-		case 'string_content_text':
-			return TSKindId.StringContentText;
 		case 'slash':
 			return TSKindId.Slash;
 		case '_tight':
@@ -890,8 +890,8 @@ export interface NamedNodeGroupAnchoredLast {
 export type Quantifier = TSKindId.Star | TSKindId.Plus | TSKindId.Qmark;
 export type Identifier = Terminal<TSKindId.Identifier, string>;
 export type ImmediateIdentifier = Terminal<TSKindId.ImmediateIdentifier, string>;
-export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
 export type StringContentText = Terminal<TSKindId.StringContentText, string>;
+export type PredicateType = TSKindId.Qmark | TSKindId.Bang;
 export type Anchor = TSKindId.Anchor;
 export type Tight = TSKindId.Tight;
 export type Space = TSKindId.Space;

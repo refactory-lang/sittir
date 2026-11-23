@@ -938,6 +938,9 @@ export interface IsGuards {
 		| TSKindId.Indent
 		| TSKindId.Dedent
 	>;
+	sourceFileText<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SourceFileText };
 	dot<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Dot>;
 	blankIdentifier<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.BlankIdentifier>;
 	emptyStatement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.EmptyStatement>;
@@ -960,9 +963,6 @@ export interface IsGuards {
 	importSpecListArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ImportSpecListArm };
-	sourceFileText<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SourceFileText };
 }
 
 const _supertype_type_ids = new Set<number>([
@@ -977,18 +977,18 @@ const _supertype_statement_ids = new Set<number>([
 ]);
 const _supertype_simpleStatement_ids = new Set<number>([179, 180, 182, 183, 184, 185]);
 const _supertype_expression_ids = new Set<number>([
-	224, 225, 213, 214, 215, 209, 216, 217, 218, 1, 219, 223, 227, 228, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
-	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 69, 70, 71, 72, 208
+	224, 225, 213, 214, 215, 209, 216, 217, 218, 1, 219, 223, 227, 228, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
+	93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 70, 71, 72, 73, 208
 ]);
-const _supertype_escapeSequence_ids = new Set<number>([75, 76, 77, 78, 79]);
-const _supertype_intLiteral_ids = new Set<number>([80, 81, 82, 83, 84]);
-const _supertype_floatLiteral_ids = new Set<number>([85, 86, 87, 88, 89, 90]);
-const _supertype_imaginaryLiteral_ids = new Set<number>([91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102]);
-const _supertype_runeLiteral_ids = new Set<number>([103, 104, 105, 106, 107, 108]);
-const _supertype_comment_ids = new Set<number>([109, 110]);
-const _supertype_floatLiteralArm4_ids = new Set<number>([88, 89, 90]);
-const _supertype_imaginaryLiteralArm10_ids = new Set<number>([100, 101, 102]);
-const _supertype_runeLiteralArm2_ids = new Set<number>([104, 105, 106, 107, 108]);
+const _supertype_escapeSequence_ids = new Set<number>([76, 77, 78, 79, 80]);
+const _supertype_intLiteral_ids = new Set<number>([81, 82, 83, 84, 85]);
+const _supertype_floatLiteral_ids = new Set<number>([86, 87, 88, 89, 90, 91]);
+const _supertype_imaginaryLiteral_ids = new Set<number>([92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103]);
+const _supertype_runeLiteral_ids = new Set<number>([104, 105, 106, 107, 108, 109]);
+const _supertype_comment_ids = new Set<number>([110, 111]);
+const _supertype_floatLiteralArm4_ids = new Set<number>([89, 90, 91]);
+const _supertype_imaginaryLiteralArm10_ids = new Set<number>([101, 102, 103]);
+const _supertype_runeLiteralArm2_ids = new Set<number>([105, 106, 107, 108, 109]);
 const _supertype_layout_ids = new Set<number>([125, 126, 127, 128, 129, 130, 131, 132]);
 
 const _members = new Map<number, ReadonlySet<number>>([
@@ -1219,6 +1219,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_FieldIdentifier_guard = _g(TSKindId.FieldIdentifier);
 	const _kind_TypeConstraint_guard = _g(TSKindId.TypeConstraint);
 	const _kind_LabelName_guard = _g(TSKindId.LabelName);
+	const _kind_SourceFileText_guard = _g(TSKindId.SourceFileText);
 	const _kind_Dot_guard = _mg(TSKindId.Dot);
 	const _kind_BlankIdentifier_guard = _mg(TSKindId.BlankIdentifier);
 	const _kind_EmptyStatement_guard = _mg(TSKindId.EmptyStatement);
@@ -1231,7 +1232,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_RawStringLiteralContent_guard = _g(TSKindId.RawStringLiteralContent);
 	const _kind_InterpretedStringLiteralContent_guard = _g(TSKindId.InterpretedStringLiteralContent);
 	const _kind_ImportSpecListArm_guard = _g(TSKindId.ImportSpecListArm);
-	const _kind_SourceFileText_guard = _g(TSKindId.SourceFileText);
 	const _form_ImportDeclaration_guard = _vg(_g(TSKindId.ImportDeclaration), {
 		importSpec: _at(_kind_ImportDeclaration_guard, 'content', _kind_ImportSpec_guard),
 		importSpecList: _at(_kind_ImportDeclaration_guard, 'content', _kind_ImportSpecList_guard)
@@ -1557,6 +1557,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		imaginaryLiteralArm10: _supertype_imaginaryLiteralArm10_guard,
 		runeLiteralArm2: _supertype_runeLiteralArm2_guard,
 		layout: _sg(_supertype_layout_ids),
+		sourceFileText: _kind_SourceFileText_guard,
 		dot: _kind_Dot_guard,
 		blankIdentifier: _kind_BlankIdentifier_guard,
 		emptyStatement: _kind_EmptyStatement_guard,
@@ -1568,8 +1569,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		iota: _kind_Iota_guard,
 		rawStringLiteralContent: _kind_RawStringLiteralContent_guard,
 		interpretedStringLiteralContent: _kind_InterpretedStringLiteralContent_guard,
-		importSpecListArm: _kind_ImportSpecListArm_guard,
-		sourceFileText: _kind_SourceFileText_guard
+		importSpecListArm: _kind_ImportSpecListArm_guard
 	}) as unknown as IsGuards;
 }
 

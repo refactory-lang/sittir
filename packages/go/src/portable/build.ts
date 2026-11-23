@@ -487,7 +487,7 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -497,15 +497,15 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('element.spread.expression', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -600,23 +600,23 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 			return unbuilt('element.spread.expression', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -624,8 +624,8 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('element.spread.expression', value);
 		case 'literal.number.float':
@@ -633,18 +633,18 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 		case 'literal.number.integer':
 			return unbuilt('element.spread.expression', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('element.spread.expression', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -770,7 +770,7 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -781,7 +781,7 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 			return unnumbered('expression.assignment.compound.add.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -789,8 +789,8 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -885,23 +885,23 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -909,8 +909,8 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.float':
@@ -918,18 +918,18 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -1057,7 +1057,7 @@ const expression_assignment_compound_add$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -1067,15 +1067,15 @@ const expression_assignment_compound_add$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.add.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -1170,23 +1170,23 @@ const expression_assignment_compound_add$184_left$item = (
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -1194,8 +1194,8 @@ const expression_assignment_compound_add$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.float':
@@ -1203,18 +1203,18 @@ const expression_assignment_compound_add$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -1340,7 +1340,7 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -1351,7 +1351,7 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 			return unnumbered('expression.assignment.compound.add.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -1359,8 +1359,8 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -1455,23 +1455,23 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -1479,8 +1479,8 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.float':
@@ -1488,18 +1488,18 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -1627,7 +1627,7 @@ const expression_assignment_compound_add$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -1637,15 +1637,15 @@ const expression_assignment_compound_add$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.add.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -1740,23 +1740,23 @@ const expression_assignment_compound_add$184_right$item = (
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -1764,8 +1764,8 @@ const expression_assignment_compound_add$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.float':
@@ -1773,18 +1773,18 @@ const expression_assignment_compound_add$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -1912,7 +1912,7 @@ const expression_assignment_compound_bitwise_and$184_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -1923,7 +1923,7 @@ const expression_assignment_compound_bitwise_and$184_left = (
 			return unnumbered('expression.assignment.compound.bitwise_and.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -1931,8 +1931,8 @@ const expression_assignment_compound_bitwise_and$184_left = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -2027,23 +2027,23 @@ const expression_assignment_compound_bitwise_and$184_left = (
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -2051,8 +2051,8 @@ const expression_assignment_compound_bitwise_and$184_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.float':
@@ -2060,18 +2060,18 @@ const expression_assignment_compound_bitwise_and$184_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -2199,7 +2199,7 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -2209,15 +2209,15 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.bitwise_and.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -2312,23 +2312,23 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -2336,8 +2336,8 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.float':
@@ -2345,18 +2345,18 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -2484,7 +2484,7 @@ const expression_assignment_compound_bitwise_and$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -2495,7 +2495,7 @@ const expression_assignment_compound_bitwise_and$184_right = (
 			return unnumbered('expression.assignment.compound.bitwise_and.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -2503,8 +2503,8 @@ const expression_assignment_compound_bitwise_and$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -2599,23 +2599,23 @@ const expression_assignment_compound_bitwise_and$184_right = (
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -2623,8 +2623,8 @@ const expression_assignment_compound_bitwise_and$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.float':
@@ -2632,18 +2632,18 @@ const expression_assignment_compound_bitwise_and$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -2771,7 +2771,7 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -2781,15 +2781,15 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.bitwise_and.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -2884,23 +2884,23 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -2908,8 +2908,8 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.float':
@@ -2917,18 +2917,18 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -3056,7 +3056,7 @@ const expression_assignment_compound_bitwise_or$184_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -3067,7 +3067,7 @@ const expression_assignment_compound_bitwise_or$184_left = (
 			return unnumbered('expression.assignment.compound.bitwise_or.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -3075,8 +3075,8 @@ const expression_assignment_compound_bitwise_or$184_left = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -3171,23 +3171,23 @@ const expression_assignment_compound_bitwise_or$184_left = (
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -3195,8 +3195,8 @@ const expression_assignment_compound_bitwise_or$184_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.float':
@@ -3204,18 +3204,18 @@ const expression_assignment_compound_bitwise_or$184_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -3343,7 +3343,7 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -3353,15 +3353,15 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.bitwise_or.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -3456,23 +3456,23 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -3480,8 +3480,8 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.float':
@@ -3489,18 +3489,18 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -3628,7 +3628,7 @@ const expression_assignment_compound_bitwise_or$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -3639,7 +3639,7 @@ const expression_assignment_compound_bitwise_or$184_right = (
 			return unnumbered('expression.assignment.compound.bitwise_or.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -3647,8 +3647,8 @@ const expression_assignment_compound_bitwise_or$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -3743,23 +3743,23 @@ const expression_assignment_compound_bitwise_or$184_right = (
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -3767,8 +3767,8 @@ const expression_assignment_compound_bitwise_or$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.float':
@@ -3776,18 +3776,18 @@ const expression_assignment_compound_bitwise_or$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -3915,7 +3915,7 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -3925,15 +3925,15 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.bitwise_or.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -4028,23 +4028,23 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -4052,8 +4052,8 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.float':
@@ -4061,18 +4061,18 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -4200,7 +4200,7 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -4211,7 +4211,7 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 			return unnumbered('expression.assignment.compound.bitwise_xor.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -4219,8 +4219,8 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -4315,23 +4315,23 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -4339,8 +4339,8 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.float':
@@ -4348,18 +4348,18 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -4487,7 +4487,7 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -4497,15 +4497,15 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.bitwise_xor.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -4600,23 +4600,23 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -4624,8 +4624,8 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.float':
@@ -4633,18 +4633,18 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -4772,7 +4772,7 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -4783,7 +4783,7 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 			return unnumbered('expression.assignment.compound.bitwise_xor.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -4791,8 +4791,8 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -4887,23 +4887,23 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -4911,8 +4911,8 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.float':
@@ -4920,18 +4920,18 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -5059,7 +5059,7 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -5069,15 +5069,15 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.bitwise_xor.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -5172,23 +5172,23 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -5196,8 +5196,8 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.float':
@@ -5205,18 +5205,18 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -5342,7 +5342,7 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -5353,7 +5353,7 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 			return unnumbered('expression.assignment.compound.divide.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -5361,8 +5361,8 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -5457,23 +5457,23 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -5481,8 +5481,8 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.float':
@@ -5490,18 +5490,18 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -5629,7 +5629,7 @@ const expression_assignment_compound_divide$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -5639,15 +5639,15 @@ const expression_assignment_compound_divide$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.divide.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -5742,23 +5742,23 @@ const expression_assignment_compound_divide$184_left$item = (
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -5766,8 +5766,8 @@ const expression_assignment_compound_divide$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.float':
@@ -5775,18 +5775,18 @@ const expression_assignment_compound_divide$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -5914,7 +5914,7 @@ const expression_assignment_compound_divide$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -5925,7 +5925,7 @@ const expression_assignment_compound_divide$184_right = (
 			return unnumbered('expression.assignment.compound.divide.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -5933,8 +5933,8 @@ const expression_assignment_compound_divide$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -6029,23 +6029,23 @@ const expression_assignment_compound_divide$184_right = (
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -6053,8 +6053,8 @@ const expression_assignment_compound_divide$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.float':
@@ -6062,18 +6062,18 @@ const expression_assignment_compound_divide$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -6201,7 +6201,7 @@ const expression_assignment_compound_divide$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -6211,15 +6211,15 @@ const expression_assignment_compound_divide$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.divide.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -6314,23 +6314,23 @@ const expression_assignment_compound_divide$184_right$item = (
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -6338,8 +6338,8 @@ const expression_assignment_compound_divide$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.float':
@@ -6347,18 +6347,18 @@ const expression_assignment_compound_divide$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -6484,7 +6484,7 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -6495,7 +6495,7 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 			return unnumbered('expression.assignment.compound.modulo.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -6503,8 +6503,8 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -6599,23 +6599,23 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -6623,8 +6623,8 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.float':
@@ -6632,18 +6632,18 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -6771,7 +6771,7 @@ const expression_assignment_compound_modulo$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -6781,15 +6781,15 @@ const expression_assignment_compound_modulo$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.modulo.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -6884,23 +6884,23 @@ const expression_assignment_compound_modulo$184_left$item = (
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -6908,8 +6908,8 @@ const expression_assignment_compound_modulo$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.float':
@@ -6917,18 +6917,18 @@ const expression_assignment_compound_modulo$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -7056,7 +7056,7 @@ const expression_assignment_compound_modulo$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -7067,7 +7067,7 @@ const expression_assignment_compound_modulo$184_right = (
 			return unnumbered('expression.assignment.compound.modulo.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -7075,8 +7075,8 @@ const expression_assignment_compound_modulo$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -7171,23 +7171,23 @@ const expression_assignment_compound_modulo$184_right = (
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -7195,8 +7195,8 @@ const expression_assignment_compound_modulo$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.float':
@@ -7204,18 +7204,18 @@ const expression_assignment_compound_modulo$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -7343,7 +7343,7 @@ const expression_assignment_compound_modulo$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -7353,15 +7353,15 @@ const expression_assignment_compound_modulo$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.modulo.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -7456,23 +7456,23 @@ const expression_assignment_compound_modulo$184_right$item = (
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -7480,8 +7480,8 @@ const expression_assignment_compound_modulo$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.float':
@@ -7489,18 +7489,18 @@ const expression_assignment_compound_modulo$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -7628,7 +7628,7 @@ const expression_assignment_compound_multiply$184_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -7639,7 +7639,7 @@ const expression_assignment_compound_multiply$184_left = (
 			return unnumbered('expression.assignment.compound.multiply.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -7647,8 +7647,8 @@ const expression_assignment_compound_multiply$184_left = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -7743,23 +7743,23 @@ const expression_assignment_compound_multiply$184_left = (
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -7767,8 +7767,8 @@ const expression_assignment_compound_multiply$184_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.float':
@@ -7776,18 +7776,18 @@ const expression_assignment_compound_multiply$184_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -7915,7 +7915,7 @@ const expression_assignment_compound_multiply$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -7925,15 +7925,15 @@ const expression_assignment_compound_multiply$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.multiply.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -8028,23 +8028,23 @@ const expression_assignment_compound_multiply$184_left$item = (
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -8052,8 +8052,8 @@ const expression_assignment_compound_multiply$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.float':
@@ -8061,18 +8061,18 @@ const expression_assignment_compound_multiply$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -8200,7 +8200,7 @@ const expression_assignment_compound_multiply$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -8211,7 +8211,7 @@ const expression_assignment_compound_multiply$184_right = (
 			return unnumbered('expression.assignment.compound.multiply.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -8219,8 +8219,8 @@ const expression_assignment_compound_multiply$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -8315,23 +8315,23 @@ const expression_assignment_compound_multiply$184_right = (
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -8339,8 +8339,8 @@ const expression_assignment_compound_multiply$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.float':
@@ -8348,18 +8348,18 @@ const expression_assignment_compound_multiply$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -8487,7 +8487,7 @@ const expression_assignment_compound_multiply$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -8497,15 +8497,15 @@ const expression_assignment_compound_multiply$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.multiply.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -8600,23 +8600,23 @@ const expression_assignment_compound_multiply$184_right$item = (
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -8624,8 +8624,8 @@ const expression_assignment_compound_multiply$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.float':
@@ -8633,18 +8633,18 @@ const expression_assignment_compound_multiply$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -8772,7 +8772,7 @@ const expression_assignment_compound_shift_left$184_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -8783,7 +8783,7 @@ const expression_assignment_compound_shift_left$184_left = (
 			return unnumbered('expression.assignment.compound.shift_left.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -8791,8 +8791,8 @@ const expression_assignment_compound_shift_left$184_left = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -8887,23 +8887,23 @@ const expression_assignment_compound_shift_left$184_left = (
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -8911,8 +8911,8 @@ const expression_assignment_compound_shift_left$184_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.float':
@@ -8920,18 +8920,18 @@ const expression_assignment_compound_shift_left$184_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -9059,7 +9059,7 @@ const expression_assignment_compound_shift_left$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -9069,15 +9069,15 @@ const expression_assignment_compound_shift_left$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.shift_left.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -9172,23 +9172,23 @@ const expression_assignment_compound_shift_left$184_left$item = (
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -9196,8 +9196,8 @@ const expression_assignment_compound_shift_left$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.float':
@@ -9205,18 +9205,18 @@ const expression_assignment_compound_shift_left$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -9344,7 +9344,7 @@ const expression_assignment_compound_shift_left$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -9355,7 +9355,7 @@ const expression_assignment_compound_shift_left$184_right = (
 			return unnumbered('expression.assignment.compound.shift_left.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -9363,8 +9363,8 @@ const expression_assignment_compound_shift_left$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -9459,23 +9459,23 @@ const expression_assignment_compound_shift_left$184_right = (
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -9483,8 +9483,8 @@ const expression_assignment_compound_shift_left$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.float':
@@ -9492,18 +9492,18 @@ const expression_assignment_compound_shift_left$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -9631,7 +9631,7 @@ const expression_assignment_compound_shift_left$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -9641,15 +9641,15 @@ const expression_assignment_compound_shift_left$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.shift_left.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -9744,23 +9744,23 @@ const expression_assignment_compound_shift_left$184_right$item = (
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -9768,8 +9768,8 @@ const expression_assignment_compound_shift_left$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.float':
@@ -9777,18 +9777,18 @@ const expression_assignment_compound_shift_left$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -9916,7 +9916,7 @@ const expression_assignment_compound_shift_right$184_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -9927,7 +9927,7 @@ const expression_assignment_compound_shift_right$184_left = (
 			return unnumbered('expression.assignment.compound.shift_right.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -9935,8 +9935,8 @@ const expression_assignment_compound_shift_right$184_left = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -10031,23 +10031,23 @@ const expression_assignment_compound_shift_right$184_left = (
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -10055,8 +10055,8 @@ const expression_assignment_compound_shift_right$184_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.float':
@@ -10064,18 +10064,18 @@ const expression_assignment_compound_shift_right$184_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -10203,7 +10203,7 @@ const expression_assignment_compound_shift_right$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -10213,15 +10213,15 @@ const expression_assignment_compound_shift_right$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.shift_right.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -10316,23 +10316,23 @@ const expression_assignment_compound_shift_right$184_left$item = (
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -10340,8 +10340,8 @@ const expression_assignment_compound_shift_right$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.float':
@@ -10349,18 +10349,18 @@ const expression_assignment_compound_shift_right$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -10488,7 +10488,7 @@ const expression_assignment_compound_shift_right$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -10499,7 +10499,7 @@ const expression_assignment_compound_shift_right$184_right = (
 			return unnumbered('expression.assignment.compound.shift_right.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -10507,8 +10507,8 @@ const expression_assignment_compound_shift_right$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -10603,23 +10603,23 @@ const expression_assignment_compound_shift_right$184_right = (
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -10627,8 +10627,8 @@ const expression_assignment_compound_shift_right$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.float':
@@ -10636,18 +10636,18 @@ const expression_assignment_compound_shift_right$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -10775,7 +10775,7 @@ const expression_assignment_compound_shift_right$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -10785,15 +10785,15 @@ const expression_assignment_compound_shift_right$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.shift_right.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -10888,23 +10888,23 @@ const expression_assignment_compound_shift_right$184_right$item = (
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -10912,8 +10912,8 @@ const expression_assignment_compound_shift_right$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.float':
@@ -10921,18 +10921,18 @@ const expression_assignment_compound_shift_right$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -11060,7 +11060,7 @@ const expression_assignment_compound_subtract$184_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -11071,7 +11071,7 @@ const expression_assignment_compound_subtract$184_left = (
 			return unnumbered('expression.assignment.compound.subtract.left', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -11079,8 +11079,8 @@ const expression_assignment_compound_subtract$184_left = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -11175,23 +11175,23 @@ const expression_assignment_compound_subtract$184_left = (
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -11199,8 +11199,8 @@ const expression_assignment_compound_subtract$184_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.float':
@@ -11208,18 +11208,18 @@ const expression_assignment_compound_subtract$184_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -11347,7 +11347,7 @@ const expression_assignment_compound_subtract$184_left$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -11357,15 +11357,15 @@ const expression_assignment_compound_subtract$184_left$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.subtract.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -11460,23 +11460,23 @@ const expression_assignment_compound_subtract$184_left$item = (
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -11484,8 +11484,8 @@ const expression_assignment_compound_subtract$184_left$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.float':
@@ -11493,18 +11493,18 @@ const expression_assignment_compound_subtract$184_left$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -11632,7 +11632,7 @@ const expression_assignment_compound_subtract$184_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return b.expressionList(72);
+				return b.expressionList(73);
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.expressionList(b.identifier(value));
 				return b.expressionList(b.identifier(value));
@@ -11643,7 +11643,7 @@ const expression_assignment_compound_subtract$184_right = (
 			return unnumbered('expression.assignment.compound.subtract.right', 'integer');
 		}
 		return b.expressionList(
-			literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value })
+			literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value })
 		);
 	}
 	if (isNode(value)) {
@@ -11651,8 +11651,8 @@ const expression_assignment_compound_subtract$184_right = (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -11747,23 +11747,23 @@ const expression_assignment_compound_subtract$184_right = (
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return b.expressionList(literal_character$103(value));
+				return b.expressionList(literal_character$104(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$104(value));
+				return b.expressionList(literal_character$105(value));
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$105(value));
+				return b.expressionList(literal_character$106(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$106(value));
+				return b.expressionList(literal_character$107(value));
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -11771,8 +11771,8 @@ const expression_assignment_compound_subtract$184_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return b.expressionList(literal_character$107(value));
-			return b.expressionList(literal_character$108(value));
+				return b.expressionList(literal_character$108(value));
+			return b.expressionList(literal_character$109(value));
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.float':
@@ -11780,18 +11780,18 @@ const expression_assignment_compound_subtract$184_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.binary':
-			return b.expressionList(literal_number_integer_binary$80(value));
+			return b.expressionList(literal_number_integer_binary$81(value));
 		case 'literal.number.integer.hex':
-			return b.expressionList(literal_number_integer_hex$84(value));
+			return b.expressionList(literal_number_integer_hex$85(value));
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$91(value));
+			if (typeof value.$value === 'bigint') return b.expressionList(literal_number_integer_imaginary$92(value));
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$91(value));
-				return b.expressionList(literal_number_integer_imaginary$97(value));
+				if (Number.isSafeInteger(value.$value)) return b.expressionList(literal_number_integer_imaginary$92(value));
+				return b.expressionList(literal_number_integer_imaginary$98(value));
 			}
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.octal':
-			return b.expressionList(literal_number_integer_octal$83(value));
+			return b.expressionList(literal_number_integer_octal$84(value));
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
@@ -11919,7 +11919,7 @@ const expression_assignment_compound_subtract$184_right$item = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -11929,15 +11929,15 @@ const expression_assignment_compound_subtract$184_right$item = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.assignment.compound.subtract.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -12032,23 +12032,23 @@ const expression_assignment_compound_subtract$184_right$item = (
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -12056,8 +12056,8 @@ const expression_assignment_compound_subtract$184_right$item = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.float':
@@ -12065,18 +12065,18 @@ const expression_assignment_compound_subtract$184_right$item = (
 		case 'literal.number.integer':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -12202,7 +12202,7 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -12212,15 +12212,15 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -12315,23 +12315,23 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 			return unbuilt('expression.binary.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -12339,8 +12339,8 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.left', value);
 		case 'literal.number.float':
@@ -12348,18 +12348,18 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -12392,43 +12392,43 @@ const expression_binary$225_operator = (value: expression_binary$225_operator$It
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!=':
-				return 59;
-			case '%':
-				return 54;
-			case '&':
-				return 52;
-			case '&&':
-				return 64;
-			case '&^':
-				return 57;
-			case '*':
-				return 19;
-			case '+':
-				return 48;
-			case '-':
-				return 49;
-			case '/':
-				return 53;
-			case '<':
 				return 60;
-			case '<<':
+			case '%':
 				return 55;
-			case '<=':
-				return 61;
-			case '==':
-				return 58;
-			case '>':
-				return 62;
-			case '>=':
-				return 63;
-			case '>>':
-				return 56;
-			case '^':
-				return 51;
-			case '|':
-				return 25;
-			case '||':
+			case '&':
+				return 53;
+			case '&&':
 				return 65;
+			case '&^':
+				return 58;
+			case '*':
+				return 20;
+			case '+':
+				return 49;
+			case '-':
+				return 50;
+			case '/':
+				return 54;
+			case '<':
+				return 61;
+			case '<<':
+				return 56;
+			case '<=':
+				return 62;
+			case '==':
+				return 59;
+			case '>':
+				return 63;
+			case '>=':
+				return 64;
+			case '>>':
+				return 57;
+			case '^':
+				return 52;
+			case '|':
+				return 26;
+			case '||':
+				return 66;
 			default:
 				return untexted('expression.binary.operator', value);
 		}
@@ -12437,7 +12437,7 @@ const expression_binary$225_operator = (value: expression_binary$225_operator$It
 		return unseated('expression.binary.operator', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [19, 25, 48, 49, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65])) return value;
+		if (seated(value, [20, 26, 49, 50, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66])) return value;
 		return unseated('expression.binary.operator', value);
 	}
 	throw new Error('expression.binary.operator takes no structure');
@@ -12559,7 +12559,7 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -12569,15 +12569,15 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -12672,23 +12672,23 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 			return unbuilt('expression.binary.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -12696,8 +12696,8 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.right', value);
 		case 'literal.number.float':
@@ -12705,18 +12705,18 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -12842,7 +12842,7 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -12852,15 +12852,15 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.add.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -12955,23 +12955,23 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -12979,8 +12979,8 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.float':
@@ -12988,18 +12988,18 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -13125,7 +13125,7 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -13135,15 +13135,15 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.add.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -13238,23 +13238,23 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -13262,8 +13262,8 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.float':
@@ -13271,18 +13271,18 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -13408,7 +13408,7 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -13418,15 +13418,15 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.divide.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -13521,23 +13521,23 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -13545,8 +13545,8 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.float':
@@ -13554,18 +13554,18 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -13691,7 +13691,7 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -13701,15 +13701,15 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.divide.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -13804,23 +13804,23 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -13828,8 +13828,8 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.float':
@@ -13837,18 +13837,18 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -13974,7 +13974,7 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -13984,15 +13984,15 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.modulo.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -14087,23 +14087,23 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -14111,8 +14111,8 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.float':
@@ -14120,18 +14120,18 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -14257,7 +14257,7 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -14267,15 +14267,15 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.modulo.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -14370,23 +14370,23 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -14394,8 +14394,8 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.float':
@@ -14403,18 +14403,18 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -14540,7 +14540,7 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -14550,15 +14550,15 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.multiply.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -14653,23 +14653,23 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -14677,8 +14677,8 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.float':
@@ -14686,18 +14686,18 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -14825,7 +14825,7 @@ const expression_binary_arithmetic_multiply$225_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -14835,15 +14835,15 @@ const expression_binary_arithmetic_multiply$225_right = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.multiply.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -14938,23 +14938,23 @@ const expression_binary_arithmetic_multiply$225_right = (
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -14962,8 +14962,8 @@ const expression_binary_arithmetic_multiply$225_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.float':
@@ -14971,18 +14971,18 @@ const expression_binary_arithmetic_multiply$225_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -15108,7 +15108,7 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -15118,15 +15118,15 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.subtract.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -15221,23 +15221,23 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -15245,8 +15245,8 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.float':
@@ -15254,18 +15254,18 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -15393,7 +15393,7 @@ const expression_binary_arithmetic_subtract$225_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -15403,15 +15403,15 @@ const expression_binary_arithmetic_subtract$225_right = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.arithmetic.subtract.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -15506,23 +15506,23 @@ const expression_binary_arithmetic_subtract$225_right = (
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -15530,8 +15530,8 @@ const expression_binary_arithmetic_subtract$225_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.float':
@@ -15539,18 +15539,18 @@ const expression_binary_arithmetic_subtract$225_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -15676,7 +15676,7 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -15686,15 +15686,15 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.bitwise.and.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -15789,23 +15789,23 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -15813,8 +15813,8 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.float':
@@ -15822,18 +15822,18 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -15959,7 +15959,7 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -15969,15 +15969,15 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.bitwise.and.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -16072,23 +16072,23 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -16096,8 +16096,8 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.float':
@@ -16105,18 +16105,18 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -16242,7 +16242,7 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -16252,15 +16252,15 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.bitwise.or.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -16355,23 +16355,23 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -16379,8 +16379,8 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.float':
@@ -16388,18 +16388,18 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -16525,7 +16525,7 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -16535,15 +16535,15 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.bitwise.or.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -16638,23 +16638,23 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -16662,8 +16662,8 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.float':
@@ -16671,18 +16671,18 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -16808,7 +16808,7 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -16818,15 +16818,15 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.bitwise.xor.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -16921,23 +16921,23 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -16945,8 +16945,8 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.float':
@@ -16954,18 +16954,18 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -17091,7 +17091,7 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -17101,15 +17101,15 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.bitwise.xor.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -17204,23 +17204,23 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -17228,8 +17228,8 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.float':
@@ -17237,18 +17237,18 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -17374,7 +17374,7 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -17384,15 +17384,15 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.equal.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -17487,23 +17487,23 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -17511,8 +17511,8 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.float':
@@ -17520,18 +17520,18 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -17657,7 +17657,7 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -17667,15 +17667,15 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.equal.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -17770,23 +17770,23 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -17794,8 +17794,8 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.float':
@@ -17803,18 +17803,18 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -17940,7 +17940,7 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -17950,15 +17950,15 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.greater.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -18053,23 +18053,23 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -18077,8 +18077,8 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.float':
@@ -18086,18 +18086,18 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -18223,7 +18223,7 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -18233,15 +18233,15 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.greater.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -18336,23 +18336,23 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -18360,8 +18360,8 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.float':
@@ -18369,18 +18369,18 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -18508,7 +18508,7 @@ const expression_binary_comparison_greater_equal$225_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -18518,15 +18518,15 @@ const expression_binary_comparison_greater_equal$225_left = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.greater_equal.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -18621,23 +18621,23 @@ const expression_binary_comparison_greater_equal$225_left = (
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -18645,8 +18645,8 @@ const expression_binary_comparison_greater_equal$225_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.float':
@@ -18654,18 +18654,18 @@ const expression_binary_comparison_greater_equal$225_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -18793,7 +18793,7 @@ const expression_binary_comparison_greater_equal$225_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -18803,15 +18803,15 @@ const expression_binary_comparison_greater_equal$225_right = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.greater_equal.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -18906,23 +18906,23 @@ const expression_binary_comparison_greater_equal$225_right = (
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -18930,8 +18930,8 @@ const expression_binary_comparison_greater_equal$225_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.float':
@@ -18939,18 +18939,18 @@ const expression_binary_comparison_greater_equal$225_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -19076,7 +19076,7 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -19086,15 +19086,15 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.less.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -19189,23 +19189,23 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -19213,8 +19213,8 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.float':
@@ -19222,18 +19222,18 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -19359,7 +19359,7 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -19369,15 +19369,15 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.less.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -19472,23 +19472,23 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -19496,8 +19496,8 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.float':
@@ -19505,18 +19505,18 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -19644,7 +19644,7 @@ const expression_binary_comparison_less_equal$225_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -19654,15 +19654,15 @@ const expression_binary_comparison_less_equal$225_left = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.less_equal.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -19757,23 +19757,23 @@ const expression_binary_comparison_less_equal$225_left = (
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -19781,8 +19781,8 @@ const expression_binary_comparison_less_equal$225_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.float':
@@ -19790,18 +19790,18 @@ const expression_binary_comparison_less_equal$225_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -19929,7 +19929,7 @@ const expression_binary_comparison_less_equal$225_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -19939,15 +19939,15 @@ const expression_binary_comparison_less_equal$225_right = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.less_equal.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -20042,23 +20042,23 @@ const expression_binary_comparison_less_equal$225_right = (
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -20066,8 +20066,8 @@ const expression_binary_comparison_less_equal$225_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.float':
@@ -20075,18 +20075,18 @@ const expression_binary_comparison_less_equal$225_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -20214,7 +20214,7 @@ const expression_binary_comparison_not_equal$225_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -20224,15 +20224,15 @@ const expression_binary_comparison_not_equal$225_left = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.not_equal.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -20327,23 +20327,23 @@ const expression_binary_comparison_not_equal$225_left = (
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -20351,8 +20351,8 @@ const expression_binary_comparison_not_equal$225_left = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.float':
@@ -20360,18 +20360,18 @@ const expression_binary_comparison_not_equal$225_left = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -20499,7 +20499,7 @@ const expression_binary_comparison_not_equal$225_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -20509,15 +20509,15 @@ const expression_binary_comparison_not_equal$225_right = (
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.comparison.not_equal.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -20612,23 +20612,23 @@ const expression_binary_comparison_not_equal$225_right = (
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -20636,8 +20636,8 @@ const expression_binary_comparison_not_equal$225_right = (
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.float':
@@ -20645,18 +20645,18 @@ const expression_binary_comparison_not_equal$225_right = (
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -20782,7 +20782,7 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -20792,15 +20792,15 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.logical.and.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -20895,23 +20895,23 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -20919,8 +20919,8 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.float':
@@ -20928,18 +20928,18 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -21065,7 +21065,7 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -21075,15 +21075,15 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.logical.and.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -21178,23 +21178,23 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -21202,8 +21202,8 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.float':
@@ -21211,18 +21211,18 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -21348,7 +21348,7 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -21358,15 +21358,15 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.logical.or.left', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -21461,23 +21461,23 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -21485,8 +21485,8 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.float':
@@ -21494,18 +21494,18 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -21631,7 +21631,7 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -21641,15 +21641,15 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.binary.logical.or.right', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -21744,23 +21744,23 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -21768,8 +21768,8 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.float':
@@ -21777,18 +21777,18 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 		case 'literal.number.integer':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -21914,7 +21914,7 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -21924,15 +21924,15 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('expression.parenthesized.expression', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -22027,23 +22027,23 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -22051,8 +22051,8 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.float':
@@ -22060,18 +22060,18 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 		case 'literal.number.integer':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -22079,19 +22079,6 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 		default:
 			return unbuilt('expression.parenthesized.expression', value);
 	}
-};
-type literal_character$103_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
-const literal_character$103_content = (value: literal_character$103_content$Item) => {
-	if (typeof value === 'string') {
-		return value;
-	}
-	if (typeof value === 'number') {
-		return unseated('literal.character.content', value);
-	}
-	if (isNode(value)) {
-		return unseated('literal.character.content', value);
-	}
-	throw new Error('literal.character.content takes no structure');
 };
 type literal_character$104_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
 const literal_character$104_content = (value: literal_character$104_content$Item) => {
@@ -22148,6 +22135,19 @@ const literal_character$107_content = (value: literal_character$107_content$Item
 type literal_character$108_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
 const literal_character$108_content = (value: literal_character$108_content$Item) => {
 	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number') {
+		return unseated('literal.character.content', value);
+	}
+	if (isNode(value)) {
+		return unseated('literal.character.content', value);
+	}
+	throw new Error('literal.character.content takes no structure');
+};
+type literal_character$109_content$Item = string | '"' | "'" | '\\' | 'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v';
+const literal_character$109_content = (value: literal_character$109_content$Item) => {
+	if (typeof value === 'string') {
 		switch (value) {
 			case 'a':
 			case 'b':
@@ -22184,18 +22184,18 @@ const literal_string$228_elements = (value: literal_string$228_elements$Item) =>
 		return b.interpretedStringLiteralContent(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [74, 75, 76, 77, 78, 79, 229])) return value;
+		if (seated(value, [75, 76, 77, 78, 79, 80, 229])) return value;
 		return unseated('literal.string.elements', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [74, 75, 76, 77, 78, 79, 229])) return value;
+		if (seated(value, [75, 76, 77, 78, 79, 80, 229])) return value;
 		return unseated('literal.string.elements', value);
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
 			return unbuilt('literal.string.elements', value);
 		case 'literal.string.text':
-			return literal_string_text$74(value);
+			return literal_string_text$75(value);
 		default:
 			return unbuilt('literal.string.elements', value);
 	}
@@ -22619,7 +22619,7 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'iota':
-				return 72;
+				return 73;
 			default:
 				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -22629,15 +22629,15 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 		if (Number.isSafeInteger(value)) {
 			return unnumbered('type.array.length', 'integer');
 		}
-		return literal_number_integer_imaginary$97({ $path: 'literal.number.integer.imaginary', $value: value });
+		return literal_number_integer_imaginary$98({ $path: 'literal.number.integer.imaginary', $value: value });
 	}
 	if (isNode(value)) {
 		if (
 			seated(
 				value,
 				[
-					1, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101,
-					102, 103, 104, 105, 106, 107, 108, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
+					1, 70, 71, 72, 73, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+					103, 104, 105, 106, 107, 108, 109, 207, 208, 209, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 227, 228,
 					230, 231, 232, 233, 234, 235, 236
 				]
 			)
@@ -22732,23 +22732,23 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 			return unbuilt('type.array.length', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(value.content)) && value.content !== undefined)
-				return literal_character$103(value);
+				return literal_character$104(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$104(value);
+				return literal_character$105(value);
 			if (
 				(typeof value.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$105(value);
+				return literal_character$106(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(value.content)) &&
 				value.content !== undefined
 			)
-				return literal_character$106(value);
+				return literal_character$107(value);
 			if (
 				(typeof value.content !== 'string' ||
 					/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -22756,8 +22756,8 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 					)) &&
 				value.content !== undefined
 			)
-				return literal_character$107(value);
-			return literal_character$108(value);
+				return literal_character$108(value);
+			return literal_character$109(value);
 		case 'literal.null':
 			return unbuilt('type.array.length', value);
 		case 'literal.number.float':
@@ -22765,18 +22765,18 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 		case 'literal.number.integer':
 			return unbuilt('type.array.length', value);
 		case 'literal.number.integer.binary':
-			return literal_number_integer_binary$80(value);
+			return literal_number_integer_binary$81(value);
 		case 'literal.number.integer.hex':
-			return literal_number_integer_hex$84(value);
+			return literal_number_integer_hex$85(value);
 		case 'literal.number.integer.imaginary':
-			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$91(value);
+			if (typeof value.$value === 'bigint') return literal_number_integer_imaginary$92(value);
 			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$91(value);
-				return literal_number_integer_imaginary$97(value);
+				if (Number.isSafeInteger(value.$value)) return literal_number_integer_imaginary$92(value);
+				return literal_number_integer_imaginary$98(value);
 			}
 			return unbuilt('type.array.length', value);
 		case 'literal.number.integer.octal':
-			return literal_number_integer_octal$83(value);
+			return literal_number_integer_octal$84(value);
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
@@ -24036,7 +24036,7 @@ const expression_assignment_compound_add$184 = (
 					)
 				)
 			: expression_assignment_compound_add$184_right(input.right),
-		operator: 119
+		operator: 120
 	});
 };
 const expression_assignment_compound_bitwise_and$184 = (
@@ -24061,7 +24061,7 @@ const expression_assignment_compound_bitwise_and$184 = (
 					)
 				)
 			: expression_assignment_compound_bitwise_and$184_right(input.right),
-		operator: 117
+		operator: 118
 	});
 };
 const expression_assignment_compound_bitwise_or$184 = (
@@ -24086,7 +24086,7 @@ const expression_assignment_compound_bitwise_or$184 = (
 					)
 				)
 			: expression_assignment_compound_bitwise_or$184_right(input.right),
-		operator: 121
+		operator: 122
 	});
 };
 const expression_assignment_compound_bitwise_xor$184 = (
@@ -24111,7 +24111,7 @@ const expression_assignment_compound_bitwise_xor$184 = (
 					)
 				)
 			: expression_assignment_compound_bitwise_xor$184_right(input.right),
-		operator: 122
+		operator: 123
 	});
 };
 const expression_assignment_compound_divide$184 = (
@@ -24136,7 +24136,7 @@ const expression_assignment_compound_divide$184 = (
 					)
 				)
 			: expression_assignment_compound_divide$184_right(input.right),
-		operator: 113
+		operator: 114
 	});
 };
 const expression_assignment_compound_modulo$184 = (
@@ -24161,7 +24161,7 @@ const expression_assignment_compound_modulo$184 = (
 					)
 				)
 			: expression_assignment_compound_modulo$184_right(input.right),
-		operator: 114
+		operator: 115
 	});
 };
 const expression_assignment_compound_multiply$184 = (
@@ -24186,7 +24186,7 @@ const expression_assignment_compound_multiply$184 = (
 					)
 				)
 			: expression_assignment_compound_multiply$184_right(input.right),
-		operator: 112
+		operator: 113
 	});
 };
 const expression_assignment_compound_shift_left$184 = (
@@ -24211,7 +24211,7 @@ const expression_assignment_compound_shift_left$184 = (
 					)
 				)
 			: expression_assignment_compound_shift_left$184_right(input.right),
-		operator: 115
+		operator: 116
 	});
 };
 const expression_assignment_compound_shift_right$184 = (
@@ -24236,7 +24236,7 @@ const expression_assignment_compound_shift_right$184 = (
 					)
 				)
 			: expression_assignment_compound_shift_right$184_right(input.right),
-		operator: 116
+		operator: 117
 	});
 };
 const expression_assignment_compound_subtract$184 = (
@@ -24261,7 +24261,7 @@ const expression_assignment_compound_subtract$184 = (
 					)
 				)
 			: expression_assignment_compound_subtract$184_right(input.right),
-		operator: 120
+		operator: 121
 	});
 };
 const expression_binary$225 = (input: PathInput<GoMap, 'expression.binary'>): ReturnType<typeof b.binaryExpression> => {
@@ -24290,7 +24290,7 @@ const expression_binary_arithmetic_add$225 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.add.right')
 				: expression_binary_arithmetic_add$225_right(input.right),
-		operator: 48
+		operator: 49
 	});
 };
 const expression_binary_arithmetic_divide$225 = (
@@ -24307,7 +24307,7 @@ const expression_binary_arithmetic_divide$225 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.divide.right')
 				: expression_binary_arithmetic_divide$225_right(input.right),
-		operator: 53
+		operator: 54
 	});
 };
 const expression_binary_arithmetic_modulo$225 = (
@@ -24324,7 +24324,7 @@ const expression_binary_arithmetic_modulo$225 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.modulo.right')
 				: expression_binary_arithmetic_modulo$225_right(input.right),
-		operator: 54
+		operator: 55
 	});
 };
 const expression_binary_arithmetic_multiply$225 = (
@@ -24341,7 +24341,7 @@ const expression_binary_arithmetic_multiply$225 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.multiply.right')
 				: expression_binary_arithmetic_multiply$225_right(input.right),
-		operator: 19
+		operator: 20
 	});
 };
 const expression_binary_arithmetic_subtract$225 = (
@@ -24358,7 +24358,7 @@ const expression_binary_arithmetic_subtract$225 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.subtract.right')
 				: expression_binary_arithmetic_subtract$225_right(input.right),
-		operator: 49
+		operator: 50
 	});
 };
 const expression_binary_bitwise_and$225 = (
@@ -24375,7 +24375,7 @@ const expression_binary_bitwise_and$225 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.and.right')
 				: expression_binary_bitwise_and$225_right(input.right),
-		operator: 52
+		operator: 53
 	});
 };
 const expression_binary_bitwise_or$225 = (
@@ -24392,7 +24392,7 @@ const expression_binary_bitwise_or$225 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.or.right')
 				: expression_binary_bitwise_or$225_right(input.right),
-		operator: 25
+		operator: 26
 	});
 };
 const expression_binary_bitwise_xor$225 = (
@@ -24409,7 +24409,7 @@ const expression_binary_bitwise_xor$225 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.xor.right')
 				: expression_binary_bitwise_xor$225_right(input.right),
-		operator: 51
+		operator: 52
 	});
 };
 const expression_binary_comparison_equal$225 = (
@@ -24426,7 +24426,7 @@ const expression_binary_comparison_equal$225 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.equal.right')
 				: expression_binary_comparison_equal$225_right(input.right),
-		operator: 58
+		operator: 59
 	});
 };
 const expression_binary_comparison_greater$225 = (
@@ -24443,7 +24443,7 @@ const expression_binary_comparison_greater$225 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.greater.right')
 				: expression_binary_comparison_greater$225_right(input.right),
-		operator: 62
+		operator: 63
 	});
 };
 const expression_binary_comparison_greater_equal$225 = (
@@ -24460,7 +24460,7 @@ const expression_binary_comparison_greater_equal$225 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.greater_equal.right')
 				: expression_binary_comparison_greater_equal$225_right(input.right),
-		operator: 63
+		operator: 64
 	});
 };
 const expression_binary_comparison_less$225 = (
@@ -24477,7 +24477,7 @@ const expression_binary_comparison_less$225 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.less.right')
 				: expression_binary_comparison_less$225_right(input.right),
-		operator: 60
+		operator: 61
 	});
 };
 const expression_binary_comparison_less_equal$225 = (
@@ -24494,7 +24494,7 @@ const expression_binary_comparison_less_equal$225 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.less_equal.right')
 				: expression_binary_comparison_less_equal$225_right(input.right),
-		operator: 61
+		operator: 62
 	});
 };
 const expression_binary_comparison_not_equal$225 = (
@@ -24511,7 +24511,7 @@ const expression_binary_comparison_not_equal$225 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.not_equal.right')
 				: expression_binary_comparison_not_equal$225_right(input.right),
-		operator: 59
+		operator: 60
 	});
 };
 const expression_binary_logical_and$225 = (
@@ -24528,7 +24528,7 @@ const expression_binary_logical_and$225 = (
 			input.right === undefined
 				? missing('expression.binary.logical.and.right')
 				: expression_binary_logical_and$225_right(input.right),
-		operator: 64
+		operator: 65
 	});
 };
 const expression_binary_logical_or$225 = (
@@ -24545,7 +24545,7 @@ const expression_binary_logical_or$225 = (
 			input.right === undefined
 				? missing('expression.binary.logical.or.right')
 				: expression_binary_logical_or$225_right(input.right),
-		operator: 65
+		operator: 66
 	});
 };
 const expression_parenthesized$208 = (
@@ -24560,59 +24560,59 @@ const identifier$1 = (input: PathInput<GoMap, 'identifier'>): ReturnType<typeof 
 	if (unroutedSlot !== undefined) return unrouted('identifier', unroutedSlot);
 	return b.identifier(typeof input === 'string' ? input : input.$value);
 };
-const literal_character$103 = (input: PathInput<GoMap, 'literal.character'>): ReturnType<typeof b.runeLiteralArm1> => {
+const literal_character$104 = (input: PathInput<GoMap, 'literal.character'>): ReturnType<typeof b.runeLiteralArm1> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm1(
-		input.content === undefined ? missing('literal.character.content') : literal_character$103_content(input.content)
-	);
-};
-const literal_character$104 = (
-	input: PathInput<GoMap, 'literal.character'>
-): ReturnType<typeof b.runeLiteralArm2Arm1> => {
-	const unroutedSlot = unroutedIn(input, ['content']);
-	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
-	return b.runeLiteralArm2Arm1(
 		input.content === undefined ? missing('literal.character.content') : literal_character$104_content(input.content)
 	);
 };
 const literal_character$105 = (
 	input: PathInput<GoMap, 'literal.character'>
-): ReturnType<typeof b.runeLiteralArm2Arm2> => {
+): ReturnType<typeof b.runeLiteralArm2Arm1> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
-	return b.runeLiteralArm2Arm2(
+	return b.runeLiteralArm2Arm1(
 		input.content === undefined ? missing('literal.character.content') : literal_character$105_content(input.content)
 	);
 };
 const literal_character$106 = (
 	input: PathInput<GoMap, 'literal.character'>
-): ReturnType<typeof b.runeLiteralArm2Arm3> => {
+): ReturnType<typeof b.runeLiteralArm2Arm2> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
-	return b.runeLiteralArm2Arm3(
+	return b.runeLiteralArm2Arm2(
 		input.content === undefined ? missing('literal.character.content') : literal_character$106_content(input.content)
 	);
 };
 const literal_character$107 = (
 	input: PathInput<GoMap, 'literal.character'>
-): ReturnType<typeof b.runeLiteralArm2Arm4> => {
+): ReturnType<typeof b.runeLiteralArm2Arm3> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
-	return b.runeLiteralArm2Arm4(
+	return b.runeLiteralArm2Arm3(
 		input.content === undefined ? missing('literal.character.content') : literal_character$107_content(input.content)
 	);
 };
 const literal_character$108 = (
 	input: PathInput<GoMap, 'literal.character'>
+): ReturnType<typeof b.runeLiteralArm2Arm4> => {
+	const unroutedSlot = unroutedIn(input, ['content']);
+	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
+	return b.runeLiteralArm2Arm4(
+		input.content === undefined ? missing('literal.character.content') : literal_character$108_content(input.content)
+	);
+};
+const literal_character$109 = (
+	input: PathInput<GoMap, 'literal.character'>
 ): ReturnType<typeof b.runeLiteralArm2Arm5> => {
 	const unroutedSlot = unroutedIn(input, ['content']);
 	if (unroutedSlot !== undefined) return unrouted('literal.character', unroutedSlot);
 	return b.runeLiteralArm2Arm5(
-		input.content === undefined ? missing('literal.character.content') : literal_character$108_content(input.content)
+		input.content === undefined ? missing('literal.character.content') : literal_character$109_content(input.content)
 	);
 };
-const literal_number_integer_binary$80 = (
+const literal_number_integer_binary$81 = (
 	input: PathInput<GoMap, 'literal.number.integer.binary'>
 ): ReturnType<typeof b.intLiteral.arm1> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -24620,7 +24620,7 @@ const literal_number_integer_binary$80 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.intLiteral.arm1(value) : b.intLiteral.arm1(value);
 };
-const literal_number_integer_hex$84 = (
+const literal_number_integer_hex$85 = (
 	input: PathInput<GoMap, 'literal.number.integer.hex'>
 ): ReturnType<typeof b.intLiteral.arm5> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -24628,7 +24628,7 @@ const literal_number_integer_hex$84 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.intLiteral.arm5(value) : b.intLiteral.arm5(value);
 };
-const literal_number_integer_imaginary$91 = (
+const literal_number_integer_imaginary$92 = (
 	input: PathInput<GoMap, 'literal.number.integer.imaginary'>
 ): ReturnType<typeof b.imaginaryLiteralArm1> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -24636,7 +24636,7 @@ const literal_number_integer_imaginary$91 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.imaginaryLiteralArm1(value) : b.imaginaryLiteralArm1(value);
 };
-const literal_number_integer_imaginary$97 = (
+const literal_number_integer_imaginary$98 = (
 	input: PathInput<GoMap, 'literal.number.integer.imaginary'>
 ): ReturnType<typeof b.imaginaryLiteralArm7> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -24644,7 +24644,7 @@ const literal_number_integer_imaginary$97 = (
 	if (typeof input.$value === 'bigint') return unnumbered('literal.number.integer.imaginary', 'bigint');
 	return b.imaginaryLiteralArm7(input.$value);
 };
-const literal_number_integer_octal$83 = (
+const literal_number_integer_octal$84 = (
 	input: PathInput<GoMap, 'literal.number.integer.octal'>
 ): ReturnType<typeof b.intLiteral.arm4> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -24659,7 +24659,7 @@ const literal_string$228 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
 	return b.interpretedStringLiteral(...(input.elements ?? []).map(literal_string$228_elements));
 };
-const literal_string_text$74 = (
+const literal_string_text$75 = (
 	input: PathInput<GoMap, 'literal.string.text'>
 ): ReturnType<typeof b.interpretedStringLiteralContent> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -24827,23 +24827,23 @@ const expression_parenthesized = (input: PathInput<GoMap, 'expression.parenthesi
 };
 const literal_character = (input: PathInput<GoMap, 'literal.character'>) => {
 	if ((typeof input.content !== 'string' || /^(?:(?:[^'\\]))$/u.test(input.content)) && input.content !== undefined)
-		return literal_character$103(input);
+		return literal_character$104(input);
 	if (
 		(typeof input.content !== 'string' || /^(?:\\x(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(input.content)) &&
 		input.content !== undefined
 	)
-		return literal_character$104(input);
+		return literal_character$105(input);
 	if (
 		(typeof input.content !== 'string' || /^(?:\\(?:[0-7])(?:[0-7])(?:[0-7]))$/u.test(input.content)) &&
 		input.content !== undefined
 	)
-		return literal_character$105(input);
+		return literal_character$106(input);
 	if (
 		(typeof input.content !== 'string' ||
 			/^(?:\\u(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(input.content)) &&
 		input.content !== undefined
 	)
-		return literal_character$106(input);
+		return literal_character$107(input);
 	if (
 		(typeof input.content !== 'string' ||
 			/^(?:\\U(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F])(?:[0-9a-fA-F]))$/u.test(
@@ -24851,25 +24851,25 @@ const literal_character = (input: PathInput<GoMap, 'literal.character'>) => {
 			)) &&
 		input.content !== undefined
 	)
-		return literal_character$107(input);
-	return literal_character$108(input);
+		return literal_character$108(input);
+	return literal_character$109(input);
 };
 const literal_number_integer_binary = (input: PathInput<GoMap, 'literal.number.integer.binary'>) => {
-	return literal_number_integer_binary$80(input);
+	return literal_number_integer_binary$81(input);
 };
 const literal_number_integer_hex = (input: PathInput<GoMap, 'literal.number.integer.hex'>) => {
-	return literal_number_integer_hex$84(input);
+	return literal_number_integer_hex$85(input);
 };
 const literal_number_integer_imaginary = (input: PathInput<GoMap, 'literal.number.integer.imaginary'>) => {
-	if (typeof input.$value === 'bigint') return literal_number_integer_imaginary$91(input);
+	if (typeof input.$value === 'bigint') return literal_number_integer_imaginary$92(input);
 	if (typeof input.$value === 'number') {
-		if (Number.isSafeInteger(input.$value)) return literal_number_integer_imaginary$91(input);
-		return literal_number_integer_imaginary$97(input);
+		if (Number.isSafeInteger(input.$value)) return literal_number_integer_imaginary$92(input);
+		return literal_number_integer_imaginary$98(input);
 	}
 	return unbuilt('literal.number.integer.imaginary', input);
 };
 const literal_number_integer_octal = (input: PathInput<GoMap, 'literal.number.integer.octal'>) => {
-	return literal_number_integer_octal$83(input);
+	return literal_number_integer_octal$84(input);
 };
 const literal_string = (input: PathInput<GoMap, 'literal.string'>) => {
 	return literal_string$228(input);

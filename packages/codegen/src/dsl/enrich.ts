@@ -280,6 +280,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 		symbol: nativeRuleFn<(name: string) => Rule>('sym'),
 		namingRules: baseRules
 	});
+	for (const name of Object.keys(mergedRules)) delete mergedRules[name];
 	Object.assign(mergedRules, textTokens.rules);
 	for (const name of textTokens.mintedNames) ruleOrigins.set(name, { kind: 'text', owners: textTokens.owners[name]! });
 	const priorWhitespaceExternals = new Set(getEnrichWhitespace(baseInput).addedExternals);

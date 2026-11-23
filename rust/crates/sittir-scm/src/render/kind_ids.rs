@@ -18,19 +18,19 @@ pub const UNDERSCORE: KindId = KindId(7);
 pub const AT: KindId = KindId(8);
 pub const DQUOTE: KindId = KindId(9);
 pub const DQUOTE2: KindId = KindId(10);
-pub const COMMENT: KindId = KindId(11);
-pub const LBRACK: KindId = KindId(12);
-pub const RBRACK: KindId = KindId(13);
-pub const LPAREN: KindId = KindId(14);
-pub const RPAREN: KindId = KindId(15);
-pub const MISSING_KEYWORD: KindId = KindId(16);
-pub const COLON: KindId = KindId(17);
-pub const BANG: KindId = KindId(18);
-pub const POUND: KindId = KindId(19);
-pub const DOT: KindId = KindId(20);
-pub const QMARK2: KindId = KindId(21);
-pub const BANG2: KindId = KindId(22);
-pub const STRING_CONTENT_TEXT: KindId = KindId(23);
+pub const STRING_CONTENT_TEXT: KindId = KindId(11);
+pub const COMMENT: KindId = KindId(12);
+pub const LBRACK: KindId = KindId(13);
+pub const RBRACK: KindId = KindId(14);
+pub const LPAREN: KindId = KindId(15);
+pub const RPAREN: KindId = KindId(16);
+pub const MISSING_KEYWORD: KindId = KindId(17);
+pub const COLON: KindId = KindId(18);
+pub const BANG: KindId = KindId(19);
+pub const POUND: KindId = KindId(20);
+pub const DOT: KindId = KindId(21);
+pub const QMARK2: KindId = KindId(22);
+pub const BANG2: KindId = KindId(23);
 pub const SLASH: KindId = KindId(24);
 pub const _TIGHT: KindId = KindId(25);
 pub const _SPACE: KindId = KindId(26);
@@ -87,7 +87,7 @@ const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[],
-    units: &[KindId(2), KindId(3), KindId(4), KindId(7), KindId(8), KindId(9), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(60)],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(7), KindId(8), KindId(9), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(21), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(60)],
     layout: &[],
     indent: KindId(31),
     dedent: KindId(32),
@@ -125,19 +125,19 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         8 => "@", // "at"
         9 => "\"", // "dquote"
         10 => "\"", // "dquote2"
-        11 => "comment", // "comment"
-        12 => "[", // "lbrack"
-        13 => "]", // "rbrack"
-        14 => "(", // "lparen"
-        15 => ")", // "rparen"
-        16 => "MISSING", // "MISSING_keyword"
-        17 => ":", // "colon"
-        18 => "!", // "bang"
-        19 => "#", // "pound"
-        20 => ".", // "dot"
-        21 => "?", // "qmark2"
-        22 => "!", // "bang2"
-        23 => "string_content_text", // "string_content_text"
+        11 => "string_content_text", // "string_content_text"
+        12 => "comment", // "comment"
+        13 => "[", // "lbrack"
+        14 => "]", // "rbrack"
+        15 => "(", // "lparen"
+        16 => ")", // "rparen"
+        17 => "MISSING", // "MISSING_keyword"
+        18 => ":", // "colon"
+        19 => "!", // "bang"
+        20 => "#", // "pound"
+        21 => ".", // "dot"
+        22 => "?", // "qmark2"
+        23 => "!", // "bang2"
         24 => "/", // "slash"
         25 => "_tight", // "_tight"
         26 => "_space", // "_space"

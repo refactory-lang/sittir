@@ -15,6 +15,7 @@ export const buildCapture = dispatched(() => backend().buildCapture);
 export const buildString = dispatched(() => backend().buildString);
 export const buildImmediateString = dispatched(() => backend().buildImmediateString);
 export const buildStringContent = dispatched(() => backend().buildStringContent);
+export const buildStringContentText = dispatched(() => backend().buildStringContentText);
 export const buildParameters = dispatched(() => backend().buildParameters);
 export const buildComment = dispatched(() => backend().buildComment);
 export const buildList = dispatched(() => backend().buildList);
@@ -28,7 +29,6 @@ export const buildListElementQuantifier = dispatched(() => backend().buildListEl
 export const buildGroupExpressionArm = dispatched(() => backend().buildGroupExpressionArm);
 export const buildNamedNodeExpressionArm = dispatched(() => backend().buildNamedNodeExpressionArm);
 export const buildGroupingGroup = dispatched(() => backend().buildGroupingGroup);
-export const buildStringContentText = dispatched(() => backend().buildStringContentText);
 export const buildAnchor = O.buildAnchor;
 export const buildNamedNodePlain = dispatched(() => backend().buildNamedNodePlain);
 export const buildNamedNodeSupertyped = dispatched(() => backend().buildNamedNodeSupertyped);
@@ -52,6 +52,7 @@ export const _factoryMap = {
 	string: buildString,
 	immediate_string: buildImmediateString,
 	string_content: buildStringContent,
+	string_content_text: buildStringContentText,
 	parameters: buildParameters,
 	comment: buildComment,
 	list: buildList,
@@ -65,7 +66,6 @@ export const _factoryMap = {
 	group_expression_arm: buildGroupExpressionArm,
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,
-	string_content_text: buildStringContentText,
 	anchor: buildAnchor,
 	named_node_plain: buildNamedNodePlain,
 	named_node_supertyped: buildNamedNodeSupertyped,

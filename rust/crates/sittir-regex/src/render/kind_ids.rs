@@ -42,18 +42,18 @@ pub const BSLASHK: KindId = KindId(31);
 pub const LT: KindId = KindId(32);
 pub const LPAREN_QMARK_P_EQ: KindId = KindId(33);
 pub const DECIMAL_ESCAPE: KindId = KindId(34);
-pub const UNICODE_PROPERTY_VALUE: KindId = KindId(35);
-pub const CONTROL_LETTER_ESCAPE: KindId = KindId(36);
-pub const IDENTITY_ESCAPE: KindId = KindId(37);
-pub const GROUP_NAME: KindId = KindId(38);
-pub const DECIMAL_DIGITS: KindId = KindId(39);
-pub const COLON: KindId = KindId(40);
-pub const CHARACTER_CLASS_ESCAPE_TEXT1: KindId = KindId(41);
-pub const CHARACTER_CLASS_ESCAPE_TEXT2: KindId = KindId(42);
-pub const UNICODE_CHARACTER_ESCAPE_TEXT1: KindId = KindId(43);
-pub const UNICODE_CHARACTER_ESCAPE_TEXT2: KindId = KindId(44);
-pub const CONTROL_ESCAPE_TEXT1: KindId = KindId(45);
-pub const CONTROL_ESCAPE_TEXT2: KindId = KindId(46);
+pub const CHARACTER_CLASS_ESCAPE_TEXT1: KindId = KindId(35);
+pub const CHARACTER_CLASS_ESCAPE_TEXT2: KindId = KindId(36);
+pub const UNICODE_CHARACTER_ESCAPE_TEXT1: KindId = KindId(37);
+pub const UNICODE_CHARACTER_ESCAPE_TEXT2: KindId = KindId(38);
+pub const UNICODE_PROPERTY_VALUE: KindId = KindId(39);
+pub const CONTROL_ESCAPE_TEXT1: KindId = KindId(40);
+pub const CONTROL_ESCAPE_TEXT2: KindId = KindId(41);
+pub const CONTROL_LETTER_ESCAPE: KindId = KindId(42);
+pub const IDENTITY_ESCAPE: KindId = KindId(43);
+pub const GROUP_NAME: KindId = KindId(44);
+pub const DECIMAL_DIGITS: KindId = KindId(45);
+pub const COLON: KindId = KindId(46);
 pub const _TIGHT: KindId = KindId(47);
 pub const _NEWLINE: KindId = KindId(48);
 pub const _BLANKLINE: KindId = KindId(49);
@@ -107,7 +107,7 @@ const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[],
-    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(19), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(40), KindId(47), KindId(48), KindId(49), KindId(50), KindId(54), KindId(77), KindId(83)],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(19), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(54), KindId(77), KindId(83)],
     layout: &[],
     indent: KindId(0),
     dedent: KindId(0),
@@ -169,18 +169,18 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         32 => "<", // "lt"
         33 => "(?P=", // "lparen_qmarkP_eq"
         34 => "decimal_escape", // "decimal_escape"
-        35 => "unicode_property_value", // "unicode_property"
-        36 => "control_letter_escape", // "control_letter_escape"
-        37 => "identity_escape", // "identity_escape"
-        38 => "group_name", // "group_name"
-        39 => "decimal_digits", // "decimal_digits"
-        40 => ":", // "colon"
-        41 => "character_class_escape_text1", // "character_class_escape_text1"
-        42 => "character_class_escape_text2", // "character_class_escape_text2"
-        43 => "unicode_character_escape_text1", // "unicode_character_escape_text1"
-        44 => "unicode_character_escape_text2", // "unicode_character_escape_text2"
-        45 => "control_escape_text1", // "control_escape_text1"
-        46 => "control_escape_text2", // "control_escape_text2"
+        35 => "character_class_escape_text1", // "character_class_escape_text1"
+        36 => "character_class_escape_text2", // "character_class_escape_text2"
+        37 => "unicode_character_escape_text1", // "unicode_character_escape_text1"
+        38 => "unicode_character_escape_text2", // "unicode_character_escape_text2"
+        39 => "unicode_property_value", // "unicode_property"
+        40 => "control_escape_text1", // "control_escape_text1"
+        41 => "control_escape_text2", // "control_escape_text2"
+        42 => "control_letter_escape", // "control_letter_escape"
+        43 => "identity_escape", // "identity_escape"
+        44 => "group_name", // "group_name"
+        45 => "decimal_digits", // "decimal_digits"
+        46 => ":", // "colon"
         47 => "_tight", // "_tight"
         48 => "_newline", // "_newline"
         49 => "_blankline", // "_blankline"

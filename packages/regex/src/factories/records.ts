@@ -50,14 +50,14 @@ import {
 	_leafRe_buildClassCharacter,
 	_leafRe_buildFlags,
 	_leafRe_buildDecimalEscape,
+	_leafRe_buildCharacterClassEscapeText1,
+	_leafRe_buildCharacterClassEscapeText2,
 	_leafRe_buildUnicodeCharacterEscape,
 	_leafRe_buildUnicodePropertyValue,
 	_leafRe_buildControlEscape,
 	_leafRe_buildControlLetterEscape,
 	_leafRe_buildGroupName,
 	_leafRe_buildDecimalDigits,
-	_leafRe_buildCharacterClassEscapeText1,
-	_leafRe_buildCharacterClassEscapeText2,
 	_leafRe_buildUnicodePropertyName,
 	_slotRe_buildIdentityEscape_content
 } from './objects.js';
@@ -1604,6 +1604,66 @@ function withCharacterClassEscape(node: object, setter: string, args: readonly u
 	throw new Error(`character_class_escape has no $with.${setter}`);
 }
 
+export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`character_class_escape_text1: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`character_class_escape_text1: text must be non-empty`);
+	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
+		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(leafCharacterClassEscapeText1, text) as unknown as T.CharacterClassEscapeText1.Bound;
+}
+
+function leafCharacterClassEscapeText1(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.CharacterClassEscapeText1 as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
+}
+
+export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`character_class_escape_text2: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`character_class_escape_text2: text must be non-empty`);
+	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
+		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(leafCharacterClassEscapeText2, text) as unknown as T.CharacterClassEscapeText2.Bound;
+}
+
+function leafCharacterClassEscapeText2(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.CharacterClassEscapeText2 as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
+}
+
 export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEscape.Bound {
 	if (typeof text !== 'string')
 		throw new Error(`unicode_character_escape: text must be a string: ${describeValue(text)}`);
@@ -2408,66 +2468,6 @@ function withUnicodePropertyValueExpressionGroup(node: object, setter: string, a
 	throw new Error(`unicode_property_value_expression_group has no $with.${setter}`);
 }
 
-export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`character_class_escape_text1: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`character_class_escape_text1: text must be non-empty`);
-	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
-		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafCharacterClassEscapeText1, text) as unknown as T.CharacterClassEscapeText1.Bound;
-}
-
-function leafCharacterClassEscapeText1(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.CharacterClassEscapeText1 as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
-}
-
-export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEscapeText2.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`character_class_escape_text2: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`character_class_escape_text2: text must be non-empty`);
-	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
-		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafCharacterClassEscapeText2, text) as unknown as T.CharacterClassEscapeText2.Bound;
-}
-
-function leafCharacterClassEscapeText2(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.CharacterClassEscapeText2 as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
-}
-
 export const buildNegation: TSKindId.Negation = TSKindId.Negation;
 
 export function buildInlineFlagsGroupEnable<
@@ -2916,6 +2916,8 @@ export type FluentKindMap = {
 	named_group_backreference: T.NamedGroupBackreference.Bound;
 	decimal_escape: T.DecimalEscape;
 	character_class_escape: T.CharacterClassEscape.Bound;
+	character_class_escape_text1: T.CharacterClassEscapeText1;
+	character_class_escape_text2: T.CharacterClassEscapeText2;
 	unicode_character_escape: T.UnicodeCharacterEscape;
 	unicode_property_value_expression: T.UnicodePropertyValueExpression.Bound;
 	unicode_property_value: T.UnicodePropertyValue;
@@ -2930,8 +2932,6 @@ export type FluentKindMap = {
 	count_quantifier_arm: T.CountQuantifierArm.Bound;
 	character_class_escape_arm: T.CharacterClassEscapeArm.Bound;
 	unicode_property_value_expression_group: T.UnicodePropertyValueExpressionGroup.Bound;
-	character_class_escape_text1: T.CharacterClassEscapeText1;
-	character_class_escape_text2: T.CharacterClassEscapeText2;
 	negation: T.Negation;
 	inline_flags_group_enable: T.InlineFlagsGroupEnable.Bound;
 	inline_flags_group_toggle: T.InlineFlagsGroupToggle.Bound;
@@ -2973,6 +2973,8 @@ export const _factoryMap = {
 	named_group_backreference: buildNamedGroupBackreference,
 	decimal_escape: buildDecimalEscape,
 	character_class_escape: buildCharacterClassEscape,
+	character_class_escape_text1: buildCharacterClassEscapeText1,
+	character_class_escape_text2: buildCharacterClassEscapeText2,
 	unicode_character_escape: buildUnicodeCharacterEscape,
 	unicode_property_value_expression: buildUnicodePropertyValueExpression,
 	unicode_property_value: buildUnicodePropertyValue,
@@ -2987,8 +2989,6 @@ export const _factoryMap = {
 	count_quantifier_arm: buildCountQuantifierArm,
 	character_class_escape_arm: buildCharacterClassEscapeArm,
 	unicode_property_value_expression_group: buildUnicodePropertyValueExpressionGroup,
-	character_class_escape_text1: buildCharacterClassEscapeText1,
-	character_class_escape_text2: buildCharacterClassEscapeText2,
 	negation: buildNegation,
 	inline_flags_group_enable: buildInlineFlagsGroupEnable,
 	inline_flags_group_toggle: buildInlineFlagsGroupToggle,
@@ -3003,7 +3003,7 @@ export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
-		37: withIdentityEscape,
+		43: withIdentityEscape,
 		51: withPattern,
 		52: withAlternation,
 		53: withTerm,
@@ -3034,7 +3034,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		86: withInlineFlagsGroupDisable
 	}),
 	words: Object.freeze({
-		37: 4,
+		43: 4,
 		51: 3,
 		52: 3,
 		53: 3,
@@ -3065,7 +3065,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		86: 4
 	}),
 	cells: Object.freeze({
-		37: 2,
+		43: 2,
 		51: 2,
 		52: 2,
 		53: 2,
@@ -3096,7 +3096,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		86: 2
 	}),
 	places: Object.freeze({
-		37: [[2, 2, 2, 4, 0, 0]],
+		43: [[2, 2, 2, 4, 0, 0]],
 		51: [[2, 2, 3, 8, 3, 0]],
 		52: [[2, 2, 1, 1, 0, 3]],
 		53: [[2, 2, 1, 1, 0, 3]],
@@ -3173,12 +3173,12 @@ export const builtViews: BuiltViews = Object.freeze({
 		12: leafPatternCharacter,
 		20: leafClassCharacter,
 		34: leafDecimalEscape,
-		35: leafUnicodePropertyValue,
-		36: leafControlLetterEscape,
-		38: leafGroupName,
-		39: leafDecimalDigits,
-		41: leafCharacterClassEscapeText1,
-		42: leafCharacterClassEscapeText2,
+		35: leafCharacterClassEscapeText1,
+		36: leafCharacterClassEscapeText2,
+		39: leafUnicodePropertyValue,
+		42: leafControlLetterEscape,
+		44: leafGroupName,
+		45: leafDecimalDigits,
 		60: leafPosixClassName,
 		66: leafFlags,
 		74: leafUnicodeCharacterEscape,

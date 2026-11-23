@@ -122,6 +122,15 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 	});
 
+	describe('string_content_text', () => {
+		it('factory produces correct type', () => {
+			const node = ir.stringContentText('test');
+			expect(node.$type).toBe(TSKindId.StringContentText);
+			expectBuiltNode(node);
+			expect(node.$text()).toBe('test');
+		});
+	});
+
 	describe('parameters', () => {
 		it('factory produces correct type', () => {
 			const node = ir.parameters({ $type: TSKindId.Identifier, text: 'test' } as never);
@@ -360,15 +369,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('string_content_text', () => {
-		it('factory produces correct type', () => {
-			const node = ir.stringContentText('test');
-			expect(node.$type).toBe(TSKindId.StringContentText);
-			expectBuiltNode(node);
-			expect(node.$text()).toBe('test');
 		});
 	});
 

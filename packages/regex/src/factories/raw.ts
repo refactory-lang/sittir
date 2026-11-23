@@ -36,6 +36,8 @@ export const buildBackreferenceEscape = dispatched(() => backend().buildBackrefe
 export const buildNamedGroupBackreference = dispatched(() => backend().buildNamedGroupBackreference);
 export const buildDecimalEscape = dispatched(() => backend().buildDecimalEscape);
 export const buildCharacterClassEscape = dispatched(() => backend().buildCharacterClassEscape);
+export const buildCharacterClassEscapeText1 = dispatched(() => backend().buildCharacterClassEscapeText1);
+export const buildCharacterClassEscapeText2 = dispatched(() => backend().buildCharacterClassEscapeText2);
 export const buildUnicodeCharacterEscape = dispatched(() => backend().buildUnicodeCharacterEscape);
 export const buildUnicodePropertyValueExpression = dispatched(() => backend().buildUnicodePropertyValueExpression);
 export const buildUnicodePropertyValue = dispatched(() => backend().buildUnicodePropertyValue);
@@ -52,8 +54,6 @@ export const buildCharacterClassEscapeArm = dispatched(() => backend().buildChar
 export const buildUnicodePropertyValueExpressionGroup = dispatched(
 	() => backend().buildUnicodePropertyValueExpressionGroup
 );
-export const buildCharacterClassEscapeText1 = dispatched(() => backend().buildCharacterClassEscapeText1);
-export const buildCharacterClassEscapeText2 = dispatched(() => backend().buildCharacterClassEscapeText2);
 export const buildNegation = O.buildNegation;
 export const buildInlineFlagsGroupEnable = dispatched(() => backend().buildInlineFlagsGroupEnable);
 export const buildInlineFlagsGroupToggle = dispatched(() => backend().buildInlineFlagsGroupToggle);
@@ -94,6 +94,8 @@ export const _factoryMap = {
 	named_group_backreference: buildNamedGroupBackreference,
 	decimal_escape: buildDecimalEscape,
 	character_class_escape: buildCharacterClassEscape,
+	character_class_escape_text1: buildCharacterClassEscapeText1,
+	character_class_escape_text2: buildCharacterClassEscapeText2,
 	unicode_character_escape: buildUnicodeCharacterEscape,
 	unicode_property_value_expression: buildUnicodePropertyValueExpression,
 	unicode_property_value: buildUnicodePropertyValue,
@@ -108,8 +110,6 @@ export const _factoryMap = {
 	count_quantifier_arm: buildCountQuantifierArm,
 	character_class_escape_arm: buildCharacterClassEscapeArm,
 	unicode_property_value_expression_group: buildUnicodePropertyValueExpressionGroup,
-	character_class_escape_text1: buildCharacterClassEscapeText1,
-	character_class_escape_text2: buildCharacterClassEscapeText2,
 	negation: buildNegation,
 	inline_flags_group_enable: buildInlineFlagsGroupEnable,
 	inline_flags_group_toggle: buildInlineFlagsGroupToggle,

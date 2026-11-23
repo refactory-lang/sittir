@@ -1021,9 +1021,9 @@ export interface Ir<Table extends AnyTable> {
 	readonly escapeSequenceUnicodeFixed: typeof F.buildEscapeSequenceUnicodeFixed;
 	readonly escapeSequenceUnicodeBraced: typeof F.buildEscapeSequenceUnicodeBraced;
 	readonly escapeSequenceHex: typeof F.buildEscapeSequenceHex;
-	readonly identifier: typeof F.buildIdentifier;
 	readonly tokenRepetitionPatternText: typeof F.buildTokenRepetitionPatternText;
 	readonly stringOpen: typeof F.buildStringOpen;
+	readonly identifier: typeof F.buildIdentifier;
 	readonly lineCommentExtraSlashes: typeof F.buildLineCommentExtraSlashes;
 	readonly lineCommentRegular: typeof F.buildLineCommentRegular;
 	readonly blockCommentRegular: typeof F.buildBlockCommentRegular;
@@ -2062,9 +2062,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		escapeSequenceUnicodeFixed: F.buildEscapeSequenceUnicodeFixed,
 		escapeSequenceUnicodeBraced: F.buildEscapeSequenceUnicodeBraced,
 		escapeSequenceHex: F.buildEscapeSequenceHex,
-		identifier: F.buildIdentifier,
 		tokenRepetitionPatternText: F.buildTokenRepetitionPatternText,
 		stringOpen: F.buildStringOpen,
+		identifier: F.buildIdentifier,
 		lineCommentExtraSlashes: F.buildLineCommentExtraSlashes,
 		lineCommentRegular: F.buildLineCommentRegular,
 		blockCommentRegular: F.buildBlockCommentRegular,

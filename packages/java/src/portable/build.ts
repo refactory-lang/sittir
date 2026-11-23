@@ -247,25 +247,25 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -275,7 +275,7 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.add.right', 'float');
 	}
@@ -284,13 +284,13 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.add.right', value);
 	}
@@ -408,7 +408,7 @@ const expression_assignment_compound_add$172_right = (value: expression_assignme
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -627,25 +627,25 @@ const expression_assignment_compound_bitwise_and$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -655,7 +655,7 @@ const expression_assignment_compound_bitwise_and$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.bitwise_and.right', 'float');
 	}
@@ -664,13 +664,13 @@ const expression_assignment_compound_bitwise_and$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.bitwise_and.right', value);
 	}
@@ -788,7 +788,7 @@ const expression_assignment_compound_bitwise_and$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -1007,25 +1007,25 @@ const expression_assignment_compound_bitwise_or$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -1035,7 +1035,7 @@ const expression_assignment_compound_bitwise_or$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.bitwise_or.right', 'float');
 	}
@@ -1044,13 +1044,13 @@ const expression_assignment_compound_bitwise_or$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.bitwise_or.right', value);
 	}
@@ -1168,7 +1168,7 @@ const expression_assignment_compound_bitwise_or$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -1387,25 +1387,25 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -1415,7 +1415,7 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.bitwise_xor.right', 'float');
 	}
@@ -1424,13 +1424,13 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.bitwise_xor.right', value);
 	}
@@ -1548,7 +1548,7 @@ const expression_assignment_compound_bitwise_xor$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -1765,25 +1765,25 @@ const expression_assignment_compound_divide$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -1793,7 +1793,7 @@ const expression_assignment_compound_divide$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.divide.right', 'float');
 	}
@@ -1802,13 +1802,13 @@ const expression_assignment_compound_divide$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.divide.right', value);
 	}
@@ -1926,7 +1926,7 @@ const expression_assignment_compound_divide$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -2143,25 +2143,25 @@ const expression_assignment_compound_modulo$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -2171,7 +2171,7 @@ const expression_assignment_compound_modulo$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.modulo.right', 'float');
 	}
@@ -2180,13 +2180,13 @@ const expression_assignment_compound_modulo$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.modulo.right', value);
 	}
@@ -2304,7 +2304,7 @@ const expression_assignment_compound_modulo$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -2523,25 +2523,25 @@ const expression_assignment_compound_multiply$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -2551,7 +2551,7 @@ const expression_assignment_compound_multiply$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.multiply.right', 'float');
 	}
@@ -2560,13 +2560,13 @@ const expression_assignment_compound_multiply$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.multiply.right', value);
 	}
@@ -2684,7 +2684,7 @@ const expression_assignment_compound_multiply$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -2903,25 +2903,25 @@ const expression_assignment_compound_shift_left$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -2931,7 +2931,7 @@ const expression_assignment_compound_shift_left$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.shift_left.right', 'float');
 	}
@@ -2940,13 +2940,13 @@ const expression_assignment_compound_shift_left$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.shift_left.right', value);
 	}
@@ -3064,7 +3064,7 @@ const expression_assignment_compound_shift_left$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -3283,25 +3283,25 @@ const expression_assignment_compound_shift_right$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -3311,7 +3311,7 @@ const expression_assignment_compound_shift_right$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.shift_right.right', 'float');
 	}
@@ -3320,13 +3320,13 @@ const expression_assignment_compound_shift_right$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.shift_right.right', value);
 	}
@@ -3444,7 +3444,7 @@ const expression_assignment_compound_shift_right$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -3663,25 +3663,25 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -3691,7 +3691,7 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.shift_right_unsigned.right', 'float');
 	}
@@ -3700,13 +3700,13 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.shift_right_unsigned.right', value);
 	}
@@ -3824,7 +3824,7 @@ const expression_assignment_compound_shift_right_unsigned$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -4043,25 +4043,25 @@ const expression_assignment_compound_subtract$172_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -4071,7 +4071,7 @@ const expression_assignment_compound_subtract$172_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.assignment.compound.subtract.right', 'float');
 	}
@@ -4080,13 +4080,13 @@ const expression_assignment_compound_subtract$172_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.assignment.compound.subtract.right', value);
 	}
@@ -4204,7 +4204,7 @@ const expression_assignment_compound_subtract$172_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -4387,25 +4387,25 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -4415,7 +4415,7 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.add.left', 'float');
 	}
@@ -4424,13 +4424,13 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.add.left', value);
 	}
@@ -4548,7 +4548,7 @@ const expression_binary_arithmetic_add$173_left = (value: expression_binary_arit
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -4731,25 +4731,25 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -4759,7 +4759,7 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.add.right', 'float');
 	}
@@ -4768,13 +4768,13 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.add.right', value);
 	}
@@ -4892,7 +4892,7 @@ const expression_binary_arithmetic_add$173_right = (value: expression_binary_ari
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -5075,25 +5075,25 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -5103,7 +5103,7 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.divide.left', 'float');
 	}
@@ -5112,13 +5112,13 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.divide.left', value);
 	}
@@ -5236,7 +5236,7 @@ const expression_binary_arithmetic_divide$173_left = (value: expression_binary_a
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -5419,25 +5419,25 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -5447,7 +5447,7 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.divide.right', 'float');
 	}
@@ -5456,13 +5456,13 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.divide.right', value);
 	}
@@ -5580,7 +5580,7 @@ const expression_binary_arithmetic_divide$173_right = (value: expression_binary_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -5763,25 +5763,25 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -5791,7 +5791,7 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.modulo.left', 'float');
 	}
@@ -5800,13 +5800,13 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.modulo.left', value);
 	}
@@ -5924,7 +5924,7 @@ const expression_binary_arithmetic_modulo$173_left = (value: expression_binary_a
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -6107,25 +6107,25 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -6135,7 +6135,7 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.modulo.right', 'float');
 	}
@@ -6144,13 +6144,13 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.modulo.right', value);
 	}
@@ -6268,7 +6268,7 @@ const expression_binary_arithmetic_modulo$173_right = (value: expression_binary_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -6451,25 +6451,25 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -6479,7 +6479,7 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.multiply.left', 'float');
 	}
@@ -6488,13 +6488,13 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.multiply.left', value);
 	}
@@ -6612,7 +6612,7 @@ const expression_binary_arithmetic_multiply$173_left = (value: expression_binary
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -6797,25 +6797,25 @@ const expression_binary_arithmetic_multiply$173_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -6825,7 +6825,7 @@ const expression_binary_arithmetic_multiply$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.multiply.right', 'float');
 	}
@@ -6834,13 +6834,13 @@ const expression_binary_arithmetic_multiply$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.multiply.right', value);
 	}
@@ -6958,7 +6958,7 @@ const expression_binary_arithmetic_multiply$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -7141,25 +7141,25 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -7169,7 +7169,7 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.subtract.left', 'float');
 	}
@@ -7178,13 +7178,13 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.subtract.left', value);
 	}
@@ -7302,7 +7302,7 @@ const expression_binary_arithmetic_subtract$173_left = (value: expression_binary
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -7487,25 +7487,25 @@ const expression_binary_arithmetic_subtract$173_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -7515,7 +7515,7 @@ const expression_binary_arithmetic_subtract$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.arithmetic.subtract.right', 'float');
 	}
@@ -7524,13 +7524,13 @@ const expression_binary_arithmetic_subtract$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.arithmetic.subtract.right', value);
 	}
@@ -7648,7 +7648,7 @@ const expression_binary_arithmetic_subtract$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -7831,25 +7831,25 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -7859,7 +7859,7 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.and.left', 'float');
 	}
@@ -7868,13 +7868,13 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.and.left', value);
 	}
@@ -7992,7 +7992,7 @@ const expression_binary_bitwise_and$173_left = (value: expression_binary_bitwise
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -8175,25 +8175,25 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -8203,7 +8203,7 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.and.right', 'float');
 	}
@@ -8212,13 +8212,13 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.and.right', value);
 	}
@@ -8336,7 +8336,7 @@ const expression_binary_bitwise_and$173_right = (value: expression_binary_bitwis
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -8519,25 +8519,25 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -8547,7 +8547,7 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.or.left', 'float');
 	}
@@ -8556,13 +8556,13 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.or.left', value);
 	}
@@ -8680,7 +8680,7 @@ const expression_binary_bitwise_or$173_left = (value: expression_binary_bitwise_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -8863,25 +8863,25 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -8891,7 +8891,7 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.or.right', 'float');
 	}
@@ -8900,13 +8900,13 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.or.right', value);
 	}
@@ -9024,7 +9024,7 @@ const expression_binary_bitwise_or$173_right = (value: expression_binary_bitwise
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -9207,25 +9207,25 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -9235,7 +9235,7 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.xor.left', 'float');
 	}
@@ -9244,13 +9244,13 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.xor.left', value);
 	}
@@ -9368,7 +9368,7 @@ const expression_binary_bitwise_xor$173_left = (value: expression_binary_bitwise
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -9551,25 +9551,25 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -9579,7 +9579,7 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.bitwise.xor.right', 'float');
 	}
@@ -9588,13 +9588,13 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.bitwise.xor.right', value);
 	}
@@ -9712,7 +9712,7 @@ const expression_binary_bitwise_xor$173_right = (value: expression_binary_bitwis
 		case 'literal.number.float':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -9895,25 +9895,25 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -9923,7 +9923,7 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.equal.left', 'float');
 	}
@@ -9932,13 +9932,13 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.equal.left', value);
 	}
@@ -10056,7 +10056,7 @@ const expression_binary_comparison_equal$173_left = (value: expression_binary_co
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -10239,25 +10239,25 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -10267,7 +10267,7 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.equal.right', 'float');
 	}
@@ -10276,13 +10276,13 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.equal.right', value);
 	}
@@ -10400,7 +10400,7 @@ const expression_binary_comparison_equal$173_right = (value: expression_binary_c
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -10583,25 +10583,25 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -10611,7 +10611,7 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater.left', 'float');
 	}
@@ -10620,13 +10620,13 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater.left', value);
 	}
@@ -10744,7 +10744,7 @@ const expression_binary_comparison_greater$173_left = (value: expression_binary_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -10927,25 +10927,25 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -10955,7 +10955,7 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater.right', 'float');
 	}
@@ -10964,13 +10964,13 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater.right', value);
 	}
@@ -11088,7 +11088,7 @@ const expression_binary_comparison_greater$173_right = (value: expression_binary
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -11273,25 +11273,25 @@ const expression_binary_comparison_greater_equal$173_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -11301,7 +11301,7 @@ const expression_binary_comparison_greater_equal$173_left = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater_equal.left', 'float');
 	}
@@ -11310,13 +11310,13 @@ const expression_binary_comparison_greater_equal$173_left = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater_equal.left', value);
 	}
@@ -11434,7 +11434,7 @@ const expression_binary_comparison_greater_equal$173_left = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -11619,25 +11619,25 @@ const expression_binary_comparison_greater_equal$173_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -11647,7 +11647,7 @@ const expression_binary_comparison_greater_equal$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.greater_equal.right', 'float');
 	}
@@ -11656,13 +11656,13 @@ const expression_binary_comparison_greater_equal$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.greater_equal.right', value);
 	}
@@ -11780,7 +11780,7 @@ const expression_binary_comparison_greater_equal$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -11963,25 +11963,25 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -11991,7 +11991,7 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less.left', 'float');
 	}
@@ -12000,13 +12000,13 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less.left', value);
 	}
@@ -12124,7 +12124,7 @@ const expression_binary_comparison_less$173_left = (value: expression_binary_com
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -12307,25 +12307,25 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -12335,7 +12335,7 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less.right', 'float');
 	}
@@ -12344,13 +12344,13 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less.right', value);
 	}
@@ -12468,7 +12468,7 @@ const expression_binary_comparison_less$173_right = (value: expression_binary_co
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -12653,25 +12653,25 @@ const expression_binary_comparison_less_equal$173_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -12681,7 +12681,7 @@ const expression_binary_comparison_less_equal$173_left = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less_equal.left', 'float');
 	}
@@ -12690,13 +12690,13 @@ const expression_binary_comparison_less_equal$173_left = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less_equal.left', value);
 	}
@@ -12814,7 +12814,7 @@ const expression_binary_comparison_less_equal$173_left = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -12999,25 +12999,25 @@ const expression_binary_comparison_less_equal$173_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -13027,7 +13027,7 @@ const expression_binary_comparison_less_equal$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.less_equal.right', 'float');
 	}
@@ -13036,13 +13036,13 @@ const expression_binary_comparison_less_equal$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.less_equal.right', value);
 	}
@@ -13160,7 +13160,7 @@ const expression_binary_comparison_less_equal$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -13345,25 +13345,25 @@ const expression_binary_comparison_not_equal$173_left = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -13373,7 +13373,7 @@ const expression_binary_comparison_not_equal$173_left = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.not_equal.left', 'float');
 	}
@@ -13382,13 +13382,13 @@ const expression_binary_comparison_not_equal$173_left = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.not_equal.left', value);
 	}
@@ -13506,7 +13506,7 @@ const expression_binary_comparison_not_equal$173_left = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -13691,25 +13691,25 @@ const expression_binary_comparison_not_equal$173_right = (
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -13719,7 +13719,7 @@ const expression_binary_comparison_not_equal$173_right = (
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.comparison.not_equal.right', 'float');
 	}
@@ -13728,13 +13728,13 @@ const expression_binary_comparison_not_equal$173_right = (
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.comparison.not_equal.right', value);
 	}
@@ -13852,7 +13852,7 @@ const expression_binary_comparison_not_equal$173_right = (
 		case 'literal.number.float':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -14035,25 +14035,25 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -14063,7 +14063,7 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.and.left', 'float');
 	}
@@ -14072,13 +14072,13 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.and.left', value);
 	}
@@ -14196,7 +14196,7 @@ const expression_binary_logical_and$173_left = (value: expression_binary_logical
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -14379,25 +14379,25 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -14407,7 +14407,7 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.and.right', 'float');
 	}
@@ -14416,13 +14416,13 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.and.right', value);
 	}
@@ -14540,7 +14540,7 @@ const expression_binary_logical_and$173_right = (value: expression_binary_logica
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -14723,25 +14723,25 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -14751,7 +14751,7 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.or.left', 'float');
 	}
@@ -14760,13 +14760,13 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.or.left', value);
 	}
@@ -14884,7 +14884,7 @@ const expression_binary_logical_or$173_left = (value: expression_binary_logical_
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -15067,25 +15067,25 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -15095,7 +15095,7 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.binary.logical.or.right', 'float');
 	}
@@ -15104,13 +15104,13 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.binary.logical.or.right', value);
 	}
@@ -15228,7 +15228,7 @@ const expression_binary_logical_or$173_right = (value: expression_binary_logical
 		case 'literal.number.float':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -15411,25 +15411,25 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -15439,7 +15439,7 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.conditional.alternative', 'float');
 	}
@@ -15448,13 +15448,13 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.conditional.alternative', value);
 	}
@@ -15572,7 +15572,7 @@ const expression_conditional$177_alternative = (value: expression_conditional$17
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.alternative', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -15755,25 +15755,25 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -15783,7 +15783,7 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.conditional.condition', 'float');
 	}
@@ -15792,13 +15792,13 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.conditional.condition', value);
 	}
@@ -15916,7 +15916,7 @@ const expression_conditional$177_condition = (value: expression_conditional$177_
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.condition', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -16099,25 +16099,25 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -16127,7 +16127,7 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.conditional.consequence', 'float');
 	}
@@ -16136,13 +16136,13 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.conditional.consequence', value);
 	}
@@ -16260,7 +16260,7 @@ const expression_conditional$177_consequence = (value: expression_conditional$17
 		case 'literal.number.float':
 			return unbuilt('expression.conditional.consequence', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -16443,25 +16443,25 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -16471,7 +16471,7 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.interpolation.expression', 'float');
 	}
@@ -16480,13 +16480,13 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.interpolation.expression', value);
 	}
@@ -16604,7 +16604,7 @@ const expression_interpolation$167_expression = (value: expression_interpolation
 		case 'literal.number.float':
 			return unbuilt('expression.interpolation.expression', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -16787,25 +16787,25 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -16815,7 +16815,7 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('expression.parenthesized.expression', 'float');
 	}
@@ -16824,13 +16824,13 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('expression.parenthesized.expression', value);
 	}
@@ -16948,7 +16948,7 @@ const expression_parenthesized$183_expression = (value: expression_parenthesized
 		case 'literal.number.float':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -17025,11 +17025,11 @@ const literal_string$327_elements = (value: literal_string$327_elements$Item) =>
 		return b.stringFragment(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [10, 127, 128, 129, 130, 131, 167, 169])) return value;
+		if (seated(value, [10, 130, 131, 132, 133, 134, 167, 169])) return value;
 		return unseated('literal.string.elements', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [10, 127, 128, 129, 130, 131, 167, 169])) return value;
+		if (seated(value, [10, 130, 131, 132, 133, 134, 167, 169])) return value;
 		return unseated('literal.string.elements', value);
 	}
 	switch (value.$path) {
@@ -17060,12 +17060,12 @@ const literal_string$328_elements = (value: literal_string$328_elements$Item) =>
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [166, 167])) return value;
-		if (seated(value, [127, 128, 129, 130, 131, 146, 169])) return b.multilineStringLiteralArm1(value);
+		if (seated(value, [15, 130, 131, 132, 133, 134, 169])) return b.multilineStringLiteralArm1(value);
 		return unseated('literal.string.elements', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [166, 167])) return value;
-		if (seated(value, [127, 128, 129, 130, 131, 146, 169])) return b.multilineStringLiteralArm1(value);
+		if (seated(value, [15, 130, 131, 132, 133, 134, 169])) return b.multilineStringLiteralArm1(value);
 		return unseated('literal.string.elements', value);
 	}
 	switch (value.$path) {
@@ -17096,12 +17096,12 @@ const literal_string_multiline$328_elements = (value: literal_string_multiline$3
 	}
 	if (typeof value === 'number') {
 		if (seated(value, [166, 167])) return value;
-		if (seated(value, [127, 128, 129, 130, 131, 146, 169])) return b.multilineStringLiteralArm1(value);
+		if (seated(value, [15, 130, 131, 132, 133, 134, 169])) return b.multilineStringLiteralArm1(value);
 		return unseated('literal.string.multiline.elements', value);
 	}
 	if (isNode(value)) {
 		if (seated(value, [166, 167])) return value;
-		if (seated(value, [127, 128, 129, 130, 131, 146, 169])) return b.multilineStringLiteralArm1(value);
+		if (seated(value, [15, 130, 131, 132, 133, 134, 169])) return b.multilineStringLiteralArm1(value);
 		return unseated('literal.string.multiline.elements', value);
 	}
 	switch (value.$path) {
@@ -17326,27 +17326,27 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 	if (typeof value === 'string') {
 		switch (value) {
 			case ';':
-				return 66;
+				return 69;
 			case 'this':
-				return b.expressionStatement(112);
+				return b.expressionStatement(115);
 			case 'boolean':
-				return b.expressionStatement(b.classLiteral(106));
+				return b.expressionStatement(b.classLiteral(109));
 			case 'byte':
-				return b.expressionStatement(b.classLiteral(99));
-			case 'char':
-				return b.expressionStatement(b.classLiteral(103));
-			case 'double':
-				return b.expressionStatement(b.classLiteral(105));
-			case 'float':
-				return b.expressionStatement(b.classLiteral(104));
-			case 'int':
-				return b.expressionStatement(b.classLiteral(101));
-			case 'long':
 				return b.expressionStatement(b.classLiteral(102));
-			case 'short':
-				return b.expressionStatement(b.classLiteral(100));
-			case 'void':
+			case 'char':
+				return b.expressionStatement(b.classLiteral(106));
+			case 'double':
+				return b.expressionStatement(b.classLiteral(108));
+			case 'float':
 				return b.expressionStatement(b.classLiteral(107));
+			case 'int':
+				return b.expressionStatement(b.classLiteral(104));
+			case 'long':
+				return b.expressionStatement(b.classLiteral(105));
+			case 'short':
+				return b.expressionStatement(b.classLiteral(103));
+			case 'void':
+				return b.expressionStatement(b.classLiteral(110));
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
 					return b.expressionStatement(b.identifier(value));
@@ -17361,7 +17361,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return b.expressionStatement(literal_number_integer$118({ $path: 'literal.number.integer', $value: value }));
+			return b.expressionStatement(literal_number_integer$121({ $path: 'literal.number.integer', $value: value }));
 		}
 		return unnumbered('statement.block.statements', 'float');
 	}
@@ -17370,7 +17370,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			seated(
 				value,
 				[
-					66, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
+					69, 197, 208, 209, 211, 212, 213, 214, 215, 216, 218, 219, 220, 225, 228, 229, 230, 231, 239, 240, 249, 250,
 					252, 256, 273, 274, 278, 301, 329, 330
 				]
 			)
@@ -17380,13 +17380,13 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 327, 328, 331, 332
 				]
 			)
 		)
 			return b.expressionStatement(value);
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.expressionStatement(b.classLiteral(value));
 		return unseated('statement.block.statements', value);
 	}
@@ -17520,7 +17520,7 @@ const statement_block$209_statements = (value: statement_block$209_statements$It
 		case 'literal.number.float':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.number.integer':
-			return b.expressionStatement(literal_number_integer$118(value));
+			return b.expressionStatement(literal_number_integer$121(value));
 		case 'literal.number.integer.binary':
 			return b.expressionStatement(literal_number_integer_binary$4(value));
 		case 'literal.number.integer.hex':
@@ -17781,25 +17781,25 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -17809,7 +17809,7 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('statement.return.expression', 'float');
 	}
@@ -17818,13 +17818,13 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('statement.return.expression', value);
 	}
@@ -17942,7 +17942,7 @@ const statement_return$216_expression = (value: statement_return$216_expression$
 		case 'literal.number.float':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -18125,25 +18125,25 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'this':
-				return 112;
+				return 115;
 			case 'boolean':
-				return b.classLiteral(106);
+				return b.classLiteral(109);
 			case 'byte':
-				return b.classLiteral(99);
-			case 'char':
-				return b.classLiteral(103);
-			case 'double':
-				return b.classLiteral(105);
-			case 'float':
-				return b.classLiteral(104);
-			case 'int':
-				return b.classLiteral(101);
-			case 'long':
 				return b.classLiteral(102);
-			case 'short':
-				return b.classLiteral(100);
-			case 'void':
+			case 'char':
+				return b.classLiteral(106);
+			case 'double':
+				return b.classLiteral(108);
+			case 'float':
 				return b.classLiteral(107);
+			case 'int':
+				return b.classLiteral(104);
+			case 'long':
+				return b.classLiteral(105);
+			case 'short':
+				return b.classLiteral(103);
+			case 'void':
+				return b.classLiteral(110);
 			default:
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value)) return b.identifier(value);
 				if (/^(?:(?:[\p{XID_Start}_$][\p{XID_Continue}\u00A2_$]*))$/u.test(value))
@@ -18153,7 +18153,7 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 	}
 	if (typeof value === 'number') {
 		if (Number.isSafeInteger(value)) {
-			return literal_number_integer$118({ $path: 'literal.number.integer', $value: value });
+			return literal_number_integer$121({ $path: 'literal.number.integer', $value: value });
 		}
 		return unnumbered('statement.throw.expression', 'float');
 	}
@@ -18162,13 +18162,13 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			seated(
 				value,
 				[
-					1, 2, 3, 4, 5, 6, 7, 13, 112, 117, 118, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
+					1, 2, 3, 4, 5, 6, 7, 16, 115, 120, 121, 159, 160, 161, 162, 163, 170, 171, 172, 173, 174, 175, 177, 178, 179,
 					180, 181, 183, 185, 187, 188, 189, 190, 192, 197, 327, 328, 331, 332
 				]
 			)
 		)
 			return value;
-		if (seated(value, [99, 100, 101, 102, 103, 104, 105, 106, 107, 287, 289, 290, 291, 292, 293, 370]))
+		if (seated(value, [102, 103, 104, 105, 106, 107, 108, 109, 110, 287, 289, 290, 291, 292, 293, 370]))
 			return b.classLiteral(value);
 		return unseated('statement.throw.expression', value);
 	}
@@ -18286,7 +18286,7 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 		case 'literal.number.float':
 			return unbuilt('statement.throw.expression', value);
 		case 'literal.number.integer':
-			return literal_number_integer$118(value);
+			return literal_number_integer$121(value);
 		case 'literal.number.integer.binary':
 			return literal_number_integer_binary$4(value);
 		case 'literal.number.integer.hex':
@@ -18317,7 +18317,7 @@ const expression_assignment_compound_add$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_add$172_left(input.left),
 		right: expression_assignment_compound_add$172_right(input.right),
-		operator: 18
+		operator: 21
 	});
 };
 const expression_assignment_compound_bitwise_and$172 = (
@@ -18328,7 +18328,7 @@ const expression_assignment_compound_bitwise_and$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_bitwise_and$172_left(input.left),
 		right: expression_assignment_compound_bitwise_and$172_right(input.right),
-		operator: 22
+		operator: 25
 	});
 };
 const expression_assignment_compound_bitwise_or$172 = (
@@ -18339,7 +18339,7 @@ const expression_assignment_compound_bitwise_or$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_bitwise_or$172_left(input.left),
 		right: expression_assignment_compound_bitwise_or$172_right(input.right),
-		operator: 23
+		operator: 26
 	});
 };
 const expression_assignment_compound_bitwise_xor$172 = (
@@ -18350,7 +18350,7 @@ const expression_assignment_compound_bitwise_xor$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_bitwise_xor$172_left(input.left),
 		right: expression_assignment_compound_bitwise_xor$172_right(input.right),
-		operator: 24
+		operator: 27
 	});
 };
 const expression_assignment_compound_divide$172 = (
@@ -18361,7 +18361,7 @@ const expression_assignment_compound_divide$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_divide$172_left(input.left),
 		right: expression_assignment_compound_divide$172_right(input.right),
-		operator: 21
+		operator: 24
 	});
 };
 const expression_assignment_compound_modulo$172 = (
@@ -18372,7 +18372,7 @@ const expression_assignment_compound_modulo$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_modulo$172_left(input.left),
 		right: expression_assignment_compound_modulo$172_right(input.right),
-		operator: 25
+		operator: 28
 	});
 };
 const expression_assignment_compound_multiply$172 = (
@@ -18383,7 +18383,7 @@ const expression_assignment_compound_multiply$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_multiply$172_left(input.left),
 		right: expression_assignment_compound_multiply$172_right(input.right),
-		operator: 20
+		operator: 23
 	});
 };
 const expression_assignment_compound_shift_left$172 = (
@@ -18394,7 +18394,7 @@ const expression_assignment_compound_shift_left$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_shift_left$172_left(input.left),
 		right: expression_assignment_compound_shift_left$172_right(input.right),
-		operator: 26
+		operator: 29
 	});
 };
 const expression_assignment_compound_shift_right$172 = (
@@ -18405,7 +18405,7 @@ const expression_assignment_compound_shift_right$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_shift_right$172_left(input.left),
 		right: expression_assignment_compound_shift_right$172_right(input.right),
-		operator: 27
+		operator: 30
 	});
 };
 const expression_assignment_compound_shift_right_unsigned$172 = (
@@ -18416,7 +18416,7 @@ const expression_assignment_compound_shift_right_unsigned$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_shift_right_unsigned$172_left(input.left),
 		right: expression_assignment_compound_shift_right_unsigned$172_right(input.right),
-		operator: 28
+		operator: 31
 	});
 };
 const expression_assignment_compound_subtract$172 = (
@@ -18427,7 +18427,7 @@ const expression_assignment_compound_subtract$172 = (
 	return b.assignmentExpression({
 		left: expression_assignment_compound_subtract$172_left(input.left),
 		right: expression_assignment_compound_subtract$172_right(input.right),
-		operator: 19
+		operator: 22
 	});
 };
 const expression_binary_arithmetic_add$173 = (
@@ -18444,7 +18444,7 @@ const expression_binary_arithmetic_add$173 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.add.right')
 				: expression_binary_arithmetic_add$173_right(input.right),
-		operator: 37
+		operator: 40
 	});
 };
 const expression_binary_arithmetic_divide$173 = (
@@ -18461,7 +18461,7 @@ const expression_binary_arithmetic_divide$173 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.divide.right')
 				: expression_binary_arithmetic_divide$173_right(input.right),
-		operator: 40
+		operator: 43
 	});
 };
 const expression_binary_arithmetic_modulo$173 = (
@@ -18478,7 +18478,7 @@ const expression_binary_arithmetic_modulo$173 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.modulo.right')
 				: expression_binary_arithmetic_modulo$173_right(input.right),
-		operator: 43
+		operator: 46
 	});
 };
 const expression_binary_arithmetic_multiply$173 = (
@@ -18495,7 +18495,7 @@ const expression_binary_arithmetic_multiply$173 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.multiply.right')
 				: expression_binary_arithmetic_multiply$173_right(input.right),
-		operator: 39
+		operator: 42
 	});
 };
 const expression_binary_arithmetic_subtract$173 = (
@@ -18512,7 +18512,7 @@ const expression_binary_arithmetic_subtract$173 = (
 			input.right === undefined
 				? missing('expression.binary.arithmetic.subtract.right')
 				: expression_binary_arithmetic_subtract$173_right(input.right),
-		operator: 38
+		operator: 41
 	});
 };
 const expression_binary_bitwise_and$173 = (
@@ -18529,7 +18529,7 @@ const expression_binary_bitwise_and$173 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.and.right')
 				: expression_binary_bitwise_and$173_right(input.right),
-		operator: 15
+		operator: 18
 	});
 };
 const expression_binary_bitwise_or$173 = (
@@ -18546,7 +18546,7 @@ const expression_binary_bitwise_or$173 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.or.right')
 				: expression_binary_bitwise_or$173_right(input.right),
-		operator: 41
+		operator: 44
 	});
 };
 const expression_binary_bitwise_xor$173 = (
@@ -18563,7 +18563,7 @@ const expression_binary_bitwise_xor$173 = (
 			input.right === undefined
 				? missing('expression.binary.bitwise.xor.right')
 				: expression_binary_bitwise_xor$173_right(input.right),
-		operator: 42
+		operator: 45
 	});
 };
 const expression_binary_comparison_equal$173 = (
@@ -18580,7 +18580,7 @@ const expression_binary_comparison_equal$173 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.equal.right')
 				: expression_binary_comparison_equal$173_right(input.right),
-		operator: 33
+		operator: 36
 	});
 };
 const expression_binary_comparison_greater$173 = (
@@ -18597,7 +18597,7 @@ const expression_binary_comparison_greater$173 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.greater.right')
 				: expression_binary_comparison_greater$173_right(input.right),
-		operator: 29
+		operator: 32
 	});
 };
 const expression_binary_comparison_greater_equal$173 = (
@@ -18614,7 +18614,7 @@ const expression_binary_comparison_greater_equal$173 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.greater_equal.right')
 				: expression_binary_comparison_greater_equal$173_right(input.right),
-		operator: 31
+		operator: 34
 	});
 };
 const expression_binary_comparison_less$173 = (
@@ -18631,7 +18631,7 @@ const expression_binary_comparison_less$173 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.less.right')
 				: expression_binary_comparison_less$173_right(input.right),
-		operator: 30
+		operator: 33
 	});
 };
 const expression_binary_comparison_less_equal$173 = (
@@ -18648,7 +18648,7 @@ const expression_binary_comparison_less_equal$173 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.less_equal.right')
 				: expression_binary_comparison_less_equal$173_right(input.right),
-		operator: 32
+		operator: 35
 	});
 };
 const expression_binary_comparison_not_equal$173 = (
@@ -18665,7 +18665,7 @@ const expression_binary_comparison_not_equal$173 = (
 			input.right === undefined
 				? missing('expression.binary.comparison.not_equal.right')
 				: expression_binary_comparison_not_equal$173_right(input.right),
-		operator: 34
+		operator: 37
 	});
 };
 const expression_binary_logical_and$173 = (
@@ -18682,7 +18682,7 @@ const expression_binary_logical_and$173 = (
 			input.right === undefined
 				? missing('expression.binary.logical.and.right')
 				: expression_binary_logical_and$173_right(input.right),
-		operator: 35
+		operator: 38
 	});
 };
 const expression_binary_logical_or$173 = (
@@ -18699,7 +18699,7 @@ const expression_binary_logical_or$173 = (
 			input.right === undefined
 				? missing('expression.binary.logical.or.right')
 				: expression_binary_logical_or$173_right(input.right),
-		operator: 36
+		operator: 39
 	});
 };
 const expression_conditional$177 = (
@@ -18743,7 +18743,7 @@ const literal_character$7 = (input: PathInput<JavaMap, 'literal.character'>): Re
 		input.content === undefined ? missing('literal.character.content') : literal_character$7_content(input.content)
 	);
 };
-const literal_number_integer$118 = (
+const literal_number_integer$121 = (
 	input: PathInput<JavaMap, 'literal.number.integer'>
 ): ReturnType<typeof b.decimalIntegerLiteral.arm2> => {
 	const unroutedSlot = unroutedIn(input, []);
@@ -18968,7 +18968,7 @@ const literal_character = (input: PathInput<JavaMap, 'literal.character'>) => {
 	return literal_character$7(input);
 };
 const literal_number_integer = (input: PathInput<JavaMap, 'literal.number.integer'>) => {
-	return literal_number_integer$118(input);
+	return literal_number_integer$121(input);
 };
 const literal_number_integer_binary = (input: PathInput<JavaMap, 'literal.number.integer.binary'>) => {
 	return literal_number_integer_binary$4(input);

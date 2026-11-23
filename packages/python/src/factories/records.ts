@@ -74,9 +74,9 @@ import {
 	type _ReservedWord_buildIdentifier,
 	_reservedWords_buildIdentifier,
 	_leafRe_buildImportPrefix,
+	_leafRe_buildFormatSpecifierText,
 	_leafRe_buildTypeConversion,
 	_leafRe_buildIdentifier,
-	_leafRe_buildFormatSpecifierText,
 	_leafRe_buildIntegerDecimalImaginary,
 	_leafRe_buildIntegerDecimalPlain,
 	_leafRe_buildLineContinuationNewline,
@@ -6460,8 +6460,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
-				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 70, 71,
+				72, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -6485,8 +6485,8 @@ function buildAsPattern$patch(source: object, config: T.AsPattern.Config): T.AsP
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69, 70,
-				71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
+				218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 70, 71,
+				72, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -6533,8 +6533,8 @@ function buildAsPattern$set(
 			const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 				[
 					[
-						218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 69,
-						70, 71, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
+						218, 212, 213, 219, 262, 214, 1, 253, 252, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 70,
+						71, 72, 215, 226, 227, 229, 238, 243, 241, 244, 239, 245, 240, 247, 246, 63, 206, 251, 148, 208
 					],
 					(v: unknown) => buildAsPatternTarget(v as never)
 				]
@@ -10708,6 +10708,35 @@ function withFormatSpecifier(node: object, setter: string, args: readonly unknow
 	throw new Error(`format_specifier has no $with.${setter}`);
 }
 
+export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
+	if (typeof text !== 'string') throw new Error(`format_specifier_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
+	if (!_leafRe_buildFormatSpecifierText.test(text))
+		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	return builtArenaOf(handle).leaf(leafFormatSpecifierText, text) as unknown as T.FormatSpecifierText.Bound;
+}
+
+function leafFormatSpecifierText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
+	const node = {
+		$type: TSKindId.FormatSpecifierText as const,
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$_layout: undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[LEAF_SITES]: null,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
+	return node;
+}
+
 export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 	if (typeof text !== 'string') throw new Error(`type_conversion: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`);
@@ -12099,35 +12128,6 @@ function withSliceGroup(node: object, setter: string, args: readonly unknown[]):
 			);
 	}
 	throw new Error(`slice_group has no $with.${setter}`);
-}
-
-export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bound {
-	if (typeof text !== 'string') throw new Error(`format_specifier_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`format_specifier_text: text must be non-empty`);
-	if (!_leafRe_buildFormatSpecifierText.test(text))
-		throw new Error(`format_specifier_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	return builtArenaOf(handle).leaf(leafFormatSpecifierText, text) as unknown as T.FormatSpecifierText.Bound;
-}
-
-function leafFormatSpecifierText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
-	const node = {
-		$type: TSKindId.FormatSpecifierText as const,
-		$tree: tree,
-		$entry: entry,
-		$site: site,
-		$_layout: undefined,
-		$text: leafText,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handleEngine,
-		[LEAF_SITES]: null,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$trivia = { leading: leafLeading, trailing: leafTrailing, [RECEIVER]: node };
-	return node;
 }
 
 export function buildTypeParams<V extends Admit<T.TypeParamsItems>>(
@@ -19437,6 +19437,7 @@ export type FluentKindMap = {
 	interpolation: T.Interpolation.Bound;
 	not_escape_sequence: T.NotEscapeSequence;
 	format_specifier: T.FormatSpecifier.Bound;
+	format_specifier_text: T.FormatSpecifierText;
 	type_conversion: T.TypeConversion;
 	identifier: T.Identifier;
 	true: T.True;
@@ -19456,7 +19457,6 @@ export type FluentKindMap = {
 	subscripts: T.Subscripts.Bound;
 	dictionary_elements: T.DictionaryElements.Bound;
 	slice_group: T.SliceGroup.Bound;
-	format_specifier_text: T.FormatSpecifierText;
 	type_params: T.TypeParams.Bound;
 	type_params_items: T.TypeParamsItems.Bound;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
@@ -19651,6 +19651,7 @@ export const _factoryMap = {
 	interpolation: buildInterpolation,
 	not_escape_sequence: buildNotEscapeSequence,
 	format_specifier: buildFormatSpecifier,
+	format_specifier_text: buildFormatSpecifierText,
 	type_conversion: buildTypeConversion,
 	identifier: buildIdentifier,
 	true: buildTrue,
@@ -19670,7 +19671,6 @@ export const _factoryMap = {
 	subscripts: buildSubscripts,
 	dictionary_elements: buildDictionaryElements,
 	slice_group: buildSliceGroup,
-	format_specifier_text: buildFormatSpecifierText,
 	type_params: buildTypeParams,
 	type_params_items: buildTypeParamsItems,
 	tuple_pattern_elements: buildTuplePatternElements,
@@ -19753,7 +19753,7 @@ export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
-		72: withComment,
+		73: withComment,
 		90: withIntegerHexLong,
 		91: withIntegerHexPlain,
 		92: withIntegerOctalLong,
@@ -19936,7 +19936,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		362: withNames
 	}),
 	words: Object.freeze({
-		72: 4,
+		73: 4,
 		90: 6,
 		91: 5,
 		92: 6,
@@ -20119,7 +20119,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		362: 3
 	}),
 	cells: Object.freeze({
-		72: 2,
+		73: 2,
 		90: 2,
 		91: 2,
 		92: 2,
@@ -20302,7 +20302,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		362: 2
 	}),
 	places: Object.freeze({
-		72: [[2, 2, 2, 4, 0, 0]],
+		73: [[2, 2, 2, 4, 0, 0]],
 		90: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
@@ -20849,8 +20849,8 @@ export const builtViews: BuiltViews = Object.freeze({
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
-		65: leafTypeConversion,
-		88: leafFormatSpecifierText,
+		65: leafFormatSpecifierText,
+		66: leafTypeConversion,
 		99: leafIntegerDecimalImaginary,
 		100: leafIntegerDecimalPlain,
 		111: leafLineContinuationNewline,

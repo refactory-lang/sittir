@@ -667,7 +667,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line: arm 72 builds its text through a content slot"
+    "message": "comment.line: arm 73 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -923,7 +923,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.false: arm 70 builds through its holder"
+    "message": "literal.boolean.false: arm 71 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -931,7 +931,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.true: arm 69 builds through its holder"
+    "message": "literal.boolean.true: arm 70 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -947,7 +947,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.null: arm 71 builds through its holder"
+    "message": "literal.null: arm 72 builds through its holder"
   },
   {
     "scope": "grammar",

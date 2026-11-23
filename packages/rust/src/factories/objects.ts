@@ -73,9 +73,9 @@ import {
 	unaffixed
 } from '@sittir/common/utils';
 
-export const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 export const _leafRe_buildTokenRepetitionPatternText = /^(?:(?:[^+*?]+))$/u;
 export const _leafRe_buildStringOpen = /^(?:(?:[bc]?"))$/u;
+export const _leafRe_buildIdentifier = /^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 export const _leafRe_buildCharLiteralEmpty = /^(?:(?:b)?'')$/u;
 export const _leafRe_buildLineCommentExtraSlashes = /^(?:(?:\/\/)(?:[^\x0A]*))$/u;
 export const _leafRe_buildLineCommentRegular = /^(?:(?:[^\x0A]*))$/u;
@@ -477,6 +477,30 @@ function buildTokenRepetitionPattern$with$separator(this: Received<Held>, ...arg
 }
 function buildTokenRepetitionPattern$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildTokenRepetitionPattern$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+
+export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
+	if (typeof text !== 'string')
+		throw new Error(`token_repetition_pattern_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
+	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
+		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.TokenRepetitionPatternText as const,
+		$_layout: undefined,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.TokenRepetitionPatternText.Bound;
 }
 
 export function buildTokenRepetition<
@@ -9722,7 +9746,7 @@ export function buildClosureParameters(
 	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
 		[
 			[
-				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
 				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 			],
 			(v: unknown) => buildClosureParameter(v as never)
@@ -11208,6 +11232,29 @@ function buildStringLiteral$with$stringOpen(this: Received<Held>, ...args: unkno
 }
 function buildStringLiteral$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildStringLiteral$with(receiverOf(this, '$with.elements'), 'elements', args);
+}
+
+export function buildStringOpen(text: string): T.StringOpen.Bound {
+	if (typeof text !== 'string') throw new Error(`string_open: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
+	if (!_leafRe_buildStringOpen.test(text))
+		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StringOpen as const,
+		$_layout: undefined,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.StringOpen.Bound;
 }
 
 export function buildRawStringLiteral<
@@ -13873,53 +13920,6 @@ function buildUseWildcardGroup$with(node: Held, setter: string, args: readonly u
 }
 function buildUseWildcardGroup$with$path(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildUseWildcardGroup$with(receiverOf(this, '$with.path'), 'path', args);
-}
-
-export function buildTokenRepetitionPatternText(text: string): T.TokenRepetitionPatternText.Bound {
-	if (typeof text !== 'string')
-		throw new Error(`token_repetition_pattern_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`token_repetition_pattern_text: text must be non-empty`);
-	if (!_leafRe_buildTokenRepetitionPatternText.test(text))
-		throw new Error(`token_repetition_pattern_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.TokenRepetitionPatternText as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.TokenRepetitionPatternText.Bound;
-}
-
-export function buildStringOpen(text: string): T.StringOpen.Bound {
-	if (typeof text !== 'string') throw new Error(`string_open: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_open: text must be non-empty`);
-	if (!_leafRe_buildStringOpen.test(text))
-		throw new Error(`string_open: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.StringOpen as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.StringOpen.Bound;
 }
 
 export function buildAttributedElement<
@@ -21839,6 +21839,7 @@ export type FluentKindMap = {
 	macro_rule: T.MacroRule.Bound;
 	token_binding_pattern: T.TokenBindingPattern.Bound;
 	token_repetition_pattern: T.TokenRepetitionPattern.Bound;
+	token_repetition_pattern_text: T.TokenRepetitionPatternText;
 	token_repetition: T.TokenRepetition.Bound;
 	non_special_token: T.NonSpecialToken.Bound;
 	attribute_item: T.AttributeItem.Bound;
@@ -21960,6 +21961,7 @@ export type FluentKindMap = {
 	reference_pattern: T.ReferencePattern.Bound;
 	negative_literal: T.NegativeLiteral.Bound;
 	string_literal: T.StringLiteral.Bound;
+	string_open: T.StringOpen;
 	raw_string_literal: T.RawStringLiteral.Bound;
 	line_comment: T.LineComment.Bound;
 	inner_line_doc_comment_marker: T.InnerLineDocCommentMarker;
@@ -21989,8 +21991,6 @@ export type FluentKindMap = {
 	patterns: T.Patterns.Bound;
 	struct_pattern_elements: T.StructPatternElements.Bound;
 	use_wildcard_group: T.UseWildcardGroup.Bound;
-	token_repetition_pattern_text: T.TokenRepetitionPatternText;
-	string_open: T.StringOpen;
 	attributed_element: T.AttributedElement.Bound;
 	array_expression_list_elements: T.ArrayExpressionListElements.Bound;
 	tuple_expression_elements: T.TupleExpressionElements.Bound;
@@ -22119,6 +22119,7 @@ export const _factoryMap = {
 	macro_rule: buildMacroRule,
 	token_binding_pattern: buildTokenBindingPattern,
 	token_repetition_pattern: buildTokenRepetitionPattern,
+	token_repetition_pattern_text: buildTokenRepetitionPatternText,
 	token_repetition: buildTokenRepetition,
 	non_special_token: buildNonSpecialToken,
 	attribute_item: buildAttributeItem,
@@ -22240,6 +22241,7 @@ export const _factoryMap = {
 	reference_pattern: buildReferencePattern,
 	negative_literal: buildNegativeLiteral,
 	string_literal: buildStringLiteral,
+	string_open: buildStringOpen,
 	raw_string_literal: buildRawStringLiteral,
 	line_comment: buildLineComment,
 	inner_line_doc_comment_marker: buildInnerLineDocCommentMarker,
@@ -22269,8 +22271,6 @@ export const _factoryMap = {
 	patterns: buildPatterns,
 	struct_pattern_elements: buildStructPatternElements,
 	use_wildcard_group: buildUseWildcardGroup,
-	token_repetition_pattern_text: buildTokenRepetitionPatternText,
-	string_open: buildStringOpen,
 	attributed_element: buildAttributedElement,
 	array_expression_list_elements: buildArrayExpressionListElements,
 	tuple_expression_elements: buildTupleExpressionElements,

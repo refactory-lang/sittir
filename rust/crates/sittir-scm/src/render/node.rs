@@ -45,6 +45,8 @@ pub enum AnyNode {
     ImmediateString(ImmediateStringNode),
     #[kind(kind::STRING_CONTENT)]
     StringContent(StringContentNode),
+    #[kind(kind::STRING_CONTENT_TEXT)]
+    StringContentText(StringContentTextNode),
     #[kind(kind::PARAMETERS)]
     Parameters(ParametersNode),
     #[kind(kind::COMMENT)]
@@ -73,8 +75,6 @@ pub enum AnyNode {
     NamedNodeExpressionArm(NamedNodeExpressionArmNode),
     #[kind(kind::GROUPING_GROUP)]
     GroupingGroup(GroupingGroupNode),
-    #[kind(kind::STRING_CONTENT_TEXT)]
-    StringContentText(StringContentTextNode),
     #[kind(kind::NAMED_NODE_PLAIN)]
     NamedNodePlain(NamedNodePlainNode),
     #[kind(kind::NAMED_NODE_SUPERTYPED)]
@@ -149,6 +149,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::String(t) => t.prepare(ctx),
             AnyNode::ImmediateString(t) => t.prepare(ctx),
             AnyNode::StringContent(t) => t.prepare(ctx),
+            AnyNode::StringContentText(t) => t.prepare(ctx),
             AnyNode::Parameters(t) => t.prepare(ctx),
             AnyNode::Comment(t) => t.prepare(ctx),
             AnyNode::List(t) => t.prepare(ctx),
@@ -163,7 +164,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GroupExpressionArm(t) => t.prepare(ctx),
             AnyNode::NamedNodeExpressionArm(t) => t.prepare(ctx),
             AnyNode::GroupingGroup(t) => t.prepare(ctx),
-            AnyNode::StringContentText(t) => t.prepare(ctx),
             AnyNode::NamedNodePlain(t) => t.prepare(ctx),
             AnyNode::NamedNodeSupertyped(t) => t.prepare(ctx),
             AnyNode::NamedNodeGroupChildren(t) => t.prepare(ctx),
@@ -207,6 +207,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::String(t) => t.gap_edges(),
             AnyNode::ImmediateString(t) => t.gap_edges(),
             AnyNode::StringContent(t) => t.gap_edges(),
+            AnyNode::StringContentText(t) => t.gap_edges(),
             AnyNode::Parameters(t) => t.gap_edges(),
             AnyNode::Comment(t) => t.gap_edges(),
             AnyNode::List(t) => t.gap_edges(),
@@ -221,7 +222,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GroupExpressionArm(t) => t.gap_edges(),
             AnyNode::NamedNodeExpressionArm(t) => t.gap_edges(),
             AnyNode::GroupingGroup(t) => t.gap_edges(),
-            AnyNode::StringContentText(t) => t.gap_edges(),
             AnyNode::NamedNodePlain(t) => t.gap_edges(),
             AnyNode::NamedNodeSupertyped(t) => t.gap_edges(),
             AnyNode::NamedNodeGroupChildren(t) => t.gap_edges(),
@@ -265,6 +265,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::String(t) => t.snapshot_edge(),
             AnyNode::ImmediateString(t) => t.snapshot_edge(),
             AnyNode::StringContent(t) => t.snapshot_edge(),
+            AnyNode::StringContentText(t) => t.snapshot_edge(),
             AnyNode::Parameters(t) => t.snapshot_edge(),
             AnyNode::Comment(t) => t.snapshot_edge(),
             AnyNode::List(t) => t.snapshot_edge(),
@@ -279,7 +280,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GroupExpressionArm(t) => t.snapshot_edge(),
             AnyNode::NamedNodeExpressionArm(t) => t.snapshot_edge(),
             AnyNode::GroupingGroup(t) => t.snapshot_edge(),
-            AnyNode::StringContentText(t) => t.snapshot_edge(),
             AnyNode::NamedNodePlain(t) => t.snapshot_edge(),
             AnyNode::NamedNodeSupertyped(t) => t.snapshot_edge(),
             AnyNode::NamedNodeGroupChildren(t) => t.snapshot_edge(),
@@ -323,6 +323,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::String(t) => t.source_coordinate(),
             AnyNode::ImmediateString(t) => t.source_coordinate(),
             AnyNode::StringContent(t) => t.source_coordinate(),
+            AnyNode::StringContentText(t) => t.source_coordinate(),
             AnyNode::Parameters(t) => t.source_coordinate(),
             AnyNode::Comment(t) => t.source_coordinate(),
             AnyNode::List(t) => t.source_coordinate(),
@@ -337,7 +338,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GroupExpressionArm(t) => t.source_coordinate(),
             AnyNode::NamedNodeExpressionArm(t) => t.source_coordinate(),
             AnyNode::GroupingGroup(t) => t.source_coordinate(),
-            AnyNode::StringContentText(t) => t.source_coordinate(),
             AnyNode::NamedNodePlain(t) => t.source_coordinate(),
             AnyNode::NamedNodeSupertyped(t) => t.source_coordinate(),
             AnyNode::NamedNodeGroupChildren(t) => t.source_coordinate(),
@@ -381,6 +381,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::String(t) => t.source_separator(ctx),
             AnyNode::ImmediateString(t) => t.source_separator(ctx),
             AnyNode::StringContent(t) => t.source_separator(ctx),
+            AnyNode::StringContentText(t) => t.source_separator(ctx),
             AnyNode::Parameters(t) => t.source_separator(ctx),
             AnyNode::Comment(t) => t.source_separator(ctx),
             AnyNode::List(t) => t.source_separator(ctx),
@@ -395,7 +396,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::GroupExpressionArm(t) => t.source_separator(ctx),
             AnyNode::NamedNodeExpressionArm(t) => t.source_separator(ctx),
             AnyNode::GroupingGroup(t) => t.source_separator(ctx),
-            AnyNode::StringContentText(t) => t.source_separator(ctx),
             AnyNode::NamedNodePlain(t) => t.source_separator(ctx),
             AnyNode::NamedNodeSupertyped(t) => t.source_separator(ctx),
             AnyNode::NamedNodeGroupChildren(t) => t.source_separator(ctx),
@@ -1049,7 +1049,7 @@ impl ::sittir_core::view::KindOf for StringContentContentNodeSlot {
         match self {
             Self::StringContentText(inner) => inner.kind_in(kinds),
             Self::EscapeSequence(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1070,7 +1070,7 @@ impl ::sittir_core::view::KindOf for StringContentContentNodeSlotRecord<'_> {
         match self {
             Self::StringContentText(inner) => inner.kind_in(kinds),
             Self::EscapeSequence(inner) => inner.kind_in(kinds),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -1404,8 +1404,8 @@ impl ::sittir_core::prepare::Prepare for PredicatePrefixNodeSlot {
 impl ::sittir_core::view::KindOf for PredicatePrefixNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Pound => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Pound => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -2622,6 +2622,80 @@ fn prepare_string_content<N: StringContentPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::STRING_CONTENT_TEXT, text, words = 2, built_words = 2, fields = StringContentTextFields, prepare = StringContentTextPrepare, view = StringContentTextNodeRecord, prepare_fn = prepare_string_content_text)]
+pub struct StringContentTextNode {
+    #[wire(key = "$_layout")]
+    #[layout]
+    pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "$text")]
+    #[text]
+    pub text: String,
+}
+
+impl ::sittir_core::view::KindOf for StringContentTextNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for StringContentTextNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(11) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for StringContentTextNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content_text(self, w))
+    }
+}
+
+::sittir_core::records_codec! {
+impl ::sittir_core::view::KindOf for StringContentTextNodeRecord<'_> {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::render::Render for StringContentTextNodeRecord<'_> {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        ::sittir_core::arena::RecordLayout::render(StringContentTextFields::layout(self), Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content_text(self, w))
+    }
+}
+
+}
+
+impl ::sittir_core::prepare::Prepare for StringContentTextNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        prepare_string_content_text(self, &mut (), ctx)
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(cursor, ctx))
+    }
+    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
+        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
+    }
+}
+
+fn prepare_string_content_text<N: StringContentTextPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+    let mut parts = node.prepare_parts();
+    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    Ok(())
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(kind = kind::PARAMETERS, words = 3, built_words = 3, fields = ParametersFields, prepare = ParametersPrepare, view = ParametersNodeRecord, prepare_fn = prepare_parameters)]
 pub struct ParametersNode {
     #[wire(key = "$_layout")]
@@ -2721,32 +2795,32 @@ pub struct CommentNode {
 
 impl ::sittir_core::view::KindOf for CommentNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for CommentNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(11) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(12) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for CommentNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match CommentFields::verbatim(self) { Some(text) => w.text(text), None => render_comment(self, w) })
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match CommentFields::verbatim(self) { Some(text) => w.text(text), None => render_comment(self, w) })
     }
 }
 
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for CommentNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(11)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::render::Render for CommentNodeRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(CommentFields::layout(self), Some(::sittir_core::types::KindId(11)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match CommentFields::verbatim(self) { Some(text) => w.text(text), None => render_comment(self, w) })
+        ::sittir_core::arena::RecordLayout::render(CommentFields::layout(self), Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Owner, w, |w| match CommentFields::verbatim(self) { Some(text) => w.text(text), None => render_comment(self, w) })
     }
 }
 
@@ -3421,7 +3495,7 @@ impl ::sittir_core::view::KindOf for PredicateTypeEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Question => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
-            Self::Bang => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
+            Self::Bang => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -3754,80 +3828,6 @@ fn prepare_grouping_group<N: GroupingGroupPrepare + ?Sized>(node: &mut N, overla
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(58), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.group_expression, overlay, ctx)?;
-    Ok(())
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_CONTENT_TEXT, text, words = 2, built_words = 2, fields = StringContentTextFields, prepare = StringContentTextPrepare, view = StringContentTextNodeRecord, prepare_fn = prepare_string_content_text)]
-pub struct StringContentTextNode {
-    #[wire(key = "$_layout")]
-    #[layout]
-    pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "$text")]
-    #[text]
-    pub text: String,
-}
-
-impl ::sittir_core::view::KindOf for StringContentTextNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for StringContentTextNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(23) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for StringContentTextNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content_text(self, w))
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for StringContentTextNodeRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(23)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for StringContentTextNodeRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(StringContentTextFields::layout(self), Some(::sittir_core::types::KindId(23)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_string_content_text(self, w))
-    }
-}
-
-}
-
-impl ::sittir_core::prepare::Prepare for StringContentTextNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-        prepare_string_content_text(self, &mut (), ctx)
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
-    }
-    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(cursor, ctx))
-    }
-    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
-        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
-    }
-}
-
-fn prepare_string_content_text<N: StringContentTextPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
-    let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     Ok(())
 }
 
@@ -4640,7 +4640,7 @@ pub enum LbrackNode {
 
 impl ::sittir_core::view::KindOf for LbrackNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4671,7 +4671,7 @@ pub enum RbrackNode {
 
 impl ::sittir_core::view::KindOf for RbrackNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4702,7 +4702,7 @@ pub enum LparenNode {
 
 impl ::sittir_core::view::KindOf for LparenNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4733,7 +4733,7 @@ pub enum RparenNode {
 
 impl ::sittir_core::view::KindOf for RparenNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4764,7 +4764,7 @@ pub enum MissingKeywordNode {
 
 impl ::sittir_core::view::KindOf for MissingKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4826,7 +4826,7 @@ pub enum ColonNode {
 
 impl ::sittir_core::view::KindOf for ColonNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4857,7 +4857,7 @@ pub enum BangNode {
 
 impl ::sittir_core::view::KindOf for BangNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4888,7 +4888,7 @@ pub enum PoundNode {
 
 impl ::sittir_core::view::KindOf for PoundNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -4919,7 +4919,7 @@ pub enum DotNode {
 
 impl ::sittir_core::view::KindOf for DotNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -5198,7 +5198,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::GroupingGroup(t) => t.seat_target(table, ctx),
             Self::NamedNodePlain(t) => t.seat_target(table, ctx),
             Self::NamedNodeSupertyped(t) => t.seat_target(table, ctx),
-            Self::Program { .. } | Self::EscapeSequence { .. } | Self::Quantifier { .. } | Self::Identifier { .. } | Self::ImmediateIdentifier { .. } | Self::ImmediateString { .. } | Self::StringContent { .. } | Self::Parameters { .. } | Self::Comment { .. } | Self::PredicateType { .. } | Self::ListElementQuantifier { .. } | Self::GroupExpressionArm { .. } | Self::StringContentText { .. } | Self::NamedNodeGroupChildren { .. } | Self::NamedNodeGroupAnchoredLast { .. } | Self::Anchor { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Star { .. } | Self::Plus { .. } | Self::Qmark { .. } | Self::At { .. } | Self::Dquote { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::MissingKeyword { .. } | Self::Underscore { .. } | Self::Colon { .. } | Self::Bang { .. } | Self::Pound { .. } | Self::Dot { .. } | Self::Slash { .. } | Self::Verbatim { .. } => None,
+            Self::Program { .. } | Self::EscapeSequence { .. } | Self::Quantifier { .. } | Self::Identifier { .. } | Self::ImmediateIdentifier { .. } | Self::ImmediateString { .. } | Self::StringContent { .. } | Self::StringContentText { .. } | Self::Parameters { .. } | Self::Comment { .. } | Self::PredicateType { .. } | Self::ListElementQuantifier { .. } | Self::GroupExpressionArm { .. } | Self::NamedNodeGroupChildren { .. } | Self::NamedNodeGroupAnchoredLast { .. } | Self::Anchor { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Star { .. } | Self::Plus { .. } | Self::Qmark { .. } | Self::At { .. } | Self::Dquote { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::MissingKeyword { .. } | Self::Underscore { .. } | Self::Colon { .. } | Self::Bang { .. } | Self::Pound { .. } | Self::Dot { .. } | Self::Slash { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -5294,6 +5294,11 @@ fn render_string_content<N: StringContentFields + ?Sized>(node: &N, w: &mut dyn 
     };
     content.render(w)?;
     Ok(())
+}
+
+fn render_string_content_text<N: StringContentTextFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    w.leaf_kind(::sittir_core::types::KindId(11));
+    w.text(t.text())
 }
 
 fn render_parameters<N: ParametersFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -5556,11 +5561,6 @@ fn render_grouping_group<N: GroupingGroupFields + ?Sized>(node: &N, w: &mut dyn 
     Ok(())
 }
 
-fn render_string_content_text<N: StringContentTextFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    w.leaf_kind(::sittir_core::types::KindId(23));
-    w.text(t.text())
-}
-
 fn render_named_node_plain<N: NamedNodePlainFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = ListView {
         items: node.elements(),
@@ -5741,23 +5741,23 @@ fn render_dquote(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
 }
 
 fn render_lbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(12)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("["))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(13)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("["))
 }
 
 fn render_rbrack(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(13)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("]"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(14)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("]"))
 }
 
 fn render_lparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(14)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("("))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(15)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("("))
 }
 
 fn render_rparen(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(15)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(")"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(16)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(")"))
 }
 
 fn render_missing_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(16)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("MISSING"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(17)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("MISSING"))
 }
 
 fn render_underscore(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -5765,19 +5765,19 @@ fn render_underscore(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_
 }
 
 fn render_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(17)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(18)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(":"))
 }
 
 fn render_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(18)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(19)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!"))
 }
 
 fn render_pound(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(19)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("#"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("#"))
 }
 
 fn render_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(20)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("."))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(21)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("."))
 }
 
 fn render_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -5964,6 +5964,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::String(inner) => inner.kind_in(kinds),
             Self::ImmediateString(inner) => inner.kind_in(kinds),
             Self::StringContent(inner) => inner.kind_in(kinds),
+            Self::StringContentText(inner) => inner.kind_in(kinds),
             Self::Parameters(inner) => inner.kind_in(kinds),
             Self::Comment(inner) => inner.kind_in(kinds),
             Self::List(inner) => inner.kind_in(kinds),
@@ -5978,7 +5979,6 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::GroupExpressionArm(inner) => inner.kind_in(kinds),
             Self::NamedNodeExpressionArm(inner) => inner.kind_in(kinds),
             Self::GroupingGroup(inner) => inner.kind_in(kinds),
-            Self::StringContentText(inner) => inner.kind_in(kinds),
             Self::NamedNodePlain(inner) => inner.kind_in(kinds),
             Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::NamedNodeGroupChildren(inner) => inner.kind_in(kinds),
@@ -5997,16 +5997,16 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Qmark => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
             Self::At => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
             Self::Dquote => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Lbrack => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
-            Self::Rbrack => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
-            Self::Lparen => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
-            Self::Rparen => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
-            Self::MissingKeyword => [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k)),
+            Self::Lbrack => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
+            Self::Rbrack => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
+            Self::Lparen => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
+            Self::Rparen => [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k)),
+            Self::MissingKeyword => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::Colon => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
-            Self::Bang => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
-            Self::Pound => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Colon => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
+            Self::Bang => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
+            Self::Pound => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k)),
             Self::Slash => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => false,
         }
@@ -6025,6 +6025,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::String(t) => t.render(w),
             AnyNode::ImmediateString(t) => t.render(w),
             AnyNode::StringContent(t) => t.render(w),
+            AnyNode::StringContentText(t) => t.render(w),
             AnyNode::Parameters(t) => t.render(w),
             AnyNode::Comment(t) => t.render(w),
             AnyNode::List(t) => t.render(w),
@@ -6039,7 +6040,6 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::GroupExpressionArm(t) => t.render(w),
             AnyNode::NamedNodeExpressionArm(t) => t.render(w),
             AnyNode::GroupingGroup(t) => t.render(w),
-            AnyNode::StringContentText(t) => t.render(w),
             AnyNode::NamedNodePlain(t) => t.render(w),
             AnyNode::NamedNodeSupertyped(t) => t.render(w),
             AnyNode::NamedNodeGroupChildren(t) => t.render(w),
@@ -6087,6 +6087,7 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::String(inner) => inner.kind_in(kinds),
             Self::ImmediateString(inner) => inner.kind_in(kinds),
             Self::StringContent(inner) => inner.kind_in(kinds),
+            Self::StringContentText(inner) => inner.kind_in(kinds),
             Self::Parameters(inner) => inner.kind_in(kinds),
             Self::Comment(inner) => inner.kind_in(kinds),
             Self::List(inner) => inner.kind_in(kinds),
@@ -6101,7 +6102,6 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::GroupExpressionArm(inner) => inner.kind_in(kinds),
             Self::NamedNodeExpressionArm(inner) => inner.kind_in(kinds),
             Self::GroupingGroup(inner) => inner.kind_in(kinds),
-            Self::StringContentText(inner) => inner.kind_in(kinds),
             Self::NamedNodePlain(inner) => inner.kind_in(kinds),
             Self::NamedNodeSupertyped(inner) => inner.kind_in(kinds),
             Self::NamedNodeGroupChildren(inner) => inner.kind_in(kinds),
@@ -6120,16 +6120,16 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::Qmark => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
             Self::At => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
             Self::Dquote => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Lbrack => [::sittir_core::types::KindId(12)].iter().any(|k| kinds.contains(k)),
-            Self::Rbrack => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
-            Self::Lparen => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
-            Self::Rparen => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
-            Self::MissingKeyword => [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k)),
+            Self::Lbrack => [::sittir_core::types::KindId(13)].iter().any(|k| kinds.contains(k)),
+            Self::Rbrack => [::sittir_core::types::KindId(14)].iter().any(|k| kinds.contains(k)),
+            Self::Lparen => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
+            Self::Rparen => [::sittir_core::types::KindId(16)].iter().any(|k| kinds.contains(k)),
+            Self::MissingKeyword => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
-            Self::Colon => [::sittir_core::types::KindId(17)].iter().any(|k| kinds.contains(k)),
-            Self::Bang => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
-            Self::Pound => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Colon => [::sittir_core::types::KindId(18)].iter().any(|k| kinds.contains(k)),
+            Self::Bang => [::sittir_core::types::KindId(19)].iter().any(|k| kinds.contains(k)),
+            Self::Pound => [::sittir_core::types::KindId(20)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(21)].iter().any(|k| kinds.contains(k)),
             Self::Slash => [::sittir_core::types::KindId(24)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => false,
         }
@@ -6148,6 +6148,7 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::String(t) => t.render(w),
             AnyNodeRecord::ImmediateString(t) => t.render(w),
             AnyNodeRecord::StringContent(t) => t.render(w),
+            AnyNodeRecord::StringContentText(t) => t.render(w),
             AnyNodeRecord::Parameters(t) => t.render(w),
             AnyNodeRecord::Comment(t) => t.render(w),
             AnyNodeRecord::List(t) => t.render(w),
@@ -6162,7 +6163,6 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::GroupExpressionArm(t) => t.render(w),
             AnyNodeRecord::NamedNodeExpressionArm(t) => t.render(w),
             AnyNodeRecord::GroupingGroup(t) => t.render(w),
-            AnyNodeRecord::StringContentText(t) => t.render(w),
             AnyNodeRecord::NamedNodePlain(t) => t.render(w),
             AnyNodeRecord::NamedNodeSupertyped(t) => t.render(w),
             AnyNodeRecord::NamedNodeGroupChildren(t) => t.render(w),
@@ -6250,7 +6250,7 @@ const _: () = assert!(::core::mem::size_of::<StringContentNode>() <= 256, "Strin
 const _: () = assert!(::core::mem::size_of::<StringContentTextNode>() <= 256, "StringContentTextNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<StringNode>() <= 256, "StringNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, DefinitionNode, NamedNodeNode, ListElementNode, NamedNodeGroupNode, StringContentContentNodeSlot, ParametersElementsNodeSlot, MissingNodeNameNodeSlot, AnonymousNodeNameNodeSlot, PredicatePrefixNodeSlot, GroupExpressionArmLeftNodeSlot, NamedNodeExpressionArmLeftNodeSlot, NamedNodePlainNameNodeSlot, NamedNodeSupertypedNameNodeSlot, ProgramNode, EscapeSequenceNode, QuantifierEnum, IdentifierNode, ImmediateIdentifierNode, CaptureNode, StringNode, ImmediateStringNode, StringContentNode, ParametersNode, CommentNode, ListNode, GroupingNode, MissingNodeNode, AnonymousNodeNode, FieldDefinitionNode, NegatedFieldNode, PredicateNode, PredicateTypeEnum, ListElementQuantifierNode, GroupExpressionArmNode, NamedNodeExpressionArmNode, GroupingGroupNode, StringContentTextNode, AnchorNode, NamedNodePlainNode, NamedNodeSupertypedNode, NamedNodeGroupChildrenNode, NamedNodeGroupAnchoredLastNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, StarNode, PlusNode, QmarkNode, AtNode, DquoteNode, LbrackNode, RbrackNode, LparenNode, RparenNode, MissingKeywordNode, UnderscoreNode, ColonNode, BangNode, PoundNode, DotNode, SlashNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, DefinitionNode, NamedNodeNode, ListElementNode, NamedNodeGroupNode, StringContentContentNodeSlot, ParametersElementsNodeSlot, MissingNodeNameNodeSlot, AnonymousNodeNameNodeSlot, PredicatePrefixNodeSlot, GroupExpressionArmLeftNodeSlot, NamedNodeExpressionArmLeftNodeSlot, NamedNodePlainNameNodeSlot, NamedNodeSupertypedNameNodeSlot, ProgramNode, EscapeSequenceNode, QuantifierEnum, IdentifierNode, ImmediateIdentifierNode, CaptureNode, StringNode, ImmediateStringNode, StringContentNode, StringContentTextNode, ParametersNode, CommentNode, ListNode, GroupingNode, MissingNodeNode, AnonymousNodeNode, FieldDefinitionNode, NegatedFieldNode, PredicateNode, PredicateTypeEnum, ListElementQuantifierNode, GroupExpressionArmNode, NamedNodeExpressionArmNode, GroupingGroupNode, AnchorNode, NamedNodePlainNode, NamedNodeSupertypedNode, NamedNodeGroupChildrenNode, NamedNodeGroupAnchoredLastNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, StarNode, PlusNode, QmarkNode, AtNode, DquoteNode, LbrackNode, RbrackNode, LparenNode, RparenNode, MissingKeywordNode, UnderscoreNode, ColonNode, BangNode, PoundNode, DotNode, SlashNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AnchorNode>() == 0, "AnchorNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

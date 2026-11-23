@@ -2406,7 +2406,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block: arm 110 builds its text through a content slot"
+    "message": "comment.block: arm 111 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -2414,7 +2414,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line: arm 109 builds its text through a content slot"
+    "message": "comment.line: arm 110 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -3462,7 +3462,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.false: arm 71 builds through its holder"
+    "message": "literal.boolean.false: arm 72 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3470,7 +3470,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.true: arm 70 builds through its holder"
+    "message": "literal.boolean.true: arm 71 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3478,7 +3478,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.null: arm 69 builds through its holder"
+    "message": "literal.null: arm 70 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3486,7 +3486,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.float: literal.number.float's number arm 85 has no slots that spell its value"
+    "message": "literal.number.float: literal.number.float's number arm 86 has no slots that spell its value"
   },
   {
     "scope": "grammar",
@@ -3494,7 +3494,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.number.integer: arm 81 builds through its holder"
+    "message": "literal.number.integer: arm 82 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3502,7 +3502,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.escape: arm 75 builds its text through a content slot"
+    "message": "literal.string.escape: arm 76 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -3526,7 +3526,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.wildcard: arm 5 builds through its holder"
+    "message": "pattern.wildcard: arm 6 builds through its holder"
   },
   {
     "scope": "grammar",

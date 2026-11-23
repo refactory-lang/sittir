@@ -68,6 +68,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: F._leafRe_buildMultilineStringFragment,
 		factory: F.buildMultilineStringFragment
 	},
+	escape_sequence_text: { factory: (content: string) => _resolveByKind('escape_sequence_text', content) },
 	null_literal: { values: ['null'], factory: () => F.buildNullLiteral },
 	underscore_pattern: { values: ['_'], factory: () => F.buildUnderscorePattern },
 	asterisk: { values: ['*'], factory: () => F.buildAsterisk },
@@ -150,7 +151,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	escape_sequence_arm3: { factory: (content: string) => _resolveByKind('escape_sequence_arm3', content) },
 	escape_sequence_arm4: { factory: (content: string) => _resolveByKind('escape_sequence_arm4', content) },
 	escape_sequence_arm5: { factory: (content: string) => _resolveByKind('escape_sequence_arm5', content) },
-	escape_sequence_text: { factory: (content: string) => _resolveByKind('escape_sequence_text', content) },
 	_tight: { values: [''], factory: () => F.buildTight },
 	_space: { values: [' '], factory: () => F.buildSpace },
 	_tab: { values: ['\t'], factory: () => F.buildTab },
@@ -166,6 +166,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 };
 const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'character_literal',
+	'escape_sequence_text',
 	'line_comment',
 	'block_comment',
 	'decimal_floating_point_literal_arm2',
@@ -173,8 +174,7 @@ const _AFFIXED_KINDS: ReadonlySet<string> = new Set([
 	'escape_sequence_arm2',
 	'escape_sequence_arm3',
 	'escape_sequence_arm4',
-	'escape_sequence_arm5',
-	'escape_sequence_text'
+	'escape_sequence_arm5'
 ]);
 const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'hex_integer_literal',
@@ -373,62 +373,62 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'type_identifier'
 ]);
 const _KIND_ID_STORED: ReadonlySet<number> = new Set([
-	5, 6, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
-	37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65,
-	66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
-	95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 116, 132, 133, 134, 135,
-	136, 137, 138, 139, 140, 141, 142, 143, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 244, 251, 292, 293
+	5, 6, 8, 9, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+	40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68,
+	69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
+	98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 119, 135, 136, 137, 138,
+	139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 244, 251, 292, 293
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
-	decimal_floating_point_literal: new Set([119, 120, 121, 122, 123, 124]),
-	hex_floating_point_literal: new Set([125, 126]),
+	decimal_floating_point_literal: new Set([122, 123, 124, 125, 126, 127]),
+	hex_floating_point_literal: new Set([128, 129]),
 	string_interpolation: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
 	]),
-	multiline_string_literal_arm1: new Set([127, 128, 129, 130, 131, 146]),
+	multiline_string_literal_arm1: new Set([15, 130, 131, 132, 133, 134]),
 	parenthesized_expression: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
 	]),
-	class_literal: new Set([1, 99, 100, 101, 102, 103, 104, 105, 106, 107, 289, 290, 291, 292, 293, 370]),
+	class_literal: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 289, 290, 291, 292, 293, 370]),
 	object_creation_expression: new Set([186, 317]),
-	wildcard_bounds: new Set([1, 99, 100, 101, 102, 103, 104, 105, 106, 107, 288, 289, 290, 291, 292, 293, 319, 370]),
+	wildcard_bounds: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 288, 289, 290, 291, 292, 293, 319, 370]),
 	switch_label: new Set([320]),
 	pattern: new Set([203, 204]),
-	record_pattern_component: new Set([64, 321]),
+	record_pattern_component: new Set([67, 321]),
 	guard: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
 	]),
 	expression_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
 	]),
 	assert_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 322, 327, 328, 331, 332, 370
 	]),
 	break_statement: new Set([1]),
 	continue_statement: new Set([1]),
 	return_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
 	]),
 	yield_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
 	]),
 	throw_statement: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 289,
 		290, 291, 292, 293, 317, 327, 328, 331, 332, 370
 	]),
 	finally_clause: new Set([209]),
@@ -436,47 +436,47 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	resource: new Set([1, 187, 323]),
 	marker_annotation: new Set([1, 271]),
 	element_value_array_initializer: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 233,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 233,
 		234, 238, 271, 289, 290, 291, 292, 293, 310, 317, 327, 328, 331, 332, 370
 	]),
 	uses_module_directive: new Set([1, 271]),
-	superclass: new Set([1, 99, 100, 101, 102, 103, 104, 105, 106, 107, 288, 289, 290, 291, 292, 293, 370]),
+	superclass: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 288, 289, 290, 291, 292, 293, 370]),
 	super_interfaces: new Set([263]),
 	permits: new Set([263]),
 	static_initializer: new Set([209]),
 	extends_interfaces: new Set([263]),
 	array_initializer: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 285,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 285,
 		289, 290, 291, 292, 293, 314, 317, 327, 328, 331, 332, 370
 	]),
 	resources: new Set([1, 187, 227, 323]),
 	element_values: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 233,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 233,
 		234, 238, 271, 289, 290, 291, 292, 293, 310, 317, 327, 328, 331, 332, 370
 	]),
 	enum_constants: new Set([1, 255]),
 	variable_initializers: new Set([
-		1, 2, 3, 4, 5, 6, 7, 13, 99, 100, 101, 102, 103, 104, 105, 106, 107, 112, 117, 118, 119, 120, 121, 122, 123, 124,
-		125, 126, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 285,
+		1, 2, 3, 4, 5, 6, 7, 16, 102, 103, 104, 105, 106, 107, 108, 109, 110, 115, 120, 121, 122, 123, 124, 125, 126, 127,
+		128, 129, 161, 162, 171, 172, 173, 174, 175, 177, 178, 181, 183, 184, 185, 186, 187, 188, 189, 190, 192, 197, 285,
 		289, 290, 291, 292, 293, 314, 317, 327, 328, 331, 332, 370
 	]),
-	wildcard_bounds_arm: new Set([1, 99, 100, 101, 102, 103, 104, 105, 106, 107, 288, 289, 290, 291, 292, 293, 370]),
+	wildcard_bounds_arm: new Set([1, 102, 103, 104, 105, 106, 107, 108, 109, 110, 288, 289, 290, 291, 292, 293, 370]),
 	formal_parameters_receiver: new Set([298]),
 	type_identifier: new Set([1])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
-	84: ['requires_modifier'],
-	85: ['requires_modifier'],
-	99: ['integral_type'],
-	100: ['integral_type'],
-	101: ['integral_type'],
+	87: ['requires_modifier'],
+	88: ['requires_modifier'],
 	102: ['integral_type'],
 	103: ['integral_type'],
-	104: ['floating_point_type'],
-	105: ['floating_point_type']
+	104: ['integral_type'],
+	105: ['integral_type'],
+	106: ['integral_type'],
+	107: ['floating_point_type'],
+	108: ['floating_point_type']
 };
 
 function _resolveOne<T>(
@@ -1756,6 +1756,34 @@ export const coerceToMultilineStringLiteralArm1: ConfigSeat<
 			configFieldOr(input, 'content', () => input, TSKindId.MultilineStringLiteralArm1),
 			_K0,
 			_K7
+		)
+	);
+};
+
+export function resolveEscapeSequenceText_content(
+	value: T.EscapeSequenceText.LooseConfig['content']
+): Admit<T.EscapeSequenceText['_content']> {
+	return _resolveOne<string>(value, _K0, _K0);
+}
+
+export const coerceToEscapeSequenceText: ConfigSeat<
+	T.EscapeSequenceText.Loose,
+	ReturnType<typeof F.buildEscapeSequenceText>
+> = (input: T.EscapeSequenceText.Loose): ReturnType<typeof F.buildEscapeSequenceText> => {
+	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceText>;
+	return F.buildEscapeSequenceText(
+		_resolveOne<string>(
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string'
+						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceText_content)
+						: input,
+				TSKindId.EscapeSequenceText
+			),
+			_K0,
+			_K0
 		)
 	);
 };
@@ -6653,34 +6681,6 @@ export const coerceToForStatementArm: Seat<T.ForStatementArm.LooseArgs, ReturnTy
 	);
 };
 
-export function resolveEscapeSequenceText_content(
-	value: T.EscapeSequenceText.LooseConfig['content']
-): Admit<T.EscapeSequenceText['_content']> {
-	return _resolveOne<string>(value, _K0, _K0);
-}
-
-export const coerceToEscapeSequenceText: ConfigSeat<
-	T.EscapeSequenceText.Loose,
-	ReturnType<typeof F.buildEscapeSequenceText>
-> = (input: T.EscapeSequenceText.Loose): ReturnType<typeof F.buildEscapeSequenceText> => {
-	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceText>;
-	return F.buildEscapeSequenceText(
-		_resolveOne<string>(
-			configFieldOr(
-				input,
-				'content',
-				() =>
-					typeof input === 'string'
-						? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequenceText_content)
-						: input,
-				TSKindId.EscapeSequenceText
-			),
-			_K0,
-			_K0
-		)
-	);
-};
-
 export function resolveFormalParametersReceiver_receiverParameter(
 	value: T.FormalParametersReceiver.LooseConfig['receiverParameter']
 ): Admit<T.FormalParametersReceiver['_receiver_parameter']> {
@@ -6960,6 +6960,7 @@ export interface _FromMap {
 	readonly multiline_string_fragment: typeof coerceToMultilineStringFragment;
 	readonly string_interpolation: typeof coerceToStringInterpolation;
 	readonly multiline_string_literal_arm1: typeof coerceToMultilineStringLiteralArm1;
+	readonly escape_sequence_text: typeof coerceToEscapeSequenceText;
 	readonly null_literal: typeof coerceToNullLiteral;
 	readonly cast_expression: typeof coerceToCastExpression;
 	readonly assignment_expression: typeof coerceToAssignmentExpression;
@@ -7115,7 +7116,6 @@ export interface _FromMap {
 	readonly assert_statement_arm: typeof coerceToAssertStatementArm;
 	readonly resource_arm: typeof coerceToResourceArm;
 	readonly for_statement_arm: typeof coerceToForStatementArm;
-	readonly escape_sequence_text: typeof coerceToEscapeSequenceText;
 	readonly formal_parameters_receiver: typeof coerceToFormalParametersReceiver;
 	readonly formal_parameters_list: typeof coerceToFormalParametersList;
 	readonly string_literal_line: typeof coerceToStringLiteralLine;
@@ -7148,6 +7148,7 @@ export const _fromMap: _FromMap = {
 	multiline_string_fragment: coerceToMultilineStringFragment,
 	string_interpolation: coerceToStringInterpolation,
 	multiline_string_literal_arm1: coerceToMultilineStringLiteralArm1,
+	escape_sequence_text: coerceToEscapeSequenceText,
 	null_literal: coerceToNullLiteral,
 	cast_expression: coerceToCastExpression,
 	assignment_expression: coerceToAssignmentExpression,
@@ -7303,7 +7304,6 @@ export const _fromMap: _FromMap = {
 	assert_statement_arm: coerceToAssertStatementArm,
 	resource_arm: coerceToResourceArm,
 	for_statement_arm: coerceToForStatementArm,
-	escape_sequence_text: coerceToEscapeSequenceText,
 	formal_parameters_receiver: coerceToFormalParametersReceiver,
 	formal_parameters_list: coerceToFormalParametersList,
 	string_literal_line: coerceToStringLiteralLine,

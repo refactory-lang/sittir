@@ -418,6 +418,29 @@ function buildStringContent$with$contents(this: Received<Held>, ...args: unknown
 	return buildStringContent$with(receiverOf(this, '$with.contents'), 'contents', args);
 }
 
+export function buildStringContentText(text: string): T.StringContentText.Bound {
+	if (typeof text !== 'string') throw new Error(`string_content_text: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
+	if (!_leafRe_buildStringContentText.test(text))
+		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.StringContentText as const,
+		$_layout: undefined,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.StringContentText.Bound;
+}
+
 export function buildParameters<A extends NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Parameters.Bound;
@@ -1168,29 +1191,6 @@ function buildGroupingGroup$with$anchor(this: Received<Held>, ...args: unknown[]
 	return buildGroupingGroup$with(receiverOf(this, '$with.anchor'), 'anchor', args);
 }
 
-export function buildStringContentText(text: string): T.StringContentText.Bound {
-	if (typeof text !== 'string') throw new Error(`string_content_text: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_content_text: text must be non-empty`);
-	if (!_leafRe_buildStringContentText.test(text))
-		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.StringContentText as const,
-		$_layout: undefined,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.StringContentText.Bound;
-}
-
 export const buildAnchor: TSKindId.Anchor = TSKindId.Anchor;
 
 export function buildNamedNodePlain<
@@ -1563,6 +1563,7 @@ export type FluentKindMap = {
 	string: T.String.Bound;
 	immediate_string: T.ImmediateString.Bound;
 	string_content: T.StringContent.Bound;
+	string_content_text: T.StringContentText;
 	parameters: T.Parameters.Bound;
 	comment: T.Comment.Bound;
 	list: T.List.Bound;
@@ -1576,7 +1577,6 @@ export type FluentKindMap = {
 	group_expression_arm: T.GroupExpressionArm.Bound;
 	named_node_expression_arm: T.NamedNodeExpressionArm.Bound;
 	grouping_group: T.GroupingGroup.Bound;
-	string_content_text: T.StringContentText;
 	anchor: T.Anchor;
 	named_node_plain: T.NamedNodePlain.Bound;
 	named_node_supertyped: T.NamedNodeSupertyped.Bound;
@@ -1601,6 +1601,7 @@ export const _factoryMap = {
 	string: buildString,
 	immediate_string: buildImmediateString,
 	string_content: buildStringContent,
+	string_content_text: buildStringContentText,
 	parameters: buildParameters,
 	comment: buildComment,
 	list: buildList,
@@ -1614,7 +1615,6 @@ export const _factoryMap = {
 	group_expression_arm: buildGroupExpressionArm,
 	named_node_expression_arm: buildNamedNodeExpressionArm,
 	grouping_group: buildGroupingGroup,
-	string_content_text: buildStringContentText,
 	anchor: buildAnchor,
 	named_node_plain: buildNamedNodePlain,
 	named_node_supertyped: buildNamedNodeSupertyped,
