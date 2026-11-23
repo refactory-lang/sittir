@@ -15,6 +15,7 @@ The maintainer's direction: "maybe we should implement a shared rule library, (s
 - **Seeded from the grammars already mined** ("We already mined the other upstream grammars"): typescript, rust and python on master, and C, C#, Go and Java on `author/csharp-fields`.
 - **The first version is a seed report and our own rules moved in** ("Seed report and migrate ours"). The branch's grammars adopt later.
 - **The four grammars land on a new branch** stacked on the body PR, in the design worktree ("New branch, same worktree"); the body PR stays as reviewed.
+- **The four grammars land on master as unstable** (the maintainer, 2026-11-23: "You can land those on master", "The extra grammars - just mark them unstable"). An unstable grammar's `package.json` does not set `"sittir": { "stable": true }`, so it is outside `stableGrammars()` and the default gates.
 - **A library rule is used as written** ("in theory we shouldn't have to compose rules from the library using our transformations - if written correctly, Java/c/c# should be able to reuse identical counted for declarations"). An adopting grammar takes the rule unchanged: no translation, no edit, no per-language variant.
 - **The goal is correct lexing and parsing** ("The goal is perhaps correct lexing and parsing not identical parsing/minimal changes to the upstream"). A library rule is written to the language's own grammar, its lexical grammar included, not to stay close to upstream. Differing from upstream is expected wherever upstream is wrong; parsing as upstream does is not a measure of a library rule.
 - **Kind renames reach the parser** ("Kind renames reach the parser"), replacing the 2026-10-10 ruling that low-level kind names stay upstream's. Every kind the bindings claim takes its converged name in the parser, as field names already do, so a library rule's references resolve in every grammar and a kind has one name at every level. A rename onto an existing kind is still a merge and still refused.
@@ -33,7 +34,7 @@ Rulings this builds on, from the same day: a portable path is defined by its slo
 
 ## Non-goals (first version)
 
-- C, C#, Go and Java adopting library rules, or landing on master. They feed the seed report only.
+- C, C#, Go and Java adopting library rules. They feed the seed report, and land on master unstable.
 - Publishing. The library is a package boundary from the start, so publishing later is packaging.
 - External scanners. A fix that needs a scanner change waits for upstream, as the grammar-acceptance plan already rules.
 
