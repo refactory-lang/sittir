@@ -531,6 +531,24 @@ Run pre-codegen grammar diagnostics
 pnpm exec tsx packages/cli/src/cli.ts tool grammar-diagnostics [options]
 ```
 
+### `tool grammar-rule`
+
+Print one rule of a grammar.json compactly: seq, choice, opt, repeat, field, alias
+
+**Arguments**
+
+- `kind` (required) — Rule name in the grammar.json
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool grammar-rule <kind> [options]
+```
+
 ### `tool hoist-census`
 
 List every holder slot that reads through a wrapper, grouped by wrapper chain

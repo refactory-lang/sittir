@@ -123,6 +123,7 @@ export { recordTestRun, recordFromReport, formatReport as formatTestRunReport } 
 export type { TestRunResult, VitestJsonReport } from './scripts/record-test-run.ts';
 export { run as testFailures, type TestFailuresOptions } from './scripts/test-failures.ts';
 export { run as testDurations, type TestDurationsOptions } from './scripts/test-durations.ts';
+export { run as grammarRule, type GrammarRuleOptions } from './scripts/grammar-rule.ts';
 
 export {
 	runCountsCli,

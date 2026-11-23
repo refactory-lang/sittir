@@ -25,6 +25,7 @@ import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
 import { glossaryKeys } from './glossary-keys.ts';
 import { grammarDiagnostics } from './grammar-diagnostics.ts';
+import { grammarRule } from './grammar-rule.ts';
 import { hoistCensus } from './hoist-census.ts';
 import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
@@ -84,6 +85,7 @@ export const toolModules: readonly CommandModule[] = [
 	fieldProvenance,
 	glossaryKeys,
 	grammarDiagnostics,
+	grammarRule,
 	hoistCensus,
 	hoistedCensus,
 	inspectRefs,

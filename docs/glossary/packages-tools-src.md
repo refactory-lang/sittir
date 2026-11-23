@@ -517,3 +517,23 @@ Builds the duration summary of a parsed vitest JSON report. A file's duration is
 ### `packages/tools/src/scripts/test-durations.ts::run`
 
 Reads the vitest JSON report and prints its per-file durations, the slowest tests and the worker-seconds, as text or JSON. Returns 0 when the report was summarized. Returns 1, printing the reason to stderr, when the report cannot be read, is not a vitest report, or lacks the timing a duration needs.
+
+### `packages/tools/src/scripts/grammar-rule.ts::GrammarRuleOptions`
+
+Options for `run`: the grammar whose `.sittir/src/grammar.json` is read, and the rule name to print.
+
+### `packages/tools/src/scripts/grammar-rule.ts::GrammarJsonRule`
+
+One rule node of a tree-sitter grammar.json: its `type` and the fields that type carries (`name` for a symbol or field, `value` for a string, pattern, alias or precedence, `named` for an alias, `content` for a wrapper, `members` for a sequence or choice).
+
+### `packages/tools/src/scripts/grammar-rule.ts::formatRule`
+
+Prints one grammar.json rule in compact form: `seq(...)`, `choice(...)`, `opt(x)` for a choice of one rule and a blank, `repeat`, `repeat1`, `field(name, x)`, `alias(x, name)` for a named alias or `alias(x, "text")` otherwise, `token`, `immediate_token`, `prec(n, x)` with `prec.left`, `prec.right` and `prec.dynamic` for the variants, symbols by name, strings quoted and patterns between slashes. Throws on a rule type it does not know, so a grammar that gains a new rule type is refused rather than printed wrongly.
+
+### `packages/tools/src/scripts/grammar-rule.ts::grammarRule`
+
+Reads the grammar.json at a path and returns the named rule in compact form. Throws, naming the kind and the path, when the grammar has no rule of that name.
+
+### `packages/tools/src/scripts/grammar-rule.ts::run`
+
+Prints one rule of `packages/<grammar>/.sittir/src/grammar.json` in compact form. Returns 0 when the rule was printed. Returns 1, printing the reason to stderr, when the grammar.json cannot be read, has no rule of that name, or holds a rule type the printer does not know.
