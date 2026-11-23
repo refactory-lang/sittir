@@ -1,3 +1,4 @@
+import { isBlankVariantName } from '../../codegen/src/dsl/primitives/variant.ts';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -115,7 +116,7 @@ async function censusOf(grammar: string): Promise<Census> {
 	const hopsOfKind = (kind: string): Hop[] => {
 		const parent = flatByKind.get(kind);
 		if (parent) {
-			return parent.variants.map((v: any) => ({
+			return parent.variants.filter((v: any) => !isBlankVariantName(v.name)).map((v: any) => ({
 				name: v.name,
 				child: v.nestedParentKey !== undefined ? (flatByKey.get(v.nestedParentKey) as any).node.kind : v.child.kind,
 				seated: false

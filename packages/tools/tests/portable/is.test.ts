@@ -837,7 +837,7 @@ describe('portable is: each kind under its neutral name', () => {
 			['for (const x of y) {}\n', 'for_in_statement', 'statement.loop.for_each'],
 			['f(...a);\n', 'spread_element', 'element.spread'],
 			['new A();\n', 'new_expression', 'expression.call.construct'],
-			['a ?? b;\n', 'binary_expression', 'expression.binary.coalesce'],
+			['a ?? b;\n', 'binary_expression_default', 'expression.binary.coalesce'],
 			['a ??= b;\n', 'augmented_assignment_expression', 'expression.assignment.compound.coalesce']
 		]
 	} as const;
