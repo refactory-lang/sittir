@@ -303,16 +303,18 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - `edge_levels` identifies the coordinate's node by its index, not `kid.span() != coord.span`.
 
 - [ ] **Step 1: Write the failing tests.**
-  - `edge_levels_agree_from_render_bodies`: for every parsed node and side in `read_fixtures`, the `EdgeLevel` sequence of the `All` tree equals the `SlotContent` tree's.
+  - `edge_levels_agree_from_render_bodies`: for every parsed node and side in `read_fixtures`, the `EdgeLevel` sequence of the `All` tree equals the `SlotContent` tree's, except a chain that ends in a list's separator whose source token is not the list's resolved separator. The test lists those chains by grammar and counts them.
   - `edge_levels_at_a_zero_width_fixed_token_agree`: python `with_layout` and typescript `with_layout`, same assertion.
+  - `a_listed_edge_chain_renders_the_same_bytes`: for every fixture holding a listed chain, the rendered bytes equal the `All` tree's, on both storages.
 - [ ] **Step 2: Run them.** Run `PARITY edge_levels`. Expected: FAIL, the `SlotContent` tree stops at a slot child.
 - [ ] **Step 3: Implement the record-level walk.** At a record level the walk reads `shape.edges[side]` in order:
   - `Token(kind)` yields a level of that kind with field `None`, and the walk stops;
   - `Slot(Cell(i))` that is present descends into it (a record, a row, or a unit, which yields its kind and stops), `Slot(Flag { .. })` that is set yields its `kind` and stops, and an absent one goes to the next part;
-  - `Guarded { slot, token }` yields `token` when `slot` is present.
+  - `Guarded { slot, token }` yields `token` when `slot` is present;
+  - a list whose `delimiter` holds this side's flag yields its resolved separator, `SideSlot::separator` or else the arm of the options the tree was read with, and the walk stops. Without the flag the walk goes on to the list's edge item. No new field is stored.
 
   At a row level the walk stays positional.
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `validate:history` is unchanged.
+- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `validate:history` is unchanged. If any rendered byte moves, stop and report the case with its source: it goes to the maintainer.
 - [ ] **Step 5: Commit:** `feat(core): a record's edge levels come from its body's edge parts`.
 
 ### Task 6: Navigation lists units from cells
