@@ -48,7 +48,7 @@ That alone does not keep master green. CI's "Regenerate every grammar" step runs
 - Kind renames reach the parser; a rename onto an existing kind is a merge and is refused.
 - `boundKindName` is the naming contract; the vocabulary is the one source of a path's slots and flags.
 - The grammar runs twice: everything a grammar imports, the library included, is erasable TypeScript in plain tree-sitter syntax.
-- No scanner patches, no fork pins. Every authored rule declares its cause, with witnesses where the cause takes them.
+- No fork pins, and a scanner upstream ships is not edited. A grammar may add a scanner (the spec's Constraints). Every authored rule declares its cause, with witnesses where the cause takes them.
 - Generated outputs are never hand-edited. Ratchets only tighten. No new terms; "library rule" is the word.
 - Three-way verification before every commit that can change what the pipeline reads, renders, parses or validates: targeted probes, `sittir validate history` across every grammar with numbers compared, the full suite plus the cargo workspace (`cargo test --workspace --no-default-features --features sittir-parity-tests/arena` as well).
 - Every API change runs by the user through brainstorm, except a binding-driven rename, which is listed with the PR's public changes. No merges without the user's word.

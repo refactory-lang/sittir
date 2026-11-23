@@ -92,7 +92,7 @@ The counted `for` loop, as an example: one rule for typescript, javascript, C, C
 ## Constraints
 
 - The grammar runs twice: tree-sitter's CLI loads the layer through `.sittir/grammar.js`, and sittir's `evaluate()` runs its own DSL. A library rule is plain tree-sitter grammar syntax in erasable TypeScript, so both run it.
-- No scanner patches and no fork pins.
+- No fork pins. A grammar may add an external scanner, preferably one shared across grammars (the maintainer, 2026-11-23: "i don't mind adding a scanner.... btw.... especially if we can implement a shared scanner"). A scanner upstream ships is not edited.
 - Every authored rule declares its cause, with witnesses where the cause takes them (the grammar-acceptance plan's rule). A library rule that is a fix keeps the cause and witnesses the reauthoring had.
 - Generated outputs are never edited by hand; ratchets only tighten.
 - No new terms: "library rule" is the maintainer's word; a library rule's identity is its path.
