@@ -1070,13 +1070,13 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.else.statements', value);
 		case 'literal.string.c':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('clause.else.statements', value);
 		case 'literal.string.raw':
@@ -1560,13 +1560,13 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.else.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.else.trailingExpression', value);
 		case 'literal.string.raw':
@@ -1963,13 +1963,13 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('clause.let.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.pattern', value);
 		case 'literal.string.raw':
@@ -2417,13 +2417,13 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.let.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.value', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.value', value);
 		case 'literal.string.raw':
@@ -2876,13 +2876,13 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.chain.left', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.chain.left', value);
 		case 'literal.string.raw':
@@ -3331,13 +3331,13 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.chain.rights', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.chain.rights', value);
 		case 'literal.string.raw':
@@ -4342,13 +4342,13 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.constant.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.constant.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.constant.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.constant.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.constant.value', value);
 		case 'literal.string.raw':
@@ -5045,13 +5045,13 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.string.raw':
@@ -6346,13 +6346,13 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.parameter.variadic.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.parameter.variadic.pattern', value);
 		case 'literal.string.raw':
@@ -7053,13 +7053,13 @@ const declaration_type_parameter_value$220_default = (value: declaration_type_pa
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.type_parameter.value.default', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.type_parameter.value.default', value);
 		case 'literal.string.raw':
@@ -7983,13 +7983,13 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.raw':
@@ -8194,13 +8194,13 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.name', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.variable.name', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.variable.name', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.variable.name', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.variable.name', value);
 		case 'literal.string.raw':
@@ -8810,13 +8810,13 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.raw':
@@ -9273,13 +9273,13 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('element.attributed.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('element.attributed.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.attributed.value', value);
 		case 'literal.string.c':
-			return unbuilt('element.attributed.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('element.attributed.value', value);
 		case 'literal.string.raw':
@@ -9867,13 +9867,13 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		case 'literal.string.raw':
@@ -10358,13 +10358,13 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		case 'literal.string.raw':
@@ -10800,13 +10800,13 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.raw':
@@ -11242,13 +11242,13 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.raw':
@@ -11684,13 +11684,13 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.raw':
@@ -12126,13 +12126,13 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		case 'literal.string.raw':
@@ -12568,13 +12568,13 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		case 'literal.string.raw':
@@ -13003,13 +13003,13 @@ const element_macro_token_tree_delimited$411_tokens = (value: element_macro_toke
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.raw':
@@ -13438,13 +13438,13 @@ const element_macro_token_tree_delimited$412_tokens = (value: element_macro_toke
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.raw':
@@ -13873,13 +13873,13 @@ const element_macro_token_tree_delimited$413_tokens = (value: element_macro_toke
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.raw':
@@ -14310,13 +14310,13 @@ const element_macro_token_tree_delimited_brace$413_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
 		case 'literal.string.raw':
@@ -14747,13 +14747,13 @@ const element_macro_token_tree_delimited_bracket$412_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
 		case 'literal.string.raw':
@@ -15184,13 +15184,13 @@ const element_macro_token_tree_delimited_paren$411_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
 		case 'literal.string.raw':
@@ -15626,13 +15626,13 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		case 'literal.string.raw':
@@ -16072,13 +16072,13 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.raw':
@@ -16518,13 +16518,13 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.raw':
@@ -16964,13 +16964,13 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.raw':
@@ -17412,13 +17412,13 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		case 'literal.string.raw':
@@ -17860,13 +17860,13 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		case 'literal.string.raw':
@@ -18308,13 +18308,13 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 		case 'literal.string.raw':
@@ -18731,13 +18731,13 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('element.struct.base.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('element.struct.base.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.struct.base.value', value);
 		case 'literal.string.c':
-			return unbuilt('element.struct.base.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('element.struct.base.value', value);
 		case 'literal.string.raw':
@@ -19290,13 +19290,13 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('element.struct.field.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('element.struct.field.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.struct.field.value', value);
 		case 'literal.string.c':
-			return unbuilt('element.struct.field.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('element.struct.field.value', value);
 		case 'literal.string.raw':
@@ -19941,13 +19941,13 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.left', value);
 		case 'literal.string.raw':
@@ -20392,13 +20392,13 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.right', value);
 		case 'literal.string.raw':
@@ -20843,13 +20843,13 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.string.raw':
@@ -21294,13 +21294,13 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.string.raw':
@@ -21747,13 +21747,13 @@ const expression_assignment_compound_bitwise_and$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.string.raw':
@@ -22200,13 +22200,13 @@ const expression_assignment_compound_bitwise_and$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.string.raw':
@@ -22653,13 +22653,13 @@ const expression_assignment_compound_bitwise_or$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.string.raw':
@@ -23106,13 +23106,13 @@ const expression_assignment_compound_bitwise_or$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.string.raw':
@@ -23559,13 +23559,13 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.string.raw':
@@ -24012,13 +24012,13 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.string.raw':
@@ -24463,13 +24463,13 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.string.raw':
@@ -24916,13 +24916,13 @@ const expression_assignment_compound_divide$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.string.raw':
@@ -25367,13 +25367,13 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.string.raw':
@@ -25820,13 +25820,13 @@ const expression_assignment_compound_modulo$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.string.raw':
@@ -26273,13 +26273,13 @@ const expression_assignment_compound_multiply$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.string.raw':
@@ -26726,13 +26726,13 @@ const expression_assignment_compound_multiply$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.string.raw':
@@ -27179,13 +27179,13 @@ const expression_assignment_compound_shift_left$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.string.raw':
@@ -27632,13 +27632,13 @@ const expression_assignment_compound_shift_left$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.string.raw':
@@ -28085,13 +28085,13 @@ const expression_assignment_compound_shift_right$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.string.raw':
@@ -28538,13 +28538,13 @@ const expression_assignment_compound_shift_right$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.string.raw':
@@ -28991,13 +28991,13 @@ const expression_assignment_compound_subtract$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.string.raw':
@@ -29444,13 +29444,13 @@ const expression_assignment_compound_subtract$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.string.raw':
@@ -29895,13 +29895,13 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.await.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.await.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.await.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.await.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.await.expression', value);
 		case 'literal.string.raw':
@@ -30346,13 +30346,13 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.string.raw':
@@ -30797,13 +30797,13 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.string.raw':
@@ -31248,13 +31248,13 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.string.raw':
@@ -31699,13 +31699,13 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.string.raw':
@@ -32150,13 +32150,13 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.string.raw':
@@ -32601,13 +32601,13 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.string.raw':
@@ -33052,13 +33052,13 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.string.raw':
@@ -33505,13 +33505,13 @@ const expression_binary_arithmetic_multiply$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.string.raw':
@@ -33956,13 +33956,13 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.string.raw':
@@ -34409,13 +34409,13 @@ const expression_binary_arithmetic_subtract$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.string.raw':
@@ -34860,13 +34860,13 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.string.raw':
@@ -35311,13 +35311,13 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.string.raw':
@@ -35762,13 +35762,13 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.string.raw':
@@ -36213,13 +36213,13 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.string.raw':
@@ -36664,13 +36664,13 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.string.raw':
@@ -37115,13 +37115,13 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.string.raw':
@@ -37566,13 +37566,13 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.string.raw':
@@ -38017,13 +38017,13 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.string.raw':
@@ -38468,13 +38468,13 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.string.raw':
@@ -38919,13 +38919,13 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.string.raw':
@@ -39372,13 +39372,13 @@ const expression_binary_comparison_greater_equal$270_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.string.raw':
@@ -39825,13 +39825,13 @@ const expression_binary_comparison_greater_equal$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.string.raw':
@@ -40276,13 +40276,13 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.string.raw':
@@ -40727,13 +40727,13 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.string.raw':
@@ -41180,13 +41180,13 @@ const expression_binary_comparison_less_equal$270_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.string.raw':
@@ -41633,13 +41633,13 @@ const expression_binary_comparison_less_equal$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.string.raw':
@@ -42086,13 +42086,13 @@ const expression_binary_comparison_not_equal$270_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.string.raw':
@@ -42539,13 +42539,13 @@ const expression_binary_comparison_not_equal$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.string.raw':
@@ -42990,13 +42990,13 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.string.raw':
@@ -43441,13 +43441,13 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.string.raw':
@@ -43892,13 +43892,13 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.string.raw':
@@ -44343,13 +44343,13 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.string.raw':
@@ -44794,13 +44794,13 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'literal.string.raw':
@@ -45245,13 +45245,13 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'literal.string.raw':
@@ -45696,13 +45696,13 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'literal.string.raw':
@@ -46147,13 +46147,13 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'literal.string.raw':
@@ -46654,13 +46654,13 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.cast.conversion.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.cast.conversion.expression', value);
 		case 'literal.string.raw':
@@ -47271,13 +47271,13 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'literal.string.raw':
@@ -47722,13 +47722,13 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.list.repeat.element', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.list.repeat.element', value);
 		case 'literal.string.raw':
@@ -48173,13 +48173,13 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.list.repeat.length', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.list.repeat.length', value);
 		case 'literal.string.raw':
@@ -48684,13 +48684,13 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'literal.string.raw':
@@ -49780,13 +49780,13 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.raw':
@@ -50255,13 +50255,13 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.raw':
@@ -50707,13 +50707,13 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.lambda.body', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.body', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.body', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.string.raw':
@@ -51591,13 +51591,13 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.raw':
@@ -52066,13 +52066,13 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.raw':
@@ -52517,13 +52517,13 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.member.object', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.member.object', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.member.object', value);
 		case 'literal.string.c':
-			return unbuilt('expression.member.object', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.member.object', value);
 		case 'literal.string.raw':
@@ -53011,13 +53011,13 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.string.raw':
@@ -53462,13 +53462,13 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.propagate.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.propagate.argument', value);
 		case 'literal.string.raw':
@@ -53913,13 +53913,13 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.start', value);
 		case 'literal.string.raw':
@@ -54364,13 +54364,13 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.end', value);
 		case 'literal.string.raw':
@@ -54815,13 +54815,13 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.raw':
@@ -55266,13 +55266,13 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.raw':
@@ -55717,13 +55717,13 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.raw':
@@ -56168,13 +56168,13 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.raw':
@@ -56619,13 +56619,13 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.end', value);
 		case 'literal.string.raw':
@@ -57070,13 +57070,13 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.start', value);
 		case 'literal.string.raw':
@@ -57521,13 +57521,13 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.legacy.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.legacy.end', value);
 		case 'literal.string.raw':
@@ -57972,13 +57972,13 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.legacy.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.legacy.start', value);
 		case 'literal.string.raw':
@@ -58423,13 +58423,13 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -58874,13 +58874,13 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -59325,13 +59325,13 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -59776,13 +59776,13 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -60227,13 +60227,13 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.subscript.index', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.subscript.index', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.subscript.index', value);
 		case 'literal.string.c':
-			return unbuilt('expression.subscript.index', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.subscript.index', value);
 		case 'literal.string.raw':
@@ -60678,13 +60678,13 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.subscript.object', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.subscript.object', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.subscript.object', value);
 		case 'literal.string.c':
-			return unbuilt('expression.subscript.object', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.subscript.object', value);
 		case 'literal.string.raw':
@@ -61129,13 +61129,13 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.unary.deref.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.unary.deref.argument', value);
 		case 'literal.string.raw':
@@ -61580,13 +61580,13 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'literal.string.raw':
@@ -62031,13 +62031,13 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'literal.string.raw':
@@ -62482,13 +62482,13 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.yield.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.yield.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.yield.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.yield.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.yield.expression', value);
 		case 'literal.string.raw':
@@ -63042,6 +63042,126 @@ const literal_number_negative$330_value = (value: literal_number_negative$330_va
 			return unbuilt('literal.number.negative.value', value);
 	}
 };
+type literal_string$332_elements$Item =
+	| Text<RustMap, 'literal.string.text'>
+	| BuildInput<RustMap, 'literal.string.escape'>
+	| RustMap['nodes']['literal.string.escape']
+	| BuildInput<RustMap, 'literal.string.text'>
+	| RustMap['nodes']['literal.string.text'];
+const literal_string$332_elements = (value: literal_string$332_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^"\\]+))$/u.test(value)) return b.stringContent(value);
+		return b.stringContent(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$151(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$154(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$153(value);
+			return literal_string_escape$152(value);
+		case 'literal.string.text':
+			return literal_string_text$157(value);
+		default:
+			return unbuilt('literal.string.elements', value);
+	}
+};
+type literal_string_bytes$332_elements$Item =
+	| Text<RustMap, 'literal.string.text'>
+	| BuildInput<RustMap, 'literal.string.escape'>
+	| RustMap['nodes']['literal.string.escape']
+	| BuildInput<RustMap, 'literal.string.text'>
+	| RustMap['nodes']['literal.string.text'];
+const literal_string_bytes$332_elements = (value: literal_string_bytes$332_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^"\\]+))$/u.test(value)) return b.stringContent(value);
+		return b.stringContent(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.bytes.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.bytes.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$151(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$154(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$153(value);
+			return literal_string_escape$152(value);
+		case 'literal.string.text':
+			return literal_string_text$157(value);
+		default:
+			return unbuilt('literal.string.bytes.elements', value);
+	}
+};
+type literal_string_c$332_elements$Item =
+	| Text<RustMap, 'literal.string.text'>
+	| BuildInput<RustMap, 'literal.string.escape'>
+	| RustMap['nodes']['literal.string.escape']
+	| BuildInput<RustMap, 'literal.string.text'>
+	| RustMap['nodes']['literal.string.text'];
+const literal_string_c$332_elements = (value: literal_string_c$332_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^"\\]+))$/u.test(value)) return b.stringContent(value);
+		return b.stringContent(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.c.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.c.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$151(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$154(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$153(value);
+			return literal_string_escape$152(value);
+		case 'literal.string.text':
+			return literal_string_text$157(value);
+		default:
+			return unbuilt('literal.string.c.elements', value);
+	}
+};
 type modifier_extern$234_abi$Item =
 	| BuildInput<RustMap, 'literal.string'>
 	| RustMap['nodes']['literal.string']
@@ -63060,11 +63180,11 @@ const modifier_extern$234_abi = (value: modifier_extern$234_abi$Item) => {
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return unbuilt('modifier.extern.abi', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('modifier.extern.abi', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.c':
-			return unbuilt('modifier.extern.abi', value);
+			return literal_string_c$332(value);
 		default:
 			return unbuilt('modifier.extern.abi', value);
 	}
@@ -63247,13 +63367,13 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.string.raw':
@@ -63490,13 +63610,13 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.list.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.list.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.list.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.string.raw':
@@ -63690,13 +63810,13 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.mutable.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.mutable.pattern', value);
 		case 'literal.string.raw':
@@ -63890,13 +64010,13 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string.raw':
@@ -64090,13 +64210,13 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.raw':
@@ -64290,13 +64410,13 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.raw':
@@ -64465,13 +64585,13 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.range.exclusive.right', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.range.exclusive.right', value);
 		case 'literal.string.raw':
@@ -64609,13 +64729,13 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.range.inclusive.right', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.range.inclusive.right', value);
 		case 'literal.string.raw':
@@ -64778,13 +64898,13 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.reference.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.reference.pattern', value);
 		case 'literal.string.raw':
@@ -64978,13 +65098,13 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.reference.value.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.reference.value.pattern', value);
 		case 'literal.string.raw':
@@ -65285,13 +65405,13 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string.raw':
@@ -65485,13 +65605,13 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.struct.tuple.fields', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.struct.tuple.fields', value);
 		case 'literal.string.raw':
@@ -65745,13 +65865,13 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.string.raw':
@@ -66589,13 +66709,13 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.raw':
@@ -67064,13 +67184,13 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.trailingExpression', value);
 		case 'literal.string.raw':
@@ -67893,13 +68013,13 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.async.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.async.statements', value);
 		case 'literal.string.raw':
@@ -68368,13 +68488,13 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.async.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.async.trailingExpression', value);
 		case 'literal.string.raw':
@@ -69197,13 +69317,13 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.const.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.const.statements', value);
 		case 'literal.string.raw':
@@ -69672,13 +69792,13 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.const.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.const.trailingExpression', value);
 		case 'literal.string.raw':
@@ -70501,13 +70621,13 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.generator.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.generator.statements', value);
 		case 'literal.string.raw':
@@ -70978,13 +71098,13 @@ const statement_block_generator$311_trailingExpression = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.generator.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.generator.trailingExpression', value);
 		case 'literal.string.raw':
@@ -71807,13 +71927,13 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.try.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.try.statements', value);
 		case 'literal.string.raw':
@@ -72282,13 +72402,13 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.try.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.try.trailingExpression', value);
 		case 'literal.string.raw':
@@ -73111,13 +73231,13 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.unsafe.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.unsafe.statements', value);
 		case 'literal.string.raw':
@@ -73586,13 +73706,13 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.unsafe.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.unsafe.trailingExpression', value);
 		case 'literal.string.raw':
@@ -74037,13 +74157,13 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.break.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.break.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.break.expression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.break.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.break.expression', value);
 		case 'literal.string.raw':
@@ -74532,13 +74652,13 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.if.condition', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.if.condition', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.if.condition', value);
 		case 'literal.string.c':
-			return unbuilt('statement.if.condition', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.if.condition', value);
 		case 'literal.string.raw':
@@ -75361,13 +75481,13 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.if.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.if.statements', value);
 		case 'literal.string.raw':
@@ -75836,13 +75956,13 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.if.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.if.trailingExpression', value);
 		case 'literal.string.raw':
@@ -76787,13 +76907,13 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.statements', value);
 		case 'literal.string.raw':
@@ -77262,13 +77382,13 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.trailingExpression', value);
 		case 'literal.string.raw':
@@ -77473,13 +77593,13 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.left', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.left', value);
 		case 'literal.string.raw':
@@ -77927,13 +78047,13 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.right', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.right', value);
 		case 'literal.string.raw':
@@ -78756,13 +78876,13 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'literal.string.raw':
@@ -79231,13 +79351,13 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.trailingExpression', value);
 		case 'literal.string.raw':
@@ -79690,13 +79810,13 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.while.condition', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.while.condition', value);
 		case 'literal.string.raw':
@@ -80533,13 +80653,13 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'literal.string.raw':
@@ -81008,13 +81128,13 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.while.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.while.trailingExpression', value);
 		case 'literal.string.raw':
@@ -81459,13 +81579,13 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.return.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.return.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.return.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.string.raw':
@@ -82072,13 +82192,13 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('type.array.length', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('type.array.length', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('type.array.length', value);
 		case 'literal.string.c':
-			return unbuilt('type.array.length', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('type.array.length', value);
 		case 'literal.string.raw':
@@ -85374,6 +85494,32 @@ const literal_number_negative$330 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
 	return b.negativeLiteral(literal_number_negative$330_value(input.value));
 };
+const literal_string$332 = (input: PathInput<RustMap, 'literal.string'>): ReturnType<typeof b.stringLiteral> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
+	return b.stringLiteral({
+		elements: (input.elements ?? []).map(literal_string$332_elements),
+		stringOpen: b.stringOpen('"')
+	});
+};
+const literal_string_bytes$332 = (
+	input: PathInput<RustMap, 'literal.string.bytes'>
+): ReturnType<typeof b.stringLiteral> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.bytes', unroutedSlot);
+	return b.stringLiteral({
+		elements: (input.elements ?? []).map(literal_string_bytes$332_elements),
+		stringOpen: b.stringOpen('b"')
+	});
+};
+const literal_string_c$332 = (input: PathInput<RustMap, 'literal.string.c'>): ReturnType<typeof b.stringLiteral> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.c', unroutedSlot);
+	return b.stringLiteral({
+		elements: (input.elements ?? []).map(literal_string_c$332_elements),
+		stringOpen: b.stringOpen('c"')
+	});
+};
 const literal_string_escape$151 = (
 	input: PathInput<RustMap, 'literal.string.escape'>
 ): ReturnType<typeof b.escapeSequenceSimple> => {
@@ -85405,6 +85551,13 @@ const literal_string_escape$154 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
 	const text = input.$value;
 	return b.escapeSequenceHex(text);
+};
+const literal_string_text$157 = (
+	input: PathInput<RustMap, 'literal.string.text'>
+): ReturnType<typeof b.stringContent> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
+	return b.stringContent(typeof input === 'string' ? input : input.$value);
 };
 const modifier_extern$234 = (input: PathInput<RustMap, 'modifier.extern'>): ReturnType<typeof b.externModifier> => {
 	const unroutedSlot = unroutedIn(input, ['abi']);
@@ -86909,6 +87062,15 @@ const literal_number_integer_octal = (input: PathInput<RustMap, 'literal.number.
 const literal_number_negative = (input: PathInput<RustMap, 'literal.number.negative'>) => {
 	return literal_number_negative$330(input);
 };
+const literal_string = (input: PathInput<RustMap, 'literal.string'>) => {
+	return literal_string$332(input);
+};
+const literal_string_bytes = (input: PathInput<RustMap, 'literal.string.bytes'>) => {
+	return literal_string_bytes$332(input);
+};
+const literal_string_c = (input: PathInput<RustMap, 'literal.string.c'>) => {
+	return literal_string_c$332(input);
+};
 const literal_string_escape = (input: PathInput<RustMap, 'literal.string.escape'>) => {
 	if ((typeof input.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(input.$value)) && input.$value !== undefined)
 		return literal_string_escape$151(input);
@@ -87166,7 +87328,11 @@ export const portableBuild = {
 			}),
 			negative: literal_number_negative
 		},
-		string: { escape: literal_string_escape }
+		string: Object.assign(literal_string, {
+			bytes: literal_string_bytes,
+			c: literal_string_c,
+			escape: literal_string_escape
+		})
 	},
 	modifier: { extern: modifier_extern },
 	pattern: {

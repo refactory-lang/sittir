@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.member.property.getter', 'declaration.member.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 436, rust: 736, typescript: 667 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 436, rust: 623, typescript: 667 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -466,6 +466,18 @@ describe('the generated portable build, through a builder that takes options', (
 		['python', '"x"\n', 'literal.string', '"x"'],
 		['python', '[x for x in a, b,]\n', 'clause.comprehension.for', 'for x in a, b,']
 	] as const)('%s: %j builds as the interpreter does, its options from their preference or its flags', async (grammar, source, path, rendered) => {
+		expect(await bothBuilds(grammar, await readAt(grammar, source, path))).toEqual([rendered, rendered]);
+	});
+});
+
+describe('the generated portable build, through a preset that builds a leaf from its text', () => {
+	it.each([
+		['rust', 'fn f() { "x"; }\n', 'literal.string', '"x"'],
+		['rust', 'fn f() { ""; }\n', 'literal.string', '""'],
+		['rust', 'fn f() { "a\\x41\\u{41}b"; }\n', 'literal.string', '"a\\x41\\u{41}b"'],
+		['rust', 'fn f() { b"x"; }\n', 'literal.string.bytes', 'b"x"'],
+		['rust', 'fn f() { c"x"; }\n', 'literal.string.c', 'c"x"']
+	] as const)('%s: %j builds as the interpreter does', async (grammar, source, path, rendered) => {
 		expect(await bothBuilds(grammar, await readAt(grammar, source, path))).toEqual([rendered, rendered]);
 	});
 });

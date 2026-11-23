@@ -1724,31 +1724,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string: a preset at stringOpen that is not one keyword or text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.bytes: a preset at stringOpen that is not one keyword or text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.string.bytes.raw: a preset at rawStringLiteralStart.prefix that is not one keyword or text"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.c: a preset at stringOpen that is not one keyword or text"
   },
   {
     "scope": "grammar",

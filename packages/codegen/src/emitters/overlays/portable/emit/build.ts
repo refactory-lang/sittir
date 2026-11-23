@@ -1115,9 +1115,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 		const entries = [...lead, ...slotEntries(path, arm, filled, input)];
 		for (const preset of arm.presets) {
-			if (preset.steps.length !== 1 || preset.builder !== undefined || preset.among !== undefined || (preset.kind === undefined && preset.text === undefined))
+			const leaf = preset.text !== undefined && preset.builder !== undefined && shapeOf(preset.builder) === 'text' ? preset.builder : undefined;
+			if (preset.steps.length !== 1 || (preset.builder !== undefined && leaf === undefined) || preset.among !== undefined || (preset.kind === undefined && preset.text === undefined))
 				return fail(`a preset at ${preset.steps.map((step) => step.key).join('.')} that is not one keyword or text`);
-			entries.push([preset.steps[0]!.key, preset.kind === undefined ? str(preset.text!) : preset.presence === true ? t.true : num(preset.kind)]);
+			entries.push([preset.steps[0]!.key, leaf !== undefined ? call(builderRef(leaf), str(preset.text!)) : preset.kind === undefined ? str(preset.text!) : preset.presence === true ? t.true : num(preset.kind)]);
 		}
 		const delimiters: (readonly [flag: string, bits: number])[] = [];
 		for (const [flag, step] of Object.entries(arm.flags)) {
