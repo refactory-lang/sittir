@@ -537,3 +537,23 @@ Reads the grammar.json at a path and returns the named rule in compact form. Thr
 ### `packages/tools/src/scripts/grammar-rule.ts::run`
 
 Prints one rule of `packages/<grammar>/.sittir/src/grammar.json` in compact form. Returns 0 when the rule was printed. Returns 1, printing the reason to stderr, when the grammar.json cannot be read, has no rule of that name, or holds a rule type the printer does not know.
+
+### `packages/tools/src/scripts/type-errors.ts::TypeErrorsOptions`
+
+Options for `run`: the type-check log to read, and whether to print JSON.
+
+### `packages/tools/src/scripts/type-errors.ts::PackageTypeErrors`
+
+One package's error count: the package named by the `packages/<name>/` segment of the error's file, or `(root)` for an error with no file or no such segment.
+
+### `packages/tools/src/scripts/type-errors.ts::TypeErrorSummary`
+
+The per-package type errors of a type-check log: the total, and the packages in order of their error counts, most first.
+
+### `packages/tools/src/scripts/type-errors.ts::summarizeTypeErrors`
+
+Counts the errors of a type-check log per package. A log has no total line (tsrs prints none), so the check is against its records: every `error TS<code>:` occurrence must parse as a diagnostic, or the log is refused as not fully read, and the per-package counts must sum to the number of records. Throws when either fails, so a count that leaves an error out is never printed.
+
+### `packages/tools/src/scripts/type-errors.ts::run`
+
+Reads a type-check log and prints its per-package error counts and total, as text or JSON. Returns 0 when the log was counted. Returns 1, printing the reason to stderr, when the log cannot be read or is not fully read.

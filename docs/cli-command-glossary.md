@@ -929,6 +929,21 @@ Record or show `vitest run` result history (test-history.jsonl)
 pnpm exec tsx packages/cli/src/cli.ts tool test-history [n] [options]
 ```
 
+### `tool type-errors`
+
+Count the type errors in a type-check log per package, checked against the log's error records
+
+**Options**
+
+- `--log <path>` — Type-check log (tsrs or tsc output)
+- `--json` — Machine-readable JSON output
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool type-errors [options]
+```
+
 ### `tool text-kind-overlap`
 
 List texts a higher-ranked candidate text kind takes from a lower-ranked one in the same loose slot

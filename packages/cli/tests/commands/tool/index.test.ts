@@ -51,6 +51,7 @@ const EXPECTED = [
 	'test-durations',
 	'test-failures',
 	'test-history',
+	'type-errors',
 	'text-kind-overlap',
 	'spelled-trivia',
 	'storage-parity',
