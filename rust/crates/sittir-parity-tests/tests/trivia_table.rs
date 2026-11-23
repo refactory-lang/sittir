@@ -226,6 +226,6 @@ fn a_node_is_empty_when_no_child_has_width() {
         let case = Case::new(typescript(), source);
         let work = sittir_core::layout::LayoutWorkCounter::default();
         let mut nodes = sittir_core::nodes::TreeNodes::new(&case.tree, case.source, &work);
-        assert_eq!(is_empty(&mut nodes, case.at("statement_block", block)), empty, "{source:?}");
+        assert_eq!(is_empty(&mut nodes, case.at("statement_block", block), &|_| false), empty, "{source:?}");
     }
 }

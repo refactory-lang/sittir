@@ -265,8 +265,9 @@ pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceK
 /// their place as a list does its items, the unit
 /// kinds, which it exposes as a kind id rather than a node, the extra kinds
 /// that are layout members, which it assigns as layout, the depth
-/// members (`indent`, `dedent`, 0 where the grammar has none), and whether
-/// the grammar has trivia that isn't whitespace: an extra with a kind of
+/// members (`indent`, `dedent`, 0 where the grammar has none), the kinds
+/// whose template renders an inner side, and whether the grammar has trivia
+/// that isn't whitespace: an extra with a kind of
 /// its own, such as a comment. Work that exists only for a placed entry
 /// (placing extras, a list's edge item) runs only where `named_extras`
 /// holds or the tree holds an `ERROR`.
@@ -278,6 +279,7 @@ pub struct SurfaceKinds {
     pub layout: &'static [KindId],
     pub indent: KindId,
     pub dedent: KindId,
+    pub inner: &'static [KindId],
     pub named_extras: bool,
 }
 
@@ -310,6 +312,13 @@ impl SurfaceKinds {
     #[must_use]
     pub fn has_inside(&self, kind: KindId) -> bool {
         !self.units.contains(&kind)
+    }
+
+    /// Whether a node of `kind` has an inside: its template renders an inner
+    /// side, where an empty node of the kind holds its trivia.
+    #[must_use]
+    pub fn holds_inner(&self, kind: KindId) -> bool {
+        self.inner.contains(&kind)
     }
 
     /// Whether `kind` is one of the grammar's depth members.
@@ -458,11 +467,13 @@ impl Walk {
 }
 
 /// Whether the node at `index` is empty: no child of it holds sides
-/// (`Kid::holder`), so the assignment gives it the trivia between its own
-/// tokens as `inner`.
+/// (`Kid::holder`), a named unit with no offsets holding them unless
+/// `zero_width` says its kind has no text in a source, so the assignment
+/// gives it the trivia between its own tokens as `inner`.
 #[must_use]
-pub fn is_empty(nodes: &mut dyn Nodes<'_>, index: NodeIndex) -> bool {
-    !nodes.kids(index).iter().any(Kid::holder)
+pub fn is_empty(nodes: &mut dyn Nodes<'_>, index: NodeIndex, zero_width: &dyn Fn(KindId) -> bool) -> bool {
+    let kids = nodes.kids(index);
+    !kids.iter().any(|kid| kid.holder() || (kid.named && !kid.entry() && nodes.is_unit(kid.index) && !zero_width(kid.grammar)))
 }
 
 /// The walk under the node at descendant `index` of the tree `nodes`

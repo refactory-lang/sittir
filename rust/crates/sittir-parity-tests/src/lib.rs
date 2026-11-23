@@ -630,6 +630,47 @@ pub struct OverRead<G: sittir_core::arena::RecordGrammar> {
     pub engine: sittir_core::engine::Engine<G>,
     pub root: sittir_core::arena::Address,
     pub records: std::collections::HashMap<sittir_core::types::NodeIndex, sittir_core::arena::Address>,
+    /// The tree's nodes the read holds as units, by index.
+    pub units: Vec<sittir_core::types::NodeIndex>,
+}
+
+/// The tokens of `node`, in source order, less its extras and what an
+/// `ERROR` holds.
+#[cfg(feature = "arena")]
+fn unit_tokens<'s>(node: tree_sitter::Node<'_>, source: &'s str, tokens: &mut Vec<&'s str>) {
+    if node.is_extra() || node.is_error() {
+        return;
+    }
+    if node.child_count() == 0 {
+        let text = &source[sittir_core::types::Span::of(&node).range()];
+        if !text.is_empty() {
+            tokens.push(text);
+        }
+        return;
+    }
+    let mut cursor = node.walk();
+    for child in node.children(&mut cursor) {
+        unit_tokens(child, source, tokens);
+    }
+}
+
+/// How many bytes `tokens` take at the start of `written`, with nothing but
+/// whitespace between them.
+#[cfg(feature = "arena")]
+fn tokens_at(written: &[u8], tokens: &[&str]) -> Option<usize> {
+    let mut at = 0;
+    for (place, token) in tokens.iter().enumerate() {
+        if place > 0 {
+            while written.get(at).is_some_and(u8::is_ascii_whitespace) {
+                at += 1;
+            }
+        }
+        if !written[at..].starts_with(token.as_bytes()) {
+            return None;
+        }
+        at += token.len();
+    }
+    Some(at)
 }
 
 #[cfg(feature = "arena")]
@@ -645,6 +686,7 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
         use sittir_core::types::NodeIndex;
         let mut engine = sittir_core::engine::Engine::new(grammar, options.clone()).expect("an engine");
         let root = engine.parse_records::<N>(tree.source()).expect("a parse").root.expect("a root");
+        let mut units = Vec::new();
         let records = {
             let built = engine.written().built();
             let over = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
@@ -656,6 +698,7 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
                     records.insert(row, at);
                 }
                 if ours.is_unit(run) {
+                    units.push(row);
                     continue;
                 }
                 let aligned = sittir_core::arena::aligned_kids(grammar, &mut ours, run, &mut theirs, row);
@@ -664,7 +707,40 @@ impl<G: sittir_core::arena::RecordGrammar> OverRead<G> {
             }
             records
         };
-        Self { engine, root, records }
+        Self { engine, root, records, units }
+    }
+
+    /// Whether `written` is `spelled` less what lies between the tokens of a
+    /// unit of several tokens this read holds. A unit has no inside, so a
+    /// rebuilt holder writes its tokens alone.
+    #[must_use]
+    pub fn apart_only_inside_a_unit(&self, tree: &sittir_core::engine::ParsedTree<G>, spelled: &str, written: &str) -> bool {
+        let source = tree.source();
+        let units: Vec<(&str, Vec<&str>)> = self
+            .units
+            .iter()
+            .filter_map(|&index| {
+                let node = sittir_core::engine::node_at_index(tree.tree(), index)?;
+                let mut tokens = Vec::new();
+                unit_tokens(node, source, &mut tokens);
+                (tokens.len() > 1).then(|| (&source[sittir_core::types::Span::of(&node).range()], tokens))
+            })
+            .collect();
+        let (spelled, written) = (spelled.as_bytes(), written.as_bytes());
+        let (mut one, mut other) = (0, 0);
+        while one < spelled.len() {
+            let unit = units.iter().find_map(|(text, tokens)| spelled[one..].starts_with(text.as_bytes()).then(|| tokens_at(&written[other..], tokens).map(|width| (text.len(), width))).flatten());
+            if let Some((taken, width)) = unit {
+                one += taken;
+                other += width;
+            } else if written.get(other) == Some(&spelled[one]) {
+                one += 1;
+                other += 1;
+            } else {
+                return false;
+            }
+        }
+        other == written.len()
     }
 
     /// The name of the record the read left the tree's node at `index`.

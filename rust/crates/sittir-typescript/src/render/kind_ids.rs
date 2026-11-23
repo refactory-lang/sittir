@@ -519,7 +519,7 @@ pub const LHS_EXPRESSION: KindId = KindId(499);
 pub const KIND_BITS: u32 = 9;
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
-/// The surface kinds: list kinds, whose items the surface exposes in their place, the wrappers a list seats around each element, which expose the element in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, and whether the grammar has trivia that isn't whitespace.
+/// The surface kinds: list kinds, whose items the surface exposes in their place, the wrappers a list seats around each element, which expose the element in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, the kinds whose template renders an inner side, and whether the grammar has trivia that isn't whitespace.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[KindId(384), KindId(385), KindId(387), KindId(390), KindId(391), KindId(392), KindId(393), KindId(401)],
     wrappers: &[],
@@ -527,6 +527,7 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
     layout: &[],
     indent: KindId(188),
     dedent: KindId(189),
+    inner: &[KindId(190), KindId(193), KindId(202), KindId(211), KindId(229), KindId(238), KindId(239), KindId(242), KindId(243), KindId(284), KindId(288), KindId(289), KindId(323), KindId(379)],
     named_extras: true,
 };
 

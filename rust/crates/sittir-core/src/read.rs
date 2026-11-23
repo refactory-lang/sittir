@@ -1269,6 +1269,7 @@ pub fn units_of<T: crate::trivia::FromTriviaText + 'static>(routed: &Routed, ctx
         .enumerate()
         .filter_map(|(at, item)| {
             let (Route::Slot { slot, scalar: true }, Some(item)) = (routed.routes[at], item) else { return None };
+            let item = ctx.names.and_then(|names| names.name(routed.children[at].index)).and_then(crate::types::NodeId::site).map_or(item, |[_, item]| ItemIndex(item));
             let trivia = ctx.unit_sides(routed.children[at].index, Depth::ONE)?;
             Some(crate::layout::UnitSides { slot: routed.keys[slot.index()].to_owned(), item, trivia })
         })

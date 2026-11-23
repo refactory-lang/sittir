@@ -461,6 +461,13 @@ pub trait Backing<G: EngineGrammar>: Sized {
     /// nodes are named by its id and their indexes.
     fn node_names(&self) -> Option<&dyn crate::read::NodeNames>;
 
+    /// The text a unit of `kind` writes, for a backer whose units hold no
+    /// bytes of the source; none for any other.
+    fn unit_text(&self, kind: KindId) -> Option<String> {
+        let _ = kind;
+        None
+    }
+
     /// `answer` of the offsets, sorted, within which this backer's nodes
     /// hold a side with an entry, each within the node whose side it is;
     /// `answer` of none for a backer that keeps no account of them.
@@ -687,7 +694,8 @@ pub trait Backing<G: EngineGrammar>: Sized {
         let stamp = |at: &Kid| ctx.stamped_kind(at.grammar, at.display);
         let router = |at: &Kid| self.grammar().router(at.grammar, at.display);
         let delimiter = |nodes: &mut dyn Nodes<'_>, at: &Kid| self.grammar().delimiter(nodes, at);
-        let query = crate::query::QueryCtx { source: self.source(), stamp: &stamp, router: &router, delimiter: &delimiter };
+        let unit_text = |kind: KindId| self.unit_text(kind);
+        let query = crate::query::QueryCtx { source: self.source(), stamp: &stamp, router: &router, delimiter: &delimiter, unit_text: &unit_text };
         let mut nodes = self.nodes();
         addresses
             .iter()
@@ -738,7 +746,8 @@ pub trait Backing<G: EngineGrammar>: Sized {
         let stamp = |at: &Kid| ctx.stamped_kind(at.grammar, at.display);
         let router = |at: &Kid| self.grammar().router(at.grammar, at.display);
         let delimiter = |nodes: &mut dyn Nodes<'_>, at: &Kid| self.grammar().delimiter(nodes, at);
-        let query = crate::query::QueryCtx { source: self.source(), stamp: &stamp, router: &router, delimiter: &delimiter };
+        let unit_text = |kind: KindId| self.unit_text(kind);
+        let query = crate::query::QueryCtx { source: self.source(), stamp: &stamp, router: &router, delimiter: &delimiter, unit_text: &unit_text };
         let surface = self.grammar().surface_kinds();
         for &child in resume.unwrap_or_default() {
             let parent = levels.last().map_or(start, |(kids, at)| kids[*at]);
@@ -914,7 +923,7 @@ pub trait Backing<G: EngineGrammar>: Sized {
     /// child of it has width, so its trivia is its `inner`.
     fn is_empty(&self, index: crate::types::NodeIndex) -> bool {
         let mut nodes = self.nodes();
-        node(&mut nodes, index).is_some() && crate::trivia_table::is_empty(&mut nodes, index)
+        node(&mut nodes, index).is_some() && crate::trivia_table::is_empty(&mut nodes, index, &|kind| self.options().token_seam(kind).is_some())
     }
 
     /// Whether a write replaced a side of a node under the node at `index`:
@@ -1102,6 +1111,10 @@ pub struct Records<'a, G: EngineGrammar> {
     options: ResolvedOptions,
     store: TriviaStore<G::Trivia>,
     work: crate::layout::LayoutWorkCounter,
+    /// Renders a unit of a kind on its own.
+    render_unit: fn(&Self, KindId) -> Option<String>,
+    /// The text of each unit kind the call asked about.
+    unit_texts: PerCall<HashMap<KindId, Option<String>, crate::heap::IndexState>>,
 }
 
 #[cfg(feature = "arena")]
@@ -1112,7 +1125,8 @@ impl<G: EngineGrammar> Records<'_, G> {
         if !written.is_empty() {
             let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape);
             for (site, _) in written {
-                if let Some(index) = runs.index_at(site) {
+                let held = if let crate::arena::NodeSite::Unit(unit) = site { crate::arena::NodeSite::Record(unit.holder) } else { site };
+                if let Some(index) = runs.index_at(held) {
                     starts.push(runs.kid(index).start);
                 }
             }
@@ -1285,6 +1299,10 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         Some(self)
     }
 
+    fn unit_text(&self, kind: KindId) -> Option<String> {
+        self.unit_texts.with(|texts| texts.entry(kind).or_insert_with(|| (self.render_unit)(self, kind)).clone())
+    }
+
     /// The starts the parse of the source's read kept in the side record its
     /// entry names (`read_entry_starts`), and those of the nodes a write gave
     /// a side since (`written_sites`), read once a call.
@@ -1294,7 +1312,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
 
     fn named(&self, name: crate::types::NodeId) -> Option<crate::arena::NodeSite> {
         let (shape, bits, _) = self.shape;
-        crate::arena::site::node_site(self.built, shape, bits, name).ok()
+        crate::arena::site::node_site(self.built, shape, bits, name).ok().filter(|site| !matches!(site, crate::arena::NodeSite::Unit(_)))
     }
 
     fn cover_side<'t>(&'t self, _: &mut Navigation<'t>, _: NodeIndex, _: TriviaSide) -> Option<&'t crate::trivia_table::Table> {
@@ -1354,7 +1372,21 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
             options: engine.options.clone(),
             store: engine.written.clone(),
             work: crate::layout::LayoutWorkCounter::default(),
+            render_unit: Self::rendered_unit,
+            unit_texts: PerCall::default(),
         })
+    }
+
+    /// A unit of `kind` rendered on its own: its kind's text.
+    fn rendered_unit(&self, kind: KindId) -> Option<String> {
+        struct NoSources;
+        impl SourceTable for NoSources {
+            fn source_of(&self, _: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+                None
+            }
+        }
+        let root = crate::arena::CellAt { cell: crate::arena::Cell::Unit { kind, row: None }, node: None, site: None };
+        G::render_record(self.grammar, root, None, self.built, &self.store, &crate::prepare::RenderContext::new(&self.options, &NoSources)).ok()
     }
 
     /// The index the call gives the node `address` names.
@@ -2148,10 +2180,19 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     }
 
     /// The first and last child of the node at `index`, extras and `ERROR`s
-    /// included (`SideLookup::end_children`).
+    /// included, a fixed token or unit its render body writes at an edge
+    /// standing at that edge of its bytes (`SideLookup::end_children`).
     fn end_children(&mut self, index: NodeIndex) -> Option<[Kid; 2]> {
-        self.kid(index)?;
-        Some([self.nodes.edge(index, crate::options::Side::Before)?, self.nodes.edge(index, crate::options::Side::After)?])
+        let holder = self.kid(index)?;
+        let options = self.tree.options();
+        let mut at = |side: crate::options::Side| {
+            if self.nodes.edge_token(&holder, side, &|kind| options.separator_of(kind)).is_none() {
+                return self.nodes.edge(index, side);
+            }
+            let edge = if side == crate::options::Side::Before { holder.start } else { holder.end };
+            Some(Kid { start: edge, end: edge, count: 1, extra: false, ..holder })
+        };
+        Some([at(crate::options::Side::Before)?, at(crate::options::Side::After)?])
     }
 
     /// The sides a coordinate of the node at `index` renders between, as

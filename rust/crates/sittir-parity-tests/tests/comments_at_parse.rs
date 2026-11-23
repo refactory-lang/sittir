@@ -48,6 +48,8 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(name: &str
     let (mut ours, mut theirs) = (records.nodes(), tree.nodes());
     let (mut apart, mut assigned) = (Vec::new(), 0);
     let mut beside_fixed = std::collections::BTreeSet::new();
+    let mut in_no_inner = std::collections::BTreeSet::new();
+    let kinds = grammar.surface_kinds();
     let mut under = vec![NodeIndex::ROOT];
     while let Some(row) = under.pop() {
         let at = theirs.kid(row);
@@ -61,6 +63,9 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(name: &str
                 for entry in placement.tables().flat_map(|table| table.side(kid.index, side).iter()) {
                     let held = theirs.kid(entry.index());
                     beside_fixed.insert((held.start, held.end));
+                    if !kinds.holds_inner(at.grammar) && !kinds.holds_inner(at.display) {
+                        in_no_inner.insert((held.start, held.end));
+                    }
                     if !named_fixed_pairs(name).iter().any(|pair| [kid.grammar, kid.display].iter().any(|&kind| pair.token == G::kind_name(kind))) {
                         apart.push(format!("{}..{} {} {side:?}: holds a side and is no named fixed token", kid.start, kid.end, G::kind_name(kid.grammar)));
                     }
@@ -145,8 +150,9 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(name: &str
             pending.extend(aligned.held.iter().map(|(met, kept)| (met.index, kept.index, Some(row))));
         }
     }
-    if seated_beside != beside_fixed {
-        apart.push(format!("beside a named fixed token the tree seats {beside_fixed:?}, the parse {seated_beside:?}"));
+    let unseated: Vec<&Bytes> = beside_fixed.difference(&seated_beside).filter(|bytes| !in_no_inner.contains(*bytes)).collect();
+    if !unseated.is_empty() {
+        apart.push(format!("beside a named fixed token the parse seats none of {unseated:?}"));
     }
     (apart, assigned)
 }

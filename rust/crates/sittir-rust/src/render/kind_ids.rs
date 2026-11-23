@@ -498,7 +498,7 @@ pub const LET_CHAIN: KindId = KindId(479);
 pub const KIND_BITS: u32 = 9;
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
-/// The surface kinds: list kinds, whose items the surface exposes in their place, the wrappers a list seats around each element, which expose the element in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, and whether the grammar has trivia that isn't whitespace.
+/// The surface kinds: list kinds, whose items the surface exposes in their place, the wrappers a list seats around each element, which expose the element in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, the kinds whose template renders an inner side, and whether the grammar has trivia that isn't whitespace.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[KindId(342), KindId(343), KindId(344), KindId(345), KindId(346), KindId(347), KindId(348), KindId(349), KindId(350), KindId(351), KindId(352), KindId(353), KindId(354), KindId(355), KindId(356), KindId(357), KindId(358), KindId(364), KindId(365)],
     wrappers: &[KindId(427), KindId(428), KindId(429), KindId(430), KindId(431), KindId(432), KindId(433)],
@@ -506,6 +506,7 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
     layout: &[],
     indent: KindId(174),
     dedent: KindId(175),
+    inner: &[KindId(176), KindId(195), KindId(199), KindId(201), KindId(203), KindId(227), KindId(230), KindId(249), KindId(277), KindId(283), KindId(293), KindId(302), KindId(313), KindId(316), KindId(317), KindId(405), KindId(406), KindId(407), KindId(408), KindId(409), KindId(410), KindId(411), KindId(412), KindId(413), KindId(436), KindId(437), KindId(438)],
     named_extras: true,
 };
 

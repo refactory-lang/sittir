@@ -318,8 +318,12 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 			const { kind, row } = packed(word(0), at, format);
 			return { form: 'parsedLeaf', kind, span: { start: word(1), end: word(2) }, row };
 		}
-		case format.forms.unit:
-			return { form: 'unit', ...packed(word(0), at, format) };
+		case format.forms.unit: {
+			if (word(0) >>> format.kindBits !== 0) return { form: 'unit', ...packed(word(0), at, format) };
+			const kind = kindField(word(0), format.kindBits);
+			if (kind === BLANK_KIND_ID || kind === ERROR_KIND_ID) throw new Error(`word ${at} holds unit kind ${kind}, which no parsed cell holds`);
+			return { form: 'unit', kind, row: undefined };
+		}
 		case format.forms.text: {
 			return { form: 'parsedText', span: { start: word(0) - 1, end: word(1) } };
 		}

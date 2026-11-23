@@ -214,13 +214,15 @@ pub enum Subject {
 
 /// What a plan reads a node with: the source, the kind a coordinate of a
 /// node carries (`ReadCtx::stamped_kind`), how a node's kind finds its
-/// slots (`ReadNode::router`), and the delimiter flags the read stamps on
-/// a list (`ReadNode::delimiter`).
+/// slots (`ReadNode::router`), the delimiter flags the read stamps on a
+/// list (`ReadNode::delimiter`), and the text of a unit that holds no bytes
+/// of the source, which is its kind's.
 pub struct QueryCtx<'a> {
     pub source: &'a str,
     pub stamp: &'a dyn Fn(&Kid) -> crate::types::KindId,
     pub router: &'a dyn Fn(&Kid) -> Option<Router>,
     pub delimiter: &'a dyn Fn(&mut dyn Nodes<'_>, &Kid) -> Option<crate::types::Delimiter>,
+    pub unit_text: &'a dyn Fn(crate::types::KindId) -> Option<String>,
 }
 
 /// One value a slot holds: its text, and the node that spells it, by its
@@ -316,11 +318,12 @@ fn any_hit(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'_>, slots: &Slot
 /// as the node's read finds it (`Router`). `false` when the node holds
 /// nothing there: its kind has no number for the slot, no router, or a child
 /// the read cannot route, so the query and the read agree.
-fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots: &Slots, visit: &mut dyn FnMut(Hit<'s>)) -> bool {
+fn slot_hits(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'_>, slots: &Slots, visit: &mut dyn for<'h> FnMut(Hit<'h>)) -> bool {
     let (Some(&slot), Some(router)) = (slots.slots.get(&(ctx.stamp)(at)), (ctx.router)(at)) else {
         return false;
     };
     let text = |kid: &Kid| ctx.source.get(kid.span().range()).unwrap_or("");
+    let unit_text = |nodes: &mut dyn Nodes<'_>, kid: &Kid| nodes.is_unit(kid.index).then(|| (ctx.unit_text)(kid.grammar)).flatten();
     match router {
         Router::Children(route, unit, _) => {
             let mut routed = true;
@@ -328,7 +331,8 @@ fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots:
                 match route(child) {
                     Ok(Route::Slot { slot: taken, .. }) if taken == slot => {
                         let kind = unit(slot, nodes, child).unwrap_or_else(|| (ctx.stamp)(child));
-                        visit(Hit { node: Some((child.index, kind)), text: text(child) });
+                        let held = unit_text(nodes, child);
+                        visit(Hit { node: Some((child.index, kind)), text: held.as_deref().unwrap_or_else(|| text(child)) });
                     }
                     Ok(_) => {}
                     Err(_) => routed = false,
@@ -354,7 +358,8 @@ fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots:
             }
             let Some(child) = nodes.kids(at.index).iter().find(|child| !child.entry()).copied() else { return false };
             let kind = unit(nodes, &child).unwrap_or_else(|| (ctx.stamp)(&child));
-            visit(Hit { node: Some((child.index, kind)), text: text(&child) });
+            let held = unit_text(nodes, &child);
+            visit(Hit { node: Some((child.index, kind)), text: held.as_deref().unwrap_or_else(|| text(&child)) });
             true
         }
     }
@@ -450,7 +455,7 @@ mod tests {
         parser.set_language(language()).unwrap();
         let tree = parser.parse(source, None).unwrap();
         let stamp = |at: &Kid| at.display;
-        let ctx = QueryCtx { source, stamp: &stamp, router: &router, delimiter: &|_, _| None };
+        let ctx = QueryCtx { source, stamp: &stamp, router: &router, delimiter: &|_, _| None, unit_text: &|_| None };
         let work = crate::layout::LayoutWorkCounter::default();
         let mut nodes = crate::nodes::TreeNodes::new(&tree, source, &work);
         let mut out = Vec::new();

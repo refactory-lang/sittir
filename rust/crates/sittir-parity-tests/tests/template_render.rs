@@ -16,6 +16,7 @@ use sittir_core::render::{RenderError, SourceTable, ThroughTemplates};
 use sittir_core::slot::ChangedEdges;
 use sittir_core::types::NodeIndex;
 use sittir_core::SlotValue;
+use sittir_parity_tests::OverRead;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
 
 /// A grammar's native render of a root (`render_node_parts`).
@@ -65,6 +66,13 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
         engine.render_at(&built, root, ChangedEdges::default(), &options, true, |_| Ok(())).map(Some).map_err(|e| e.to_string())
     }
 
+    /// Whether `arena` is `object` less what lies inside a unit of several
+    /// tokens of `source`.
+    fn apart_only_inside_a_unit(&self, source: &str, object: &str, arena: &str) -> bool {
+        let (tree, options) = self.parse(source);
+        OverRead::of::<N>(self.grammar, &options, &tree).apart_only_inside_a_unit(&tree, object, arena)
+    }
+
     /// Whether `source` renders alike from its templates read from its
     /// tree and from the records a parse leaves with no tree.
     fn alike(&self, name: &str, source: &str) -> Result<Outcome, String> {
@@ -79,7 +87,7 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
             (Ok(Ok(_)), Ok(Ok(None))) => Err("records: a parse left no root of a source the parser accepts".to_owned()),
             (Ok(object), Ok(arena)) => {
                 let (object, arena) = (object?, arena?.expect("a root"));
-                if object != arena && !(name == "rust" && apart_only_beside_a_quote(&object, &arena)) {
+                if object != arena && !(name == "rust" && apart_only_beside_a_quote(&object, &arena)) && !self.apart_only_inside_a_unit(source, &object, &arena) {
                     return Err(format!("\n object {object:?}\n arena  {arena:?}"));
                 }
                 Ok(if object == source { Outcome::AsSource } else { Outcome::Rendered })
@@ -195,7 +203,7 @@ fn every_scm_source_renders_alike_from_its_templates() {
 /// Each `(source, what its whitespace spells, what a built node writes)`
 /// that differs between the two storages only inside a unit of several tokens.
 #[test]
-fn a_unit_of_several_tokens_drops_only_the_whitespace_between_them() {
+fn a_unit_of_several_tokens_drops_what_lies_between_them() {
     fn check<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>, cases: &[(&str, &str, &str)]) {
         for &(source, spelled, tight) in cases {
             let (tree, options) = grammar.parse(source);
@@ -206,15 +214,13 @@ fn a_unit_of_several_tokens_drops_only_the_whitespace_between_them() {
             assert_eq!(arena, object.replacen(spelled, tight, 1), "{name} {source:?}");
         }
     }
-    check("rust", &rust_renders(), &[("let x = ( );", "( )", "()"), ("fn f() -> ( ) {}", "( )", "()")]);
-    check("typescript", &typescript_renders(), &[("function f() { new . target; }", "new . target", "new.target"), ("import . meta;", "import . meta", "import.meta"), ("await  using x = y;", "await  using", "await using")]);
-    check("python", &python_renders(), &[("a not  in b\n", "not  in", "not in"), ("a is  not b\n", "is  not", "is not")]);
+    check("rust", &rust_renders(), &[("let x = ( );", "( )", "()"), ("fn f() -> ( ) {}", "( )", "()"), ("let x = (/* c */);", "(/* c */)", "()")]);
+    check("typescript", &typescript_renders(), &[("function f() { new . target; }", "new . target", "new.target"), ("import . meta;", "import . meta", "import.meta"), ("await  using x = y;", "await  using", "await using"), ("let x: unique /* c */ symbol;", "unique /* c */ symbol", "unique symbol")]);
+    check("python", &python_renders(), &[("a not  in b\n", "not  in", "not in"), ("a is  not b\n", "is  not", "is not"), ("(a not # c\n in b)\n", "not # c\n in", "not in")]);
 }
 
 /// A parsed unit renders from its templates as its row did: a zero-width one
-/// writes the seam it stands for, its sides come through its site, and one
-/// of several tokens with an extra, `ERROR` or `MISSING` token under it
-/// renders as its source.
+/// writes the seam it stands for, and its sides come through its site.
 #[test]
 fn a_parsed_unit_renders_alike_in_both_storages() {
     fn check<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>, sources: &[&str]) {
@@ -224,9 +230,9 @@ fn a_parsed_unit_renders_alike_in_both_storages() {
             }
         }
     }
-    check("rust", &rust_renders(), &["let x = (/* c */);", "(self: Box<Self>)", "(&'a mut self)", "() => {};", "foo!($/';()*()+.);", "a!('lifetime);"]);
-    check("typescript", &typescript_renders(), &["function f() { return /* c */; }\n", "if (c) x()\nelse y()", "if (c) {\n  x()\n}\nelse y()", "{ /* c */ ; }", "class A { get x(/* c */): T { return 1 } }", "class A { get x( ): T { return 1 } }", "abstract makeSound(): void;"]);
-    check("python", &python_renders(), &["def f():\n    a\nx = 1\n", "a not /* c */ in b\n"]);
+    check("rust", &rust_renders(), &["(&'a mut self)", "() => {};", "foo!($/';()*()+.);", "a!('lifetime);"]);
+    check("typescript", &typescript_renders(), &["function f() { return /* c */; }\n", "if (c) x()\nelse y()", "if (c) {\n  x()\n}\nelse y()", "{ /* c */ ; }", "abstract makeSound(): void;", "class A { get x( ): T { return 1 } }", "class A { get x(/* c */): T { return 1 } }"]);
+    check("python", &python_renders(), &["def f():\n    a\nx = 1\n"]);
 }
 
 fn rust_renders() -> Renders<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {

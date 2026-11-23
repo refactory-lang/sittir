@@ -373,10 +373,9 @@ impl OpenRun {
     }
 
     /// Whether the entry at `entry`, the last child met with all under it,
-    /// is `MISSING` or has an extra, an `ERROR` or a `MISSING` token under
-    /// it: source its kind's text doesn't hold.
+    /// is or holds a `MISSING` token, whose text the source doesn't hold.
     fn keeps_unit_row(&self, entry: usize) -> bool {
-        (entry..self.entries.len()).any(|at| self.beside[at].aside || matches!(self.entries[at], RunEntry::Row { facts, .. } if facts.missing))
+        (entry..self.entries.len()).any(|at| matches!(self.entries[at], RunEntry::Row { facts, .. } if facts.missing))
     }
 
     /// Whether the entry at `entry` is a unit whose row is not written.
@@ -560,11 +559,23 @@ impl OpenRun {
         Some((edge(true), edge(false)))
     }
 
+    /// The facts of the row at `holder`, or of the record's node for none.
+    fn holder_facts(&self, holder: Option<usize>) -> Option<NodeFacts> {
+        match holder {
+            None => self.facts,
+            Some(holder) => match self.entries[holder] {
+                RunEntry::Row { facts, .. } => Some(facts),
+                RunEntry::Record { .. } => None,
+            },
+        }
+    }
+
     /// Each extra among the children of the record's node and of the rows
     /// under it, on the side of the child it is placed on
     /// (`trivia_table::owner`, its siblings the children around it), the
     /// node that side is kept on its `target`, or the `inner` of the node
-    /// that holds it, unless that node is a unit, which has no inside.
+    /// that holds it, where that node's kind has an inside
+    /// (`SurfaceKinds::holds_inner`).
     fn placed(&self, kinds: Option<crate::trivia_table::SurfaceKinds>, text: &str, out: &mut Vec<Placed>) {
         use crate::trivia_table::{owner, Owner, Sibling, TriviaSide};
         if self.within || self.beside.iter().all(|beside| beside.extra.is_none()) {
@@ -585,7 +596,7 @@ impl OpenRun {
                 let (site, side, within) = match owner(&siblings[..position], span, &siblings[position + 1..], text) {
                     Owner::Trailing { at } => (self.target(children[at], false, kinds), TriviaSide::Trailing, siblings[at].span.end),
                     Owner::Leading { at } => (self.target(children[position + 1 + at], true, kinds), TriviaSide::Leading, siblings[position + 1 + at].span.start),
-                    Owner::Inner if holder.is_some_and(|holder| kinds.is_some_and(|kinds| !kinds.has_inside(self.beside[holder].kind))) => continue,
+                    Owner::Inner if kinds.is_some_and(|kinds| self.holder_facts(holder).is_some_and(|facts| !kinds.holds_inner(facts.kind) && !kinds.holds_inner(facts.display()))) => continue,
                     Owner::Inner => (holder.map_or(super::NodeSite::Record(self.at), |holder| self.site(holder)), TriviaSide::Inner, span.start),
                 };
                 if self.keeps_as_fixed_token_or_flag(site) {

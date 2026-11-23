@@ -171,6 +171,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + Record
                 NodeAlike::Rendered => counts[1] += 1,
                 NodeAlike::Panicking => counts[2] += 1,
                 NodeAlike::Unread => {}
+                NodeAlike::Apart { native, record, .. } if over.apart_only_inside_a_unit(&edited, &native, &record) => counts[1] += 1,
                 NodeAlike::Apart { at, native, record } => apart.push(EditedApart { at, native, record }),
             }
         }

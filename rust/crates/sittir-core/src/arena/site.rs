@@ -165,7 +165,11 @@ pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Op
 pub fn node_site(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, name: crate::types::NodeId) -> Result<super::NodeSite, ArenaError> {
     let holder = Address(name.address());
     let Some([word, item]) = name.site() else { return Ok(super::NodeSite::Record(holder)) };
-    Ok(match site_row(arena, holder, shape, bits, CellSite { word, item })? {
+    let cell = parsed_cell(arena, holder, shape, bits, CellSite { word, item })?.ok_or(malformed("cell site item", item))?;
+    if matches!(cell, Cell::Unit { row: None, .. }) {
+        return Ok(super::NodeSite::Unit(crate::trivia_store::Site { holder, word, item: crate::types::ItemIndex(item) }));
+    }
+    Ok(match leaf_row(&cell).ok_or(malformed("cell site", word))? {
         1 => super::NodeSite::Record(holder),
         row => super::NodeSite::Row { holder, entry: row.checked_sub(2).ok_or(malformed("cell row", row))? },
     })

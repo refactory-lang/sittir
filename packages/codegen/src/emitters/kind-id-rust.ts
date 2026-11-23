@@ -6,7 +6,7 @@ import { ERROR_KIND_ID } from '@sittir/common/error-kind';
 import { findEntryForKindName, treeNameOf } from '../dsl/symbol-table.ts';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import { layoutMemberKindIds, elementWrapperKindIds, listKindIds, rootKindIds, unitKindIds } from './wrap.ts';
-import { namedExtras } from '../compiler/model/trivia.ts';
+import { innerRegions, namedExtras } from '../compiler/model/trivia.ts';
 
 export interface EmitKindIdRustConfig {
 	grammar: string;
@@ -115,7 +115,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const errorEntry = errorKindEntry(entries, `kind_ids.rs for ${grammar}`);
 	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.get() == KindId::ERROR.get());`);
 	lines.push('');
-	lines.push(`/// The surface kinds: list kinds, whose items the surface exposes in their place, the wrappers a list seats around each element, which expose the element in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, and whether the grammar has trivia that isn't whitespace.`);
+	lines.push(`/// The surface kinds: list kinds, whose items the surface exposes in their place, the wrappers a list seats around each element, which expose the element in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, the kinds whose template renders an inner side, and whether the grammar has trivia that isn't whitespace.`);
 	lines.push(`pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {`);
 	const kindIds = (ids: readonly number[]): string => ids.map((id) => `KindId(${id})`).join(', ');
 	lines.push(`    lists: &[${kindIds(listKindIds(nodeMap))}],`);
@@ -125,6 +125,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const members = depthMembersOf(nodeMap);
 	const [indent, dedent] = [members.indent, members.dedent].map((kind) => (kind === undefined ? 0 : (findEntryForKindName(entries, kind)?.id ?? 0)));
 	lines.push(`    indent: KindId(${indent}),`, `    dedent: KindId(${dedent}),`);
+	lines.push(`    inner: &[${kindIds([...innerRegions(nodeMap).keys()])}],`);
 	lines.push(`    named_extras: ${namedExtras(nodeMap)},`);
 	lines.push(`};`);
 	lines.push('');
