@@ -494,7 +494,7 @@ function resolveMember(
 				const armSlots = rule.members.map((m) =>
 					mergeSlotsByName(collectSlotsWithin(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 				);
-				return mergeChoiceArms(stampArms(armSlots, rule, kindForName, diagnostics));
+				return mergeChoiceArms(armMult === 'array' || armMult === 'nonEmptyArray' ? armSlots : stampArms(armSlots, rule, kindForName, diagnostics));
 			}
 			if (!simplifyArmStage.isSlotNode(rule)) return [];
 			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);

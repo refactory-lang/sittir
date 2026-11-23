@@ -41,6 +41,8 @@ const sym = (name: string) => ({ type: 'SYMBOL', name });
 const str = (value: string) => ({ type: 'STRING', value });
 const choice = (...members: unknown[]) => ({ type: 'CHOICE', members });
 const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
+const repeat = (content: unknown) => ({ type: 'REPEAT', content });
+const repeat1 = (content: unknown) => ({ type: 'REPEAT1', content });
 const leaves = { digits: { type: 'PATTERN', value: '[0-9]+' }, word: { type: 'PATTERN', value: '[a-z]+' } };
 
 describe('arms stamp', () => {
@@ -66,6 +68,14 @@ describe('arms stamp', () => {
 			input: choice(seq(field('value', sym('digits')), str('p')), seq(field('value', sym('word')), str('q'))),
 			...leaves
 		});
+		expect(Object.values(held(nodeMap, 'input')).every((slot) => slot === undefined)).toBe(true);
+	});
+
+	it.each([
+		['repeat', repeat],
+		['repeat1', repeat1]
+	])('leaves a choice under %s unstamped, since separate iterations may take different arms', (_, repeated) => {
+		const nodeMap = synthetic({ input: repeated(choice(field('value', sym('digits')), field('arguments', sym('word')))), ...leaves });
 		expect(Object.values(held(nodeMap, 'input')).every((slot) => slot === undefined)).toBe(true);
 	});
 
