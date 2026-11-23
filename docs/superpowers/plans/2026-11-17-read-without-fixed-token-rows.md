@@ -14,7 +14,7 @@ Where the work stands:
   - named fixed tokens leave query results (Task 6).
 
   Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below. A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec).
-- **Tasks 2, 3 and 3a** are done (`0a524d9eb`, `4e4ccad56`, `6fc600773`). The stored-layout row did not move under arena storage. **Task 4 is next.**
+- **Tasks 2, 3, 3a and 4** are done (`0a524d9eb`, `4e4ccad56`, `6fc600773`, `5febfa404`). The stored-layout row did not move under arena storage. Task 4's `validate:history` comparison runs with the final head's gates. **Task 5 is next.**
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -270,7 +270,7 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - `EngineGrammar::delimiter(self, nodes, at)` keeps its signature.
 - Drops `prepare::source_trailing_delimiter`, `SourceTable::last_list_child_kind`, `engine::last_list_child` and codegen's `sourceTrailingSeparator`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `the_query_reads_the_stored_delimiter`, arena, over `read_fixtures(name)` for the five grammars: for every flanked list, `Plan::Delimiter` holds iff the list's side `DELIMITER` has the flag, on the `SlotContent` tree.
   - `parsed_lists_answer_their_separators_from_stamps`, both storages, over `read_fixtures(name)` for the five grammars. For every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's: `slot_separator`; `slot_layouts`. Nodes are matched by (grammar, display, span) in pre-order.
   - `the_separator_is_resolved_against_the_options_a_tree_was_read_with`: a list whose majority is the read-time arm and one whose majority differs, each rebuilt and rendered with a render call's own separator option, render the same in object and arena.
@@ -280,16 +280,16 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
     - after `$with.delimiter(undefined)` and the same rebuild, renders `a, b`;
     - after the same, under an engine whose `delimiter` option at that site is trailing, renders `a, b,`.
   - `delimiter-parity.test.ts` runs under `nodeStorage: 'arena'` as well as object.
-- [ ] **Step 2: Run them.** Run `PARITY the_query_reads`, `PARITY parsed_lists`, `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts packages/typescript/tests/edited-object-type.test.ts packages/tools/tests/portable/delimiter-parity.test.ts`. Expected:
+- [x] **Step 2: Run them.** Run `PARITY the_query_reads`, `PARITY parsed_lists`, `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts packages/typescript/tests/edited-object-type.test.ts packages/tools/tests/portable/delimiter-parity.test.ts`. Expected:
   - `the_query_reads…` FAILs: the `SlotContent` tree has no separator rows to count.
   - `parsed_lists…` FAILs on the `SlotContent` tree.
   - `a_cleared_delimiter…` FAILs, rendering `a, b,`.
-- [ ] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
-- [ ] **Step 4: Run.**
+- [x] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
+- [x] **Step 4: Run.**
   - Step 2's commands. Expected: PASS.
   - `validate:history` per row, both storages. Expected: no row moves. A cleared delimiter is the one behaviour change, and only `$with.delimiter(undefined)` reaches it (not checked: that the validator never clears a delimiter).
   - The full unit suite.
-- [ ] **Step 5: Commit:** `feat(core): a list's delimiter and separators are resolved once in the read, and its readers take the resolved option`.
+- [x] **Step 5: Commit:** `feat(core): a list's delimiter and separators are resolved once in the read, and its readers take the resolved option`.
 
 ### Task 5: Edge levels from body facts
 
