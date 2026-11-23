@@ -50,17 +50,7 @@ One `[naming]` line per automatic type-name rename, for the gen log.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::writeGrammarDiagnosticsJson`
 
-```text
-/**
- * Persist a diagnostics array to JSON. Sibling of
- * {@link formatGrammarDiagnostics}/{@link formatCompilerDiagnostics} — those
- * format for stderr, this serializes the same shape for a later task to
- * merge into a unified validation report. Works for either
- * `GrammarDiagnostic` or `CompilerDiagnostic` since both extend the shared
- * `Diagnostic` base (code/severity/message/proposal + scope-specific
- * fields), so no shape adaptation is needed — the array is written as-is.
- */
-```
+Persists a diagnostics array to JSON, as `formatGrammarDiagnostics` and `formatCompilerDiagnostics` format one for stderr. It takes any `Diagnostic` and writes the array as-is, so `gen` can record an emit halt's blocking diagnostics beside the compile records. A later report merges the file into the unified validation report.
 
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::diagnoseContentAliasInjectivity`
 

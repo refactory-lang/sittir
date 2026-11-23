@@ -20,6 +20,7 @@ import {
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
+import { EmitHaltedError, type Diagnostic } from './types/diagnostics.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { pruneOrphanedPlaceholderRules } from './transpile/prune-grammar-json.ts';
@@ -259,6 +260,9 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		isTTY: Boolean((process.stdin as NodeJS.ReadStream).isTTY)
 	});
 
+	const recordEmitDiagnostics = (emitted: readonly Diagnostic[]): void =>
+		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...emitted], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));
+
 	console.log(`Generating ${grammar} IR...`);
 	const result = await generate({
 		grammar,
@@ -267,6 +271,9 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		compilation,
 		allowDiagnostics,
 		rederiveJoinSeams: true
+	}).catch((error: unknown) => {
+		if (error instanceof EmitHaltedError) recordEmitDiagnostics(error.blocking);
+		throw error;
 	});
 
 	if (result.slotGroupingDiagnostics.length > 0) {
@@ -285,7 +292,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 
 	if (result.emitDiagnostics.length > 0) {
 		writeDiagnostics(result.emitDiagnostics, formatGrammarDiagnostics);
-		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...result.emitDiagnostics], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));
+		recordEmitDiagnostics(result.emitDiagnostics);
 	}
 
 	const outDir = outputDir;

@@ -25,7 +25,7 @@ import {
 	type GeneratedIdTables,
 	type KindEntryLike
 } from '../../dsl/symbol-table.ts';
-import type { CompilerDiagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
+import type { CompilerDiagnostic, Diagnostic, GrammarDiagnostic } from '../../types/diagnostics.ts';
 import { diagnoseDistributedAliases, diagnoseInlineTokenAliases, diagnoseMixedDisplayUnions } from './alias-distributed.ts';
 import { isParserHiddenName, isTerminalRootRule, ruleListParts, symbolFactsOf } from '../../dsl/rule-patterns.ts';
 import { ALIAS, SYMBOL } from '../../types/rule-types.ts';
@@ -838,7 +838,7 @@ export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnost
 }
 
 export function writeGrammarDiagnosticsJson(
-	diagnostics: readonly (GrammarDiagnostic | CompilerDiagnostic)[],
+	diagnostics: readonly Diagnostic[],
 	outPath: string
 ): void {
 	writeFileSync(outPath, JSON.stringify(diagnostics, null, 2));
