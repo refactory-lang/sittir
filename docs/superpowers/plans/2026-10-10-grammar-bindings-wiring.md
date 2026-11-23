@@ -169,7 +169,7 @@ Two PRs:
 
 **Census first:**
 - the synonyms per level and the flags' table (NT11: empty);
-- every synonym position the collision rule checks, against the probe's 120 positions with no collision and one note: `try` is a synonym of `propagate` and the canonical segment of `expression.block.try`;
+- every synonym position the collision rule checks, against the probe's 120 positions with no collision and one note: `try` is a synonym of `propagate` and the canonical segment of `statement.block.try`;
 - per grammar, the claims 4a rewrites into their language's word.
 
 ### 4a. The tables, the reader and the collision rule

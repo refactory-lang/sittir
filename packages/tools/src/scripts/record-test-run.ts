@@ -18,19 +18,25 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative, sep } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'node:url';
+
+import { REPO_ROOT } from '@sittir/codegen/grammars';
 
 import { appendTestHistory, commitTestHistory, readTestHistory, type TestRun } from '../test-history.ts';
 
-const REPO_ROOT = fileURLToPath(new URL('../../../..', import.meta.url));
-
-interface VitestJsonAssertionResult {
+export interface VitestJsonAssertionResult {
 	status: 'passed' | 'failed' | 'skipped' | 'pending' | 'todo';
+	fullName: string;
+	failureMessages: string[];
+	duration?: number;
 }
 
-interface VitestJsonTestResult {
+export interface VitestJsonTestResult {
 	name: string;
 	status: 'passed' | 'failed';
+	message?: string;
+	startTime?: number;
+	endTime?: number;
 	assertionResults: VitestJsonAssertionResult[];
 }
 
@@ -40,6 +46,7 @@ export interface VitestJsonReport {
 	numFailedTests: number;
 	numPendingTests: number;
 	numTodoTests: number;
+	success?: boolean;
 	testResults: VitestJsonTestResult[];
 }
 

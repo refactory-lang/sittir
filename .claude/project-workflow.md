@@ -24,6 +24,11 @@ Developer diagnostics live behind the unified `sittir` CLI (`@sittir/cli`). Pref
 - `probe-stages` — rule shape at every compiler phase (wire/evaluate/link/normalize/assemble)
 - `probe-parity` — template coverage for one kind
 - `profile` — unified failure aggregation across validators
+- `test-failures` — groups a vitest JSON report's failures by error message (`--report <path>`, `--json`); `--against <older report>` lists the new, fixed and unchanged failures by test name and refuses a comparison that does not reconcile
+- `test-durations` — per-file durations, the slowest tests and worker-seconds of a vitest JSON report (`--report <path>`, `--slowest <n>`, `--json`)
+- `grammar-rule` — prints one rule of a grammar's `.sittir/src/grammar.json` compactly (`-g <grammar> <kind>`); the raw rule, where `probe-stages` shows the rule at each compiler phase
+- `type-errors` — counts a type-check log's errors per package (`--log <path>`, `--json`); refuses a log with an error record it does not parse
+- `cargo-test-tally` — passed, failed and ignored per binary and in total from a `cargo test` log (`--log <path>`, `--storage <label>`, `--json`); refuses a log whose result lines disagree with its per-test lines
 - `check-baseline` / `check-perf` / `check-jinja` — regression gates and invariant checks
 - `propose-14` — signature-conformance ratchet: per-module classification table (`--table`), committed-baseline regression gate (`--update` to lower the baseline in a sweep PR)
 - `list-kinds`, `classify`, `phantom-kinds`, `field-provenance`, `grammar-diagnostics`, `assemble-shape-census` (per-modelType histogram of the rule shape each `Assembled*` constructor receives) — discovery tools
@@ -35,6 +40,10 @@ Timing tools (`bench`, `bench-storage`, `trivia-timing`, and `check-baseline --c
 Validator entry points live under `sittir validate` (not `tool`): `validate counts` — per-grammar validator pass/total (rrp / shallow / factory-rp + AST match); `validate history [n]` — objective before/after comparison of recorded runs; `validate probe-factory`; `validate trace-rt`.
 
 When adding a new diagnostic, implement it as `export async function run(opts: <Name>Options)` in `packages/tools/src/<category>/<name>.ts`, re-export it from `packages/tools/src/index.ts` (`export { run as <camelName>, type <Name>Options }`), add a `CommandModule` in `packages/cli/src/commands/tool/<name>.ts` (using the option mixins from `packages/cli/src/framework/options.ts`), and register it in the `toolModules` array in `packages/cli/src/commands/tool/index.ts`. A tool that times work calls `measureBuilt(<name>)` (`packages/tools/src/built.ts`) before it measures.
+
+A tool's documentation changes with it: each new exported declaration gets its entry in `docs/glossary/`, `docs/cli-command-glossary.md` is regenerated, and a tool peers should reach for first gets a line in the list above.
+
+A tool change needs no regen, validation run, native build or full suite (the maintainer, 2026-11-22), unless it changes codegen or a validator, which take the three-way verification in the working standards. It still passes what CI checks: its own tests, the tools build, lint, the glossary keys and the CLI glossary.
 
 ## Specs and branches
 

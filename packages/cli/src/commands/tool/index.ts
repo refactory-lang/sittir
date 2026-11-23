@@ -25,6 +25,7 @@ import { exercise } from './exercise.ts';
 import { fieldProvenance } from './field-provenance.ts';
 import { glossaryKeys } from './glossary-keys.ts';
 import { grammarDiagnostics } from './grammar-diagnostics.ts';
+import { grammarRule } from './grammar-rule.ts';
 import { hoistCensus } from './hoist-census.ts';
 import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
@@ -44,6 +45,10 @@ import { profile } from './profile.ts';
 import { profileFactory } from './profile-factory.ts';
 import { propose14 } from './propose-14.ts';
 import { separatedLists } from './separated-lists.ts';
+import { testDurations } from './test-durations.ts';
+import { testFailures } from './test-failures.ts';
+import { typeErrors } from './type-errors.ts';
+import { cargoTestTally } from './cargo-test-tally.ts';
 import { testHistory } from './test-history.ts';
 import { textKindOverlap } from './text-kind-overlap.ts';
 import { spelledTrivia } from './spelled-trivia.ts';
@@ -82,6 +87,7 @@ export const toolModules: readonly CommandModule[] = [
 	fieldProvenance,
 	glossaryKeys,
 	grammarDiagnostics,
+	grammarRule,
 	hoistCensus,
 	hoistedCensus,
 	inspectRefs,
@@ -101,7 +107,11 @@ export const toolModules: readonly CommandModule[] = [
 	profileFactory,
 	propose14,
 	separatedLists,
+	testDurations,
+	testFailures,
 	testHistory,
+	typeErrors,
+	cargoTestTally,
 	textKindOverlap,
 	spelledTrivia,
 	triviaPlacement,
