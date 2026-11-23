@@ -851,3 +851,11 @@ The name of a grammar's node union, `<Prefix>Node` (`RustNode`, `TypescriptNode`
 ### `packages/codegen/src/grammars.ts::PORTABLE_TABLE_FILE`
 
 Where a grammar package keeps its portable build table, beside the generated build module: `portable/table.ts`. The build hook's loader, the tools' delimiter spellings and the grammar-internals module list read the table there.
+
+### `packages/codegen/src/grammars.ts::parserNameOf`
+
+The name tree-sitter generates a grammar's parser under, which names its C entry point and can differ from the package name. It is the `name` in the package's generated `grammar.json`. Before one exists it is the `name` in the upstream `grammar.json` at the path of the package's `tree-sitter.json` entry, because that config can spell the name differently (C#'s says `c-sharp`, its grammar `c_sharp`). An upstream with no `grammar.json` gives the entry's name, and a package with no upstream config gives the package name. A name pinned only by the wire layer is not visible until the first generate.
+
+### `packages/codegen/src/grammars.ts::grammarNameAt`
+
+The `name` of the `grammar.json` at a path.

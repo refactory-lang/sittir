@@ -95,6 +95,7 @@ export function moduleSpecifier(from: string, to: string): string {
 
 export interface UpstreamGrammarEntry {
 	readonly name?: unknown;
+	readonly path?: unknown;
 	readonly 'file-types'?: unknown;
 }
 
@@ -122,11 +123,17 @@ export function upstreamGrammarEntry(pkg: Pick<GrammarPackage, 'dir' | 'name'>):
 	return { entry, configPath };
 }
 
+function grammarNameAt(path: string): string {
+	return (JSON.parse(readFileSync(path, 'utf8')) as { name: string }).name;
+}
+
 export function parserNameOf(pkg: Pick<GrammarPackage, 'dir' | 'name'>): string {
 	const generated = join(sittirDirOf(pkg), 'src', 'grammar.json');
-	if (existsSync(generated)) return (JSON.parse(readFileSync(generated, 'utf8')) as { name: string }).name;
+	if (existsSync(generated)) return grammarNameAt(generated);
 	if (upstreamConfigPath(pkg) === undefined) return pkg.name;
 	const { entry, configPath } = upstreamGrammarEntry(pkg);
+	const upstream = join(dirname(configPath), typeof entry.path === 'string' ? entry.path : '.', 'src', 'grammar.json');
+	if (existsSync(upstream)) return grammarNameAt(upstream);
 	if (typeof entry.name !== 'string') throw new Error(`parserNameOf: the grammar entry of "${pkg.name}" in ${configPath} has no name`);
 	return entry.name;
 }

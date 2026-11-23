@@ -48,6 +48,24 @@ describe('the tree-sitter grammar name is upstream’s, and the package name is 
 			expect(() => parserNameOf(pkgWith('lost', '{"grammars":[{"name":"a"},{"name":"b"}]}'))).toThrow(/declares 2 grammars and none is named "lost"/);
 		});
 
+		const withUpstreamGrammar = (pkg: { dir: string; name: string }, path: string, grammarName: string) => {
+			const src = join(pkg.dir, 'node_modules', `tree-sitter-${pkg.name}`, path, 'src');
+			mkdirSync(src, { recursive: true });
+			writeFileSync(join(src, 'grammar.json'), JSON.stringify({ name: grammarName }));
+			return pkg;
+		};
+
+		it('is the name in the upstream grammar.json when its config spells it differently', () => {
+			const pkg = withUpstreamGrammar(pkgWith('spelled', '{"grammars":[{"name":"c-sharp"}]}'), '.', 'c_sharp');
+			expect(parserNameOf(pkg)).toBe('c_sharp');
+		});
+
+		it('reads the grammar.json at the path of the entry named for the package', () => {
+			const config = '{"grammars":[{"name":"other","path":"other"},{"name":"nested","path":"inner"}]}';
+			const pkg = withUpstreamGrammar(pkgWith('nested', config), 'inner', 'inner_name');
+			expect(parserNameOf(pkg)).toBe('inner_name');
+		});
+
 		it('refuses a malformed tree-sitter.json and an entry with no name', () => {
 			expect(() => parserNameOf(pkgWith('broken', '{'))).toThrow(SyntaxError);
 			expect(() => parserNameOf(pkgWith('nameless', '{"grammars":[{"file-types":["x"]}]}'))).toThrow(/has no name/);
