@@ -5368,34 +5368,75 @@ function wrapBinaryExpression$with(node: Held, setter: string, args: readonly un
 		case 'left':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_left']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression({ ...$edited(data), _left: admitSlot(handle, 'binary_expression', 'left', v) }, tree)
+					v === undefined
+						? wrapBinaryExpression({ ...$edited(data), _left: admitSlot(handle, 'binary_expression', 'left', v) }, tree)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: undefined,
+									_left: admitSlot(handle, 'binary_expression', 'left', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'operator':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_operator']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression(
-						{ ...$edited(data), _operator: admitSlot(handle, 'binary_expression', 'operator', v) },
-						tree
-					)
+					v === undefined
+						? wrapBinaryExpression(
+								{ ...$edited(data), _operator: admitSlot(handle, 'binary_expression', 'operator', v) },
+								tree
+							)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: undefined,
+									_operator: admitSlot(handle, 'binary_expression', 'operator', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'right':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_right']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression({ ...$edited(data), _right: admitSlot(handle, 'binary_expression', 'right', v) }, tree)
+					v === undefined
+						? wrapBinaryExpression(
+								{ ...$edited(data), _right: admitSlot(handle, 'binary_expression', 'right', v) },
+								tree
+							)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: undefined,
+									_right: admitSlot(handle, 'binary_expression', 'right', v)
+								},
+								tree
+							)
 				)
 			);
 		case 'binaryExpressionIn':
 			return applySetter(args, (v: NonNullable<T.BinaryExpression['_binary_expression_in']>) =>
 				rebuilt(node, handle, () =>
-					wrapBinaryExpression(
-						{
-							...$edited(data),
-							_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
-						},
-						tree
-					)
+					v === undefined
+						? wrapBinaryExpression(
+								{
+									...$edited(data),
+									_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
+								},
+								tree
+							)
+						: wrapBinaryExpression(
+								{
+									...$edited(data),
+									_left: undefined,
+									_operator: undefined,
+									_right: undefined,
+									_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
+								},
+								tree
+							)
 				)
 			);
 	}

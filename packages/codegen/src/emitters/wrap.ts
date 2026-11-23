@@ -32,7 +32,7 @@ import {
 } from './shared.ts';
 import { formDefinedProperties } from './refine-emit.ts';
 import { chainReadsAsList, wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
-import { builtTypeSurfaceOf, chainItemsAt, anyShapes, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
+import { armCrossingClears, builtTypeSurfaceOf, chainItemsAt, anyShapes, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf, recordVerbatimPlaceOf } from './record-construction.ts';
@@ -652,11 +652,19 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 					.join('')
 			: '';
 		const input = branch?.options.includes(method) === true && f.optionDefaultArm !== undefined ? `(v ?? ${JSON.stringify(f.optionDefaultArm)})` : 'v';
-		const set = `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), input), nodeMap, kindEntries, node.typeName))}${branchDefaults} }, tree)`;
+		const setOf = (cleared: string): string =>
+			`${wrapFn}({ ...$edited(data), ${cleared}${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), input), nodeMap, kindEntries, node.typeName))}${branchDefaults} }, tree)`;
+		const set = setOf('');
+		const crossed = node instanceof AssembledList ? [] : armCrossingClears(node, node.slots, f);
 		return {
 			name: method,
 			params: `v: ${setterValueType}`,
-			body: branch?.needed.includes(method) === true ? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${set}` : set
+			body:
+				branch?.needed.includes(method) === true
+					? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${set}`
+					: crossed.length === 0
+						? set
+						: `v === undefined ? ${set} : ${setOf(crossed.map((other) => `${other.storageKey}: undefined, `).join(''))}`
 		};
 	});
 }

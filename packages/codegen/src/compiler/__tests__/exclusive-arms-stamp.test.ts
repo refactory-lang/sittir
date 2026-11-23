@@ -6,7 +6,7 @@ import { grammarPackage } from '../../grammars.ts';
 import { buildRuleCatalog } from '../rule-catalog.ts';
 import { isSlotBearingCompound } from '../../emitters/shared.ts';
 import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
-import { builtTypeSurfaceOf } from '../../emitters/factories.ts';
+import { armCrossingClears, armRequiredSlot, builtTypeSurfaceOf } from '../../emitters/factories.ts';
 import type { NodeMap, RawGrammar } from '../types.ts';
 
 function synthetic(rules: Record<string, unknown>): NodeMap {
@@ -44,6 +44,38 @@ const seq = (...members: unknown[]) => ({ type: 'SEQ', members });
 const repeat = (content: unknown) => ({ type: 'REPEAT', content });
 const repeat1 = (content: unknown) => ({ type: 'REPEAT1', content });
 const leaves = { digits: { type: 'PATTERN', value: '[0-9]+' }, word: { type: 'PATTERN', value: '[a-z]+' } };
+
+function slotOf(nodeMap: NodeMap, kind: string, field: string) {
+	const node = nodeMap.nodes.get(kind);
+	if (!node || !isSlotBearingCompound(node)) throw new Error(`expected '${kind}' to assemble as a compound`);
+	return { node, slot: node.slots.find((candidate) => candidate.fieldName === field)! };
+}
+
+describe('arm-crossing setters', () => {
+	it('clears the slots only the old arm held and keeps a shared one', () => {
+		const nodeMap = synthetic({
+			input: choice(seq(field('shared', sym('digits')), field('left', sym('word'))), seq(field('right', sym('word')), field('shared', sym('digits')))),
+			...leaves
+		});
+		const crossing = (name: string) => {
+			const { node, slot } = slotOf(nodeMap, 'input', name);
+			return armCrossingClears(node as never, node.slots, slot).map((cleared) => cleared.fieldName);
+		};
+		expect(crossing('right')).toEqual(['left']);
+		expect(crossing('left')).toEqual(['right']);
+		expect(crossing('shared')).toEqual([]);
+	});
+
+	it('types a setter without undefined only for a slot its arm requires, and only when no arm is empty', () => {
+		const exclusive = synthetic({ input: choice(field('value', sym('digits')), field('arguments', sym('word'))), ...leaves });
+		const { node: exclusiveNode, slot: value } = slotOf(exclusive, 'input', 'value');
+		expect(armRequiredSlot(exclusiveNode as never, exclusiveNode.slots, value)).toBe(true);
+		const withEmptyArm = synthetic({ input: choice(field('value', sym('digits')), seq(choice(field('arguments', sym('word')), { type: 'BLANK' }))), ...leaves });
+		const { node, slot } = slotOf(withEmptyArm, 'input', 'value');
+		expect(slot.arms).toBeDefined();
+		expect(armRequiredSlot(node as never, node.slots, slot)).toBe(false);
+	});
+});
 
 describe('arms stamp', () => {
 	it('records which arm holds each slot and whether the arm requires it', () => {
