@@ -377,6 +377,42 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain("return unbuilt('literal.number', input);");
 	}, 60_000);
 
+	const emittedNumber = (table: unknown) =>
+		runPinned('portableBuild', {
+			grammar: 'typescript',
+			node: 'TypeScriptNode',
+			map: 'TypeScriptMap',
+			imports: { vocabulary: '@sittir/types/vocabulary', builders: '../ir-strict.js', map: './map.js', utils: '@sittir/common/portable/utils', nodes: '@sittir/common/utils', types: '../types.js' },
+			table,
+			slots: {},
+			viewed: [],
+			textPaths: [],
+			textInputs: [],
+			textValues: [],
+			textKinds: [],
+			flags: {},
+			facts: {},
+			holes: [],
+			decided: {}
+		} as never);
+
+	it('writes a base prefix into its own slot beside the digits', async () => {
+		const { text } = await emittedNumber({
+			builders: { binary: 'config' },
+			paths: { 'literal.number.integer': { root: true, builds: { integer: 4 }, arms: [{ kind: 4, builder: 'binary', scalar: 'integer', numeric: ['prefix', 'content'], digits: { base: 2, affix: '0b' }, when: [], slots: [], presets: [], flags: {} }] } }
+		});
+		expect(text).toContain("return b.binary({ prefix: '0b', content: input.$value });");
+	}, 60_000);
+
+	it('builds nothing through a number arm no slot spells', async () => {
+		const { text } = await emittedNumber({
+			builders: { float: 'config' },
+			paths: { 'literal.number.float': { root: true, arms: [{ kind: 4, builder: 'float', scalar: 'float', numeric: [], when: [], slots: [], presets: [], flags: {} }] } }
+		});
+		expect(text).not.toContain('b.float(');
+		expect(text).toContain('export const portableBuild = {};');
+	}, 60_000);
+
 	it('builds a bare number through its slot\'s takers, a safe integer by the integer arm and any other number by the float arm, and refuses a number type it takes no taker for', async () => {
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',

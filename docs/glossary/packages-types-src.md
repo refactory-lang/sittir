@@ -1242,7 +1242,7 @@ The scalar type of a number arm.
 
 ### `packages/types/src/portable-build.ts::PortableBuildArm::numeric`
 
-The numeric text or decimal parts of a number arm.
+The numeric text or decimal parts of a number arm. With a base prefix in its own slot, the list is the prefix slot and then the digits. An empty list means no slot spells the number: the arm takes no `$value`, and a read keeps its node.
 
 ### `packages/types/src/portable-build.ts::PortableBuildArm::when`
 

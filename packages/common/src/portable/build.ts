@@ -767,8 +767,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					throw new Error(
 						`portable build: ${structure.$path} takes ${arm.scalar === 'float' ? 'a float (a number)' : 'an integer (a safe integer or a bigint)'} in ${language}, not ${spelledValue(scalar)}`
 					);
+				if (isNumberSlots(arm.numeric) && arm.numeric.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no slots that spell a $value in ${language}`);
 				if (arm.numeric === undefined || (isNumberSlots(arm.numeric) && !takesConfig(arm.builder!))) frame.input = scalar;
-				else if (isNumberSlots(arm.numeric)) frame.config[arm.numeric.at(-1)!] = scalar;
+				else if (isNumberSlots(arm.numeric)) {
+					for (const affix of arm.numeric.slice(0, -1)) frame.config[affix] = arm.digits!.affix;
+					frame.config[arm.numeric.at(-1)!] = scalar;
+				}
 				else {
 					const spelled = decimalSpelling(scalar, arm.numeric, arm.scientific === true);
 					if (spelled === undefined) throw new Error(`portable build: ${structure.$path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(scalar)}`);

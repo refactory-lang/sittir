@@ -342,7 +342,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			const read = scalarOf(node, arm);
 			return read === undefined ? [] : [{ arm, value: read }];
 		})[0];
-		if (scalar === undefined && arms.some((arm) => arm.scalar !== undefined)) return kept(node, { reason: 'scalar' }, carried);
+		if (scalar === undefined && (table.paths[path]?.arms ?? arms).some((arm) => arm.scalar !== undefined)) return kept(node, { reason: 'scalar' }, carried);
 		const beside = scalar === undefined ? [] : scalar.arm.slots;
 		if (scalar !== undefined && !beside.some((slot) => present(slotValue(node, slot)))) return { $path: path, $value: scalar.value };
 		if (scalar === undefined) {

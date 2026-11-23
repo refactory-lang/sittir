@@ -216,7 +216,7 @@ export interface PortableDecimalParts {
  * a bigint, read and built as one); its path's `builds` names the arm that builds a `$value` of each type. `numeric` names the grammar slots the number is
  * written from: the slots of its kind whose texts, in order, hold its digits, or the slot of each part of its decimal spelling. An option, such as
  * a radix prefix or an exponent marker, is never one of them: the builder writes it from its preference default;
- * `scientific` marks a kind whose decimal spelling always has an exponent. An arm with no `numeric` spells it in its kind's whole text. An arm builds the number
+ * `scientific` marks a kind whose decimal spelling always has an exponent. An arm with no `numeric` spells it in its kind's whole text, and an empty `numeric` means no slot spells it: the arm takes no `$value` and a read keeps its node. An arm builds the number
  * as its builder's input, or, where its builder takes a config, through its last `numeric` slot or its decimal parts. An integer arm reads its number
  * in the `digits` base after the `digits` affix. Its other slots read and build beside the `$value`. A `template`
  * spells its slot from the named holes. A `mounted` arm's builder is a mount that builds its holder, the kind

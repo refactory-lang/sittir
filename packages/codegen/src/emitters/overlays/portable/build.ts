@@ -62,7 +62,7 @@ import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { buildFactoryMap } from '../../factory-map.ts';
 import { includesNonEmpty, patternDfa, type PatternDfa } from '../../../compiler/model/pattern-automaton.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
-import { interiorSlotGuards, kindNumberShape, numberSpelling, numericSlotShape, readsEveryInteger, slotPattern, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
+import { DECIMAL_PARTS, interiorSlotGuards, kindNumberShape, numberSlotsSpellValue, numberSpelling, numericSlotShape, readsEveryInteger, slotPattern, wholeTextPattern, wholeTextShape, type NumberShape } from '../../interior.ts';
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -1185,28 +1185,30 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const slotKinds = new Map<string, ReadonlySet<number>>();
 			for (const { slot, seats } of completed) if (!slotKinds.has(slot.name)) slotKinds.set(slot.name, valueIds(seats));
 			const valueScalar = valueScalarOf(entry.vocab);
-			const scalar = armScalar(shape, valueScalar === undefined ? undefined : (kindValueScalars.get(kind) ?? valueScalar));
 			if (valueScalar !== undefined && shape === undefined) formDiagnostics.push({ code: 'portable-value-unshaped', path: entry.vocab, kinds: [kind] });
 			const contentSlot = lexedContentSlot(node);
 			const config = builder !== undefined && builders.get(builder) === 'config';
+			const scalar = armScalar(shape, valueScalar === undefined ? undefined : (kindValueScalars.get(kind) ?? valueScalar));
+			const spellsValue = numberSlotsSpellValue(node, config);
 			const stamped = new Set((modelNode(model, node.kind)?.slots ?? []).flatMap((slot) => (slot.valueSource === true ? [slot.name] : [])));
-			const numericSlots = scalar === undefined || builder === undefined ? [] : node.slots.filter((slot) => stamped.has(slot.name));
+			const numericSlots = scalar === undefined || builder === undefined || !spellsValue ? [] : node.slots.filter((slot) => stamped.has(slot.name));
 			const numericKeys = numericSlots.map((slot) => slot.propertyName);
-			const parts = config && numericKeys.length > 1;
+			const parts = config && numericKeys.length > 1 && numericKeys.every((key) => DECIMAL_PARTS.some((part) => part === key));
+			const prefixed = config && numericKeys.length > 1 && !parts;
 			const spelling = parts || numericKeys.length === 0 || config || contentSlot === undefined ? undefined : numberSpelling(node, contentSlot);
 			const spelled =
 				spelling === undefined || spelling.slots.every((slot) => numericSlots.includes(slot)) ? spelling : { shape: { ...spelling.shape, prefix: '' }, pattern: slotPattern(numericSlots[0]!) };
-			const numeric: PortableBuildArm['numeric'] = numericKeys.length === 0 ? undefined : parts ? Object.fromEntries(numericKeys.map((key) => [key, key])) : numericKeys;
+			const numeric: PortableBuildArm['numeric'] = scalar !== undefined && !spellsValue ? [] : numericKeys.length === 0 ? undefined : parts ? Object.fromEntries(numericKeys.map((key) => [key, key])) : numericKeys;
 			const scientific = parts && numericSlots.some((slot) => slot.propertyName === 'exponent' && isRequired(slot));
 			const read =
-				numericKeys.length === 0
+				numericKeys.length === 0 || prefixed
 					? { shape: wholeTextShape(kind, node), pattern: wholeTextPattern(node) }
 					: parts
 						? undefined
 						: (spelled ?? { shape: numericSlotShape(numericSlots[0]!), pattern: slotPattern(numericSlots[0]!) });
 			const readShape = scalar === 'integer' || scalar === 'bigint' ? read?.shape : undefined;
-			const digits = readShape === undefined || readShape.base === 'float' ? undefined : { base: readShape.base, affix: readShape.prefix };
-			if (scalar === 'integer' || scalar === 'bigint') {
+			const digits = !spellsValue || readShape === undefined || readShape.base === 'float' ? undefined : { base: readShape.base, affix: readShape.prefix };
+			if (spellsValue && (scalar === 'integer' || scalar === 'bigint')) {
 				if (readShape !== undefined && readsEveryInteger(read?.pattern, readShape)) totalIntegerReads.add(builtId);
 				else if (!partialIntegerReads.has(builtId)) {
 					partialIntegerReads.add(builtId);
@@ -1511,7 +1513,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const ordered = [...decidedOrder.filter((arm) => emptyOf(arm).length > 0), ...decidedOrder.filter((arm) => emptyOf(arm).length === 0)].sort((a, b) => Number(textBuilt(builderShapes, a.arm)) - Number(textBuilt(builderShapes, b.arm)));
 		const scalarArms = new Map<Arm, ArmScalar>();
 		for (const scalar of ARM_SCALARS) {
-			const pool = ordered.filter((arm) => arm.scalar === scalar);
+			const pool = ordered.filter((arm) => arm.scalar === scalar && !(Array.isArray(arm.arm.numeric) && arm.arm.numeric.length === 0));
 			if (pool.length === 0) continue;
 			const complete = pool.filter((arm) => arm.complete);
 			const able = complete.length === 0 ? pool : complete;

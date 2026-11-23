@@ -45,3 +45,23 @@ describe('the portable read of a node with a named child no slot reads', () => {
 		expect(carriesOf(table, 'fn f(a: u8) -> u8 { a }')).toEqual([]);
 	});
 });
+
+describe('the portable read of a number no arm can read as a value', () => {
+	const armsOf = (path: string, change: (arm: PortableBuildTable['paths'][string]['arms'][number]) => PortableBuildTable['paths'][string]['arms'][number]): PortableBuildTable => {
+		const at = table.paths[path]!;
+		return { ...table, paths: { ...table.paths, [path]: { ...at, arms: at.arms.map(change) } } };
+	};
+
+	it('keeps the node where the arm has no slots that spell its value', () => {
+		const built = armsOf('literal.number.float', (arm) => ({ ...arm, numeric: [] }));
+		expect(carriesOf(built, 'fn f() { 1.5; }')).toEqual([{ text: '1.5', carry: { reason: 'scalar' } }]);
+	});
+
+	it('keeps the node where its arm of a number path takes no number', () => {
+		const at = table.paths['literal.number.float']!;
+		const [arm] = at.arms;
+		const { scalar, ...plain } = arm!;
+		const built = { ...table, paths: { ...table.paths, 'literal.number.float': { ...at, arms: [plain, { ...plain, kind: -1, scalar }] } } };
+		expect(carriesOf(built, 'fn f() { 1.5; }')).toEqual([{ text: '1.5', carry: { reason: 'scalar' } }]);
+	});
+});

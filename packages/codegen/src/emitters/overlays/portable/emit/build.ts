@@ -976,6 +976,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const numeric = arm.numeric;
 		const parts = numeric === undefined || Array.isArray(numeric) ? undefined : numeric;
 		const slots: readonly string[] = numeric === undefined ? [] : Array.isArray(numeric) ? numeric : Object.values(numeric);
+		if (numeric !== undefined && slots.length === 0) return fail(`${path}'s number arm ${arm.kind} has no slots that spell its value`);
 		const spelled = (slot: PortableSlotRoute): boolean => numeric === undefined || (slot.steps.length === 1 && slots.includes(slot.steps[0]!.key));
 		const others = arm.slots.filter((slot) => !spelled(slot));
 		const scalar = dot(input(), '$value');
@@ -986,7 +987,10 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			return [constant('value', scalar), ret(ternary(typeIs(id('value'), 'bigint'), call(callee, id('value')), call(callee, id('value'))))];
 		}
 		const entries = slotEntries(path, arm, others, input);
-		if (parts === undefined) return [...bigint, ret(call(callee, obj([...entries, [slots.at(-1)!, scalar]])))];
+		if (parts === undefined) {
+			const affixes = slots.slice(0, -1).map((slot): [string, Expression] => [slot, str(arm.digits!.affix)]);
+			return [...bigint, ret(call(callee, obj([...entries, ...affixes, [slots.at(-1)!, scalar]])))];
+		}
 		const options = new Set(table.options?.[arm.builder!] ?? []);
 		if (entries.some(([key]) => options.has(key))) return fail(`${path}'s number arm takes a slot through its builder's options`);
 		const written = slots.map((slot): [string, Expression] => [slot, dot(id('parts'), slot)]);

@@ -367,20 +367,44 @@ export function numberSpelling(node: AssembledNode, content: AssembledNontermina
 
 export const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'exponentSign'] as const satisfies readonly (keyof PortableDecimalParts)[];
 
+function prefixedDigits(node: AssembledNode): readonly AssembledNonterminal[] {
+	const whole = wholeTextShape(node.kind, node);
+	if (whole === undefined || whole.base === 'float' || whole.prefix === '') return [];
+	const first = interiorOf(node)?.entries[0];
+	if (first === undefined || !('enum' in first) || !first.values.includes(whole.prefix)) return [];
+	const prefix = node.slots.find((slot) => slot.name === first.enum);
+	const digits = node.slots.filter((slot) => numericSlotShape(slot)?.base === whole.base);
+	return prefix === undefined || digits.length !== 1 ? [] : [prefix, digits[0]!];
+}
+
 export function numberSlotsOf(node: AssembledNode, config: boolean): readonly AssembledNonterminal[] {
 	if (kindNumberShape(node.kind, node) === undefined) return [];
-	if (!config) {
+	const spelled = (): readonly AssembledNonterminal[] => {
 		const content = lexedContentSlot(node);
 		return (content === undefined ? undefined : numberSpelling(node, content)?.slots) ?? [];
-	}
+	};
+	if (!config) return spelled();
 	const alone = node.slots.filter((slot) => {
 		const shape = numericSlotShape(slot);
 		return shape !== undefined && spellsItsBase(shape);
 	});
-	if (alone.length < 2) return alone;
+	if (alone.length === 0) {
+		const single = spelled();
+		return single.length > 0 ? single : prefixedDigits(node);
+	}
+	if (alone.length === 1) return alone;
 	const partless = alone.filter((slot) => !DECIMAL_PARTS.some((part) => part === slot.propertyName)).map((slot) => slot.propertyName);
 	if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${node.kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
 	return DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []);
+}
+
+export function numberSlotsSpellValue(node: AssembledNode, config: boolean): boolean {
+	const slots = numberSlotsOf(node, config);
+	const whole = wholeTextShape(node.kind, node);
+	if (slots.length === 0) return whole?.base !== 'float' || leafGuard(node.kind, node)!.test('0.5');
+	if (slots.length !== 1) return true;
+	const own = numericSlotShape(slots[0]!);
+	return whole === undefined || own === undefined || whole.base === own.base;
 }
 
 export function slotPattern(slot: AssembledNonterminal): string | undefined {

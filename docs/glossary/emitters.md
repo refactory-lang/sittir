@@ -15330,7 +15330,15 @@ The decimal parts a number kind's slots can spell, in the order a spelling write
 
 ### `packages/codegen/src/emitters/interior.ts::numberSlotsOf`
 
-The slots a number kind's value is written from, for a kind with a number shape; none for any other kind. When the kind's builder takes no config, they are the slots of its lexed content's number spelling. When it takes a config, they are the numeric slots that spell their own base; two or more must each be a decimal part (`DECIMAL_PARTS`) and come back in that order, else the emit fails with `portable-vocabulary-mismatch`. The factory map stamps them, less the kind's options, as the slots' `valueSource`.
+The slots a number kind's value is written from, for a kind with a number shape; none for any other kind. When the kind's builder takes no config, they are the slots of its lexed content's number spelling. When it takes a config, they are the numeric slots that spell their own base, or, with none, its lexed content's spelling or its base prefix and digits (`prefixedDigits`); two or more must each be a decimal part (`DECIMAL_PARTS`) and come back in that order, else the emit fails with `portable-vocabulary-mismatch`. The factory map stamps them, less the kind's options, as the slots' `valueSource`.
+
+### `packages/codegen/src/emitters/interior.ts::numberSlotsSpellValue`
+
+Whether a number kind's slots spell its value. One slot does only when its number shape has the base of the kind's whole text, so the digits before a point, or after a fixed one, are not the number. A float kind with no number slots does only when its whole text can hold a fraction, so a kind that requires an exponent cannot. When this is false the arm's `numeric` is empty: it takes no `$value`, and a read keeps its node.
+
+### `packages/codegen/src/emitters/interior.ts::prefixedDigits`
+
+The base-prefix slot and the digits slot of a config kind whose prefix is a choice of its own: the whole text has a prefixed integer shape, the interior opens with an enum slot holding that prefix, and one slot holds digits of that base. Empty for any other kind.
 
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
 

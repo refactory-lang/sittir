@@ -434,6 +434,32 @@ describe('the portable build of a registered option', () => {
 	});
 });
 
+describe('the portable build of a number arm', () => {
+	const built = (arm: Partial<PortableBuildTable['paths'][string]['arms'][number]>, value: number) => {
+		const calls: unknown[][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table: {
+				builders: { literal: 'config' },
+				paths: { 'literal.number.integer': { root: true, builds: { integer: 2 }, arms: [{ kind: 2, builder: 'literal', scalar: 'integer', slots: [], presets: [], flags: {}, when: [], ...arm }] } }
+			},
+			builders: { literal: (...args: unknown[]) => (calls.push(args), { $type: 2 }) },
+			kindName: () => 'literal',
+			readsAs: () => true
+		});
+		builder({ $path: 'literal.number.integer', $value: value } as never);
+		return calls;
+	};
+
+	it('writes the base prefix into its slot and the number into the digits', () => {
+		expect(built({ numeric: ['prefix', 'content'], digits: { base: 2, affix: '0b' } }, 5)).toEqual([[{ prefix: '0b', content: 5 }]]);
+	});
+
+	it('refuses a value where no slot spells it', () => {
+		expect(() => built({ numeric: [] }, 5)).toThrow('literal.number.integer: literal has no slots that spell a $value in test');
+	});
+});
+
 describe("the portable build of a flag that is a slot's list's trailing separator", () => {
 	const tableOf = (slot: PortableBuildTable['paths'][string]['arms'][number]['slots'][number], list: readonly { readonly key: string; readonly builder?: string }[]): PortableBuildTable => ({
 		builders: { holder: 'config', items: 'elements' },
