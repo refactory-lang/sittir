@@ -14,7 +14,7 @@ Where the work stands:
   - named fixed tokens leave query results (Task 6).
 
   Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below. A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec).
-- **Tasks 2 and 3** are done (`0a524d9eb`, `4e4ccad56`). **Task 3a is next.**
+- **Tasks 2, 3 and 3a** are done (`0a524d9eb`, `4e4ccad56`, `6fc600773`). The stored-layout row did not move under arena storage. **Task 4 is next.**
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -220,13 +220,13 @@ The spec's gate (accepted by the maintainer, 2026-11-18). It runs before Task 4,
 **Interfaces:**
 - Produces the addon function `readStoredLayout(engine, node)`, listed in the PR body. `runStoredLayout` reads the storage its lane names.
 
-- [ ] **Step 1: Write the failing test.** `stored-layout.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars, the stored layout answers from the lane's own tree, not from a bare parse.
-- [ ] **Step 2: Run it.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/stored-layout.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
-- [ ] **Step 3: Implement** `readStoredLayout` and the lane's read.
-- [ ] **Step 4: Run.**
+- [x] **Step 1: Write the failing test.** `stored-layout.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars, the stored layout answers from the lane's own tree, not from a bare parse.
+- [x] **Step 2: Run it.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/stored-layout.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
+- [x] **Step 3: Implement** `readStoredLayout` and the lane's read.
+- [x] **Step 4: Run.**
   - Step 2's command. Expected: PASS.
   - `validate --node-storage arena`: the stored-layout row now describes arena trees. Each row that moves is listed and sent to brainstorm. Once accepted, it is the arena baseline that Task 4 compares against. Object storage's rows do not move.
-- [ ] **Step 5: Commit:** `feat(tools): the stored-layout row answers for an arena tree`.
+- [x] **Step 5: Commit:** `feat(tools): the stored-layout row answers for an arena tree`.
 
 ### Task 4: A list's delimiter and separators, resolved once in the read
 
