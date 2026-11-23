@@ -739,7 +739,8 @@ export function createNativeEngine<
 				writeText,
 
 				release(node) {
-					const arena = handleArenaOf(node);
+					const read = treeOf(node)?.built;
+					const arena = handleArenaOf(node) ?? (read?.holdsRootWithoutView(node) ? read : undefined);
 					if (arena === undefined) return;
 					if (arena.owner !== engine.handle) throw new Error('an engine releases only the nodes its own builders returned');
 					arena.releaseHandle(node);

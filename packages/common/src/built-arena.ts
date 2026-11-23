@@ -11,7 +11,7 @@ import { checkedKindId } from './kind-id.ts';
 import { addressOf, chunkOf, headerKind, headerOf, kindField, leafItemPastNames, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
-import { isParsedPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
+import { isParsedPosition, isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
 import { keepExemplar } from './exemplars.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import { Source } from './source.ts';
@@ -300,6 +300,7 @@ export class BuiltArena {
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide' | 'unitSides' | 'writeUnitSides'>>;
 	readonly token: TreeToken;
 	readonly #wrap: Wrap;
+	readonly #rootsWithoutView = new WeakMap<object, number>();
 	readonly #handle: TreeEngineHandle;
 	readonly #views: BuiltViews;
 	readonly #words: Chunks<WritableWords>;
@@ -798,11 +799,17 @@ export class BuiltArena {
 		this.#release(at, this.format.held.record, true);
 	}
 
-	/** Releases what the handle `node` holds: its record's count, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
+	/** Releases what the handle `node` holds: its record's count, the count of the parse's root a wrapper with no view of its record holds, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
 	releaseHandle(node: object): void {
 		const at = (node as { readonly $at?: unknown }).$at;
 		if (typeof at === 'number') {
 			if (this.#liveRecord(node, at) && ((node as Partial<RecordHandle>).$words?.length ?? 0) !== 0) this.release(at);
+			return;
+		}
+		const root = this.#rootsWithoutView.get(node);
+		if (root !== undefined) {
+			this.#rootsWithoutView.delete(node);
+			this.release(root);
 			return;
 		}
 		this.#unpark(this.#parkedOf(node));
@@ -1215,7 +1222,18 @@ export class BuiltArena {
 		if (this.#commits.length > 0) this.#recordMinted(root, this.#chunk(root, 1));
 		const regions = Object.freeze(errors);
 		if (regions.length > 0) this.#errors.set(entry, regions);
-		return this.#readView(root, regions);
+		const view = this.#readView(root, regions);
+		if (!isRecordPosition(view)) this.#holdRootWithoutView(view, root);
+		return view;
+	}
+
+	#holdRootWithoutView(view: object, at: number): void {
+		this.#rootsWithoutView.set(view, at);
+		Object.defineProperty(view, Symbol.dispose, { configurable: true, value: () => this.releaseHandle(view) });
+	}
+
+	holdsRootWithoutView(node: object): boolean {
+		return this.#rootsWithoutView.has(node);
 	}
 
 	/** The ERROR and MISSING regions of the parse that left the node the key `node` names (`coordinateIndex`): none for a parse that had none. */

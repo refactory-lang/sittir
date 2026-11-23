@@ -1240,6 +1240,10 @@ A chunk a read wrote, as the addon answers it (`NativeEngineLike.readWords`): `d
 
 Holds the entry at `at` once more for a holder that takes the handle naming it: a value placed into a built record's cell, or an entry written to a built leaf's trivia. A record whose count its handle holds (`OWNED`), a builder's or a parse's root's, gives that count to the holder instead of taking one more, unless a commit scope keeps the handle's; any other entry takes one more, as `hold` does. Native's `BuiltChunks::adopt` is the same operation, and its `BuiltChunks::hold` the other.
 
+### `packages/common/src/built-arena.ts::BuiltArena::holdsRootWithoutView`
+
+Whether `node` is the wrapper of a parse's root whose kind has no view, and whose count it still holds. Such a root, an `ERROR`, wraps as a read row with no `$at`, so it is no handle: the arena keeps its address beside the wrapper, and `release` and the wrapper's dispose give the count back through `releaseHandle`. Releasing it drops the entry, so a second release is a no-op even once the address has been reused by a later parse.
+
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 
 The writer check a record builder runs before it writes (`EngineHandle.verifyStored`): the stored values checked against the kind's structure row, as `verifyStructure` checks an object node's. Only an engine in `verifyStructure: 'runtime'` mode has one. A built record's node is checked here, as it is written, so the walk after a build leaves it alone (`isBuiltNode`).
