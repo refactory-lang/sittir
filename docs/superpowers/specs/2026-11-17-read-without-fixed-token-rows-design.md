@@ -36,7 +36,7 @@ A **row** is a run entry for a node with no record: `RunEntry::Row { facts, span
 
 ## The end state
 
-- A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. It writes none for a unit either.
+- A parse writes a row only for slot content that is text the source carries (a variable-text leaf, or a node with no record holding one), and for what lies under trivia. It writes no row for a fixed token. It writes none for a unit either, unless an extra, `ERROR` or `MISSING` token lies under a unit of several tokens (§ Slots held by a kind id alone).
 - A fixed token's text comes from its kind. Where it sits comes from its holder's render body and the record's cells, the way a built node's template answers it. No byte offset of a fixed token is stored.
 - A slot whose content is a choice among units is held by its cell's kind id alone, parsed and built alike.
 - A record's own coordinate (`AT`: kind, start, end) stays, and so does every offset of text the source carries.
@@ -94,12 +94,14 @@ Every slot whose content is a choice among units is encoded by the cell's kind i
 |---|---|---|
 | keyword unit (`keyword`), including a boolean slot's keyword (`"storage":"boolean"`) | the keyword's kind id; for a boolean slot, the slot's flag | the text is the kind's, the place is the site |
 | punctuation or enum unit (`punctuation`, `enum`), including an enum member that a node with no record holds (`string` in `predefined_type`) | the member's kind id, which is the unit variant `EngineGrammar::unit_id` names | the enum kind is the slot's type; the member's text is its kind's |
-| external-scanner unit (a unit in `.sittir/src/grammar.json` `externals`, such as typescript's `_automatic_semicolon`) | its kind id | zero-width: its text is its kind's, which is empty in the source and `"\n"` in a render (`Kid::holder`'s doc) |
+| external-scanner unit (a unit in `.sittir/src/grammar.json` `externals`, such as typescript's `_automatic_semicolon`) | its kind id | zero-width: the source holds no text for it, and its render writes only the seam it stands for (`ResolvedOptions::token_seam`), parsed and built alike. A line break it stands for survives between two nodes, and a render that ends there drops it, as it drops any gap |
 | `MISSING` unit | the kind id of the unit the parser inserted | the source holds no text for it; its holder's `HOLDS_ERROR` fact stays (see § ERROR, header-only records, zero width and MISSING) |
 
 An automatic semicolon that a slot holds is read by the cell's kind, not by a row's width: whether a token has width is a fact of its kind.
 
 A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form. Whether a query lists a unit is a fact of its holder, slot and kind: `any` in `x as any` is listed and `const` in `x as const` is not, in one slot. Each slot's `CellShape` answers it: a member of a visible enum the slot holds is listed, as is a token the grammar aliases to a visible kind (regex `class_range`'s `-`, which codegen stamps). A member of a hidden enum is not, and the parser's named fact answers for every other unit. The shape also holds the slot's `field`, and nothing is stored per node.
+
+**A unit of several tokens.** Eight kinds carry the `unit` stamp and are more than one token in the grammar: rust `unit_type` and `unit_expression`; typescript `using_declaration_arm`, `meta_property_new_target`, `meta_property_import_meta` and `_formal_parameters_get_accessor_signature`; python `_not_in` and `_is_not`. Whitespace between its tokens isn't kept, so `( )` written from its holder's template is `()`, as a built one is. An extra, an `ERROR` or a `MISSING` token under one is source the kind's text doesn't hold, so that one node keeps its row and what lies under it, and renders as its source: `(/* c */)` stays `(/* c */)`. The walk reads this from the tree, and no kind is named in code.
 
 Unit rows are slot content, not fixed tokens; the maintainer ruled that they go too, in the same stage. The numbers list them apart.
 
