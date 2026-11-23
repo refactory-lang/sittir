@@ -42,7 +42,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(grammar: G
     let text = Source::read(&*built, parse.source).expect("its source entry").text;
     let records = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records");
     let table = RunTable::default();
-    let mut runs = RunNodes::holding(&*built, text, root, &table, (<G as EngineGrammar>::shape, <G as EngineGrammar>::KIND_BITS)).expect("its root");
+    let mut runs = RunNodes::holding(&*built, text, root, &table, <G as EngineGrammar>::read_shape()).expect("its root");
     let placement = tree.placed_trivia();
     let (mut ours, mut theirs) = (records.nodes(), tree.nodes());
     let (mut apart, mut assigned) = (Vec::new(), 0);
@@ -291,7 +291,7 @@ fn a_placed_error_is_the_entry_a_built_side_holds_for_it() {
     let built = engine.written().built();
     let text = Source::read(&*built, parse.source).expect("its source entry").text;
     let table = RunTable::default();
-    let mut runs = RunNodes::holding(&*built, text, root, &table, (<sittir_python::PythonGrammar as EngineGrammar>::shape, <sittir_python::PythonGrammar as EngineGrammar>::KIND_BITS)).expect("its root");
+    let mut runs = RunNodes::holding(&*built, text, root, &table, <sittir_python::PythonGrammar as EngineGrammar>::read_shape()).expect("its root");
     let error = runs.kids(NodeIndex::ROOT).iter().find(|kid| kid.grammar == sittir_core::types::KindId::ERROR).copied().expect("the source's ERROR");
     let Some(sittir_core::arena::NodeSite::Record(at)) = runs.site(error.index) else { panic!("the ERROR has a record of its own") };
     let Some(place @ Place::Node(_)) = sittir_core::engine::Records::over(&engine, &built, root).expect("a tree over the records").place(NodeIndex::ROOT) else { panic!("the root's place") };

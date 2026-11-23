@@ -10,11 +10,11 @@ use super::small::{SmallMap, SmallStack};
 
 use super::{Address, ArenaError, ArenaRead, Cell, SideRecord};
 use crate::record::HEADER_WORDS;
-use crate::types::{KindId, NodeId};
+use crate::types::{FieldId, KindId, NodeId};
 
 /// Where a record of one kind keeps its cells: its width in words, parsed
 /// and built, and each slot's cell, by the stamps its node type carries.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub struct RecordShape {
     pub words: u32,
     pub built_words: u32,
@@ -33,12 +33,13 @@ impl RecordShape {
 }
 
 /// A slot a kind's render body writes: an index into `RecordShape::cells`,
-/// or a flag, which has no cell: the word and bit that hold it and the kind
-/// of its keyword.
+/// or a flag, which has no cell: the word and bit that hold it, the kind
+/// its keyword shows as, and the tokens its keyword is, the stored one
+/// first and then each raw symbol the grammar folds into it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BodySlot {
     Cell(u8),
-    Flag { word: u32, bit: u8, kind: KindId },
+    Flag { word: u32, bit: u8, kind: KindId, tokens: &'static [KindId], field: Option<FieldId> },
 }
 
 /// One part of a kind's render body at an edge.
@@ -61,7 +62,7 @@ pub enum EdgePart {
 /// width, the forms it holds (`record::form`), and for a list (one word
 /// naming its run) the width of each item's cell in its run; in a built record, its one word. `key` is
 /// the slot's wire key, which a refusal of the slot names.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub struct CellShape {
     pub word: u32,
     pub width: u32,
@@ -69,16 +70,37 @@ pub struct CellShape {
     pub forms: u8,
     pub built: u32,
     pub key: &'static str,
+    /// Whether this slot shows an anonymous unit kind as a named node, given
+    /// the parser's named fact for a kind: a token its grammar aliases to a
+    /// visible kind here, or what `RecordCells::listed` answers for its type.
+    pub listed: fn(KindId, fn(KindId) -> bool) -> bool,
+    /// The field the grammar gives this slot.
+    pub field: Option<FieldId>,
+}
+
+impl CellShape {
+    /// No listed kinds and no field, for a struct update to fill.
+    pub const BARE: Self = Self { word: 0, width: 0, run: None, forms: 0, built: 0, key: "", listed: |_, _| false, field: None };
 }
 
 /// The record shapes a node type is written as, by the kind a record's
 /// header names: a struct's own, a choice's variants', none for a type that
 /// is never a record. The derive writes every impl.
 pub trait RecordCells {
+    /// Whether a slot of this type shows the anonymous unit `kind` as a named
+    /// node: `kind` is a member of an enum kind the slot holds, and `named`,
+    /// the parser's fact for a kind, says that enum is visible.
+    fn listed(kind: KindId, named: fn(KindId) -> bool) -> bool {
+        let _ = (kind, named);
+        false
+    }
     fn shape(kind: KindId) -> Option<RecordShape>;
 }
 
 impl<N: RecordCells + ?Sized> RecordCells for Box<N> {
+    fn listed(kind: KindId, named: fn(KindId) -> bool) -> bool {
+        N::listed(kind, named)
+    }
     fn shape(kind: KindId) -> Option<RecordShape> {
         N::shape(kind)
     }
@@ -195,12 +217,12 @@ mod tests {
     /// words 2 and 3; a list the cell naming its run, at word 2; a leaf is
     /// its header.
     fn shape(kind: KindId) -> Option<RecordShape> {
-        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" }];
+        const PAIR_CELLS: &[CellShape] = &[CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child", ..CellShape::BARE }];
         const FORK_CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_first" },
-            CellShape { word: 5, width: 3, run: None, forms: form::NODE, built: 3, key: "_second" },
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_first", ..CellShape::BARE },
+            CellShape { word: 5, width: 3, run: None, forms: form::NODE, built: 3, key: "_second", ..CellShape::BARE },
         ];
-        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), forms: form::NODE, built: 2, key: "_items" }];
+        const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), forms: form::NODE, built: 2, key: "_items", ..CellShape::BARE }];
         match kind {
             PAIR => Some(RecordShape { words: 5, built_words: 3, cells: PAIR_CELLS, ..RecordShape::BARE }),
             FORK => Some(RecordShape { words: 8, built_words: 4, cells: FORK_CELLS, ..RecordShape::BARE }),

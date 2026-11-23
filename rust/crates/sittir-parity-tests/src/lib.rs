@@ -168,6 +168,84 @@ pub fn edge_sources(name: &str) -> Vec<String> {
     sources
 }
 
+/// A named token a holder's render body writes, which navigation does not
+/// list: the holder's kind, the token's, and a source holding the pair.
+#[derive(Debug, Clone, Copy)]
+pub struct NamedFixedPair {
+    pub holder: &'static str,
+    pub token: &'static str,
+    pub source: &'static str,
+}
+
+const fn pair(holder: &'static str, token: &'static str, source: &'static str) -> NamedFixedPair {
+    NamedFixedPair { holder, token, source }
+}
+
+/// Each pair of a holder and the named fixed token its body writes, by
+/// grammar.
+#[must_use]
+pub fn named_fixed_pairs(name: &str) -> &'static [NamedFixedPair] {
+    const RUST: [NamedFixedPair; 7] = [
+        pair("self_parameter", "self", "impl S { fn f(&self) {} }\n"),
+        pair("pointer_type_mut", "mutable_specifier", "type T = *mut u8;\n"),
+        pair("reference_expression_mut", "mutable_specifier", "fn f() { let x = &mut a; }\n"),
+        pair("reference_expression_raw_mut", "mutable_specifier", "fn f() { let x = &raw mut a; }\n"),
+        pair("extern_crate_declaration", "crate", "extern crate a;\n"),
+        pair("mut_pattern", "mutable_specifier", "fn f() { let g = move |mut e| e; }\n"),
+        pair("receiver_parameter_declaration", "self", "impl S { fn f(self: Box<Self>) {} }\n"),
+    ];
+    const TYPESCRIPT: [NamedFixedPair; 6] = [
+        pair("object_type_content", "automatic_semicolon", "type T = {\n  a: string\n  b: number\n};\n"),
+        pair("method_definition_getter", "formal_parameters", "class C { get a() { return 1; } }\n"),
+        pair("type_query_call_expression", "import", "type T = typeof import('a');\n"),
+        pair("receiver_parameter_declaration", "this", "function f(this: T) {}\n"),
+        pair("abstract_method_signature_getter", "formal_parameters", "abstract class C { abstract get a(): number; }\n"),
+        pair("method_signature_getter", "formal_parameters", "interface I { get a(): number; }\n"),
+    ];
+    const PYTHON: [NamedFixedPair; 3] = [pair("_simple_statements", "newline", "x = 1\n"), pair("block_statement", "newline", "if a:\n    b\n"), pair("decorator", "newline", "@a\ndef f(): pass\n")];
+    match name {
+        "rust" => &RUST,
+        "typescript" => &TYPESCRIPT,
+        "python" => &PYTHON,
+        _ => &[],
+    }
+}
+
+/// A source for each kind that writes a flag after a cell, whose cells are
+/// not in document order.
+#[must_use]
+pub fn out_of_order_units(name: &str) -> Vec<&'static str> {
+    match name {
+        "rust" => vec!["pub static mut X: u8 = 1;\n", "pub unsafe trait T {}\n", "impl S { fn f(&'a mut self) {} }\n", "type T = &'a mut U;\n"],
+        "typescript" => vec![
+            "a?.[0];\n",
+            "class C { constructor(@d public override readonly a: T = 1) {} }\n",
+            "class C { constructor(@d public override readonly a?: T) {} }\n",
+            "type T = typeof a?.[0];\n",
+            "interface I { public static override readonly a?: T }\n",
+            "type T = { -readonly [a: string]: U };\n",
+            "type T = { -readonly [K in U]: V };\n",
+            "class C { set a(@d public override readonly b: T) {} }\n",
+            "class C { public static override readonly async *a?<T>(b): U {} }\n",
+            "class C { public static override get a(): T { return 1; } }\n",
+            "class C { public static override set a(b) {} }\n",
+            "declare class C { public static override readonly async *a?<T>(b): U; }\n",
+            "declare class C { public static override get a(): T; }\n",
+            "declare class C { public static override set a(b); }\n",
+            "abstract class C { public abstract override *a?<T>(b): U; }\n",
+            "abstract class C { public abstract override get a(): T; }\n",
+            "abstract class C { public abstract override set a(b); }\n",
+            "class C { @d declare public static override readonly abstract a?: T = 1; }\n",
+            "class C { @d public static abstract override accessor a: T = 1; }\n",
+            "class C { m(@d public override readonly this: T = 1) {} }\n",
+        ],
+        "python" => vec!["f\"{a=!r:b}\"\n"],
+        "regex" => vec!["[^-a-]", "a{1,2}?"],
+        "scm" => vec!["((a) .)\n"],
+        _ => Vec::new(),
+    }
+}
+
 /// Every node of `tree` no extra or `ERROR` holds, in preorder.
 pub fn read_kids<G: sittir_core::engine::EngineGrammar, B: sittir_core::engine::Backing<G>>(tree: &B) -> Vec<sittir_core::nodes::Kid> {
     use sittir_core::nodes::{Step, Visit};
@@ -181,6 +259,8 @@ pub fn read_kids<G: sittir_core::engine::EngineGrammar, B: sittir_core::engine::
         }
         Visit::Enter
     });
+    let mut nodes = tree.nodes();
+    kids.retain(|kid| !sittir_core::nodes::Nodes::is_unit(&mut nodes, kid.index));
     kids
 }
 

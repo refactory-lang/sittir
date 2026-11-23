@@ -91,6 +91,12 @@ pub fn kind_name(language: &Language, kind: KindId) -> Option<&str> {
     language.node_kind_for_id(kind.get())
 }
 
+/// Whether the grammar's `kind` is a named one.
+#[must_use]
+pub fn kind_is_named(language: &Language, kind: KindId) -> bool {
+    language.node_kind_is_named(kind.get())
+}
+
 /// The kind the grammar names `name`, named or anonymous; `KindId::BLANK`
 /// when it names none. The one call of `Language::id_for_node_kind`.
 #[allow(clippy::disallowed_methods, reason = "wraps `Language::id_for_node_kind`, which clippy.toml disallows outside this module")]

@@ -2433,13 +2433,13 @@ pub struct CharacterClassNode {
     #[slot(presence = display(kind::_NEGATION), word = 2, bit = 0)]
     pub negation: bool,
     #[wire(key = "_leading")]
-    #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER), word = 2, bit = 1)]
+    #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER, kind::DASH), word = 2, bit = 1)]
     pub leading: bool,
     #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS, word = 3, width = 1, run = 3, forms = 1, built = 3)]
     pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsNodeSlot>>,
     #[wire(key = "_trailing")]
-    #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER), word = 2, bit = 2)]
+    #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER, kind::DASH), word = 2, bit = 2)]
     pub trailing: bool,
 }
 
@@ -2661,10 +2661,10 @@ pub struct ClassRangeNode {
     #[height]
     height: u16,
     #[wire(key = "_start")]
-    #[slot(field = field::START, word = 2, width = 4, forms = 3, built = 2)]
+    #[slot(field = field::START, listed = kind::DASH, word = 2, width = 4, forms = 3, built = 2)]
     pub start: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
     #[wire(key = "_end")]
-    #[slot(field = field::END, word = 6, width = 4, forms = 3, built = 3)]
+    #[slot(field = field::END, listed = kind::DASH, word = 6, width = 4, forms = 3, built = 3)]
     pub end: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
 }
 

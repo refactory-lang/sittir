@@ -103,6 +103,10 @@ impl EngineGrammar for PythonGrammar {
         fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
             <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
         }
+
+        fn named_kind(kind: sittir_core::types::KindId) -> bool {
+            sittir_core::read::kind_is_named(&crate::language(), kind)
+        }
     }
 }
 

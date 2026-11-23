@@ -65,6 +65,20 @@ pub trait EngineGrammar: Copy {
         let _ = kind;
         None
     }
+    /// Whether `kind` is a named kind of this grammar; none is for a grammar
+    /// with no records.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    fn named_kind(kind: KindId) -> bool {
+        let _ = kind;
+        false
+    }
+    /// What navigation over this grammar's records reads of it.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    fn read_shape() -> crate::arena::ReadShape {
+        (Self::shape, Self::KIND_BITS, Self::named_kind)
+    }
     /// The children of the node `at`, found through `nodes`, as its read
     /// routes them (`ReadNode::routes`); none for a node read without
     /// routes, or a grammar with no nodes.
@@ -740,10 +754,11 @@ pub trait Backing<G: EngineGrammar>: Sized {
             return Ok((items, None));
         }
         while let Some(kid) = Self::advance(nodes, start, &mut levels, depth) {
-            if !kid.named || kid.extra || surface.is_depth_member(kid.grammar) || !(kid.error() || self.grammar().admits(kid.grammar, kid.display)) {
+            let held_unit = nodes.is_unit(kid.index);
+            if !kid.named || kid.extra || surface.is_depth_member(kid.grammar) || !(held_unit || kid.error() || self.grammar().admits(kid.grammar, kid.display)) {
                 continue;
             }
-            let unit = self.grammar().unit_id(nodes, &kid);
+            let unit = if held_unit { Some(kid.grammar) } else { self.grammar().unit_id(nodes, &kid) };
             let holder = levels.len().checked_sub(2).map_or(start, |above| levels[above].0[levels[above].1]);
             if let (None, Some(crate::read::Router::Children(route, ..))) = (unit, router(&holder)) {
                 if !kid.error() && !matches!(route(&kid), Ok(crate::read::Route::Slot { .. })) {
@@ -1069,7 +1084,7 @@ pub struct Records<'a, G: EngineGrammar> {
     table: crate::arena::RunTable,
     /// How the grammar lays a record of each kind out, and its kind bits:
     /// what finds a slot's site from its node's row and back.
-    shape: (fn(KindId) -> Option<crate::arena::RecordShape>, u32),
+    shape: crate::arena::ReadShape,
     /// Each record's rows that a cell of it names, with the cell's site,
     /// read once a record.
     sites: PerCall<crate::arena::site::RowSites>,
@@ -1109,7 +1124,7 @@ impl<G: EngineGrammar> Records<'_, G> {
     /// of a record as that record's `inner`.
     fn written_sites(&self) -> Option<Vec<(crate::arena::NodeSite, TriviaSide)>> {
         let spans = crate::arena::read_spans(self.built, self.source).ok()?;
-        let (shape, bits) = self.shape;
+        let (shape, bits, _) = self.shape;
         let site_of = |name: crate::types::NodeId, side: TriviaSide| match name.inside_of() {
             Some(record) if side == TriviaSide::Leading => Some((crate::arena::NodeSite::Record(crate::arena::Address(record.address())), TriviaSide::Inner)),
             _ => Some((crate::arena::site::node_site(self.built, shape, bits, name).ok()?, side)),
@@ -1170,7 +1185,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
             return Some(Vec::new());
         }
         let crate::arena::NodeSite::Record(at) = self.table.site(index)? else { return None };
-        let (shape, bits) = self.shape;
+        let (shape, bits, _) = self.shape;
         let record = shape(crate::arena::ArenaRead::header_kind(self.built, at, bits).ok()?)?;
         let side = crate::arena::SideRecord::read(self.built, crate::arena::side_of(self.built, at).ok()?).ok()?;
         Some(side.slots.iter().filter(|slot| slot.separator.is_some()).filter_map(|slot| Some(crate::layout::SlotLayout { slot: record.cells.iter().find(|cell| cell.word == slot.word)?.key.to_string(), separator: slot.separator, ..crate::layout::SlotLayout::default() })).collect())
@@ -1266,7 +1281,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
     }
 
     fn named(&self, name: crate::types::NodeId) -> Option<crate::arena::NodeSite> {
-        let (shape, bits) = self.shape;
+        let (shape, bits, _) = self.shape;
         crate::arena::site::node_site(self.built, shape, bits, name).ok()
     }
 
@@ -1283,7 +1298,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
 impl<G: EngineGrammar> crate::read::NodeNames for Records<'_, G> {
     fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId> {
         let site = self.table.site(index)?;
-        let (shape, bits) = self.shape;
+        let (shape, bits, _) = self.shape;
         self.sites.with(|known| crate::arena::site::site_name(self.built, shape, bits, site, known).ok().flatten())
     }
 }
@@ -1317,7 +1332,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
             grammar: engine.grammar,
             built,
             table: crate::arena::RunTable::default(),
-            shape: (G::shape, G::KIND_BITS),
+            shape: G::read_shape(),
             sites: PerCall::default(),
             entry_starts: PerCall::default(),
             source,

@@ -604,6 +604,10 @@ pub struct NewChunk<T: ChunkUnit> {
 /// The record shape of a kind, the grammar's (`EngineGrammar::shape`).
 pub type ShapeOf = fn(KindId) -> Option<RecordShape>;
 
+/// What navigation reads of a grammar: each record's shape, its kind bits,
+/// and whether a kind is named.
+pub type ReadShape = (ShapeOf, u32, fn(KindId) -> bool);
+
 /// The chunks of an engine's built arena: native memory JavaScript's
 /// builders ask for one chunk at a time and write records and leaf entries
 /// into through external array buffers, with each chunk's counts beside it

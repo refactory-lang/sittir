@@ -19,6 +19,14 @@ sittir_core::grammar_nodes!(NoTrivia; NoTrivia, Ident, Params, Block, Function, 
 
 type Layout = Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>;
 
+::sittir_core::records_codec! {
+    impl ::sittir_core::arena::RecordCells for Ident {
+        fn shape(_: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
+            ::core::option::Option::None
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Node)]
 #[node(kind = kind::IDENTIFIER, text, words = 2, built_words = 2)]
 struct Ident {
@@ -836,6 +844,14 @@ fn a_row_read_equals_the_same_node_in_a_whole_read_trivia_included() {
     let inner: Function = sittir_core::read::read_at::<Function>(&mut tree.walk(), &mut ctx, inner_row, Depth::All).unwrap();
     let body = function(&whole, 0).body.node().unwrap();
     assert_eq!(&inner, body.statements[0].node().unwrap());
+}
+
+::sittir_core::records_codec! {
+    impl ::sittir_core::arena::RecordCells for Name {
+        fn shape(_: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
+            ::core::option::Option::None
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Node)]

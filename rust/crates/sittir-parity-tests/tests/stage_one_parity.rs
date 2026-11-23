@@ -2,13 +2,16 @@
 //! reader as a read that writes them all does.
 #![cfg(feature = "arena")]
 
+use std::collections::BTreeMap;
+
 use sittir_core::arena::side::{RunEntry, SideRecord};
 use sittir_core::arena::{header_of, Address, ArenaRead, BodySlot, Cell, CellWord, EdgePart, HydrateNode, ListCell, ReadRows, RecordCells, RecordGrammar, RecordShape};
-use sittir_core::engine::{Backing, Engine, EngineGrammar, Records};
+use sittir_core::engine::{Backing, Descendant, Engine, EngineGrammar, Records};
 use sittir_core::layout::SlotLayout;
 use sittir_core::options::ResolvedOptions;
-use sittir_core::types::{Delimiter, KindId};
-use sittir_parity_tests::{edge_chains, edge_sources, fixture_sources, parsed, read_kids, with_layout, MIXED_LISTS};
+use sittir_core::nodes::Nodes as _;
+use sittir_core::types::{Delimiter, KindId, NodeIndex, Span};
+use sittir_parity_tests::{edge_chains, edge_sources, fixture_sources, named_fixed_pairs, out_of_order_units, parsed, read_fixtures, read_kids, with_layout, MIXED_LISTS};
 
 type ShapeFn = fn(KindId) -> Option<RecordShape>;
 
@@ -234,6 +237,97 @@ fn the_query_reads_the_stored_delimiter() {
         each_slot_content_read::<G, N>(name, grammar, options, |source, tree, records| {
             assert_eq!(delimiters(grammar, records), delimiters(grammar, tree), "{name} {source:?}");
         });
+    }
+    each_grammar!(check);
+}
+
+fn over_both_reads<G: RecordGrammar + Copy, N: HydrateNode>(grammar: G, options: fn() -> ResolvedOptions, source: &str, answer: impl FnOnce(&Records<'_, G>, &Records<'_, G>)) {
+    let (mut whole, mut content) = (Engine::new(grammar, options()).expect("an engine"), Engine::new(grammar, options()).expect("an engine"));
+    let whole_root = whole.parse_records_with::<N>(source, ReadRows::All).expect("a read").root;
+    let content_root = content.parse_records_with::<N>(source, ReadRows::SlotContent).expect("a read").root;
+    let (Some(whole_root), Some(content_root)) = (whole_root, content_root) else { return };
+    let (whole_built, content_built) = (whole.written().built(), content.written().built());
+    let (Ok(all), Ok(records)) = (Records::over(&whole, &whole_built, whole_root), Records::over(&content, &content_built, content_root)) else { return };
+    answer(&all, &records);
+}
+
+/// A query's item: its stamped kind, its span (none for a unit), and the
+/// id of its node (none for a unit).
+type Listed = (KindId, Option<Span>, Option<NodeIndex>);
+
+fn listed<G: EngineGrammar, B: Backing<G>>(tree: &B, index: NodeIndex, depth: Option<u32>) -> Vec<Listed> {
+    let mut nodes = tree.nodes();
+    let (found, _) = tree.descendants_under(&mut nodes, index, &[], None, None, u32::MAX, depth).expect("a walk");
+    let ctx = tree.read_ctx();
+    found
+        .into_iter()
+        .map(|item| match item {
+            Descendant::Node(kid) => (ctx.stamped_kind(kid.grammar, kid.display), Some(kid.span()), Some(kid.index)),
+            Descendant::Unit(kind) => (kind, None, None),
+        })
+        .collect()
+}
+
+/// The nodes `all` and `content` list alike, by their ids in each. An item
+/// only `all` lists goes to `dropped`.
+fn aligned(context: &str, all: &[Listed], content: &[Listed], dropped: &mut dyn FnMut(KindId)) -> Vec<(NodeIndex, NodeIndex)> {
+    let (mut rest, mut same) = (content.iter().peekable(), Vec::new());
+    for one in all {
+        match rest.peek() {
+            Some(other) if (other.0, other.1) == (one.0, one.1) => {
+                if let (Some(whole), Some(held)) = (one.2, other.2) {
+                    same.push((whole, held));
+                }
+                rest.next();
+            }
+            _ => dropped(one.0),
+        }
+    }
+    assert!(rest.next().is_none(), "{context}: the read without rows lists more:\n  all {all:?}\n  content {content:?}");
+    same
+}
+
+#[test]
+fn queries_list_units_in_render_body_order() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        let pairs = named_fixed_pairs(name);
+        let mut left: BTreeMap<(&'static str, &'static str), u32> = BTreeMap::new();
+        let mut sources = read_fixtures(name);
+        sources.extend(out_of_order_units(name).into_iter().map(str::to_owned));
+        for source in &sources {
+            over_both_reads::<G, N>(grammar, options, source, |all, records| {
+                let context = format!("{name} {source:?}");
+                let token = |kind: KindId| pairs.iter().any(|pair| pair.token == G::kind_name(kind));
+                let whole = aligned(&context, &listed::<G, _>(all, NodeIndex::ROOT, None), &listed::<G, _>(records, NodeIndex::ROOT, None), &mut |kind| assert!(token(kind), "{context}: dropped {}, in no pair", G::kind_name(kind)));
+                for (at, held) in std::iter::once((NodeIndex::ROOT, NodeIndex::ROOT)).chain(whole) {
+                    let holder = all.nodes().kid(at);
+                    let names = [G::kind_name(holder.grammar), G::kind_name(holder.display)];
+                    aligned(&context, &listed::<G, _>(all, at, Some(1)), &listed::<G, _>(records, held, Some(1)), &mut |kind| {
+                        let pair = pairs.iter().find(|pair| pair.token == G::kind_name(kind) && names.contains(&pair.holder));
+                        let pair = pair.unwrap_or_else(|| panic!("{context}: {names:?} dropped {}, in no pair", G::kind_name(kind)));
+                        *left.entry((pair.holder, pair.token)).or_default() += 1;
+                    });
+                    aligned(&context, &listed::<G, _>(all, at, None), &listed::<G, _>(records, held, None), &mut |kind| assert!(token(kind), "{context}: dropped {}, in no pair", G::kind_name(kind)));
+                }
+            });
+        }
+        eprintln!("{name}: named fixed tokens dropped: {left:?}");
+    }
+    each_grammar!(check);
+}
+
+#[test]
+fn a_named_fixed_token_leaves_query_results() {
+    fn check<G: RecordGrammar + Copy, N: HydrateNode>(name: &str, grammar: G, options: fn() -> ResolvedOptions) {
+        for pair in named_fixed_pairs(name) {
+            over_both_reads::<G, N>(grammar, options, pair.source, |all, records| {
+                let count = |items: &[Listed], of: &str| items.iter().filter(|item| G::kind_name(item.0) == of).count();
+                let (whole, held) = (listed::<G, _>(all, NodeIndex::ROOT, None), listed::<G, _>(records, NodeIndex::ROOT, None));
+                assert!(count(&whole, pair.token) > 0, "{name} {pair:?}: the source holds the token");
+                assert_eq!(count(&held, pair.token), 0, "{name} {pair:?}: the token leaves the query");
+                assert_eq!(count(&held, pair.holder), count(&whole, pair.holder), "{name} {pair:?}: the holder is found as often");
+            });
+        }
     }
     each_grammar!(check);
 }

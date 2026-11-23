@@ -1208,8 +1208,8 @@ mod tests {
     #[cfg(feature = "arena")]
     fn holder_shape(kind: KindId) -> Option<crate::arena::RecordShape> {
         const CELLS: &[crate::arena::CellShape] = &[
-            crate::arena::CellShape { word: 2, width: 1, run: None, forms: crate::record::form::NODE, built: 2, key: "unit" },
-            crate::arena::CellShape { word: 7, width: 1, run: None, forms: crate::record::form::NODE, built: 3, key: "leaf" },
+            crate::arena::CellShape { word: 2, width: 1, run: None, forms: crate::record::form::NODE, built: 2, key: "unit", ..crate::arena::CellShape::BARE },
+            crate::arena::CellShape { word: 7, width: 1, run: None, forms: crate::record::form::NODE, built: 3, key: "leaf", ..crate::arena::CellShape::BARE },
         ];
         (kind == HOLDER).then_some(crate::arena::RecordShape { words: 8, built_words: 4, cells: CELLS, ..crate::arena::RecordShape::BARE })
     }
@@ -1253,8 +1253,8 @@ mod tests {
     #[cfg(feature = "arena")]
     fn list_holder_shape(kind: KindId) -> Option<crate::arena::RecordShape> {
         const CELLS: &[crate::arena::CellShape] = &[
-            crate::arena::CellShape { word: 2, width: 1, run: Some(3), forms: crate::record::form::NODE, built: 2, key: "units" },
-            crate::arena::CellShape { word: 3, width: 1, run: None, forms: crate::record::form::NODE, built: 3, key: "unit" },
+            crate::arena::CellShape { word: 2, width: 1, run: Some(3), forms: crate::record::form::NODE, built: 2, key: "units", ..crate::arena::CellShape::BARE },
+            crate::arena::CellShape { word: 3, width: 1, run: None, forms: crate::record::form::NODE, built: 3, key: "unit", ..crate::arena::CellShape::BARE },
         ];
         (kind == HOLDER).then_some(crate::arena::RecordShape { words: 4, built_words: 4, cells: CELLS, ..crate::arena::RecordShape::BARE })
     }

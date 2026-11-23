@@ -637,7 +637,7 @@ pub(super) fn built_cells(arena: &dyn ArenaRead, at: Address, record: RecordShap
 /// What a walk over a parsed record's cells visits: each cell, decoded,
 /// with its slot's shape and its item, and each list slot's run, at the
 /// entry its list cell names, its length word.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub(super) enum ParsedCell {
     Cell(CellShape, u32, Cell),
     Run(Address),
@@ -702,9 +702,9 @@ mod tests {
     #[test]
     fn a_built_records_cells_are_walked_a_list_slots_as_its_items_or_as_the_cell_naming_its_run() {
         const CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" },
-            CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items" },
-            CellShape { word: 6, width: 3, run: None, forms: form::NODE, built: 4, key: "_unset" },
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child", ..CellShape::BARE },
+            CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items", ..CellShape::BARE },
+            CellShape { word: 6, width: 3, run: None, forms: form::NODE, built: 4, key: "_unset", ..CellShape::BARE },
         ];
         let record = RecordShape { words: 9, built_words: 5, cells: CELLS, ..RecordShape::BARE };
         let mut image = BuiltImage::new(BITS);
@@ -740,7 +740,7 @@ mod tests {
     }
 
     fn shape(forms: u8, width: u32) -> CellShape {
-        CellShape { word: 0, width, run: None, forms, built: 0, key: "_slot" }
+        CellShape { word: 0, width, run: None, forms, built: 0, key: "_slot", ..CellShape::BARE }
     }
 
     /// `cell-forms.json`, the fixture the TypeScript cell decoder is pinned

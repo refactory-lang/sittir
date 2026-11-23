@@ -706,8 +706,8 @@ mod tests {
 
     fn shape(kind: KindId) -> Option<RecordShape> {
         const CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child" },
-            CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items" },
+            CellShape { word: 2, width: 3, run: None, forms: form::NODE, built: 2, key: "_child", ..CellShape::BARE },
+            CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items", ..CellShape::BARE },
         ];
         match kind {
             PAIR => Some(RecordShape { words: 6, built_words: 4, cells: CELLS, ..RecordShape::BARE }),

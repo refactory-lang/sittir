@@ -175,6 +175,10 @@ impl<'t> Nodes<'t> for Counting<'_, 't> {
         self.inner.edge_token(holder, side, arm)
     }
 
+    fn is_unit(&mut self, index: NodeIndex) -> bool {
+        self.inner.is_unit(index)
+    }
+
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
         self.inner.parent(index)
     }

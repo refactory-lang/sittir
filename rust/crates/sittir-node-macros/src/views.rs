@@ -54,15 +54,27 @@ pub(crate) fn held(ty: &Type) -> Option<(&Type, TokenStream)> {
 }
 
 /// A slot's stamped cell, parsed and built, as `CellShape` spells it.
-pub(crate) fn cell_shape(field: &Field<'_>, cell: &crate::attrs::CellStamp) -> syn::Result<TokenStream> {
-    let name = field.ident;
+pub(crate) fn cell_shape(field: &Field<'_>, slot: &crate::attrs::SlotAttrs) -> syn::Result<TokenStream> {
+    let (name, cell) = (field.ident, &slot.cell);
     let key = field.key.as_ref().ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its wire key (`#[wire(key = …)]`)")))?;
     let word = cell.word.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its record cell (`word = …`)")))?;
     let built = cell.built.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its built cell (`built = …`)")))?;
     let forms = cell.forms.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its cell's forms (`forms = …`)")))?;
     let width = cell.width.unwrap_or(1);
     let run = cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
-    Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, forms: #forms, built: #built, key: #key }))
+    let listed = match (slot.listed.as_slice(), held(field.ty)) {
+        ([], Some((node, _))) => quote!(<#node as ::sittir_core::arena::RecordCells>::listed),
+        ([], None) => quote!(::sittir_core::arena::CellShape::BARE.listed),
+        (own, Some((node, _))) => quote!(|kind, named| [#(#own),*].contains(&kind) || <#node as ::sittir_core::arena::RecordCells>::listed(kind, named)),
+        (own, None) => quote!(|kind, _| [#(#own),*].contains(&kind)),
+    };
+    let slot_field = slot_field(slot);
+    Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, forms: #forms, built: #built, key: #key, listed: #listed, field: #slot_field }))
+}
+
+/// The field the grammar gives a slot, as an `Option<FieldId>`.
+fn slot_field(slot: &crate::attrs::SlotAttrs) -> TokenStream {
+    slot.fields.first().map_or_else(|| quote!(::core::option::Option::None), |field| quote!(::core::option::Option::Some(#field)))
 }
 
 /// A flag's stamped bit and the kind of its keyword, as `BodySlot::Flag`
@@ -72,13 +84,14 @@ fn flag_slot(field: &Field<'_>, slot: &crate::attrs::SlotAttrs) -> syn::Result<T
     let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a presence slot without its record word (`word = …`)")))?;
     let bit = slot.cell.bit.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a presence slot without its bit (`bit = …`)")))?;
     let bit = u8::try_from(bit).map_err(|_| syn::Error::new_spanned(name, format!("`{name}`'s bit does not fit a `u8`")))?;
-    let kind = match &slot.presence {
-        Some(crate::attrs::Presence::Token(group)) => group.first(),
-        Some(crate::attrs::Presence::Display(kind)) => Some(kind),
-        None => None,
-    }
-    .ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` holds a bit without its keyword (`presence = …`)")))?;
-    Ok(quote!(::sittir_core::arena::BodySlot::Flag { word: #word, bit: #bit, kind: #kind }))
+    let (kind, tokens): (Option<&syn::Path>, Vec<&syn::Path>) = match &slot.presence {
+        Some(crate::attrs::Presence::Token(group)) => (group.first(), group.iter().collect()),
+        Some(crate::attrs::Presence::Display(kind, token)) => (Some(kind), vec![token.as_ref().unwrap_or(kind)]),
+        None => (None, Vec::new()),
+    };
+    let kind = kind.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` holds a bit without its keyword (`presence = …`)")))?;
+    let slot_field = slot_field(slot);
+    Ok(quote!(::sittir_core::arena::BodySlot::Flag { word: #word, bit: #bit, kind: #kind, tokens: &[#(#tokens),*], field: #slot_field }))
 }
 
 fn view_of(node: &Type) -> TokenStream {
@@ -104,7 +117,7 @@ fn view_field(owner: &Ident, field: &Field<'_>, trivia: &TokenStream, facet: Opt
     };
     let shape_of = |slot: &crate::attrs::SlotAttrs| -> syn::Result<(u32, TokenStream)> {
         let (word, _, _) = cell_at(slot)?;
-        Ok((word, cell_shape(field, &slot.cell)?))
+        Ok((word, cell_shape(field, slot)?))
     };
     let shape = shape(field)?;
     Ok(match (&field.role, shape) {
@@ -380,7 +393,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             _ => None,
         })
         .collect();
-    let cells = celled.iter().map(|(field, slot)| cell_shape(field, &slot.cell)).collect::<syn::Result<Vec<_>>>()?;
+    let cells = celled.iter().map(|(field, slot)| cell_shape(field, slot)).collect::<syn::Result<Vec<_>>>()?;
     let body_slot = |name: &Ident| -> syn::Result<TokenStream> {
         if let Some(at) = celled.iter().position(|(field, _)| field.ident == name) {
             let at = u8::try_from(at).map_err(|_| syn::Error::new_spanned(name, format!("`{ident}` has more cells than a `u8` indexes")))?;
@@ -553,12 +566,17 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
     });
     let refused = malformed("choice cell");
     let payload_types = payloads.iter().map(|(_, ty)| ty);
+    let listed_types = payloads.iter().map(|(_, ty)| ty);
     Ok(gated(&quote! {
         #declaration
         impl ::sittir_core::arena::HasRecord for #ident {
             type Record<'a> = #view;
         }
         impl ::sittir_core::arena::RecordCells for #ident {
+            fn listed(kind: ::sittir_core::types::KindId, named: fn(::sittir_core::types::KindId) -> bool) -> bool {
+                let _ = (kind, named);
+                false #(|| <#listed_types as ::sittir_core::arena::RecordCells>::listed(kind, named))*
+            }
             fn shape(kind: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
                 ::core::option::Option::None #(.or_else(|| <#payload_types as ::sittir_core::arena::RecordCells>::shape(kind)))*
             }
@@ -588,13 +606,16 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
 }
 
 /// An enum kind is its own view: a member is read from its unit cell.
-pub fn members(ident: &Ident) -> TokenStream {
+pub fn members(ident: &Ident, own: &syn::Path) -> TokenStream {
     let refused = malformed("member cell");
     gated(&quote! {
         impl ::sittir_core::arena::HasRecord for #ident {
             type Record<'a> = #ident;
         }
         impl ::sittir_core::arena::RecordCells for #ident {
+            fn listed(kind: ::sittir_core::types::KindId, named: fn(::sittir_core::types::KindId) -> bool) -> bool {
+                __member(kind, kind).is_some() && named(#own)
+            }
             fn shape(_: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
                 ::core::option::Option::None
             }
@@ -669,13 +690,13 @@ mod tests {
         assert!(has(&out, "let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);"));
         assert!(has(&out, "__layout: layout, __words: words, __at: at,"));
         assert!(has(&out, "r#async: (words[2usize] >> 3u32) & 1 != 0,"));
-        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 6u32, width: 1u32, run: ::core::option::Option::Some(3u32), forms: 1u8, built: 4u32, key: "_statements" })?,"#));
+        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 6u32, width: 1u32, run: ::core::option::Option::Some(3u32), forms: 1u8, built: 4u32, key: "_statements", listed: <StatementNode as ::sittir_core::arena::RecordCells>::listed, field: ::core::option::Option::Some(field::STATEMENTS) })?,"#));
         assert!(has(&out, "delimiter: layout.delimiter(side.delimiter),"));
         assert!(has(&out, "statements_separator_space: layout.space(6u32, false, side.slots.iter().find(|slot| slot.word == 6u32).and_then(|slot| slot.space_after)),"));
         assert!(has(&out, "impl<'a> BlockFields for BlockNodeRecord<'a> {"));
         assert!(has(&out, "fn layout(&self) -> Self::Layout<'_> { self.__layout }"));
         assert!(has(&out, "type Label<'b> = ::sittir_core::arena::RecordSlot<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <LabelNode as ::sittir_core::arena::HasRecord>::Record<'a>, false> where Self: 'b;"));
-        assert!(has(&out, r#"let site = ::sittir_core::trivia_store::Site { holder: self.__layout.place(), word: 3u32, item: ::sittir_core::types::ItemIndex(0) }; ::sittir_core::arena::RecordSlot::of_shape(self.__layout.context(), site, self.__words, self.__at, ::sittir_core::arena::CellShape { word: 3u32, width: 3u32, run: ::core::option::Option::None, forms: 1u8, built: 3u32, key: "_label" })"#));
+        assert!(has(&out, r#"let site = ::sittir_core::trivia_store::Site { holder: self.__layout.place(), word: 3u32, item: ::sittir_core::types::ItemIndex(0) }; ::sittir_core::arena::RecordSlot::of_shape(self.__layout.context(), site, self.__words, self.__at, ::sittir_core::arena::CellShape { word: 3u32, width: 3u32, run: ::core::option::Option::None, forms: 1u8, built: 3u32, key: "_label", listed: <LabelNode as ::sittir_core::arena::RecordCells>::listed, field: ::core::option::Option::Some(field::LABEL) })"#));
         assert!(has(&out, "::sittir_core::arena::RecordItems<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <StatementNode as ::sittir_core::arena::HasRecord>::Record<'a>, true>"));
     }
 
@@ -695,7 +716,7 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 2u32, width: 1u32, run: ::core::option::Option::Some(3u32), forms: 1u8, built: 2u32, key: "_statements" })?.non_empty("BlockNode")?,"#));
+        assert!(has(&out, r#"statements: ::sittir_core::arena::RecordItems::of_shape(ctx, place, at, words, ::sittir_core::arena::CellShape { word: 2u32, width: 1u32, run: ::core::option::Option::Some(3u32), forms: 1u8, built: 2u32, key: "_statements", listed: <StatementNode as ::sittir_core::arena::RecordCells>::listed, field: ::core::option::Option::Some(field::STATEMENTS) })?.non_empty("BlockNode")?,"#));
     }
 
     #[test]
@@ -787,7 +808,7 @@ mod tests {
             }
         };
         let out = expand(&with(quote::quote!([exclusive, target]))).expect("expands").replace(' ', "");
-        assert!(out.contains("order:&[::sittir_core::arena::BodySlot::Flag{word:2u32,bit:0u8,kind:kind::MUT},::sittir_core::arena::BodySlot::Cell(0u8)]"), "{out}");
+        assert!(out.contains("order:&[::sittir_core::arena::BodySlot::Flag{word:2u32,bit:0u8,kind:kind::MUT,tokens:&[kind::MUT],field:::core::option::Option::Some(field::EXCLUSIVE)},::sittir_core::arena::BodySlot::Cell(0u8)]"), "{out}");
         assert!(out.contains("edges:[&[::sittir_core::arena::EdgePart::Token(kind::AMP)],&[::sittir_core::arena::EdgePart::Slot(::sittir_core::arena::BodySlot::Cell(0u8))]]"), "{out}");
         let refused = expand(&with(quote::quote!([target]))).expect_err("refused").to_string();
         assert!(refused.contains("names each of its cells and flags once"), "{refused}");
@@ -862,7 +883,7 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, r#"whole: ctx.cell_text(ctx.slot_cell(words, at, ::sittir_core::arena::CellShape { word: 2u32, width: 2u32, run: ::core::option::Option::None, forms: 4u8, built: 2u32, key: "_whole" })?)?,"#));
+        assert!(has(&out, r#"whole: ctx.cell_text(ctx.slot_cell(words, at, ::sittir_core::arena::CellShape { word: 2u32, width: 2u32, run: ::core::option::Option::None, forms: 4u8, built: 2u32, key: "_whole", listed: ::sittir_core::arena::CellShape::BARE.listed, field: ::core::option::Option::None })?)?,"#));
         assert!(has(&out, "::sittir_core::arena::Cell::Absent => ::core::option::Option::None, cell => ::core::option::Option::Some(ctx.cell_text(cell)?),"));
         assert!(!has(&out, "__words: &'a [u32]"));
     }

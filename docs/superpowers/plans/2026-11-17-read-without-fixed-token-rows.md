@@ -320,28 +320,30 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 ### Task 6: Navigation lists units from cells
 
 **Files:**
-- Modify `arena/run_nodes.rs` (`Walk::kids_of`) and `arena/built.rs` (`siblings_of`).
+- Modify `arena/run_nodes.rs` (`Walk::kids_of`, `childless`, `edge`), `engine.rs` (`descendants_under`) and `nodes.rs` (`Nodes::is_unit`).
+- Modify `arena/admit.rs` and the derive (`sittir-node-macros`), which stamp each slot's listed units and field, and `emitters/node-projection.ts`, which stamps a slot's aliased tokens and a flag's token.
 - Modify `rust/crates/sittir-parity-tests/src/lib.rs` to add `read_fixtures` and `out_of_order_units`.
 - Test: `stage_one_parity.rs`.
 
 **Interfaces:**
 - Consumes `RecordShape::order`.
+- Produces `CellShape::{listed, field}`, `RecordCells::listed` and `BodySlot::Flag { tokens, field }`. Whether a unit is named depends on its slot, not its kind: a slot lists the members of a visible enum it holds and the tokens its grammar aliases to a visible kind. The parser's named fact answers for the rest.
 - Produces `named_fixed_pairs(name) -> &'static [NamedFixedPair]`, with `NamedFixedPair { holder: &'static str, token: &'static str, source: &'static str }`: one source for each pair in the spec's "What navigation lists", taken from the census cases. That is 16 pairs: rust 7, typescript 6, python 3. Python's `block_statement` is the display of `block`.
-- Produces `out_of_order_units(name) -> Vec<&'static str>`: one source for each of the 20 kinds whose cells are out of document order. Examples are `&'a mut T`, `a?.[0]` and `fn f(&'a mut self) {}`, and the corpus gives the other 17. A kind that `fixture_sources` already covers needs no added source.
+- Produces `out_of_order_units(name) -> Vec<&'static str>`: one source for each of the 28 kinds whose cells are out of document order. Examples are `&'a mut T`, `a?.[0]` and `fn f(&'a mut self) {}`, and the corpus gives the other 25. A kind that `fixture_sources` already covers needs no added source.
 
-- [ ] **Step 1: Write the failing test.** `queries_list_units_in_render_body_order`. For every node of `read_fixtures(name)` plus `out_of_order_units(name)`, `$children` and `$descendants` as (stamped kind, span or none) sequences are equal between the trees, with two exceptions:
+- [x] **Step 1: Write the failing test.** `queries_list_units_in_render_body_order`. For every node of `read_fixtures(name)` plus `out_of_order_units(name)`, `$children` and `$descendants` as (stamped kind, span or none) sequences are equal between the trees, with two exceptions:
   - units compare by kind only;
   - the `All` side drops the named fixed tokens Task 1 counted, and the test prints each one it drops.
 
   And `a_named_fixed_token_leaves_query_results`: for each pair of `named_fixed_pairs(name)`, on the `SlotContent` tree, `ParsedTree::descendants` from the root yields no item of the token's kind, and yields one item of the holder's kind for each that the `All` tree yields (the maintainer, 2026-11-17: "Yes, they leave queries too").
-- [ ] **Step 2: Run them.** Run `PARITY queries_list_units` and `PARITY a_named_fixed_token_leaves_query_results`. Expected: FAIL. The `SlotContent` tree lists no units, and the token's kind is yielded.
-- [ ] **Step 3: Implement the merge in `kids_of`.** For a record, walk its slots in `order`:
+- [x] **Step 2: Run them.** Run `PARITY queries_list_units` and `PARITY a_named_fixed_token_leaves_query_results`. Expected: `queries_list_units` FAILS, since the `SlotContent` tree lists no units. `a_named_fixed_token_leaves_query_results` is a guard: Task 3 already dropped those rows, so it passes before and after.
+- [x] **Step 3: Implement the merge in `kids_of`.** For a record, walk its slots in `order`:
   - a cell naming a run entry emits the run's entries up to and including that one, in run order, so trivia keeps its place;
   - a unit cell or a set flag emits a unit kid with its kind and no span.
 
-  The rest of the run follows. `siblings_of` gives a unit sibling no span.
-- [ ] **Step 4: Run.** Run Step 2's commands. Expected: PASS, and the dropped list equals Task 1's count. A dropped token outside the pairs stops the plan.
-- [ ] **Step 5: Commit:** `feat(core): navigation lists a unit from its cell, where its body writes it`.
+  The rest of the run follows. A unit has no place in the source, so `edge` passes over it.
+- [x] **Step 4: Run.** Run Step 2's commands. Expected: PASS, and the dropped list equals Task 1's count. A dropped token outside the pairs stops the plan.
+- [x] **Step 5: Commit:** `feat(core): navigation lists a unit from its cell, where its body writes it`.
 
 ### Task 7: Depth moves and line starts
 

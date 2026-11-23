@@ -879,8 +879,8 @@ mod tests {
         Site { holder: Place::record(Address(1)).into(), word: 2, item: ItemIndex(item) }
     }
 
-    const SLOT: CellShape = CellShape { word: 2, width: 3, run: None, forms: crate::record::form::NODE, built: 2, key: "_slot" };
-    const LIST: CellShape = CellShape { word: 2, width: 1, run: Some(3), forms: crate::record::form::NODE, built: 2, key: "_items" };
+    const SLOT: CellShape = CellShape { word: 2, width: 3, run: None, forms: crate::record::form::NODE, built: 2, key: "_slot", ..CellShape::BARE };
+    const LIST: CellShape = CellShape { word: 2, width: 1, run: Some(3), forms: crate::record::form::NODE, built: 2, key: "_items", ..CellShape::BARE };
 
     fn holding(cell: u32) -> [u32; 3] {
         [0, 0, cell]

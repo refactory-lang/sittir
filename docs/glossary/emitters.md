@@ -14729,6 +14729,14 @@ The distinct grammar ids of a kind's `layoutTokens`, in the order its rule write
 
 A fixed token a kind's own rule writes: the grammar id stamped on its site, and the text its render body spells it with, undefined for a token whose symbol carries no fixed text. The text is what ties a body's token part back to the stamped id, within that one kind (`edgeTokenId`).
 
+### `packages/codegen/src/emitters/node-projection.ts::literalTokenOf`
+
+The parser's anonymous token whose literal text is a slot value's text, or `undefined` for a value that holds no literal. An aliased literal keeps two kinds: the one it shows as (`parseKindId`) and this token, which is the kind a read stores and a query reports for it.
+
+### `packages/codegen/src/emitters/node-projection.ts::listedTokens`
+
+The anonymous tokens a slot's grammar aliases to a visible named kind, emitted as the slot's `listed` stamp. A parsed unit cell holds only the token's kind, so this stamp is what lets navigation report such a unit as named: regex `class_range` holds `-` in `start` and `end`, shown as `class_character`. An alias to a hidden kind is left out, since the parser shows no named node for it.
+
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeArmRow`
 
 One row of the edge-arm table.

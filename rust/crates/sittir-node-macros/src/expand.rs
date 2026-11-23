@@ -408,7 +408,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     let codec = codec::members(ident);
     let writer = crate::write::members(ident);
     let hydrate = crate::hydrate::members(ident);
-    let view = crate::views::members(ident);
+    let view = crate::views::members(ident, kind);
     let prepare_record = crate::prepare_record::members(ident);
     Ok(quote! {
         const _: () = {
@@ -983,7 +983,7 @@ enum SlotKind<'a> {
 fn presence_check(keyword: &Presence) -> TokenStream {
     match keyword {
         Presence::Token(group) => quote!([#(#group),*].contains(&child.grammar)),
-        Presence::Display(kind) => quote!(child.display == #kind),
+        Presence::Display(kind, _) => quote!(child.display == #kind),
     }
 }
 

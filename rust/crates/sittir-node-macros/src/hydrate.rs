@@ -130,7 +130,7 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
             finishes.push(quote!(records.flag(__draft, #word, #bit, #acc)?;));
             continue;
         }
-        let shape = crate::views::cell_shape(field, &slot.cell)?;
+        let shape = crate::views::cell_shape(field, slot)?;
         starts.push(quote!(let mut #acc = <#ty as ::sittir_core::arena::HydrateSlot>::held();));
         takes.push(quote! {
             __rt::Route::Slot { slot: #id, .. } => {
@@ -239,7 +239,7 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
             opaque.push(quote!(records.flag(__draft, #word, #bit, false)?;));
             continue;
         }
-        let shape = crate::views::cell_shape(field, &slot.cell)?;
+        let shape = crate::views::cell_shape(field, slot)?;
         let span = quote!(__rt::capture_span(&captures, #capture, base).map(|span| ::sittir_core::arena::Hydrated::Text { span }));
         if inner_of(field.ty, "Option").is_some() {
             cells.push(quote!(records.cell(__draft, #shape, #span)?;));
@@ -255,7 +255,7 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
     let verbatim = fields
         .iter()
         .find_map(|field| match &field.role {
-            Role::Slot(slot) if field.ident == "verbatim" => Some(crate::views::cell_shape(field, &slot.cell)),
+            Role::Slot(slot) if field.ident == "verbatim" => Some(crate::views::cell_shape(field, slot)),
             _ => None,
         })
         .transpose()?
@@ -295,7 +295,7 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
         });
     }
     let words = words_of(ident, attrs)?;
-    let shape = crate::views::cell_shape(field, &slot.cell)?;
+    let shape = crate::views::cell_shape(field, slot)?;
     let wraps_hidden = attrs.wraps_hidden;
     let message = format!("{ident}: an envelope's content read from its own row is no node with a record, since a tree holds one record per row");
     let (hidden, restore) = if wraps_hidden {

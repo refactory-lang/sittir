@@ -158,6 +158,9 @@ pub struct SlotAttrs {
     pub untagged: bool,
     pub presence: Option<Presence>,
     pub separators: Vec<TokenGroup>,
+    /// Tokens the grammar aliases to a visible kind in this slot, which a
+    /// query lists as named.
+    pub listed: Vec<Path>,
     pub capture: Option<LitStr>,
     pub scalar: bool,
     pub cell: CellStamp,
@@ -227,10 +230,11 @@ fn token_group(input: ParseStream) -> syn::Result<TokenGroup> {
 
 /// The keyword a presence slot reads: a token, matched by grammar id like any
 /// table entry, or `display(KIND)`, an alias the site wraps the keyword in,
-/// matched by the display id it shows.
+/// matched by the display id it shows, with the keyword's own token when
+/// the alias wraps a literal.
 pub enum Presence {
     Token(TokenGroup),
-    Display(Path),
+    Display(Path, Option<Path>),
 }
 
 fn presence(input: ParseStream) -> syn::Result<Presence> {
@@ -239,7 +243,9 @@ fn presence(input: ParseStream) -> syn::Result<Presence> {
         input.call(Ident::parse_any)?;
         let content;
         syn::parenthesized!(content in input);
-        return Ok(Presence::Display(content.parse()?));
+        let shown = content.parse()?;
+        let token = content.parse::<Option<Token![,]>>()?.map(|_| content.parse()).transpose()?;
+        return Ok(Presence::Display(shown, token));
     }
     Ok(Presence::Token(token_group(input)?))
 }
@@ -335,6 +341,7 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "untagged" => out.untagged = true,
             "presence" => out.presence = Some(presence(meta.value()?)?),
             "separator" => out.separators.extend(token_groups(meta.value()?)?),
+            "listed" => out.listed.extend(paths(meta.value()?)?),
             "capture" => out.capture = Some(meta.value()?.parse()?),
             "scalar" => out.scalar = true,
             "word" => out.cell.word = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),

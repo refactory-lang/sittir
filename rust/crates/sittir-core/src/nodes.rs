@@ -240,6 +240,12 @@ pub trait Nodes<'t> {
         let _ = (holder, side, arm);
         None
     }
+    /// Whether the node at `index` is a unit its holder's cell or flag names,
+    /// with no row of its own.
+    fn is_unit(&mut self, index: NodeIndex) -> bool {
+        let _ = index;
+        false
+    }
 
     /// The node after the node at `index` among its parent's children.
     fn next(&mut self, index: NodeIndex) -> Option<Kid> {
@@ -540,6 +546,9 @@ impl<'t> Nodes<'t> for Navigation<'t> {
 
     fn edge_token(&mut self, holder: &Kid, side: Side, arm: &dyn Fn(KindId) -> Option<KindId>) -> Option<KindId> {
         self.nodes().edge_token(holder, side, arm)
+    }
+    fn is_unit(&mut self, index: NodeIndex) -> bool {
+        self.nodes().is_unit(index)
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
