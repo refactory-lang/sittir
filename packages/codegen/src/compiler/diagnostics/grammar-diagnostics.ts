@@ -504,6 +504,7 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'rule-cause-mismatch',
 	'render-only-not-external',
 	'vocabulary-replaces-upstream',
+	'vocabulary-disagreement',
 	'whitespace-mint-collision',
 	'external-alias-outside-render-as',
 	'render-as-alias-invalid',

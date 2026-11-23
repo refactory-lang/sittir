@@ -13,8 +13,9 @@ import {
 	vocabularyDisagreements,
 	vocabularySlots
 } from '../../src/inventory/index.ts';
-import { type Derivation, bindingPatterns, camel, levelSlots } from '@sittir/codegen/bindings';
+import { type Derivation, bindingPatterns, camel, grammarInput, levelSlots, vocabularyDiagnostics } from '@sittir/codegen/bindings';
 import { type Vocabulary, readVocabulary } from '@sittir/codegen/bindings';
+import { compileGrammarOf, evaluateGrammar, invoke } from '../../src/codegen-surface.ts';
 import { GENERATED_FILES } from '../../src/vocabulary/write.ts';
 
 const ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
@@ -244,6 +245,14 @@ describe('the authored vocabulary', () => {
 	it('disagrees with the bindings only where the ceiling records', async () => {
 		expect(vocabularyDisagreements(await deriveVocabulary(), await readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
 	}, 120_000);
+	it.each(['rust', 'typescript', 'python'])('raises no disagreement in the generate step for %s', async (grammar) => {
+		const compiled = await compileGrammarOf(grammar);
+		const model = await invoke('nodeModel', 'buildNodeModel', compiled.nodeMap, compiled.generatedIdTables);
+		const input = await grammarInput(grammar, await evaluateGrammar(grammar), model);
+		expect(input).toBeDefined();
+		if (input === undefined) return;
+		expect(vocabularyDiagnostics(input)).toEqual([]);
+	}, FULL_PIPELINE_TIMEOUT);
 	it("stops a base's claim only at the clones the ceiling records, where the clone's own unconditional claim sits at an unrelated path", async () => {
 		expect((await deriveVocabulary()).stoppedReads).toEqual(CEILING.stoppedAtClones);
 	}, 120_000);

@@ -1777,6 +1777,10 @@ each list's `resolvedDelimiterArm` on the model, and the serialized
 `defaultDelimiter` must be that stamped arm, the default the options table
 renders with, not the fallback an unstamped list reports.
 
+The bindings are checked against the grammar's composed vocabulary before the
+portable emit (`vocabularyDiagnostics`), so a claim on a path the vocabulary
+does not declare stops the run before anything is built from it.
+
 #### body
 
 ```text
@@ -7964,7 +7968,7 @@ The generated portable build module source, when the grammar emits one.
 
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::emitDiagnostics`
 
-The warnings emit raised for the grammar: an accessor name that holds more than one value class, and the portable build's picks.
+The diagnostics emit raised for the grammar: an accessor name that holds more than one value class, a disagreement between the bindings and the vocabulary, and the portable build's picks.
 
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::portableTyped`
 

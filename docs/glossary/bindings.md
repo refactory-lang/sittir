@@ -1702,6 +1702,22 @@ The source text an item spells.
 
 The reads the derivation stopped at, which a later pass does not extend.
 
+### `packages/codegen/src/bindings/derive.ts::vocabularyDisagreements`
+
+Where the bindings and the authored vocabulary disagree, one sorted line each: every line of `undeclaredClaims` and of `undeclaredSlots`. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it. The bindings inventory's `--check` prints these lines, and `vocabularyDiagnostics` raises the same two lists in `generate`.
+
+### `packages/codegen/src/bindings/derive.ts::undeclaredClaims`
+
+The claimed paths no vocabulary interface has as its `$kind`, one sorted line each. A grammar's claims are canonicalized before they reach the derivation, so a path spelled by a synonym is checked as the path it resolves to.
+
+### `packages/codegen/src/bindings/derive.ts::undeclaredSlots`
+
+The members the bindings route to a declared path whose interface (its own members and its parents') does not declare them, and the template holes it does not declare, one sorted line each. A refinement's pinned slot needs no declaration: the read tells it, so it is no member, and the bindings claim is the one source of the refinement's spelling. A path no interface declares is reported by `undeclaredClaims`, so its slots add no line here.
+
+### `packages/codegen/src/bindings/derive.ts::vocabularyDiagnostics`
+
+One `vocabulary-disagreement` record per disagreement between a grammar's bindings and the vocabulary composed for it. A line of `undeclaredClaims` is blocking and a line of `undeclaredSlots` is a warning. A layer cannot expect the code; a run can allow it by name.
+
 ### `packages/codegen/src/bindings/facts.ts::ClaimFact::absent`
 
 Whether the claim asserts the absence of its member.

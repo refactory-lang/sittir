@@ -14,6 +14,7 @@ import { leadEffectsOf } from '../dsl/verbs/effects.ts';
 import { bindingsPathIn, VOCABULARY_DIR } from '../bindings/facts.ts';
 import { readVocabulary } from '../bindings/vocabulary.ts';
 import { grammarInput } from '../bindings/input.ts';
+import { vocabularyDiagnostics } from '../bindings/derive.ts';
 import { emitPortable } from '../emitters/overlays/portable/index.ts';
 import { runPinned } from '../bindings/read.ts';
 import type { PortableTypedOutput } from '../emitters/overlays/portable/typed.ts';
@@ -25,7 +26,7 @@ import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
 import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic, type GrammarDiagnostic } from '../types/diagnostics.ts';
-import { formatCompilerDiagnostics, formatNamingEvents, fromStaleJoinSeams, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
+import { assertGatePasses, formatCompilerDiagnostics, formatNamingEvents, fromStaleJoinSeams, GrammarDiagnosticError } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 
 import type { NodeMap, RawGrammar } from './types.ts';
@@ -173,6 +174,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const nodeModel = printNodeModel(nodeModelData);
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir), vocabulary);
+		const vocabularyRecords = routesInput === undefined ? [] : vocabularyDiagnostics(routesInput);
+		assertGatePasses(vocabularyRecords, undefined, cfg.allowDiagnostics);
 		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries, emitted.templates.bodies);
 		const portableModule = portable === undefined ? undefined : await runPinned('portableBuild', portable.emit);
 		const emitDiagnostics = (portableModule?.diagnostics ?? []).map(
@@ -257,7 +260,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			portableTable: portable?.build,
 			portableBuild: portableModule?.text,
 			portableTyped: portable?.typed,
-			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...portableDiagnostics, ...emitDiagnostics],
+			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...vocabularyRecords, ...portableDiagnostics, ...emitDiagnostics],
 			is: emitted.is,
 			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),

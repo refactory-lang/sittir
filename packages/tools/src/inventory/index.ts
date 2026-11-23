@@ -20,13 +20,14 @@ import {
 	readVocabulary,
 	resolveRoutes,
 	type Vocabulary,
+	vocabularyDisagreements,
 	VOCABULARY_DIR
 } from '@sittir/codegen/bindings';
 import { REPO_ROOT, assertGrammar, grammarPackageDir, type GrammarName } from '@sittir/codegen/grammars';
 import { compileGrammarOf, evaluateGrammar, invoke, load, type GrammarDiagnostic } from '../codegen-surface.ts';
 import { readNodeModelFile } from '../validate/common.ts';
 
-export { VOCABULARY_DIR };
+export { VOCABULARY_DIR, vocabularyDisagreements };
 export interface BindingsInventoryOptions {
 	readonly grammars?: readonly string[];
 	readonly check?: boolean;
@@ -154,23 +155,6 @@ export function grammarBindingsSummary(grammar: string, { bindings, report }: Om
 
 export async function deriveVocabulary(grammars: readonly GrammarName[] = bindingGrammars()): Promise<Derivation> {
 	return derive(await loadInputs(grammars));
-}
-
-export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): string[] {
-	const out: string[] = [];
-	for (const v of d.allvocab) {
-		if (!vocabulary.kinds.has(v)) out.push(`${v}: claimed, but no vocabulary interface has this kind`);
-	}
-	const undeclared = (v: string, slot: string, how: string): void => {
-		if (vocabulary.kinds.has(v) && !vocabulary.slots(v).has(slot)) out.push(`${v}.${slot}: ${how}, but its interface does not declare it`);
-	};
-	for (const [v, slots] of d.slots) {
-		for (const slot of slots.keys()) undeclared(v, slot, 'routed');
-	}
-	for (const [v, holes] of d.holes) {
-		for (const hole of holes.keys()) undeclared(v, hole, 'templated');
-	}
-	return out.sort();
 }
 
 export function summarize(d: Derivation): string {

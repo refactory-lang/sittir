@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularySlot, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularySlot, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms, vocabularyDiagnostics } from '../index.ts';
 import { guaranteedBy } from '../routes.ts';
 import { isNamedSlot } from '../facts.ts';
 import { EMPTY_VOCABULARY } from '../../__tests__/helpers/vocabulary.ts';
@@ -2152,5 +2152,48 @@ describe("a kind a deep slot's path enters stays in the holder's other grammar s
 			{ owner: "pair", slot: "left" },
 			{ owner: "wrap", slot: "inner" }
 		]);
+	});
+});
+
+describe('vocabularyDiagnostics', () => {
+	const model = new Map([node('call', [slot('function', ['identifier'])]), node('identifier')].map((n) => [n.kind, n]));
+	const declared = (path: string, ...slots: readonly string[]) =>
+		[path, { name: path, own: new Map(slots.map((name) => [name, { optional: false, flag: false }])), parent: undefined, refines: undefined }] as const;
+	const vocabulary: Vocabulary = {
+		kinds: new Map([declared('expression'), declared('expression.call', 'callee')]),
+		flags: new Set(),
+		synonyms: { levels: new Map([['expression', new Map([['call', ['invocation']]])]]), flags: new Map() },
+		slots: (path) => vocabulary.kinds.get(path)?.own ?? new Map(),
+		featuresOf: () => new Set(),
+		composedAs: () => vocabulary
+	};
+	const diagnosticsOf = async (bindings: string) =>
+		vocabularyDiagnostics({
+			grammar: 'g',
+			bindings: resolveFlags(canonicalFacts(await readBindings(bindings), vocabulary, model), vocabulary, model),
+			model,
+			textTokens: new Set(),
+			layoutSlots: [],
+			vocabulary
+		}).map(({ code, severity, canProceed, message }) => ({ code, severity, canProceed, message }));
+
+	it('refuses a claim on a path the vocabulary does not declare', async () => {
+		expect(await diagnosticsOf('(call) @expression.nowhere')).toEqual([
+			{ code: 'vocabulary-disagreement', severity: 'error', canProceed: false, message: 'expression.nowhere: claimed, but no vocabulary interface has this kind' }
+		]);
+	});
+
+	it('takes a claim spelled by a synonym as the path it resolves to', async () => {
+		expect(await diagnosticsOf('(call function: (_) @callee) @expression.invocation')).toEqual([]);
+	});
+
+	it('only warns on a routed slot the path does not declare', async () => {
+		expect(await diagnosticsOf('(call function: (_) @target) @expression.call')).toEqual([
+			{ code: 'vocabulary-disagreement', severity: 'warning', canProceed: true, message: 'expression.call.target: routed, but its interface does not declare it' }
+		]);
+	});
+
+	it('raises nothing for a declared path and slot', async () => {
+		expect(await diagnosticsOf('(call function: (_) @callee) @expression.call')).toEqual([]);
 	});
 });

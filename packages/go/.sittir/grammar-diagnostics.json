@@ -685,6 +685,582 @@
   {
     "scope": "grammar",
     "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.bounds.types: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.default.statementList: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.switch.statementList: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.switch.types: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.alias.path: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.path: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.import.wildcard.path: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.constSpecGroup: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.names: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.fieldDeclarationArm: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.names: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.tag: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.names: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.struct.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.typeParameters: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_alias.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter.names: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.left: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.names: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.right: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.operator: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.left: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.right: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.left: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.right: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.member.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.conversion.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.conversion.trailingComma: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.map.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.map.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.struct.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.function.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.instantiation.types: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member.field: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.reference.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.slice.capacity: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.slice.end: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.slice.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.subscript.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.operator: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.update.decrement.expression: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.update.increment.expression: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "file.elements: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "file.topLevelDeclaration: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.package: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.string.multiline.rawStringLiteralContent: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.statementList: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.if.initializer: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.labeled.statement: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.counted.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.return.expressionList: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.switch.alias: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.switch.elements: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.switch.initializer: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.function.result: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.object.fieldDeclarationList: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
     "code": "portable-value-unshaped",
     "severity": "warning",
     "canProceed": true,

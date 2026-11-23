@@ -32,10 +32,6 @@ that can be worked through. The patterns and the names each one references come 
 
 Each grammar's binding facts (`readBindings`), named by their bound kinds through the node model's stamped `renamedFrom` (`bindFacts` over `loadBoundNameOf`, the identity with the grammar bindings off), slot model, the text tokens its evaluation minted (`RawGrammar.textTokens`), and its layout slots. A minted text kind is the same fact as the inline token it replaced, so `derive` reads it as that token's text (`text:<pattern>`), not as an unmapped kind. The layout slots are every address in the grammar options' bindings block that names an owner and a field (`readOptionsBlock`, parsed by `parsePreferencePath`; the owner `_` stands for any kind). A separated list's separator is no slot of the model, so no slot is layout by its name alone: a branch's slot named `separator` (typescript's `member_expression`, rust's `token_repetition`) is a member like any other.
 
-### `packages/tools/src/inventory/index.ts::vocabularyDisagreements`
-
-Where the bindings and the authored vocabulary disagree, one line each: a claimed path no vocabulary interface has as its `$kind`, a member the bindings route to a kind whose interface (its own members and its parents') does not declare it, and a template hole its interface does not declare. A refinement's pinned slot needs no declaration: the read tells it, so it is no member, and the bindings claim is the one source of the refinement's spelling. The vocabulary is authored, so a disagreement is fixed on whichever side is wrong: a feature adds the kind or member, or the binding drops it.
-
 ### `packages/tools/src/inventory/index.ts::BindingsModule`
 
 A grammar's `grammar.bindings.ts` text, with the grammar bindings and the derivation report it was printed from.

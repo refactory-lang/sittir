@@ -664,6 +664,1206 @@
   {
     "scope": "grammar",
     "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "attribute.arguments: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "attribute.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.bounds.types: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.match.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.match.switchLabel: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.case.switch.switchLabels: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.catch.catchFormalParameter: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.extends.type.typeList: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.extends.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.finally.block: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.implements.typeList: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.resource.item.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "clause.resource.resources: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.class.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.class.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.class.parameters: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.class.permits: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.declarators: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.private.declarators: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.private.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.public.declarators: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constant.public.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.private.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.private.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.private.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.protected.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.protected.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.protected.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.public.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.public.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.public.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.constructor.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.private.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.private.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.private.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public.interfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum.public.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.arguments: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.enum_member.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.declarators: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.private.declarators: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.protected.declarators: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.field.public.declarators: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.extendsInterfaces: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.interface.permits: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.private.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.private.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.private.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.protected.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.protected.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.protected.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.public.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.abstract.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.signature.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.method.throws: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.module.open: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.receiver.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.receiver.identifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.receiver.unannotatedType: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.variadic.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.variadic.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.variadic.unannotatedType: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.parameter.variadic.variableDeclarator: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.type_parameter.typeIdentifier: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.constant.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "declaration.variable.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.assignment.operator: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.membership.instanceof.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.membership.instanceof.final: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.left: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.left.right: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.left: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right.right: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right_unsigned.left: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.binary.shift.right_unsigned.right: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.construct.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.construct.classBody: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.construct.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.construct.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.member.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.template.templateArgument: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.call.template.templateProcessor: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.castExpressionArm: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.types: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.cast.value: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.collection.list.variableInitializers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member.field: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.member.super: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.subscript.array: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.unary.operand: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.update.expression: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "file.toplevelStatements: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.annotations: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "identifier.qualified.scope: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.float.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.binary.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.binary.prefix: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.octal.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "literal.number.integer.octal.prefix: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "modifier.elements: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.field.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "pattern.struct.recordPatternBody: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.assert.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.block.static.block: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.asterisk: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.import.static: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.labeled.identifier: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.labeled.statement: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.counted.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.counted.updates: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.modifiers: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.name: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.type: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.loop.for_each.value: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.resource.catchClauses: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.resource.finallyClause: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.resource.resources: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.switch.body: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "statement.switch.condition: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.array.dimensions: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
+    "code": "vocabulary-disagreement",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "type.generic.content: routed, but its interface does not declare it"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "java",
     "code": "portable-value-unshaped",
     "severity": "warning",
     "canProceed": true,

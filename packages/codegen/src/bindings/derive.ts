@@ -1,6 +1,7 @@
 import { type ContainerCapture, type ModelSlot, KNOWN_PREDICATE_OPERATORS, WILDCARD, isFixedText } from './facts.ts';
 import { camel, snake } from './names.ts';
 import type { Vocabulary } from './vocabulary.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { type GrammarInput, type GrammarRoutes, concreteKinds, containerCaptureSlot, containerSlots, declaredContainerKinds, formsOf, guaranteedBy, holdsContainer, isLayout, modelNode, readsList, resolveRoutes, slotFor, unenteredForms } from './routes.ts';
 
 interface Resolution {
@@ -547,6 +548,42 @@ export function levelSlots(d: Derivation, v: string): Map<string, SlotFacts> {
 		merged.set(cm, m);
 	}
 	return merged;
+}
+
+export function undeclaredClaims(d: Derivation, vocabulary: Vocabulary): string[] {
+	return [...d.allvocab]
+		.filter((path) => !vocabulary.kinds.has(path))
+		.map((path) => `${path}: claimed, but no vocabulary interface has this kind`)
+		.sort();
+}
+
+export function undeclaredSlots(d: Derivation, vocabulary: Vocabulary): string[] {
+	const undeclared = (how: string, byPath: ReadonlyMap<string, ReadonlyMap<string, unknown>>): string[] =>
+		[...byPath].flatMap(([path, slots]) =>
+			vocabulary.kinds.has(path)
+				? [...slots.keys()].filter((slot) => !vocabulary.slots(path).has(slot)).map((slot) => `${path}.${slot}: ${how}, but its interface does not declare it`)
+				: []
+		);
+	return [...undeclared('routed', d.slots), ...undeclared('templated', d.holes)].sort();
+}
+
+export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): string[] {
+	return [...undeclaredClaims(d, vocabulary), ...undeclaredSlots(d, vocabulary)].sort();
+}
+
+export function vocabularyDiagnostics(input: GrammarInput): GrammarDiagnostic[] {
+	const d = derive([input]);
+	const diagnostic =
+		(canProceed: boolean) =>
+		(message: string): GrammarDiagnostic => ({
+			scope: 'grammar',
+			grammar: input.grammar,
+			code: 'vocabulary-disagreement',
+			severity: canProceed ? 'warning' : 'error',
+			canProceed,
+			message
+		});
+	return [...undeclaredClaims(d, input.vocabulary).map(diagnostic(false)), ...undeclaredSlots(d, input.vocabulary).map(diagnostic(true))];
 }
 
 export type Scalar = 'string' | 'boolean' | 'number';
