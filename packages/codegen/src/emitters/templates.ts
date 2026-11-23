@@ -1294,6 +1294,12 @@ const withoutSlotJoins = (body: Body): Body => body.map((n) => (n.kind === 'slot
 const isLiteralOnly = (body: Body): boolean =>
 	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
 
+function armLiteral(arm: RenderRule): string | undefined {
+	const parts = arm.type === SEQ ? arm.members.filter((member) => !isSeamChoice(member as RenderRule)) : [arm];
+	const [only] = parts;
+	return parts.length === 1 && only?.type === STRING ? only.value : undefined;
+}
+
 export function emitKindGatedLiterals(
 	rule: Extract<RenderRule, { type: 'CHOICE' }>,
 	fieldName: string | undefined,
@@ -1311,8 +1317,9 @@ export function emitKindGatedLiterals(
 	const beforeSlots = new Set(ctx.emittedSlotNames);
 	const heldValues = new Set(lookupSlot(rule, ctx)?.values.filter(isTerminalValue).map((value) => value.value));
 	for (const member of rule.members) {
-		if (member.type === STRING && heldValues.has(member.value)) {
-			arms.push({ prefix: undefined, residual: EMPTY, kinds: [], literal: member.value });
+		const literal = armLiteral(member);
+		if (literal !== undefined && heldValues.has(literal)) {
+			arms.push({ prefix: undefined, residual: EMPTY, kinds: [], literal });
 			continue;
 		}
 		const arm = fieldName === undefined ? member : withFieldOnCarriers(member, fieldName);
