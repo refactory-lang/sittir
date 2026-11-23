@@ -863,3 +863,7 @@ The `name` of the `grammar.json` at a path.
 ### `packages/codegen/src/grammars.ts::upstreamDirOf`
 
 The real directory of the upstream package a grammar package depends on, found by walking `node_modules` up from the package. It does not use `require.resolve`, because that also searches `NODE_PATH`, and pnpm's bin shims put every hoisted package there, so a package with no upstream dependency would read another grammar's.
+
+### `packages/codegen/src/grammars.ts::GRAMMAR_SHAPE_EMIT_SCRIPT`
+
+The script that writes a grammar's shape and upstream declaration, relative to the repository root. It takes grammar names as arguments (`shapePackages`).

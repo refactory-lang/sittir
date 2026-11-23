@@ -6,8 +6,20 @@ import {
 	emitGrammarShapeSource,
 	emitUpstreamDeclarationSource,
 	grammarShapeFile,
+	shapePackages,
 	upstreamDeclarationFile
 } from '../emit-grammar-shape.ts';
+
+describe('the grammars a shape emit covers', () => {
+	it('is the named grammars', () => {
+		expect(shapePackages(['rust']).map((pkg) => pkg.name)).toEqual(['rust']);
+	});
+
+	it('is every grammar with a base entry when none is named', () => {
+		const withBase = grammarPackages().filter((pkg) => existsSync(join(pkg.dir, BASE_ENTRY)));
+		expect(shapePackages([]).map((pkg) => pkg.name)).toEqual(withBase.map((pkg) => pkg.name));
+	});
+});
 
 describe('grammar shapes are derived from the upstream grammar.json', () => {
 	for (const pkg of grammarPackages()) {

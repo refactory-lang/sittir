@@ -46,3 +46,7 @@ its `readonly <name>: <Prefix>API;` member to `LanguageApis`. Both blocks are
 kept sorted and deduplicated, so the edit is a no-op for a grammar already
 there. It throws if the file has no single-name grammar API imports or no
 `LanguageApis` interface to extend.
+
+### `packages/tools/src/bootstrap/grammar.ts::installCommands`
+
+The commands a bootstrap runs once its files are written: `pnpm install`, then the grammar shape emit for the new grammar. The emit reads the upstream's `grammar.json`, so it follows the install. Without its shape and upstream declaration, the grammar's `base.ts` import has no type and the grammar type-check ratchet fails.

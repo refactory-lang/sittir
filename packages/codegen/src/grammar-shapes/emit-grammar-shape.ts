@@ -57,9 +57,12 @@ export async function emitGrammarShapeSource(pkg: GrammarPackage): Promise<strin
 	return formatted.code;
 }
 
+export function shapePackages(names: readonly string[]): readonly GrammarPackage[] {
+	return grammarPackages().filter((pkg) => existsSync(join(pkg.dir, BASE_ENTRY)) && (names.length === 0 || names.includes(pkg.name)));
+}
+
 if (process.argv[1] !== undefined && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-	for (const pkg of grammarPackages()) {
-		if (!existsSync(join(pkg.dir, BASE_ENTRY))) continue;
+	for (const pkg of shapePackages(process.argv.slice(2))) {
 		const source = await emitGrammarShapeSource(pkg);
 		writeFileSync(grammarShapeFile(pkg.name), source);
 		mkdirSync(dirname(upstreamDeclarationFile(pkg)), { recursive: true });

@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 import {
 	BOOTSTRAP_INDENT_UNIT,
 	GRAMMAR_ENTRY,
+	GRAMMAR_SHAPE_EMIT_SCRIPT,
 	REPO_ROOT,
 	grammarDisplayName,
 	grammarPackageDir,
@@ -118,6 +119,13 @@ function run(cmd: string, args: readonly string[]): void {
 	execFileSync(cmd, args, { cwd: REPO_ROOT, stdio: 'inherit' });
 }
 
+export function installCommands(name: string): readonly (readonly [string, readonly string[]])[] {
+	return [
+		['pnpm', ['install']],
+		['pnpm', ['exec', 'tsx', GRAMMAR_SHAPE_EMIT_SCRIPT, name]]
+	];
+}
+
 export async function bootstrapGrammar(opts: BootstrapGrammarOptions): Promise<number> {
 	if (!GRAMMAR_NAME.test(opts.name)) {
 		throw new Error(`bootstrap-grammar: '${opts.name}' is not a valid grammar name (${GRAMMAR_NAME})`);
@@ -141,7 +149,7 @@ export async function bootstrapGrammar(opts: BootstrapGrammarOptions): Promise<n
 
 	run('pnpm', ['exec', 'oxfmt', ...formattablePaths(written, packageDir)]);
 	if (opts.install !== false) {
-		run('pnpm', ['install']);
+		for (const [command, args] of installCommands(opts.name)) run(command, args);
 		const corpus = await fetchUpstreamCorpus({ grammar: opts.name });
 		process.stdout.write(`corpus: ${corpus.files.length} file(s) from ${corpus.repository}@${corpus.ref}\n`);
 	}

@@ -31,6 +31,8 @@ export const NODE_MODEL_FILE = 'node-model.json5';
 export const PORTABLE_NODE_MODEL_FILE = 'node-model-portable.json5';
 export type NodeModelFile = typeof NODE_MODEL_FILE | typeof PORTABLE_NODE_MODEL_FILE;
 export const GRAMMAR_TYPECHECK_SCRIPT = 'type-check:grammar';
+
+export const GRAMMAR_SHAPE_EMIT_SCRIPT = 'packages/codegen/src/grammar-shapes/emit-grammar-shape.ts';
 export const GRAMMAR_TYPECHECK_CEILING = 'grammar-typecheck-ceiling.json';
 
 let discovered: readonly GrammarPackage[] | undefined;

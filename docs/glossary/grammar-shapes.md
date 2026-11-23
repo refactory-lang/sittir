@@ -529,3 +529,7 @@ The shape file's text for one grammar, formatted with the repo's oxfmt config.
 Supertypes are emitted under `supertypes`, the key grammar.json and
 tree-sitter's normalized grammar both use. Run the file directly to rewrite
 every grammar's shape.
+
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::shapePackages`
+
+The grammars one run of the emit script writes: the ones named on its command line, or every grammar with a base entry when none is named. `bootstrap-grammar` names only the new grammar, so a bootstrap does not write the shape files of grammars that keep theirs uncommitted.

@@ -1,8 +1,8 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { REPO_ROOT, allGrammars } from '@sittir/codegen/grammars';
-import { bootstrapGrammar, plannedRegistrations } from '../src/bootstrap/grammar.ts';
+import { GRAMMAR_SHAPE_EMIT_SCRIPT, REPO_ROOT, allGrammars } from '@sittir/codegen/grammars';
+import { bootstrapGrammar, installCommands, plannedRegistrations } from '../src/bootstrap/grammar.ts';
 
 const SCRATCH = 'zzprobe';
 const REGISTRATION_FILES = ['tsconfig.json', 'packages/tools/package.json', 'packages/tools/src/languages.ts'];
@@ -24,6 +24,16 @@ describe('grammar registrations', () => {
 		const languages = edits.get('packages/tools/src/languages.ts')!;
 		expect(languages).toContain(`import type { ZzprobeAPI } from '@sittir/${SCRATCH}';\n`);
 		expect(languages).toContain(`\treadonly ${SCRATCH}: ZzprobeAPI;\n`);
+	});
+});
+
+describe('bootstrap-grammar install', () => {
+	it('installs the upstream, then emits the new grammar’s shape files', () => {
+		expect(installCommands(SCRATCH)).toEqual([
+			['pnpm', ['install']],
+			['pnpm', ['exec', 'tsx', GRAMMAR_SHAPE_EMIT_SCRIPT, SCRATCH]]
+		]);
+		expect(existsSync(join(REPO_ROOT, GRAMMAR_SHAPE_EMIT_SCRIPT))).toBe(true);
 	});
 });
 
