@@ -209,7 +209,10 @@ type BuildArgs =
 ```
 
 Mixing the arms is a type error, and so is an empty config unless the choice has an
-empty arm. A slot every arm holds appears in each tuple.
+empty arm. A slot every arm holds appears in each tuple. A flag is outside this rule
+as well, so arms that differ only in flags take one config: typescript's
+`public_field_definition_plain` keeps `static`, `override`, `readonly` and `abstract`
+as independent booleans.
 
 A mandatory single group is the degenerate case with one overload. Today's
 forwarded parent already accepts the group's Config that way
