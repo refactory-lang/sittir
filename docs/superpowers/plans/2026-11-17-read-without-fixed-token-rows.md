@@ -23,7 +23,7 @@ Where the work stands:
   - `headerOf`.
 
   It merges into the hydrate-at-parse branch.
-- **The scanner change Task 4 relies on** (no automatic semicolon in a list's trailing spot) is one commit on `fix/ts-asi-before-same-line-comment`. It is not pushed and has no pull request. It waited for the placement fix, which is withdrawn. Under master's ownership, the comment after an interface member's automatic semicolon leads the next member, so the change adds the interface case to the known gap. It merges into the hydrate-at-parse branch before Task 4 (brainstorm's call, 2026-11-22), after the spec's before-and-after tree checks, and the interface case is added to the known-gap issue.
+- **The scanner change Task 4 relies on** (no automatic semicolon in a list's trailing spot) is merged into the hydrate-at-parse branch (`cb0515444`), after the spec's before-and-after tree checks. It adds no case to the known gap: the comment in `a: string // c⏎  b: number` trails `a`, because placement passes over the empty semicolon, so replacing `b` keeps it. A same-line comment after a statement's automatic semicolon now trails the statement, as it does after an explicit `;`.
 - **The storage audit** (2026-11-18): its table is `docs/superpowers/specs/2026-11-18-one-read-rule-per-fact-design.md`, "The four facts" and "Left unread by the audit". Its baseline is three numbers, measured on the validation corpus of the five grammars (440 sources, 15,024 nodes), comparing object and arena storage:
   - 0 root snapshots differ;
   - 0 untouched node renders differ;
