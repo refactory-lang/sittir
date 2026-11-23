@@ -15428,6 +15428,10 @@ The first route of an arm, and its step, that leaves some items of a list unread
 
 The first route of an arm, and the landing it shares, where two routes of one slot land on the same grammar slot through the same containers and their kinds overlap. A route's kinds are its `reads`; a route without `reads` reads every kind its grammar slot holds, so it overlaps any other. Routes whose kinds don't overlap may share a landing: typescript's `else` reads a lone `if` through one route of its body and every other statement through another. The build table refuses an arm this finds anything in, as a vocabulary mismatch.
 
+### `packages/codegen/src/emitters/overlays/portable/build.ts::directBuilderUnfilled`
+
+Whether an arm has nothing to pass to a direct builder whose kind requires a slot: no route, preset, flag, number or text value fills it. Such an arm keeps no builder and is seated like a kind without one of its own, so it builds through its holder. A direct builder whose one slot is optional is still called bare.
+
 ### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::build`
 
 The emitted portable build source.

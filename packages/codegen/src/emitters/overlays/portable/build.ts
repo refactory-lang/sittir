@@ -236,6 +236,12 @@ const landingOf = (steps: readonly PortableSlotStep[], within: readonly Portable
 	return [...steps.slice(0, -1).map((step) => `${step.key}:${step.builder ?? ''}`), ...tail].join(' > ');
 };
 
+export const directBuilderUnfilled = (
+	shape: PortableCallShape | undefined,
+	arm: { readonly slots: readonly unknown[]; readonly presets: readonly unknown[]; readonly flags: object; readonly scalar: unknown; readonly content: unknown },
+	requiresSlot: boolean
+): boolean => shape === 'direct' && requiresSlot && arm.slots.length === 0 && arm.presets.length === 0 && Object.keys(arm.flags).length === 0 && arm.scalar === undefined && arm.content === undefined;
+
 export function landsTwice(routes: readonly PortableSlotRoute[]): { readonly route: PortableSlotRoute; readonly landing: string } | undefined {
 	const overlap = (a: PortableSlotRoute, b: PortableSlotRoute): boolean => a.reads === undefined || b.reads === undefined || a.reads.some((kind) => b.reads!.includes(kind));
 	const landed = new Map<string, PortableSlotRoute[]>();
@@ -1234,6 +1240,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			if (unread !== undefined)
 				throw new Error(`portable build: ${kind}'s ${unread.route.name} reads only some of the items its step ${unread.route.steps[unread.step]!.key} holds, and no other route of ${entry.vocab} reads the rest; route the other items, or read their holder whole`);
 			const owners = ownersOf(armSlots);
+			const unfilled = mount === undefined && directBuilderUnfilled(builder === undefined ? undefined : builders.get(builder), { slots: armSlots, presets: deepest, flags: flagSteps, scalar, content }, node.slots.some(isRequired));
 			for (const [i, a] of owners.entries())
 				for (const b of owners.slice(i + 1)) {
 					const shape = undecidedShape(armSlots, a, b);
@@ -1254,9 +1261,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					complete: shape?.complete ?? true,
 					arm: {
 						kind: builtId,
-						...(builder === undefined ? {} : { builder }),
+						...(builder === undefined || unfilled ? {} : { builder }),
 						...(mount === undefined ? {} : { mounted: mount.mounted }),
-						...(seated === undefined ? {} : { seated }),
+						...(unfilled ? { seated: shapes[node.kind] } : seated === undefined ? {} : { seated }),
 						...(numeric === undefined ? {} : { numeric }),
 						...(scientific ? { scientific } : {}),
 						...(digits === undefined ? {} : { digits }),
