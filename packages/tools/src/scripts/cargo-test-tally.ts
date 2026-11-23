@@ -25,7 +25,7 @@ export interface CargoTestTally {
 const RUNNING = /^\s*Running (.+)$/;
 const DOC_TESTS = /^\s*Doc-tests (.+)$/;
 const RESULT = /^test result: (ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored;/;
-const TEST_LINE = /^test .+ \.\.\. (ok|FAILED|ignored)\s*$/;
+const TEST_LINE = /^test .+ \.\.\. (ok|FAILED|ignored)(?:, .*)?\s*$/;
 
 export function summarizeCargoTests(output: string, storage: string): CargoTestTally {
 	const binaries: CargoTestBinaryTally[] = [];

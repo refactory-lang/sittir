@@ -7,7 +7,7 @@ const LOG = [
 	'running 3 tests',
 	'test alpha::one ... ok',
 	'test alpha::two ... ok',
-	'test alpha::three ... ignored',
+	'test alpha::three ... ignored, reads a corpus that is not checked out',
 	'test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.01s',
 	'',
 	'     Running tests/parity.rs (target/debug/deps/parity-9f8e.d)',
