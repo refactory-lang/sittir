@@ -2233,6 +2233,13 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         Some(line_starts_inside_tokens(&mut self.nodes, index, self.tree.source()))
     }
 
+    /// What `SourceTable::list_delimiter` answers: the delimiter of the node
+    /// of `kind` at the span `at` names, going down from it.
+    fn list_delimiter(&mut self, at: Named, kind: KindId) -> Option<crate::types::Delimiter> {
+        let list = node_at_span(&mut self.nodes, at.index, at.span, kind)?;
+        self.tree.grammar().delimiter(&mut self.nodes, &list)
+    }
+
     /// Visits the levels at the edge on `side` of `at`
     /// (`SourceTable::for_each_edge_level`).
     fn edge_levels(&mut self, at: Named, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
@@ -2464,6 +2471,11 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for Seating<'_, G, B> {
         let Some(mut cursor) = cursor else { return false };
         read(&mut cursor, &mut self.ctx());
         true
+    }
+
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: KindId) -> Option<crate::types::Delimiter> {
+        let (mut lookups, named) = self.own(at)?;
+        lookups.list_delimiter(named, kind)
     }
 
     fn for_each_edge_level(&self, at: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
@@ -3047,6 +3059,10 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for ReadSources<'_, G, B> {
 
     fn read_node(&self, coord: &NodeCoordinate, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
         self.seating(coord.into()).is_some_and(|seating| seating.read_node(coord, read))
+    }
+
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: KindId) -> Option<crate::types::Delimiter> {
+        self.seating(at)?.list_delimiter(at, kind)
     }
 
     fn for_each_edge_level(&self, at: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {

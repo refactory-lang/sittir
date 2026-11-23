@@ -284,8 +284,8 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
   - `the_query_reads…` FAILs: the `SlotContent` tree has no separator rows to count.
   - `parsed_lists…` FAILs on the `SlotContent` tree.
   - `a_rebuilt_list_keeps…` PASSes: it pins today's behaviour through the change.
-- [ ] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
-- [ ] **Step 4: Run.**
+- [x] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
+- [x] **Step 4: Run.**
   - Step 2's commands. Expected: PASS.
   - `validate:history` per row, both storages. Expected: no row moves.
   - The full unit suite.

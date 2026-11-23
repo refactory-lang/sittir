@@ -179,6 +179,14 @@ pub trait SourceTable {
         Vec::new()
     }
 
+    /// The delimiter the read resolved for the list of `kind` that `at`
+    /// names, found going down from `at`. A table of bare sources cannot
+    /// answer and says so.
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: KindId) -> Option<crate::types::Delimiter> {
+        let _ = (at, kind);
+        None
+    }
+
     /// Visits the node a coordinate names, then each first (`Side::Before`)
     /// or last (`Side::After`) child that starts or ends at the same byte,
     /// outermost first: the nodes whose templates meet at that edge of the
@@ -363,6 +371,10 @@ impl SourceTable for ThroughTemplates<'_> {
 
     fn line_starts_inside_tokens(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<u32> {
         self.0.line_starts_inside_tokens(coord)
+    }
+
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: KindId) -> Option<crate::types::Delimiter> {
+        self.0.list_delimiter(at, kind)
     }
 
     fn for_each_edge_level(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {

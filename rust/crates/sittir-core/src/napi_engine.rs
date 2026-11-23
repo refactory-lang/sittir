@@ -2112,6 +2112,10 @@ where
         self.trees.line_starts_inside_tokens(at)
     }
 
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: crate::types::KindId) -> Option<crate::types::Delimiter> {
+        self.trees.list_delimiter(at, kind)
+    }
+
     fn for_each_edge_level(&self, at: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
         self.trees.for_each_edge_level(at, side, f);
     }

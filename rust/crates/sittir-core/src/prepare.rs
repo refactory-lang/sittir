@@ -71,6 +71,19 @@ impl<O, X: ArmOf<O> + ?Sized> ArmOf<O> for &mut X {
     }
 }
 
+/// A rebuilt list's delimiter flags with its trailing flag as `source`, the
+/// list of `kind` it was rebuilt from (`Layout::sides`), resolved it
+/// (`SourceTable::list_delimiter`). A list rebuilt from none, or a table that
+/// cannot answer, takes `default`, the options table's. The leading flag is
+/// always `default`'s.
+#[must_use]
+pub fn source_trailing_delimiter(source: Option<&crate::slot::NodeIdOrOwnedCoordinate>, kind: KindId, default: crate::types::Delimiter, ctx: &RenderContext<'_>) -> crate::types::Delimiter {
+    let Some(source) = source.map(crate::slot::NodeIdOrOwnedCoordinate::at) else { return default };
+    let Some(resolved) = ctx.sources.list_delimiter(source, kind) else { return default };
+    let trailing = crate::types::Delimiter::TRAILING;
+    if resolved.has(trailing) { default.with(trailing) } else { default.without(trailing) }
+}
+
 /// The item at one end of a root's render, as the root's edge reads it: a
 /// coordinate into its source, framed by its sides (`SourceTable::framed_span`),
 /// bytes of a source (a root's inner entries read from its tree), a snapshot
@@ -750,5 +763,47 @@ mod tests {
     #[test]
     fn a_tree_addressed_edge_item_gives_the_root_its_source_flank() {
         assert_eq!(before_flank(&coordinate(1, 4), "\n#!\n"), Some(NEWLINE));
+    }
+
+    /// A table that holds trees: the list a flank names resolved `resolved`, or the table cannot answer.
+    struct ListTrees(Option<crate::types::Delimiter>);
+    impl SourceTable for ListTrees {
+        fn source_of(&self, _: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+            None
+        }
+        fn list_delimiter(&self, _: crate::slot::NodeIdOrCoordinate<'_>, _: KindId) -> Option<crate::types::Delimiter> {
+            self.0
+        }
+    }
+
+    /// The delimiter a list rebuilt from one that resolved `resolved` (rebuilt from none when not `rebuilt`) takes over the options default `default`.
+    fn trailing(resolved: Option<u8>, rebuilt: bool, default: u8) -> u8 {
+        let sources = ListTrees(resolved.map(crate::types::Delimiter));
+        let options = ResolvedOptions::default();
+        let ctx = RenderContext::new(&options, &sources);
+        let source = rebuilt.then(|| coordinate(2, 7));
+        super::source_trailing_delimiter(source.map(crate::slot::NodeIdOrOwnedCoordinate::Coordinate).as_ref(), KindId(1), crate::types::Delimiter(default), &ctx).get()
+    }
+
+    #[test]
+    fn a_rebuilt_list_keeps_its_sources_trailing_delimiter() {
+        assert_eq!(trailing(Some(2), true, 0), 2);
+    }
+
+    #[test]
+    fn a_rebuilt_list_whose_source_has_no_trailing_delimiter_clears_a_trailing_default() {
+        assert_eq!(trailing(Some(0), true, 2), 0);
+    }
+
+    #[test]
+    fn a_list_rebuilt_from_none_or_a_table_with_no_tree_takes_the_options_default() {
+        assert_eq!(trailing(Some(2), false, 0), 0);
+        assert_eq!(trailing(None, true, 2), 2);
+    }
+
+    #[test]
+    fn the_leading_flag_always_comes_from_the_options_default() {
+        assert_eq!(trailing(Some(2), true, 1), 3);
+        assert_eq!(trailing(Some(1), true, 3), 1);
     }
 }

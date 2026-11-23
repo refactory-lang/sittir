@@ -3471,7 +3471,19 @@ function prepareStructImpl(
 		}
 		body.push(...seatLoops(seated));
 		if (delim !== undefined) {
-			body.push(`    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::${delim.constName}));`);
+			const fallback = `ctx.options.delimiter_at(options::${delim.constName})`;
+			const fromSource = node instanceof AssembledList && node.trailingDelimiter === 'optional';
+			const kindId = fromSource ? findKindEntry(kindEntries, node.kind)?.id : undefined;
+			if (fromSource && kindId === undefined) {
+				throw emitShapeFailure({
+					code: 'trailing-delimiter-without-kind-id',
+					ownerKind: node.kind,
+					message: `list '${node.kind}' has an optional trailing delimiter and no kind id to find its source by`,
+					details: {}
+				});
+			}
+			const value = kindId === undefined ? fallback : `::sittir_core::prepare::source_trailing_delimiter(${PREPARE_MOD}::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(${kindId}), ${fallback}, ctx)`;
+			body.push(`    let delimiter = ${value};`, `    ${PREPARE_MOD}::Setting::fill(&mut parts.delimiter, overlay, delimiter);`);
 		}
 		const sep = node instanceof AssembledList ? separatorSiteOf(plan, node) : undefined;
 		if (sep !== undefined && node instanceof AssembledList) {

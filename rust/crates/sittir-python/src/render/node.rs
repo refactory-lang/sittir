@@ -14477,7 +14477,8 @@ fn prepare_import_list<N: ImportListPrepare + ?Sized>(node: &mut N, overlay: &mu
     ::sittir_core::prepare::Setting::fill(&mut parts.name_separator_space_before, overlay, ctx.options.site_arm(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.name_separator_space_after, overlay, ctx.options.site_arm(options::SITE_IMPORT_LIST_NAME_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.name, overlay, options::SEATS_IMPORT_LIST_NAME, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_IMPORT_LIST_NAME));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(141), ctx.options.delimiter_at(options::DELIM_IMPORT_LIST_NAME), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     Ok(())
 }
@@ -17871,7 +17872,8 @@ fn prepare_expression_list<N: ExpressionListPrepare + ?Sized>(node: &mut N, over
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_EXPRESSION_LIST_ELEMENTS, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_EXPRESSION_LIST_ELEMENTS));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(186), ctx.options.delimiter_at(options::DELIM_EXPRESSION_LIST_ELEMENTS), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -18742,7 +18744,8 @@ fn prepare_parameters_elements<N: ParametersElementsPrepare + ?Sized>(node: &mut
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PARAMETERS_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_PARAMETERS_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(198), ctx.options.delimiter_at(options::DELIM_PARAMETERS_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -18830,7 +18833,8 @@ fn prepare_patterns<N: PatternsPrepare + ?Sized>(node: &mut N, overlay: &mut N::
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PATTERNS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_PATTERNS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(199), ctx.options.delimiter_at(options::DELIM_PATTERNS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -20105,7 +20109,8 @@ fn prepare_pattern_list<N: PatternListPrepare + ?Sized>(node: &mut N, overlay: &
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_PATTERN_LIST_ELEMENTS, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_PATTERN_LIST_ELEMENTS));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(223), ctx.options.delimiter_at(options::DELIM_PATTERN_LIST_ELEMENTS), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -22032,7 +22037,8 @@ fn prepare_collection_elements<N: CollectionElementsPrepare + ?Sized>(node: &mut
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_COLLECTION_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_COLLECTION_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_COLLECTION_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(248), ctx.options.delimiter_at(options::DELIM_COLLECTION_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -23357,7 +23363,8 @@ fn prepare_simple_statements_elements<N: SimpleStatementsElementsPrepare + ?Size
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_SIMPLE_STATEMENTS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_SIMPLE_STATEMENTS_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(265), ctx.options.delimiter_at(options::DELIM_SIMPLE_STATEMENTS_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -23445,7 +23452,8 @@ fn prepare_subjects<N: SubjectsPrepare + ?Sized>(node: &mut N, overlay: &mut N::
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_SUBJECTS_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_SUBJECTS_ELEMENTS, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_SUBJECTS_ELEMENTS));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(266), ctx.options.delimiter_at(options::DELIM_SUBJECTS_ELEMENTS), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -23532,7 +23540,8 @@ fn prepare_with_clause_with_items<N: WithClauseWithItemsPrepare + ?Sized>(node: 
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_item"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.item, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_WITH_ITEMS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(267), ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_WITH_ITEMS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -23620,7 +23629,8 @@ fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TYPES_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_TYPES_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(268), ctx.options.delimiter_at(options::DELIM_TYPES_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -23708,7 +23718,8 @@ fn prepare_argument_list_elements<N: ArgumentListElementsPrepare + ?Sized>(node:
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_ARGUMENT_LIST_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_ARGUMENT_LIST_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(269), ctx.options.delimiter_at(options::DELIM_ARGUMENT_LIST_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -23796,7 +23807,8 @@ fn prepare_list_pattern_case_patterns<N: ListPatternCasePatternsPrepare + ?Sized
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_LIST_PATTERN_CASE_PATTERNS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_LIST_PATTERN_CASE_PATTERNS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(270), ctx.options.delimiter_at(options::DELIM_LIST_PATTERN_CASE_PATTERNS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -23884,7 +23896,8 @@ fn prepare_dict_pattern_elements<N: DictPatternElementsPrepare + ?Sized>(node: &
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_DICT_PATTERN_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_DICT_PATTERN_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(271), ctx.options.delimiter_at(options::DELIM_DICT_PATTERN_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -23972,7 +23985,8 @@ fn prepare_subscripts<N: SubscriptsPrepare + ?Sized>(node: &mut N, overlay: &mut
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_SUBSCRIPTS_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_SUBSCRIPTS_ELEMENTS, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_ELEMENTS));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(272), ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_ELEMENTS), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -24060,7 +24074,8 @@ fn prepare_dictionary_elements<N: DictionaryElementsPrepare + ?Sized>(node: &mut
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_DICTIONARY_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_DICTIONARY_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(273), ctx.options.delimiter_at(options::DELIM_DICTIONARY_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -24369,7 +24384,8 @@ fn prepare_type_params_items<N: TypeParamsItemsPrepare + ?Sized>(node: &mut N, o
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TYPE_PARAMS_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TYPE_PARAMS_ITEMS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TYPE_PARAMS_ITEMS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_TYPE_PARAMS_ITEMS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(278), ctx.options.delimiter_at(options::DELIM_TYPE_PARAMS_ITEMS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -24457,7 +24473,8 @@ fn prepare_tuple_pattern_elements<N: TuplePatternElementsPrepare + ?Sized>(node:
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TUPLE_PATTERN_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(279), ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -24545,7 +24562,8 @@ fn prepare_case_pattern_list<N: CasePatternListPrepare + ?Sized>(node: &mut N, o
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_CASE_PATTERN_LIST_ELEMENTS, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_CASE_PATTERN_LIST_ELEMENTS));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(280), ctx.options.delimiter_at(options::DELIM_CASE_PATTERN_LIST_ELEMENTS), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -24633,7 +24651,8 @@ fn prepare_tuple_elements<N: TupleElementsPrepare + ?Sized>(node: &mut N, overla
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_TUPLE_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_TUPLE_ELEMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_TUPLE_ELEMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(281), ctx.options.delimiter_at(options::DELIM_TUPLE_ELEMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -24950,7 +24969,8 @@ fn prepare_print_arguments<N: PrintArgumentsPrepare + ?Sized>(node: &mut N, over
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PRINT_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PRINT_ARGUMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_PRINT_ARGUMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(285), ctx.options.delimiter_at(options::DELIM_PRINT_ARGUMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -25038,7 +25058,8 @@ fn prepare_print_chevron_arguments<N: PrintChevronArgumentsPrepare + ?Sized>(nod
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_before, overlay, ctx.options.site_arm(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_PRINT_CHEVRON_ARGUMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.item, overlay, options::SEATS_PRINT_CHEVRON_ARGUMENTS_ITEM, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_PRINT_CHEVRON_ARGUMENTS_ITEM));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(286), ctx.options.delimiter_at(options::DELIM_PRINT_CHEVRON_ARGUMENTS_ITEM), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
     Ok(())
 }
@@ -27815,7 +27836,8 @@ fn prepare_expression_statement_tuple<N: ExpressionStatementTuplePrepare + ?Size
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_before, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.elements_separator_space_after, overlay, ctx.options.site_arm(options::SITE_EXPRESSION_STATEMENT_TUPLE_ELEMENTS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.elements, overlay, options::SEATS_EXPRESSION_STATEMENT_TUPLE_ELEMENTS, ctx);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_EXPRESSION_STATEMENT_TUPLE_ELEMENTS));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(305), ctx.options.delimiter_at(options::DELIM_EXPRESSION_STATEMENT_TUPLE_ELEMENTS), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.elements, overlay, ctx)?;
     Ok(())
 }
@@ -27902,7 +27924,8 @@ fn prepare_with_clause_bare<N: WithClauseBarePrepare + ?Sized>(node: &mut N, ove
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_items"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.items, overlay, slot.as_deref()); }
     ::sittir_core::prepare::Setting::fill(&mut parts.items_separator_space_before, overlay, ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_BEFORE).arm);
     ::sittir_core::prepare::Setting::fill(&mut parts.items_separator_space_after, overlay, ctx.options.site_arm(options::SITE_WITH_CLAUSE_BARE_ITEMS_SEPARATOR_SPACE_AFTER).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_BARE_ITEMS));
+    let delimiter = ::sittir_core::prepare::source_trailing_delimiter(::sittir_core::prepare::LayoutTarget::sides(&parts.layout, overlay).as_ref(), ::sittir_core::types::KindId(306), ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_BARE_ITEMS), ctx);
+    ::sittir_core::prepare::Setting::fill(&mut parts.delimiter, overlay, delimiter);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.items, overlay, ctx)?;
     Ok(())
 }
