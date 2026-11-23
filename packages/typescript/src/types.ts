@@ -16,6 +16,7 @@ import type {
 	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
+	ArmRows,
 	CoOptionalRows,
 	BranchHint,
 	BranchShapesOf,
@@ -21423,8 +21424,16 @@ export namespace BinaryExpression {
 	}
 	export type Loose = LooseFor<TSKindId.BinaryExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpression>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.BinaryExpression>>];
-	export type LooseArgs = [config?: T.BinaryExpression.Loose];
+	export type BuildArgs = ArmRows<
+		[config?: Partial<ConfigOf<T.BinaryExpression>>],
+		'left' | 'operator' | 'right' | 'binaryExpressionIn',
+		[['left' | 'operator' | 'right', 'left' | 'operator' | 'right'], ['binaryExpressionIn', 'binaryExpressionIn']]
+	>;
+	export type LooseArgs = ArmRows<
+		[config?: T.BinaryExpression.Loose],
+		'left' | 'operator' | 'right' | 'binaryExpressionIn',
+		[['left' | 'operator' | 'right', 'left' | 'operator' | 'right'], ['binaryExpressionIn', 'binaryExpressionIn']]
+	>;
 	export type Kind = TSKindId.BinaryExpression;
 }
 export namespace UnaryExpression {

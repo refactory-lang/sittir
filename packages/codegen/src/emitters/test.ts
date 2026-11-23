@@ -42,7 +42,7 @@ import {
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { refersTo, writesText, type Body } from './render-body.ts';
 import { builtFromText } from './built-from-text.ts';
-import { valueStorageExpr, kindEnumTextExpr } from './factories.ts';
+import { exclusiveArmsOf, valueStorageExpr, kindEnumTextExpr } from './factories.ts';
 import { classifyFactoryEmission, leadingOptionsOf, registeredSlots } from './shared.ts';
 import { seatsConfigChild, subFactoriesOf, type SubFactory } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
@@ -265,7 +265,10 @@ function factoryCallArgs(
 	options?: DummyOptions
 ): { typeConfigArg: string; renderConfigArg: string; registeredOptionsArg: string | undefined } {
 	const registeredSet = new Set(registeredSlots(node));
-	const seated = (f: AssembledNonterminal): boolean => isRequired(f) || (options?.populateOptional === true && !isMultiple(f));
+	const firstArm = exclusiveArmsOf(node, node.slots)?.arms[0];
+	const inFirstArm = (f: AssembledNonterminal): boolean => firstArm === undefined || firstArm.keys.includes(f.propertyName);
+	const seated = (f: AssembledNonterminal): boolean =>
+		isRequired(f) || firstArm?.needed.includes(f.propertyName) === true || (options?.populateOptional === true && !isMultiple(f) && inFirstArm(f));
 	const inner: DummyOptions | undefined = options?.texts === undefined ? undefined : { texts: options.texts };
 	const typeConfigParts: string[] = [];
 	for (const f of node.slots) {

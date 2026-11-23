@@ -378,6 +378,29 @@ export type CoOptionalRows<
 							options?: OmitEach<O, BranchOptions> & { readonly [K in BranchOptions]?: never }
 					  ])
 	: never;
+type ArmConfig<C, All extends PropertyKey, Keys extends PropertyKey, Needed extends PropertyKey> = C extends { readonly $type: number }
+	? C
+	: C extends object
+		? Omit<C, Exclude<All, Keys> | Needed> & { readonly [K in Exclude<All, Keys>]?: never } & Required<Pick<C, Needed & keyof C>>
+		: C;
+type ArmRow<Rest extends readonly unknown[], C, All extends PropertyKey, Arm extends readonly [PropertyKey, PropertyKey], Optional extends boolean> =
+	[Arm[1]] extends [never]
+		? Optional extends true
+			? [config?: ArmConfig<C, All, Arm[0], Arm[1]>, ...rest: Rest]
+			: [config: ArmConfig<C, All, Arm[0], Arm[1]>, ...rest: Rest]
+		: [config: ArmConfig<C, All, Arm[0], Arm[1]>, ...rest: Rest];
+/**
+ * The argument tuples of a builder whose rule is a required choice of arms that hold different slots: one tuple per arm,
+ * each needing the keys its arm requires and naming none that only another arm holds, so mixing arms and an empty config
+ * are type errors. A key every arm holds is in each tuple. `Arms` pairs each arm's keys with the keys it requires; an arm
+ * that requires none takes an absent config when the row leads with an optional one. A config member that is not an
+ * object (loose text, a number) or is a built node is in every tuple. The tuples are a union and not overloads, because
+ * `ArgsOf` and `Parameters` read only an overload's last signature.
+ */
+export type ArmRows<Row extends readonly unknown[], All extends PropertyKey, Arms extends readonly (readonly [PropertyKey, PropertyKey])[]> =
+	Row extends readonly [(infer C)?, ...infer Rest]
+		? { [I in keyof Arms]: ArmRow<Rest, C, All, Arms[I], Row extends readonly [unknown, ...unknown[]] ? false : true> }[number]
+		: never;
 export type RenameKeys<T, M extends { readonly [From: string]: string }> = T extends unknown
 	? { [K in keyof T as K extends keyof M ? M[K] : K]: T[K] }
 	: never;

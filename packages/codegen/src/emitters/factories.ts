@@ -1159,6 +1159,39 @@ export function coOptionalBranchOfNode(node: AssembledNode): CoOptionalBranch | 
 	return isSlotBearingCompound(node) && !(node instanceof AssembledList) ? coOptionalBranchOf(node, node.slots) : undefined;
 }
 
+interface ExclusiveArms {
+	readonly keys: readonly string[];
+	readonly arms: readonly { readonly keys: readonly string[]; readonly needed: readonly string[] }[];
+}
+
+export function exclusiveArmsOf(node: FieldCarryingNode, slots: readonly AssembledNonterminal[]): ExclusiveArms | undefined {
+	const stamped = slots.filter((slot) => slot.arms !== undefined);
+	if (stamped.length === 0) return undefined;
+	const choices = new Set(stamped.map((slot) => slot.arms?.choice));
+	if (choices.size > 1) {
+		throw new Error(`[factories] kind '${node.kind}': its arm slots do not share one choice (${[...choices].join(', ')})`);
+	}
+	const registered = new Set(registeredSlots(node));
+	if (stamped.some((slot) => registered.has(slot))) {
+		throw new Error(`[factories] kind '${node.kind}': an option slot held by only some arms of a choice is not typed`);
+	}
+	const armIndexes = [...new Set(stamped.flatMap((slot) => slot.arms!.held.map((held) => held.arm)))].sort((a, b) => a - b);
+	const heldByAll = (slot: AssembledNonterminal): boolean => slot.arms!.held.length === armIndexes.length;
+	if (stamped.every((slot) => heldByAll(slot) || slot.storageInfo?.kind === 'boolean')) return undefined;
+	const shape = (index: number): { keys: string[]; needed: string[] } => ({
+		keys: stamped.filter((slot) => slot.arms!.held.some((held) => held.arm === index)).map((slot) => slot.propertyName),
+		needed: stamped.filter((slot) => slot.arms!.held.some((held) => held.arm === index && held.required)).map((slot) => slot.propertyName)
+	});
+	const arms = armIndexes.map(shape).filter((arm, at, all) => all.findIndex((other) => keyUnion(other.keys) === keyUnion(arm.keys) && keyUnion(other.needed) === keyUnion(arm.needed)) === at);
+	return { keys: stamped.map((slot) => slot.propertyName), arms };
+}
+
+export function exclusiveArmsOfNode(node: AssembledNode): ExclusiveArms | undefined {
+	return isSlotBearingCompound(node) && !(node instanceof AssembledList) ? exclusiveArmsOf(node, node.slots) : undefined;
+}
+
+const armPairs = (arms: ExclusiveArms): string => `[${arms.arms.map((arm) => `[${keyUnion(arm.keys)}, ${keyUnion(arm.needed)}]`).join(', ')}]`;
+
 const keyUnion = (keys: readonly string[]): string => (keys.length === 0 ? 'never' : keys.map((key) => `'${key}'`).join(' | '));
 
 function fieldCarryingBuiltTypeSurface(
@@ -1210,8 +1243,19 @@ function fieldCarryingBuiltTypeSurface(
 	if (branch !== undefined && (spreadTarget !== null || arrayArgs !== '' || surface.leadingOptions !== undefined || forwardedConstruction(node, surface, nodeMap, kindEntries) !== null)) {
 		throw new Error(`[factories] kind '${node.kind}': an optional branch is not typed on a builder that spreads, forwards or leads with options`);
 	}
+	const arms = exclusiveArmsOf(node, slots);
+	if (branch !== undefined && arms !== undefined) {
+		throw new Error(`[factories] kind '${node.kind}': an optional branch beside a choice of arms is not typed`);
+	}
+	if (arms !== undefined && (spreadTarget !== null || arrayArgs !== '' || surface.leadingOptions !== undefined || forwardedConstruction(node, surface, nodeMap, kindEntries) !== null)) {
+		throw new Error(`[factories] kind '${node.kind}': a choice of arms is not typed on a builder that spreads, forwards or leads with options`);
+	}
 	const branchRows = (rows: string): string =>
-		branch === undefined ? rows : `CoOptionalRows<${rows}, ${keyUnion(branch.keys)}, ${keyUnion(branch.needed)}, ${keyUnion(branch.options)}>`;
+		arms !== undefined
+			? `ArmRows<${rows}, ${keyUnion(arms.keys)}, ${armPairs(arms)}>`
+			: branch === undefined
+				? rows
+				: `CoOptionalRows<${rows}, ${keyUnion(branch.keys)}, ${keyUnion(branch.needed)}, ${keyUnion(branch.options)}>`;
 	return {
 		...(spreadTarget === null && surface.nullary !== true && !surface.param.rest ? { row: rowParamOf(node, surface.param, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,

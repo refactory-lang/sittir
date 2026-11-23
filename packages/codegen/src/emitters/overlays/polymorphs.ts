@@ -23,6 +23,7 @@ import {
 import { looseRefusal, numericSeatRefusal } from '../interior.ts';
 import {
 	coOptionalBranchOfNode,
+	exclusiveArmsOfNode,
 	constructorTargetKind,
 	leadingOptionsSplit,
 	listHasOptions,
@@ -236,7 +237,7 @@ export function collectPolymorphWires(nodeMap: NodeMap, options: { silent?: bool
 		const flattens = flattenSeatsOf(node, nodeMap).filter((seat) => isEmitted(seat.group.kind));
 		const elements = emittedElementsSeats(node, nodeMap, kindEntries);
 		const forwarded = forwardedSeatsOf(node);
-		const branched = coOptionalBranchOfNode(node) !== undefined;
+		const branched = coOptionalBranchOfNode(node) !== undefined || exclusiveArmsOfNode(node) !== undefined;
 		const claimed = new Set(subs.map((sub) => sub.slot));
 		const tuples = classifyFactoryShape(node, nodeMap) === 'forwarded' ? [] : tupleSeatOf(node, nodeMap).filter((e) => isEmitted(e.group.kind) && !claimed.has(e.slot));
 		visiting.add(node.kind);
@@ -1073,7 +1074,7 @@ function referencedDecls(decls: readonly Decl[], roots: readonly string[]): Decl
 	return decls.filter((decl) => kept.has(decl.name));
 }
 
-const SITTIR_TYPES = ['ArgsOf', 'CoOptionalRows', 'ConfigSeat', 'ElementsOf', 'EmptyForm', 'NoneOf', 'OmitEach', 'OmitLeadingOption', 'OptionalConfigSeat', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
+const SITTIR_TYPES = ['ArgsOf', 'ArmRows', 'CoOptionalRows', 'ConfigSeat', 'ElementsOf', 'EmptyForm', 'NoneOf', 'OmitEach', 'OmitLeadingOption', 'OptionalConfigSeat', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
 
 export function sittirTypesImport(body: readonly string[]): string[] {
 	const text = body.join('\n');

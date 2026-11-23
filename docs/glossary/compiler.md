@@ -7749,6 +7749,14 @@ The grammar's root rule (`rootRuleName`, the first rule), read once when the lin
 
 A field over a sequence names that sequence's one named child: tree-sitter puts the field on every child of the sequence, and the one child that is a slot, is not literal text, and carries no field of its own is what the field holds (scm `predicate.name` is its identifier, beside the `#`/`.` sigil). With no such child, or several, the sequence is left as it is and its members derive their own slots.
 
+### `packages/codegen/src/compiler/collect-slots.ts::stampArms`
+
+Stamps the slots of a structural choice with the arm that holds each, before the arms merge and a slot that only some arms hold is relaxed to optional. It stamps only when some slot is missing from some arm and the choice has a rule id; a choice whose arms all hold the same slots keeps its slots as they are. A slot already stamped by an inner choice records a blocking `unclassifiable-shape` diagnostic (`nested-arms`) rather than lose the inner stamp. Requiredness is the slot's own inside the arm, so an optional choice, which pushes optional onto every arm, stamps every slot as not required.
+
+### `packages/codegen/src/compiler/collect-slots.ts::mergeArmsHeld`
+
+Joins the arm stamps of two same-named slots that `mergeChoiceArms` merges into one: the merged slot holds every arm either held, an arm held by both keeping the first's requiredness. A slot with no stamp takes the other's.
+
 ### `packages/codegen/src/compiler/assemble.ts::perInstanceSeparator`
 
 The separator a list keeps per instance. A separator whose arms are all

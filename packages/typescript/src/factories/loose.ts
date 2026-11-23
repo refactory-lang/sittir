@@ -287,6 +287,11 @@ export const catchClause$seated: Seat<
 	ReturnType<typeof C.coerceToCatchClause>
 > = K.catchClause$flatten$catchClauseGroup(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
 
+export const binaryExpression$seated: Seat<
+	T.BinaryExpression.LooseArgs,
+	ReturnType<typeof C.coerceToBinaryExpression>
+> = K.binaryExpression$branch(C.coerceToBinaryExpression);
+
 export const numberFloatPoint$seated: Seat<
 	T.NumberFloatPoint.LooseArgs,
 	ReturnType<typeof C.coerceToNumberFloatPoint>,
