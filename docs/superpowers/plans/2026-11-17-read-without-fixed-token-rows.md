@@ -299,7 +299,7 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 
 **Interfaces:**
 - Consumes `RecordShape::edges` (Task 2) and the cells.
-- Produces `nodes::for_each_edge_part(nodes, holder, side, shape_of, visit)`. It walks `EdgePart`s at a record level and positions at a row level.
+- Produces `nodes::for_each_edge_part(nodes, holder, side, stamped, arm, visit)`. It walks `EdgePart`s at a record level and positions at a row level. `RunNodes` holds the record shape; `stamped` gives a level's stamped kind and `arm` a list's separator from the options the tree was read with.
 - `edge_levels` identifies the coordinate's node by its index, not `kid.span() != coord.span`.
 
 - [x] **Step 1: Write the failing tests.**
