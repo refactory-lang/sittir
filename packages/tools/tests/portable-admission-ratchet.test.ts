@@ -10,7 +10,7 @@ const UNFORMED: Readonly<Record<string, number>> = { python: 0, rust: 0, typescr
 const RAW: Readonly<Record<string, { readonly kind: number; readonly value: number }>> = {
 	python: { kind: 1, value: 54 },
 	rust: { kind: 9, value: 96 },
-	typescript: { kind: 1, value: 63 }
+	typescript: { kind: 1, value: 64 }
 };
 
 const pinned = (name: string, count: number, ceiling: number, shown: string): void => {
