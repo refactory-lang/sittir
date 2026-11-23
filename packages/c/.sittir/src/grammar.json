@@ -83,12 +83,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_empty_declaration",
-          "annotations": {
-            "variant": "empty",
-            "variantOf": "_top_level_item"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_empty_declaration",
+            "annotations": {
+              "variant": "empty",
+              "variantOf": "_top_level_item"
+            }
+          },
+          "named": true,
+          "value": "empty_declaration"
         },
         {
           "type": "SYMBOL",
@@ -205,12 +210,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_empty_declaration",
-          "annotations": {
-            "variant": "empty",
-            "variantOf": "_block_item"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_empty_declaration",
+            "annotations": {
+              "variant": "empty",
+              "variantOf": "_block_item"
+            }
+          },
+          "named": true,
+          "value": "empty_declaration"
         },
         {
           "type": "SYMBOL",
@@ -2087,57 +2097,19 @@
           "type": "PREC",
           "value": 15,
           "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "defined"
-              },
-              {
-                "type": "STRING",
-                "value": "("
-              },
-              {
-                "type": "FIELD",
-                "name": "identifier",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "identifier"
-                },
-                "metadata": {
-                  "fieldSource": "enriched"
-                }
-              },
-              {
-                "type": "STRING",
-                "value": ")"
-              }
-            ],
+            "type": "SYMBOL",
+            "name": "preproc_defined_parenthesized",
             "annotations": {
+              "variant": "parenthesized",
               "variantOf": "preproc_defined"
             }
           }
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "defined"
-            },
-            {
-              "type": "FIELD",
-              "name": "identifier",
-              "content": {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              "metadata": {
-                "fieldSource": "enriched"
-              }
-            }
-          ],
+          "type": "SYMBOL",
+          "name": "preproc_defined_bare",
           "annotations": {
+            "variant": "bare",
             "variantOf": "preproc_defined"
           }
         }
@@ -8596,23 +8568,23 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "update_expression_arm1",
+            "name": "update_expression_prefix",
             "metadata": {
               "symbolSource": "group-lift"
             },
             "annotations": {
-              "variant": "arm1",
+              "variant": "prefix",
               "variantOf": "update_expression"
             }
           },
           {
             "type": "SYMBOL",
-            "name": "update_expression_arm2",
+            "name": "update_expression_postfix",
             "metadata": {
               "symbolSource": "group-lift"
             },
             "annotations": {
-              "variant": "arm2",
+              "variant": "postfix",
               "variantOf": "update_expression"
             }
           }
@@ -9757,26 +9729,29 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "concatenated_string_arm",
-                "metadata": {
-                  "symbolSource": "group-lift"
-                },
-                "annotations": {
-                  "variant": "arm",
-                  "variantOf": "concatenated_string"
-                }
-              },
-              {
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "string_literal"
+                    "type": "FIELD",
+                    "name": "elements",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "string_literal"
+                    "type": "FIELD",
+                    "name": "elements",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "string_literal"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
                   }
                 ],
                 "annotations": {
@@ -9787,12 +9762,56 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "string_literal"
+                    "type": "FIELD",
+                    "name": "elements",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "string_literal"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "identifier"
+                    "type": "FIELD",
+                    "name": "elements",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "string_literal"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  }
+                ],
+                "annotations": {
+                  "variantOf": "concatenated_string"
+                }
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "elements",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "string_literal"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "elements",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
                   }
                 ],
                 "annotations": {
@@ -13128,80 +13147,6 @@
         "hoisted": true
       }
     },
-    "update_expression_arm1": {
-      "type": "PREC_RIGHT",
-      "value": 14,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "--"
-                },
-                {
-                  "type": "STRING",
-                  "value": "++"
-                }
-              ]
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "argument",
-            "content": {
-              "type": "SYMBOL",
-              "name": "expression"
-            }
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "update_expression_arm2": {
-      "type": "PREC_RIGHT",
-      "value": 14,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "argument",
-            "content": {
-              "type": "SYMBOL",
-              "name": "expression"
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "--"
-                },
-                {
-                  "type": "STRING",
-                  "value": "++"
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "gnu_asm_expression_group1": {
       "type": "PREC",
       "value": 15,
@@ -13870,26 +13815,6 @@
         "hoisted": true
       }
     },
-    "concatenated_string_arm": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "identifier"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "string_literal"
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "_kw_static": {
       "type": "STRING",
       "value": "static"
@@ -13909,6 +13834,139 @@
     "_kw_short": {
       "type": "STRING",
       "value": "short"
+    },
+    "preproc_defined_parenthesized": {
+      "type": "PREC",
+      "value": 15,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "defined"
+          },
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "FIELD",
+            "name": "identifier",
+            "content": {
+              "type": "SYMBOL",
+              "name": "identifier"
+            },
+            "metadata": {
+              "fieldSource": "enriched"
+            }
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ],
+        "annotations": {
+          "variantOf": "preproc_defined",
+          "hoisted": true
+        }
+      }
+    },
+    "preproc_defined_bare": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "defined"
+        },
+        {
+          "type": "FIELD",
+          "name": "identifier",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "update_expression_prefix": {
+      "type": "PREC_RIGHT",
+      "value": 14,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "--"
+                },
+                {
+                  "type": "STRING",
+                  "value": "++"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "argument",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "update_expression_postfix": {
+      "type": "PREC_RIGHT",
+      "value": 14,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "argument",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "--"
+                },
+                {
+                  "type": "STRING",
+                  "value": "++"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "annotations": {
+        "hoisted": true
+      }
     },
     "_layout": {
       "type": "CHOICE",
@@ -14154,7 +14212,9 @@
     "escape_sequence",
     "comment",
     "_layout",
-    "_declaration_element"
+    "_declaration_element",
+    "preproc_defined",
+    "update_expression"
   ],
   "reserved": {}
 }

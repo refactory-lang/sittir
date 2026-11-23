@@ -86,9 +86,12 @@
 (pointer_expression) @expression
 (pointer_expression operator: "*") @expression.unary.deref
 (pointer_expression operator: "&") @expression.reference
-(update_expression) @expression.update
-(update_expression (_ operator: "++")) @expression.update.increment
-(update_expression (_ operator: "--")) @expression.update.decrement
+(update_expression_prefix) @expression.update.prefix
+(update_expression_postfix) @expression.update
+(update_expression_prefix operator: "++") @expression.update.increment
+(update_expression_postfix operator: "++") @expression.update.increment
+(update_expression_prefix operator: "--") @expression.update.decrement
+(update_expression_postfix operator: "--") @expression.update.decrement
 (assignment_expression) @expression.assignment
 (assignment_expression operator: "+=") @expression.assignment.compound.add
 (assignment_expression operator: "-=") @expression.assignment.compound.subtract
