@@ -421,7 +421,7 @@ The arena spec's "A render keeps no table of the nodes it visits" (the maintaine
 - Consumes Task 2's `RecordShape`, Task 5's edge walk and Task 7's stamps.
 - The render walk names a node by its `NodeId`, its holder and the slot that holds it.
 - `Spans::Met` and `row_sites` go. On the render path `RunTable`, `Table` and `Met` hold at most one `Nodes` answer and are emptied before the next, so they keep no entry across a render. A navigation outside a render keeps only what it uses, for that navigation alone.
-- A parsed cell, a row's site and a row's `inner` name words of the holder's run (the arena spec's "A cell names its row by the word it starts at"). `Table.place`, `Table.last_row` and the scan in `entries_at` go. `NodeId` and the link record do not change: a rebuilt list's item reaches its row through the cell its link names.
+- A parsed cell, a row's site and a row's `inner` name words of the holder's run (the arena spec's "A cell names its row by the word it starts at"). `Table.place`, `Table.last_row`, the scan in `entries_at` and `Walk::above` go. Every reader of a row's parent starts from a listed kid, whose parent is known, so a row named on its own and asked for its parent is refused by name. `NodeId` and the link record do not change: a rebuilt list's item reaches its row through the cell its link names.
 - No public item changes.
 
 - [ ] **Step 1: Write the failing tests.**
