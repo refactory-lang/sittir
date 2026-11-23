@@ -75,6 +75,27 @@ describe('arm-crossing setters emission', () => {
 	});
 });
 
+describe('arm-crossing setters in a co-optional branch', () => {
+	const branchArm = (): { generatedIdTables: never; nodeMap: NodeMap } => {
+		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog({
+			input: choice(seq(field('left', sym('word')), { type: 'SEQ', multiplicity: 'optional', members: [{ ...field('exponent', sym('digits')), annotations: { coOptional: { required: true } } }, { ...field('sign', sym('word')), annotations: { coOptional: { required: false } } }] }), field('right', sym('word'))),
+			...leaves
+		} as never);
+		const raw: RawGrammar = { name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] };
+		const assembled = assemblePredicted(raw);
+		return { generatedIdTables: assembled.generatedIdTables as never, nodeMap: assembled.nodeMap };
+	};
+
+	it('refuses the parsed surface of a choice whose arm holds a co-optional branch', () => {
+		expect(() => emitWrap({ ...branchArm(), grammar: 'synth' })).toThrow(/optional branch/);
+	});
+
+	it('clears the other arm when a built setter in the branch sets a defined value', () => {
+		const factories = emitFactories({ ...branchArm(), grammar: 'synth' });
+		expect(factories).toMatch(/right: undefined, exponent: value/);
+	});
+});
+
 describe('arm-crossing setters', () => {
 	it('clears the slots only the old arm held and keeps a shared one', () => {
 		const nodeMap = synthetic({

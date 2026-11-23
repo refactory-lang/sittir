@@ -1203,6 +1203,10 @@ export function armRequiredSlot(node: FieldCarryingNode, slots: readonly Assembl
 	return holding.length > 0 && holding.every((arm) => arm.needed.includes(slot.propertyName)) && found.arms.every((arm) => arm.needed.length > 0);
 }
 
+function setterRequired(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): boolean {
+	return isRequired(slot) || armRequiredSlot(node, slots, slot);
+}
+
 export function armClearsOfNode(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
 	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return new Map();
 	const found = exclusiveArmsOf(node, node.slots);
@@ -1250,7 +1254,7 @@ function fieldCarryingBuiltTypeSurface(
 		const registeredHere = new Set(registeredSlots(node));
 		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		setters = [
-			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries, isRequired(f) || armRequiredSlot(node, slots, f))),
+			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries, setterRequired(node, slots, f))),
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	}
@@ -2229,7 +2233,7 @@ function fieldCarryingFactoryText(
 			const crossed = armCrossingClears(node, slots, f);
 			const crossing = call(fn, `{ ...${configAccess}, ${crossed.map((other) => `${other.propertyName}: undefined`).join(', ')}, ${f.propertyName}: ${value} }${optionsArg}`);
 			const full = {
-				body: branch?.needed.includes(f.propertyName) === true ? `${value} === undefined ? ${withoutBranch()} : ${set}` : crossed.length === 0 ? set : `${value} === undefined ? ${set} : ${crossing}`,
+				body: branch?.needed.includes(f.propertyName) === true ? `${value} === undefined ? ${withoutBranch()} : ${crossed.length === 0 ? set : crossing}` : crossed.length === 0 ? set : `${value} === undefined ? ${set} : ${crossing}`,
 				reads: optionsArg === '' ? [configAccess] : [configAccess, 'options']
 			};
 			return crossed.length > 0 ? full : setBy(f, { local: configAccess, input: `Partial<${configType}>`, partial: true }, `{ ${f.propertyName}: ${value} }`, full);
@@ -2243,7 +2247,7 @@ function fieldCarryingFactoryText(
 				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, `restItems(${JSON.stringify(method)}, values)`) });
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
-				const setterSig = setterValueSignature(f, elemType, isRequired(f) || armRequiredSlot(node, slots, f));
+				const setterSig = setterValueSignature(f, elemType, setterRequired(node, slots, f));
 				setters.push({ name: method, params: setterSig, ...slotSet(f, 'value') });
 			}
 		}

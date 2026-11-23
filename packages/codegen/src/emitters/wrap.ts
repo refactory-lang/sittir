@@ -662,7 +662,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 			params: `v: ${setterValueType}`,
 			body:
 				branch?.needed.includes(method) === true
-					? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${set}`
+					? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${setOf(clearedKeys)}`
 					: crossed.length === 0
 						? set
 						: `v === undefined ? ${set} : ${setOf(clearedKeys)}`
