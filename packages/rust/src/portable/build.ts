@@ -226,8 +226,10 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('clause.bounds.removed.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.bounds.removed.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -1023,8 +1025,10 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('clause.else.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -1511,8 +1515,10 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.else.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -1633,8 +1639,10 @@ const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) 
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('clause.import.alias.name', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.import.alias.name', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case undefined:
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
@@ -1718,8 +1726,10 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 			return clause_import_wildcard$229(value);
 		case 'identifier':
 			return unbuilt('clause.import.list.useClauses', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.import.list.useClauses', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		default:
@@ -1776,8 +1786,10 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('clause.import.list.scoped.path', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.import.list.scoped.path', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case undefined:
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
@@ -2360,8 +2372,10 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.let.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -2817,8 +2831,10 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.let.chain.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -3270,8 +3286,10 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.let.chain.rights', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -3570,8 +3588,10 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 			return unbuilt('clause.where.predicate.bounds', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.where.predicate.bounds', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -3885,8 +3905,10 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.constant.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.constant.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -4275,8 +4297,10 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.constant.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -4976,8 +5000,10 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.member.enum_member.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -6137,8 +6163,10 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.parameter.receiver.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.parameter.receiver.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -6510,8 +6538,10 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 			return unbuilt('declaration.type_parameter.bounds', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -6670,8 +6700,10 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.type_parameter.default', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.default', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -6869,8 +6901,10 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -7193,8 +7227,10 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.type_parameter.value.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -7510,8 +7546,10 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.variable.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -7900,8 +7938,10 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -8333,8 +8373,10 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.variable.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -8723,8 +8765,10 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -9184,8 +9228,10 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('element.attributed.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -9347,8 +9393,10 @@ const element_macro_token_binding$184_name = (value: element_macro_token_binding
 		return unseated('element.macro.token_binding.name', value);
 	}
 	switch (value.$path) {
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_binding.name', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		default:
 			return unbuilt('element.macro.token_binding.name', value);
 	}
@@ -9776,8 +9824,10 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_repetition.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		case 'literal.boolean.true':
@@ -10265,8 +10315,10 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		case 'literal.boolean.true':
@@ -10705,8 +10757,10 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.boolean.true':
@@ -11145,8 +11199,10 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.boolean.true':
@@ -11585,8 +11641,10 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.boolean.true':
@@ -12025,8 +12083,10 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		case 'literal.boolean.true':
@@ -12465,8 +12525,10 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		case 'literal.boolean.true':
@@ -15521,8 +15583,10 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		case 'literal.boolean.true':
@@ -15965,8 +16029,10 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.boolean.true':
@@ -16409,8 +16475,10 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.boolean.true':
@@ -16853,8 +16921,10 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.boolean.true':
@@ -17299,8 +17369,10 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		case 'literal.boolean.true':
@@ -17745,8 +17817,10 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		case 'literal.boolean.true':
@@ -18191,8 +18265,10 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 		case 'literal.boolean.true':
@@ -18610,8 +18686,10 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('element.struct.base.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -19167,8 +19245,10 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('element.struct.field.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -19410,8 +19490,10 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('element.type_binding.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.type_binding.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -19814,8 +19896,10 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -20263,8 +20347,10 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -20712,8 +20798,10 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.add.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -21161,8 +21249,10 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.add.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -21612,8 +21702,10 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -22063,8 +22155,10 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -22514,8 +22608,10 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -22965,8 +23061,10 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -23416,8 +23514,10 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -23867,8 +23967,10 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -24316,8 +24418,10 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -24767,8 +24871,10 @@ const expression_assignment_compound_divide$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -25216,8 +25322,10 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -25667,8 +25775,10 @@ const expression_assignment_compound_modulo$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -26118,8 +26228,10 @@ const expression_assignment_compound_multiply$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -26569,8 +26681,10 @@ const expression_assignment_compound_multiply$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -27020,8 +27134,10 @@ const expression_assignment_compound_shift_left$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -27471,8 +27587,10 @@ const expression_assignment_compound_shift_left$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -27922,8 +28040,10 @@ const expression_assignment_compound_shift_right$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -28373,8 +28493,10 @@ const expression_assignment_compound_shift_right$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -28824,8 +28946,10 @@ const expression_assignment_compound_subtract$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -29275,8 +29399,10 @@ const expression_assignment_compound_subtract$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -29724,8 +29850,10 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.await.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -30173,8 +30301,10 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -30622,8 +30752,10 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -31071,8 +31203,10 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -31520,8 +31654,10 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -31969,8 +32105,10 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -32418,8 +32556,10 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -32867,8 +33007,10 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -33318,8 +33460,10 @@ const expression_binary_arithmetic_multiply$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -33767,8 +33911,10 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -34218,8 +34364,10 @@ const expression_binary_arithmetic_subtract$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -34667,8 +34815,10 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -35116,8 +35266,10 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -35565,8 +35717,10 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -36014,8 +36168,10 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -36463,8 +36619,10 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -36912,8 +37070,10 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -37361,8 +37521,10 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -37810,8 +37972,10 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -38259,8 +38423,10 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -38708,8 +38874,10 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -39159,8 +39327,10 @@ const expression_binary_comparison_greater_equal$270_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -39610,8 +39780,10 @@ const expression_binary_comparison_greater_equal$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -40059,8 +40231,10 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -40508,8 +40682,10 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -40959,8 +41135,10 @@ const expression_binary_comparison_less_equal$270_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -41410,8 +41588,10 @@ const expression_binary_comparison_less_equal$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -41861,8 +42041,10 @@ const expression_binary_comparison_not_equal$270_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -42312,8 +42494,10 @@ const expression_binary_comparison_not_equal$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -42761,8 +42945,10 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.and.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -43210,8 +43396,10 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.and.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -43659,8 +43847,10 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.or.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -44108,8 +44298,10 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.or.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -44557,8 +44749,10 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.left.count', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -45006,8 +45200,10 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.left.operand', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -45455,8 +45651,10 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.right.count', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -45904,8 +46102,10 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.right.operand', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -46409,8 +46609,10 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.cast.conversion.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -46628,8 +46830,10 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('expression.cast.conversion.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.cast.conversion.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -47022,8 +47226,10 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.list.elements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -47471,8 +47677,10 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.list.repeat.element', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -47920,8 +48128,10 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.list.repeat.length', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -48429,8 +48639,10 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.tuple.elements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -48753,8 +48965,10 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('expression.lambda.returnType', value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.returnType', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -49521,8 +49735,10 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -49994,8 +50210,10 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -50444,8 +50662,10 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.body', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -51326,8 +51546,10 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -51799,8 +52021,10 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -52248,8 +52472,10 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.member.object', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -52740,8 +52966,10 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.parenthesized.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -53189,8 +53417,10 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.propagate.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -53638,8 +53868,10 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -54087,8 +54319,10 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -54536,8 +54770,10 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -54985,8 +55221,10 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -55434,8 +55672,10 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -55883,8 +56123,10 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -56332,8 +56574,10 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -56781,8 +57025,10 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -57230,8 +57476,10 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -57679,8 +57927,10 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -58128,8 +58378,10 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -58577,8 +58829,10 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -59026,8 +59280,10 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -59475,8 +59731,10 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -59924,8 +60182,10 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.subscript.index', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -60373,8 +60633,10 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.subscript.object', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -60822,8 +61084,10 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.unary.deref.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -61271,8 +61535,10 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.unary.negation.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -61720,8 +61986,10 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.unary.not.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -62169,8 +62437,10 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.yield.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -62375,8 +62645,10 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('identifier.qualified.qualifier', value);
-		case 'identifier.metavariable':
-			return unbuilt('identifier.qualified.qualifier', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'type.bracketed':
@@ -62456,8 +62728,10 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('identifier.qualified.qualifier', value);
-		case 'identifier.metavariable':
-			return unbuilt('identifier.qualified.qualifier', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'type.bracketed':
@@ -62537,8 +62811,10 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('identifier.qualified.qualifier', value);
-		case 'identifier.metavariable':
-			return unbuilt('identifier.qualified.qualifier', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'type.bracketed':
@@ -64142,8 +64418,10 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('pattern.range.exclusive.right', value);
-		case 'identifier.metavariable':
-			return unbuilt('pattern.range.exclusive.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -64284,8 +64562,10 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('pattern.range.inclusive.right', value);
-		case 'identifier.metavariable':
-			return unbuilt('pattern.range.inclusive.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -66264,8 +66544,10 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -66737,8 +67019,10 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -67564,8 +67848,10 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.async.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -68037,8 +68323,10 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.async.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -68864,8 +69152,10 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.const.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -69337,8 +69627,10 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.const.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -70164,8 +70456,10 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.generator.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -70639,8 +70933,10 @@ const statement_block_generator$311_trailingExpression = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -71466,8 +71762,10 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.try.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -71939,8 +72237,10 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.try.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -72766,8 +73066,10 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.unsafe.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -73239,8 +73541,10 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -73688,8 +73992,10 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.break.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -74181,8 +74487,10 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.if.condition', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -75008,8 +75316,10 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.if.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -75481,8 +75791,10 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.if.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -75619,8 +75931,10 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 			return clause_import_wildcard$229(value);
 		case 'identifier':
 			return unbuilt('statement.import.argument', value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.import.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		default:
@@ -76428,8 +76742,10 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -76901,8 +77217,10 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -77564,8 +77882,10 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.for_each.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -78391,8 +78711,10 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.for_each.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -78864,8 +79186,10 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -79321,8 +79645,10 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.while.condition', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -80162,8 +80488,10 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.while.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$127(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -80635,8 +80963,10 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -81084,8 +81414,10 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.return.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -81303,8 +81635,10 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.array.element', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.array.element', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -81693,8 +82027,10 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('type.array.length', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -81925,8 +82261,10 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 			return unbuilt('type.bounded.left', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('type.bounded.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82098,8 +82436,10 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 			return unbuilt('type.bounded.right', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('type.bounded.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82260,8 +82600,10 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.bracketed.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.bracketed.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82552,8 +82894,10 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.pointer.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.pointer.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82712,8 +83056,10 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.pointer.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.pointer.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82872,8 +83218,10 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.qualified.alias', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.qualified.alias', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83032,8 +83380,10 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.qualified.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.qualified.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83206,8 +83556,10 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.reference.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.reference.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83366,8 +83718,10 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.tuple.types', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.tuple.types', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$127(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83522,6 +83876,12 @@ const clause_where_predicate$212 = (
 			...nonEmpty('clause.where.predicate.bounds', (input.bounds ?? []).map(clause_where_predicate$212_bounds$item))
 		)
 	});
+};
+const comment_block$340 = (input: PathInput<RustMap, 'comment.block'>): ReturnType<typeof b.blockComment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
+	const text = input.$value;
+	return b.blockComment(text === '' ? undefined : b.blockCommentRegular(text));
 };
 const declaration_constant$205 = (
 	input: PathInput<RustMap, 'declaration.constant'>
@@ -84871,6 +85231,14 @@ const identifier_lifetime$239 = (input: PathInput<RustMap, 'identifier.lifetime'
 	if (unroutedSlot !== undefined) return unrouted('identifier.lifetime', unroutedSlot);
 	return b.lifetime(identifier_lifetime$239_name(input.name));
 };
+const identifier_metavariable$127 = (
+	input: PathInput<RustMap, 'identifier.metavariable'>
+): ReturnType<typeof b.metavariable> => {
+	const unroutedSlot = unroutedIn(input, ['attributes']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.metavariable', unroutedSlot);
+	const text = input.$value;
+	return b.metavariable(text);
+};
 const identifier_qualified$263 = (
 	input: PathInput<RustMap, 'identifier.qualified'>
 ): ReturnType<typeof b.scopedIdentifier> => {
@@ -85005,6 +85373,38 @@ const literal_number_negative$330 = (
 	const unroutedSlot = unroutedIn(input, ['value']);
 	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
 	return b.negativeLiteral(literal_number_negative$330_value(input.value));
+};
+const literal_string_escape$151 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceSimple> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceSimple(text);
+};
+const literal_string_escape$152 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeFixed> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceUnicodeFixed(text);
+};
+const literal_string_escape$153 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeBraced> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceUnicodeBraced(text);
+};
+const literal_string_escape$154 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceHex> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceHex(text);
 };
 const modifier_extern$234 = (input: PathInput<RustMap, 'modifier.extern'>): ReturnType<typeof b.externModifier> => {
 	const unroutedSlot = unroutedIn(input, ['abi']);
@@ -85489,6 +85889,9 @@ const clause_where = (input: PathInput<RustMap, 'clause.where'>) => {
 };
 const clause_where_predicate = (input: PathInput<RustMap, 'clause.where.predicate'>) => {
 	return clause_where_predicate$212(input);
+};
+const comment_block = (input: PathInput<RustMap, 'comment.block'>) => {
+	return comment_block$340(input);
 };
 const declaration_constant = (input: PathInput<RustMap, 'declaration.constant'>) => {
 	return declaration_constant$205(input);
@@ -86484,6 +86887,10 @@ const identifier_label = (input: PathInput<RustMap, 'identifier.label'>) => {
 const identifier_lifetime = (input: PathInput<RustMap, 'identifier.lifetime'>) => {
 	return identifier_lifetime$239(input);
 };
+const identifier_metavariable = (input: PathInput<RustMap, 'identifier.metavariable'>) => {
+	if (input.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+	return identifier_metavariable$127(input);
+};
 const literal_number_float = (input: PathInput<RustMap, 'literal.number.float'>) => {
 	return literal_number_float$162(input);
 };
@@ -86501,6 +86908,21 @@ const literal_number_integer_octal = (input: PathInput<RustMap, 'literal.number.
 };
 const literal_number_negative = (input: PathInput<RustMap, 'literal.number.negative'>) => {
 	return literal_number_negative$330(input);
+};
+const literal_string_escape = (input: PathInput<RustMap, 'literal.string.escape'>) => {
+	if ((typeof input.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(input.$value)) && input.$value !== undefined)
+		return literal_string_escape$151(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$154(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$153(input);
+	return literal_string_escape$152(input);
 };
 const modifier_extern = (input: PathInput<RustMap, 'modifier.extern'>) => {
 	return modifier_extern$234(input);
@@ -86629,6 +87051,7 @@ export const portableBuild = {
 		macro: { rule: clause_macro_rule },
 		where: Object.assign(clause_where, { predicate: clause_where_predicate })
 	},
+	comment: { block: comment_block },
 	declaration: {
 		constant: declaration_constant,
 		macro: Object.assign(declaration_macro, {
@@ -86732,7 +87155,7 @@ export const portableBuild = {
 		unary: { deref: expression_unary_deref, negation: expression_unary_negation, not: expression_unary_not },
 		yield: expression_yield
 	},
-	identifier: { label: identifier_label, lifetime: identifier_lifetime },
+	identifier: { label: identifier_label, lifetime: identifier_lifetime, metavariable: identifier_metavariable },
 	literal: {
 		number: {
 			float: literal_number_float,
@@ -86742,7 +87165,8 @@ export const portableBuild = {
 				octal: literal_number_integer_octal
 			}),
 			negative: literal_number_negative
-		}
+		},
+		string: { escape: literal_string_escape }
 	},
 	modifier: { extern: modifier_extern },
 	pattern: {

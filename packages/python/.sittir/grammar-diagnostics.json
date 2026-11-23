@@ -667,14 +667,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line: arm 72 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.constant: a preset at name that is not one keyword or text"
   },
   {
@@ -979,7 +971,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw: arm 253 builds its text through a content slot"
+    "message": "literal.string.bytes.raw: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",
@@ -987,15 +979,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw.multiline: arm 253 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.escape: arm 109 builds its text through a content slot"
+    "message": "literal.string.bytes.raw.multiline: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",
@@ -1075,7 +1059,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.raw: arm 253 builds its text through a content slot"
+    "message": "literal.string.raw: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",
@@ -1083,7 +1067,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.raw.multiline: arm 253 builds its text through a content slot"
+    "message": "literal.string.raw.multiline: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",

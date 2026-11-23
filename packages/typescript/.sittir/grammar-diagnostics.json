@@ -4516,30 +4516,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block: arm 154 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "comment.block.doc: arm 154 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "comment.line: arm 153 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.function: arm 251 builds parameters through more than one form"
   },
   {
@@ -5157,14 +5133,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.number.negative: arm 403 mounts into its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.escape: arm 121 builds its text through a content slot"
   },
   {
     "scope": "grammar",

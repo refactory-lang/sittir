@@ -780,7 +780,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block: arm 340 builds its text through a content slot"
+    "message": "comment.block.doc: arm 340's content slot places its text inside a container"
   },
   {
     "scope": "grammar",
@@ -788,15 +788,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block.doc: arm 340 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "comment.block.doc.inner: arm 340 builds its text through a content slot"
+    "message": "comment.block.doc.inner: arm 340's content slot places its text inside a container"
   },
   {
     "scope": "grammar",
@@ -812,7 +804,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line.doc: arm 337 builds its text through a content slot"
+    "message": "comment.line.doc: arm 337's content slot places its text inside a container"
   },
   {
     "scope": "grammar",
@@ -820,7 +812,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.line.doc.inner: arm 337 builds its text through a content slot"
+    "message": "comment.line.doc.inner: arm 337's content slot places its text inside a container"
   },
   {
     "scope": "grammar",
@@ -1692,14 +1684,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "identifier.metavariable: arm 127 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "identifier.receiver: arm 124 builds through its holder"
   },
   {
@@ -1756,7 +1740,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw: arm 333 builds its text through a content slot"
+    "message": "literal.string.bytes.raw: a preset at rawStringLiteralStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1772,7 +1756,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.c.raw: arm 333 builds its text through a content slot"
+    "message": "literal.string.c.raw: a preset at rawStringLiteralStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",
@@ -1780,15 +1764,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.escape: arm 151 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.raw: arm 333 builds its text through a content slot"
+    "message": "literal.string.raw: a preset at rawStringLiteralStart.prefix that is not one keyword or text"
   },
   {
     "scope": "grammar",

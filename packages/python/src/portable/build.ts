@@ -46226,7 +46226,49 @@ const literal_string$253_elements = (value: literal_string$253_elements$Item) =>
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:['"abfrntv\\]))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$109(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:x[a-fA-F0-9]{2}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$106(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:\r?\n))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$108(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:N\{[^}]+\}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$110(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:[0-9]{1,3}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$107(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:u[a-fA-F0-9]{4}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$104(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:U[a-fA-F0-9]{8}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$105(value));
+			return b.stringContent(literal_string_escape$126(value));
 		case 'literal.string.text':
 			return b.stringContent(literal_string_text$125(value));
 		default:
@@ -59095,6 +59137,12 @@ const clause_resource$307 = (input: PathInput<PythonMap, 'clause.resource'>): Re
 		b.withClauseWithItems(...nonEmpty('clause.resource.items', (input.items ?? []).map(clause_resource$307_items$item)))
 	);
 };
+const comment_line$72 = (input: PathInput<PythonMap, 'comment.line'>): ReturnType<typeof b.comment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
+	const text = input.$value;
+	return b.comment(text);
+};
 const declaration_function$170 = (
 	input: PathInput<PythonMap, 'declaration.function'>
 ): ReturnType<typeof b.functionDefinition> => {
@@ -60515,6 +60563,69 @@ const literal_string_concatenated$252 = (
 		)
 	);
 };
+const literal_string_escape$104 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeFixed> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceUnicodeFixed(text);
+};
+const literal_string_escape$105 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeWide> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceUnicodeWide(text);
+};
+const literal_string_escape$106 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceHex> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceHex(text);
+};
+const literal_string_escape$107 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceOctal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceOctal(text);
+};
+const literal_string_escape$108 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceLineBreak> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceLineBreak(text);
+};
+const literal_string_escape$109 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceSimple> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceSimple(text);
+};
+const literal_string_escape$110 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceNamed> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceNamed(text);
+};
+const literal_string_escape$126 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeInterpolation> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	return b.escapeInterpolation(typeof input === 'string' ? input : input.$value);
+};
 const literal_string_text$125 = (
 	input: PathInput<PythonMap, 'literal.string.text'>
 ): ReturnType<typeof b.stringFragment> => {
@@ -60980,6 +61091,9 @@ const clause_resource = (input: PathInput<PythonMap, 'clause.resource'>) => {
 		return clause_resource$306(input);
 	return clause_resource$307(input);
 };
+const comment_line = (input: PathInput<PythonMap, 'comment.line'>) => {
+	return comment_line$72(input);
+};
 const declaration_function = (input: PathInput<PythonMap, 'declaration.function'>) => {
 	if (input.decorators !== undefined) return unrouted('declaration.function', 'decorators');
 	return declaration_function$170(input);
@@ -61348,6 +61462,51 @@ const literal_string = (input: PathInput<PythonMap, 'literal.string'>) => {
 const literal_string_concatenated = (input: PathInput<PythonMap, 'literal.string.concatenated'>) => {
 	return literal_string_concatenated$252(input);
 };
+const literal_string_escape = (input: PathInput<PythonMap, 'literal.string.escape'>) => {
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:['"abfrntv\\]))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$109(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:x[a-fA-F0-9]{2}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$106(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:\r?\n))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$108(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:N\{[^}]+\}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$110(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:[0-9]{1,3}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$107(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:u[a-fA-F0-9]{4}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$104(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:U[a-fA-F0-9]{8}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$105(input);
+	return literal_string_escape$126(input);
+};
 const literal_string_text = (input: PathInput<PythonMap, 'literal.string.text'>) => {
 	return literal_string_text$125(input);
 };
@@ -61443,6 +61602,7 @@ export const portableBuild = {
 		},
 		resource: clause_resource
 	},
+	comment: { line: comment_line },
 	declaration: {
 		function: declaration_function,
 		member: { property: { getter: declaration_member_property_getter, setter: declaration_member_property_setter } },
@@ -61546,7 +61706,11 @@ export const portableBuild = {
 				octal: literal_number_integer_octal
 			})
 		},
-		string: Object.assign(literal_string, { concatenated: literal_string_concatenated, text: literal_string_text })
+		string: Object.assign(literal_string, {
+			concatenated: literal_string_concatenated,
+			escape: literal_string_escape,
+			text: literal_string_text
+		})
 	},
 	pattern: {
 		as: pattern_as,

@@ -76479,7 +76479,7 @@ const literal_string$425_elements = (value: literal_string$425_elements$Item) =>
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			return literal_string_escape$121(value);
 		case 'literal.string.text':
 			return literal_string_text$119(value);
 		default:
@@ -76507,7 +76507,7 @@ const literal_string$426_elements = (value: literal_string$426_elements$Item) =>
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			return literal_string_escape$121(value);
 		case 'literal.string.text':
 			return literal_string_text$120(value);
 		default:
@@ -76540,7 +76540,7 @@ const literal_string_interpolated$274_elements = (value: literal_string_interpol
 		case 'expression.interpolation':
 			return expression_interpolation$275(value);
 		case 'literal.string.escape':
-			return unbuilt('literal.string.interpolated.elements', value);
+			return literal_string_escape$121(value);
 		case 'literal.string.text':
 			return literal_string_text$176(value);
 		default:
@@ -92208,10 +92208,30 @@ const clause_mapped_type$361 = (
 		alias: input.alias === undefined ? undefined : clause_mapped_type$361_alias(input.alias)
 	});
 };
+const comment_block$154 = (input: PathInput<TypeScriptMap, 'comment.block'>): ReturnType<typeof b.commentBlock> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
+	const text = input.$value;
+	return b.commentBlock(text);
+};
+const comment_block_doc$154 = (
+	input: PathInput<TypeScriptMap, 'comment.block.doc'>
+): ReturnType<typeof b.commentBlock> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block.doc', unroutedSlot);
+	const text = input.$value;
+	return b.commentBlock(text);
+};
 const comment_html$178 = (input: PathInput<TypeScriptMap, 'comment.html'>): ReturnType<typeof b.htmlComment> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.html', unroutedSlot);
 	return b.htmlComment(typeof input === 'string' ? input : input.$value);
+};
+const comment_line$153 = (input: PathInput<TypeScriptMap, 'comment.line'>): ReturnType<typeof b.commentLine> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
+	const text = input.$value;
+	return b.commentLine(text);
 };
 const declaration_ambient$313 = (
 	input: PathInput<TypeScriptMap, 'declaration.ambient'>
@@ -93884,6 +93904,14 @@ const literal_string$426 = (input: PathInput<TypeScriptMap, 'literal.string'>): 
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
 	return b.stringSingle(...(input.elements ?? []).map(literal_string$426_elements));
 };
+const literal_string_escape$121 = (
+	input: PathInput<TypeScriptMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequence> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequence(text);
+};
 const literal_string_interpolated$274 = (
 	input: PathInput<TypeScriptMap, 'literal.string.interpolated'>
 ): ReturnType<typeof b.templateString> => {
@@ -94401,8 +94429,17 @@ const clause_import_specifier = (input: PathInput<TypeScriptMap, 'clause.import.
 const clause_mapped_type = (input: PathInput<TypeScriptMap, 'clause.mapped_type'>) => {
 	return clause_mapped_type$361(input);
 };
+const comment_block = (input: PathInput<TypeScriptMap, 'comment.block'>) => {
+	return comment_block$154(input);
+};
+const comment_block_doc = (input: PathInput<TypeScriptMap, 'comment.block.doc'>) => {
+	return comment_block_doc$154(input);
+};
 const comment_html = (input: PathInput<TypeScriptMap, 'comment.html'>) => {
 	return comment_html$178(input);
+};
+const comment_line = (input: PathInput<TypeScriptMap, 'comment.line'>) => {
+	return comment_line$153(input);
 };
 const declaration_ambient = (input: PathInput<TypeScriptMap, 'declaration.ambient'>) => {
 	return declaration_ambient$313(input);
@@ -94827,6 +94864,9 @@ const literal_string = (input: PathInput<TypeScriptMap, 'literal.string'>) => {
 		return literal_string$425(input);
 	return literal_string$426(input);
 };
+const literal_string_escape = (input: PathInput<TypeScriptMap, 'literal.string.escape'>) => {
+	return literal_string_escape$121(input);
+};
 const literal_string_interpolated = (input: PathInput<TypeScriptMap, 'literal.string.interpolated'>) => {
 	return literal_string_interpolated$274(input);
 };
@@ -94976,7 +95016,7 @@ export const portableBuild = {
 		},
 		mapped_type: clause_mapped_type
 	},
-	comment: { html: comment_html },
+	comment: { block: Object.assign(comment_block, { doc: comment_block_doc }), html: comment_html, line: comment_line },
 	declaration: {
 		ambient: declaration_ambient,
 		member: {
@@ -95109,7 +95149,11 @@ export const portableBuild = {
 			})
 		}),
 		regex: Object.assign(literal_regex, { flags: literal_regex_flags, pattern: literal_regex_pattern }),
-		string: Object.assign(literal_string, { interpolated: literal_string_interpolated, text: literal_string_text })
+		string: Object.assign(literal_string, {
+			escape: literal_string_escape,
+			interpolated: literal_string_interpolated,
+			text: literal_string_text
+		})
 	},
 	pattern: {
 		assignment: pattern_assignment,
