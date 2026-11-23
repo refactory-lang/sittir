@@ -1211,7 +1211,7 @@ mod tests {
             crate::arena::CellShape { word: 2, width: 1, run: None, forms: crate::record::form::NODE, built: 2, key: "unit" },
             crate::arena::CellShape { word: 7, width: 1, run: None, forms: crate::record::form::NODE, built: 3, key: "leaf" },
         ];
-        (kind == HOLDER).then_some(crate::arena::RecordShape { words: 8, built_words: 4, cells: CELLS })
+        (kind == HOLDER).then_some(crate::arena::RecordShape { words: 8, built_words: 4, cells: CELLS, ..crate::arena::RecordShape::BARE })
     }
 
     /// A built record of `store`'s arena of `holder_shape`'s kind, a unit
@@ -1256,7 +1256,7 @@ mod tests {
             crate::arena::CellShape { word: 2, width: 1, run: Some(3), forms: crate::record::form::NODE, built: 2, key: "units" },
             crate::arena::CellShape { word: 3, width: 1, run: None, forms: crate::record::form::NODE, built: 3, key: "unit" },
         ];
-        (kind == HOLDER).then_some(crate::arena::RecordShape { words: 4, built_words: 4, cells: CELLS })
+        (kind == HOLDER).then_some(crate::arena::RecordShape { words: 4, built_words: 4, cells: CELLS, ..crate::arena::RecordShape::BARE })
     }
 
     #[cfg(feature = "arena")]

@@ -13720,6 +13720,26 @@ The one-seam-per-flank check: every internal gap and each edge of a template car
 
 Whether a slot may be absent at render time (its node field is not required). A join printed after such a slot is written inside the slot's presence test, since the gap between a slot and what follows exists only when the slot does: a join with no left neighbour would otherwise coalesce with the seam of the template before it.
 
+### `packages/codegen/src/emitters/render-body.ts::alternativesOf`
+
+The bodies an `if` node chooses among: each arm's, then its fallback's when it has one.
+
+### `packages/codegen/src/emitters/render-body.ts::writesDepth`
+
+Whether a body holds an `indent` or `dedent` part at any level. A kind that does must be read as a record, because a depth move is stamped on the record's side record and no row carries it; `emitRenderModule` fails generation otherwise.
+
+### `packages/codegen/src/emitters/render-body.ts::bodySlotOrder`
+
+Each slot a body writes, once, at its first appearance. This is a unit's place among its holder's children, since a record's cells are not in document order: a boolean slot is a presence bit ahead of every cell. Slots in different arms of one `if` are alternatives and order nothing between them; two slots written in both orders on paths through the body throw, because no single order would then describe the kind.
+
+### `packages/codegen/src/emitters/render-body.ts::EdgePartSpec`
+
+One thing a body can write at an edge, before its ids are resolved: a `token` by its text, a `cell` by its slot name, or a token `guarded` by the slot whose presence writes it. A depth part's token is its marker text (`INDENT_TEXT`, `DEDENT_TEXT`).
+
+### `packages/codegen/src/emitters/render-body.ts::bodyEdgeParts`
+
+What a body can write first (`before`) or last (`after`), nearest the edge first, so a reader finds the edge token of a record without a row for it. The walk passes seams and spacing, stops at an unconditional token or a required slot, and reads past a slot `optional` names and past an `if` unless every alternative ends the walk. A slot inside the arm that tests it counts as required there. Two shapes a `Guarded` part cannot state throw: a token under an arm gated by a slot's kind, and a fallback that writes at the edge beside an arm that writes nothing there.
+
 ### `packages/codegen/src/emitters/factories.ts::slotGuardKey`
 
 ```text
@@ -14054,7 +14074,7 @@ A token as an entry of a reader table (`layout`, an unaliased `presence`, `separ
 
 A path, or a bracketed list of paths when there are several.
 
-### `packages/codegen/src/emitters/node-projection.ts::layoutTokenIds`
+### `packages/codegen/src/emitters/node-projection.ts::layoutTokens`
 
 The tokens a kind's own rule writes and no slot takes, as the grammar ids the parser gives them: an unfielded string (at an alias site, the symbol under the alias, not the one it is shown as), an unfielded literal symbol, an external, and a fixed-text leaf that no printed slot holds, fielded or not. `nodeArgs` prints each with the raw symbols folded into it (`tokenGroup`). Tokens inside a printed slot's field belong to the slot. The reader skips these tokens where it routes children. Every string reads its stamp: link stamps the public symbol on each string site, duplicates and `token(…)`-wrapped strings included, so there is no lookup by text. A string with no stamp, and a fixed symbol with no kind id, is a diagnostic naming the kind and the token, so nothing drops silently. The indent and dedent render markers are not tokens and are skipped.
 
@@ -14596,6 +14616,14 @@ The field name a verbatim value is stored under in a record.
 
 The render seam a fixed text writes. An indent or dedent depth text gives the kinds its depth break breaks at; a whitespace-only text gives the layout kinds it names; any other text gives `undefined` and is written as text.
 
+### `packages/codegen/src/emitters/render-module.ts::edgeTokenId`
+
+The stamped grammar id of the fixed token a kind's body spells `text` at an edge, looked up among that kind's own `layoutTokens` at generation. No id, or two ids for one text, fails generation naming the kind, so nothing resolves a token by text at run time.
+
+### `packages/codegen/src/emitters/render-module.ts::bodyFactsArg`
+
+The `order` and `edges` arguments of a struct's `#[node(…)]`, from its render body. A text leaf, a token with an interior and an envelope get none: the parser gives the first two no children, and an envelope's shape is its list's. A slot with a place that the body never writes follows the written ones in `order`, so the macro's check that every cell and flag is listed holds.
+
 ### `packages/codegen/src/emitters/shared.ts::EnumArm`
 
 One arm of an enum: its kind and its name.
@@ -14711,6 +14739,14 @@ The projection of a node onto its emitted form.
 ### `packages/codegen/src/emitters/node-projection.ts::ReadFactsCtx::displayIds`
 
 The display ids the facts read.
+
+### `packages/codegen/src/emitters/node-projection.ts::layoutTokenIds`
+
+The distinct grammar ids of a kind's `layoutTokens`, in the order its rule writes them. `nodeArgs` prints each with the raw symbols folded into it (`tokenGroup`).
+
+### `packages/codegen/src/emitters/node-projection.ts::LayoutToken`
+
+A fixed token a kind's own rule writes: the grammar id stamped on its site, and the text its render body spells it with, undefined for a token whose symbol carries no fixed text. The text is what ties a body's token part back to the stamped id, within that one kind (`edgeTokenId`).
 
 ### `packages/codegen/src/emitters/render-options-rs.ts::EdgeArmRow`
 

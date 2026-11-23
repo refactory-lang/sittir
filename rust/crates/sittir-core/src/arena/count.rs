@@ -710,8 +710,8 @@ mod tests {
             CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items" },
         ];
         match kind {
-            PAIR => Some(RecordShape { words: 6, built_words: 4, cells: CELLS }),
-            LEAF => Some(RecordShape { words: 2, built_words: 2, cells: &[] }),
+            PAIR => Some(RecordShape { words: 6, built_words: 4, cells: CELLS, ..RecordShape::BARE }),
+            LEAF => Some(RecordShape { words: 2, built_words: 2, cells: &[], ..RecordShape::BARE }),
             _ => None,
         }
     }

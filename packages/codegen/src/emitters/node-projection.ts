@@ -9,6 +9,7 @@ import {
 	AssembledList,
 	AssembledSupertype,
 	concreteKindsOf,
+	fixedTextOfKind,
 	isFixedTextLeaf,
 	isNodeRef,
 	kindIdText,
@@ -218,12 +219,21 @@ function tokenGroup(id: number, ctx: ReadFactsCtx): string {
 
 const RENDER_MARKERS: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
 
+export interface LayoutToken {
+	readonly id: number;
+	readonly text: string | undefined;
+}
+
 export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCtx, slots: readonly AssembledNonterminal[]): number[] {
+	return [...new Set(layoutTokens(node, ctx, slots).map(({ id }) => id))];
+}
+
+export function layoutTokens(node: AbstractAssembledCompound, ctx: ReadFactsCtx, slots: readonly AssembledNonterminal[]): LayoutToken[] {
 	const slotFields = new Set(slots.map((slot) => slot.fieldName));
 	const slotKinds = new Set(slots.flatMap(slotKindNames));
-	const ids: number[] = [];
-	const add = (id: number): void => {
-		if (!ids.includes(id)) ids.push(id);
+	const tokens: LayoutToken[] = [];
+	const add = (id: number, text: string | undefined): void => {
+		if (!tokens.some((token) => token.id === id && token.text === text)) tokens.push({ id, text });
 	};
 	const layoutString = (rule: { readonly value: string; readonly resolvedKindId?: number }): number => {
 		const stamped = rule.resolvedKindId;
@@ -237,7 +247,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 		switch (rule.type) {
 			case STRING:
 				if (RENDER_MARKERS.has(rule.value)) return;
-				add(layoutString(rule));
+				add(layoutString(rule), rule.value);
 				return;
 			case SYMBOL: {
 				if (rule.nonterminal !== false) return;
@@ -247,7 +257,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 				if (fixed) {
 					const id = rule.kindId;
 					if (id === undefined) throw new Error(`node.rs: '${node.kind}' layout symbol '${rule.name}' has no stamped kind id`);
-					add(id);
+					add(id, rule.literal ?? fixedTextOfKind(referenced));
 				}
 				return;
 			}
@@ -259,7 +269,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 		}
 	};
 	if (!(node instanceof AssembledLexedPattern)) walk(node.renderRule);
-	return ids;
+	return tokens;
 }
 
 export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefined {

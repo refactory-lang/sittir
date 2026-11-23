@@ -42,7 +42,7 @@ use std::sync::Arc;
 
 use crate::types::KindId;
 
-pub use admit::{admit, CellShape, RecordCells, RecordShape};
+pub use admit::{admit, BodySlot, CellShape, EdgePart, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub(crate) use borrowed::{rewrite_layout, side_of};
 pub use built::{render_entry_at, render_record_entry};

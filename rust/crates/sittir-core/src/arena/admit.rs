@@ -19,6 +19,37 @@ pub struct RecordShape {
     pub words: u32,
     pub built_words: u32,
     pub cells: &'static [CellShape],
+    /// Each cell and flag, in the order the kind's render body writes their
+    /// slots.
+    pub order: &'static [BodySlot],
+    /// What the kind's render body writes at its `Side::Before` and
+    /// `Side::After` edges, nearest the edge first.
+    pub edges: [&'static [EdgePart]; 2],
+}
+
+impl RecordShape {
+    /// No cells and no render-body facts, for a struct update to fill.
+    pub const BARE: Self = Self { words: 0, built_words: 0, cells: &[], order: &[], edges: [&[], &[]] };
+}
+
+/// A slot a kind's render body writes: an index into `RecordShape::cells`,
+/// or a flag, which has no cell: the word and bit that hold it and the kind
+/// of its keyword.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BodySlot {
+    Cell(u8),
+    Flag { word: u32, bit: u8, kind: KindId },
+}
+
+/// One part of a kind's render body at an edge.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EdgePart {
+    /// A fixed token the body always writes there.
+    Token(KindId),
+    /// A slot: its content is the edge when it is present.
+    Slot(BodySlot),
+    /// A fixed token the body writes there when `slot` is present.
+    Guarded { slot: BodySlot, token: KindId },
 }
 
 /// One slot's cell in a record: in a parsed record, its first word and
@@ -51,7 +82,7 @@ impl<N: RecordCells + ?Sized> RecordCells for Box<N> {
 /// An `ERROR` node a built record holds is a leaf with a header-only record.
 impl RecordCells for crate::verbatim::VerbatimNode {
     fn shape(kind: KindId) -> Option<RecordShape> {
-        (kind == KindId::ERROR).then_some(RecordShape { words: HEADER_WORDS, built_words: HEADER_WORDS, cells: &[] })
+        (kind == KindId::ERROR).then_some(RecordShape { words: HEADER_WORDS, built_words: HEADER_WORDS, cells: &[], ..RecordShape::BARE })
     }
 }
 
@@ -166,10 +197,10 @@ mod tests {
         ];
         const LIST_CELLS: &[CellShape] = &[CellShape { word: 2, width: 1, run: Some(3), forms: form::NODE, built: 2, key: "_items" }];
         match kind {
-            PAIR => Some(RecordShape { words: 5, built_words: 3, cells: PAIR_CELLS }),
-            FORK => Some(RecordShape { words: 8, built_words: 4, cells: FORK_CELLS }),
-            LIST => Some(RecordShape { words: 3, built_words: 3, cells: LIST_CELLS }),
-            LEAF => Some(RecordShape { words: HEADER_WORDS, built_words: HEADER_WORDS, cells: &[] }),
+            PAIR => Some(RecordShape { words: 5, built_words: 3, cells: PAIR_CELLS, ..RecordShape::BARE }),
+            FORK => Some(RecordShape { words: 8, built_words: 4, cells: FORK_CELLS, ..RecordShape::BARE }),
+            LIST => Some(RecordShape { words: 3, built_words: 3, cells: LIST_CELLS, ..RecordShape::BARE }),
+            LEAF => Some(RecordShape { words: HEADER_WORDS, built_words: HEADER_WORDS, cells: &[], ..RecordShape::BARE }),
             _ => None,
         }
     }

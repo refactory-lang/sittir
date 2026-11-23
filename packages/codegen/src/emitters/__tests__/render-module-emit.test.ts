@@ -897,7 +897,7 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 27, built_words = 10, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 27, built_words = 10, order = \[visibility_modifier, function_modifiers, name, type_parameters, parameters, return_type, where_clause, body\], edges = \(\[slot\(visibility_modifier\), slot\(function_modifiers\), token\(kind::FN_KEYWORD\)\], \[slot\(body\)\]\), fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
 		);
 		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 8, width = 3, forms = 1, built = 4\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);

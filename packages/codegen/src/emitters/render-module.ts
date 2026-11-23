@@ -23,6 +23,7 @@ import {
 	AssembledSupertype,
 	AssembledPunctuation,
 	AssembledLeaf,
+	AssembledLexedPattern,
 	AssembledList,
 	deriveUnnamedChildrenCardinality,
 	hasOptionalElements,
@@ -59,7 +60,9 @@ import {
 	slotArgs,
 	takesUntagged,
 	nodeArgs,
+	layoutTokens,
 	variantKindArgs,
+	type LayoutToken,
 	type ReadFactsCtx,
 	type NodeLiteral,
 	type NodeProjection
@@ -145,8 +148,12 @@ import {
 	isWhitespaceOnly,
 	joinArmConst,
 	templateOf,
+	bodyEdgeParts,
+	bodySlotOrder,
+	writesDepth,
 	type ArmSeams,
 	type Body,
+	type EdgePartSpec,
 	type Flanks,
 	type ViewKind
 } from './render-body.ts';
@@ -1115,7 +1122,11 @@ export function emitRenderModule(
 	for (const kind of [...templates.bodies.keys()].sort((a, b) => compareOrdinal(a, b))) {
 		const node = nodeMap.nodes.get(kind);
 		if (node !== undefined && layoutNodeOf(node) !== node) continue;
-		structs.push(emitStruct(kind, node, templates.bodies.get(kind)!, nodeMap));
+		const body = templates.bodies.get(kind)!;
+		if (node !== undefined && writesDepth(body) && nodeRecordLayout(node, nodeMap) === undefined) {
+			throw emitShapeFailure({ code: 'depth-part-without-record', ownerKind: kind, message: `${kind} writes a depth part but is read with no record` });
+		}
+		structs.push(emitStruct(kind, node, body, nodeMap));
 	}
 	const meta = collectMetaData(nodeMap);
 	const joins = inputs.joins;
@@ -3703,6 +3714,55 @@ export function nodeRecordLayout(node: AssembledNode, nodeMap: NodeMap): RecordL
 }
 
 
+function edgeTokenId(node: AssembledNode, text: string, tokens: readonly LayoutToken[]): number {
+	const ids = [...new Set(tokens.filter((token) => token.text === text).map((token) => token.id))];
+	if (ids.length !== 1) {
+		throw emitShapeFailure({
+			code: 'edge-token-without-kind',
+			ownerKind: node.kind,
+			message: `${node.kind} writes ${JSON.stringify(text)} at an edge, which ${ids.length} of its fixed tokens spell`,
+			details: { text, ids }
+		});
+	}
+	return ids[0]!;
+}
+
+function bodyFactsArg(
+	node: AssembledNode,
+	body: Body | undefined,
+	printedSlots: readonly StructSlot[],
+	placeOf: ReadonlyMap<string, RecordPlace>,
+	slotModel: RenderSlotModel,
+	ctx: ReadFactsCtx
+): string {
+	if (body === undefined || !(node instanceof AbstractAssembledCompound) || node instanceof AssembledAlias || node instanceof AssembledLexedPattern || isTextLeaf(node) || interiorOf(node) !== undefined) return '';
+	const { storageByName } = collectSlotEmissionMetadata(node, slotModel);
+	const held = new Map(
+		printedSlots.flatMap(({ slot, forceOptional }) => {
+			const field = rustFieldIdent(slot.storageName);
+			const facts = { field, optional: forceOptional || !isNodeRequired(slot) };
+			return placeOf.has(field) ? [[field, facts] as const, [rustFieldIdent(slot.name), facts] as const] : [];
+		})
+	);
+	const slotOf = (name: string) => held.get(rustFieldIdent(storageByName.get(name) ?? name));
+	const fieldOf = (name: string): string => {
+		const slot = slotOf(name);
+		if (slot === undefined) throw emitShapeFailure({ code: 'edge-slot-without-place', ownerKind: node.kind, message: `${node.kind} writes slot '${name}' at an edge, which has no place in its record` });
+		return slot.field;
+	};
+	const tokens = layoutTokens(node, ctx, printedSlots.map(({ slot }) => slot));
+	const optional = (name: string): boolean => slotOf(name)?.optional === true;
+	const printed = (part: EdgePartSpec): string => {
+		if ('cell' in part) return `slot(${fieldOf(part.cell)})`;
+		const token = ctx.names.kind(edgeTokenId(node, part.token, tokens));
+		return 'guarded' in part ? `guarded(${fieldOf(part.guarded)}, ${token})` : `token(${token})`;
+	};
+	const side = (edge: 'before' | 'after'): string => `[${bodyEdgeParts(body, edge, optional).map(printed).join(', ')}]`;
+	const written = bodySlotOrder(body).flatMap((name) => slotOf(name)?.field ?? []);
+	const order = [...new Set([...written, ...[...held.values()].map(({ field }) => field)])];
+	return `, order = [${order.join(', ')}], edges = (${side('before')}, ${side('after')})`;
+}
+
 function renderNodeDataStruct(
 	structName: string,
 	node: AssembledNode,
@@ -3731,7 +3791,7 @@ function renderNodeDataStruct(
 		defaulted: defaulted.some(({ ident }) => ident === field),
 		...delimitedPrepareFlags(node, slot)
 	});
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, built_words = ${layout.builtWords}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}, prepare_fn = ${rustTypedPrepareFnName(node.typeName)}${seatThroughArg(node, nodeMap, plan)}${facetArg(node, nodeMap)}`, 'struct', structName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, built_words = ${layout.builtWords}${bodyFactsArg(node, templateBody, printedSlots, placeOf, slotModel, read.ctx)}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}, prepare_fn = ${rustTypedPrepareFnName(node.typeName)}${seatThroughArg(node, nodeMap, plan)}${facetArg(node, nodeMap)}`, 'struct', structName));
 	if (displayIds.length > 0) lines.push(...renderKindField());
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());

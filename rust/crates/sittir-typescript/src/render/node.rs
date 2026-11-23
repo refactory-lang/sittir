@@ -19988,7 +19988,7 @@ impl ::sittir_core::render::Render for PublicFieldDefinitionPlainOptionalityNode
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PROGRAM, words = 6, built_words = 4, fields = ProgramFields, prepare = ProgramPrepare, view = ProgramNodeRecord, prepare_fn = prepare_program)]
+#[node(kind = kind::PROGRAM, words = 6, built_words = 4, order = [shebang, statements], edges = ([slot(shebang), slot(statements)], [slot(statements), slot(shebang)]), fields = ProgramFields, prepare = ProgramPrepare, view = ProgramNodeRecord, prepare_fn = prepare_program)]
 pub struct ProgramNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20153,7 +20153,7 @@ fn prepare_hash_bang_line<N: HashBangLinePrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMESPACE_EXPORT, layout = [kind::STAR, kind::AS_KEYWORD, kind::DEFAULT_KEYWORD], words = 6, built_words = 3, fields = NamespaceExportFields, prepare = NamespaceExportPrepare, view = NamespaceExportNodeRecord, prepare_fn = prepare_namespace_export, seat_through = module_export_name)]
+#[node(kind = kind::NAMESPACE_EXPORT, layout = [kind::STAR, kind::AS_KEYWORD, kind::DEFAULT_KEYWORD], words = 6, built_words = 3, order = [module_export_name], edges = ([token(kind::STAR)], [slot(module_export_name)]), fields = NamespaceExportFields, prepare = NamespaceExportPrepare, view = NamespaceExportNodeRecord, prepare_fn = prepare_namespace_export, seat_through = module_export_name)]
 pub struct NamespaceExportNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20228,7 +20228,7 @@ fn prepare_namespace_export<N: NamespaceExportPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_CLAUSE, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 5, built_words = 3, fields = ExportClauseFields, prepare = ExportClausePrepare, view = ExportClauseNodeRecord, prepare_fn = prepare_export_clause)]
+#[node(kind = kind::EXPORT_CLAUSE, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 5, built_words = 3, order = [export_specifiers], edges = ([token(kind::LBRACE)], [token(kind::RBRACE)]), fields = ExportClauseFields, prepare = ExportClausePrepare, view = ExportClauseNodeRecord, prepare_fn = prepare_export_clause)]
 pub struct ExportClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20303,7 +20303,7 @@ fn prepare_export_clause<N: ExportClausePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_SPECIFIER, layout = [kind::AS_KEYWORD], words = 11, built_words = 5, fields = ExportSpecifierFields, prepare = ExportSpecifierPrepare, view = ExportSpecifierNodeRecord, prepare_fn = prepare_export_specifier)]
+#[node(kind = kind::EXPORT_SPECIFIER, layout = [kind::AS_KEYWORD], words = 11, built_words = 5, order = [type_keyword, name, alias], edges = ([slot(type_keyword), slot(name)], [slot(alias), slot(name)]), fields = ExportSpecifierFields, prepare = ExportSpecifierPrepare, view = ExportSpecifierNodeRecord, prepare_fn = prepare_export_specifier)]
 pub struct ExportSpecifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20417,7 +20417,7 @@ impl ::sittir_core::render::Render for ImportNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_STATEMENT, layout = [kind::IMPORT_KEYWORD], words = 10, built_words = 6, fields = ImportStatementFields, prepare = ImportStatementPrepare, view = ImportStatementNodeRecord, prepare_fn = prepare_import_statement)]
+#[node(kind = kind::IMPORT_STATEMENT, layout = [kind::IMPORT_KEYWORD], words = 10, built_words = 6, order = [type_keyword, from_clause, import_attribute, terminator], edges = ([token(kind::IMPORT_KEYWORD)], [slot(terminator), slot(import_attribute), slot(from_clause)]), fields = ImportStatementFields, prepare = ImportStatementPrepare, view = ImportStatementNodeRecord, prepare_fn = prepare_import_statement)]
 pub struct ImportStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20505,7 +20505,7 @@ fn prepare_import_statement<N: ImportStatementPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_CLAUSE, words = 5, built_words = 3, fields = ImportClauseFields, prepare = ImportClausePrepare, view = ImportClauseNodeRecord, prepare_fn = prepare_import_clause)]
+#[node(kind = kind::IMPORT_CLAUSE, words = 5, built_words = 3, order = [content], edges = ([slot(content)], [slot(content)]), fields = ImportClauseFields, prepare = ImportClausePrepare, view = ImportClauseNodeRecord, prepare_fn = prepare_import_clause)]
 pub struct ImportClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20579,7 +20579,7 @@ fn prepare_import_clause<N: ImportClausePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMESPACE_IMPORT, layout = [kind::STAR, kind::AS_KEYWORD], words = 5, built_words = 3, fields = NamespaceImportFields, prepare = NamespaceImportPrepare, view = NamespaceImportNodeRecord, prepare_fn = prepare_namespace_import)]
+#[node(kind = kind::NAMESPACE_IMPORT, layout = [kind::STAR, kind::AS_KEYWORD], words = 5, built_words = 3, order = [name], edges = ([token(kind::STAR)], [slot(name)]), fields = NamespaceImportFields, prepare = NamespaceImportPrepare, view = NamespaceImportNodeRecord, prepare_fn = prepare_namespace_import)]
 pub struct NamespaceImportNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20654,7 +20654,7 @@ fn prepare_namespace_import<N: NamespaceImportPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_IMPORTS, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 5, built_words = 3, fields = NamedImportsFields, prepare = NamedImportsPrepare, view = NamedImportsNodeRecord, prepare_fn = prepare_named_imports)]
+#[node(kind = kind::NAMED_IMPORTS, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 5, built_words = 3, order = [import_specifiers], edges = ([token(kind::LBRACE)], [token(kind::RBRACE)]), fields = NamedImportsFields, prepare = NamedImportsPrepare, view = NamedImportsNodeRecord, prepare_fn = prepare_named_imports)]
 pub struct NamedImportsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20729,7 +20729,7 @@ fn prepare_named_imports<N: NamedImportsPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_ATTRIBUTE, words = 6, built_words = 4, fields = ImportAttributeFields, prepare = ImportAttributePrepare, view = ImportAttributeNodeRecord, prepare_fn = prepare_import_attribute)]
+#[node(kind = kind::IMPORT_ATTRIBUTE, words = 6, built_words = 4, order = [attribute_kind, object], edges = ([slot(attribute_kind)], [slot(object)]), fields = ImportAttributeFields, prepare = ImportAttributePrepare, view = ImportAttributeNodeRecord, prepare_fn = prepare_import_attribute)]
 pub struct ImportAttributeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20808,7 +20808,7 @@ fn prepare_import_attribute<N: ImportAttributePrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPRESSION_STATEMENT, words = 7, built_words = 4, fields = ExpressionStatementFields, prepare = ExpressionStatementPrepare, view = ExpressionStatementNodeRecord, prepare_fn = prepare_expression_statement)]
+#[node(kind = kind::EXPRESSION_STATEMENT, words = 7, built_words = 4, order = [expression, terminator], edges = ([slot(expression)], [slot(terminator), slot(expression)]), fields = ExpressionStatementFields, prepare = ExpressionStatementPrepare, view = ExpressionStatementNodeRecord, prepare_fn = prepare_expression_statement)]
 pub struct ExpressionStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20888,7 +20888,7 @@ fn prepare_expression_statement<N: ExpressionStatementPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VARIABLE_DECLARATION, layout = [kind::VAR_KEYWORD], words = 4, built_words = 4, fields = VariableDeclarationFields, prepare = VariableDeclarationPrepare, view = VariableDeclarationNodeRecord, prepare_fn = prepare_variable_declaration)]
+#[node(kind = kind::VARIABLE_DECLARATION, layout = [kind::VAR_KEYWORD], words = 4, built_words = 4, order = [declarators, terminator], edges = ([token(kind::VAR_KEYWORD)], [slot(terminator), slot(declarators)]), fields = VariableDeclarationFields, prepare = VariableDeclarationPrepare, view = VariableDeclarationNodeRecord, prepare_fn = prepare_variable_declaration)]
 pub struct VariableDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -20978,7 +20978,7 @@ fn prepare_variable_declaration<N: VariableDeclarationPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LEXICAL_DECLARATION, words = 5, built_words = 5, fields = LexicalDeclarationFields, prepare = LexicalDeclarationPrepare, view = LexicalDeclarationNodeRecord, prepare_fn = prepare_lexical_declaration)]
+#[node(kind = kind::LEXICAL_DECLARATION, words = 5, built_words = 5, order = [kind, declarators, terminator], edges = ([slot(kind)], [slot(terminator), slot(declarators)]), fields = LexicalDeclarationFields, prepare = LexicalDeclarationPrepare, view = LexicalDeclarationNodeRecord, prepare_fn = prepare_lexical_declaration)]
 pub struct LexicalDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21072,7 +21072,7 @@ fn prepare_lexical_declaration<N: LexicalDeclarationPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::USING_DECLARATION, layout = [kind::_AUTOMATIC_SEMICOLON, kind::SEMI], words = 5, built_words = 5, fields = UsingDeclarationFields, prepare = UsingDeclarationPrepare, view = UsingDeclarationNodeRecord, prepare_fn = prepare_using_declaration)]
+#[node(kind = kind::USING_DECLARATION, layout = [kind::_AUTOMATIC_SEMICOLON, kind::SEMI], words = 5, built_words = 5, order = [kind, variable_declarator, automatic_semicolon], edges = ([slot(kind)], [slot(automatic_semicolon), slot(variable_declarator)]), fields = UsingDeclarationFields, prepare = UsingDeclarationPrepare, view = UsingDeclarationNodeRecord, prepare_fn = prepare_using_declaration)]
 pub struct UsingDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21166,7 +21166,7 @@ fn prepare_using_declaration<N: UsingDeclarationPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STATEMENT_BLOCK, layout = [kind::LBRACE, kind::RBRACE], words = 4, built_words = 4, fields = StatementBlockFields, prepare = StatementBlockPrepare, view = StatementBlockNodeRecord, prepare_fn = prepare_statement_block)]
+#[node(kind = kind::STATEMENT_BLOCK, layout = [kind::LBRACE, kind::RBRACE], words = 4, built_words = 4, order = [statements, terminator], edges = ([token(kind::LBRACE)], [slot(terminator), token(kind::RBRACE)]), fields = StatementBlockFields, prepare = StatementBlockPrepare, view = StatementBlockNodeRecord, prepare_fn = prepare_statement_block)]
 pub struct StatementBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21252,7 +21252,7 @@ fn prepare_statement_block<N: StatementBlockPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD], words = 6, built_words = 3, fields = ElseClauseFields, prepare = ElseClausePrepare, view = ElseClauseNodeRecord, prepare_fn = prepare_else_clause)]
+#[node(kind = kind::ELSE_CLAUSE, layout = [kind::ELSE_KEYWORD], words = 6, built_words = 3, order = [body], edges = ([token(kind::ELSE_KEYWORD)], [slot(body)]), fields = ElseClauseFields, prepare = ElseClausePrepare, view = ElseClauseNodeRecord, prepare_fn = prepare_else_clause)]
 pub struct ElseClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21327,7 +21327,7 @@ fn prepare_else_clause<N: ElseClausePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IF_STATEMENT, layout = [kind::IF_KEYWORD], words = 12, built_words = 5, fields = IfStatementFields, prepare = IfStatementPrepare, view = IfStatementNodeRecord, prepare_fn = prepare_if_statement)]
+#[node(kind = kind::IF_STATEMENT, layout = [kind::IF_KEYWORD], words = 12, built_words = 5, order = [condition, consequence, alternative], edges = ([token(kind::IF_KEYWORD)], [slot(alternative), slot(consequence)]), fields = IfStatementFields, prepare = IfStatementPrepare, view = IfStatementNodeRecord, prepare_fn = prepare_if_statement)]
 pub struct IfStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21410,7 +21410,7 @@ fn prepare_if_statement<N: IfStatementPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SWITCH_STATEMENT, layout = [kind::SWITCH_KEYWORD], words = 8, built_words = 4, fields = SwitchStatementFields, prepare = SwitchStatementPrepare, view = SwitchStatementNodeRecord, prepare_fn = prepare_switch_statement)]
+#[node(kind = kind::SWITCH_STATEMENT, layout = [kind::SWITCH_KEYWORD], words = 8, built_words = 4, order = [value, body], edges = ([token(kind::SWITCH_KEYWORD)], [slot(body)]), fields = SwitchStatementFields, prepare = SwitchStatementPrepare, view = SwitchStatementNodeRecord, prepare_fn = prepare_switch_statement)]
 pub struct SwitchStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21489,7 +21489,7 @@ fn prepare_switch_statement<N: SwitchStatementPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::LPAREN, kind::SEMI, kind::RPAREN], words = 18, built_words = 6, fields = ForStatementFields, prepare = ForStatementPrepare, view = ForStatementNodeRecord, prepare_fn = prepare_for_statement)]
+#[node(kind = kind::FOR_STATEMENT, layout = [kind::FOR_KEYWORD, kind::LPAREN, kind::SEMI, kind::RPAREN], words = 18, built_words = 6, order = [initializer, condition, increment, body], edges = ([token(kind::FOR_KEYWORD)], [slot(body)]), fields = ForStatementFields, prepare = ForStatementPrepare, view = ForStatementNodeRecord, prepare_fn = prepare_for_statement)]
 pub struct ForStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21576,7 +21576,7 @@ fn prepare_for_statement<N: ForStatementPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_IN_STATEMENT, layout = [kind::FOR_KEYWORD], words = 10, built_words = 5, fields = ForInStatementFields, prepare = ForInStatementPrepare, view = ForInStatementNodeRecord, prepare_fn = prepare_for_in_statement)]
+#[node(kind = kind::FOR_IN_STATEMENT, layout = [kind::FOR_KEYWORD], words = 10, built_words = 5, order = [async_, header, body], edges = ([token(kind::FOR_KEYWORD)], [slot(body)]), fields = ForInStatementFields, prepare = ForInStatementPrepare, view = ForInStatementNodeRecord, prepare_fn = prepare_for_in_statement)]
 pub struct ForInStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21658,7 +21658,7 @@ fn prepare_for_in_statement<N: ForInStatementPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WHILE_STATEMENT, layout = [kind::WHILE_KEYWORD], words = 9, built_words = 4, fields = WhileStatementFields, prepare = WhileStatementPrepare, view = WhileStatementNodeRecord, prepare_fn = prepare_while_statement)]
+#[node(kind = kind::WHILE_STATEMENT, layout = [kind::WHILE_KEYWORD], words = 9, built_words = 4, order = [condition, body], edges = ([token(kind::WHILE_KEYWORD)], [slot(body)]), fields = WhileStatementFields, prepare = WhileStatementPrepare, view = WhileStatementNodeRecord, prepare_fn = prepare_while_statement)]
 pub struct WhileStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21737,7 +21737,7 @@ fn prepare_while_statement<N: WhileStatementPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DO_STATEMENT, layout = [kind::DO_KEYWORD, kind::WHILE_KEYWORD], words = 10, built_words = 5, fields = DoStatementFields, prepare = DoStatementPrepare, view = DoStatementNodeRecord, prepare_fn = prepare_do_statement)]
+#[node(kind = kind::DO_STATEMENT, layout = [kind::DO_KEYWORD, kind::WHILE_KEYWORD], words = 10, built_words = 5, order = [body, condition, terminator], edges = ([token(kind::DO_KEYWORD)], [slot(terminator), slot(condition)]), fields = DoStatementFields, prepare = DoStatementPrepare, view = DoStatementNodeRecord, prepare_fn = prepare_do_statement)]
 pub struct DoStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21821,7 +21821,7 @@ fn prepare_do_statement<N: DoStatementPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TRY_STATEMENT, layout = [kind::TRY_KEYWORD], words = 11, built_words = 5, fields = TryStatementFields, prepare = TryStatementPrepare, view = TryStatementNodeRecord, prepare_fn = prepare_try_statement)]
+#[node(kind = kind::TRY_STATEMENT, layout = [kind::TRY_KEYWORD], words = 11, built_words = 5, order = [body, handlers, finalizer], edges = ([token(kind::TRY_KEYWORD)], [slot(finalizer), slot(handlers), slot(body)]), fields = TryStatementFields, prepare = TryStatementPrepare, view = TryStatementNodeRecord, prepare_fn = prepare_try_statement)]
 pub struct TryStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21904,7 +21904,7 @@ fn prepare_try_statement<N: TryStatementPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::WITH_STATEMENT, layout = [kind::WITH_KEYWORD], words = 9, built_words = 4, fields = WithStatementFields, prepare = WithStatementPrepare, view = WithStatementNodeRecord, prepare_fn = prepare_with_statement)]
+#[node(kind = kind::WITH_STATEMENT, layout = [kind::WITH_KEYWORD], words = 9, built_words = 4, order = [object, body], edges = ([token(kind::WITH_KEYWORD)], [slot(body)]), fields = WithStatementFields, prepare = WithStatementPrepare, view = WithStatementNodeRecord, prepare_fn = prepare_with_statement)]
 pub struct WithStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -21983,7 +21983,7 @@ fn prepare_with_statement<N: WithStatementPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BREAK_STATEMENT, layout = [kind::BREAK_KEYWORD], words = 6, built_words = 4, fields = BreakStatementFields, prepare = BreakStatementPrepare, view = BreakStatementNodeRecord, prepare_fn = prepare_break_statement)]
+#[node(kind = kind::BREAK_STATEMENT, layout = [kind::BREAK_KEYWORD], words = 6, built_words = 4, order = [label, terminator], edges = ([token(kind::BREAK_KEYWORD)], [slot(terminator), slot(label), token(kind::BREAK_KEYWORD)]), fields = BreakStatementFields, prepare = BreakStatementPrepare, view = BreakStatementNodeRecord, prepare_fn = prepare_break_statement)]
 pub struct BreakStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22063,7 +22063,7 @@ fn prepare_break_statement<N: BreakStatementPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONTINUE_STATEMENT, layout = [kind::CONTINUE_KEYWORD], words = 6, built_words = 4, fields = ContinueStatementFields, prepare = ContinueStatementPrepare, view = ContinueStatementNodeRecord, prepare_fn = prepare_continue_statement)]
+#[node(kind = kind::CONTINUE_STATEMENT, layout = [kind::CONTINUE_KEYWORD], words = 6, built_words = 4, order = [label, terminator], edges = ([token(kind::CONTINUE_KEYWORD)], [slot(terminator), slot(label), token(kind::CONTINUE_KEYWORD)]), fields = ContinueStatementFields, prepare = ContinueStatementPrepare, view = ContinueStatementNodeRecord, prepare_fn = prepare_continue_statement)]
 pub struct ContinueStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22143,7 +22143,7 @@ fn prepare_continue_statement<N: ContinueStatementPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DEBUGGER_STATEMENT, layout = [kind::DEBUGGER_KEYWORD], words = 3, built_words = 3, fields = DebuggerStatementFields, prepare = DebuggerStatementPrepare, view = DebuggerStatementNodeRecord, prepare_fn = prepare_debugger_statement)]
+#[node(kind = kind::DEBUGGER_STATEMENT, layout = [kind::DEBUGGER_KEYWORD], words = 3, built_words = 3, order = [terminator], edges = ([token(kind::DEBUGGER_KEYWORD)], [slot(terminator), token(kind::DEBUGGER_KEYWORD)]), fields = DebuggerStatementFields, prepare = DebuggerStatementPrepare, view = DebuggerStatementNodeRecord, prepare_fn = prepare_debugger_statement)]
 pub struct DebuggerStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22219,7 +22219,7 @@ fn prepare_debugger_statement<N: DebuggerStatementPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::RETURN_STATEMENT, layout = [kind::RETURN_KEYWORD], words = 7, built_words = 4, fields = ReturnStatementFields, prepare = ReturnStatementPrepare, view = ReturnStatementNodeRecord, prepare_fn = prepare_return_statement)]
+#[node(kind = kind::RETURN_STATEMENT, layout = [kind::RETURN_KEYWORD], words = 7, built_words = 4, order = [expression, terminator], edges = ([token(kind::RETURN_KEYWORD)], [slot(terminator), slot(expression), token(kind::RETURN_KEYWORD)]), fields = ReturnStatementFields, prepare = ReturnStatementPrepare, view = ReturnStatementNodeRecord, prepare_fn = prepare_return_statement)]
 pub struct ReturnStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22299,7 +22299,7 @@ fn prepare_return_statement<N: ReturnStatementPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::THROW_STATEMENT, layout = [kind::THROW_KEYWORD], words = 7, built_words = 4, fields = ThrowStatementFields, prepare = ThrowStatementPrepare, view = ThrowStatementNodeRecord, prepare_fn = prepare_throw_statement)]
+#[node(kind = kind::THROW_STATEMENT, layout = [kind::THROW_KEYWORD], words = 7, built_words = 4, order = [expression, terminator], edges = ([token(kind::THROW_KEYWORD)], [slot(terminator), slot(expression)]), fields = ThrowStatementFields, prepare = ThrowStatementPrepare, view = ThrowStatementNodeRecord, prepare_fn = prepare_throw_statement)]
 pub struct ThrowStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22430,7 +22430,7 @@ impl ::sittir_core::render::Render for EmptyStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LABELED_STATEMENT, layout = [kind::COLON], words = 9, built_words = 4, fields = LabeledStatementFields, prepare = LabeledStatementPrepare, view = LabeledStatementNodeRecord, prepare_fn = prepare_labeled_statement)]
+#[node(kind = kind::LABELED_STATEMENT, layout = [kind::COLON], words = 9, built_words = 4, order = [label, body], edges = ([slot(label)], [slot(body)]), fields = LabeledStatementFields, prepare = LabeledStatementPrepare, view = LabeledStatementNodeRecord, prepare_fn = prepare_labeled_statement)]
 pub struct LabeledStatementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22509,7 +22509,7 @@ fn prepare_labeled_statement<N: LabeledStatementPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SWITCH_BODY, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, fields = SwitchBodyFields, prepare = SwitchBodyPrepare, view = SwitchBodyNodeRecord, prepare_fn = prepare_switch_body)]
+#[node(kind = kind::SWITCH_BODY, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, order = [cases], edges = ([token(kind::LBRACE)], [token(kind::RBRACE)]), fields = SwitchBodyFields, prepare = SwitchBodyPrepare, view = SwitchBodyNodeRecord, prepare_fn = prepare_switch_body)]
 pub struct SwitchBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22590,7 +22590,7 @@ fn prepare_switch_body<N: SwitchBodyPrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SWITCH_CASE, layout = [kind::CASE_KEYWORD, kind::COLON], words = 7, built_words = 4, fields = SwitchCaseFields, prepare = SwitchCasePrepare, view = SwitchCaseNodeRecord, prepare_fn = prepare_switch_case)]
+#[node(kind = kind::SWITCH_CASE, layout = [kind::CASE_KEYWORD, kind::COLON], words = 7, built_words = 4, order = [value, body], edges = ([token(kind::CASE_KEYWORD)], [slot(body), token(kind::COLON)]), fields = SwitchCaseFields, prepare = SwitchCasePrepare, view = SwitchCaseNodeRecord, prepare_fn = prepare_switch_case)]
 pub struct SwitchCaseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22675,7 +22675,7 @@ fn prepare_switch_case<N: SwitchCasePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SWITCH_DEFAULT, layout = [kind::DEFAULT_KEYWORD, kind::COLON], words = 3, built_words = 3, fields = SwitchDefaultFields, prepare = SwitchDefaultPrepare, view = SwitchDefaultNodeRecord, prepare_fn = prepare_switch_default)]
+#[node(kind = kind::SWITCH_DEFAULT, layout = [kind::DEFAULT_KEYWORD, kind::COLON], words = 3, built_words = 3, order = [body], edges = ([token(kind::DEFAULT_KEYWORD)], [slot(body), token(kind::COLON)]), fields = SwitchDefaultFields, prepare = SwitchDefaultPrepare, view = SwitchDefaultNodeRecord, prepare_fn = prepare_switch_default)]
 pub struct SwitchDefaultNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22756,7 +22756,7 @@ fn prepare_switch_default<N: SwitchDefaultPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CATCH_CLAUSE, layout = [kind::CATCH_KEYWORD], words = 8, built_words = 4, fields = CatchClauseFields, prepare = CatchClausePrepare, view = CatchClauseNodeRecord, prepare_fn = prepare_catch_clause)]
+#[node(kind = kind::CATCH_CLAUSE, layout = [kind::CATCH_KEYWORD], words = 8, built_words = 4, order = [catch_clause_group, body], edges = ([token(kind::CATCH_KEYWORD)], [slot(body)]), fields = CatchClauseFields, prepare = CatchClausePrepare, view = CatchClauseNodeRecord, prepare_fn = prepare_catch_clause)]
 pub struct CatchClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22835,7 +22835,7 @@ fn prepare_catch_clause<N: CatchClausePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FINALLY_CLAUSE, layout = [kind::FINALLY_KEYWORD], words = 5, built_words = 3, fields = FinallyClauseFields, prepare = FinallyClausePrepare, view = FinallyClauseNodeRecord, prepare_fn = prepare_finally_clause)]
+#[node(kind = kind::FINALLY_CLAUSE, layout = [kind::FINALLY_KEYWORD], words = 5, built_words = 3, order = [body], edges = ([token(kind::FINALLY_KEYWORD)], [slot(body)]), fields = FinallyClauseFields, prepare = FinallyClausePrepare, view = FinallyClauseNodeRecord, prepare_fn = prepare_finally_clause)]
 pub struct FinallyClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22910,7 +22910,7 @@ fn prepare_finally_clause<N: FinallyClausePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD], words = 6, built_words = 3, fields = YieldExpressionFields, prepare = YieldExpressionPrepare, view = YieldExpressionNodeRecord, prepare_fn = prepare_yield_expression, seat_through = expression)]
+#[node(kind = kind::YIELD_EXPRESSION, layout = [kind::YIELD_KEYWORD], words = 6, built_words = 3, order = [expression], edges = ([token(kind::YIELD_KEYWORD)], [slot(expression), token(kind::YIELD_KEYWORD)]), fields = YieldExpressionFields, prepare = YieldExpressionPrepare, view = YieldExpressionNodeRecord, prepare_fn = prepare_yield_expression, seat_through = expression)]
 pub struct YieldExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -22985,7 +22985,7 @@ fn prepare_yield_expression<N: YieldExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OBJECT, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, fields = ObjectFields, prepare = ObjectPrepare, view = ObjectNodeRecord, prepare_fn = prepare_object)]
+#[node(kind = kind::OBJECT, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, order = [properties], edges = ([token(kind::LBRACE)], [token(kind::RBRACE)]), fields = ObjectFields, prepare = ObjectPrepare, view = ObjectNodeRecord, prepare_fn = prepare_object)]
 pub struct ObjectNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23070,7 +23070,7 @@ fn prepare_object<N: ObjectPrepare + ?Sized>(node: &mut N, overlay: &mut N::Over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OBJECT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, fields = ObjectPatternFields, prepare = ObjectPatternPrepare, view = ObjectPatternNodeRecord, prepare_fn = prepare_object_pattern)]
+#[node(kind = kind::OBJECT_PATTERN, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, order = [properties], edges = ([token(kind::LBRACE)], [token(kind::RBRACE)]), fields = ObjectPatternFields, prepare = ObjectPatternPrepare, view = ObjectPatternNodeRecord, prepare_fn = prepare_object_pattern)]
 pub struct ObjectPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23155,7 +23155,7 @@ fn prepare_object_pattern<N: ObjectPatternPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSIGNMENT_PATTERN, layout = [kind::EQ], words = 9, built_words = 4, fields = AssignmentPatternFields, prepare = AssignmentPatternPrepare, view = AssignmentPatternNodeRecord, prepare_fn = prepare_assignment_pattern)]
+#[node(kind = kind::ASSIGNMENT_PATTERN, layout = [kind::EQ], words = 9, built_words = 4, order = [left, right], edges = ([slot(left)], [slot(right)]), fields = AssignmentPatternFields, prepare = AssignmentPatternPrepare, view = AssignmentPatternNodeRecord, prepare_fn = prepare_assignment_pattern)]
 pub struct AssignmentPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23234,7 +23234,7 @@ fn prepare_assignment_pattern<N: AssignmentPatternPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OBJECT_ASSIGNMENT_PATTERN, layout = [kind::EQ], words = 9, built_words = 4, fields = ObjectAssignmentPatternFields, prepare = ObjectAssignmentPatternPrepare, view = ObjectAssignmentPatternNodeRecord, prepare_fn = prepare_object_assignment_pattern)]
+#[node(kind = kind::OBJECT_ASSIGNMENT_PATTERN, layout = [kind::EQ], words = 9, built_words = 4, order = [left, right], edges = ([slot(left)], [slot(right)]), fields = ObjectAssignmentPatternFields, prepare = ObjectAssignmentPatternPrepare, view = ObjectAssignmentPatternNodeRecord, prepare_fn = prepare_object_assignment_pattern)]
 pub struct ObjectAssignmentPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23313,7 +23313,7 @@ fn prepare_object_assignment_pattern<N: ObjectAssignmentPatternPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY, layout = [kind::LBRACK, kind::RBRACK], words = 3, built_words = 3, fields = ArrayFields, prepare = ArrayPrepare, view = ArrayNodeRecord, prepare_fn = prepare_array)]
+#[node(kind = kind::ARRAY, layout = [kind::LBRACK, kind::RBRACK], words = 3, built_words = 3, order = [elements], edges = ([token(kind::LBRACK)], [token(kind::RBRACK)]), fields = ArrayFields, prepare = ArrayPrepare, view = ArrayNodeRecord, prepare_fn = prepare_array)]
 pub struct ArrayNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23398,7 +23398,7 @@ fn prepare_array<N: ArrayPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_PATTERN, layout = [kind::LBRACK, kind::RBRACK], words = 3, built_words = 3, fields = ArrayPatternFields, prepare = ArrayPatternPrepare, view = ArrayPatternNodeRecord, prepare_fn = prepare_array_pattern)]
+#[node(kind = kind::ARRAY_PATTERN, layout = [kind::LBRACK, kind::RBRACK], words = 3, built_words = 3, order = [elements], edges = ([token(kind::LBRACK)], [token(kind::RBRACK)]), fields = ArrayPatternFields, prepare = ArrayPatternPrepare, view = ArrayPatternNodeRecord, prepare_fn = prepare_array_pattern)]
 pub struct ArrayPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23483,7 +23483,7 @@ fn prepare_array_pattern<N: ArrayPatternPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NESTED_IDENTIFIER, layout = [kind::DOT], words = 8, built_words = 4, fields = NestedIdentifierFields, prepare = NestedIdentifierPrepare, view = NestedIdentifierNodeRecord, prepare_fn = prepare_nested_identifier)]
+#[node(kind = kind::NESTED_IDENTIFIER, layout = [kind::DOT], words = 8, built_words = 4, order = [qualifier, name], edges = ([slot(qualifier)], [slot(name)]), fields = NestedIdentifierFields, prepare = NestedIdentifierPrepare, view = NestedIdentifierNodeRecord, prepare_fn = prepare_nested_identifier)]
 pub struct NestedIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23562,7 +23562,7 @@ fn prepare_nested_identifier<N: NestedIdentifierPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS, layout = [kind::CLASS_KEYWORD], words = 15, built_words = 7, fields = ClassFields, prepare = ClassPrepare, view = ClassNodeRecord, prepare_fn = prepare_class)]
+#[node(kind = kind::CLASS, layout = [kind::CLASS_KEYWORD], words = 15, built_words = 7, order = [decorator, name, type_parameters, heritage, body], edges = ([slot(decorator), token(kind::CLASS_KEYWORD)], [slot(body)]), fields = ClassFields, prepare = ClassPrepare, view = ClassNodeRecord, prepare_fn = prepare_class)]
 pub struct ClassNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23659,7 +23659,7 @@ fn prepare_class<N: ClassPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_DECLARATION, layout = [kind::CLASS_KEYWORD], words = 16, built_words = 8, fields = ClassDeclarationFields, prepare = ClassDeclarationPrepare, view = ClassDeclarationNodeRecord, prepare_fn = prepare_class_declaration)]
+#[node(kind = kind::CLASS_DECLARATION, layout = [kind::CLASS_KEYWORD], words = 16, built_words = 8, order = [decorator, name, type_parameters, heritage, body, terminator], edges = ([slot(decorator), token(kind::CLASS_KEYWORD)], [slot(terminator), slot(body)]), fields = ClassDeclarationFields, prepare = ClassDeclarationPrepare, view = ClassDeclarationNodeRecord, prepare_fn = prepare_class_declaration)]
 pub struct ClassDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23761,7 +23761,7 @@ fn prepare_class_declaration<N: ClassDeclarationPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_HERITAGE, words = 5, built_words = 3, fields = ClassHeritageFields, prepare = ClassHeritagePrepare, view = ClassHeritageNodeRecord, prepare_fn = prepare_class_heritage)]
+#[node(kind = kind::CLASS_HERITAGE, words = 5, built_words = 3, order = [content], edges = ([slot(content)], [slot(content)]), fields = ClassHeritageFields, prepare = ClassHeritagePrepare, view = ClassHeritageNodeRecord, prepare_fn = prepare_class_heritage)]
 pub struct ClassHeritageNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23835,7 +23835,7 @@ fn prepare_class_heritage<N: ClassHeritagePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_EXPRESSION, layout = [kind::FUNCTION_KEYWORD], words = 18, built_words = 8, fields = FunctionExpressionFields, prepare = FunctionExpressionPrepare, view = FunctionExpressionNodeRecord, prepare_fn = prepare_function_expression)]
+#[node(kind = kind::FUNCTION_EXPRESSION, layout = [kind::FUNCTION_KEYWORD], words = 18, built_words = 8, order = [async_, name, type_parameters, parameters, return_type, body], edges = ([slot(async_), token(kind::FUNCTION_KEYWORD)], [slot(body)]), fields = FunctionExpressionFields, prepare = FunctionExpressionPrepare, view = FunctionExpressionNodeRecord, prepare_fn = prepare_function_expression)]
 pub struct FunctionExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -23929,7 +23929,7 @@ fn prepare_function_expression<N: FunctionExpressionPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_DECLARATION, layout = [kind::FUNCTION_KEYWORD], words = 19, built_words = 9, fields = FunctionDeclarationFields, prepare = FunctionDeclarationPrepare, view = FunctionDeclarationNodeRecord, prepare_fn = prepare_function_declaration)]
+#[node(kind = kind::FUNCTION_DECLARATION, layout = [kind::FUNCTION_KEYWORD], words = 19, built_words = 9, order = [async_, name, type_parameters, parameters, return_type, body, terminator], edges = ([slot(async_), token(kind::FUNCTION_KEYWORD)], [slot(terminator), slot(body)]), fields = FunctionDeclarationFields, prepare = FunctionDeclarationPrepare, view = FunctionDeclarationNodeRecord, prepare_fn = prepare_function_declaration)]
 pub struct FunctionDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24028,7 +24028,7 @@ fn prepare_function_declaration<N: FunctionDeclarationPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERATOR_FUNCTION, layout = [kind::FUNCTION_KEYWORD, kind::STAR], words = 18, built_words = 8, fields = GeneratorFunctionFields, prepare = GeneratorFunctionPrepare, view = GeneratorFunctionNodeRecord, prepare_fn = prepare_generator_function)]
+#[node(kind = kind::GENERATOR_FUNCTION, layout = [kind::FUNCTION_KEYWORD, kind::STAR], words = 18, built_words = 8, order = [async_, name, type_parameters, parameters, return_type, body], edges = ([slot(async_), token(kind::FUNCTION_KEYWORD)], [slot(body)]), fields = GeneratorFunctionFields, prepare = GeneratorFunctionPrepare, view = GeneratorFunctionNodeRecord, prepare_fn = prepare_generator_function)]
 pub struct GeneratorFunctionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24122,7 +24122,7 @@ fn prepare_generator_function<N: GeneratorFunctionPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERATOR_FUNCTION_DECLARATION, layout = [kind::FUNCTION_KEYWORD, kind::STAR], words = 19, built_words = 9, fields = GeneratorFunctionDeclarationFields, prepare = GeneratorFunctionDeclarationPrepare, view = GeneratorFunctionDeclarationNodeRecord, prepare_fn = prepare_generator_function_declaration)]
+#[node(kind = kind::GENERATOR_FUNCTION_DECLARATION, layout = [kind::FUNCTION_KEYWORD, kind::STAR], words = 19, built_words = 9, order = [async_, name, type_parameters, parameters, return_type, body, terminator], edges = ([slot(async_), token(kind::FUNCTION_KEYWORD)], [slot(terminator), slot(body)]), fields = GeneratorFunctionDeclarationFields, prepare = GeneratorFunctionDeclarationPrepare, view = GeneratorFunctionDeclarationNodeRecord, prepare_fn = prepare_generator_function_declaration)]
 pub struct GeneratorFunctionDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24221,7 +24221,7 @@ fn prepare_generator_function_declaration<N: GeneratorFunctionDeclarationPrepare
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARROW_FUNCTION, layout = [kind::EQ_GT], words = 10, built_words = 5, fields = ArrowFunctionFields, prepare = ArrowFunctionPrepare, view = ArrowFunctionNodeRecord, prepare_fn = prepare_arrow_function)]
+#[node(kind = kind::ARROW_FUNCTION, layout = [kind::EQ_GT], words = 10, built_words = 5, order = [async_, content, body], edges = ([slot(async_), slot(content)], [slot(body)]), fields = ArrowFunctionFields, prepare = ArrowFunctionPrepare, view = ArrowFunctionNodeRecord, prepare_fn = prepare_arrow_function)]
 pub struct ArrowFunctionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24334,7 +24334,7 @@ impl ::sittir_core::render::Render for OptionalChainNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NEW_EXPRESSION, layout = [kind::NEW_KEYWORD], words = 12, built_words = 5, fields = NewExpressionFields, prepare = NewExpressionPrepare, view = NewExpressionNodeRecord, prepare_fn = prepare_new_expression)]
+#[node(kind = kind::NEW_EXPRESSION, layout = [kind::NEW_KEYWORD], words = 12, built_words = 5, order = [function, type_arguments, arguments], edges = ([token(kind::NEW_KEYWORD)], [slot(arguments), slot(type_arguments), slot(function)]), fields = NewExpressionFields, prepare = NewExpressionPrepare, view = NewExpressionNodeRecord, prepare_fn = prepare_new_expression)]
 pub struct NewExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24417,7 +24417,7 @@ fn prepare_new_expression<N: NewExpressionPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AWAIT_EXPRESSION, layout = [kind::AWAIT_KEYWORD], words = 6, built_words = 3, fields = AwaitExpressionFields, prepare = AwaitExpressionPrepare, view = AwaitExpressionNodeRecord, prepare_fn = prepare_await_expression)]
+#[node(kind = kind::AWAIT_EXPRESSION, layout = [kind::AWAIT_KEYWORD], words = 6, built_words = 3, order = [expression], edges = ([token(kind::AWAIT_KEYWORD)], [slot(expression)]), fields = AwaitExpressionFields, prepare = AwaitExpressionPrepare, view = AwaitExpressionNodeRecord, prepare_fn = prepare_await_expression)]
 pub struct AwaitExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24492,7 +24492,7 @@ fn prepare_await_expression<N: AwaitExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MEMBER_EXPRESSION, words = 10, built_words = 5, fields = MemberExpressionFields, prepare = MemberExpressionPrepare, view = MemberExpressionNodeRecord, prepare_fn = prepare_member_expression)]
+#[node(kind = kind::MEMBER_EXPRESSION, words = 10, built_words = 5, order = [object, operator, property], edges = ([slot(object)], [slot(property)]), fields = MemberExpressionFields, prepare = MemberExpressionPrepare, view = MemberExpressionNodeRecord, prepare_fn = prepare_member_expression)]
 pub struct MemberExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24575,7 +24575,7 @@ fn prepare_member_expression<N: MemberExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SUBSCRIPT_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 11, built_words = 5, fields = SubscriptExpressionFields, prepare = SubscriptExpressionPrepare, view = SubscriptExpressionNodeRecord, prepare_fn = prepare_subscript_expression)]
+#[node(kind = kind::SUBSCRIPT_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 11, built_words = 5, order = [object, optional_chain, index], edges = ([slot(object)], [token(kind::RBRACK)]), fields = SubscriptExpressionFields, prepare = SubscriptExpressionPrepare, view = SubscriptExpressionNodeRecord, prepare_fn = prepare_subscript_expression)]
 pub struct SubscriptExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24657,7 +24657,7 @@ fn prepare_subscript_expression<N: SubscriptExpressionPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LHS_EXPRESSION, words = 6, built_words = 3, fields = LhsExpressionFields, prepare = LhsExpressionPrepare, view = LhsExpressionNodeRecord, prepare_fn = prepare_lhs_expression)]
+#[node(kind = kind::_LHS_EXPRESSION, words = 6, built_words = 3, order = [content], edges = ([slot(content)], [slot(content)]), fields = LhsExpressionFields, prepare = LhsExpressionPrepare, view = LhsExpressionNodeRecord, prepare_fn = prepare_lhs_expression)]
 pub struct LhsExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24731,7 +24731,7 @@ fn prepare_lhs_expression<N: LhsExpressionPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ], words = 9, built_words = 4, fields = AssignmentExpressionFields, prepare = AssignmentExpressionPrepare, view = AssignmentExpressionNodeRecord, prepare_fn = prepare_assignment_expression)]
+#[node(kind = kind::ASSIGNMENT_EXPRESSION, layout = [kind::EQ], words = 9, built_words = 4, order = [left, right], edges = ([slot(left)], [slot(right)]), fields = AssignmentExpressionFields, prepare = AssignmentExpressionPrepare, view = AssignmentExpressionNodeRecord, prepare_fn = prepare_assignment_expression)]
 pub struct AssignmentExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24810,7 +24810,7 @@ fn prepare_assignment_expression<N: AssignmentExpressionPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AUGMENTED_ASSIGNMENT_EXPRESSION, words = 10, built_words = 5, fields = AugmentedAssignmentExpressionFields, prepare = AugmentedAssignmentExpressionPrepare, view = AugmentedAssignmentExpressionNodeRecord, prepare_fn = prepare_augmented_assignment_expression)]
+#[node(kind = kind::AUGMENTED_ASSIGNMENT_EXPRESSION, words = 10, built_words = 5, order = [left, operator, right], edges = ([slot(left)], [slot(right)]), fields = AugmentedAssignmentExpressionFields, prepare = AugmentedAssignmentExpressionPrepare, view = AugmentedAssignmentExpressionNodeRecord, prepare_fn = prepare_augmented_assignment_expression)]
 pub struct AugmentedAssignmentExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24893,7 +24893,7 @@ fn prepare_augmented_assignment_expression<N: AugmentedAssignmentExpressionPrepa
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SPREAD_ELEMENT, layout = [kind::DOT_DOT_DOT], words = 6, built_words = 3, fields = SpreadElementFields, prepare = SpreadElementPrepare, view = SpreadElementNodeRecord, prepare_fn = prepare_spread_element)]
+#[node(kind = kind::SPREAD_ELEMENT, layout = [kind::DOT_DOT_DOT], words = 6, built_words = 3, order = [expression], edges = ([token(kind::DOT_DOT_DOT)], [slot(expression)]), fields = SpreadElementFields, prepare = SpreadElementPrepare, view = SpreadElementNodeRecord, prepare_fn = prepare_spread_element)]
 pub struct SpreadElementNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -24968,7 +24968,7 @@ fn prepare_spread_element<N: SpreadElementPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TERNARY_EXPRESSION, layout = [kind::QMARK | kind::_TERNARY_QMARK, kind::COLON], words = 14, built_words = 5, fields = TernaryExpressionFields, prepare = TernaryExpressionPrepare, view = TernaryExpressionNodeRecord, prepare_fn = prepare_ternary_expression)]
+#[node(kind = kind::TERNARY_EXPRESSION, layout = [kind::QMARK | kind::_TERNARY_QMARK, kind::COLON], words = 14, built_words = 5, order = [condition, consequence, alternative], edges = ([slot(condition)], [slot(alternative)]), fields = TernaryExpressionFields, prepare = TernaryExpressionPrepare, view = TernaryExpressionNodeRecord, prepare_fn = prepare_ternary_expression)]
 pub struct TernaryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25051,7 +25051,7 @@ fn prepare_ternary_expression<N: TernaryExpressionPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BINARY_EXPRESSION, words = 14, built_words = 6, fields = BinaryExpressionFields, prepare = BinaryExpressionPrepare, view = BinaryExpressionNodeRecord, prepare_fn = prepare_binary_expression)]
+#[node(kind = kind::BINARY_EXPRESSION, words = 14, built_words = 6, order = [left, operator, right, binary_expression_in], edges = ([slot(left), slot(operator), slot(right), slot(binary_expression_in)], [slot(binary_expression_in), slot(right), slot(operator), slot(left)]), fields = BinaryExpressionFields, prepare = BinaryExpressionPrepare, view = BinaryExpressionNodeRecord, prepare_fn = prepare_binary_expression)]
 pub struct BinaryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25137,7 +25137,7 @@ fn prepare_binary_expression<N: BinaryExpressionPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNARY_EXPRESSION, words = 7, built_words = 4, fields = UnaryExpressionFields, prepare = UnaryExpressionPrepare, view = UnaryExpressionNodeRecord, prepare_fn = prepare_unary_expression)]
+#[node(kind = kind::UNARY_EXPRESSION, words = 7, built_words = 4, order = [operator, argument], edges = ([slot(operator)], [slot(argument)]), fields = UnaryExpressionFields, prepare = UnaryExpressionPrepare, view = UnaryExpressionNodeRecord, prepare_fn = prepare_unary_expression)]
 pub struct UnaryExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25216,7 +25216,7 @@ fn prepare_unary_expression<N: UnaryExpressionPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SEQUENCE_EXPRESSION, words = 3, built_words = 3, fields = SequenceExpressionFields, prepare = SequenceExpressionPrepare, view = SequenceExpressionNodeRecord, prepare_fn = prepare_sequence_expression)]
+#[node(kind = kind::SEQUENCE_EXPRESSION, words = 3, built_words = 3, order = [expression], edges = ([slot(expression)], [slot(expression)]), fields = SequenceExpressionFields, prepare = SequenceExpressionPrepare, view = SequenceExpressionNodeRecord, prepare_fn = prepare_sequence_expression)]
 pub struct SequenceExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25517,7 +25517,7 @@ fn prepare_escape_sequence<N: EscapeSequencePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TEMPLATE_STRING, layout = [kind::BQUOTE | kind::BQUOTE2], words = 3, built_words = 3, fields = TemplateStringFields, prepare = TemplateStringPrepare, view = TemplateStringNodeRecord, prepare_fn = prepare_template_string)]
+#[node(kind = kind::TEMPLATE_STRING, layout = [kind::BQUOTE | kind::BQUOTE2], words = 3, built_words = 3, order = [elements], edges = ([token(kind::BQUOTE)], [token(kind::BQUOTE)]), fields = TemplateStringFields, prepare = TemplateStringPrepare, view = TemplateStringNodeRecord, prepare_fn = prepare_template_string)]
 pub struct TemplateStringNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25593,7 +25593,7 @@ fn prepare_template_string<N: TemplateStringPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TEMPLATE_SUBSTITUTION, layout = [kind::DOLLAR_LBRACE, kind::RBRACE], words = 6, built_words = 3, fields = TemplateSubstitutionFields, prepare = TemplateSubstitutionPrepare, view = TemplateSubstitutionNodeRecord, prepare_fn = prepare_template_substitution)]
+#[node(kind = kind::TEMPLATE_SUBSTITUTION, layout = [kind::DOLLAR_LBRACE, kind::RBRACE], words = 6, built_words = 3, order = [expression], edges = ([token(kind::DOLLAR_LBRACE)], [token(kind::RBRACE)]), fields = TemplateSubstitutionFields, prepare = TemplateSubstitutionPrepare, view = TemplateSubstitutionNodeRecord, prepare_fn = prepare_template_substitution)]
 pub struct TemplateSubstitutionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -25668,7 +25668,7 @@ fn prepare_template_substitution<N: TemplateSubstitutionPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REGEX, layout = [kind::SLASH | kind::SLASH2], words = 8, built_words = 4, fields = RegexFields, prepare = RegexPrepare, view = RegexNodeRecord, prepare_fn = prepare_regex)]
+#[node(kind = kind::REGEX, layout = [kind::SLASH | kind::SLASH2], words = 8, built_words = 4, order = [pattern, flags], edges = ([token(kind::SLASH)], [slot(flags), token(kind::SLASH)]), fields = RegexFields, prepare = RegexPrepare, view = RegexNodeRecord, prepare_fn = prepare_regex)]
 pub struct RegexNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26340,7 +26340,7 @@ impl ::sittir_core::render::Render for UndefinedNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARGUMENTS, layout = [kind::LPAREN, kind::RPAREN], words = 3, built_words = 3, fields = ArgumentsFields, prepare = ArgumentsPrepare, view = ArgumentsNodeRecord, prepare_fn = prepare_arguments)]
+#[node(kind = kind::ARGUMENTS, layout = [kind::LPAREN, kind::RPAREN], words = 3, built_words = 3, order = [elements], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ArgumentsFields, prepare = ArgumentsPrepare, view = ArgumentsNodeRecord, prepare_fn = prepare_arguments)]
 pub struct ArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26425,7 +26425,7 @@ fn prepare_arguments<N: ArgumentsPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECORATOR, layout = [kind::AT], words = 5, built_words = 3, fields = DecoratorFields, prepare = DecoratorPrepare, view = DecoratorNodeRecord, prepare_fn = prepare_decorator)]
+#[node(kind = kind::DECORATOR, layout = [kind::AT], words = 5, built_words = 3, order = [expression], edges = ([token(kind::AT)], [slot(expression)]), fields = DecoratorFields, prepare = DecoratorPrepare, view = DecoratorNodeRecord, prepare_fn = prepare_decorator)]
 pub struct DecoratorNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26500,7 +26500,7 @@ fn prepare_decorator<N: DecoratorPrepare + ?Sized>(node: &mut N, overlay: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECORATOR_MEMBER_EXPRESSION, layout = [kind::DOT], words = 9, built_words = 4, fields = DecoratorMemberExpressionFields, prepare = DecoratorMemberExpressionPrepare, view = DecoratorMemberExpressionNodeRecord, prepare_fn = prepare_decorator_member_expression)]
+#[node(kind = kind::DECORATOR_MEMBER_EXPRESSION, layout = [kind::DOT], words = 9, built_words = 4, order = [object, property], edges = ([slot(object)], [slot(property)]), fields = DecoratorMemberExpressionFields, prepare = DecoratorMemberExpressionPrepare, view = DecoratorMemberExpressionNodeRecord, prepare_fn = prepare_decorator_member_expression)]
 pub struct DecoratorMemberExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26579,7 +26579,7 @@ fn prepare_decorator_member_expression<N: DecoratorMemberExpressionPrepare + ?Si
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECORATOR_CALL_EXPRESSION, words = 11, built_words = 5, fields = DecoratorCallExpressionFields, prepare = DecoratorCallExpressionPrepare, view = DecoratorCallExpressionNodeRecord, prepare_fn = prepare_decorator_call_expression)]
+#[node(kind = kind::DECORATOR_CALL_EXPRESSION, words = 11, built_words = 5, order = [function, type_arguments, arguments], edges = ([slot(function)], [slot(arguments)]), fields = DecoratorCallExpressionFields, prepare = DecoratorCallExpressionPrepare, view = DecoratorCallExpressionNodeRecord, prepare_fn = prepare_decorator_call_expression)]
 pub struct DecoratorCallExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26662,7 +26662,7 @@ fn prepare_decorator_call_expression<N: DecoratorCallExpressionPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_BODY, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, fields = ClassBodyFields, prepare = ClassBodyPrepare, view = ClassBodyNodeRecord, prepare_fn = prepare_class_body)]
+#[node(kind = kind::CLASS_BODY, layout = [kind::LBRACE, kind::RBRACE], words = 3, built_words = 3, order = [members], edges = ([token(kind::LBRACE)], [token(kind::RBRACE)]), fields = ClassBodyFields, prepare = ClassBodyPrepare, view = ClassBodyNodeRecord, prepare_fn = prepare_class_body)]
 pub struct ClassBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26743,7 +26743,7 @@ fn prepare_class_body<N: ClassBodyPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FORMAL_PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, fields = FormalParametersFields, prepare = FormalParametersPrepare, view = FormalParametersNodeRecord, prepare_fn = prepare_formal_parameters)]
+#[node(kind = kind::FORMAL_PARAMETERS, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, order = [elements], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = FormalParametersFields, prepare = FormalParametersPrepare, view = FormalParametersNodeRecord, prepare_fn = prepare_formal_parameters)]
 pub struct FormalParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26818,7 +26818,7 @@ fn prepare_formal_parameters<N: FormalParametersPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_STATIC_BLOCK, layout = [kind::STATIC_KEYWORD], words = 6, built_words = 4, fields = ClassStaticBlockFields, prepare = ClassStaticBlockPrepare, view = ClassStaticBlockNodeRecord, prepare_fn = prepare_class_static_block)]
+#[node(kind = kind::CLASS_STATIC_BLOCK, layout = [kind::STATIC_KEYWORD], words = 6, built_words = 4, order = [terminator, body], edges = ([token(kind::STATIC_KEYWORD)], [slot(body)]), fields = ClassStaticBlockFields, prepare = ClassStaticBlockPrepare, view = ClassStaticBlockNodeRecord, prepare_fn = prepare_class_static_block)]
 pub struct ClassStaticBlockNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26898,7 +26898,7 @@ fn prepare_class_static_block<N: ClassStaticBlockPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REST_PATTERN, layout = [kind::DOT_DOT_DOT], words = 6, built_words = 3, fields = RestPatternFields, prepare = RestPatternPrepare, view = RestPatternNodeRecord, prepare_fn = prepare_rest_pattern, seat_through = lhs_expression)]
+#[node(kind = kind::REST_PATTERN, layout = [kind::DOT_DOT_DOT], words = 6, built_words = 3, order = [lhs_expression], edges = ([token(kind::DOT_DOT_DOT)], [slot(lhs_expression)]), fields = RestPatternFields, prepare = RestPatternPrepare, view = RestPatternNodeRecord, prepare_fn = prepare_rest_pattern, seat_through = lhs_expression)]
 pub struct RestPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -26973,7 +26973,7 @@ fn prepare_rest_pattern<N: RestPatternPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PAIR, layout = [kind::COLON], words = 9, built_words = 4, fields = PairFields, prepare = PairPrepare, view = PairNodeRecord, prepare_fn = prepare_pair)]
+#[node(kind = kind::PAIR, layout = [kind::COLON], words = 9, built_words = 4, order = [key, value], edges = ([slot(key)], [slot(value)]), fields = PairFields, prepare = PairPrepare, view = PairNodeRecord, prepare_fn = prepare_pair)]
 pub struct PairNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27052,7 +27052,7 @@ fn prepare_pair<N: PairPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PAIR_PATTERN, layout = [kind::COLON], words = 8, built_words = 4, fields = PairPatternFields, prepare = PairPatternPrepare, view = PairPatternNodeRecord, prepare_fn = prepare_pair_pattern)]
+#[node(kind = kind::PAIR_PATTERN, layout = [kind::COLON], words = 8, built_words = 4, order = [key, value], edges = ([slot(key)], [slot(value)]), fields = PairPatternFields, prepare = PairPatternPrepare, view = PairPatternNodeRecord, prepare_fn = prepare_pair_pattern)]
 pub struct PairPatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27131,7 +27131,7 @@ fn prepare_pair_pattern<N: PairPatternPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COMPUTED_PROPERTY_NAME, layout = [kind::LBRACK, kind::RBRACK], words = 6, built_words = 3, fields = ComputedPropertyNameFields, prepare = ComputedPropertyNamePrepare, view = ComputedPropertyNameNodeRecord, prepare_fn = prepare_computed_property_name)]
+#[node(kind = kind::COMPUTED_PROPERTY_NAME, layout = [kind::LBRACK, kind::RBRACK], words = 6, built_words = 3, order = [expression], edges = ([token(kind::LBRACK)], [token(kind::RBRACK)]), fields = ComputedPropertyNameFields, prepare = ComputedPropertyNamePrepare, view = ComputedPropertyNameNodeRecord, prepare_fn = prepare_computed_property_name)]
 pub struct ComputedPropertyNameNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27206,7 +27206,7 @@ fn prepare_computed_property_name<N: ComputedPropertyNamePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NON_NULL_EXPRESSION, layout = [kind::BANG], words = 6, built_words = 3, fields = NonNullExpressionFields, prepare = NonNullExpressionPrepare, view = NonNullExpressionNodeRecord, prepare_fn = prepare_non_null_expression)]
+#[node(kind = kind::NON_NULL_EXPRESSION, layout = [kind::BANG], words = 6, built_words = 3, order = [expression], edges = ([slot(expression)], [token(kind::BANG)]), fields = NonNullExpressionFields, prepare = NonNullExpressionPrepare, view = NonNullExpressionNodeRecord, prepare_fn = prepare_non_null_expression)]
 pub struct NonNullExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27281,7 +27281,7 @@ fn prepare_non_null_expression<N: NonNullExpressionPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_SIGNATURE, layout = [kind::FUNCTION_KEYWORD], words = 16, built_words = 8, fields = FunctionSignatureFields, prepare = FunctionSignaturePrepare, view = FunctionSignatureNodeRecord, prepare_fn = prepare_function_signature)]
+#[node(kind = kind::FUNCTION_SIGNATURE, layout = [kind::FUNCTION_KEYWORD], words = 16, built_words = 8, order = [async_, name, type_parameters, parameters, return_type, terminator], edges = ([slot(async_), token(kind::FUNCTION_KEYWORD)], [slot(terminator), slot(return_type), slot(parameters)]), fields = FunctionSignatureFields, prepare = FunctionSignaturePrepare, view = FunctionSignatureNodeRecord, prepare_fn = prepare_function_signature)]
 pub struct FunctionSignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27376,7 +27376,7 @@ fn prepare_function_signature<N: FunctionSignaturePrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECORATOR_PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, fields = DecoratorParenthesizedExpressionFields, prepare = DecoratorParenthesizedExpressionPrepare, view = DecoratorParenthesizedExpressionNodeRecord, prepare_fn = prepare_decorator_parenthesized_expression)]
+#[node(kind = kind::DECORATOR_PARENTHESIZED_EXPRESSION, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, order = [expression], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = DecoratorParenthesizedExpressionFields, prepare = DecoratorParenthesizedExpressionPrepare, view = DecoratorParenthesizedExpressionNodeRecord, prepare_fn = prepare_decorator_parenthesized_expression)]
 pub struct DecoratorParenthesizedExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27451,7 +27451,7 @@ fn prepare_decorator_parenthesized_expression<N: DecoratorParenthesizedExpressio
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ASSERTION, words = 9, built_words = 4, fields = TypeAssertionFields, prepare = TypeAssertionPrepare, view = TypeAssertionNodeRecord, prepare_fn = prepare_type_assertion)]
+#[node(kind = kind::TYPE_ASSERTION, words = 9, built_words = 4, order = [type_arguments, expression], edges = ([slot(type_arguments)], [slot(expression)]), fields = TypeAssertionFields, prepare = TypeAssertionPrepare, view = TypeAssertionNodeRecord, prepare_fn = prepare_type_assertion)]
 pub struct TypeAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27530,7 +27530,7 @@ fn prepare_type_assertion<N: TypeAssertionPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AS_EXPRESSION, layout = [kind::AS_KEYWORD], words = 10, built_words = 4, fields = AsExpressionFields, prepare = AsExpressionPrepare, view = AsExpressionNodeRecord, prepare_fn = prepare_as_expression)]
+#[node(kind = kind::AS_EXPRESSION, layout = [kind::AS_KEYWORD], words = 10, built_words = 4, order = [expression, type_], edges = ([slot(expression)], [slot(type_)]), fields = AsExpressionFields, prepare = AsExpressionPrepare, view = AsExpressionNodeRecord, prepare_fn = prepare_as_expression)]
 pub struct AsExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27609,7 +27609,7 @@ fn prepare_as_expression<N: AsExpressionPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SATISFIES_EXPRESSION, layout = [kind::SATISFIES_KEYWORD], words = 10, built_words = 4, fields = SatisfiesExpressionFields, prepare = SatisfiesExpressionPrepare, view = SatisfiesExpressionNodeRecord, prepare_fn = prepare_satisfies_expression)]
+#[node(kind = kind::SATISFIES_EXPRESSION, layout = [kind::SATISFIES_KEYWORD], words = 10, built_words = 4, order = [expression, type_], edges = ([slot(expression)], [slot(type_)]), fields = SatisfiesExpressionFields, prepare = SatisfiesExpressionPrepare, view = SatisfiesExpressionNodeRecord, prepare_fn = prepare_satisfies_expression)]
 pub struct SatisfiesExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27688,7 +27688,7 @@ fn prepare_satisfies_expression<N: SatisfiesExpressionPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INSTANTIATION_EXPRESSION, words = 9, built_words = 4, fields = InstantiationExpressionFields, prepare = InstantiationExpressionPrepare, view = InstantiationExpressionNodeRecord, prepare_fn = prepare_instantiation_expression)]
+#[node(kind = kind::INSTANTIATION_EXPRESSION, words = 9, built_words = 4, order = [function, type_arguments], edges = ([slot(function)], [slot(type_arguments)]), fields = InstantiationExpressionFields, prepare = InstantiationExpressionPrepare, view = InstantiationExpressionNodeRecord, prepare_fn = prepare_instantiation_expression)]
 pub struct InstantiationExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27767,7 +27767,7 @@ fn prepare_instantiation_expression<N: InstantiationExpressionPrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_REQUIRE_CLAUSE, layout = [kind::EQ, kind::REQUIRE_KEYWORD, kind::LPAREN, kind::RPAREN], words = 8, built_words = 4, fields = ImportRequireClauseFields, prepare = ImportRequireClausePrepare, view = ImportRequireClauseNodeRecord, prepare_fn = prepare_import_require_clause)]
+#[node(kind = kind::IMPORT_REQUIRE_CLAUSE, layout = [kind::EQ, kind::REQUIRE_KEYWORD, kind::LPAREN, kind::RPAREN], words = 8, built_words = 4, order = [name, source], edges = ([slot(name)], [token(kind::RPAREN)]), fields = ImportRequireClauseFields, prepare = ImportRequireClausePrepare, view = ImportRequireClauseNodeRecord, prepare_fn = prepare_import_require_clause)]
 pub struct ImportRequireClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27846,7 +27846,7 @@ fn prepare_import_require_clause<N: ImportRequireClausePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTENDS_CLAUSE, layout = [kind::EXTENDS_KEYWORD], words = 3, built_words = 3, fields = ExtendsClauseFields, prepare = ExtendsClausePrepare, view = ExtendsClauseNodeRecord, prepare_fn = prepare_extends_clause)]
+#[node(kind = kind::EXTENDS_CLAUSE, layout = [kind::EXTENDS_KEYWORD], words = 3, built_words = 3, order = [types], edges = ([token(kind::EXTENDS_KEYWORD)], [slot(types)]), fields = ExtendsClauseFields, prepare = ExtendsClausePrepare, view = ExtendsClauseNodeRecord, prepare_fn = prepare_extends_clause)]
 pub struct ExtendsClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -27931,7 +27931,7 @@ fn prepare_extends_clause<N: ExtendsClausePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_EXTENDS_CLAUSE_SINGLE, words = 9, built_words = 4, fields = ExtendsClauseSingleFields, prepare = ExtendsClauseSinglePrepare, view = ExtendsClauseSingleNodeRecord, prepare_fn = prepare_extends_clause_single)]
+#[node(kind = kind::_EXTENDS_CLAUSE_SINGLE, words = 9, built_words = 4, order = [value, type_arguments], edges = ([slot(value)], [slot(type_arguments), slot(value)]), fields = ExtendsClauseSingleFields, prepare = ExtendsClauseSinglePrepare, view = ExtendsClauseSingleNodeRecord, prepare_fn = prepare_extends_clause_single)]
 pub struct ExtendsClauseSingleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28010,7 +28010,7 @@ fn prepare_extends_clause_single<N: ExtendsClauseSinglePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPLEMENTS_CLAUSE, layout = [kind::IMPLEMENTS_KEYWORD], words = 3, built_words = 3, fields = ImplementsClauseFields, prepare = ImplementsClausePrepare, view = ImplementsClauseNodeRecord, prepare_fn = prepare_implements_clause)]
+#[node(kind = kind::IMPLEMENTS_CLAUSE, layout = [kind::IMPLEMENTS_KEYWORD], words = 3, built_words = 3, order = [type_], edges = ([token(kind::IMPLEMENTS_KEYWORD)], [slot(type_)]), fields = ImplementsClauseFields, prepare = ImplementsClausePrepare, view = ImplementsClauseNodeRecord, prepare_fn = prepare_implements_clause)]
 pub struct ImplementsClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28095,7 +28095,7 @@ fn prepare_implements_clause<N: ImplementsClausePrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AMBIENT_DECLARATION, layout = [kind::DECLARE_KEYWORD], words = 5, built_words = 3, fields = AmbientDeclarationFields, prepare = AmbientDeclarationPrepare, view = AmbientDeclarationNodeRecord, prepare_fn = prepare_ambient_declaration, seat_through = content)]
+#[node(kind = kind::AMBIENT_DECLARATION, layout = [kind::DECLARE_KEYWORD], words = 5, built_words = 3, order = [content], edges = ([token(kind::DECLARE_KEYWORD)], [slot(content)]), fields = AmbientDeclarationFields, prepare = AmbientDeclarationPrepare, view = AmbientDeclarationNodeRecord, prepare_fn = prepare_ambient_declaration, seat_through = content)]
 pub struct AmbientDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28170,7 +28170,7 @@ fn prepare_ambient_declaration<N: AmbientDeclarationPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_CLASS_DECLARATION, layout = [kind::ABSTRACT_KEYWORD, kind::CLASS_KEYWORD], words = 15, built_words = 7, fields = AbstractClassDeclarationFields, prepare = AbstractClassDeclarationPrepare, view = AbstractClassDeclarationNodeRecord, prepare_fn = prepare_abstract_class_declaration)]
+#[node(kind = kind::ABSTRACT_CLASS_DECLARATION, layout = [kind::ABSTRACT_KEYWORD, kind::CLASS_KEYWORD], words = 15, built_words = 7, order = [decorator, name, type_parameters, heritage, body], edges = ([slot(decorator), token(kind::ABSTRACT_KEYWORD)], [slot(body)]), fields = AbstractClassDeclarationFields, prepare = AbstractClassDeclarationPrepare, view = AbstractClassDeclarationNodeRecord, prepare_fn = prepare_abstract_class_declaration)]
 pub struct AbstractClassDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28267,7 +28267,7 @@ fn prepare_abstract_class_declaration<N: AbstractClassDeclarationPrepare + ?Size
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MODULE, layout = [kind::MODULE_KEYWORD], words = 8, built_words = 4, fields = ModuleFields, prepare = ModulePrepare, view = ModuleNodeRecord, prepare_fn = prepare_module)]
+#[node(kind = kind::MODULE, layout = [kind::MODULE_KEYWORD], words = 8, built_words = 4, order = [name, body], edges = ([token(kind::MODULE_KEYWORD)], [slot(body), slot(name)]), fields = ModuleFields, prepare = ModulePrepare, view = ModuleNodeRecord, prepare_fn = prepare_module)]
 pub struct ModuleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28346,7 +28346,7 @@ fn prepare_module<N: ModulePrepare + ?Sized>(node: &mut N, overlay: &mut N::Over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTERNAL_MODULE, layout = [kind::NAMESPACE_KEYWORD], words = 8, built_words = 4, fields = InternalModuleFields, prepare = InternalModulePrepare, view = InternalModuleNodeRecord, prepare_fn = prepare_internal_module)]
+#[node(kind = kind::INTERNAL_MODULE, layout = [kind::NAMESPACE_KEYWORD], words = 8, built_words = 4, order = [name, body], edges = ([token(kind::NAMESPACE_KEYWORD)], [slot(body), slot(name)]), fields = InternalModuleFields, prepare = InternalModulePrepare, view = InternalModuleNodeRecord, prepare_fn = prepare_internal_module)]
 pub struct InternalModuleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28425,7 +28425,7 @@ fn prepare_internal_module<N: InternalModulePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_ALIAS, layout = [kind::IMPORT_KEYWORD, kind::EQ], words = 9, built_words = 5, fields = ImportAliasFields, prepare = ImportAliasPrepare, view = ImportAliasNodeRecord, prepare_fn = prepare_import_alias)]
+#[node(kind = kind::IMPORT_ALIAS, layout = [kind::IMPORT_KEYWORD, kind::EQ], words = 9, built_words = 5, order = [name, value, terminator], edges = ([token(kind::IMPORT_KEYWORD)], [slot(terminator), slot(value)]), fields = ImportAliasFields, prepare = ImportAliasPrepare, view = ImportAliasNodeRecord, prepare_fn = prepare_import_alias)]
 pub struct ImportAliasNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28509,7 +28509,7 @@ fn prepare_import_alias<N: ImportAliasPrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NESTED_TYPE_IDENTIFIER, layout = [kind::DOT], words = 8, built_words = 4, fields = NestedTypeIdentifierFields, prepare = NestedTypeIdentifierPrepare, view = NestedTypeIdentifierNodeRecord, prepare_fn = prepare_nested_type_identifier)]
+#[node(kind = kind::NESTED_TYPE_IDENTIFIER, layout = [kind::DOT], words = 8, built_words = 4, order = [qualifier, name], edges = ([slot(qualifier)], [slot(name)]), fields = NestedTypeIdentifierFields, prepare = NestedTypeIdentifierPrepare, view = NestedTypeIdentifierNodeRecord, prepare_fn = prepare_nested_type_identifier)]
 pub struct NestedTypeIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28588,7 +28588,7 @@ fn prepare_nested_type_identifier<N: NestedTypeIdentifierPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTERFACE_DECLARATION, layout = [kind::INTERFACE_KEYWORD], words = 14, built_words = 6, fields = InterfaceDeclarationFields, prepare = InterfaceDeclarationPrepare, view = InterfaceDeclarationNodeRecord, prepare_fn = prepare_interface_declaration)]
+#[node(kind = kind::INTERFACE_DECLARATION, layout = [kind::INTERFACE_KEYWORD], words = 14, built_words = 6, order = [name, type_parameters, extends_type_clause, body], edges = ([token(kind::INTERFACE_KEYWORD)], [slot(body)]), fields = InterfaceDeclarationFields, prepare = InterfaceDeclarationPrepare, view = InterfaceDeclarationNodeRecord, prepare_fn = prepare_interface_declaration)]
 pub struct InterfaceDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28675,7 +28675,7 @@ fn prepare_interface_declaration<N: InterfaceDeclarationPrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXTENDS_TYPE_CLAUSE, layout = [kind::EXTENDS_KEYWORD], words = 3, built_words = 3, fields = ExtendsTypeClauseFields, prepare = ExtendsTypeClausePrepare, view = ExtendsTypeClauseNodeRecord, prepare_fn = prepare_extends_type_clause)]
+#[node(kind = kind::EXTENDS_TYPE_CLAUSE, layout = [kind::EXTENDS_KEYWORD], words = 3, built_words = 3, order = [type_], edges = ([token(kind::EXTENDS_KEYWORD)], [slot(type_)]), fields = ExtendsTypeClauseFields, prepare = ExtendsTypeClausePrepare, view = ExtendsTypeClauseNodeRecord, prepare_fn = prepare_extends_type_clause)]
 pub struct ExtendsTypeClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28760,7 +28760,7 @@ fn prepare_extends_type_clause<N: ExtendsTypeClausePrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_DECLARATION, layout = [kind::ENUM_KEYWORD], words = 9, built_words = 5, fields = EnumDeclarationFields, prepare = EnumDeclarationPrepare, view = EnumDeclarationNodeRecord, prepare_fn = prepare_enum_declaration)]
+#[node(kind = kind::ENUM_DECLARATION, layout = [kind::ENUM_KEYWORD], words = 9, built_words = 5, order = [const_, name, body], edges = ([slot(const_), token(kind::ENUM_KEYWORD)], [slot(body)]), fields = EnumDeclarationFields, prepare = EnumDeclarationPrepare, view = EnumDeclarationNodeRecord, prepare_fn = prepare_enum_declaration)]
 pub struct EnumDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28842,7 +28842,7 @@ fn prepare_enum_declaration<N: EnumDeclarationPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_BODY, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 5, built_words = 3, fields = EnumBodyFields, prepare = EnumBodyPrepare, view = EnumBodyNodeRecord, prepare_fn = prepare_enum_body)]
+#[node(kind = kind::ENUM_BODY, min_depth = 2, layout = [kind::LBRACE, kind::RBRACE], words = 5, built_words = 3, order = [elements], edges = ([token(kind::LBRACE)], [token(kind::RBRACE)]), fields = EnumBodyFields, prepare = EnumBodyPrepare, view = EnumBodyNodeRecord, prepare_fn = prepare_enum_body)]
 pub struct EnumBodyNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28917,7 +28917,7 @@ fn prepare_enum_body<N: EnumBodyPrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_ASSIGNMENT, layout = [kind::EQ], words = 9, built_words = 4, fields = EnumAssignmentFields, prepare = EnumAssignmentPrepare, view = EnumAssignmentNodeRecord, prepare_fn = prepare_enum_assignment)]
+#[node(kind = kind::ENUM_ASSIGNMENT, layout = [kind::EQ], words = 9, built_words = 4, order = [name, value], edges = ([slot(name)], [slot(value)]), fields = EnumAssignmentFields, prepare = EnumAssignmentPrepare, view = EnumAssignmentNodeRecord, prepare_fn = prepare_enum_assignment)]
 pub struct EnumAssignmentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -28996,7 +28996,7 @@ fn prepare_enum_assignment<N: EnumAssignmentPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ALIAS_DECLARATION, layout = [kind::TYPE_KEYWORD, kind::EQ], words = 13, built_words = 6, fields = TypeAliasDeclarationFields, prepare = TypeAliasDeclarationPrepare, view = TypeAliasDeclarationNodeRecord, prepare_fn = prepare_type_alias_declaration)]
+#[node(kind = kind::TYPE_ALIAS_DECLARATION, layout = [kind::TYPE_KEYWORD, kind::EQ], words = 13, built_words = 6, order = [name, type_parameters, value, terminator], edges = ([token(kind::TYPE_KEYWORD)], [slot(terminator), slot(value)]), fields = TypeAliasDeclarationFields, prepare = TypeAliasDeclarationPrepare, view = TypeAliasDeclarationNodeRecord, prepare_fn = prepare_type_alias_declaration)]
 pub struct TypeAliasDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29158,7 +29158,7 @@ impl ::sittir_core::render::Render for OverrideModifierNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REQUIRED_PARAMETER, layout = [kind::EQ], words = 15, built_words = 8, fields = RequiredParameterFields, prepare = RequiredParameterPrepare, view = RequiredParameterNodeRecord, prepare_fn = prepare_required_parameter)]
+#[node(kind = kind::REQUIRED_PARAMETER, layout = [kind::EQ], words = 15, built_words = 8, order = [decorator, accessibility_modifier, override_, readonly, name, type_, value], edges = ([slot(decorator), slot(accessibility_modifier), slot(override_), slot(readonly), slot(name)], [slot(value), slot(type_), slot(name)]), fields = RequiredParameterFields, prepare = RequiredParameterPrepare, view = RequiredParameterNodeRecord, prepare_fn = prepare_required_parameter)]
 pub struct RequiredParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29261,7 +29261,7 @@ fn prepare_required_parameter<N: RequiredParameterPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OPTIONAL_PARAMETER, layout = [kind::QMARK | kind::_TERNARY_QMARK, kind::EQ], words = 16, built_words = 8, fields = OptionalParameterFields, prepare = OptionalParameterPrepare, view = OptionalParameterNodeRecord, prepare_fn = prepare_optional_parameter)]
+#[node(kind = kind::OPTIONAL_PARAMETER, layout = [kind::QMARK | kind::_TERNARY_QMARK, kind::EQ], words = 16, built_words = 8, order = [decorator, accessibility_modifier, override_, readonly, name, type_, value], edges = ([slot(decorator), slot(accessibility_modifier), slot(override_), slot(readonly), slot(name)], [slot(value), slot(type_), token(kind::QMARK)]), fields = OptionalParameterFields, prepare = OptionalParameterPrepare, view = OptionalParameterNodeRecord, prepare_fn = prepare_optional_parameter)]
 pub struct OptionalParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29364,7 +29364,7 @@ fn prepare_optional_parameter<N: OptionalParameterPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OMITTING_TYPE_ANNOTATION, layout = [kind::DASH_QMARK_COLON], words = 6, built_words = 3, fields = OmittingTypeAnnotationFields, prepare = OmittingTypeAnnotationPrepare, view = OmittingTypeAnnotationNodeRecord, prepare_fn = prepare_omitting_type_annotation)]
+#[node(kind = kind::OMITTING_TYPE_ANNOTATION, layout = [kind::DASH_QMARK_COLON], words = 6, built_words = 3, order = [type_], edges = ([token(kind::DASH_QMARK_COLON)], [slot(type_)]), fields = OmittingTypeAnnotationFields, prepare = OmittingTypeAnnotationPrepare, view = OmittingTypeAnnotationNodeRecord, prepare_fn = prepare_omitting_type_annotation)]
 pub struct OmittingTypeAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29439,7 +29439,7 @@ fn prepare_omitting_type_annotation<N: OmittingTypeAnnotationPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ADDING_TYPE_ANNOTATION, layout = [kind::PLUS_QMARK_COLON], words = 6, built_words = 3, fields = AddingTypeAnnotationFields, prepare = AddingTypeAnnotationPrepare, view = AddingTypeAnnotationNodeRecord, prepare_fn = prepare_adding_type_annotation)]
+#[node(kind = kind::ADDING_TYPE_ANNOTATION, layout = [kind::PLUS_QMARK_COLON], words = 6, built_words = 3, order = [type_], edges = ([token(kind::PLUS_QMARK_COLON)], [slot(type_)]), fields = AddingTypeAnnotationFields, prepare = AddingTypeAnnotationPrepare, view = AddingTypeAnnotationNodeRecord, prepare_fn = prepare_adding_type_annotation)]
 pub struct AddingTypeAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29514,7 +29514,7 @@ fn prepare_adding_type_annotation<N: AddingTypeAnnotationPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OPTING_TYPE_ANNOTATION, layout = [kind::QMARK_COLON], words = 6, built_words = 3, fields = OptingTypeAnnotationFields, prepare = OptingTypeAnnotationPrepare, view = OptingTypeAnnotationNodeRecord, prepare_fn = prepare_opting_type_annotation)]
+#[node(kind = kind::OPTING_TYPE_ANNOTATION, layout = [kind::QMARK_COLON], words = 6, built_words = 3, order = [type_], edges = ([token(kind::QMARK_COLON)], [slot(type_)]), fields = OptingTypeAnnotationFields, prepare = OptingTypeAnnotationPrepare, view = OptingTypeAnnotationNodeRecord, prepare_fn = prepare_opting_type_annotation)]
 pub struct OptingTypeAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29589,7 +29589,7 @@ fn prepare_opting_type_annotation<N: OptingTypeAnnotationPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ANNOTATION, layout = [kind::COLON], words = 6, built_words = 3, fields = TypeAnnotationFields, prepare = TypeAnnotationPrepare, view = TypeAnnotationNodeRecord, prepare_fn = prepare_type_annotation)]
+#[node(kind = kind::TYPE_ANNOTATION, layout = [kind::COLON], words = 6, built_words = 3, order = [type_], edges = ([token(kind::COLON)], [slot(type_)]), fields = TypeAnnotationFields, prepare = TypeAnnotationPrepare, view = TypeAnnotationNodeRecord, prepare_fn = prepare_type_annotation)]
 pub struct TypeAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29664,7 +29664,7 @@ fn prepare_type_annotation<N: TypeAnnotationPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION, layout = [kind::DOT], words = 9, built_words = 4, fields = TypeQueryMemberExpressionInTypeAnnotationFields, prepare = TypeQueryMemberExpressionInTypeAnnotationPrepare, view = TypeQueryMemberExpressionInTypeAnnotationNodeRecord, prepare_fn = prepare_type_query_member_expression_in_type_annotation)]
+#[node(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION, layout = [kind::DOT], words = 9, built_words = 4, order = [object, property], edges = ([slot(object)], [slot(property)]), fields = TypeQueryMemberExpressionInTypeAnnotationFields, prepare = TypeQueryMemberExpressionInTypeAnnotationPrepare, view = TypeQueryMemberExpressionInTypeAnnotationNodeRecord, prepare_fn = prepare_type_query_member_expression_in_type_annotation)]
 pub struct TypeQueryMemberExpressionInTypeAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29743,7 +29743,7 @@ fn prepare_type_query_member_expression_in_type_annotation<N: TypeQueryMemberExp
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION, words = 9, built_words = 4, fields = TypeQueryCallExpressionInTypeAnnotationFields, prepare = TypeQueryCallExpressionInTypeAnnotationPrepare, view = TypeQueryCallExpressionInTypeAnnotationNodeRecord, prepare_fn = prepare_type_query_call_expression_in_type_annotation)]
+#[node(kind = kind::_TYPE_QUERY_CALL_EXPRESSION_IN_TYPE_ANNOTATION, words = 9, built_words = 4, order = [function, arguments], edges = ([slot(function)], [slot(arguments)]), fields = TypeQueryCallExpressionInTypeAnnotationFields, prepare = TypeQueryCallExpressionInTypeAnnotationPrepare, view = TypeQueryCallExpressionInTypeAnnotationNodeRecord, prepare_fn = prepare_type_query_call_expression_in_type_annotation)]
 pub struct TypeQueryCallExpressionInTypeAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29822,7 +29822,7 @@ fn prepare_type_query_call_expression_in_type_annotation<N: TypeQueryCallExpress
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSERTS, layout = [kind::ASSERTS_KEYWORD], words = 6, built_words = 3, fields = AssertsFields, prepare = AssertsPrepare, view = AssertsNodeRecord, prepare_fn = prepare_asserts)]
+#[node(kind = kind::ASSERTS, layout = [kind::ASSERTS_KEYWORD], words = 6, built_words = 3, order = [value], edges = ([token(kind::ASSERTS_KEYWORD)], [slot(value)]), fields = AssertsFields, prepare = AssertsPrepare, view = AssertsNodeRecord, prepare_fn = prepare_asserts)]
 pub struct AssertsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29897,7 +29897,7 @@ fn prepare_asserts<N: AssertsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ASSERTS_ANNOTATION, layout = [kind::COLON], words = 5, built_words = 3, fields = AssertsAnnotationFields, prepare = AssertsAnnotationPrepare, view = AssertsAnnotationNodeRecord, prepare_fn = prepare_asserts_annotation)]
+#[node(kind = kind::ASSERTS_ANNOTATION, layout = [kind::COLON], words = 5, built_words = 3, order = [asserts], edges = ([token(kind::COLON)], [slot(asserts)]), fields = AssertsAnnotationFields, prepare = AssertsAnnotationPrepare, view = AssertsAnnotationNodeRecord, prepare_fn = prepare_asserts_annotation)]
 pub struct AssertsAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -29972,7 +29972,7 @@ fn prepare_asserts_annotation<N: AssertsAnnotationPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_PARAMETER, words = 8, built_words = 4, fields = TupleParameterFields, prepare = TupleParameterPrepare, view = TupleParameterNodeRecord, prepare_fn = prepare_tuple_parameter)]
+#[node(kind = kind::TUPLE_PARAMETER, words = 8, built_words = 4, order = [name, type_], edges = ([slot(name)], [slot(type_)]), fields = TupleParameterFields, prepare = TupleParameterPrepare, view = TupleParameterNodeRecord, prepare_fn = prepare_tuple_parameter)]
 pub struct TupleParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30051,7 +30051,7 @@ fn prepare_tuple_parameter<N: TupleParameterPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OPTIONAL_TUPLE_PARAMETER, layout = [kind::QMARK | kind::_TERNARY_QMARK], words = 8, built_words = 4, fields = OptionalTupleParameterFields, prepare = OptionalTupleParameterPrepare, view = OptionalTupleParameterNodeRecord, prepare_fn = prepare_optional_tuple_parameter)]
+#[node(kind = kind::OPTIONAL_TUPLE_PARAMETER, layout = [kind::QMARK | kind::_TERNARY_QMARK], words = 8, built_words = 4, order = [name, type_], edges = ([slot(name)], [slot(type_)]), fields = OptionalTupleParameterFields, prepare = OptionalTupleParameterPrepare, view = OptionalTupleParameterNodeRecord, prepare_fn = prepare_optional_tuple_parameter)]
 pub struct OptionalTupleParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30130,7 +30130,7 @@ fn prepare_optional_tuple_parameter<N: OptionalTupleParameterPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OPTIONAL_TYPE, layout = [kind::QMARK | kind::_TERNARY_QMARK], words = 6, built_words = 3, fields = OptionalTypeFields, prepare = OptionalTypePrepare, view = OptionalTypeNodeRecord, prepare_fn = prepare_optional_type)]
+#[node(kind = kind::OPTIONAL_TYPE, layout = [kind::QMARK | kind::_TERNARY_QMARK], words = 6, built_words = 3, order = [type_], edges = ([slot(type_)], [token(kind::QMARK)]), fields = OptionalTypeFields, prepare = OptionalTypePrepare, view = OptionalTypeNodeRecord, prepare_fn = prepare_optional_type)]
 pub struct OptionalTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30205,7 +30205,7 @@ fn prepare_optional_type<N: OptionalTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::REST_TYPE, layout = [kind::DOT_DOT_DOT], words = 6, built_words = 3, fields = RestTypeFields, prepare = RestTypePrepare, view = RestTypeNodeRecord, prepare_fn = prepare_rest_type)]
+#[node(kind = kind::REST_TYPE, layout = [kind::DOT_DOT_DOT], words = 6, built_words = 3, order = [type_], edges = ([token(kind::DOT_DOT_DOT)], [slot(type_)]), fields = RestTypeFields, prepare = RestTypePrepare, view = RestTypeNodeRecord, prepare_fn = prepare_rest_type)]
 pub struct RestTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30280,7 +30280,7 @@ fn prepare_rest_type<N: RestTypePrepare + ?Sized>(node: &mut N, overlay: &mut N:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONSTRUCTOR_TYPE, layout = [kind::NEW_KEYWORD, kind::EQ_GT], words = 13, built_words = 6, fields = ConstructorTypeFields, prepare = ConstructorTypePrepare, view = ConstructorTypeNodeRecord, prepare_fn = prepare_constructor_type)]
+#[node(kind = kind::CONSTRUCTOR_TYPE, layout = [kind::NEW_KEYWORD, kind::EQ_GT], words = 13, built_words = 6, order = [abstract_, type_parameters, parameters, type_], edges = ([slot(abstract_), token(kind::NEW_KEYWORD)], [slot(type_)]), fields = ConstructorTypeFields, prepare = ConstructorTypePrepare, view = ConstructorTypeNodeRecord, prepare_fn = prepare_constructor_type)]
 pub struct ConstructorTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30366,7 +30366,7 @@ fn prepare_constructor_type<N: ConstructorTypePrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TEMPLATE_TYPE, layout = [kind::DOLLAR_LBRACE, kind::RBRACE], words = 6, built_words = 3, fields = TemplateTypeFields, prepare = TemplateTypePrepare, view = TemplateTypeNodeRecord, prepare_fn = prepare_template_type)]
+#[node(kind = kind::TEMPLATE_TYPE, layout = [kind::DOLLAR_LBRACE, kind::RBRACE], words = 6, built_words = 3, order = [type_], edges = ([token(kind::DOLLAR_LBRACE)], [token(kind::RBRACE)]), fields = TemplateTypeFields, prepare = TemplateTypePrepare, view = TemplateTypeNodeRecord, prepare_fn = prepare_template_type)]
 pub struct TemplateTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30441,7 +30441,7 @@ fn prepare_template_type<N: TemplateTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TEMPLATE_LITERAL_TYPE, layout = [kind::BQUOTE | kind::BQUOTE2], words = 3, built_words = 3, fields = TemplateLiteralTypeFields, prepare = TemplateLiteralTypePrepare, view = TemplateLiteralTypeNodeRecord, prepare_fn = prepare_template_literal_type)]
+#[node(kind = kind::TEMPLATE_LITERAL_TYPE, layout = [kind::BQUOTE | kind::BQUOTE2], words = 3, built_words = 3, order = [elements], edges = ([token(kind::BQUOTE)], [token(kind::BQUOTE)]), fields = TemplateLiteralTypeFields, prepare = TemplateLiteralTypePrepare, view = TemplateLiteralTypeNodeRecord, prepare_fn = prepare_template_literal_type)]
 pub struct TemplateLiteralTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30517,7 +30517,7 @@ fn prepare_template_literal_type<N: TemplateLiteralTypePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INFER_TYPE, layout = [kind::INFER_KEYWORD, kind::EXTENDS_KEYWORD], words = 9, built_words = 4, fields = InferTypeFields, prepare = InferTypePrepare, view = InferTypeNodeRecord, prepare_fn = prepare_infer_type)]
+#[node(kind = kind::INFER_TYPE, layout = [kind::INFER_KEYWORD, kind::EXTENDS_KEYWORD], words = 9, built_words = 4, order = [name, type_], edges = ([token(kind::INFER_KEYWORD)], [slot(type_), slot(name)]), fields = InferTypeFields, prepare = InferTypePrepare, view = InferTypeNodeRecord, prepare_fn = prepare_infer_type)]
 pub struct InferTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30596,7 +30596,7 @@ fn prepare_infer_type<N: InferTypePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONDITIONAL_TYPE, layout = [kind::EXTENDS_KEYWORD, kind::QMARK | kind::_TERNARY_QMARK, kind::COLON], words = 18, built_words = 6, fields = ConditionalTypeFields, prepare = ConditionalTypePrepare, view = ConditionalTypeNodeRecord, prepare_fn = prepare_conditional_type)]
+#[node(kind = kind::CONDITIONAL_TYPE, layout = [kind::EXTENDS_KEYWORD, kind::QMARK | kind::_TERNARY_QMARK, kind::COLON], words = 18, built_words = 6, order = [left, right, consequence, alternative], edges = ([slot(left)], [slot(alternative)]), fields = ConditionalTypeFields, prepare = ConditionalTypePrepare, view = ConditionalTypeNodeRecord, prepare_fn = prepare_conditional_type)]
 pub struct ConditionalTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30683,7 +30683,7 @@ fn prepare_conditional_type<N: ConditionalTypePrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GENERIC_TYPE, words = 8, built_words = 4, fields = GenericTypeFields, prepare = GenericTypePrepare, view = GenericTypeNodeRecord, prepare_fn = prepare_generic_type)]
+#[node(kind = kind::GENERIC_TYPE, words = 8, built_words = 4, order = [name, type_arguments], edges = ([slot(name)], [slot(type_arguments)]), fields = GenericTypeFields, prepare = GenericTypePrepare, view = GenericTypeNodeRecord, prepare_fn = prepare_generic_type)]
 pub struct GenericTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30762,7 +30762,7 @@ fn prepare_generic_type<N: GenericTypePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PREDICATE, layout = [kind::IS_KEYWORD], words = 10, built_words = 4, fields = TypePredicateFields, prepare = TypePredicatePrepare, view = TypePredicateNodeRecord, prepare_fn = prepare_type_predicate)]
+#[node(kind = kind::TYPE_PREDICATE, layout = [kind::IS_KEYWORD], words = 10, built_words = 4, order = [name, type_], edges = ([slot(name)], [slot(type_)]), fields = TypePredicateFields, prepare = TypePredicatePrepare, view = TypePredicateNodeRecord, prepare_fn = prepare_type_predicate)]
 pub struct TypePredicateNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30841,7 +30841,7 @@ fn prepare_type_predicate<N: TypePredicatePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PREDICATE_ANNOTATION, layout = [kind::COLON], words = 5, built_words = 3, fields = TypePredicateAnnotationFields, prepare = TypePredicateAnnotationPrepare, view = TypePredicateAnnotationNodeRecord, prepare_fn = prepare_type_predicate_annotation)]
+#[node(kind = kind::TYPE_PREDICATE_ANNOTATION, layout = [kind::COLON], words = 5, built_words = 3, order = [type_predicate], edges = ([token(kind::COLON)], [slot(type_predicate)]), fields = TypePredicateAnnotationFields, prepare = TypePredicateAnnotationPrepare, view = TypePredicateAnnotationNodeRecord, prepare_fn = prepare_type_predicate_annotation)]
 pub struct TypePredicateAnnotationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30916,7 +30916,7 @@ fn prepare_type_predicate_annotation<N: TypePredicateAnnotationPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION, layout = [kind::DOT, kind::QMARK_DOT], words = 10, built_words = 5, fields = TypeQueryMemberExpressionFields, prepare = TypeQueryMemberExpressionPrepare, view = TypeQueryMemberExpressionNodeRecord, prepare_fn = prepare_type_query_member_expression)]
+#[node(kind = kind::_TYPE_QUERY_MEMBER_EXPRESSION, layout = [kind::DOT, kind::QMARK_DOT], words = 10, built_words = 5, order = [object, operator, property], edges = ([slot(object)], [slot(property)]), fields = TypeQueryMemberExpressionFields, prepare = TypeQueryMemberExpressionPrepare, view = TypeQueryMemberExpressionNodeRecord, prepare_fn = prepare_type_query_member_expression)]
 pub struct TypeQueryMemberExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -30999,7 +30999,7 @@ fn prepare_type_query_member_expression<N: TypeQueryMemberExpressionPrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 11, built_words = 5, fields = TypeQuerySubscriptExpressionFields, prepare = TypeQuerySubscriptExpressionPrepare, view = TypeQuerySubscriptExpressionNodeRecord, prepare_fn = prepare_type_query_subscript_expression)]
+#[node(kind = kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION, layout = [kind::LBRACK, kind::RBRACK], words = 11, built_words = 5, order = [object, optional_chain, index], edges = ([slot(object)], [token(kind::RBRACK)]), fields = TypeQuerySubscriptExpressionFields, prepare = TypeQuerySubscriptExpressionPrepare, view = TypeQuerySubscriptExpressionNodeRecord, prepare_fn = prepare_type_query_subscript_expression)]
 pub struct TypeQuerySubscriptExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31081,7 +31081,7 @@ fn prepare_type_query_subscript_expression<N: TypeQuerySubscriptExpressionPrepar
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_QUERY_CALL_EXPRESSION, layout = [kind::IMPORT], words = 5, built_words = 3, fields = TypeQueryCallExpressionFields, prepare = TypeQueryCallExpressionPrepare, view = TypeQueryCallExpressionNodeRecord, prepare_fn = prepare_type_query_call_expression)]
+#[node(kind = kind::_TYPE_QUERY_CALL_EXPRESSION, layout = [kind::IMPORT], words = 5, built_words = 3, order = [arguments], edges = ([token(kind::IMPORT)], [slot(arguments)]), fields = TypeQueryCallExpressionFields, prepare = TypeQueryCallExpressionPrepare, view = TypeQueryCallExpressionNodeRecord, prepare_fn = prepare_type_query_call_expression)]
 pub struct TypeQueryCallExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31156,7 +31156,7 @@ fn prepare_type_query_call_expression<N: TypeQueryCallExpressionPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION, words = 9, built_words = 4, fields = TypeQueryInstantiationExpressionFields, prepare = TypeQueryInstantiationExpressionPrepare, view = TypeQueryInstantiationExpressionNodeRecord, prepare_fn = prepare_type_query_instantiation_expression)]
+#[node(kind = kind::_TYPE_QUERY_INSTANTIATION_EXPRESSION, words = 9, built_words = 4, order = [function, type_arguments], edges = ([slot(function)], [slot(type_arguments)]), fields = TypeQueryInstantiationExpressionFields, prepare = TypeQueryInstantiationExpressionPrepare, view = TypeQueryInstantiationExpressionNodeRecord, prepare_fn = prepare_type_query_instantiation_expression)]
 pub struct TypeQueryInstantiationExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31235,7 +31235,7 @@ fn prepare_type_query_instantiation_expression<N: TypeQueryInstantiationExpressi
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_QUERY, layout = [kind::TYPEOF_KEYWORD], words = 6, built_words = 3, fields = TypeQueryFields, prepare = TypeQueryPrepare, view = TypeQueryNodeRecord, prepare_fn = prepare_type_query)]
+#[node(kind = kind::TYPE_QUERY, layout = [kind::TYPEOF_KEYWORD], words = 6, built_words = 3, order = [expression], edges = ([token(kind::TYPEOF_KEYWORD)], [slot(expression)]), fields = TypeQueryFields, prepare = TypeQueryPrepare, view = TypeQueryNodeRecord, prepare_fn = prepare_type_query)]
 pub struct TypeQueryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31310,7 +31310,7 @@ fn prepare_type_query<N: TypeQueryPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INDEX_TYPE_QUERY, layout = [kind::KEYOF_KEYWORD], words = 6, built_words = 3, fields = IndexTypeQueryFields, prepare = IndexTypeQueryPrepare, view = IndexTypeQueryNodeRecord, prepare_fn = prepare_index_type_query)]
+#[node(kind = kind::INDEX_TYPE_QUERY, layout = [kind::KEYOF_KEYWORD], words = 6, built_words = 3, order = [type_], edges = ([token(kind::KEYOF_KEYWORD)], [slot(type_)]), fields = IndexTypeQueryFields, prepare = IndexTypeQueryPrepare, view = IndexTypeQueryNodeRecord, prepare_fn = prepare_index_type_query)]
 pub struct IndexTypeQueryNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31385,7 +31385,7 @@ fn prepare_index_type_query<N: IndexTypeQueryPrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LOOKUP_TYPE, layout = [kind::LBRACK, kind::RBRACK], words = 10, built_words = 4, fields = LookupTypeFields, prepare = LookupTypePrepare, view = LookupTypeNodeRecord, prepare_fn = prepare_lookup_type)]
+#[node(kind = kind::LOOKUP_TYPE, layout = [kind::LBRACK, kind::RBRACK], words = 10, built_words = 4, order = [type_, index_type], edges = ([slot(type_)], [token(kind::RBRACK)]), fields = LookupTypeFields, prepare = LookupTypePrepare, view = LookupTypeNodeRecord, prepare_fn = prepare_lookup_type)]
 pub struct LookupTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31464,7 +31464,7 @@ fn prepare_lookup_type<N: LookupTypePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::MAPPED_TYPE_CLAUSE, layout = [kind::IN_KEYWORD, kind::AS_KEYWORD], words = 13, built_words = 5, fields = MappedTypeClauseFields, prepare = MappedTypeClausePrepare, view = MappedTypeClauseNodeRecord, prepare_fn = prepare_mapped_type_clause)]
+#[node(kind = kind::MAPPED_TYPE_CLAUSE, layout = [kind::IN_KEYWORD, kind::AS_KEYWORD], words = 13, built_words = 5, order = [name, type_, alias], edges = ([slot(name)], [slot(alias), slot(type_)]), fields = MappedTypeClauseFields, prepare = MappedTypeClausePrepare, view = MappedTypeClauseNodeRecord, prepare_fn = prepare_mapped_type_clause)]
 pub struct MappedTypeClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31547,7 +31547,7 @@ fn prepare_mapped_type_clause<N: MappedTypeClausePrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LITERAL_TYPE, words = 6, built_words = 3, fields = LiteralTypeFields, prepare = LiteralTypePrepare, view = LiteralTypeNodeRecord, prepare_fn = prepare_literal_type, seat_through = content)]
+#[node(kind = kind::LITERAL_TYPE, words = 6, built_words = 3, order = [content], edges = ([slot(content)], [slot(content)]), fields = LiteralTypeFields, prepare = LiteralTypePrepare, view = LiteralTypeNodeRecord, prepare_fn = prepare_literal_type, seat_through = content)]
 pub struct LiteralTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31672,7 +31672,7 @@ impl ::sittir_core::render::Render for ExistentialTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLOW_MAYBE_TYPE, layout = [kind::QMARK | kind::_TERNARY_QMARK], words = 6, built_words = 3, fields = FlowMaybeTypeFields, prepare = FlowMaybeTypePrepare, view = FlowMaybeTypeNodeRecord, prepare_fn = prepare_flow_maybe_type)]
+#[node(kind = kind::FLOW_MAYBE_TYPE, layout = [kind::QMARK | kind::_TERNARY_QMARK], words = 6, built_words = 3, order = [type_], edges = ([token(kind::QMARK)], [slot(type_)]), fields = FlowMaybeTypeFields, prepare = FlowMaybeTypePrepare, view = FlowMaybeTypeNodeRecord, prepare_fn = prepare_flow_maybe_type)]
 pub struct FlowMaybeTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31747,7 +31747,7 @@ fn prepare_flow_maybe_type<N: FlowMaybeTypePrepare + ?Sized>(node: &mut N, overl
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARENTHESIZED_TYPE, layout = [kind::LPAREN, kind::RPAREN], words = 6, built_words = 3, fields = ParenthesizedTypeFields, prepare = ParenthesizedTypePrepare, view = ParenthesizedTypeNodeRecord, prepare_fn = prepare_parenthesized_type)]
+#[node(kind = kind::PARENTHESIZED_TYPE, layout = [kind::LPAREN, kind::RPAREN], words = 6, built_words = 3, order = [type_], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ParenthesizedTypeFields, prepare = ParenthesizedTypePrepare, view = ParenthesizedTypeNodeRecord, prepare_fn = prepare_parenthesized_type)]
 pub struct ParenthesizedTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31893,7 +31893,7 @@ impl ::sittir_core::render::Render for PredefinedTypeEnum {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT, kind::GT], words = 5, built_words = 3, fields = TypeArgumentsFields, prepare = TypeArgumentsPrepare, view = TypeArgumentsNodeRecord, prepare_fn = prepare_type_arguments)]
+#[node(kind = kind::TYPE_ARGUMENTS, min_depth = 2, layout = [kind::LT, kind::GT], words = 5, built_words = 3, order = [types], edges = ([token(kind::LT)], [token(kind::GT)]), fields = TypeArgumentsFields, prepare = TypeArgumentsPrepare, view = TypeArgumentsNodeRecord, prepare_fn = prepare_type_arguments)]
 pub struct TypeArgumentsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -31968,7 +31968,7 @@ fn prepare_type_arguments<N: TypeArgumentsPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OBJECT_TYPE, displays = [kind::_INTERFACE_BODY], words = 7, built_words = 5, fields = ObjectTypeFields, prepare = ObjectTypePrepare, view = ObjectTypeNodeRecord, prepare_fn = prepare_object_type)]
+#[node(kind = kind::OBJECT_TYPE, displays = [kind::_INTERFACE_BODY], words = 7, built_words = 5, order = [opening, members, closing], edges = ([slot(opening)], [slot(closing)]), fields = ObjectTypeFields, prepare = ObjectTypePrepare, view = ObjectTypeNodeRecord, prepare_fn = prepare_object_type)]
 pub struct ObjectTypeNode {
     #[wire(key = "$type")]
     pub kind: KindId,
@@ -32053,7 +32053,7 @@ fn prepare_object_type<N: ObjectTypePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL_SIGNATURE, words = 11, built_words = 5, fields = CallSignatureFields, prepare = CallSignaturePrepare, view = CallSignatureNodeRecord, prepare_fn = prepare_call_signature)]
+#[node(kind = kind::CALL_SIGNATURE, words = 11, built_words = 5, order = [type_parameters, parameters, return_type], edges = ([slot(type_parameters), slot(parameters)], [slot(return_type), slot(parameters)]), fields = CallSignatureFields, prepare = CallSignaturePrepare, view = CallSignatureNodeRecord, prepare_fn = prepare_call_signature)]
 pub struct CallSignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32136,7 +32136,7 @@ fn prepare_call_signature<N: CallSignaturePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PROPERTY_SIGNATURE, words = 10, built_words = 6, fields = PropertySignatureFields, prepare = PropertySignaturePrepare, view = PropertySignatureNodeRecord, prepare_fn = prepare_property_signature)]
+#[node(kind = kind::PROPERTY_SIGNATURE, words = 10, built_words = 6, order = [accessibility_modifier, static_, override_, readonly, name, optional, type_], edges = ([slot(accessibility_modifier), slot(static_), slot(override_), slot(readonly), slot(name)], [slot(type_), slot(optional), slot(name)]), fields = PropertySignatureFields, prepare = PropertySignaturePrepare, view = PropertySignatureNodeRecord, prepare_fn = prepare_property_signature)]
 pub struct PropertySignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32231,7 +32231,7 @@ fn prepare_property_signature<N: PropertySignaturePrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT, kind::GT], words = 5, built_words = 3, fields = TypeParametersFields, prepare = TypeParametersPrepare, view = TypeParametersNodeRecord, prepare_fn = prepare_type_parameters)]
+#[node(kind = kind::TYPE_PARAMETERS, min_depth = 2, layout = [kind::LT, kind::GT], words = 5, built_words = 3, order = [elements], edges = ([token(kind::LT)], [token(kind::GT)]), fields = TypeParametersFields, prepare = TypeParametersPrepare, view = TypeParametersNodeRecord, prepare_fn = prepare_type_parameters)]
 pub struct TypeParametersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32306,7 +32306,7 @@ fn prepare_type_parameters<N: TypeParametersPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETER, words = 12, built_words = 6, fields = TypeParameterFields, prepare = TypeParameterPrepare, view = TypeParameterNodeRecord, prepare_fn = prepare_type_parameter)]
+#[node(kind = kind::TYPE_PARAMETER, words = 12, built_words = 6, order = [const_, name, constraint, default], edges = ([slot(const_), slot(name)], [slot(default), slot(constraint), slot(name)]), fields = TypeParameterFields, prepare = TypeParameterPrepare, view = TypeParameterNodeRecord, prepare_fn = prepare_type_parameter)]
 pub struct TypeParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32392,7 +32392,7 @@ fn prepare_type_parameter<N: TypeParameterPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DEFAULT_TYPE, layout = [kind::EQ], words = 6, built_words = 3, fields = DefaultTypeFields, prepare = DefaultTypePrepare, view = DefaultTypeNodeRecord, prepare_fn = prepare_default_type)]
+#[node(kind = kind::DEFAULT_TYPE, layout = [kind::EQ], words = 6, built_words = 3, order = [type_], edges = ([token(kind::EQ)], [slot(type_)]), fields = DefaultTypeFields, prepare = DefaultTypePrepare, view = DefaultTypeNodeRecord, prepare_fn = prepare_default_type)]
 pub struct DefaultTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32467,7 +32467,7 @@ fn prepare_default_type<N: DefaultTypePrepare + ?Sized>(node: &mut N, overlay: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONSTRAINT, layout = [kind::EXTENDS_KEYWORD, kind::COLON], words = 7, built_words = 4, fields = ConstraintFields, prepare = ConstraintPrepare, view = ConstraintNodeRecord, prepare_fn = prepare_constraint)]
+#[node(kind = kind::CONSTRAINT, layout = [kind::EXTENDS_KEYWORD, kind::COLON], words = 7, built_words = 4, order = [operator, type_], edges = ([slot(operator), slot(type_)], [slot(type_)]), fields = ConstraintFields, prepare = ConstraintPrepare, view = ConstraintNodeRecord, prepare_fn = prepare_constraint)]
 pub struct ConstraintNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32547,7 +32547,7 @@ fn prepare_constraint<N: ConstraintPrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONSTRUCT_SIGNATURE, layout = [kind::NEW_KEYWORD], words = 12, built_words = 6, fields = ConstructSignatureFields, prepare = ConstructSignaturePrepare, view = ConstructSignatureNodeRecord, prepare_fn = prepare_construct_signature)]
+#[node(kind = kind::CONSTRUCT_SIGNATURE, layout = [kind::NEW_KEYWORD], words = 12, built_words = 6, order = [abstract_, type_parameters, parameters, type_], edges = ([slot(abstract_), token(kind::NEW_KEYWORD)], [slot(type_), slot(parameters)]), fields = ConstructSignatureFields, prepare = ConstructSignaturePrepare, view = ConstructSignatureNodeRecord, prepare_fn = prepare_construct_signature)]
 pub struct ConstructSignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32633,7 +32633,7 @@ fn prepare_construct_signature<N: ConstructSignaturePrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::RBRACK], words = 6, built_words = 3, fields = ArrayTypeFields, prepare = ArrayTypePrepare, view = ArrayTypeNodeRecord, prepare_fn = prepare_array_type)]
+#[node(kind = kind::ARRAY_TYPE, layout = [kind::LBRACK, kind::RBRACK], words = 6, built_words = 3, order = [type_], edges = ([slot(type_)], [token(kind::RBRACK)]), fields = ArrayTypeFields, prepare = ArrayTypePrepare, view = ArrayTypeNodeRecord, prepare_fn = prepare_array_type)]
 pub struct ArrayTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32708,7 +32708,7 @@ fn prepare_array_type<N: ArrayTypePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 5, built_words = 3, fields = TupleTypeFields, prepare = TupleTypePrepare, view = TupleTypeNodeRecord, prepare_fn = prepare_tuple_type)]
+#[node(kind = kind::TUPLE_TYPE, min_depth = 2, layout = [kind::LBRACK, kind::RBRACK], words = 5, built_words = 3, order = [tuple_type_members], edges = ([token(kind::LBRACK)], [token(kind::RBRACK)]), fields = TupleTypeFields, prepare = TupleTypePrepare, view = TupleTypeNodeRecord, prepare_fn = prepare_tuple_type)]
 pub struct TupleTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32783,7 +32783,7 @@ fn prepare_tuple_type<N: TupleTypePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::READONLY_TYPE, layout = [kind::READONLY_KEYWORD], words = 6, built_words = 3, fields = ReadonlyTypeFields, prepare = ReadonlyTypePrepare, view = ReadonlyTypeNodeRecord, prepare_fn = prepare_readonly_type)]
+#[node(kind = kind::READONLY_TYPE, layout = [kind::READONLY_KEYWORD], words = 6, built_words = 3, order = [type_], edges = ([token(kind::READONLY_KEYWORD)], [slot(type_)]), fields = ReadonlyTypeFields, prepare = ReadonlyTypePrepare, view = ReadonlyTypeNodeRecord, prepare_fn = prepare_readonly_type)]
 pub struct ReadonlyTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32858,7 +32858,7 @@ fn prepare_readonly_type<N: ReadonlyTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNION_TYPE, layout = [kind::PIPE], words = 10, built_words = 4, fields = UnionTypeFields, prepare = UnionTypePrepare, view = UnionTypeNodeRecord, prepare_fn = prepare_union_type)]
+#[node(kind = kind::UNION_TYPE, layout = [kind::PIPE], words = 10, built_words = 4, order = [left, right], edges = ([slot(left), token(kind::PIPE)], [slot(right)]), fields = UnionTypeFields, prepare = UnionTypePrepare, view = UnionTypeNodeRecord, prepare_fn = prepare_union_type)]
 pub struct UnionTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -32937,7 +32937,7 @@ fn prepare_union_type<N: UnionTypePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INTERSECTION_TYPE, layout = [kind::AMP], words = 10, built_words = 4, fields = IntersectionTypeFields, prepare = IntersectionTypePrepare, view = IntersectionTypeNodeRecord, prepare_fn = prepare_intersection_type)]
+#[node(kind = kind::INTERSECTION_TYPE, layout = [kind::AMP], words = 10, built_words = 4, order = [left, right], edges = ([slot(left), token(kind::AMP)], [slot(right)]), fields = IntersectionTypeFields, prepare = IntersectionTypePrepare, view = IntersectionTypeNodeRecord, prepare_fn = prepare_intersection_type)]
 pub struct IntersectionTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33016,7 +33016,7 @@ fn prepare_intersection_type<N: IntersectionTypePrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_TYPE, layout = [kind::EQ_GT], words = 12, built_words = 5, fields = FunctionTypeFields, prepare = FunctionTypePrepare, view = FunctionTypeNodeRecord, prepare_fn = prepare_function_type)]
+#[node(kind = kind::FUNCTION_TYPE, layout = [kind::EQ_GT], words = 12, built_words = 5, order = [type_parameters, parameters, return_type], edges = ([slot(type_parameters), slot(parameters)], [slot(return_type)]), fields = FunctionTypeFields, prepare = FunctionTypePrepare, view = FunctionTypeNodeRecord, prepare_fn = prepare_function_type)]
 pub struct FunctionTypeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33099,7 +33099,7 @@ fn prepare_function_type<N: FunctionTypePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_SPECIFIERS, item = item, wrapped_items, words = 3, built_words = 3, fields = ExportSpecifiersFields, prepare = ExportSpecifiersPrepare, view = ExportSpecifiersNodeRecord, prepare_fn = prepare_export_specifiers)]
+#[node(kind = kind::EXPORT_SPECIFIERS, item = item, wrapped_items, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = ExportSpecifiersFields, prepare = ExportSpecifiersPrepare, view = ExportSpecifiersNodeRecord, prepare_fn = prepare_export_specifiers)]
 pub struct ExportSpecifiersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33189,7 +33189,7 @@ fn prepare_export_specifiers<N: ExportSpecifiersPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_SPECIFIERS, item = item, words = 3, built_words = 3, fields = ImportSpecifiersFields, prepare = ImportSpecifiersPrepare, view = ImportSpecifiersNodeRecord, prepare_fn = prepare_import_specifiers)]
+#[node(kind = kind::IMPORT_SPECIFIERS, item = item, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = ImportSpecifiersFields, prepare = ImportSpecifiersPrepare, view = ImportSpecifiersNodeRecord, prepare_fn = prepare_import_specifiers)]
 pub struct ImportSpecifiersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33279,7 +33279,7 @@ fn prepare_import_specifiers<N: ImportSpecifiersPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FORMAL_PARAMETERS_ELEMENTS, item = item, words = 3, built_words = 3, fields = FormalParametersElementsFields, prepare = FormalParametersElementsPrepare, view = FormalParametersElementsNodeRecord, prepare_fn = prepare_formal_parameters_elements)]
+#[node(kind = kind::FORMAL_PARAMETERS_ELEMENTS, item = item, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = FormalParametersElementsFields, prepare = FormalParametersElementsPrepare, view = FormalParametersElementsNodeRecord, prepare_fn = prepare_formal_parameters_elements)]
 pub struct FormalParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33369,7 +33369,7 @@ fn prepare_formal_parameters_elements<N: FormalParametersElementsPrepare + ?Size
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_BODY_ELEMENT_NAME, words = 5, built_words = 3, fields = EnumBodyElementNameFields, prepare = EnumBodyElementNamePrepare, view = EnumBodyElementNameNodeRecord, prepare_fn = prepare_enum_body_element_name)]
+#[node(kind = kind::ENUM_BODY_ELEMENT_NAME, words = 5, built_words = 3, order = [name], edges = ([slot(name)], [slot(name)]), fields = EnumBodyElementNameFields, prepare = EnumBodyElementNamePrepare, view = EnumBodyElementNameNodeRecord, prepare_fn = prepare_enum_body_element_name)]
 pub struct EnumBodyElementNameNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33443,7 +33443,7 @@ fn prepare_enum_body_element_name<N: EnumBodyElementNamePrepare + ?Sized>(node: 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ENUM_BODY_ELEMENTS, item = item, words = 3, built_words = 3, fields = EnumBodyElementsFields, prepare = EnumBodyElementsPrepare, view = EnumBodyElementsNodeRecord, prepare_fn = prepare_enum_body_elements)]
+#[node(kind = kind::ENUM_BODY_ELEMENTS, item = item, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = EnumBodyElementsFields, prepare = EnumBodyElementsPrepare, view = EnumBodyElementsNodeRecord, prepare_fn = prepare_enum_body_elements)]
 pub struct EnumBodyElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33533,7 +33533,7 @@ fn prepare_enum_body_elements<N: EnumBodyElementsPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPES, item = item, words = 3, built_words = 3, fields = TypesFields, prepare = TypesPrepare, view = TypesNodeRecord, prepare_fn = prepare_types)]
+#[node(kind = kind::TYPES, item = item, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = TypesFields, prepare = TypesPrepare, view = TypesNodeRecord, prepare_fn = prepare_types)]
 pub struct TypesNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33623,7 +33623,7 @@ fn prepare_types<N: TypesPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord, prepare_fn = prepare_type_parameters_elements)]
+#[node(kind = kind::TYPE_PARAMETERS_ELEMENTS, item = item, wrapped_items, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = TypeParametersElementsFields, prepare = TypeParametersElementsPrepare, view = TypeParametersElementsNodeRecord, prepare_fn = prepare_type_parameters_elements)]
 pub struct TypeParametersElementsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33713,7 +33713,7 @@ fn prepare_type_parameters_elements<N: TypeParametersElementsPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TUPLE_TYPE_MEMBERS, item = item, words = 3, built_words = 3, fields = TupleTypeMembersFields, prepare = TupleTypeMembersPrepare, view = TupleTypeMembersNodeRecord, prepare_fn = prepare_tuple_type_members)]
+#[node(kind = kind::TUPLE_TYPE_MEMBERS, item = item, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = TupleTypeMembersFields, prepare = TupleTypeMembersPrepare, view = TupleTypeMembersNodeRecord, prepare_fn = prepare_tuple_type_members)]
 pub struct TupleTypeMembersNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33803,7 +33803,7 @@ fn prepare_tuple_type_members<N: TupleTypeMembersPrepare + ?Sized>(node: &mut N,
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_CLAUSE_GROUP, layout = [kind::COMMA], words = 5, built_words = 3, fields = ImportClauseGroupFields, prepare = ImportClauseGroupPrepare, view = ImportClauseGroupNodeRecord, prepare_fn = prepare_import_clause_group)]
+#[node(kind = kind::IMPORT_CLAUSE_GROUP, layout = [kind::COMMA], words = 5, built_words = 3, order = [content], edges = ([token(kind::COMMA)], [slot(content)]), fields = ImportClauseGroupFields, prepare = ImportClauseGroupPrepare, view = ImportClauseGroupNodeRecord, prepare_fn = prepare_import_clause_group)]
 pub struct ImportClauseGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -33909,7 +33909,7 @@ impl ::sittir_core::render::Render for UsingDeclarationArmNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CATCH_CLAUSE_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 8, built_words = 4, fields = CatchClauseGroupFields, prepare = CatchClauseGroupPrepare, view = CatchClauseGroupNodeRecord, prepare_fn = prepare_catch_clause_group)]
+#[node(kind = kind::CATCH_CLAUSE_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 8, built_words = 4, order = [parameter, type_], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = CatchClauseGroupFields, prepare = CatchClauseGroupPrepare, view = CatchClauseGroupNodeRecord, prepare_fn = prepare_catch_clause_group)]
 pub struct CatchClauseGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34063,7 +34063,7 @@ fn prepare_get_accessor_signature<N: GetAccessorSignaturePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AMBIENT_DECLARATION_GLOBAL, layout = [kind::GLOBAL_KEYWORD], words = 5, built_words = 3, fields = AmbientDeclarationGlobalFields, prepare = AmbientDeclarationGlobalPrepare, view = AmbientDeclarationGlobalNodeRecord, prepare_fn = prepare_ambient_declaration_global)]
+#[node(kind = kind::AMBIENT_DECLARATION_GLOBAL, layout = [kind::GLOBAL_KEYWORD], words = 5, built_words = 3, order = [body], edges = ([token(kind::GLOBAL_KEYWORD)], [slot(body)]), fields = AmbientDeclarationGlobalFields, prepare = AmbientDeclarationGlobalPrepare, view = AmbientDeclarationGlobalNodeRecord, prepare_fn = prepare_ambient_declaration_global)]
 pub struct AmbientDeclarationGlobalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34138,7 +34138,7 @@ fn prepare_ambient_declaration_global<N: AmbientDeclarationGlobalPrepare + ?Size
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::AMBIENT_DECLARATION_MODULE, layout = [kind::MODULE_KEYWORD, kind::DOT, kind::COLON], words = 10, built_words = 5, fields = AmbientDeclarationModuleFields, prepare = AmbientDeclarationModulePrepare, view = AmbientDeclarationModuleNodeRecord, prepare_fn = prepare_ambient_declaration_module)]
+#[node(kind = kind::AMBIENT_DECLARATION_MODULE, layout = [kind::MODULE_KEYWORD, kind::DOT, kind::COLON], words = 10, built_words = 5, order = [name, type_, terminator], edges = ([token(kind::MODULE_KEYWORD)], [slot(terminator), slot(type_)]), fields = AmbientDeclarationModuleFields, prepare = AmbientDeclarationModulePrepare, view = AmbientDeclarationModuleNodeRecord, prepare_fn = prepare_ambient_declaration_module)]
 pub struct AmbientDeclarationModuleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34222,7 +34222,7 @@ fn prepare_ambient_declaration_module<N: AmbientDeclarationModulePrepare + ?Size
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OBJECT_TYPE_CONTENT, item = item, words = 3, built_words = 3, fields = ObjectTypeContentFields, prepare = ObjectTypeContentPrepare, view = ObjectTypeContentNodeRecord, prepare_fn = prepare_object_type_content)]
+#[node(kind = kind::OBJECT_TYPE_CONTENT, item = item, words = 3, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = ObjectTypeContentFields, prepare = ObjectTypeContentPrepare, view = ObjectTypeContentNodeRecord, prepare_fn = prepare_object_type_content)]
 pub struct ObjectTypeContentNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -34467,7 +34467,7 @@ fn prepare_comment_block<N: CommentBlockPrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LITERAL_TYPE_NEGATIVE_NUMBER, layout = [kind::DASH], words = 5, built_words = 3, fields = LiteralTypeNegativeNumberFields, prepare = LiteralTypeNegativeNumberPrepare, view = LiteralTypeNegativeNumberNodeRecord, prepare_fn = prepare_literal_type_negative_number)]
+#[node(kind = kind::LITERAL_TYPE_NEGATIVE_NUMBER, layout = [kind::DASH], words = 5, built_words = 3, order = [value], edges = ([token(kind::DASH)], [slot(value)]), fields = LiteralTypeNegativeNumberFields, prepare = LiteralTypeNegativeNumberPrepare, view = LiteralTypeNegativeNumberNodeRecord, prepare_fn = prepare_literal_type_negative_number)]
 pub struct LiteralTypeNegativeNumberNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35466,7 +35466,7 @@ fn prepare_number_bigint_decimal<N: NumberBigintDecimalPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BINARY_EXPRESSION_IN, layout = [kind::IN_KEYWORD], words = 10, built_words = 4, fields = BinaryExpressionInFields, prepare = BinaryExpressionInPrepare, view = BinaryExpressionInNodeRecord, prepare_fn = prepare_binary_expression_in)]
+#[node(kind = kind::BINARY_EXPRESSION_IN, layout = [kind::IN_KEYWORD], words = 10, built_words = 4, order = [left, right], edges = ([slot(left)], [slot(right)]), fields = BinaryExpressionInFields, prepare = BinaryExpressionInPrepare, view = BinaryExpressionInNodeRecord, prepare_fn = prepare_binary_expression_in)]
 pub struct BinaryExpressionInNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35596,7 +35596,7 @@ impl ::sittir_core::render::Render for EmptyMemberNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_BODY_MEMBER_METHOD, words = 7, built_words = 5, fields = ClassBodyMemberMethodFields, prepare = ClassBodyMemberMethodPrepare, view = ClassBodyMemberMethodNodeRecord, prepare_fn = prepare_class_body_member_method)]
+#[node(kind = kind::CLASS_BODY_MEMBER_METHOD, words = 7, built_words = 5, order = [decorator, method_definition, terminator], edges = ([slot(decorator), slot(method_definition)], [slot(terminator), slot(method_definition)]), fields = ClassBodyMemberMethodFields, prepare = ClassBodyMemberMethodPrepare, view = ClassBodyMemberMethodNodeRecord, prepare_fn = prepare_class_body_member_method)]
 pub struct ClassBodyMemberMethodNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35686,7 +35686,7 @@ fn prepare_class_body_member_method<N: ClassBodyMemberMethodPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_BODY_MEMBER_METHOD_SIG, words = 6, built_words = 4, fields = ClassBodyMemberMethodSigFields, prepare = ClassBodyMemberMethodSigPrepare, view = ClassBodyMemberMethodSigNodeRecord, prepare_fn = prepare_class_body_member_method_sig)]
+#[node(kind = kind::CLASS_BODY_MEMBER_METHOD_SIG, words = 6, built_words = 4, order = [method_signature, terminator], edges = ([slot(method_signature)], [slot(terminator), slot(method_signature)]), fields = ClassBodyMemberMethodSigFields, prepare = ClassBodyMemberMethodSigPrepare, view = ClassBodyMemberMethodSigNodeRecord, prepare_fn = prepare_class_body_member_method_sig)]
 pub struct ClassBodyMemberMethodSigNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35766,7 +35766,7 @@ fn prepare_class_body_member_method_sig<N: ClassBodyMemberMethodSigPrepare + ?Si
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_BODY_MEMBER_DECLARATION, words = 6, built_words = 4, fields = ClassBodyMemberDeclarationFields, prepare = ClassBodyMemberDeclarationPrepare, view = ClassBodyMemberDeclarationNodeRecord, prepare_fn = prepare_class_body_member_declaration)]
+#[node(kind = kind::CLASS_BODY_MEMBER_DECLARATION, words = 6, built_words = 4, order = [member, terminator], edges = ([slot(member)], [slot(terminator), slot(member)]), fields = ClassBodyMemberDeclarationFields, prepare = ClassBodyMemberDeclarationPrepare, view = ClassBodyMemberDeclarationNodeRecord, prepare_fn = prepare_class_body_member_declaration)]
 pub struct ClassBodyMemberDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35846,7 +35846,7 @@ fn prepare_class_body_member_declaration<N: ClassBodyMemberDeclarationPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INDEX_SIGNATURE_COLON, layout = [kind::LBRACK, kind::COLON, kind::RBRACK], words = 14, built_words = 7, fields = IndexSignatureColonFields, prepare = IndexSignatureColonPrepare, view = IndexSignatureColonNodeRecord, prepare_fn = prepare_index_signature_colon)]
+#[node(kind = kind::INDEX_SIGNATURE_COLON, layout = [kind::LBRACK, kind::COLON, kind::RBRACK], words = 14, built_words = 7, order = [sign, readonly, name, index_type, type_], edges = ([slot(sign), slot(readonly), token(kind::LBRACK)], [slot(type_)]), fields = IndexSignatureColonFields, prepare = IndexSignatureColonPrepare, view = IndexSignatureColonNodeRecord, prepare_fn = prepare_index_signature_colon)]
 pub struct IndexSignatureColonNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -35936,7 +35936,7 @@ fn prepare_index_signature_colon<N: IndexSignatureColonPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE, layout = [kind::LBRACK, kind::RBRACK], words = 10, built_words = 6, fields = IndexSignatureMappedTypeClauseFields, prepare = IndexSignatureMappedTypeClausePrepare, view = IndexSignatureMappedTypeClauseNodeRecord, prepare_fn = prepare_index_signature_mapped_type_clause)]
+#[node(kind = kind::INDEX_SIGNATURE_MAPPED_TYPE_CLAUSE, layout = [kind::LBRACK, kind::RBRACK], words = 10, built_words = 6, order = [sign, readonly, mapped_type_clause, type_], edges = ([slot(sign), slot(readonly), token(kind::LBRACK)], [slot(type_)]), fields = IndexSignatureMappedTypeClauseFields, prepare = IndexSignatureMappedTypeClausePrepare, view = IndexSignatureMappedTypeClauseNodeRecord, prepare_fn = prepare_index_signature_mapped_type_clause)]
 pub struct IndexSignatureMappedTypeClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36022,7 +36022,7 @@ fn prepare_index_signature_mapped_type_clause<N: IndexSignatureMappedTypeClauseP
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_STATEMENT_CLAUSE_FROM, layout = [kind::FROM_KEYWORD], words = 8, built_words = 4, fields = ImportStatementClauseFromFields, prepare = ImportStatementClauseFromPrepare, view = ImportStatementClauseFromNodeRecord, prepare_fn = prepare_import_statement_clause_from)]
+#[node(kind = kind::IMPORT_STATEMENT_CLAUSE_FROM, layout = [kind::FROM_KEYWORD], words = 8, built_words = 4, order = [import_clause, source], edges = ([slot(import_clause)], [slot(source)]), fields = ImportStatementClauseFromFields, prepare = ImportStatementClauseFromPrepare, view = ImportStatementClauseFromNodeRecord, prepare_fn = prepare_import_statement_clause_from)]
 pub struct ImportStatementClauseFromNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36101,7 +36101,7 @@ fn prepare_import_statement_clause_from<N: ImportStatementClauseFromPrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::YIELD_EXPRESSION_DELEGATE, layout = [kind::STAR], words = 6, built_words = 3, fields = YieldExpressionDelegateFields, prepare = YieldExpressionDelegatePrepare, view = YieldExpressionDelegateNodeRecord, prepare_fn = prepare_yield_expression_delegate)]
+#[node(kind = kind::YIELD_EXPRESSION_DELEGATE, layout = [kind::STAR], words = 6, built_words = 3, order = [expression], edges = ([token(kind::STAR)], [slot(expression)]), fields = YieldExpressionDelegateFields, prepare = YieldExpressionDelegatePrepare, view = YieldExpressionDelegateNodeRecord, prepare_fn = prepare_yield_expression_delegate)]
 pub struct YieldExpressionDelegateNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36207,7 +36207,7 @@ impl ::sittir_core::render::Render for OptionalChainMarkerNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_SPECIFIER_NAME, words = 6, built_words = 4, fields = ImportSpecifierNameFields, prepare = ImportSpecifierNamePrepare, view = ImportSpecifierNameNodeRecord, prepare_fn = prepare_import_specifier_name)]
+#[node(kind = kind::IMPORT_SPECIFIER_NAME, words = 6, built_words = 4, order = [type_keyword, name], edges = ([slot(type_keyword), slot(name)], [slot(name)]), fields = ImportSpecifierNameFields, prepare = ImportSpecifierNamePrepare, view = ImportSpecifierNameNodeRecord, prepare_fn = prepare_import_specifier_name)]
 pub struct ImportSpecifierNameNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36286,7 +36286,7 @@ fn prepare_import_specifier_name<N: ImportSpecifierNamePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_SPECIFIER_AS, layout = [kind::AS_KEYWORD], words = 10, built_words = 5, fields = ImportSpecifierAsFields, prepare = ImportSpecifierAsPrepare, view = ImportSpecifierAsNodeRecord, prepare_fn = prepare_import_specifier_as)]
+#[node(kind = kind::IMPORT_SPECIFIER_AS, layout = [kind::AS_KEYWORD], words = 10, built_words = 5, order = [type_keyword, name, alias], edges = ([slot(type_keyword), slot(name)], [slot(alias)]), fields = ImportSpecifierAsFields, prepare = ImportSpecifierAsPrepare, view = ImportSpecifierAsNodeRecord, prepare_fn = prepare_import_specifier_as)]
 pub struct ImportSpecifierAsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36369,7 +36369,7 @@ fn prepare_import_specifier_as<N: ImportSpecifierAsPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARENTHESIZED_EXPRESSION_TYPED, layout = [kind::LPAREN, kind::RPAREN], words = 9, built_words = 4, fields = ParenthesizedExpressionTypedFields, prepare = ParenthesizedExpressionTypedPrepare, view = ParenthesizedExpressionTypedNodeRecord, prepare_fn = prepare_parenthesized_expression_typed)]
+#[node(kind = kind::PARENTHESIZED_EXPRESSION_TYPED, layout = [kind::LPAREN, kind::RPAREN], words = 9, built_words = 4, order = [expression, type_], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ParenthesizedExpressionTypedFields, prepare = ParenthesizedExpressionTypedPrepare, view = ParenthesizedExpressionTypedNodeRecord, prepare_fn = prepare_parenthesized_expression_typed)]
 pub struct ParenthesizedExpressionTypedNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36448,7 +36448,7 @@ fn prepare_parenthesized_expression_typed<N: ParenthesizedExpressionTypedPrepare
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PARENTHESIZED_EXPRESSION_SEQUENCE, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, fields = ParenthesizedExpressionSequenceFields, prepare = ParenthesizedExpressionSequencePrepare, view = ParenthesizedExpressionSequenceNodeRecord, prepare_fn = prepare_parenthesized_expression_sequence)]
+#[node(kind = kind::PARENTHESIZED_EXPRESSION_SEQUENCE, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, order = [sequence_expression], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ParenthesizedExpressionSequenceFields, prepare = ParenthesizedExpressionSequencePrepare, view = ParenthesizedExpressionSequenceNodeRecord, prepare_fn = prepare_parenthesized_expression_sequence)]
 pub struct ParenthesizedExpressionSequenceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36523,7 +36523,7 @@ fn prepare_parenthesized_expression_sequence<N: ParenthesizedExpressionSequenceP
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_EQUALS_EXPORT, layout = [kind::EXPORT_KEYWORD, kind::EQ], words = 7, built_words = 4, fields = ExportStatementEqualsExportFields, prepare = ExportStatementEqualsExportPrepare, view = ExportStatementEqualsExportNodeRecord, prepare_fn = prepare_export_statement_equals_export)]
+#[node(kind = kind::EXPORT_STATEMENT_EQUALS_EXPORT, layout = [kind::EXPORT_KEYWORD, kind::EQ], words = 7, built_words = 4, order = [value, terminator], edges = ([token(kind::EXPORT_KEYWORD)], [slot(terminator), slot(value)]), fields = ExportStatementEqualsExportFields, prepare = ExportStatementEqualsExportPrepare, view = ExportStatementEqualsExportNodeRecord, prepare_fn = prepare_export_statement_equals_export)]
 pub struct ExportStatementEqualsExportNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36603,7 +36603,7 @@ fn prepare_export_statement_equals_export<N: ExportStatementEqualsExportPrepare 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_NAMESPACE_EXPORT, layout = [kind::EXPORT_KEYWORD, kind::AS_KEYWORD, kind::NAMESPACE_KEYWORD], words = 6, built_words = 4, fields = ExportStatementNamespaceExportFields, prepare = ExportStatementNamespaceExportPrepare, view = ExportStatementNamespaceExportNodeRecord, prepare_fn = prepare_export_statement_namespace_export)]
+#[node(kind = kind::EXPORT_STATEMENT_NAMESPACE_EXPORT, layout = [kind::EXPORT_KEYWORD, kind::AS_KEYWORD, kind::NAMESPACE_KEYWORD], words = 6, built_words = 4, order = [name, terminator], edges = ([token(kind::EXPORT_KEYWORD)], [slot(terminator), slot(name)]), fields = ExportStatementNamespaceExportFields, prepare = ExportStatementNamespaceExportPrepare, view = ExportStatementNamespaceExportNodeRecord, prepare_fn = prepare_export_statement_namespace_export)]
 pub struct ExportStatementNamespaceExportNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36683,7 +36683,7 @@ fn prepare_export_statement_namespace_export<N: ExportStatementNamespaceExportPr
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL_EXPRESSION_CALL, words = 12, built_words = 5, fields = CallExpressionCallFields, prepare = CallExpressionCallPrepare, view = CallExpressionCallNodeRecord, prepare_fn = prepare_call_expression_call)]
+#[node(kind = kind::CALL_EXPRESSION_CALL, words = 12, built_words = 5, order = [function, type_arguments, arguments], edges = ([slot(function)], [slot(arguments)]), fields = CallExpressionCallFields, prepare = CallExpressionCallPrepare, view = CallExpressionCallNodeRecord, prepare_fn = prepare_call_expression_call)]
 pub struct CallExpressionCallNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36766,7 +36766,7 @@ fn prepare_call_expression_call<N: CallExpressionCallPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL_EXPRESSION_TEMPLATE_CALL, words = 9, built_words = 4, fields = CallExpressionTemplateCallFields, prepare = CallExpressionTemplateCallPrepare, view = CallExpressionTemplateCallNodeRecord, prepare_fn = prepare_call_expression_template_call)]
+#[node(kind = kind::CALL_EXPRESSION_TEMPLATE_CALL, words = 9, built_words = 4, order = [function, arguments], edges = ([slot(function)], [slot(arguments)]), fields = CallExpressionTemplateCallFields, prepare = CallExpressionTemplateCallPrepare, view = CallExpressionTemplateCallNodeRecord, prepare_fn = prepare_call_expression_template_call)]
 pub struct CallExpressionTemplateCallNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36845,7 +36845,7 @@ fn prepare_call_expression_template_call<N: CallExpressionTemplateCallPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CALL_EXPRESSION_MEMBER, layout = [kind::QMARK_DOT], words = 12, built_words = 5, fields = CallExpressionMemberFields, prepare = CallExpressionMemberPrepare, view = CallExpressionMemberNodeRecord, prepare_fn = prepare_call_expression_member)]
+#[node(kind = kind::CALL_EXPRESSION_MEMBER, layout = [kind::QMARK_DOT], words = 12, built_words = 5, order = [function, type_arguments, arguments], edges = ([slot(function)], [slot(arguments)]), fields = CallExpressionMemberFields, prepare = CallExpressionMemberPrepare, view = CallExpressionMemberNodeRecord, prepare_fn = prepare_call_expression_member)]
 pub struct CallExpressionMemberNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -36928,7 +36928,7 @@ fn prepare_call_expression_member<N: CallExpressionMemberPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_DOUBLE, layout = [kind::DQUOTE | kind::DQUOTE2], words = 3, built_words = 3, fields = StringDoubleFields, prepare = StringDoublePrepare, view = StringDoubleNodeRecord, prepare_fn = prepare_string_double)]
+#[node(kind = kind::STRING_DOUBLE, layout = [kind::DQUOTE | kind::DQUOTE2], words = 3, built_words = 3, order = [elements], edges = ([token(kind::DQUOTE)], [token(kind::DQUOTE)]), fields = StringDoubleFields, prepare = StringDoublePrepare, view = StringDoubleNodeRecord, prepare_fn = prepare_string_double)]
 pub struct StringDoubleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37004,7 +37004,7 @@ fn prepare_string_double<N: StringDoublePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::STRING_SINGLE, layout = [kind::SQUOTE | kind::SQUOTE2], words = 3, built_words = 3, fields = StringSingleFields, prepare = StringSinglePrepare, view = StringSingleNodeRecord, prepare_fn = prepare_string_single)]
+#[node(kind = kind::STRING_SINGLE, layout = [kind::SQUOTE | kind::SQUOTE2], words = 3, built_words = 3, order = [elements], edges = ([token(kind::SQUOTE)], [token(kind::SQUOTE)]), fields = StringSingleFields, prepare = StringSinglePrepare, view = StringSingleNodeRecord, prepare_fn = prepare_string_single)]
 pub struct StringSingleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37080,7 +37080,7 @@ fn prepare_string_single<N: StringSinglePrepare + ?Sized>(node: &mut N, overlay:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UPDATE_EXPRESSION_POSTFIX, words = 7, built_words = 4, fields = UpdateExpressionPostfixFields, prepare = UpdateExpressionPostfixPrepare, view = UpdateExpressionPostfixNodeRecord, prepare_fn = prepare_update_expression_postfix)]
+#[node(kind = kind::UPDATE_EXPRESSION_POSTFIX, words = 7, built_words = 4, order = [argument, operator], edges = ([slot(argument)], [slot(operator)]), fields = UpdateExpressionPostfixFields, prepare = UpdateExpressionPostfixPrepare, view = UpdateExpressionPostfixNodeRecord, prepare_fn = prepare_update_expression_postfix)]
 pub struct UpdateExpressionPostfixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37159,7 +37159,7 @@ fn prepare_update_expression_postfix<N: UpdateExpressionPostfixPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UPDATE_EXPRESSION_PREFIX, words = 7, built_words = 4, fields = UpdateExpressionPrefixFields, prepare = UpdateExpressionPrefixPrepare, view = UpdateExpressionPrefixNodeRecord, prepare_fn = prepare_update_expression_prefix)]
+#[node(kind = kind::UPDATE_EXPRESSION_PREFIX, words = 7, built_words = 4, order = [operator, argument], edges = ([slot(operator)], [slot(argument)]), fields = UpdateExpressionPrefixFields, prepare = UpdateExpressionPrefixPrepare, view = UpdateExpressionPrefixNodeRecord, prepare_fn = prepare_update_expression_prefix)]
 pub struct UpdateExpressionPrefixNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37238,7 +37238,7 @@ fn prepare_update_expression_prefix<N: UpdateExpressionPrefixPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ARROW_FUNCTION_PARAMETER, words = 5, built_words = 3, fields = ArrowFunctionParameterFields, prepare = ArrowFunctionParameterPrepare, view = ArrowFunctionParameterNodeRecord, prepare_fn = prepare_arrow_function_parameter)]
+#[node(kind = kind::ARROW_FUNCTION_PARAMETER, words = 5, built_words = 3, order = [parameter], edges = ([slot(parameter)], [slot(parameter)]), fields = ArrowFunctionParameterFields, prepare = ArrowFunctionParameterPrepare, view = ArrowFunctionParameterNodeRecord, prepare_fn = prepare_arrow_function_parameter)]
 pub struct ArrowFunctionParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37312,7 +37312,7 @@ fn prepare_arrow_function_parameter<N: ArrowFunctionParameterPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_HERITAGE_EXTENDS_CLAUSE, words = 8, built_words = 4, fields = ClassHeritageExtendsClauseFields, prepare = ClassHeritageExtendsClausePrepare, view = ClassHeritageExtendsClauseNodeRecord, prepare_fn = prepare_class_heritage_extends_clause)]
+#[node(kind = kind::CLASS_HERITAGE_EXTENDS_CLAUSE, words = 8, built_words = 4, order = [extends_clause, implements_clause], edges = ([slot(extends_clause)], [slot(implements_clause), slot(extends_clause)]), fields = ClassHeritageExtendsClauseFields, prepare = ClassHeritageExtendsClausePrepare, view = ClassHeritageExtendsClauseNodeRecord, prepare_fn = prepare_class_heritage_extends_clause)]
 pub struct ClassHeritageExtendsClauseNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37391,7 +37391,7 @@ fn prepare_class_heritage_extends_clause<N: ClassHeritageExtendsClausePrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IMPORT_CLAUSE_DEFAULT_IMPORT, words = 8, built_words = 4, fields = ImportClauseDefaultImportFields, prepare = ImportClauseDefaultImportPrepare, view = ImportClauseDefaultImportNodeRecord, prepare_fn = prepare_import_clause_default_import)]
+#[node(kind = kind::IMPORT_CLAUSE_DEFAULT_IMPORT, words = 8, built_words = 4, order = [identifier, import_clause_group], edges = ([slot(identifier)], [slot(import_clause_group), slot(identifier)]), fields = ImportClauseDefaultImportFields, prepare = ImportClauseDefaultImportPrepare, view = ImportClauseDefaultImportNodeRecord, prepare_fn = prepare_import_clause_default_import)]
 pub struct ImportClauseDefaultImportNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37470,7 +37470,7 @@ fn prepare_import_clause_default_import<N: ImportClauseDefaultImportPrepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM, layout = [kind::EXPORT_KEYWORD], words = 7, built_words = 5, fields = ExportStatementDefaultFromFields, prepare = ExportStatementDefaultFromPrepare, view = ExportStatementDefaultFromNodeRecord, prepare_fn = prepare_export_statement_default_from)]
+#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM, layout = [kind::EXPORT_KEYWORD], words = 7, built_words = 5, order = [type_only, content, terminator], edges = ([token(kind::EXPORT_KEYWORD)], [slot(terminator), slot(content)]), fields = ExportStatementDefaultFromFields, prepare = ExportStatementDefaultFromPrepare, view = ExportStatementDefaultFromNodeRecord, prepare_fn = prepare_export_statement_default_from)]
 pub struct ExportStatementDefaultFromNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37553,7 +37553,7 @@ fn prepare_export_statement_default_from<N: ExportStatementDefaultFromPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, layout = [kind::EXPORT_KEYWORD], words = 6, built_words = 4, fields = ExportStatementDefaultDeclarationFields, prepare = ExportStatementDefaultDeclarationPrepare, view = ExportStatementDefaultDeclarationNodeRecord, prepare_fn = prepare_export_statement_default_declaration)]
+#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, layout = [kind::EXPORT_KEYWORD], words = 6, built_words = 4, order = [decorator, content], edges = ([slot(decorator), token(kind::EXPORT_KEYWORD)], [slot(content)]), fields = ExportStatementDefaultDeclarationFields, prepare = ExportStatementDefaultDeclarationPrepare, view = ExportStatementDefaultDeclarationNodeRecord, prepare_fn = prepare_export_statement_default_declaration)]
 pub struct ExportStatementDefaultDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37638,7 +37638,7 @@ fn prepare_export_statement_default_declaration<N: ExportStatementDefaultDeclara
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM, layout = [kind::STAR, kind::FROM_KEYWORD], words = 5, built_words = 3, fields = ExportStatementDefaultFromStarFromFields, prepare = ExportStatementDefaultFromStarFromPrepare, view = ExportStatementDefaultFromStarFromNodeRecord, prepare_fn = prepare_export_statement_default_from_star_from)]
+#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM, layout = [kind::STAR, kind::FROM_KEYWORD], words = 5, built_words = 3, order = [source], edges = ([token(kind::STAR)], [slot(source)]), fields = ExportStatementDefaultFromStarFromFields, prepare = ExportStatementDefaultFromStarFromPrepare, view = ExportStatementDefaultFromStarFromNodeRecord, prepare_fn = prepare_export_statement_default_from_star_from)]
 pub struct ExportStatementDefaultFromStarFromNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37713,7 +37713,7 @@ fn prepare_export_statement_default_from_star_from<N: ExportStatementDefaultFrom
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM, layout = [kind::FROM_KEYWORD], words = 8, built_words = 4, fields = ExportStatementDefaultFromNsFromFields, prepare = ExportStatementDefaultFromNsFromPrepare, view = ExportStatementDefaultFromNsFromNodeRecord, prepare_fn = prepare_export_statement_default_from_ns_from)]
+#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_NS_FROM, layout = [kind::FROM_KEYWORD], words = 8, built_words = 4, order = [namespace_export, source], edges = ([slot(namespace_export)], [slot(source)]), fields = ExportStatementDefaultFromNsFromFields, prepare = ExportStatementDefaultFromNsFromPrepare, view = ExportStatementDefaultFromNsFromNodeRecord, prepare_fn = prepare_export_statement_default_from_ns_from)]
 pub struct ExportStatementDefaultFromNsFromNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37792,7 +37792,7 @@ fn prepare_export_statement_default_from_ns_from<N: ExportStatementDefaultFromNs
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM, layout = [kind::FROM_KEYWORD], words = 8, built_words = 4, fields = ExportStatementDefaultFromClauseFromFields, prepare = ExportStatementDefaultFromClauseFromPrepare, view = ExportStatementDefaultFromClauseFromNodeRecord, prepare_fn = prepare_export_statement_default_from_clause_from)]
+#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_FROM_CLAUSE_FROM, layout = [kind::FROM_KEYWORD], words = 8, built_words = 4, order = [export_clause, source], edges = ([slot(export_clause)], [slot(source), slot(export_clause)]), fields = ExportStatementDefaultFromClauseFromFields, prepare = ExportStatementDefaultFromClauseFromPrepare, view = ExportStatementDefaultFromClauseFromNodeRecord, prepare_fn = prepare_export_statement_default_from_clause_from)]
 pub struct ExportStatementDefaultFromClauseFromNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37871,7 +37871,7 @@ fn prepare_export_statement_default_from_clause_from<N: ExportStatementDefaultFr
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW, layout = [kind::DEFAULT_KEYWORD], words = 5, built_words = 3, fields = ExportStatementDefaultDeclarationDefaultKwFields, prepare = ExportStatementDefaultDeclarationDefaultKwPrepare, view = ExportStatementDefaultDeclarationDefaultKwNodeRecord, prepare_fn = prepare_export_statement_default_declaration_default_kw, seat_through = content)]
+#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW, layout = [kind::DEFAULT_KEYWORD], words = 5, built_words = 3, order = [content], edges = ([token(kind::DEFAULT_KEYWORD)], [slot(content)]), fields = ExportStatementDefaultDeclarationDefaultKwFields, prepare = ExportStatementDefaultDeclarationDefaultKwPrepare, view = ExportStatementDefaultDeclarationDefaultKwNodeRecord, prepare_fn = prepare_export_statement_default_declaration_default_kw, seat_through = content)]
 pub struct ExportStatementDefaultDeclarationDefaultKwNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -37946,7 +37946,7 @@ fn prepare_export_statement_default_declaration_default_kw<N: ExportStatementDef
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE, layout = [kind::_AUTOMATIC_SEMICOLON, kind::SEMI], words = 7, built_words = 4, fields = ExportStatementDefaultDeclarationDefaultKwValueFields, prepare = ExportStatementDefaultDeclarationDefaultKwValuePrepare, view = ExportStatementDefaultDeclarationDefaultKwValueNodeRecord, prepare_fn = prepare_export_statement_default_declaration_default_kw_value)]
+#[node(kind = kind::EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE, layout = [kind::_AUTOMATIC_SEMICOLON, kind::SEMI], words = 7, built_words = 4, order = [value, automatic_semicolon], edges = ([slot(value)], [slot(automatic_semicolon), slot(value)]), fields = ExportStatementDefaultDeclarationDefaultKwValueFields, prepare = ExportStatementDefaultDeclarationDefaultKwValuePrepare, view = ExportStatementDefaultDeclarationDefaultKwValueNodeRecord, prepare_fn = prepare_export_statement_default_declaration_default_kw_value)]
 pub struct ExportStatementDefaultDeclarationDefaultKwValueNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38026,7 +38026,7 @@ fn prepare_export_statement_default_declaration_default_kw_value<N: ExportStatem
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VARIABLE_DECLARATOR_PLAIN, layout = [kind::EQ], words = 12, built_words = 5, fields = VariableDeclaratorPlainFields, prepare = VariableDeclaratorPlainPrepare, view = VariableDeclaratorPlainNodeRecord, prepare_fn = prepare_variable_declarator_plain)]
+#[node(kind = kind::VARIABLE_DECLARATOR_PLAIN, layout = [kind::EQ], words = 12, built_words = 5, order = [name, type_, value], edges = ([slot(name)], [slot(value), slot(type_), slot(name)]), fields = VariableDeclaratorPlainFields, prepare = VariableDeclaratorPlainPrepare, view = VariableDeclaratorPlainNodeRecord, prepare_fn = prepare_variable_declarator_plain)]
 pub struct VariableDeclaratorPlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38109,7 +38109,7 @@ fn prepare_variable_declarator_plain<N: VariableDeclaratorPlainPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::VARIABLE_DECLARATOR_DEFINITE, layout = [kind::BANG], words = 8, built_words = 4, fields = VariableDeclaratorDefiniteFields, prepare = VariableDeclaratorDefinitePrepare, view = VariableDeclaratorDefiniteNodeRecord, prepare_fn = prepare_variable_declarator_definite)]
+#[node(kind = kind::VARIABLE_DECLARATOR_DEFINITE, layout = [kind::BANG], words = 8, built_words = 4, order = [name, type_], edges = ([slot(name)], [slot(type_)]), fields = VariableDeclaratorDefiniteFields, prepare = VariableDeclaratorDefinitePrepare, view = VariableDeclaratorDefiniteNodeRecord, prepare_fn = prepare_variable_declarator_definite)]
 pub struct VariableDeclaratorDefiniteNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38290,7 +38290,7 @@ impl ::sittir_core::render::Render for MetaPropertyImportMetaNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_HEADER_LHS, layout = [kind::LPAREN, kind::RPAREN], words = 10, built_words = 5, fields = ForHeaderLhsFields, prepare = ForHeaderLhsPrepare, view = ForHeaderLhsNodeRecord, prepare_fn = prepare_for_header_lhs)]
+#[node(kind = kind::FOR_HEADER_LHS, layout = [kind::LPAREN, kind::RPAREN], words = 10, built_words = 5, order = [left, operator, right], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ForHeaderLhsFields, prepare = ForHeaderLhsPrepare, view = ForHeaderLhsNodeRecord, prepare_fn = prepare_for_header_lhs)]
 pub struct ForHeaderLhsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38373,7 +38373,7 @@ fn prepare_for_header_lhs<N: ForHeaderLhsPrepare + ?Sized>(node: &mut N, overlay
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_HEADER_VAR_KIND, layout = [kind::LPAREN, kind::VAR_KEYWORD, kind::EQ, kind::RPAREN], words = 14, built_words = 6, fields = ForHeaderVarKindFields, prepare = ForHeaderVarKindPrepare, view = ForHeaderVarKindNodeRecord, prepare_fn = prepare_for_header_var_kind)]
+#[node(kind = kind::FOR_HEADER_VAR_KIND, layout = [kind::LPAREN, kind::VAR_KEYWORD, kind::EQ, kind::RPAREN], words = 14, built_words = 6, order = [left, value, operator, right], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ForHeaderVarKindFields, prepare = ForHeaderVarKindPrepare, view = ForHeaderVarKindNodeRecord, prepare_fn = prepare_for_header_var_kind)]
 pub struct ForHeaderVarKindNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38460,7 +38460,7 @@ fn prepare_for_header_var_kind<N: ForHeaderVarKindPrepare + ?Sized>(node: &mut N
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_HEADER_LET_CONST_KIND, layout = [kind::LPAREN, kind::RPAREN], words = 12, built_words = 7, fields = ForHeaderLetConstKindFields, prepare = ForHeaderLetConstKindPrepare, view = ForHeaderLetConstKindNodeRecord, prepare_fn = prepare_for_header_let_const_kind)]
+#[node(kind = kind::FOR_HEADER_LET_CONST_KIND, layout = [kind::LPAREN, kind::RPAREN], words = 12, built_words = 7, order = [kind, left, terminator, operator, right], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ForHeaderLetConstKindFields, prepare = ForHeaderLetConstKindPrepare, view = ForHeaderLetConstKindNodeRecord, prepare_fn = prepare_for_header_let_const_kind)]
 pub struct ForHeaderLetConstKindNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38552,7 +38552,7 @@ fn prepare_for_header_let_const_kind<N: ForHeaderLetConstKindPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FOR_HEADER_USING_KIND, layout = [kind::LPAREN, kind::RPAREN], words = 12, built_words = 7, fields = ForHeaderUsingKindFields, prepare = ForHeaderUsingKindPrepare, view = ForHeaderUsingKindNodeRecord, prepare_fn = prepare_for_header_using_kind)]
+#[node(kind = kind::FOR_HEADER_USING_KIND, layout = [kind::LPAREN, kind::RPAREN], words = 12, built_words = 7, order = [kind, left, terminator, operator, right], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = ForHeaderUsingKindFields, prepare = ForHeaderUsingKindPrepare, view = ForHeaderUsingKindNodeRecord, prepare_fn = prepare_for_header_using_kind)]
 pub struct ForHeaderUsingKindNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38675,7 +38675,7 @@ impl ::sittir_core::render::Render for FormalParametersGetAccessorSignatureNode 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, fields = FormalParametersSetAccessorSignatureFields, prepare = FormalParametersSetAccessorSignaturePrepare, view = FormalParametersSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_set_accessor_signature)]
+#[node(kind = kind::_FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, order = [elements], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = FormalParametersSetAccessorSignatureFields, prepare = FormalParametersSetAccessorSignaturePrepare, view = FormalParametersSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_set_accessor_signature)]
 pub struct FormalParametersSetAccessorSignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38749,7 +38749,7 @@ fn prepare_formal_parameters_set_accessor_signature<N: FormalParametersSetAccess
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE, words = 5, built_words = 3, fields = FormalParametersElementsSetAccessorSignatureFields, prepare = FormalParametersElementsSetAccessorSignaturePrepare, view = FormalParametersElementsSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_elements_set_accessor_signature)]
+#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE, words = 5, built_words = 3, order = [item], edges = ([slot(item)], [slot(item)]), fields = FormalParametersElementsSetAccessorSignatureFields, prepare = FormalParametersElementsSetAccessorSignaturePrepare, view = FormalParametersElementsSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_elements_set_accessor_signature)]
 pub struct FormalParametersElementsSetAccessorSignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38823,7 +38823,7 @@ fn prepare_formal_parameters_elements_set_accessor_signature<N: FormalParameters
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_SETTER_PARAMETER, words = 12, built_words = 7, fields = SetterParameterFields, prepare = SetterParameterPrepare, view = SetterParameterNodeRecord, prepare_fn = prepare_setter_parameter)]
+#[node(kind = kind::_SETTER_PARAMETER, words = 12, built_words = 7, order = [decorator, accessibility_modifier, override_, readonly, pattern, type_], edges = ([slot(decorator), slot(accessibility_modifier), slot(override_), slot(readonly), slot(pattern)], [slot(type_), slot(pattern)]), fields = SetterParameterFields, prepare = SetterParameterPrepare, view = SetterParameterNodeRecord, prepare_fn = prepare_setter_parameter)]
 pub struct SetterParameterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38922,7 +38922,7 @@ fn prepare_setter_parameter<N: SetterParameterPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_DEFINITION_PLAIN, words = 19, built_words = 9, fields = MethodDefinitionPlainFields, prepare = MethodDefinitionPlainPrepare, view = MethodDefinitionPlainNodeRecord, prepare_fn = prepare_method_definition_plain)]
+#[node(kind = kind::METHOD_DEFINITION_PLAIN, words = 19, built_words = 9, order = [accessibility_modifier, static_, override_, readonly, async_, generator, name, optional, type_parameters, parameters, return_type, body], edges = ([slot(accessibility_modifier), slot(static_), slot(override_), slot(readonly), slot(async_), slot(generator), slot(name)], [slot(body)]), fields = MethodDefinitionPlainFields, prepare = MethodDefinitionPlainPrepare, view = MethodDefinitionPlainNodeRecord, prepare_fn = prepare_method_definition_plain)]
 pub struct MethodDefinitionPlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39035,7 +39035,7 @@ fn prepare_method_definition_plain<N: MethodDefinitionPlainPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_DEFINITION_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 13, built_words = 7, fields = MethodDefinitionGetterFields, prepare = MethodDefinitionGetterPrepare, view = MethodDefinitionGetterNodeRecord, prepare_fn = prepare_method_definition_getter)]
+#[node(kind = kind::METHOD_DEFINITION_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 13, built_words = 7, order = [accessibility_modifier, static_, override_, name, type_, body], edges = ([slot(accessibility_modifier), slot(static_), slot(override_), token(kind::GET_KEYWORD)], [slot(body)]), fields = MethodDefinitionGetterFields, prepare = MethodDefinitionGetterPrepare, view = MethodDefinitionGetterNodeRecord, prepare_fn = prepare_method_definition_getter)]
 pub struct MethodDefinitionGetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39128,7 +39128,7 @@ fn prepare_method_definition_getter<N: MethodDefinitionGetterPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_DEFINITION_SETTER, layout = [kind::SET_KEYWORD], words = 13, built_words = 7, fields = MethodDefinitionSetterFields, prepare = MethodDefinitionSetterPrepare, view = MethodDefinitionSetterNodeRecord, prepare_fn = prepare_method_definition_setter)]
+#[node(kind = kind::METHOD_DEFINITION_SETTER, layout = [kind::SET_KEYWORD], words = 13, built_words = 7, order = [accessibility_modifier, static_, override_, name, parameters, body], edges = ([slot(accessibility_modifier), slot(static_), slot(override_), token(kind::SET_KEYWORD)], [slot(body)]), fields = MethodDefinitionSetterFields, prepare = MethodDefinitionSetterPrepare, view = MethodDefinitionSetterNodeRecord, prepare_fn = prepare_method_definition_setter)]
 pub struct MethodDefinitionSetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39221,7 +39221,7 @@ fn prepare_method_definition_setter<N: MethodDefinitionSetterPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_SIGNATURE_PLAIN, words = 16, built_words = 8, fields = MethodSignaturePlainFields, prepare = MethodSignaturePlainPrepare, view = MethodSignaturePlainNodeRecord, prepare_fn = prepare_method_signature_plain)]
+#[node(kind = kind::METHOD_SIGNATURE_PLAIN, words = 16, built_words = 8, order = [accessibility_modifier, static_, override_, readonly, async_, generator, name, optional, type_parameters, parameters, return_type], edges = ([slot(accessibility_modifier), slot(static_), slot(override_), slot(readonly), slot(async_), slot(generator), slot(name)], [slot(return_type), slot(parameters)]), fields = MethodSignaturePlainFields, prepare = MethodSignaturePlainPrepare, view = MethodSignaturePlainNodeRecord, prepare_fn = prepare_method_signature_plain)]
 pub struct MethodSignaturePlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39330,7 +39330,7 @@ fn prepare_method_signature_plain<N: MethodSignaturePlainPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_SIGNATURE_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 10, built_words = 6, fields = MethodSignatureGetterFields, prepare = MethodSignatureGetterPrepare, view = MethodSignatureGetterNodeRecord, prepare_fn = prepare_method_signature_getter)]
+#[node(kind = kind::METHOD_SIGNATURE_GETTER, layout = [kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 10, built_words = 6, order = [accessibility_modifier, static_, override_, name, type_], edges = ([slot(accessibility_modifier), slot(static_), slot(override_), token(kind::GET_KEYWORD)], [slot(type_), token(kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE)]), fields = MethodSignatureGetterFields, prepare = MethodSignatureGetterPrepare, view = MethodSignatureGetterNodeRecord, prepare_fn = prepare_method_signature_getter)]
 pub struct MethodSignatureGetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39419,7 +39419,7 @@ fn prepare_method_signature_getter<N: MethodSignatureGetterPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_SIGNATURE_SETTER, layout = [kind::SET_KEYWORD], words = 10, built_words = 6, fields = MethodSignatureSetterFields, prepare = MethodSignatureSetterPrepare, view = MethodSignatureSetterNodeRecord, prepare_fn = prepare_method_signature_setter)]
+#[node(kind = kind::METHOD_SIGNATURE_SETTER, layout = [kind::SET_KEYWORD], words = 10, built_words = 6, order = [accessibility_modifier, static_, override_, name, parameters], edges = ([slot(accessibility_modifier), slot(static_), slot(override_), token(kind::SET_KEYWORD)], [slot(parameters)]), fields = MethodSignatureSetterFields, prepare = MethodSignatureSetterPrepare, view = MethodSignatureSetterNodeRecord, prepare_fn = prepare_method_signature_setter)]
 pub struct MethodSignatureSetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39508,7 +39508,7 @@ fn prepare_method_signature_setter<N: MethodSignatureSetterPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_PLAIN, layout = [kind::ABSTRACT_KEYWORD], words = 16, built_words = 8, fields = AbstractMethodSignaturePlainFields, prepare = AbstractMethodSignaturePlainPrepare, view = AbstractMethodSignaturePlainNodeRecord, prepare_fn = prepare_abstract_method_signature_plain)]
+#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_PLAIN, layout = [kind::ABSTRACT_KEYWORD], words = 16, built_words = 8, order = [accessibility_modifier, override_, generator, name, optional, type_parameters, parameters, return_type], edges = ([slot(accessibility_modifier), token(kind::ABSTRACT_KEYWORD)], [slot(return_type), slot(parameters)]), fields = AbstractMethodSignaturePlainFields, prepare = AbstractMethodSignaturePlainPrepare, view = AbstractMethodSignaturePlainNodeRecord, prepare_fn = prepare_abstract_method_signature_plain)]
 pub struct AbstractMethodSignaturePlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39608,7 +39608,7 @@ fn prepare_abstract_method_signature_plain<N: AbstractMethodSignaturePlainPrepar
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_GETTER, layout = [kind::ABSTRACT_KEYWORD, kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 10, built_words = 6, fields = AbstractMethodSignatureGetterFields, prepare = AbstractMethodSignatureGetterPrepare, view = AbstractMethodSignatureGetterNodeRecord, prepare_fn = prepare_abstract_method_signature_getter)]
+#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_GETTER, layout = [kind::ABSTRACT_KEYWORD, kind::GET_KEYWORD, kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE], words = 10, built_words = 6, order = [accessibility_modifier, override_, name, type_], edges = ([slot(accessibility_modifier), token(kind::ABSTRACT_KEYWORD)], [slot(type_), token(kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE)]), fields = AbstractMethodSignatureGetterFields, prepare = AbstractMethodSignatureGetterPrepare, view = AbstractMethodSignatureGetterNodeRecord, prepare_fn = prepare_abstract_method_signature_getter)]
 pub struct AbstractMethodSignatureGetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39694,7 +39694,7 @@ fn prepare_abstract_method_signature_getter<N: AbstractMethodSignatureGetterPrep
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_SETTER, layout = [kind::ABSTRACT_KEYWORD, kind::SET_KEYWORD], words = 10, built_words = 6, fields = AbstractMethodSignatureSetterFields, prepare = AbstractMethodSignatureSetterPrepare, view = AbstractMethodSignatureSetterNodeRecord, prepare_fn = prepare_abstract_method_signature_setter)]
+#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_SETTER, layout = [kind::ABSTRACT_KEYWORD, kind::SET_KEYWORD], words = 10, built_words = 6, order = [accessibility_modifier, override_, name, parameters], edges = ([slot(accessibility_modifier), token(kind::ABSTRACT_KEYWORD)], [slot(parameters)]), fields = AbstractMethodSignatureSetterFields, prepare = AbstractMethodSignatureSetterPrepare, view = AbstractMethodSignatureSetterNodeRecord, prepare_fn = prepare_abstract_method_signature_setter)]
 pub struct AbstractMethodSignatureSetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39780,7 +39780,7 @@ fn prepare_abstract_method_signature_setter<N: AbstractMethodSignatureSetterPrep
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PUBLIC_FIELD_DEFINITION_PLAIN, layout = [kind::EQ], words = 16, built_words = 9, fields = PublicFieldDefinitionPlainFields, prepare = PublicFieldDefinitionPlainPrepare, view = PublicFieldDefinitionPlainNodeRecord, prepare_fn = prepare_public_field_definition_plain)]
+#[node(kind = kind::PUBLIC_FIELD_DEFINITION_PLAIN, layout = [kind::EQ], words = 16, built_words = 9, order = [decorator, declare, accessibility_modifier, static_, override_, readonly, abstract_, name, optionality, type_, value], edges = ([slot(decorator), slot(declare), slot(accessibility_modifier), slot(static_), slot(override_), slot(readonly), slot(abstract_), slot(name)], [slot(value), slot(type_), slot(optionality), slot(name)]), fields = PublicFieldDefinitionPlainFields, prepare = PublicFieldDefinitionPlainPrepare, view = PublicFieldDefinitionPlainNodeRecord, prepare_fn = prepare_public_field_definition_plain)]
 pub struct PublicFieldDefinitionPlainNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -39896,7 +39896,7 @@ fn prepare_public_field_definition_plain<N: PublicFieldDefinitionPlainPrepare + 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PUBLIC_FIELD_DEFINITION_ACCESSOR, layout = [kind::ACCESSOR_KEYWORD, kind::EQ], words = 15, built_words = 8, fields = PublicFieldDefinitionAccessorFields, prepare = PublicFieldDefinitionAccessorPrepare, view = PublicFieldDefinitionAccessorNodeRecord, prepare_fn = prepare_public_field_definition_accessor)]
+#[node(kind = kind::PUBLIC_FIELD_DEFINITION_ACCESSOR, layout = [kind::ACCESSOR_KEYWORD, kind::EQ], words = 15, built_words = 8, order = [decorator, accessibility_modifier, static_, abstract_, override_, name, type_, value], edges = ([slot(decorator), slot(accessibility_modifier), slot(static_), slot(abstract_), slot(override_), token(kind::ACCESSOR_KEYWORD)], [slot(value), slot(type_), slot(name)]), fields = PublicFieldDefinitionAccessorFields, prepare = PublicFieldDefinitionAccessorPrepare, view = PublicFieldDefinitionAccessorNodeRecord, prepare_fn = prepare_public_field_definition_accessor)]
 pub struct PublicFieldDefinitionAccessorNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40525,7 +40525,7 @@ impl ::sittir_core::render::Render for DedentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_CONSTRUCTOR_DECLARATION, layout = [kind::CONSTRUCTOR_KEYWORD], words = 9, built_words = 5, fields = ConstructorDeclarationFields, prepare = ConstructorDeclarationPrepare, view = ConstructorDeclarationNodeRecord, prepare_fn = prepare_constructor_declaration)]
+#[node(kind = kind::_CONSTRUCTOR_DECLARATION, layout = [kind::CONSTRUCTOR_KEYWORD], words = 9, built_words = 5, order = [accessibility_modifier, parameters, body], edges = ([slot(accessibility_modifier), token(kind::CONSTRUCTOR_KEYWORD)], [slot(body)]), fields = ConstructorDeclarationFields, prepare = ConstructorDeclarationPrepare, view = ConstructorDeclarationNodeRecord, prepare_fn = prepare_constructor_declaration)]
 pub struct ConstructorDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40608,7 +40608,7 @@ fn prepare_constructor_declaration<N: ConstructorDeclarationPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_RECEIVER_PARAMETER_DECLARATION, layout = [kind::THIS, kind::EQ], words = 12, built_words = 7, fields = ReceiverParameterDeclarationFields, prepare = ReceiverParameterDeclarationPrepare, view = ReceiverParameterDeclarationNodeRecord, prepare_fn = prepare_receiver_parameter_declaration)]
+#[node(kind = kind::_RECEIVER_PARAMETER_DECLARATION, layout = [kind::THIS, kind::EQ], words = 12, built_words = 7, order = [decorator, accessibility_modifier, override_, readonly, type_, value], edges = ([slot(decorator), slot(accessibility_modifier), slot(override_), slot(readonly), token(kind::THIS)], [slot(value), slot(type_), token(kind::THIS)]), fields = ReceiverParameterDeclarationFields, prepare = ReceiverParameterDeclarationPrepare, view = ReceiverParameterDeclarationNodeRecord, prepare_fn = prepare_receiver_parameter_declaration)]
 pub struct ReceiverParameterDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40707,7 +40707,7 @@ fn prepare_receiver_parameter_declaration<N: ReceiverParameterDeclarationPrepare
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_RECEIVER, words = 8, built_words = 4, fields = FormalParametersElementsReceiverFields, prepare = FormalParametersElementsReceiverPrepare, view = FormalParametersElementsReceiverNodeRecord, prepare_fn = prepare_formal_parameters_elements_receiver)]
+#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_RECEIVER, words = 8, built_words = 4, order = [receiver, formal_parameters_elements_receiver_group], edges = ([slot(receiver)], [slot(formal_parameters_elements_receiver_group), slot(receiver)]), fields = FormalParametersElementsReceiverFields, prepare = FormalParametersElementsReceiverPrepare, view = FormalParametersElementsReceiverNodeRecord, prepare_fn = prepare_formal_parameters_elements_receiver)]
 pub struct FormalParametersElementsReceiverNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -40786,7 +40786,7 @@ fn prepare_formal_parameters_elements_receiver<N: FormalParametersElementsReceiv
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FORMAL_PARAMETERS_ELEMENTS_RECEIVER_GROUP, min_depth = 2, layout = [kind::COMMA], words = 5, built_words = 3, fields = FormalParametersElementsReceiverGroupFields, prepare = FormalParametersElementsReceiverGroupPrepare, view = FormalParametersElementsReceiverGroupNodeRecord, prepare_fn = prepare_formal_parameters_elements_receiver_group)]
+#[node(kind = kind::FORMAL_PARAMETERS_ELEMENTS_RECEIVER_GROUP, min_depth = 2, layout = [kind::COMMA], words = 5, built_words = 3, order = [elements], edges = ([token(kind::COMMA)], [slot(elements), token(kind::COMMA)]), fields = FormalParametersElementsReceiverGroupFields, prepare = FormalParametersElementsReceiverGroupPrepare, view = FormalParametersElementsReceiverGroupNodeRecord, prepare_fn = prepare_formal_parameters_elements_receiver_group)]
 pub struct FormalParametersElementsReceiverGroupNode {
     #[wire(key = "$_layout")]
     #[layout]

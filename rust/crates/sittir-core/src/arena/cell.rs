@@ -698,7 +698,7 @@ mod tests {
             CellShape { word: 5, width: 1, run: Some(3), forms: form::NODE, built: 3, key: "_items" },
             CellShape { word: 6, width: 3, run: None, forms: form::NODE, built: 4, key: "_unset" },
         ];
-        let record = RecordShape { words: 9, built_words: 5, cells: CELLS };
+        let record = RecordShape { words: 9, built_words: 5, cells: CELLS, ..RecordShape::BARE };
         let mut image = BuiltImage::new(BITS);
         let leaf = image.record(KindId(6), HEADER_WORDS, &[]);
         let child = built_cell(leaf, ChangedEdges { leading: true, trailing: false });

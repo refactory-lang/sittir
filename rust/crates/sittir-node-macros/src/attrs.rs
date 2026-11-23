@@ -82,6 +82,58 @@ pub struct KindAttrs {
     /// On a delimiter token: its derived facet's field, which its record's
     /// view reads from the overlay where prepare filled it.
     pub facet: Option<Ident>,
+    /// On a struct: its cells and flags, in the order its render body writes
+    /// them.
+    pub order: Option<Vec<Ident>>,
+    /// On a struct: what its render body writes at its before and after
+    /// edges, nearest the edge first.
+    pub edges: Option<(Vec<EdgePartAttr>, Vec<EdgePartAttr>)>,
+}
+
+/// One part of `edges = ([…], […])`: `token(KIND)`, `slot(name)`, or
+/// `guarded(name, KIND)`.
+pub enum EdgePartAttr {
+    Token(Path),
+    Slot(Ident),
+    Guarded(Ident, Path),
+}
+
+fn edge_part(input: ParseStream) -> syn::Result<EdgePartAttr> {
+    let name = input.call(Ident::parse_any)?;
+    let content;
+    syn::parenthesized!(content in input);
+    match name.to_string().as_str() {
+        "token" => Ok(EdgePartAttr::Token(content.parse()?)),
+        "slot" => Ok(EdgePartAttr::Slot(content.call(Ident::parse_any)?)),
+        "guarded" => {
+            let slot = content.call(Ident::parse_any)?;
+            content.parse::<Token![,]>()?;
+            Ok(EdgePartAttr::Guarded(slot, content.parse()?))
+        }
+        _ => Err(syn::Error::new_spanned(name, "an edge part is `token(KIND)`, `slot(name)` or `guarded(name, KIND)`")),
+    }
+}
+
+fn edge_parts(input: ParseStream) -> syn::Result<Vec<EdgePartAttr>> {
+    let content;
+    syn::bracketed!(content in input);
+    Ok(Punctuated::<EdgePartAttr, Token![,]>::parse_terminated_with(&content, edge_part)?.into_iter().collect())
+}
+
+/// `([PART, …], [PART, …])`.
+fn edges(input: ParseStream) -> syn::Result<(Vec<EdgePartAttr>, Vec<EdgePartAttr>)> {
+    let content;
+    syn::parenthesized!(content in input);
+    let before = edge_parts(&content)?;
+    content.parse::<Token![,]>()?;
+    Ok((before, edge_parts(&content)?))
+}
+
+/// `[slot, …]`.
+fn slot_names(input: ParseStream) -> syn::Result<Vec<Ident>> {
+    let content;
+    syn::bracketed!(content in input);
+    Ok(Punctuated::<Ident, Token![,]>::parse_terminated_with(&content, Ident::parse_any)?.into_iter().collect())
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -261,6 +313,8 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "seat_through" => out.seat_through = Some(meta.value()?.parse()?),
                 "stamp" => out.stamp = Some(meta.value()?.parse()?),
                 "facet" => out.facet = Some(meta.value()?.parse()?),
+                "order" => out.order = Some(slot_names(meta.value()?)?),
+                "edges" => out.edges = Some(edges(meta.value()?)?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())

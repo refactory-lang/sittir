@@ -65,6 +65,22 @@ pub(crate) fn cell_shape(field: &Field<'_>, cell: &crate::attrs::CellStamp) -> s
     Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, forms: #forms, built: #built, key: #key }))
 }
 
+/// A flag's stamped bit and the kind of its keyword, as `BodySlot::Flag`
+/// spells them.
+fn flag_slot(field: &Field<'_>, slot: &crate::attrs::SlotAttrs) -> syn::Result<TokenStream> {
+    let name = field.ident;
+    let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a presence slot without its record word (`word = …`)")))?;
+    let bit = slot.cell.bit.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a presence slot without its bit (`bit = …`)")))?;
+    let bit = u8::try_from(bit).map_err(|_| syn::Error::new_spanned(name, format!("`{name}`'s bit does not fit a `u8`")))?;
+    let kind = match &slot.presence {
+        Some(crate::attrs::Presence::Token(group)) => group.first(),
+        Some(crate::attrs::Presence::Display(kind)) => Some(kind),
+        None => None,
+    }
+    .ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` holds a bit without its keyword (`presence = …`)")))?;
+    Ok(quote!(::sittir_core::arena::BodySlot::Flag { word: #word, bit: #bit, kind: #kind }))
+}
+
 fn view_of(node: &Type) -> TokenStream {
     quote!(<#node as ::sittir_core::arena::HasRecord>::Record<'a>)
 }
@@ -350,19 +366,65 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             },
         )
     };
-    let cells = fields
+    let celled: Vec<(&Field<'_>, &crate::attrs::SlotAttrs)> = fields
         .iter()
         .filter_map(|field| match (&field.role, shape(field)) {
-            (Role::Slot(slot), Ok(Shape::Child | Shape::OptionalChild | Shape::Items | Shape::Text | Shape::OptionalText)) if slot.cell.word.is_some() => Some(cell_shape(field, &slot.cell)),
+            (Role::Slot(slot), Ok(Shape::Child | Shape::OptionalChild | Shape::Items | Shape::Text | Shape::OptionalText)) if slot.cell.word.is_some() => Some((field, slot)),
             _ => None,
         })
-        .collect::<syn::Result<Vec<_>>>()?;
+        .collect();
+    let flagged: Vec<(&Field<'_>, &crate::attrs::SlotAttrs)> = fields
+        .iter()
+        .filter_map(|field| match (&field.role, shape(field)) {
+            (Role::Slot(slot), Ok(Shape::Value)) if slot.cell.bit.is_some() && slot.presence.is_some() => Some((field, slot)),
+            _ => None,
+        })
+        .collect();
+    let cells = celled.iter().map(|(field, slot)| cell_shape(field, &slot.cell)).collect::<syn::Result<Vec<_>>>()?;
+    let body_slot = |name: &Ident| -> syn::Result<TokenStream> {
+        if let Some(at) = celled.iter().position(|(field, _)| field.ident == name) {
+            let at = u8::try_from(at).map_err(|_| syn::Error::new_spanned(name, format!("`{ident}` has more cells than a `u8` indexes")))?;
+            return Ok(quote!(::sittir_core::arena::BodySlot::Cell(#at)));
+        }
+        let (field, slot) = flagged.iter().find(|(field, _)| field.ident == name).ok_or_else(|| syn::Error::new_spanned(name, format!("`{ident}` has no cell or flag `{name}`")))?;
+        flag_slot(field, slot)
+    };
+    let listed: Vec<&Ident> = match &attrs.order {
+        Some(names) => names.iter().collect(),
+        None => celled.iter().chain(&flagged).map(|(field, _)| field.ident).collect(),
+    };
+    if listed.len() != celled.len() + flagged.len() || !celled.iter().chain(&flagged).all(|(field, _)| listed.contains(&field.ident)) {
+        return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s `order` names each of its cells and flags once")));
+    }
+    let order = listed.iter().map(|name| body_slot(name)).collect::<syn::Result<Vec<_>>>()?;
+    let edge = |parts: &[crate::attrs::EdgePartAttr]| -> syn::Result<Vec<TokenStream>> {
+        parts
+            .iter()
+            .map(|part| {
+                Ok(match part {
+                    crate::attrs::EdgePartAttr::Token(kind) => quote!(::sittir_core::arena::EdgePart::Token(#kind)),
+                    crate::attrs::EdgePartAttr::Slot(name) => {
+                        let slot = body_slot(name)?;
+                        quote!(::sittir_core::arena::EdgePart::Slot(#slot))
+                    }
+                    crate::attrs::EdgePartAttr::Guarded(name, token) => {
+                        let slot = body_slot(name)?;
+                        quote!(::sittir_core::arena::EdgePart::Guarded { slot: #slot, token: #token })
+                    }
+                })
+            })
+            .collect()
+    };
+    let (before, after) = match &attrs.edges {
+        Some((before, after)) => (edge(before)?, edge(after)?),
+        None => (Vec::new(), Vec::new()),
+    };
     let shape = if let (true, Some(content)) = (attrs.content_list, &attrs.content) {
         let field = fields.iter().find(|field| field.ident == content).ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
         let (node, _) = held(field.ty).ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content holds a `SlotValue<…>`"))?;
         quote!(#accepts.then(|| <#node as ::sittir_core::arena::RecordCells>::shape(kind)).flatten())
     } else {
-        quote!(#accepts.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*] }))
+        quote!(#accepts.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*], order: &[#(#order),*], edges: [&[#(#before),*], &[#(#after),*]] }))
     };
     let refusal = format!(
         "`{ident}`, of kind `{}`, has a record of {words} words, header included, past `sittir_core::types::NodeId::SITE_WORDS`, the most words a record takes in arena storage, where a node's name gives a cell's word `NodeId::WORD_BITS` bits: give the kind fewer cells, or widen `NodeId::WORD_BITS`",
@@ -696,6 +758,33 @@ mod tests {
         assert!(!has(&out, "fn write_cell_shown("));
         assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { (kind == kind::ARGUMENTS) }"));
         assert!(has(&out, "{ self.__write_as(__sink, __KIND, ::sittir_core::arena::LayoutField::layout(&self.layout)) }"));
+    }
+
+    #[test]
+    fn a_struct_s_order_places_its_flag_and_refuses_a_slot_left_out() {
+        let with = |order: proc_macro2::TokenStream| -> syn::DeriveInput {
+            parse_quote! {
+                #[node(kind = kind::REFERENCE, words = 7, built_words = 4, order = #order, edges = ([token(kind::AMP)], [slot(target)]), fields = ReferenceFields, view = ReferenceNodeRecord, prepare_fn = prepare_reference)]
+                pub struct ReferenceNode {
+                    #[wire(key = "$_layout")]
+                    #[layout]
+                    pub layout: Option<Box<NodeLayout>>,
+                    #[height]
+                    height: u16,
+                    #[wire(key = "_exclusive")]
+                    #[slot(field = field::EXCLUSIVE, presence = kind::MUT, word = 2, bit = 0)]
+                    pub exclusive: bool,
+                    #[wire(key = "_target")]
+                    #[slot(field = field::TARGET, word = 3, width = 3, forms = 1, built = 3)]
+                    pub target: SlotValue<TargetNode>,
+                }
+            }
+        };
+        let out = expand(&with(quote::quote!([exclusive, target]))).expect("expands").replace(' ', "");
+        assert!(out.contains("order:&[::sittir_core::arena::BodySlot::Flag{word:2u32,bit:0u8,kind:kind::MUT},::sittir_core::arena::BodySlot::Cell(0u8)]"), "{out}");
+        assert!(out.contains("edges:[&[::sittir_core::arena::EdgePart::Token(kind::AMP)],&[::sittir_core::arena::EdgePart::Slot(::sittir_core::arena::BodySlot::Cell(0u8))]]"), "{out}");
+        let refused = expand(&with(quote::quote!([target]))).expect_err("refused").to_string();
+        assert!(refused.contains("names each of its cells and flags once"), "{refused}");
     }
 
     #[test]

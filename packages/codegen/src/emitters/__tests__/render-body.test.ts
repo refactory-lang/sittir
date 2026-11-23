@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { doubledFlanks,
 	ADJACENT,
@@ -7,6 +8,8 @@ import { doubledFlanks,
 	INDENT,
 	MARKER_EDGE,
 	SPACE,
+	bodyEdgeParts,
+	bodySlotOrder,
 	branches,
 	concat,
 	duplicateSlots,
@@ -29,9 +32,75 @@ import { doubledFlanks,
 	text,
 	tokenSeam,
 	weight,
-	withJoinArm
+	withJoinArm,
+	writesDepth
 } from '../render-body.ts';
-import type { IfNode } from '../render-body.ts';
+import type { Body, IfNode } from '../render-body.ts';
+import { DEDENT_TEXT, INDENT_TEXT } from '../../dsl/primitives/spacing.ts';
+
+const bodyOf = (grammar: string, kind: string): Body => {
+	const bodies = JSON.parse(readFileSync(new URL(`../../../../${grammar}/.sittir/render-bodies.json`, import.meta.url), 'utf8')) as Record<string, Body>;
+	return bodies[kind]!;
+};
+
+describe('bodySlotOrder', () => {
+	it('lists each slot where the body first writes it', () => {
+		expect(bodySlotOrder(bodyOf('rust', 'reference_type'))).toEqual(['lifetime', 'exclusive', 'type']);
+		expect(bodySlotOrder(bodyOf('typescript', 'subscript_expression'))).toEqual(['object', 'optional_chain', 'index']);
+	});
+
+	it('lists a slot two arms share once', () => {
+		expect(bodySlotOrder(branches([{ test: 'a', body: concat(slot('a'), slot('b')) }], slot('b')))).toEqual(['a', 'b']);
+	});
+
+	it('refuses two arms that order two slots both ways', () => {
+		const body = branches([{ test: 'x', body: concat(slot('x'), slot('y')) }], concat(slot('y'), slot('x')));
+		expect(() => bodySlotOrder(body)).toThrow(/writes slots .* in both orders/);
+	});
+});
+
+describe('writesDepth', () => {
+	it('finds a depth part at any level of a body', () => {
+		expect(writesDepth(concat(text('a'), INDENT))).toBe(true);
+		expect(writesDepth(gate('s', DEDENT))).toBe(true);
+		expect(writesDepth(concat(text('a'), slot('b')))).toBe(false);
+	});
+});
+
+describe('bodyEdgeParts', () => {
+	it('stops at an unconditional token', () => {
+		expect(bodyEdgeParts(bodyOf('rust', 'let_declaration'), 'before')).toEqual([{ token: 'let' }]);
+		expect(bodyEdgeParts(bodyOf('rust', 'let_declaration'), 'after')).toEqual([{ token: ';' }]);
+	});
+
+	it('reads past a gated slot to the part after it', () => {
+		expect(bodyEdgeParts(bodyOf('typescript', 'function_declaration'), 'before')).toEqual([{ cell: 'async' }, { token: 'function' }]);
+	});
+
+	it('stops at a required slot and reads past an optional one', () => {
+		const body = concat(slot('a'), text(';'));
+		expect(bodyEdgeParts(body, 'before')).toEqual([{ cell: 'a' }]);
+		expect(bodyEdgeParts(body, 'before', (name) => name === 'a')).toEqual([{ cell: 'a' }, { token: ';' }]);
+	});
+
+	it('names a token inside an arm by the slot that guards it', () => {
+		expect(bodyEdgeParts(gate('s', concat(text('='), slot('s'))), 'before')).toEqual([{ guarded: 's', token: '=' }]);
+	});
+
+	it('takes nothing from a seam', () => {
+		expect(bodyEdgeParts(seam('a'), 'before')).toEqual([]);
+		expect(bodyEdgeParts(concat(seam('a'), text('x'), seam('b')), 'after')).toEqual([{ token: 'x' }]);
+	});
+
+	it('names a depth part as its token', () => {
+		expect(bodyEdgeParts(concat(INDENT, slot('a'), DEDENT), 'before')).toEqual([{ token: INDENT_TEXT }]);
+		expect(bodyEdgeParts(concat(INDENT, slot('a'), DEDENT), 'after')).toEqual([{ token: DEDENT_TEXT }]);
+	});
+
+	it('refuses a fallback token beside an arm that writes nothing at the edge', () => {
+		expect(() => bodyEdgeParts(branches([{ test: 'a', body: seam('s') }], text('x')), 'before')).toThrow(/an arm that writes nothing/);
+	});
+});
 
 describe('concat', () => {
 	it('merges adjacent literal text but never a depth node', () => {
