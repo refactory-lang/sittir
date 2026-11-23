@@ -1208,6 +1208,20 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const pickable = arms.filter((arm) => !flagOnly.has(storageName(arm.kind)));
 		if (pickable.length > 0 && pickable.length < arms.length) byPath.set(path, pickable);
 	}
+	const inheriting = new Map<string, Set<string>>();
+	for (const [kind, entries] of routes.readEntries) {
+		if (modelNode(model, kind)?.modelType === 'supertype' || typeOf(kind) === undefined) continue;
+		for (const entry of entries) if (entry.claimed !== kind) (inheriting.get(entry.vocab) ?? inheriting.set(entry.vocab, new Set()).get(entry.vocab)!).add(kind);
+	}
+	const refinedBy = (path: string, kind: string): boolean =>
+		[...byPath].some(([other, arms]) => other !== path && portablePathHasFacts(path, other) && arms.some((arm) => arm.kind === kind));
+	const ownRefinement = (path: string, kind: string): boolean =>
+		(routes.readEntries.get(kind) ?? []).some((entry) => entry.claimed === kind && entry.vocab !== path && portablePathHasFacts(path, entry.vocab));
+	for (const [path, arms] of byPath) {
+		const built = new Set(arms.map((arm) => arm.kind));
+		const left = [...(inheriting.get(path) ?? [])].filter((kind) => !built.has(kind) && refinedBy(path, kind));
+		if (arms.length > 0 && left.length > 0 && arms.every((arm) => ownRefinement(path, arm.kind))) byPath.set(path, []);
+	}
 	const seatedAt = (member: PortableMemberStep): string[] =>
 		member.seats.flatMap((seat) => [...seat.kinds.map((kind) => `${seat.at[0]} ${seat.at[1]} ${kind}`), ...(seat.within ?? []).flatMap((container) => (container.members ?? []).flatMap(seatedAt))]);
 	const seated = new Set([...byPath.values()].flatMap((arms) => arms.flatMap(({ arm }) => arm.members.flatMap(seatedAt))));

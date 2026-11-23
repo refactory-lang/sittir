@@ -849,7 +849,6 @@ export interface RustMap extends V.GrammarMap {
 								| V.Read<RustMap, 'expression.member'>
 								| V.Read<RustMap, 'expression.parenthesized'>
 								| V.Read<RustMap, 'expression.propagate'>
-								| V.Read<RustMap, 'expression.range'>
 								| V.Read<RustMap, 'expression.range.exclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -26556,7 +26555,6 @@ export interface RustMap extends V.GrammarMap {
 								| V.Read<RustMap, 'expression.member'>
 								| V.Read<RustMap, 'expression.parenthesized'>
 								| V.Read<RustMap, 'expression.propagate'>
-								| V.Read<RustMap, 'expression.range'>
 								| V.Read<RustMap, 'expression.range.exclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive'>
 								| V.Read<RustMap, 'expression.range.inclusive.legacy'>
@@ -27349,7 +27347,6 @@ export interface RustMap extends V.GrammarMap {
 				| T.UnaryExpression.Parsed
 				| T.WhileExpression.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<never, 'end' | 'start'> | V.Form<'start', 'end'> | V.Form<'end', 'start'>;
 		};
 		readonly 'expression.range.exclusive': {
 			readonly end:
