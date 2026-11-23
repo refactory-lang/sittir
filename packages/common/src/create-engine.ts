@@ -23,7 +23,6 @@ import type {
 	Rendered,
 	RenderArgument,
 	CreateEngineOptions,
-	KindMembership,
 	StructureTable
 } from '@sittir/types';
 import { engineClosed, engineOpened } from './engine-census.ts';
@@ -31,7 +30,7 @@ import { bindTree, engineOf, foreignEngine, inEngine, nodeStorageOf, stampEngine
 import { keepLayout } from './exemplars.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
-import { checkHoisted, checkInput, checkRow, verifyStructure } from './verify-structure.ts';
+import { checkHoisted, checkInput, checkRow, verifyStructure, type NamedMembership } from './verify-structure.ts';
 import { BuiltArena, type BuiltViews } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
@@ -187,7 +186,7 @@ export function scopeBuilders<T extends object>(engine: object, table: T): T {
 	return scope(table);
 }
 
-function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['verifyStored'] {
+function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: NamedMembership): EngineHandle['verifyStored'] {
 	if (mode !== 'runtime') return undefined;
 	return (kind, stored) => {
 		const row = table[kind];
@@ -198,7 +197,7 @@ function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], t
 function settlerOf(
 	mode: EngineOptions<LanguageAPI>['verifyStructure'],
 	table: StructureTable,
-	membership: KindMembership
+	membership: NamedMembership
 ): EngineHandle['settle'] {
 	if (mode !== 'runtime') return (node) => node;
 	const seen = new WeakSet<object>();
@@ -214,7 +213,7 @@ function keepingBuilt(settle: EngineHandle['settle'], keeps: boolean): EngineHan
 	return (node) => settle(typeof node === 'object' && node !== null ? keepLayout(layouts, node) : node);
 }
 
-function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['admit'] {
+function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: NamedMembership): EngineHandle['admit'] {
 	if (mode !== 'runtime') return () => undefined;
 	return (kindId, args, declared) => {
 		const row = typeof kindId === 'number' ? table[kindId] : undefined;
@@ -222,7 +221,7 @@ function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: 
 	};
 }
 
-function hoistedAdmitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['admitHoisted'] {
+function hoistedAdmitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: NamedMembership): EngineHandle['admitHoisted'] {
 	if (mode !== 'runtime') return undefined;
 	return (kind, property, values) => {
 		const row = table[kind];
@@ -254,16 +253,17 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		portable: hooks.portable
 	});
 	stampEngineStorage(identity, storage);
+	const named: NamedMembership = { ...hooks.membership, nameOf: (kind) => hooks.trivia.kindName(kind as API['kindId']) };
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
 		querySlots: hooks.querySlots,
 		nativeSlots: hooks.nativeSlots,
 		structure: hooks.structure,
-		settle: keepingBuilt(settlerOf(options?.verifyStructure, hooks.structure, hooks.membership), records === undefined),
-		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
-		admit: admitterOf(options?.verifyStructure, hooks.structure, hooks.membership),
-		admitHoisted: hoistedAdmitterOf(options?.verifyStructure, hooks.structure, hooks.membership)
+		settle: keepingBuilt(settlerOf(options?.verifyStructure, hooks.structure, named), records === undefined),
+		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, named),
+		admit: admitterOf(options?.verifyStructure, hooks.structure, named),
+		admitHoisted: hoistedAdmitterOf(options?.verifyStructure, hooks.structure, named)
 	};
 	const interceptors = options?.intercept ?? [];
 	const parseChain = interceptorChain(interceptors.map((hook) => hook.parse?.bind(hook)));

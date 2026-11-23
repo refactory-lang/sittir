@@ -18,6 +18,9 @@ import type {
 	NoneOf,
 	GatedList,
 	WithoutGroup,
+	CoOptionalRows,
+	BranchHint,
+	BranchShapesOf,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -4224,7 +4227,7 @@ export interface Slice {
 		readonly start: SlotHint<NonNullable<T.Slice.Config>['start'], true>;
 		readonly stop: SlotHint<NonNullable<T.Slice.Config>['stop'], true>;
 		readonly step: SlotHint<T.SliceGroup, true>;
-		readonly $flat: FlatHint<'step', T.SliceGroup, { readonly expression: 'expression' }, true, '_step'>;
+		readonly $flat: FlatHint<'step', T.SliceGroup, { readonly expression: 'expression' }, true>;
 	};
 	readonly start: () => Expression | undefined;
 	readonly stop: () => Expression | undefined;
@@ -4857,8 +4860,8 @@ export interface String {
 		readonly contents: SlotHint<(T.Interpolation | T.StringContent)[], true, true>;
 		readonly stringEnd: SlotHint<T.StringEnd>;
 		readonly $flat:
-			| FlatHint<'stringStart', T.StringStart, { readonly prefix: 'prefix' }, false, '_string_start'>
-			| FlatHint<'stringEnd', T.StringEnd, {}, false, '_string_end'>;
+			| FlatHint<'stringStart', T.StringStart, { readonly prefix: 'prefix' }, false>
+			| FlatHint<'stringEnd', T.StringEnd, {}, false>;
 	};
 	readonly stringStart: () => StringStart;
 	readonly contents: () => readonly (Interpolation | StringContent)[];
@@ -5589,6 +5592,7 @@ export interface FloatPoint {
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
@@ -5621,6 +5625,7 @@ export interface FloatLeadingPoint {
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly imaginary: SlotHint<string, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly integer: () => string | undefined;
 	readonly fraction: () => string;
@@ -14887,8 +14892,7 @@ export namespace Slice {
 	export type BuildArgs = [
 		config?:
 			| WithoutGroup<Partial<ConfigOf<T.Slice>>, OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
-			| (OmitEach<NonNullable<Partial<ConfigOf<T.Slice>>>, 'step'> &
-					(
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.Slice>>>, 'step'> & { readonly step?: never } & (
 						| { expression: T.SliceGroup.BuildArgs[0] }
 						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.Config }>, '$type'>>
 					))
@@ -14896,8 +14900,7 @@ export namespace Slice {
 	export type LooseArgs = [
 		config?:
 			| WithoutGroup<T.Slice.Loose, OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
-			| (OmitEach<NonNullable<T.Slice.Loose>, 'step'> &
-					(
+			| (OmitEach<NonNullable<T.Slice.Loose>, 'step'> & { readonly step?: never } & (
 						| { expression: T.SliceGroup.LooseArgs[0] }
 						| NoneOf<OmitEach<NonNullable<{ expression: T.SliceGroup.LooseConfig }>, '$type'>>
 					))
@@ -15582,7 +15585,9 @@ export namespace String {
 		config?: GatedList<
 			OmitEach<
 				NonNullable<
-					OmitEach<NonNullable<Partial<ConfigOf<T.String>>>, 'stringStart'> & { prefix?: T.StringStart.BuildArgs[0] }
+					OmitEach<NonNullable<Partial<ConfigOf<T.String>>>, 'stringStart'> & { readonly stringStart?: never } & {
+						prefix?: T.StringStart.BuildArgs[0];
+					}
 				>,
 				'stringEnd'
 			>,
@@ -15597,7 +15602,7 @@ export namespace String {
 		config?: GatedList<
 			OmitEach<
 				NonNullable<
-					OmitEach<NonNullable<T.String.Loose>, 'stringStart'> & {
+					OmitEach<NonNullable<T.String.Loose>, 'stringStart'> & { readonly stringStart?: never } & {
 						prefix?: NonNullable<T.StringStart.LooseConfig>['prefix'];
 					}
 				>,
@@ -17147,15 +17152,16 @@ export namespace FloatPoint {
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Bound extends BoundOf<T.FloatPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	interface BoundSurface extends BoundOf<T.FloatPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.FloatPoint['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.FloatPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export type Bound = BoundSurface & BranchShapesOf<BoundSurface, T.FloatPoint, BoundByKindId>;
+	interface ParsedSurface extends ParsedOf<T.FloatPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.FloatPoint['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -17163,6 +17169,7 @@ export namespace FloatPoint {
 		>;
 		readonly $snapshot: () => Snapshot<T.FloatPoint['$type']>;
 	}
+	export type Parsed = ParsedSurface & BranchShapesOf<ParsedSurface, T.FloatPoint, ParsedByKindId>;
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.FloatPoint>, 'marker'>
 		| WidenSlots<
@@ -17175,14 +17182,24 @@ export namespace FloatPoint {
 		OmitEach<LooseConfigFor<TSKindId.FloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.FloatPoint>, 'marker'>,
-			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.FloatPoint.Options
-	];
-	export type LooseArgs = [config: T.FloatPoint.Loose, options?: T.FloatPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.FloatPoint>, 'marker'>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.FloatPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.FloatPoint.Loose, options?: T.FloatPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.FloatPoint;
 }
 export namespace FloatLeadingPoint {
@@ -17191,15 +17208,16 @@ export namespace FloatLeadingPoint {
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Bound extends BoundOf<T.FloatLeadingPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	interface BoundSurface extends BoundOf<T.FloatLeadingPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.FloatLeadingPoint['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.FloatLeadingPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export type Bound = BoundSurface & BranchShapesOf<BoundSurface, T.FloatLeadingPoint, BoundByKindId>;
+	interface ParsedSurface extends ParsedOf<T.FloatLeadingPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.FloatLeadingPoint['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -17207,6 +17225,7 @@ export namespace FloatLeadingPoint {
 		>;
 		readonly $snapshot: () => Snapshot<T.FloatLeadingPoint['$type']>;
 	}
+	export type Parsed = ParsedSurface & BranchShapesOf<ParsedSurface, T.FloatLeadingPoint, ParsedByKindId>;
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.FloatLeadingPoint>, 'marker'>
 		| WidenSlots<
@@ -17219,14 +17238,24 @@ export namespace FloatLeadingPoint {
 		OmitEach<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
-			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.FloatLeadingPoint.Options
-	];
-	export type LooseArgs = [config: T.FloatLeadingPoint.Loose, options?: T.FloatLeadingPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.FloatLeadingPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.FloatLeadingPoint.Loose, options?: T.FloatLeadingPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.FloatLeadingPoint;
 }
 export namespace FloatScientific {

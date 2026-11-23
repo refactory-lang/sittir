@@ -32,6 +32,7 @@ import {
 	readNode,
 	listOption,
 	checkDelimited,
+	hasSlot,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -4984,6 +4985,7 @@ export function wrapUseWildcard(data: T.UseWildcard, tree: TreeHandle): T.UseWil
 			data._use_wildcard_group === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.UseWildcardGroup | undefined>(node, '_use_wildcard_group', tree), 'path'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -9213,6 +9215,7 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 			data._match === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.MatchPattern | undefined>(node, '_match', tree), 'condition'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11213,6 +11216,7 @@ export function wrapRawStringLiteral(data: T.RawStringLiteral, tree: TreeHandle)
 							hydrateSlot<T.RawStringLiteralStart | undefined>(node, '_raw_string_literal_start', tree),
 							'prefix'
 						),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -14532,16 +14536,30 @@ function wrapAttributeInput$with(node: Held, setter: string, args: readonly unkn
 		case 'value':
 			return applySetter(args, (v: NonNullable<T.AttributeInput['_value']>) =>
 				rebuilt(node, handle, () =>
-					wrapAttributeInput({ ...$edited(data), _value: admitSlot(handle, 'attribute_input', 'value', v) }, tree)
+					v === undefined
+						? wrapAttributeInput({ ...$edited(data), _value: admitSlot(handle, 'attribute_input', 'value', v) }, tree)
+						: wrapAttributeInput(
+								{ ...$edited(data), _arguments: undefined, _value: admitSlot(handle, 'attribute_input', 'value', v) },
+								tree
+							)
 				)
 			);
 		case 'arguments':
 			return applySetter(args, (v: NonNullable<T.AttributeInput['_arguments']>) =>
 				rebuilt(node, handle, () =>
-					wrapAttributeInput(
-						{ ...$edited(data), _arguments: admitSlot(handle, 'attribute_input', 'arguments', v) },
-						tree
-					)
+					v === undefined
+						? wrapAttributeInput(
+								{ ...$edited(data), _arguments: admitSlot(handle, 'attribute_input', 'arguments', v) },
+								tree
+							)
+						: wrapAttributeInput(
+								{
+									...$edited(data),
+									_value: undefined,
+									_arguments: admitSlot(handle, 'attribute_input', 'arguments', v)
+								},
+								tree
+							)
 				)
 			);
 	}
@@ -16790,6 +16808,7 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 			data._match === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.MatchPattern | undefined>(node, '_match', tree), 'condition'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -16950,6 +16969,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 			data._match === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.MatchPattern | undefined>(node, '_match', tree), 'condition'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -20536,6 +20556,7 @@ export function wrapParametersElementsReceiver(
 			data._receiver === undefined
 				? undefined
 				: () => groupField(hydrateSlot<T.AttributedParameterReceiver | undefined>(node, '_receiver', tree), 'content'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -23863,6 +23884,7 @@ function viewUseWildcard(data: RecordPosition, tree: TreeHandle): T.UseWildcard.
 		useWildcardGroup: viewUseWildcard$useWildcardGroup,
 		path: undefined as typeof viewUseWildcard$path | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -25940,6 +25962,7 @@ function viewLastMatchArm(data: RecordPosition, tree: TreeHandle): T.LastMatchAr
 		pattern: undefined as typeof viewLastMatchArm$pattern | undefined,
 		condition: undefined as typeof viewLastMatchArm$condition | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -26931,6 +26954,7 @@ function viewRawStringLiteral(data: RecordPosition, tree: TreeHandle): T.RawStri
 		rawStringLiteralEnd: viewRawStringLiteral$rawStringLiteralEnd,
 		prefix: undefined as typeof viewRawStringLiteral$prefix | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -30020,6 +30044,7 @@ function viewMatchArmWithComma(data: RecordPosition, tree: TreeHandle): T.MatchA
 		pattern: undefined as typeof viewMatchArmWithComma$pattern | undefined,
 		condition: undefined as typeof viewMatchArmWithComma$condition | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -30084,6 +30109,7 @@ function viewMatchArmBlockEnding(data: RecordPosition, tree: TreeHandle): T.Matc
 		pattern: undefined as typeof viewMatchArmBlockEnding$pattern | undefined,
 		condition: undefined as typeof viewMatchArmBlockEnding$condition | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,
@@ -31648,6 +31674,7 @@ function viewParametersElementsReceiver(data: RecordPosition, tree: TreeHandle):
 		attributeItem: undefined as typeof viewParametersElementsReceiver$attributeItem | undefined,
 		content: undefined as typeof viewParametersElementsReceiver$content | undefined,
 		$with: undefined as unknown as object,
+		$has: hasSlot,
 		$render: handleRender,
 		toString: handleToString,
 		toJSON: refuseJSON,

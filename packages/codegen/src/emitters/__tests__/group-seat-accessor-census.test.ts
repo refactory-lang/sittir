@@ -65,7 +65,7 @@ describe('a group seat flattens exactly the group fields its config surface name
 				expect(stamps.get(node.typeName), node.kind).toEqual(
 					hints.map((hint) => {
 						const keys = hint.keys.map((key) => `readonly${key.name}:${key.field}`).join(';');
-						return `FlatHint<${hint.slot},T.${hint.group},{${keys}},${hint.optional},${hint.stored}>`;
+						return `FlatHint<${hint.slot},T.${hint.group},{${keys}},${hint.optional}>`;
 					})
 				);
 				const slots = 'slots' in node ? node.slots.map((slot) => slot.propertyName) : [];

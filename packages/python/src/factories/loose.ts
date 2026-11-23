@@ -241,6 +241,24 @@ export const classPattern$seated: Seat<
 	ReturnType<typeof C.coerceToClassPattern>
 > = K.classPattern$fields(C.coerceToClassPattern, C.coerceToListPatternCasePatterns);
 
+export const floatPoint$seated: Seat<
+	T.FloatPoint.LooseArgs,
+	ReturnType<typeof C.coerceToFloatPoint>,
+	false,
+	false,
+	{ integer: true; fraction: true; exponent: true },
+	'exponent'
+> = K.floatPoint$branch(C.coerceToFloatPoint);
+
+export const floatLeadingPoint$seated: Seat<
+	T.FloatLeadingPoint.LooseArgs,
+	ReturnType<typeof C.coerceToFloatLeadingPoint>,
+	false,
+	false,
+	{ integer: true; fraction: true; exponent: true },
+	'exponent'
+> = K.floatLeadingPoint$branch(C.coerceToFloatLeadingPoint);
+
 export const slice$seated: Seat<T.Slice.LooseArgs, ReturnType<typeof C.coerceToSlice>> = K.slice$flatten$step(
 	C.coerceToSlice,
 	C.coerceToSliceGroup

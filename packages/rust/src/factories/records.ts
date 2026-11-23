@@ -20341,56 +20341,31 @@ function buildAttributeInput$patch(
 		return node as unknown as T.AttributeInput.Bound;
 	});
 }
-function buildAttributeInput$set(
-	source: object,
-	...[slot, input]: ['value', Partial<T.AttributeInput.Config>] | ['arguments', Partial<T.AttributeInput.Config>]
-): T.AttributeInput.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'value':
-			case 'arguments':
-				return buildAttributeInput$patch(source, { ...(inputs.config as T.AttributeInput.Config), ...input });
-		}
-	}
-	switch (slot) {
-		case 'value': {
-			const config = input;
-			const _value = kindIdStorage<NonNullable<T.AttributeInput['_value']>>(config.value);
-			return setSlot(
-				source,
-				TSKindId.AttributeInput as const,
-				'attribute_input',
-				0,
-				'value',
-				_value
-			) as unknown as T.AttributeInput.Bound;
-		}
-		case 'arguments': {
-			const config = input;
-			const _arguments = config.arguments;
-			return setSlot(
-				source,
-				TSKindId.AttributeInput as const,
-				'attribute_input',
-				1,
-				'arguments',
-				_arguments
-			) as unknown as T.AttributeInput.Bound;
-		}
-	}
-}
 function withAttributeInput(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'value':
-			return applySetter(args, (value?: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
-				rebuilt(node, handle, () => buildAttributeInput$set(node, 'value', { value: value }))
+		case 'value': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.AttributeInput.Config;
+			return applySetter(args, (value: Admit<NonNullable<T.AttributeInput.Config>['value']>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildAttributeInput$patch(node, { ...config, value: value })
+						: buildAttributeInput$patch(node, { ...config, arguments: undefined, value: value })
+				)
 			);
-		case 'arguments':
-			return applySetter(args, (value?: Admit<T.DelimTokenTree>) =>
-				rebuilt(node, handle, () => buildAttributeInput$set(node, 'arguments', { arguments: value }))
+		}
+		case 'arguments': {
+			const inputs = builtInputs(node);
+			const config = inputs.config as T.AttributeInput.Config;
+			return applySetter(args, (value: Admit<T.DelimTokenTree>) =>
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildAttributeInput$patch(node, { ...config, arguments: value })
+						: buildAttributeInput$patch(node, { ...config, value: undefined, arguments: value })
+				)
 			);
+		}
 	}
 	throw new Error(`attribute_input has no $with.${setter}`);
 }

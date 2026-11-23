@@ -60513,6 +60513,12 @@ const literal_number_float$101 = (
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float', input.$value);
+	if (parts.exponent === undefined)
+		return b.floatPoint({
+			imaginary: input.imaginary === undefined ? undefined : literal_number_float$101_imaginary(input.imaginary),
+			integer: parts.integer,
+			fraction: parts.fraction
+		});
 	return b.floatPoint({
 		imaginary: input.imaginary === undefined ? undefined : literal_number_float$101_imaginary(input.imaginary),
 		integer: parts.integer,
@@ -60533,6 +60539,13 @@ const literal_number_float_leading_point$102 = (
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float.leading_point', input.$value);
+	if (parts.exponent === undefined)
+		return b.floatLeadingPoint({
+			imaginary:
+				input.imaginary === undefined ? undefined : literal_number_float_leading_point$102_imaginary(input.imaginary),
+			integer: parts.integer,
+			fraction: parts.fraction
+		});
 	return b.floatLeadingPoint({
 		imaginary:
 			input.imaginary === undefined ? undefined : literal_number_float_leading_point$102_imaginary(input.imaginary),

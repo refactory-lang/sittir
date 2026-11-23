@@ -77,7 +77,7 @@
 - Test: `packages/types/tests/build-input.test-d.ts`
 
 - [x] **Step 1: The failing tests:**
-  - python `BuildInput<PythonMap, 'declaration.property.getter'>['$flags']` admits `'async'` (decision 3);
+  - python `BuildInput<PythonMap, 'declaration.member.property.getter'>['$flags']` admits `'async'` (decision 3);
   - a `T.Block.Bound` is assignable to the getter's `body`, and a typescript node isn't (decision 2);
   - typescript `{ $path: 'literal.number', $value: 1 }` is assignable to an array element (decision 1);
   - the getter's input has no `parameters`;
@@ -195,6 +195,8 @@ The bindings spec's §6 (Names, rule 6; Kinds, rule 2) and §9, and decision 8 h
   - decision 7's bare booleans, once the emitter builds literal arms (`literal.boolean.*` arms are literal arms, unfit today), since a bare `true` has no generated path to go to until then;
   - Step 3 (generated-module type errors: 0 in all three grammars) and Step 4.
 
+**Ceiling:** the user allowed rust's count of structures only the interpreter builds to rise from 771 to 776 for the struct-pattern paths. Both builds refused those six rows before, and the generated build now stops at paths that were already ungenerated: `statement.match`, `file` and `element.type_argument`. A commit that generates one of them lowers the ceiling to its new count.
+
 **Files:**
 - Create: `packages/codegen/src/emitters/overlays/portable/emit/build.ts` (from the prototype, its builders typed by `emit/engine.ts`), run in the pinned child
 - Generated: `packages/<lang>/src/portable/build.ts` becomes `portableBuild`, a table a caller scopes with `scopeBuilders(engine, portableBuild)`
@@ -268,7 +270,7 @@ What the census checked, so the task needs no new probe:
   - `createEngine(python, { api: 'portable' })` has `build.declaration.property.getter`, typed by `BuildInput`.
   - `parse(source)` returns `File<G>`, projected whole in the call; `project(node, carried?)` reports kept nodes through `PortableCarried` from `@sittir/types`.
   - Nothing named in the spec's removed rows is exported.
-- [ ] **Step 2: Implement.** Delete the interpreters and move every caller (tools, tests, conformance) to the engine. Remove the Task 4 interpreter comparison, with its rows recorded in the commit.
+- [ ] **Step 2: Implement.** First, in every grammar, the count of corpus structures only the interpreter builds is zero, or each remaining path is a row the user has ruled on. Then delete the interpreters and move every caller (tools, tests, conformance) to the engine. Remove the Task 4 interpreter comparison, with its rows recorded in the commit.
 - [ ] **Step 3: Three-way verification,** plus the workspace type-check. Commit.
 
 ### Task 7: Gates and ratchets
@@ -278,6 +280,23 @@ What the census checked, so the task needs no new probe:
 - [ ] **Step 3: Run every gate:** the ratchets, validate history against base, the suite, the workspace type-check, and the times against the baseline.
 - [ ] **Step 4: Open the PR** with `Owner: sittir-design` on the first line, the API rows (every public export added, changed or removed, before → after), the counts and the times. Brainstorm reviews, and the merge needs the user's word.
 
+### Task 8: An item a language requires last, typed as its list's last item
+
+**Status:** not started. It follows Task 4 and is not on the body branch: there the base already reads and builds as `fields`' last item.
+
+The spec's ruling: rust's struct base (`P { x: 1, ..base }`), its struct pattern's `..` and its variadic parameter (`fn f(a: i32, ...)`), and typescript's object and array rest (`{a, ...r}`, `[a, ...r]`) and rest parameter (`(a, ...args)`) each stay their list's last item, and the list's type says so: `fields` is `readonly Field[] | readonly [...Field[], StructBase]`. Python's parameter sections are not this case. The estimate below is not built; each "not checked" is a question for the step that reaches it.
+
+**Files:**
+- Modify: `packages/rust/grammar.sittir.ts`, `packages/typescript/grammar.sittir.ts` (or their rule-library layer)
+- Modify: `packages/codegen/src/emitters/overlays/portable/typed.ts`, `packages/codegen/src/emitters/overlays/portable/emit/build.ts`
+- Test: the corpus test, `packages/tools/src/__tests__/portable-generated-build.test.ts`, the typed overlay's tests
+
+- [ ] **Step 1: Narrow each list in its grammar layer** to its items, then an optional last item: rust's `field_initializer_list`, `struct_pattern` and `parameters`; typescript's `object_pattern`, `array_pattern` and `formal_parameters`. Upstream admits the item anywhere and only the compiler refuses it, so each is an accepts-invalid fix, the rule library's kind of rule; engine-api may own this step. The narrowing carries each language's comma rule after the last item (rust refuses `..base,` and typescript `...r,`; rust's `...,` is not checked). Each changes its grammar's parser; whether the corpus holds a misplaced item, which would move a validation row, is not checked.
+- [ ] **Step 2: Type the last item.** The portable typed overlay writes such a list as `readonly Item[] | readonly [...Item[], Last]`. The low-level surface already types a list whose last value is `final` as a tuple (rust's `match` arms: `readonly [...MatchArm[], LastMatchArm]`); whether the narrowed lists' last values are marked `final` is not checked.
+- [ ] **Step 3: Place the last item in both builds, and refuse a misplaced one** for a caller the types don't reach. The runtime build already places a `final` seat and refuses a list whose last item builds in none of its last element's forms. The generated build refuses every `final` seat today (`emit/build.ts`, "holding a list's last element"), which also leaves rust's `statement.match` ungenerated; it gains the placement and the same refusal.
+- [ ] **Step 4: Three-way verification,** with the validation rows the narrowing moves, if any, sent to brainstorm before the commit.
+
 ## Follow-ups
 
 - **Aliasing a lift that an `options:` key addresses fails enrich.** When the grammar bindings alias an enrich lift and the grammar's `options:` block addresses that lift by name, evaluating the layer throws `resolveLiftNames: '<lift>' carries a variant name but is not a rule enrich minted`. No grammar hits this today, because the bindings keep the two kinds apart. The case: python's `integer_legacy_octal_long` has `{ 'marker:': preference('L') }`. Derive python's bindings with `sameShapeAs` not counting options, and the bindings alias it into `octal_big_integer_number_literal` (`integer_legacy_octal: { "-2": alias(…), "-1": alias(…) }`). `bindings-inventory --write` then fails evaluating the layer it wrote. The fix belongs in the enrich/wire layer: an alias at a lift should carry the lift's options with it, or refuse with the options key named.
+- **Python's map misfits `declaration.type.class.members`, and the type error stays** (the maintainer, 2026-11-21: "Leave the type error - it's transient"). Python's class body is a block, so `members` reads every item in it. Bare expressions (`print(1)`, `x`, `x += 1`, a string that isn't the docstring) read as expressions, identifiers, literals and `pattern.rest`, and today's interim `(Declaration.Any | Statement.Any)[]` admits none of them (TS2344 `Misfit<"declaration.type.class", "members">`). Neither widening the vocabulary type nor building a widening override is taken. The error clears when `members` is narrowed and python's override admits its statements, which the spec's "Rename now, narrow later" leaves for later. Until then the workspace type-check carries this one error; any other new error is a regression.

@@ -1045,8 +1045,8 @@ function defaultedValueExpr(
 	return emptyDefault ? `orDefault(${hoisted}, () => ${emptyDefault})` : hoisted;
 }
 
-function setterValueSignature(f: AssembledNonterminal, elemType: string): string {
-	if (isRequired(f)) return `value: ${admitNodes(elemType)}`;
+function setterValueSignature(f: AssembledNonterminal, elemType: string, required: boolean = isRequired(f)): string {
+	if (required) return `value: ${admitNodes(elemType)}`;
 	return `value?: ${admitNodes(elemType)}`;
 }
 
@@ -1122,13 +1122,109 @@ export function slotSetter(
 	f: AssembledNonterminal,
 	configType: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[],
+	required: boolean = isRequired(f)
 ): SlotSetter {
 	const restType = restSetterType(f, configType, nodeMap, kindEntries);
-	if (restType !== undefined) return { name: f.propertyName, input: restType, optional: !isRequired(f), rest: true };
+	if (restType !== undefined) return { name: f.propertyName, input: restType, optional: !required, rest: true };
 	const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
-	return { name: f.propertyName, input: elemType, optional: !isRequired(f), rest: false };
+	return { name: f.propertyName, input: required && !isRequired(f) ? `NonNullable<${elemType}>` : elemType, optional: !required, rest: false };
 }
+
+interface CoOptionalBranch {
+	readonly keys: readonly string[];
+	readonly needed: readonly string[];
+	readonly options: readonly string[];
+	readonly required: readonly string[];
+	readonly storageKeys: readonly string[];
+}
+
+export function coOptionalBranchOf(node: FieldCarryingNode, slots: readonly AssembledNonterminal[]): CoOptionalBranch | undefined {
+	const stamped = slots.filter((slot) => slot.coOptional !== undefined);
+	if (stamped.length === 0) return undefined;
+	const branches = new Set(stamped.map((slot) => slot.coOptional?.branch));
+	if (branches.size > 1 || branches.has(undefined)) {
+		throw new Error(`[factories] kind '${node.kind}': its co-optional slots do not share one optional branch (${[...branches].join(', ')})`);
+	}
+	const registered = new Set(registeredSlots(node));
+	const named = (pick: (slot: AssembledNonterminal) => boolean): string[] => stamped.filter(pick).map((slot) => slot.propertyName);
+	const keys = named((slot) => !registered.has(slot));
+	const needed = named((slot) => !registered.has(slot) && slot.coOptional?.required === true);
+	if (needed.length === 0) {
+		throw new Error(`[factories] kind '${node.kind}': its optional branch has no required config slot to tell it present from absent`);
+	}
+	return { keys, needed, options: named((slot) => registered.has(slot)), required: named((slot) => slot.coOptional?.required === true), storageKeys: stamped.map((slot) => slot.storageKey) };
+}
+
+export function coOptionalBranchOfNode(node: AssembledNode): CoOptionalBranch | undefined {
+	return isSlotBearingCompound(node) && !(node instanceof AssembledList) ? coOptionalBranchOf(node, node.slots) : undefined;
+}
+
+interface ExclusiveArms {
+	readonly keys: readonly string[];
+	readonly arms: readonly { readonly keys: readonly string[]; readonly needed: readonly string[] }[];
+}
+
+export function exclusiveArmsOf(node: FieldCarryingNode, slots: readonly AssembledNonterminal[]): ExclusiveArms | undefined {
+	const stamped = slots.filter((slot) => slot.arms !== undefined);
+	if (stamped.length === 0) return undefined;
+	const choices = new Set(stamped.map((slot) => slot.arms?.choice));
+	if (choices.size > 1) {
+		throw new Error(`[factories] kind '${node.kind}': its arm slots do not share one choice (${[...choices].join(', ')})`);
+	}
+	const registered = new Set(registeredSlots(node));
+	if (stamped.some((slot) => registered.has(slot))) {
+		throw new Error(`[factories] kind '${node.kind}': an option slot held by only some arms of a choice is not typed`);
+	}
+	const armIndexes = [...new Set(stamped.flatMap((slot) => slot.arms!.held.map((held) => held.arm)))].sort((a, b) => a - b);
+	const heldByAll = (slot: AssembledNonterminal): boolean => slot.arms!.held.length === armIndexes.length;
+	if (stamped.every((slot) => heldByAll(slot) || slot.storageInfo?.kind === 'boolean')) return undefined;
+	const shape = (index: number): { keys: string[]; needed: string[] } => ({
+		keys: stamped.filter((slot) => slot.arms!.held.some((held) => held.arm === index)).map((slot) => slot.propertyName),
+		needed: stamped.filter((slot) => slot.arms!.held.some((held) => held.arm === index && held.required)).map((slot) => slot.propertyName)
+	});
+	const arms = armIndexes.map(shape).filter((arm, at, all) => all.findIndex((other) => keyUnion(other.keys) === keyUnion(arm.keys) && keyUnion(other.needed) === keyUnion(arm.needed)) === at);
+	return { keys: stamped.map((slot) => slot.propertyName), arms };
+}
+
+export function armCrossingClears(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): readonly AssembledNonterminal[] {
+	const found = exclusiveArmsOf(node, slots);
+	if (found === undefined) return [];
+	const holding = found.arms.filter((arm) => arm.keys.includes(slot.propertyName));
+	if (holding.length === 0) return [];
+	const kept = new Set(holding.flatMap((arm) => arm.keys));
+	return slots.filter((other) => found.keys.includes(other.propertyName) && !kept.has(other.propertyName));
+}
+
+export function armRequiredSlot(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): boolean {
+	const found = exclusiveArmsOf(node, slots);
+	if (found === undefined) return false;
+	const holding = found.arms.filter((arm) => arm.keys.includes(slot.propertyName));
+	return holding.length > 0 && holding.every((arm) => arm.needed.includes(slot.propertyName)) && found.arms.every((arm) => arm.needed.length > 0);
+}
+
+function setterRequired(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): boolean {
+	return isRequired(slot) || armRequiredSlot(node, slots, slot);
+}
+
+export function armClearsOfNode(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return new Map();
+	const found = exclusiveArmsOf(node, node.slots);
+	if (found === undefined) return new Map();
+	const clears = node.slots
+		.filter((slot) => found.keys.includes(slot.propertyName))
+		.map((slot) => [slot.propertyName, armCrossingClears(node, node.slots, slot).map((other) => other.propertyName)] as const)
+		.filter(([, cleared]) => cleared.length > 0);
+	return new Map(clears);
+}
+
+export function exclusiveArmsOfNode(node: AssembledNode): ExclusiveArms | undefined {
+	return isSlotBearingCompound(node) && !(node instanceof AssembledList) ? exclusiveArmsOf(node, node.slots) : undefined;
+}
+
+const armPairs = (arms: ExclusiveArms): string => `[${arms.arms.map((arm) => `[${keyUnion(arm.keys)}, ${keyUnion(arm.needed)}]`).join(', ')}]`;
+
+const keyUnion = (keys: readonly string[]): string => (keys.length === 0 ? 'never' : keys.map((key) => `'${key}'`).join(' | '));
 
 function fieldCarryingBuiltTypeSurface(
 	node: FieldCarryingNode,
@@ -1158,7 +1254,7 @@ function fieldCarryingBuiltTypeSurface(
 		const registeredHere = new Set(registeredSlots(node));
 		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		setters = [
-			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries)),
+			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries, setterRequired(node, slots, f))),
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	}
@@ -1175,6 +1271,23 @@ function fieldCarryingBuiltTypeSurface(
 		surface.spreadFacts !== null && surface.spreadFacts.multiple
 			? ` | ${rowsOf(paramText({ ...surface.param, rest: false }, `Readonly<${surface.param.looseType}>`))}`
 			: '';
+	const branch = coOptionalBranchOf(node, slots);
+	if (branch !== undefined && (spreadTarget !== null || arrayArgs !== '' || surface.leadingOptions !== undefined || forwardedConstruction(node, surface, nodeMap, kindEntries) !== null)) {
+		throw new Error(`[factories] kind '${node.kind}': an optional branch is not typed on a builder that spreads, forwards or leads with options`);
+	}
+	const arms = exclusiveArmsOf(node, slots);
+	if (branch !== undefined && arms !== undefined) {
+		throw new Error(`[factories] kind '${node.kind}': an optional branch beside a choice of arms is not typed`);
+	}
+	if (arms !== undefined && (spreadTarget !== null || arrayArgs !== '' || surface.leadingOptions !== undefined || forwardedConstruction(node, surface, nodeMap, kindEntries) !== null)) {
+		throw new Error(`[factories] kind '${node.kind}': a choice of arms is not typed on a builder that spreads, forwards or leads with options`);
+	}
+	const branchRows = (rows: string): string =>
+		arms !== undefined
+			? `ArmRows<${rows}, ${keyUnion(arms.keys)}, ${armPairs(arms)}>`
+			: branch === undefined
+				? rows
+				: `CoOptionalRows<${rows}, ${keyUnion(branch.keys)}, ${keyUnion(branch.needed)}, ${keyUnion(branch.options)}>`;
 	return {
 		...(spreadTarget === null && surface.nullary !== true && !surface.param.rest ? { row: rowParamOf(node, surface.param, nodeMap, kindEntries) } : {}),
 		mainType: `T.${node.typeName}`,
@@ -1182,9 +1295,9 @@ function fieldCarryingBuiltTypeSurface(
 		setters,
 		buildArgs:
 			spreadTarget === null
-				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? rowsOf(surface.rowParams))
+				? (forwardedConstruction(node, surface, nodeMap, kindEntries)?.rows.join(' | ') ?? branchRows(rowsOf(surface.rowParams)))
 				: `${rowsOf(surface.rowParams)}${spreadArgs('BuildArgs')}`,
-		looseArgs: `${rowsOf(surface.rowLooseParams)}${arrayArgs}${spreadArgs('LooseArgs')}`,
+		looseArgs: `${branchRows(rowsOf(surface.rowLooseParams))}${arrayArgs}${spreadArgs('LooseArgs')}`,
 		maxArgs: spreadTarget === null ? surface.arity : undefined
 	};
 }
@@ -2109,11 +2222,22 @@ function fieldCarryingFactoryText(
 		};
 		setters = [];
 		const optionsArg = registered.length === 0 && preference === undefined ? '' : ', options';
-		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> =>
-			setBy(f, { local: configAccess, input: `Partial<${configType}>`, partial: true }, `{ ${f.propertyName}: ${value} }`, {
-				body: call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`),
+		const branch = coOptionalBranchOf(node, slots);
+		const withoutBranch = (): string => {
+			const cleared = (keys: readonly string[]): string => keys.map((key) => `${key}: undefined`).join(', ');
+			const options = branch!.options.length === 0 ? '' : `, { ...options, ${cleared(branch!.options)} }`;
+			return call(fn, `{ ...${configAccess}, ${cleared(branch!.keys)} }${options}`);
+		};
+		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> => {
+			const set = call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`);
+			const crossed = armCrossingClears(node, slots, f);
+			const crossing = call(fn, `{ ...${configAccess}, ${crossed.map((other) => `${other.propertyName}: undefined`).join(', ')}, ${f.propertyName}: ${value} }${optionsArg}`);
+			const full = {
+				body: branch?.needed.includes(f.propertyName) === true ? `${value} === undefined ? ${withoutBranch()} : ${crossed.length === 0 ? set : crossing}` : crossed.length === 0 ? set : `${value} === undefined ? ${set} : ${crossing}`,
 				reads: optionsArg === '' ? [configAccess] : [configAccess, 'options']
-			});
+			};
+			return crossed.length > 0 ? full : setBy(f, { local: configAccess, input: `Partial<${configType}>`, partial: true }, `{ ${f.propertyName}: ${value} }`, full);
+		};
 		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		for (const f of slots) {
 			if (registeredSet.has(f) || formDefined.has(f.propertyName)) continue;
@@ -2123,7 +2247,7 @@ function fieldCarryingFactoryText(
 				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, `restItems(${JSON.stringify(method)}, values)`) });
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
-				const setterSig = setterValueSignature(f, elemType);
+				const setterSig = setterValueSignature(f, elemType, setterRequired(node, slots, f));
 				setters.push({ name: method, params: setterSig, ...slotSet(f, 'value') });
 			}
 		}
@@ -2225,6 +2349,7 @@ function fieldCarryingFactoryText(
 			extra: [...(view?.members ?? []), ...groupSeatMembers(plan, (hint) => hint.stored)],
 			tail: view?.tail,
 			trivia,
+			...(hasShapes(node, nodeMap, kindEntries) ? { shapes: true as const } : {}),
 			root: node.grammarRoot
 		});
 		lines.push(...members.members, '  };', ...members.after);
@@ -2674,6 +2799,14 @@ export interface GroupSeatHint {
 	readonly factory: string;
 	readonly optional: boolean;
 	readonly keys: readonly GroupSeatKey[];
+}
+
+export function hasShapes(node: AssembledNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
+	return groupSeatHints(node, nodeMap, kindEntries).length > 0 || coOptionalBranchOfNode(node) !== undefined;
+}
+
+export function anyShapes(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): boolean {
+	return [...nodeMap.nodes.values()].some((node) => hasShapes(node, nodeMap, kindEntries));
 }
 
 export function groupSeatHints(
@@ -3397,7 +3530,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		lines.push(`import type { ${SITTIR_TYPES_IMPORT_CANDIDATES.join(', ')} } from '@sittir/types';`);
 		if (hasDelimited(nodeMap)) lines.push(`import type { DelimitedSpec } from '@sittir/common/utils';`);
 		lines.push(`import type { ${OBJECT_MEMBER_TYPES.join(', ')} } from '@sittir/common/utils';`);
-		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
+		const utilsImports = ['currentHandle', 'admitChildren', ...(hasDelimited(nodeMap) ? ['checkDelimited'] : []), ...(anyShapes(nodeMap, kindEntries) ? ['hasSlot'] : []), ...seatedSetterImports(nodeMap, kindEntries), 'rebuilt', 'renderText', 'refuseJSON', 'releaseNothing', 'RECEIVER', 'SOURCE', 'Source', 'hydrateStoredSlot', 'hydrateStoredSlots', ...OBJECT_MEMBER_VALUES, ...triviaInnerImports(nodeMap), 'describeValue', 'restItems', ...blankArmImports(nodeMap), ...spelledReadImports(nodeMap), ...(usesElementWrap ? ['isNodeOfKind'] : []), ...storageCoercionImports];
 		const utilsImportAt = lines.length;
 		lines.push(utilsImportLine(utilsImports));
 		lines.push('');

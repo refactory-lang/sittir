@@ -89,6 +89,8 @@ export function splitSegments(pathStr: string): string[] {
 
 const KIND_SEGMENT = /^\(([A-Za-z_][A-Za-z0-9_]*)(?: as ([A-Za-z_][A-Za-z0-9_]*))?\)$/;
 
+export const EVERY_ARM_KEY = '*';
+
 export function parsePath(pathStr: string): PathSegment[] {
 	if (pathStr === '.') return [];
 	if (typeof pathStr !== 'string' || pathStr.length === 0) {
@@ -112,7 +114,7 @@ export function parsePath(pathStr: string): PathSegment[] {
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
 			segments.push({ kind: 'fieldName', name: part.slice(0, -1) });
 		} else if (part === '*') {
-			throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard`);
+			throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard; as a whole key, '*' names the arms no other key names and takes only variant()`);
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
 			throw new Error(
 				`parsePath: bare kind name '${part}' is no longer valid as a path segment — use '(${part})' instead`

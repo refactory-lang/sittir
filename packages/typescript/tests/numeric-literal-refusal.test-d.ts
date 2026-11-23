@@ -103,13 +103,13 @@ export function everyCallingConventionRefusesANegativeLiteral(): void {
 }
 
 export function aNegativeLiteralIsRefusedAtAnyDepth(): void {
-	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: 2 } });
-	ir.array([{ $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: 2 }]);
+	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpressionDefault, left: 1, operator: '+', right: 2 } });
+	ir.array([{ $type: TSKindId.BinaryExpressionDefault, left: 1, operator: '+', right: 2 }]);
 
 	// @ts-expect-error a negative literal is refused in a config nested in another
-	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpression, left: -1, operator: '+', right: 2 } });
+	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpressionDefault, left: -1, operator: '+', right: 2 } });
 	// @ts-expect-error a negative literal is refused in a config nested in a list item
-	ir.array([{ $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: -2 }]);
+	ir.array([{ $type: TSKindId.BinaryExpressionDefault, left: 1, operator: '+', right: -2 }]);
 }
 
 export function anOptionalLooseInputRefusesAnInlineNegativeBigint(): void {
@@ -125,13 +125,11 @@ export function anOptionalLooseInputRefusesAnInlineNegativeBigint(): void {
 	ir.binaryExpression({ left: 1, operator: '+', right: 2, bogus: 1 });
 }
 
-declare const maybe: { left: number; operator: '+'; right: number } | undefined;
-declare const maybeConstant: { readonly left: 1; readonly operator: '+'; readonly right: 2 } | undefined;
+declare const held: { left: number; operator: '+'; right: number };
+declare const heldConstant: { readonly left: 1; readonly operator: '+'; readonly right: 2 };
 
-export function anOptionalLooseInputStillTakesWhatItTook(): void {
-	ir.binaryExpression(maybe);
-	ir.binaryExpression(maybeConstant);
-	ir.binaryExpression(Math.random() > 0.5 ? ({ left: 1, operator: '+', right: 2 } as const) : undefined);
-	ir.binaryExpression(undefined);
-	ir.binaryExpression();
+export function aLooseInputHeldInAVariableStillTakesWhatItTook(): void {
+	ir.binaryExpression(held);
+	ir.binaryExpression(heldConstant);
+	ir.binaryExpression(Math.random() > 0.5 ? ({ left: 1, operator: '+', right: 2 } as const) : ({ left: 3, operator: '-', right: 4 } as const));
 }

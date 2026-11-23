@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { compileGrammar } from '../../compile.ts';
 import { grammarPackage } from '../../../grammars.ts';
-import { mountCallOf, subFactoriesOf } from '../sub-factories.ts';
+import { subFactoriesOf } from '../sub-factories.ts';
 import type { NodeMap } from '../../types.ts';
 
 const COMPILE_TIMEOUT = 120_000;
@@ -17,13 +17,6 @@ function routeOf(nodeMap: NodeMap, parent: string, name: string) {
 }
 
 describe('a route takes the parent keys that can be present beside its arm', () => {
-	it('drops the keys that sit only in other members of the parent choice', async () => {
-		const typescript = await nodeMapOf('typescript');
-		const entry = routeOf(typescript, 'binary_expression', 'in');
-		expect(entry.residual.map((slot) => slot.name)).toEqual([]);
-		expect(mountCallOf(entry, typescript)).toBe('child');
-	}, COMPILE_TIMEOUT);
-
 	it('keeps the keys that share a seq with the arm', async () => {
 		const python = await nodeMapOf('python');
 		const entry = routeOf(python, 'keyword_pattern', 'dottedName');

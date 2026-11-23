@@ -467,9 +467,13 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 `rejectBareText(value, where, expected)` is the bare-text refusal a `'runtime'` engine's structure verifier makes for a node-only slot (no builder calls it): a string or a bigint throws `<where>: a strict factory takes a built node, not a string; expected <expected>, or use .coerce` (naming which it was). Arrays are checked element-wise and every other value passes through unchanged. A number passes, because a slot that also holds fixed-text kinds stores their kind ids as numbers and the guard cannot tell a kind id from a scalar; where the slot holds no such kind, the native render refuses the number, naming the slot (`renders from a node, not a kind id`). A bigint is never a kind id, and the native node would drop it without a word, so it is refused here. The loose surface (`.coerce`) is where text becomes a node. A slot that stores only kind ids (a kind enum with no node value) takes no guard: its strict input is one of its declared fixed values, not a leaf's text, so `coerceKindEnumStorage` maps a matching string to its id.
 
+### `packages/common/src/verify-structure.ts::NamedMembership`
+
+The kind membership table a `'runtime'` engine's structure verifier reads, with the engine's way to name a kind id (`nameOf`, the engine's `kindName`), so a refusal can name the kinds it speaks of. The membership a grammar generates has no names; `createEngine` adds them.
+
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
-`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A built record's node is skipped too (`isBuiltNode`): its builder checked its values as it wrote them. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). Each node's row is checked by `checkRow`: a required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), a `final` list ends with a node of its last kind (`checkFinal`), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's, no non-node value (`rejectNonNode`), and no node of a kind the slot does not admit (`rejectForeignKind`). A `runtime` engine therefore refuses a node of a kind the slot does not admit, with the strict factory's message. Booleans, kind ids and texts go through `requireScalar`. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A built record's node is skipped too (`isBuiltNode`): its builder checked its values as it wrote them. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
 
 ### `packages/common/src/verify-structure.ts::checkInput`
 
@@ -1151,7 +1155,7 @@ A render handle whose text and save are the wrapped render's, written through `w
 
 ### `packages/common/src/verify-structure.ts::checkRow`
 
-One kind's structure row checked against one node's stored values: its required slots, its non-empty lists and its node-only slots. `verifyStructure` runs it on each object node it walks; a record builder runs it on the values it is about to write (`storedVerifierOf`).
+One kind's structure row checked against one node's stored values: its required slots, its single-valued and non-empty lists, its `final` list rule (`checkFinal`), its node-only slots (`rejectNonNode` and `rejectForeignKind`), and its boolean, kind id and text slots (`requireScalar`). `verifyStructure` runs it on each object node it walks; a record builder runs it on the values it is about to write (`storedVerifierOf`).
 
 ### `packages/common/src/engine-scope.ts::dispatched`
 
@@ -1431,6 +1435,38 @@ A hop of a hoisted read over a built holder: the wrapper's one slot, read as `st
 
 `wrapHoisted` over each item of a list slot's value; one item is a one-item list.
 
+### `packages/common/src/utils.ts::hasSlot`
+
+The runtime of a node's `$has(name)`: whether the slot `name` holds a value, answered by calling the node's own getter and testing the result against `undefined`. It reads no stored property, so a node held as an object and a view over an arena chunk answer alike. The guard is exact only for a name the type declares as deciding the shape (a branch's required slot, a flattened group's seat or its one required key); for any other name it is a plain presence test. It is a node member, not data (`MEMBER_KEYS`), so a copy of a node's data never carries it.
+
 ### `packages/common/src/verify-structure.ts::checkHoisted`
 
 Checks the values given to a hoisted slot against the kinds its structure row names for that property, refusing a node of another kind with the strict factory's message.
+
+### `packages/common/src/verify-structure.ts::checkFinal`
+
+Checks a list whose last element has a fixed kind. A `final` row entry gives the kinds the last element must be (`last`) and the kinds the elements before it may be (`rest`). It throws when the list is absent or empty, when the last element is a node of a kind outside `last`, and when an earlier element is a node of a kind outside `rest`. An item without a numeric `$type` is skipped.
+
+### `packages/common/src/verify-structure.ts::rejectNonNode`
+
+Refuses a value in a node-only slot that is not a node. A list is walked item by item, and an item that is itself an array throws, because a list holds nodes. A function, boolean or symbol throws the strict factory's message, which names the expected form and points to the default engine's builder for loose input. Any other value is returned unchanged.
+
+### `packages/common/src/verify-structure.ts::requireScalar`
+
+Checks a scalar slot (a boolean, a kind id or a text) when it is set. A value that is neither absent nor `null` must satisfy `holds`, or it throws `<label>: takes <expected>, not <the value>`. Absent and `null` values pass, since the required check already covers them.
+
+### `packages/common/src/verify-structure.ts::rejectForeignKind`
+
+The kind check for a node-only slot. Each object value that is a node, not a coordinate, must be a member of one of the slot's kinds, as decided by the kind membership table; an array is walked item by item. A node of another kind throws `<label>: a strict factory takes <expected>, not a node of kind <n> (<name>); the slot admits <name> / <name> / …`, the names the engine's `kindName` gives (a membership with no `nameOf` leaves the parenthesis out and lists ids). `<expected>` is the row's text, shared with the bare-text refusal; the admitted kinds are the slot's own, so a slot of leaves lists them all, not only its default leaf's builder.
+
+### `packages/common/src/verify-structure.ts::describeValue`
+
+How a scalar slot's value is named in a `requireScalar` message: a number as `kind id <n>`, a string as its quoted text, and anything else by its `typeof`.
+
+### `packages/common/src/verify-structure.ts::verifyNode`
+
+Checks one object node: its row (`checkRow`) when its `$type` has one, then each slot value whose key does not start with `$`, through `verifyBuilt`. The node joins `seen` last, after everything under it has passed.
+
+### `packages/common/src/verify-structure.ts::verifyBuilt`
+
+Walks one slot value. An array is walked item by item. An object is verified only when its source stamp is `Source.Factory` (`sourceOf`); a read node, a coordinate or an object already in `seen` is skipped, and a non-object passes.

@@ -70,6 +70,8 @@ export interface SubBuilderRowKind {
 	'abstractMethodSignature.plain': TSKindId.AbstractMethodSignaturePlain;
 	'abstractMethodSignature.setter': TSKindId.AbstractMethodSignatureSetter;
 	'ambientDeclaration.module': TSKindId.AmbientDeclarationModule;
+	binaryExpression: TSKindId.BinaryExpressionDefault;
+	'binaryExpression.in': TSKindId.BinaryExpressionIn;
 	'callExpression.call': TSKindId.CallExpressionCall;
 	'callExpression.member': TSKindId.CallExpressionMember;
 	'callExpression.templateCall': TSKindId.CallExpressionTemplateCall;

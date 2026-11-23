@@ -44,3 +44,12 @@ export function aBuildableReadPrefixBuildsBack(read: T.String.Parsed): void {
 	// @ts-expect-error a read-only member reads but does not build
 	ir.string({ prefix: read.prefix(), contents: [ir.stringContent(ir.stringFragment('x'))] });
 }
+
+export function theStartSeatAndThePrefixExcludeEachOther(start: T.StringStart.Parsed): void {
+	const contents = [ir.stringContent(ir.stringFragment('x'))];
+	const held = { contents, stringStart: start, prefix: 'r' as const };
+	// @ts-expect-error a held config with the seat and a flattened key is refused
+	ir.string(held);
+	// @ts-expect-error a config with the seat and a flattened key is refused
+	ir.string({ contents, stringStart: start, prefix: 'r' });
+}

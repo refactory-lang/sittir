@@ -125,7 +125,8 @@ export interface KindMembers {
 		| TSKindId.AugmentedAssignmentExpression
 		| TSKindId.AwaitExpression
 		| TSKindId.UnaryExpression
-		| TSKindId.BinaryExpression
+		| TSKindId.BinaryExpressionDefault
+		| TSKindId.BinaryExpressionIn
 		| TSKindId.TernaryExpression
 		| TSKindId.UpdateExpressionPostfix
 		| TSKindId.UpdateExpressionPrefix
@@ -175,6 +176,7 @@ export interface KindMembers {
 		| TSKindId.CallExpressionCall
 		| TSKindId.CallExpressionTemplateCall
 		| TSKindId.CallExpressionMember;
+	[TSKindId.BinaryExpression]: TSKindId.BinaryExpressionDefault | TSKindId.BinaryExpressionIn;
 	[TSKindId.UpdateExpression]: TSKindId.UpdateExpressionPostfix | TSKindId.UpdateExpressionPrefix;
 	[TSKindId.String]: TSKindId.StringDouble | TSKindId.StringSingle;
 	[TSKindId.Number]:
@@ -539,12 +541,6 @@ export interface IsGuards {
 	ternaryExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TernaryExpression };
-	readonly binaryExpression: {
-		<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BinaryExpression };
-		in<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BinaryExpression };
-	};
 	unaryExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UnaryExpression };
@@ -914,6 +910,9 @@ export interface IsGuards {
 	binaryExpressionIn<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BinaryExpressionIn };
+	binaryExpressionDefault<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BinaryExpressionDefault };
 	classBodyMemberMethod<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassBodyMemberMethod };
@@ -1324,6 +1323,12 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CallExpressionMember };
 	};
+	readonly binaryExpression: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.BinaryExpression]>;
+		in<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BinaryExpressionIn };
+	};
 	readonly updateExpression: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.UpdateExpression]>;
 		postfix<T extends { readonly $type: number } | number>(
@@ -1633,54 +1638,55 @@ export interface IsGuards {
 	thisType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ThisType>;
 }
 
-const _supertype_exportStatement_ids = new Set<number>([432, 433, 420, 421]);
+const _supertype_exportStatement_ids = new Set<number>([433, 434, 421, 422]);
 const _supertype_declaration_ids = new Set<number>([
 	249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([415, 416]);
+const _supertype_importSpecifier_ids = new Set<number>([416, 417]);
 const _supertype_statement_ids = new Set<number>([
-	432, 433, 420, 421, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
+	433, 434, 421, 422, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
 	213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 225, 226, 227, 228
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([439, 440]);
-const _supertype_forHeader_ids = new Set<number>([443, 444, 445, 446]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([417, 418]);
+const _supertype_variableDeclarator_ids = new Set<number>([440, 441]);
+const _supertype_forHeader_ids = new Set<number>([444, 445, 446, 447]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([418, 419]);
 const _supertype_expression_ids = new Set<number>([
-	306, 307, 308, 305, 260, 259, 417, 418, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
-	425, 426, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 441, 442, 422, 423, 424, 300, 262, 264, 258, 270,
-	269, 268, 427, 428, 257, 237
+	306, 307, 308, 305, 260, 259, 418, 419, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151,
+	426, 427, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 442, 443, 423, 424, 425, 300, 262, 264, 258, 270,
+	406, 405, 268, 428, 429, 257, 237
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	260, 259, 417, 418, 129, 1, 279, 280, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 425, 426, 274, 276,
-	281, 282, 283, 238, 242, 248, 252, 250, 245, 441, 442, 422, 423, 424, 300
+	260, 259, 418, 419, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 426, 427, 274, 276,
+	281, 282, 283, 238, 242, 248, 252, 250, 245, 442, 443, 423, 424, 425, 300
 ]);
-const _supertype_callExpression_ids = new Set<number>([422, 423, 424]);
-const _supertype_updateExpression_ids = new Set<number>([427, 428]);
-const _supertype_string_ids = new Set<number>([425, 426]);
-const _supertype_comment_ids = new Set<number>([153, 154]);
-const _supertype_number_ids = new Set<number>([155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166]);
-const _supertype_metaProperty_ids = new Set<number>([441, 442]);
+const _supertype_callExpression_ids = new Set<number>([423, 424, 425]);
+const _supertype_binaryExpression_ids = new Set<number>([406, 405]);
+const _supertype_updateExpression_ids = new Set<number>([428, 429]);
+const _supertype_string_ids = new Set<number>([426, 427]);
+const _supertype_comment_ids = new Set<number>([138, 139]);
+const _supertype_number_ids = new Set<number>([140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151]);
+const _supertype_metaProperty_ids = new Set<number>([442, 443]);
 const _supertype_pattern_ids = new Set<number>([261, 292]);
-const _supertype_methodDefinition_ids = new Set<number>([457, 458, 459]);
-const _supertype_publicFieldDefinition_ids = new Set<number>([466, 467]);
-const _supertype_methodSignature_ids = new Set<number>([460, 461, 462]);
-const _supertype_abstractMethodSignature_ids = new Set<number>([463, 464, 465]);
+const _supertype_methodDefinition_ids = new Set<number>([458, 459, 460]);
+const _supertype_publicFieldDefinition_ids = new Set<number>([467, 468]);
+const _supertype_methodSignature_ids = new Set<number>([461, 462, 463]);
+const _supertype_abstractMethodSignature_ids = new Set<number>([464, 465, 466]);
 const _supertype_type_ids = new Set<number>([
-	509, 244, 508, 366, 40, 41, 42, 43, 44, 144, 78, 145, 146, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
+	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
 	350, 348, 382, 381, 383, 380, 345, 349, 335, 336
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	509, 244, 508, 366, 40, 41, 42, 43, 44, 144, 78, 145, 146, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
+	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
 	350, 348, 382, 381
 ]);
-const _supertype_indexSignature_ids = new Set<number>([410, 411]);
-const _supertype_classBodyMember_ids = new Set<number>([407, 408, 290, 409, 406]);
+const _supertype_indexSignature_ids = new Set<number>([411, 412]);
+const _supertype_classBodyMember_ids = new Set<number>([408, 409, 290, 410, 407]);
 const _supertype_enumBodyElement_ids = new Set<number>([388, 324]);
-const _supertype_forInitializer_ids = new Set<number>([447, 448, 449]);
-const _supertype_numberBigint_ids = new Set<number>([163, 164, 165, 166]);
-const _supertype_exportStatementDefault_ids = new Set<number>([432, 433]);
+const _supertype_forInitializer_ids = new Set<number>([448, 449, 450]);
+const _supertype_numberBigint_ids = new Set<number>([148, 149, 150, 151]);
+const _supertype_exportStatementDefault_ids = new Set<number>([433, 434]);
 const _supertype_layout_ids = new Set<number>([182, 183, 184, 185, 186, 187, 188, 189]);
-const _supertype_methodDefinitionClassBodyMemberMethod_ids = new Set<number>([457, 468, 458, 459]);
+const _supertype_methodDefinitionClassBodyMemberMethod_ids = new Set<number>([458, 469, 459, 460]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ExportStatement, _supertype_exportStatement_ids],
@@ -1693,6 +1699,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Expression, _supertype_expression_ids],
 	[TSKindId.PrimaryExpression, _supertype_primaryExpression_ids],
 	[TSKindId.CallExpression, _supertype_callExpression_ids],
+	[TSKindId.BinaryExpression, _supertype_binaryExpression_ids],
 	[TSKindId.UpdateExpression, _supertype_updateExpression_ids],
 	[TSKindId.String, _supertype_string_ids],
 	[TSKindId.Number, _supertype_number_ids],
@@ -1712,7 +1719,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ExportStatementDefault, _supertype_exportStatementDefault_ids],
 	[TSKindId.MethodDefinitionClassBodyMemberMethod, _supertype_methodDefinitionClassBodyMemberMethod_ids],
 	[TSKindId.AccessibilityModifier, new Set<number>([34, 35, 36])],
-	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 144, 78, 145, 146, 46])]
+	[TSKindId.PredefinedType, new Set<number>([40, 41, 42, 43, 44, 125, 78, 126, 127, 46])]
 ]);
 const _single = new Map<number, ReadonlySet<number>>();
 function _kinds(kind: number): ReadonlySet<number> {
@@ -1819,6 +1826,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CallExpressionCall_guard = _g(TSKindId.CallExpressionCall);
 	const _kind_CallExpressionTemplateCall_guard = _g(TSKindId.CallExpressionTemplateCall);
 	const _kind_CallExpressionMember_guard = _g(TSKindId.CallExpressionMember);
+	const _kind_BinaryExpressionIn_guard = _g(TSKindId.BinaryExpressionIn);
 	const _kind_UpdateExpressionPostfix_guard = _g(TSKindId.UpdateExpressionPostfix);
 	const _kind_UpdateExpressionPrefix_guard = _g(TSKindId.UpdateExpressionPrefix);
 	const _kind_StringDouble_guard = _g(TSKindId.StringDouble);
@@ -1919,8 +1927,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_AugmentedAssignmentExpression_guard = _g(TSKindId.AugmentedAssignmentExpression);
 	const _kind_SpreadElement_guard = _g(TSKindId.SpreadElement);
 	const _kind_TernaryExpression_guard = _g(TSKindId.TernaryExpression);
-	const _kind_BinaryExpressionIn_guard = _g(TSKindId.BinaryExpressionIn);
-	const _kind_BinaryExpression_guard = _g(TSKindId.BinaryExpression);
 	const _kind_UnaryExpression_guard = _g(TSKindId.UnaryExpression);
 	const _kind_SequenceExpression_guard = _g(TSKindId.SequenceExpression);
 	const _kind_EscapeSequence_guard = _g(TSKindId.EscapeSequence);
@@ -2010,6 +2016,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CatchClauseGroup_guard = _g(TSKindId.CatchClauseGroup);
 	const _kind_GetAccessorSignature_guard = _g(TSKindId.GetAccessorSignature);
 	const _kind_ObjectTypeContent_guard = _g(TSKindId.ObjectTypeContent);
+	const _kind_BinaryExpressionDefault_guard = _g(TSKindId.BinaryExpressionDefault);
 	const _kind_FormalParametersElementsSetAccessorSignature_guard = _g(
 		TSKindId.FormalParametersElementsSetAccessorSignature
 	);
@@ -2111,9 +2118,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		parameter: _at(_kind_ArrowFunction_guard, 'content', _kind_ArrowFunctionParameter_guard),
 		callSignature: _at(_kind_ArrowFunction_guard, 'content', _kind_CallSignature_guard)
 	});
-	const _form_BinaryExpression_guard = _vg(_g(TSKindId.BinaryExpression), {
-		in: _at(_kind_BinaryExpression_guard, 'binaryExpressionIn', _kind_BinaryExpressionIn_guard)
-	});
 	const _form_LiteralType_guard = _vg(_g(TSKindId.LiteralType), {
 		negativeNumber: _at(_kind_LiteralType_guard, 'content', _kind_LiteralTypeNegativeNumber_guard),
 		true: _at(_kind_LiteralType_guard, 'content', _kind_True_guard),
@@ -2169,6 +2173,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		templateCall: _kind_CallExpressionTemplateCall_guard,
 		member: _kind_CallExpressionMember_guard
 	});
+	const _supertype_binaryExpression_guard = _vg(_mg(269), { in: _kind_BinaryExpressionIn_guard });
 	const _supertype_updateExpression_guard = _vg(_mg(271), {
 		postfix: _kind_UpdateExpressionPostfix_guard,
 		prefix: _kind_UpdateExpressionPrefix_guard
@@ -2228,7 +2233,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		octal: _kind_NumberBigintOctal_guard,
 		decimal: _kind_NumberBigintDecimal_guard
 	});
-	const _supertype_exportStatementDefault_guard = _vg(_mg(419), {
+	const _supertype_exportStatementDefault_guard = _vg(_mg(420), {
 		from: _form_ExportStatementDefaultFrom_guard,
 		declaration: _form_ExportStatementDefaultDeclaration_guard
 	});
@@ -2331,7 +2336,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		augmentedAssignmentExpression: _kind_AugmentedAssignmentExpression_guard,
 		spreadElement: _kind_SpreadElement_guard,
 		ternaryExpression: _kind_TernaryExpression_guard,
-		binaryExpression: _form_BinaryExpression_guard,
 		unaryExpression: _kind_UnaryExpression_guard,
 		sequenceExpression: _kind_SequenceExpression_guard,
 		escapeSequence: _kind_EscapeSequence_guard,
@@ -2450,6 +2454,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		numberBigintOctal: _kind_NumberBigintOctal_guard,
 		numberBigintDecimal: _kind_NumberBigintDecimal_guard,
 		binaryExpressionIn: _kind_BinaryExpressionIn_guard,
+		binaryExpressionDefault: _kind_BinaryExpressionDefault_guard,
 		classBodyMemberMethod: _kind_ClassBodyMemberMethod_guard,
 		classBodyMemberMethodSig: _kind_ClassBodyMemberMethodSig_guard,
 		classBodyMemberDeclaration: _kind_ClassBodyMemberDeclaration_guard,
@@ -2524,6 +2529,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		expression: _mg(235),
 		primaryExpression: _mg(236),
 		callExpression: _supertype_callExpression_guard,
+		binaryExpression: _supertype_binaryExpression_guard,
 		updateExpression: _supertype_updateExpression_guard,
 		string: _supertype_string_guard,
 		comment: _supertype_comment_guard,

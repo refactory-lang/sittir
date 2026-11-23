@@ -1,0 +1,39 @@
+
+strict (a member of the parent, or a kind directly beneath it): 2 bound names flip back
+  expression.binary.shift.left: left_binary_expression → left_shift_binary_expression
+  expression.binary.shift.right: right_binary_expression → right_shift_binary_expression
+  bound names shared by two kinds after the flip: 0
+
+wide (a kind anywhere beneath the parent spelled the same also counts): 31 bound names flip back
+  expression.binary.bitwise.and: and_binary_expression → and_bitwise_binary_expression
+  expression.binary.bitwise.or: or_binary_expression → or_bitwise_binary_expression
+  expression.binary.shift.left: left_binary_expression → left_shift_binary_expression
+  expression.binary.shift.right: right_binary_expression → right_shift_binary_expression
+  expression.collection.list: list_expression → list_collection_expression
+  expression.collection.map: map_expression → map_collection_expression
+  expression.collection.list.repeat: repeat_list_expression → repeat_list_collection_expression
+  expression.collection.set: set_expression → set_collection_expression
+  declaration.type.struct: struct_declaration → struct_type_declaration
+  declaration.type.struct.tuple: tuple_struct_declaration → tuple_struct_type_declaration
+  declaration.type.struct.unit: unit_struct_declaration → unit_struct_type_declaration
+  declaration.member.signature: signature_declaration → signature_member_declaration
+  declaration.member.signature.call: call_signature_declaration → call_signature_member_declaration
+  declaration.member.signature.construct: construct_signature_declaration → construct_signature_member_declaration
+  declaration.member.signature.index: index_signature_declaration → index_signature_member_declaration
+  declaration.member.signature.index.mapped: mapped_index_signature_declaration → mapped_index_signature_member_declaration
+  declaration.type.struct.private: private_struct_declaration → private_struct_type_declaration
+  declaration.type.struct.public: public_struct_declaration → public_struct_type_declaration
+  declaration.type.struct.public.internal: internal_public_struct_declaration → internal_public_struct_type_declaration
+  declaration.type.struct.public.parent: parent_public_struct_declaration → parent_public_struct_type_declaration
+  declaration.type.struct.public.restricted: restricted_public_struct_declaration → restricted_public_struct_type_declaration
+  declaration.type.struct.tuple.private: private_tuple_struct_declaration → private_tuple_struct_type_declaration
+  declaration.type.struct.tuple.public: public_tuple_struct_declaration → public_tuple_struct_type_declaration
+  declaration.type.struct.tuple.public.internal: internal_public_tuple_struct_declaration → internal_public_tuple_struct_type_declaration
+  declaration.type.struct.tuple.public.parent: parent_public_tuple_struct_declaration → parent_public_tuple_struct_type_declaration
+  declaration.type.struct.tuple.public.restricted: restricted_public_tuple_struct_declaration → restricted_public_tuple_struct_type_declaration
+  declaration.type.struct.unit.private: private_unit_struct_declaration → private_unit_struct_type_declaration
+  declaration.type.struct.unit.public: public_unit_struct_declaration → public_unit_struct_type_declaration
+  declaration.type.struct.unit.public.internal: internal_public_unit_struct_declaration → internal_public_unit_struct_type_declaration
+  declaration.type.struct.unit.public.parent: parent_public_unit_struct_declaration → parent_public_unit_struct_type_declaration
+  declaration.type.struct.unit.public.restricted: restricted_public_unit_struct_declaration → restricted_public_unit_struct_type_declaration
+  bound names shared by two kinds after the flip: 0

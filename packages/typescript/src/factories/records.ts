@@ -8429,196 +8429,6 @@ function withTernaryExpression(node: object, setter: string, args: readonly unkn
 	throw new Error(`ternary_expression has no $with.${setter}`);
 }
 
-export function buildBinaryExpression<
-	LeftSlot extends T.BinaryExpression.Config['left'],
-	RightSlot extends T.BinaryExpression.Config['right'],
-	BinaryExpressionInSlot extends T.BinaryExpression.Config['binaryExpressionIn']
->(
-	config?: RefusingConfig<
-		Partial<T.BinaryExpression.Config>,
-		{ left: LeftSlot; right: RightSlot; binaryExpressionIn: BinaryExpressionInSlot }
-	>
-): T.BinaryExpression.Bound;
-export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config> = {}): T.BinaryExpression.Bound {
-	currentHandle()?.admit(TSKindId.BinaryExpression, [config]);
-	const _left = rejectReservedText(
-		kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left),
-		'BinaryExpression.left',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
-	const _right = rejectReservedText(
-		kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right),
-		'BinaryExpression.right',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _binary_expression_in = config.binaryExpressionIn;
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'binary_expression', {
-			left: _left,
-			operator: _operator,
-			right: _right,
-			binaryExpressionIn: _binary_expression_in
-		});
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.BinaryExpression as const, { _left, _operator, _right, _binary_expression_in });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.BinaryExpression as const);
-		storeCell(arena, record, 2, 2, _left);
-		storeCell(arena, record, 3, 6, _operator);
-		storeCell(arena, record, 4, 7, _right);
-		storeCell(arena, record, 5, 11, _binary_expression_in);
-		const node = arena.view(record);
-		return node as unknown as T.BinaryExpression.Bound;
-	});
-}
-
-function buildBinaryExpression$patch(
-	source: object,
-	config: Partial<T.BinaryExpression.Config> = {}
-): T.BinaryExpression.Bound {
-	currentHandle()?.admit(TSKindId.BinaryExpression, [config]);
-	const _left = rejectReservedText(
-		kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left),
-		'BinaryExpression.left',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
-	const _right = rejectReservedText(
-		kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right),
-		'BinaryExpression.right',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _binary_expression_in = config.binaryExpressionIn;
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'binary_expression', {
-			left: _left,
-			operator: _operator,
-			right: _right,
-			binaryExpressionIn: _binary_expression_in
-		});
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.BinaryExpression as const, { _left, _operator, _right, _binary_expression_in });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.BinaryExpression as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 4, 7, carriedSlot(source, 'right', _right));
-		patchCell(arena, record, 5, 11, carriedSlot(source, 'binaryExpressionIn', _binary_expression_in));
-		const node = arena.view(record);
-		return node as unknown as T.BinaryExpression.Bound;
-	});
-}
-function buildBinaryExpression$set(
-	source: object,
-	...[slot, input]:
-		| ['left', Partial<T.BinaryExpression.Config>]
-		| ['operator', Partial<T.BinaryExpression.Config>]
-		| ['right', Partial<T.BinaryExpression.Config>]
-		| ['binaryExpressionIn', Partial<T.BinaryExpression.Config>]
-): T.BinaryExpression.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'left':
-			case 'operator':
-			case 'right':
-			case 'binaryExpressionIn':
-				return buildBinaryExpression$patch(source, { ...(inputs.config as T.BinaryExpression.Config), ...input });
-		}
-	}
-	switch (slot) {
-		case 'left': {
-			const config = input;
-			const _left = rejectReservedText(
-				kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left),
-				'BinaryExpression.left',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				0,
-				'left',
-				_left
-			) as unknown as T.BinaryExpression.Bound;
-		}
-		case 'operator': {
-			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				1,
-				'operator',
-				_operator
-			) as unknown as T.BinaryExpression.Bound;
-		}
-		case 'right': {
-			const config = input;
-			const _right = rejectReservedText(
-				kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right),
-				'BinaryExpression.right',
-				TSKindId.Identifier,
-				_reservedWords_buildIdentifier
-			);
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				2,
-				'right',
-				_right
-			) as unknown as T.BinaryExpression.Bound;
-		}
-		case 'binaryExpressionIn': {
-			const config = input;
-			const _binary_expression_in = config.binaryExpressionIn;
-			return setSlot(
-				source,
-				TSKindId.BinaryExpression as const,
-				'binary_expression',
-				3,
-				'binaryExpressionIn',
-				_binary_expression_in
-			) as unknown as T.BinaryExpression.Bound;
-		}
-	}
-}
-function withBinaryExpression(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'left':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'left', { left: value }))
-			);
-		case 'operator':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'operator', { operator: value }))
-			);
-		case 'right':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression$set(node, 'right', { right: value }))
-			);
-		case 'binaryExpressionIn':
-			return applySetter(args, (value?: Admit<T.BinaryExpressionIn>) =>
-				rebuilt(node, handle, () =>
-					buildBinaryExpression$set(node, 'binaryExpressionIn', { binaryExpressionIn: value })
-				)
-			);
-	}
-	throw new Error(`binary_expression has no $with.${setter}`);
-}
-
 export function buildUnaryExpression<ArgumentSlot extends T.UnaryExpression.Config['argument']>(
 	config: RefusingConfig<T.UnaryExpression.Config, { argument: ArgumentSlot }>
 ): T.UnaryExpression.Bound;
@@ -22504,7 +22314,15 @@ function withNumberFloatPoint(node: object, setter: string, args: readonly unkno
 			const config = inputs.config as T.NumberFloatPoint.Config;
 			const options = inputs.options as T.NumberFloatPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 	}
@@ -22700,7 +22518,15 @@ function withNumberFloatLeadingPoint(node: object, setter: string, args: readonl
 			const config = inputs.config as T.NumberFloatLeadingPoint.Config;
 			const options = inputs.options as T.NumberFloatLeadingPoint.Options;
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatLeadingPoint$patch(
+								node,
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatLeadingPoint$patch(node, { ...config, exponent: value }, options)
+				)
 			);
 		}
 	}
@@ -23693,6 +23519,163 @@ function withBinaryExpressionIn(node: object, setter: string, args: readonly unk
 			);
 	}
 	throw new Error(`binary_expression_in has no $with.${setter}`);
+}
+
+export function buildBinaryExpressionDefault<
+	LeftSlot extends T.BinaryExpressionDefault.Config['left'],
+	RightSlot extends T.BinaryExpressionDefault.Config['right']
+>(
+	config: RefusingConfig<T.BinaryExpressionDefault.Config, { left: LeftSlot; right: RightSlot }>
+): T.BinaryExpressionDefault.Bound;
+export function buildBinaryExpressionDefault(
+	config: T.BinaryExpressionDefault.Config
+): T.BinaryExpressionDefault.Bound {
+	currentHandle()?.admit(TSKindId.BinaryExpressionDefault, [config]);
+	const _left = rejectReservedText(
+		kindIdStorage<NonNullable<T.BinaryExpressionDefault['_left']>>(config.left),
+		'BinaryExpressionDefault.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _operator = kindIdStorage<NonNullable<T.BinaryExpressionDefault['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.BinaryExpressionDefault['_right']>>(config.right),
+		'BinaryExpressionDefault.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'binary_expression_default', { left: _left, operator: _operator, right: _right });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.BinaryExpressionDefault as const, { _left, _operator, _right });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.BinaryExpressionDefault as const);
+		storeCell(arena, record, 2, 2, _left);
+		storeCell(arena, record, 3, 6, _operator);
+		storeCell(arena, record, 4, 7, _right);
+		const node = arena.view(record);
+		return node as unknown as T.BinaryExpressionDefault.Bound;
+	});
+}
+
+function buildBinaryExpressionDefault$patch(
+	source: object,
+	config: T.BinaryExpressionDefault.Config
+): T.BinaryExpressionDefault.Bound {
+	currentHandle()?.admit(TSKindId.BinaryExpressionDefault, [config]);
+	const _left = rejectReservedText(
+		kindIdStorage<NonNullable<T.BinaryExpressionDefault['_left']>>(config.left),
+		'BinaryExpressionDefault.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _operator = kindIdStorage<NonNullable<T.BinaryExpressionDefault['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.BinaryExpressionDefault['_right']>>(config.right),
+		'BinaryExpressionDefault.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'binary_expression_default', { left: _left, operator: _operator, right: _right });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.BinaryExpressionDefault as const, { _left, _operator, _right });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.BinaryExpressionDefault as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
+		patchCell(arena, record, 4, 7, carriedSlot(source, 'right', _right));
+		const node = arena.view(record);
+		return node as unknown as T.BinaryExpressionDefault.Bound;
+	});
+}
+function buildBinaryExpressionDefault$set(
+	source: object,
+	...[slot, input]:
+		| ['left', Partial<T.BinaryExpressionDefault.Config>]
+		| ['operator', Partial<T.BinaryExpressionDefault.Config>]
+		| ['right', Partial<T.BinaryExpressionDefault.Config>]
+): T.BinaryExpressionDefault.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'left':
+			case 'operator':
+			case 'right':
+				return buildBinaryExpressionDefault$patch(source, {
+					...(inputs.config as T.BinaryExpressionDefault.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'left': {
+			const config = input;
+			const _left = rejectReservedText(
+				kindIdStorage<NonNullable<T.BinaryExpressionDefault['_left']>>(config.left),
+				'BinaryExpressionDefault.left',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.BinaryExpressionDefault as const,
+				'binary_expression_default',
+				0,
+				'left',
+				_left
+			) as unknown as T.BinaryExpressionDefault.Bound;
+		}
+		case 'operator': {
+			const config = input;
+			const _operator = kindIdStorage<NonNullable<T.BinaryExpressionDefault['_operator']>>(config.operator);
+			return setSlot(
+				source,
+				TSKindId.BinaryExpressionDefault as const,
+				'binary_expression_default',
+				1,
+				'operator',
+				_operator
+			) as unknown as T.BinaryExpressionDefault.Bound;
+		}
+		case 'right': {
+			const config = input;
+			const _right = rejectReservedText(
+				kindIdStorage<NonNullable<T.BinaryExpressionDefault['_right']>>(config.right),
+				'BinaryExpressionDefault.right',
+				TSKindId.Identifier,
+				_reservedWords_buildIdentifier
+			);
+			return setSlot(
+				source,
+				TSKindId.BinaryExpressionDefault as const,
+				'binary_expression_default',
+				2,
+				'right',
+				_right
+			) as unknown as T.BinaryExpressionDefault.Bound;
+		}
+	}
+}
+function withBinaryExpressionDefault(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionDefault.Config>['left']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionDefault$set(node, 'left', { left: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionDefault.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionDefault$set(node, 'operator', { operator: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionDefault.Config>['right']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionDefault$set(node, 'right', { right: value }))
+			);
+	}
+	throw new Error(`binary_expression_default has no $with.${setter}`);
 }
 
 export const buildEmptyMember: TSKindId.EmptyMember = TSKindId.EmptyMember;
@@ -34807,7 +34790,6 @@ export type FluentKindMap = {
 	augmented_assignment_expression: T.AugmentedAssignmentExpression.Bound;
 	spread_element: T.SpreadElement.Bound;
 	ternary_expression: T.TernaryExpression.Bound;
-	binary_expression: T.BinaryExpression.Bound;
 	unary_expression: T.UnaryExpression.Bound;
 	sequence_expression: T.SequenceExpression.Bound;
 	unescaped_double_string_fragment: T.UnescapedDoubleStringFragment;
@@ -34941,6 +34923,7 @@ export type FluentKindMap = {
 	number_bigint_octal: T.NumberBigintOctal.Bound;
 	number_bigint_decimal: T.NumberBigintDecimal.Bound;
 	binary_expression_in: T.BinaryExpressionIn.Bound;
+	binary_expression_default: T.BinaryExpressionDefault.Bound;
 	empty_member: T.EmptyMember;
 	class_body_member_method: T.ClassBodyMemberMethod.Bound;
 	class_body_member_method_sig: T.ClassBodyMemberMethodSig.Bound;
@@ -35091,7 +35074,6 @@ export const _factoryMap = {
 	augmented_assignment_expression: buildAugmentedAssignmentExpression,
 	spread_element: buildSpreadElement,
 	ternary_expression: buildTernaryExpression,
-	binary_expression: buildBinaryExpression,
 	unary_expression: buildUnaryExpression,
 	sequence_expression: buildSequenceExpression,
 	unescaped_double_string_fragment: buildUnescapedDoubleStringFragment,
@@ -35225,6 +35207,7 @@ export const _factoryMap = {
 	number_bigint_octal: buildNumberBigintOctal,
 	number_bigint_decimal: buildNumberBigintDecimal,
 	binary_expression_in: buildBinaryExpressionIn,
+	binary_expression_default: buildBinaryExpressionDefault,
 	empty_member: buildEmptyMember,
 	class_body_member_method: buildClassBodyMemberMethod,
 	class_body_member_method_sig: buildClassBodyMemberMethodSig,
@@ -35315,21 +35298,21 @@ export type _FactoryMap = typeof _factoryMap;
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
 		2: withHashBangLine,
-		121: withEscapeSequence,
-		128: withPrivatePropertyIdentifier,
-		153: withCommentLine,
-		154: withCommentBlock,
-		155: withNumberHex,
-		156: withNumberFloatPoint,
-		157: withNumberFloatLeadingPoint,
-		158: withNumberFloatScientific,
-		159: withNumberLegacyOctal,
-		161: withNumberBinary,
-		162: withNumberOctal,
-		163: withNumberBigintHex,
-		164: withNumberBigintBinary,
-		165: withNumberBigintOctal,
-		166: withNumberBigintDecimal,
+		101: withEscapeSequence,
+		109: withPrivatePropertyIdentifier,
+		138: withCommentLine,
+		139: withCommentBlock,
+		140: withNumberHex,
+		141: withNumberFloatPoint,
+		142: withNumberFloatLeadingPoint,
+		143: withNumberFloatScientific,
+		144: withNumberLegacyOctal,
+		146: withNumberBinary,
+		147: withNumberOctal,
+		148: withNumberBigintHex,
+		149: withNumberBigintBinary,
+		150: withNumberBigintOctal,
+		151: withNumberBigintDecimal,
 		190: withProgram,
 		192: withNamespaceExport,
 		193: withExportClause,
@@ -35389,7 +35372,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		264: withAugmentedAssignmentExpression,
 		267: withSpreadElement,
 		268: withTernaryExpression,
-		269: withBinaryExpression,
 		270: withUnaryExpression,
 		272: withSequenceExpression,
 		274: withTemplateString,
@@ -35493,87 +35475,88 @@ export const builtViews: BuiltViews = Object.freeze({
 		402: withObjectTypeContent,
 		403: withLiteralTypeNegativeNumber,
 		405: withBinaryExpressionIn,
-		407: withClassBodyMemberMethod,
-		408: withClassBodyMemberMethodSig,
-		409: withClassBodyMemberDeclaration,
-		410: withIndexSignatureColon,
-		411: withIndexSignatureMappedTypeClause,
-		412: withImportStatementClauseFrom,
-		413: withYieldExpressionDelegate,
-		415: withImportSpecifierName,
-		416: withImportSpecifierAs,
-		417: withParenthesizedExpressionTyped,
-		418: withParenthesizedExpressionSequence,
-		420: withExportStatementEqualsExport,
-		421: withExportStatementNamespaceExport,
-		422: withCallExpressionCall,
-		423: withCallExpressionTemplateCall,
-		424: withCallExpressionMember,
-		425: withStringDouble,
-		426: withStringSingle,
-		427: withUpdateExpressionPostfix,
-		428: withUpdateExpressionPrefix,
-		429: withArrowFunctionParameter,
-		430: withClassHeritageExtendsClause,
-		431: withImportClauseDefaultImport,
-		432: withExportStatementDefaultFrom,
-		433: withExportStatementDefaultDeclaration,
-		434: withExportStatementDefaultFromStarFrom,
-		435: withExportStatementDefaultFromNsFrom,
-		436: withExportStatementDefaultFromClauseFrom,
-		437: withExportStatementDefaultDeclarationDefaultKw,
-		438: withExportStatementDefaultDeclarationDefaultKwValue,
-		439: withVariableDeclaratorPlain,
-		440: withVariableDeclaratorDefinite,
-		443: withForHeaderLhs,
-		444: withForHeaderVarKind,
-		445: withForHeaderLetConstKind,
-		446: withForHeaderUsingKind,
-		447: withForInitializerLetConstKind,
-		448: withForInitializerVarKind,
-		449: withForInitializerUsingKind,
-		452: withFormalParametersSetAccessorSignature,
-		453: withFormalParametersElementsSetAccessorSignature,
-		454: withSetterParameter,
-		457: withMethodDefinitionPlain,
-		458: withMethodDefinitionGetter,
-		459: withMethodDefinitionSetter,
-		460: withMethodSignaturePlain,
-		461: withMethodSignatureGetter,
-		462: withMethodSignatureSetter,
-		463: withAbstractMethodSignaturePlain,
-		464: withAbstractMethodSignatureGetter,
-		465: withAbstractMethodSignatureSetter,
-		466: withPublicFieldDefinitionPlain,
-		467: withPublicFieldDefinitionAccessor,
-		468: withConstructorDeclaration,
-		472: withReceiverParameterDeclaration,
-		474: withFormalParametersElementsReceiver,
-		475: withFormalParametersElementsReceiverGroup,
-		502: withInterfaceBody,
-		504: withPropertyIdentifier,
-		505: withShorthandPropertyIdentifier,
-		506: withShorthandPropertyIdentifierPattern,
-		507: withStatementIdentifier,
-		509: withTypeIdentifier
+		406: withBinaryExpressionDefault,
+		408: withClassBodyMemberMethod,
+		409: withClassBodyMemberMethodSig,
+		410: withClassBodyMemberDeclaration,
+		411: withIndexSignatureColon,
+		412: withIndexSignatureMappedTypeClause,
+		413: withImportStatementClauseFrom,
+		414: withYieldExpressionDelegate,
+		416: withImportSpecifierName,
+		417: withImportSpecifierAs,
+		418: withParenthesizedExpressionTyped,
+		419: withParenthesizedExpressionSequence,
+		421: withExportStatementEqualsExport,
+		422: withExportStatementNamespaceExport,
+		423: withCallExpressionCall,
+		424: withCallExpressionTemplateCall,
+		425: withCallExpressionMember,
+		426: withStringDouble,
+		427: withStringSingle,
+		428: withUpdateExpressionPostfix,
+		429: withUpdateExpressionPrefix,
+		430: withArrowFunctionParameter,
+		431: withClassHeritageExtendsClause,
+		432: withImportClauseDefaultImport,
+		433: withExportStatementDefaultFrom,
+		434: withExportStatementDefaultDeclaration,
+		435: withExportStatementDefaultFromStarFrom,
+		436: withExportStatementDefaultFromNsFrom,
+		437: withExportStatementDefaultFromClauseFrom,
+		438: withExportStatementDefaultDeclarationDefaultKw,
+		439: withExportStatementDefaultDeclarationDefaultKwValue,
+		440: withVariableDeclaratorPlain,
+		441: withVariableDeclaratorDefinite,
+		444: withForHeaderLhs,
+		445: withForHeaderVarKind,
+		446: withForHeaderLetConstKind,
+		447: withForHeaderUsingKind,
+		448: withForInitializerLetConstKind,
+		449: withForInitializerVarKind,
+		450: withForInitializerUsingKind,
+		453: withFormalParametersSetAccessorSignature,
+		454: withFormalParametersElementsSetAccessorSignature,
+		455: withSetterParameter,
+		458: withMethodDefinitionPlain,
+		459: withMethodDefinitionGetter,
+		460: withMethodDefinitionSetter,
+		461: withMethodSignaturePlain,
+		462: withMethodSignatureGetter,
+		463: withMethodSignatureSetter,
+		464: withAbstractMethodSignaturePlain,
+		465: withAbstractMethodSignatureGetter,
+		466: withAbstractMethodSignatureSetter,
+		467: withPublicFieldDefinitionPlain,
+		468: withPublicFieldDefinitionAccessor,
+		469: withConstructorDeclaration,
+		473: withReceiverParameterDeclaration,
+		475: withFormalParametersElementsReceiver,
+		476: withFormalParametersElementsReceiverGroup,
+		503: withInterfaceBody,
+		505: withPropertyIdentifier,
+		506: withShorthandPropertyIdentifier,
+		507: withShorthandPropertyIdentifierPattern,
+		508: withStatementIdentifier,
+		510: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		2: 4,
-		121: 4,
-		128: 4,
-		153: 4,
-		154: 4,
-		155: 5,
-		156: 8,
-		157: 7,
-		158: 7,
-		159: 4,
-		161: 5,
-		162: 5,
-		163: 4,
-		164: 4,
-		165: 4,
-		166: 4,
+		101: 4,
+		109: 4,
+		138: 4,
+		139: 4,
+		140: 5,
+		141: 8,
+		142: 7,
+		143: 7,
+		144: 4,
+		146: 5,
+		147: 5,
+		148: 4,
+		149: 4,
+		150: 4,
+		151: 4,
 		190: 4,
 		192: 3,
 		193: 3,
@@ -35633,7 +35616,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		264: 5,
 		267: 3,
 		268: 5,
-		269: 6,
 		270: 4,
 		272: 3,
 		274: 3,
@@ -35737,87 +35719,88 @@ export const builtViews: BuiltViews = Object.freeze({
 		402: 3,
 		403: 3,
 		405: 4,
-		407: 5,
-		408: 4,
+		406: 5,
+		408: 5,
 		409: 4,
-		410: 7,
-		411: 6,
-		412: 4,
-		413: 3,
-		415: 4,
-		416: 5,
-		417: 4,
-		418: 3,
-		420: 4,
+		410: 4,
+		411: 7,
+		412: 6,
+		413: 4,
+		414: 3,
+		416: 4,
+		417: 5,
+		418: 4,
+		419: 3,
 		421: 4,
-		422: 5,
-		423: 4,
-		424: 5,
-		425: 3,
+		422: 4,
+		423: 5,
+		424: 4,
+		425: 5,
 		426: 3,
-		427: 4,
+		427: 3,
 		428: 4,
-		429: 3,
-		430: 4,
+		429: 4,
+		430: 3,
 		431: 4,
-		432: 5,
-		433: 4,
-		434: 3,
-		435: 4,
+		432: 4,
+		433: 5,
+		434: 4,
+		435: 3,
 		436: 4,
-		437: 3,
-		438: 4,
-		439: 5,
-		440: 4,
-		443: 5,
-		444: 6,
-		445: 7,
+		437: 4,
+		438: 3,
+		439: 4,
+		440: 5,
+		441: 4,
+		444: 5,
+		445: 6,
 		446: 7,
-		447: 4,
-		448: 3,
-		449: 4,
-		452: 3,
+		447: 7,
+		448: 4,
+		449: 3,
+		450: 4,
 		453: 3,
-		454: 7,
-		457: 9,
-		458: 7,
+		454: 3,
+		455: 7,
+		458: 9,
 		459: 7,
-		460: 8,
-		461: 6,
+		460: 7,
+		461: 8,
 		462: 6,
-		463: 8,
-		464: 6,
+		463: 6,
+		464: 8,
 		465: 6,
-		466: 9,
-		467: 8,
-		468: 5,
-		472: 7,
-		474: 4,
-		475: 3,
-		502: 5,
-		504: 3,
+		466: 6,
+		467: 9,
+		468: 8,
+		469: 5,
+		473: 7,
+		475: 4,
+		476: 3,
+		503: 5,
 		505: 3,
 		506: 3,
 		507: 3,
-		509: 3
+		508: 3,
+		510: 3
 	}),
 	cells: Object.freeze({
 		2: 2,
-		121: 2,
-		128: 2,
-		153: 2,
-		154: 2,
-		155: 2,
-		156: 2,
-		157: 2,
-		158: 2,
-		159: 2,
-		161: 2,
-		162: 2,
-		163: 2,
-		164: 2,
-		165: 2,
-		166: 2,
+		101: 2,
+		109: 2,
+		138: 2,
+		139: 2,
+		140: 2,
+		141: 2,
+		142: 2,
+		143: 2,
+		144: 2,
+		146: 2,
+		147: 2,
+		148: 2,
+		149: 2,
+		150: 2,
+		151: 2,
 		190: 2,
 		192: 2,
 		193: 2,
@@ -35877,7 +35860,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		264: 2,
 		267: 2,
 		268: 2,
-		269: 2,
 		270: 2,
 		272: 2,
 		274: 2,
@@ -35981,18 +35963,18 @@ export const builtViews: BuiltViews = Object.freeze({
 		402: 2,
 		403: 2,
 		405: 2,
-		407: 2,
+		406: 2,
 		408: 2,
 		409: 2,
-		410: 3,
+		410: 2,
 		411: 3,
-		412: 2,
+		412: 3,
 		413: 2,
-		415: 2,
+		414: 2,
 		416: 2,
 		417: 2,
 		418: 2,
-		420: 2,
+		419: 2,
 		421: 2,
 		422: 2,
 		423: 2,
@@ -36004,8 +35986,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		429: 2,
 		430: 2,
 		431: 2,
-		432: 3,
-		433: 2,
+		432: 2,
+		433: 3,
 		434: 2,
 		435: 2,
 		436: 2,
@@ -36013,17 +35995,17 @@ export const builtViews: BuiltViews = Object.freeze({
 		438: 2,
 		439: 2,
 		440: 2,
-		443: 2,
+		441: 2,
 		444: 2,
 		445: 2,
 		446: 2,
 		447: 2,
 		448: 2,
 		449: 2,
-		452: 2,
+		450: 2,
 		453: 2,
-		454: 3,
-		457: 3,
+		454: 2,
+		455: 3,
 		458: 3,
 		459: 3,
 		460: 3,
@@ -36034,59 +36016,60 @@ export const builtViews: BuiltViews = Object.freeze({
 		465: 3,
 		466: 3,
 		467: 3,
-		468: 2,
-		472: 3,
-		474: 2,
+		468: 3,
+		469: 2,
+		473: 3,
 		475: 2,
-		502: 2,
-		504: 2,
+		476: 2,
+		503: 2,
 		505: 2,
 		506: 2,
 		507: 2,
-		509: 2
+		508: 2,
+		510: 2
 	}),
 	places: Object.freeze({
 		2: [[2, 2, 2, 4, 0, 0]],
-		121: [[2, 2, 2, 4, 0, 0]],
-		128: [[2, 2, 2, 4, 0, 0]],
-		153: [[2, 2, 2, 4, 0, 0]],
-		154: [[2, 2, 2, 4, 0, 0]],
-		155: [
+		101: [[2, 2, 2, 4, 0, 0]],
+		109: [[2, 2, 2, 4, 0, 0]],
+		138: [[2, 2, 2, 4, 0, 0]],
+		139: [[2, 2, 2, 4, 0, 0]],
+		140: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		156: [
+		141: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0],
 			[8, 5, 2, 4, 0, 0],
 			[10, 6, 2, 4, 0, 0]
 		],
-		157: [
+		142: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0],
 			[8, 5, 2, 4, 0, 0]
 		],
-		158: [
+		143: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0],
 			[6, 4, 2, 4, 0, 0],
 			[8, 5, 2, 4, 0, 0]
 		],
-		159: [[2, 2, 2, 4, 0, 0]],
-		161: [
+		144: [[2, 2, 2, 4, 0, 0]],
+		146: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		162: [
+		147: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
-		163: [[2, 2, 2, 4, 0, 0]],
-		164: [[2, 2, 2, 4, 0, 0]],
-		165: [[2, 2, 2, 4, 0, 0]],
-		166: [[2, 2, 2, 4, 0, 0]],
+		148: [[2, 2, 2, 4, 0, 0]],
+		149: [[2, 2, 2, 4, 0, 0]],
+		150: [[2, 2, 2, 4, 0, 0]],
+		151: [[2, 2, 2, 4, 0, 0]],
 		190: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 1, 3, 0, 4]
@@ -36307,12 +36290,6 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 4, 3, 0, 0]
-		],
-		269: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 1, 2, 0, 0],
-			[7, 4, 4, 3, 0, 0],
-			[11, 5, 3, 1, 0, 0]
 		],
 		270: [
 			[2, 2, 1, 2, 0, 0],
@@ -36638,141 +36615,139 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		407: [
+		406: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 1, 2, 0, 0],
+			[7, 4, 4, 3, 0, 0]
+		],
+		408: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 39, 8, 39, 0],
 			[42, 4, 1, 18, 0, 0]
-		],
-		408: [
-			[2, 2, 35, 8, 35, 0],
-			[37, 3, 1, 2, 0, 0]
 		],
 		409: [
 			[2, 2, 35, 8, 35, 0],
 			[37, 3, 1, 2, 0, 0]
 		],
 		410: [
+			[2, 2, 35, 8, 35, 0],
+			[37, 3, 1, 2, 0, 0]
+		],
+		411: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0, 0],
 			[7, 5, 4, 3, 0, 0],
 			[11, 6, 3, 1, 0, 0]
 		],
-		411: [
+		412: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 8, 15, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		412: [
+		413: [
 			[2, 2, 14, 8, 14, 0],
 			[16, 3, 3, 8, 3, 0]
 		],
-		413: [[2, 2, 4, 3, 0, 0]],
-		415: [
+		414: [[2, 2, 4, 3, 0, 0]],
+		416: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0]
 		],
-		416: [
+		417: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 11, 3, 0],
 			[7, 4, 3, 1, 0, 0]
 		],
-		417: [
+		418: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0]
 		],
-		418: [[2, 2, 3, 8, 3, 0]],
-		420: [
+		419: [[2, 2, 3, 8, 3, 0]],
+		421: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		421: [
+		422: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0]
 		],
-		422: [
+		423: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
-		],
-		423: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
 		],
 		424: [
 			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 8, 3, 0]
+		],
+		425: [
+			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0],
 			[11, 4, 3, 8, 3, 0]
 		],
-		425: [[2, 2, 1, 1, 0, 3]],
 		426: [[2, 2, 1, 1, 0, 3]],
-		427: [
+		427: [[2, 2, 1, 1, 0, 3]],
+		428: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		428: [
+		429: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
 		],
-		429: [[2, 2, 3, 1, 0, 0]],
-		430: [
+		430: [[2, 2, 3, 1, 0, 0]],
+		431: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 3, 8, 3, 0]
 		],
-		431: [
+		432: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 7, 8, 7, 0]
 		],
-		432: [
+		433: [
 			[2, 0],
 			[3, 3, 11, 8, 11, 0],
 			[14, 4, 1, 2, 0, 0]
 		],
-		433: [
+		434: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 3, 1, 0, 0]
 		],
-		434: [[2, 2, 3, 8, 3, 0]],
-		435: [
+		435: [[2, 2, 3, 8, 3, 0]],
+		436: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 3, 8, 3, 0]
 		],
-		436: [
+		437: [
 			[2, 2, 5, 8, 5, 0],
 			[7, 3, 3, 8, 3, 0]
 		],
-		437: [[2, 2, 3, 1, 0, 0]],
-		438: [
+		438: [[2, 2, 3, 1, 0, 0]],
+		439: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0]
 		],
-		439: [
+		440: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 4, 3, 0, 0]
 		],
-		440: [
+		441: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
-		443: [
+		444: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 1, 2, 0, 0],
 			[6, 4, 4, 3, 0, 0]
 		],
-		444: [
+		445: [
 			[2, 2, 4, 9, 3, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 1, 2, 0, 0],
 			[11, 5, 4, 3, 0, 0]
-		],
-		445: [
-			[2, 2, 1, 2, 0, 0],
-			[3, 3, 4, 9, 3, 0],
-			[7, 4, 1, 18, 0, 0],
-			[8, 5, 1, 2, 0, 0],
-			[9, 6, 4, 3, 0, 0]
 		],
 		446: [
 			[2, 2, 1, 2, 0, 0],
@@ -36783,16 +36758,23 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		447: [
 			[2, 2, 1, 2, 0, 0],
-			[3, 3, 1, 1, 0, 3]
+			[3, 3, 4, 9, 3, 0],
+			[7, 4, 1, 18, 0, 0],
+			[8, 5, 1, 2, 0, 0],
+			[9, 6, 4, 3, 0, 0]
 		],
-		448: [[2, 2, 1, 1, 0, 3]],
-		449: [
+		448: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 1, 1, 0, 3]
 		],
-		452: [[2, 2, 14, 8, 14, 0]],
-		453: [[2, 2, 12, 8, 12, 0]],
-		454: [
+		449: [[2, 2, 1, 1, 0, 3]],
+		450: [
+			[2, 2, 1, 2, 0, 0],
+			[3, 3, 1, 1, 0, 3]
+		],
+		453: [[2, 2, 14, 8, 14, 0]],
+		454: [[2, 2, 12, 8, 12, 0]],
+		455: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -36800,7 +36782,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 4, 3, 0, 0],
 			[9, 6, 3, 1, 0, 0]
 		],
-		457: [
+		458: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36814,7 +36796,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[27, 7, 3, 1, 0, 0],
 			[30, 8, 4, 8, 4, 0]
 		],
-		458: [
+		459: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36822,7 +36804,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 3, 1, 0, 0],
 			[22, 6, 4, 8, 4, 0]
 		],
-		459: [
+		460: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36830,7 +36812,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[19, 5, 16, 8, 16, 0],
 			[35, 6, 4, 8, 4, 0]
 		],
-		460: [
+		461: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36843,21 +36825,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		461: [
+		462: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		462: [
+		463: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		463: [
+		464: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[2, 1],
@@ -36867,19 +36849,19 @@ export const builtViews: BuiltViews = Object.freeze({
 			[24, 6, 3, 1, 0, 0],
 			[27, 7, 3, 1, 0, 0]
 		],
-		464: [
+		465: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 3, 1, 0, 0]
 		],
-		465: [
+		466: [
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
 			[19, 5, 16, 8, 16, 0]
 		],
-		466: [
+		467: [
 			[3, 3, 1, 1, 0, 3],
 			[2, 0],
 			[4, 4, 1, 2, 0, 0],
@@ -36892,7 +36874,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[21, 7, 3, 1, 0, 0],
 			[24, 8, 4, 3, 0, 0]
 		],
-		467: [
+		468: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -36902,12 +36884,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[20, 6, 3, 1, 0, 0],
 			[23, 7, 4, 3, 0, 0]
 		],
-		468: [
+		469: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 1, 0, 0],
 			[6, 4, 4, 8, 4, 0]
 		],
-		472: [
+		473: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
 			[2, 0],
@@ -36915,29 +36897,29 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 3, 1, 0, 0],
 			[8, 6, 4, 3, 0, 0]
 		],
-		474: [
+		475: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		475: [[2, 2, 3, 8, 3, 0]],
-		502: [
+		476: [[2, 2, 3, 8, 3, 0]],
+		503: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 3, 8, 3, 0],
 			[6, 4, 1, 2, 0, 0]
 		],
-		504: [[2, 2, 3, 1, 0, 0]],
 		505: [[2, 2, 3, 1, 0, 0]],
 		506: [[2, 2, 3, 1, 0, 0]],
 		507: [[2, 2, 3, 1, 0, 0]],
-		509: [[2, 2, 3, 1, 0, 0]]
+		508: [[2, 2, 3, 1, 0, 0]],
+		510: [[2, 2, 3, 1, 0, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,
-		119: leafUnescapedDoubleStringFragment,
-		120: leafUnescapedSingleStringFragment,
-		126: leafRegexPattern,
-		127: leafRegexFlags,
-		160: leafNumberDecimal,
+		99: leafUnescapedDoubleStringFragment,
+		100: leafUnescapedSingleStringFragment,
+		107: leafRegexPattern,
+		108: leafRegexFlags,
+		145: leafNumberDecimal,
 		176: leafTemplateChars,
 		177: leafTernaryQmark,
 		178: leafHtmlComment,

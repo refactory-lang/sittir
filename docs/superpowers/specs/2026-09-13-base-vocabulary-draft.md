@@ -103,14 +103,14 @@ nothing; a grammar whose field differs binds it.
 | --- | --- | --- | --- | --- | --- | --- |
 | attribute | payload | `expression` | `content` | `attribute` | `content` | choice: neutral over a path + token tree that is no expression |
 | comment.* | text | (leaf) | (leaf) | `content` | `content` | only name; leaves derive it from text |
-| declaration.class | bases | `superclasses` | `heritage` | — | `heritage` | choice: TS's covers implements as well |
-| declaration.field | default | — | `value` | — | `value` | rule 4 (matches variable) |
+| declaration.type.class | bases | `superclasses` | `heritage` | — | `heritage` | choice: TS's covers implements as well |
+| declaration.member.field | default | — | `value` | — | `value` | rule 4 (matches variable) |
 | declaration.parameter | binding | `name` (claim) | `pattern` | `name` | `name` | rule 5 |
 | declaration.parameter | default | `value` | `value` | — | `default` | choice: `value` is the initializer of a variable, a parameter has a default |
 | declaration.parameter | mutability | — | — | `mutable_specifier` | `mutable` | rule 1 |
 | declaration.parameter.type | bound | — | `constraint` | `bounds` | `constraint` | choice: singular, TS's word |
 | declaration.parameter.type | default | — | `value` | `default_type` | `default` | as parameter |
-| declaration.type_alias | aliased type | — | `value` | `type` | `value` | choice: the right-hand side is `value` everywhere; `type` stays the annotation |
+| declaration.type.type_alias | aliased type | — | `value` | `type` | `value` | choice: the right-hand side is `value` everywhere; `type` stays the annotation |
 | declaration.variable | binding | `left` | `name` | `pattern` | `name` | rule 5 (TS + python's bindings capture) |
 | declaration.variable | initializer | `right` | `value` | `value` | `value` | rule 5 |
 | declaration.variable | let-else | — | — | `alternative` | `alternative` | delta, r only |
@@ -237,23 +237,23 @@ export interface BaseContext {
   'comment.line.doc': Comment.Line.Doc;   // r
   'comment.line.doc.inner': Comment.Line.Doc.Inner;   // r
   'declaration': Declaration;   // prefix
-  'declaration.class': Declaration.Class;   // pt
+  'declaration.type.class': Declaration.Type.Class;   // pt
   'declaration.constant': Declaration.Constant;   // r
-  'declaration.constructor': Declaration.Constructor;   // pt
+  'declaration.member.constructor': Declaration.Member.Constructor;   // pt
   'declaration.decorated': Declaration.Decorated;   // p
-  'declaration.enum': Declaration.Enum;   // rt
-  'declaration.enum.member': Declaration.Enum.Member;   // r
-  'declaration.field': Declaration.Field;   // rt
+  'declaration.type.enum': Declaration.Type.Enum;   // rt
+  'declaration.type.enum.member': Declaration.Type.Enum.Member;   // r
+  'declaration.member.field': Declaration.Member.Field;   // rt
   'declaration.function': Declaration.Function;   // prt
-  'declaration.interface': Declaration.Interface;   // t
+  'declaration.type.interface': Declaration.Type.Interface;   // t
   'declaration.macro': Declaration.Macro;   // r
-  'declaration.method': Declaration.Method;   // prt
-  'declaration.method.class': Declaration.Method.Class;   // p
-  'declaration.method.dunder': Declaration.Method.Dunder;   // p
-  'declaration.method.getter': Declaration.Method.Getter;   // t
-  'declaration.method.setter': Declaration.Method.Setter;   // t
-  'declaration.method.static': Declaration.Method.Static;   // pr
-  'declaration.method.trait': Declaration.Method.Trait;   // r
+  'declaration.member.method': Declaration.Member.Method;   // prt
+  'declaration.member.method.class': Declaration.Member.Method.Class;   // p
+  'declaration.member.method.dunder': Declaration.Member.Method.Dunder;   // p
+  'declaration.member.method.getter': Declaration.Member.Method.Getter;   // t
+  'declaration.member.method.setter': Declaration.Member.Method.Setter;   // t
+  'declaration.member.method.static': Declaration.Member.Method.Static;   // pr
+  'declaration.member.method.trait': Declaration.Member.Method.Trait;   // r
   'declaration.module': Declaration.Module;   // r
   'declaration.parameter': Declaration.Parameter;   // prt
   'declaration.parameter.default': Declaration.Parameter.Default;   // p
@@ -262,11 +262,11 @@ export interface BaseContext {
   'declaration.parameter.type': Declaration.Parameter.Type;   // rt
   'declaration.parameter.typed': Declaration.Parameter.Typed;   // p
   'declaration.parameter.typed_default': Declaration.Parameter.TypedDefault;   // p
-  'declaration.property': Declaration.Property;   // t
-  'declaration.struct': Declaration.Struct;   // r
+  'declaration.member.property': Declaration.Member.Property;   // t
+  'declaration.type.struct': Declaration.Type.Struct;   // r
   'declaration.trait': Declaration.Trait;   // r
-  'declaration.type_alias': Declaration.TypeAlias;   // rt
-  'declaration.union': Declaration.Union;   // r
+  'declaration.type.type_alias': Declaration.Type.TypeAlias;   // rt
+  'declaration.type.union': Declaration.Type.Union;   // r
   'declaration.variable': Declaration.Variable;   // prt
   'declaration.variable.pattern': Declaration.Variable.Pattern;   // t
   'declaration.variable.static': Declaration.Variable.Static;   // r
@@ -283,7 +283,7 @@ export interface BaseContext {
   'expression.assignment.compound.subtract': Expression.Assignment.Compound.Subtract;   // prt
   'expression.await': Expression.Await;   // prt
   'expression.binary': Expression.Binary;   // prt
-  'expression.binary.arithmetic': Expression.Binary.Arithmetic;   // prefix
+  'expression.binary.arithmetic': Expression.Binary.Arithmetic.Any;   // namespace
   'expression.binary.arithmetic.add': Expression.Binary.Arithmetic.Add;   // prt
   'expression.binary.arithmetic.divide': Expression.Binary.Arithmetic.Divide;   // prt
   'expression.binary.arithmetic.exponent': Expression.Binary.Arithmetic.Exponent;   // pt
@@ -291,11 +291,11 @@ export interface BaseContext {
   'expression.binary.arithmetic.modulo': Expression.Binary.Arithmetic.Modulo;   // prt
   'expression.binary.arithmetic.multiply': Expression.Binary.Arithmetic.Multiply;   // prt
   'expression.binary.arithmetic.subtract': Expression.Binary.Arithmetic.Subtract;   // prt
-  'expression.binary.bitwise': Expression.Binary.Bitwise;   // prefix
+  'expression.binary.bitwise': Expression.Binary.Bitwise.Any;   // namespace
   'expression.binary.bitwise.and': Expression.Binary.Bitwise.And;   // prt
   'expression.binary.bitwise.or': Expression.Binary.Bitwise.Or;   // prt
   'expression.binary.bitwise.xor': Expression.Binary.Bitwise.Xor;   // prt
-  'expression.binary.comparison': Expression.Binary.Comparison;
+  'expression.binary.comparison': Expression.Binary.Comparison.Any;   // namespace
   'expression.binary.comparison.equal': Expression.Binary.Comparison.Equal;   // prt
   'expression.binary.comparison.greater': Expression.Binary.Comparison.Greater;   // prt
   'expression.binary.comparison.greater_equal': Expression.Binary.Comparison.GreaterEqual;   // prt
@@ -316,7 +316,7 @@ export interface BaseContext {
   'expression.binary.membership.instanceof': Expression.Binary.Membership.Instanceof;   // t
   'expression.binary.membership.not_in': Expression.Binary.Membership.NotIn;   // p
   'expression.binary.nullish': Expression.Binary.Nullish;   // t
-  'expression.binary.shift': Expression.Binary.Shift;   // prefix
+  'expression.binary.shift': Expression.Binary.Shift.Any;   // namespace
   'expression.binary.shift.left': Expression.Binary.Shift.Left;   // prt
   'expression.binary.shift.right': Expression.Binary.Shift.Right;   // prt
   'expression.binary.shift.right_unsigned': Expression.Binary.Shift.RightUnsigned;   // t
@@ -457,7 +457,7 @@ export namespace Declaration {
   export type Constructor<G extends GrammarContext> = {   // pt content-derived }
   export type Decorated<G extends GrammarContext> = {   // p
     decorator: G['attribute'][];
-    definition: G['declaration.class'] | G['declaration.function'];
+    definition: G['declaration.type.class'] | G['declaration.function'];
   }
   export type Enum<G extends GrammarContext> = {   // rt
     body: <rust:enum_variant_list> | <typescript:enum_body>;

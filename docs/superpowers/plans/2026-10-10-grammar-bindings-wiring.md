@@ -25,7 +25,7 @@ Each stage starts with a census, sent to brainstorm before any code: the sites t
 
 ## Stage 1: a claim's path segment as a flag
 
-§2.1: a path segment resolves to a kind or to one of its flags. Three facts are stated only by the claimed node's own kind, with no token to capture: python `@staticmethod` (an envelope) and rust's method with no receiver (a predicate), both `declaration.method.static`, plus `literal.number.integer.big` and `.imaginary` (atomic tokens; typescript's `big.hex`, `big.binary` and `big.octal` ride with `big`).
+§2.1: a path segment resolves to a kind or to one of its flags. Three facts are stated only by the claimed node's own kind, with no token to capture: python `@staticmethod` (an envelope) and rust's method with no receiver (a predicate), both `declaration.member.method.static`, plus `literal.number.integer.big` and `.imaginary` (atomic tokens; typescript's `big.hex`, `big.binary` and `big.octal` ride with `big`).
 
 - **Census:** every claim whose last segment the vocabulary declares as a `Flag` on the parent path, per grammar, with the inventory rows it removes.
 - **Change:** route derivation resolves such a segment to the parent path plus the flag. The read entry carries the flag, and the inventory stops requiring an interface for that segment. `codegen/src/bindings` (`derive`, `routes`) and the inventory.
@@ -67,7 +67,7 @@ Each gets its own red test before its fix:
 
 ### 2c. Contextual aliases
 
-**2c and 2e land as one change.** A split turns on only with the claim-following that keeps its base kind's claims reading on the split kind: once the parser emits `method_declaration` where it emitted `function_item`, every `declaration.method` read keyed on `function_item` reads false until claims follow the split (2e). The `static` claims below also read the split kinds and, for python, the class-body clone. So the aliases, the clone projection (2e), the `variantOf` repair and one split per site ship together, behind one census and one gate.
+**2c and 2e land as one change.** A split turns on only with the claim-following that keeps its base kind's claims reading on the split kind: once the parser emits `method_declaration` where it emitted `function_item`, every `declaration.member.method` read keyed on `function_item` reads false until claims follow the split (2e). The `static` claims below also read the split kinds and, for python, the class-body clone. So the aliases, the clone projection (2e), the `variantOf` repair and one split per site ship together, behind one census and one gate.
 
 Ruled to be parser aliases at a context-unique site, with the ancestor clones kept and no target clone:
 - rust's three context splits: `function_signature_item` → `signature_method_declaration` in a trait, and `function_item` → `method_declaration` in a trait and in an impl body. Today's grammar bindings derive only the two trait splits: the impl-body one went when rust's impl methods became claimed by a read test (receiver or not), an interim. Ruled: all three are aliases, so the impl-body alias comes back; the census confirms its cost. With the alias, `$type` says method, and the no-receiver read test only sets the `static` flag (stage 1);
@@ -75,16 +75,16 @@ Ruled to be parser aliases at a context-unique site, with the ancestor clones ke
 - python's method in a class body (five clones, `_suite` down to `_compound_statement`);
 - python's decorated method in a class body (a second split within `decorated_definition`, reusing the first split's clones).
 
-The aliases retire the interim placed claim that reads any decorated function in a python class body as `declaration.method`.
+The aliases retire the interim placed claim that reads any decorated function in a python class body as `declaration.member.method`.
 
 **Literal splits.** A claim that names a kind by a fixed text on the claimed node's own leaf becomes a parser split. It is built on this stage's one copy primitive: one primitive serves splits, contextual aliases and the receiver lead, and a copy aliases back to its source's name unless it is named.
 
-- **Input:** a kind claim whose predicate is `#eq?` or `#any-of?` on a leaf of the captured node. Typescript's constructor is the case that motivates it: `((method_definition name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))`.
+- **Input:** a kind claim whose predicate is `#eq?` or `#any-of?` on a leaf of the captured node. Typescript's constructor is the case that motivates it: `((method_definition name: (property_identifier) @name) @declaration.member.constructor (#eq? @name "constructor"))`.
   - A regex predicate (`#match?`) is the lexical floor and stays a read test.
   - A flag claim stays a flag read (stage 1): python's `staticmethod` names a flag, not a kind.
 - **The split:**
   - The claimed kind's rule is copied with the leaf replaced by the literal, aliased back to the leaf's kind (`alias('constructor', $.property_identifier)`), so the leaf node does not change.
-  - The copy is named from the claim's path, as the aliases are (`declaration.constructor` → `constructor_declaration`). It sits beside its source at each use site the claim's pattern names.
+  - The copy is named from the claim's path, as the aliases are (`declaration.member.constructor` → `constructor_declaration`). It sits beside its source at each use site the claim's pattern names.
   - Ancestors the pattern names as context are copied, and alias back.
   - The claim then names the copy, and `$type` decides it.
 - **Precondition: the literal lexes as a keyword token at that position**, as `get` and `set` do in a method's head. It matches the grammar's `word` token, and the leaf is the word token or an alias of it (`property_identifier` over `identifier`). Tree-sitter's keyword extraction then lexes it as the literal wherever the copy's arm is valid, and as the identifier everywhere else.
@@ -104,8 +104,8 @@ The aliases retire the interim placed claim that reads any decorated function in
 **`static` reads from the method's own node.** Today both `static` facts come from context: rust's from a placed claim in an impl body with a per-parameter `#not-kind-eq?`, and python's from the parent `decorated_definition`'s decorator. With the aliases, each is read from the method's own node, or, for python, from the envelope the portable method is read through. The aliases' claims replace the placed ones:
 - **rust** (also needs 2b's receiver form): a method or method signature whose parameter list is not the receiver form is static. The per-parameter test misses a typed `self` (`self: Box<Self>`), which 2b moves into the receiver form.
   ```
-  ((method_declaration (parameters (_)? @_list)) @declaration.method.static (#not-kind-eq? @_list "parameters_elements_receiver"))
-  ((signature_method_declaration (parameters (_)? @_list)) @declaration.method.signature.static (#not-kind-eq? @_list "parameters_elements_receiver"))
+  ((method_declaration (parameters (_)? @_list)) @declaration.member.method.static (#not-kind-eq? @_list "parameters_elements_receiver"))
+  ((signature_method_declaration (parameters (_)? @_list)) @declaration.member.method.signature.static (#not-kind-eq? @_list "parameters_elements_receiver"))
   ```
 - **python**: the flag is captured on the class-body clone, the envelope of the decorated method:
   ```
@@ -130,7 +130,7 @@ Each alias kind gets its own low-level builder beside the aliased kind's (`build
 Lands with 2c (see there). `formsOf` adds the kind's split clones (stamped `splitFrom`) to its supertype forms, so a base kind's claims reach its visible clones (bindings §9). `splitFrom` reaches `ModelNode` (the node model serializes it; `slotModelOf` drops it today), and the one `formsOf` expansion covers the physical clones and the ancestor contexts a read entry's `within` names. Python's `decorated_definition` container claim (decorators to the element, `static` from `@staticmethod`) then reaches `decorated_definition_class_declaration`.
 - **`variantOf` survives the split.** Splitting clones a supertype the split kind's base belongs to: rust's `_declaration_statement` becomes `_declaration_statement_impl_item_body` and `_declaration_statement_trait_item`, and 17 of the 18 kinds stamped `variantOf: _declaration_statement` lose the stamp. A clone of a supertype keeps its members' `variantOf`; the stamp is never narrowed.
 - **One split per site.** The derived rust grammar bindings list the impl-body split twice, one per receiver claim (`self_parameter` and typed `self`). The derivation emits one split per (kind, context).
-- **Tests:** rust's `is` method tests find `method_declaration`; the receiver-routes inventory test checks that `method_declaration`'s read entries include `declaration.method`; the inline codemod acceptance test accepts `method_declaration` beside `function_item`.
+- **Tests:** rust's `is` method tests find `method_declaration`; the receiver-routes inventory test checks that `method_declaration`'s read entries include `declaration.member.method`; the inline codemod acceptance test accepts `method_declaration` beside `function_item`.
 - **Census:** each clone, its base, and the members it gains; rust's callable builders gain `methodDeclaration`, `signatureMethodDeclaration`, `traitInterfaceDeclarationBody` and `extensionDeclarationBody`, and its list setters the two cloned body lists.
 
 ### 2f. The docstring path
@@ -169,7 +169,7 @@ Two PRs:
 
 **Census first:**
 - the synonyms per level and the flags' table (NT11: empty);
-- every synonym position the collision rule checks, against the probe's 120 positions with no collision and one note: `try` is a synonym of `propagate` and the canonical segment of `expression.block.try`;
+- every synonym position the collision rule checks, against the probe's 120 positions with no collision and one note: `try` is a synonym of `propagate` and the canonical segment of `statement.block.try`;
 - per grammar, the claims 4a rewrites into their language's word.
 
 ### 4a. The tables, the reader and the collision rule

@@ -289,6 +289,11 @@ export const rawStringLiteral$seated: Seat<
 	F.buildRawStringLiteralEnd
 );
 
+export const attributeInput$seated: Seat<
+	T.AttributeInput.BuildArgs,
+	ReturnType<typeof F.buildAttributeInput>
+> = K.attributeInput$branch(F.buildAttributeInput);
+
 export const enumVariantListElements$seated: Seat<
 	T.EnumVariantListElements.BuildArgs,
 	ReturnType<typeof F.buildEnumVariantListElements>

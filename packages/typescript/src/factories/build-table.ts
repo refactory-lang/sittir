@@ -162,11 +162,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly semi: Routes<Table>['usingDeclaration$semi'];
 	};
 	readonly catchClause: Table['catchClause$seated'];
-	readonly binaryExpression$in: Seat<
-		ArgsOf<Table['buildBinaryExpressionIn']>,
-		ReturnType<Table['buildBinaryExpression']>
-	>;
-	readonly binaryExpression: Table['buildBinaryExpression'] & { readonly in: Routes<Table>['binaryExpression$in'] };
 	readonly classHeritage$extendsClause: Seat<
 		ArgsOf<Table['buildClassHeritageExtendsClause']>,
 		ReturnType<typeof F.buildClassHeritage>
@@ -358,6 +353,8 @@ export interface Routes<Table extends AnyTable> {
 		readonly dot: Routes<Table>['typeQueryMemberExpression$dot'];
 		readonly qmarkDot: Routes<Table>['typeQueryMemberExpression$qmarkDot'];
 	};
+	readonly numberFloatPoint: Table['numberFloatPoint$seated'];
+	readonly numberFloatLeadingPoint: Table['numberFloatLeadingPoint$seated'];
 	readonly constraint$extends: <const V extends ArgsOf<Table['buildConstraint']>[0]>(
 		arg: V & RefuseUndeclared<V, ArgsOf<Table['buildConstraint']>[0]>,
 		options?: OptionsArg<Table['buildConstraint']>
@@ -1895,6 +1892,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly templateCall: Table['buildCallExpressionTemplateCall'];
 		readonly member: Table['buildCallExpressionMember'];
 	};
+	readonly binaryExpression: Table['buildBinaryExpressionDefault'] & { readonly in: Table['buildBinaryExpressionIn'] };
 	readonly updateExpression: Table['buildUpdateExpressionPostfix'] & {
 		readonly postfix: Table['buildUpdateExpressionPostfix'];
 		readonly prefix: Table['buildUpdateExpressionPrefix'];
@@ -1932,7 +1930,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$binary: Seat<
-		ArgsOf<Table['buildBinaryExpression']>,
+		ArgsOf<Routes<Table>['binaryExpression']>,
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$ternary: Seat<
@@ -1952,7 +1950,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$binary$in: Seat<
-		ArgsOf<Routes<Table>['binaryExpression$in']>,
+		ArgsOf<Table['buildBinaryExpressionIn']>,
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$update$postfix: Seat<
@@ -2142,9 +2140,12 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildLiteralType>
 	>;
 	readonly literalType$hex: Seat<ArgsOf<Table['buildNumberHex']>, ReturnType<typeof F.buildLiteralType>>;
-	readonly literalType$floatPoint: Seat<ArgsOf<Table['buildNumberFloatPoint']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$floatPoint: Seat<
+		ArgsOf<Routes<Table>['numberFloatPoint']>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
 	readonly literalType$floatLeadingPoint: Seat<
-		ArgsOf<Table['buildNumberFloatLeadingPoint']>,
+		ArgsOf<Routes<Table>['numberFloatLeadingPoint']>,
 		ReturnType<typeof F.buildLiteralType>
 	>;
 	readonly literalType$floatScientific: Seat<
@@ -2238,8 +2239,8 @@ export interface Routes<Table extends AnyTable> {
 	};
 	readonly number: typeof F.buildNumberDecimal & {
 		readonly hex: Table['buildNumberHex'];
-		readonly floatPoint: Table['buildNumberFloatPoint'];
-		readonly floatLeadingPoint: Table['buildNumberFloatLeadingPoint'];
+		readonly floatPoint: Routes<Table>['numberFloatPoint'];
+		readonly floatLeadingPoint: Routes<Table>['numberFloatLeadingPoint'];
 		readonly floatScientific: Table['buildNumberFloatScientific'];
 		readonly legacyOctal: typeof F.buildNumberLegacyOctal;
 		readonly decimal: typeof F.buildNumberDecimal;
@@ -2309,7 +2310,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly augmentedAssignmentExpression: Table['buildAugmentedAssignmentExpression'];
 	readonly spreadElement: Table['buildSpreadElement'];
 	readonly ternaryExpression: Table['buildTernaryExpression'];
-	readonly binaryExpression: Routes<Table>['binaryExpression'];
 	readonly unaryExpression: Table['buildUnaryExpression'];
 	readonly sequenceExpression: Table['buildSequenceExpression'];
 	readonly templateString: Table['buildTemplateString'];
@@ -2409,11 +2409,13 @@ export interface Ir<Table extends AnyTable> {
 	readonly ambientDeclarationModule: Table['buildAmbientDeclarationModule'];
 	readonly objectTypeContent: Table['buildObjectTypeContent'];
 	readonly numberHex: Table['buildNumberHex'];
-	readonly numberFloatPoint: Table['buildNumberFloatPoint'];
-	readonly numberFloatLeadingPoint: Table['buildNumberFloatLeadingPoint'];
+	readonly numberFloatPoint: Routes<Table>['numberFloatPoint'];
+	readonly numberFloatLeadingPoint: Routes<Table>['numberFloatLeadingPoint'];
 	readonly numberFloatScientific: Table['buildNumberFloatScientific'];
 	readonly numberBinary: Table['buildNumberBinary'];
 	readonly numberOctal: Table['buildNumberOctal'];
+	readonly binaryExpressionIn: Table['buildBinaryExpressionIn'];
+	readonly binaryExpressionDefault: Table['buildBinaryExpressionDefault'];
 	readonly classBodyMemberMethod: Routes<Table>['classBodyMemberMethod'];
 	readonly classBodyMemberMethodSig: Routes<Table>['classBodyMemberMethodSig'];
 	readonly classBodyMemberDeclaration: Table['buildClassBodyMemberDeclaration'];
@@ -2466,6 +2468,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly forHeader: Routes<Table>['forHeader'];
 	readonly parenthesizedExpression: Routes<Table>['parenthesizedExpression'];
 	readonly callExpression: Routes<Table>['callExpression'];
+	readonly binaryExpression: Routes<Table>['binaryExpression'];
 	readonly updateExpression: Routes<Table>['updateExpression'];
 	readonly string: Routes<Table>['string'];
 	readonly comment: Routes<Table>['comment'];
@@ -2724,13 +2727,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const catchClause: Routes<Table>['catchClause'] = $at('catchClause$seated');
-	const binaryExpression$in: Routes<Table>['binaryExpression$in'] = K.binaryExpression$in(
-		$at('buildBinaryExpression'),
-		$at('buildBinaryExpressionIn')
-	);
-	const binaryExpression: Routes<Table>['binaryExpression'] = Object.freeze(
-		Object.assign(delegate($at('buildBinaryExpression')), { in: binaryExpression$in } as const)
-	);
 	const classHeritage$extendsClause: Routes<Table>['classHeritage$extendsClause'] = K.classHeritage$extendsClause(
 		F.buildClassHeritage,
 		$at('buildClassHeritageExtendsClause')
@@ -2900,6 +2896,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			qmarkDot: typeQueryMemberExpression$qmarkDot
 		} as const)
 	);
+	const numberFloatPoint: Routes<Table>['numberFloatPoint'] = $at('numberFloatPoint$seated');
+	const numberFloatLeadingPoint: Routes<Table>['numberFloatLeadingPoint'] = $at('numberFloatLeadingPoint$seated');
 	const constraint$extends: Routes<Table>['constraint$extends'] = K.constraint$extends(
 		$at('buildConstraint'),
 		TSKindId.ExtendsKeyword
@@ -3744,6 +3742,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		templateCall: $at('buildCallExpressionTemplateCall'),
 		member: $at('buildCallExpressionMember')
 	} as const);
+	const binaryExpression: Routes<Table>['binaryExpression'] = Object.freeze(
+		Object.assign(delegate($at('buildBinaryExpressionDefault')), { in: $at('buildBinaryExpressionIn') } as const)
+	);
 	const updateExpression: Routes<Table>['updateExpression'] = Object.freeze(
 		Object.assign(delegate($at('buildUpdateExpressionPostfix')), {
 			postfix: $at('buildUpdateExpressionPostfix'),
@@ -3776,7 +3777,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		$at('buildUnaryExpression')
 	);
 	const yieldExpressionDelegate$binary: Routes<Table>['yieldExpressionDelegate$binary'] =
-		K.yieldExpressionDelegate$binary(F.buildYieldExpressionDelegate, $at('buildBinaryExpression'));
+		K.yieldExpressionDelegate$binary(F.buildYieldExpressionDelegate, binaryExpression);
 	const yieldExpressionDelegate$ternary: Routes<Table>['yieldExpressionDelegate$ternary'] =
 		K.yieldExpressionDelegate$ternary(F.buildYieldExpressionDelegate, $at('buildTernaryExpression'));
 	const yieldExpressionDelegate$update: Routes<Table>['yieldExpressionDelegate$update'] =
@@ -3954,11 +3955,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const literalType$floatPoint: Routes<Table>['literalType$floatPoint'] = K.literalType$floatPoint(
 		F.buildLiteralType,
-		$at('buildNumberFloatPoint')
+		numberFloatPoint
 	);
 	const literalType$floatLeadingPoint: Routes<Table>['literalType$floatLeadingPoint'] = K.literalType$floatLeadingPoint(
 		F.buildLiteralType,
-		$at('buildNumberFloatLeadingPoint')
+		numberFloatLeadingPoint
 	);
 	const literalType$floatScientific: Routes<Table>['literalType$floatScientific'] = K.literalType$floatScientific(
 		F.buildLiteralType,
@@ -4085,8 +4086,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const number: Routes<Table>['number'] = Object.freeze(
 		Object.assign(delegate(F.buildNumberDecimal), {
 			hex: $at('buildNumberHex'),
-			floatPoint: $at('buildNumberFloatPoint'),
-			floatLeadingPoint: $at('buildNumberFloatLeadingPoint'),
+			floatPoint: numberFloatPoint,
+			floatLeadingPoint: numberFloatLeadingPoint,
 			floatScientific: $at('buildNumberFloatScientific'),
 			legacyOctal: F.buildNumberLegacyOctal,
 			decimal: F.buildNumberDecimal,
@@ -4155,7 +4156,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		augmentedAssignmentExpression: $at('buildAugmentedAssignmentExpression'),
 		spreadElement: $at('buildSpreadElement'),
 		ternaryExpression: $at('buildTernaryExpression'),
-		binaryExpression: binaryExpression,
 		unaryExpression: $at('buildUnaryExpression'),
 		sequenceExpression: $at('buildSequenceExpression'),
 		templateString: $at('buildTemplateString'),
@@ -4255,11 +4255,13 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		ambientDeclarationModule: $at('buildAmbientDeclarationModule'),
 		objectTypeContent: $at('buildObjectTypeContent'),
 		numberHex: $at('buildNumberHex'),
-		numberFloatPoint: $at('buildNumberFloatPoint'),
-		numberFloatLeadingPoint: $at('buildNumberFloatLeadingPoint'),
+		numberFloatPoint: numberFloatPoint,
+		numberFloatLeadingPoint: numberFloatLeadingPoint,
 		numberFloatScientific: $at('buildNumberFloatScientific'),
 		numberBinary: $at('buildNumberBinary'),
 		numberOctal: $at('buildNumberOctal'),
+		binaryExpressionIn: $at('buildBinaryExpressionIn'),
+		binaryExpressionDefault: $at('buildBinaryExpressionDefault'),
 		classBodyMemberMethod: classBodyMemberMethod,
 		classBodyMemberMethodSig: classBodyMemberMethodSig,
 		classBodyMemberDeclaration: $at('buildClassBodyMemberDeclaration'),
@@ -4312,6 +4314,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		forHeader: forHeader,
 		parenthesizedExpression: parenthesizedExpression,
 		callExpression: callExpression,
+		binaryExpression: binaryExpression,
 		updateExpression: updateExpression,
 		string: string,
 		comment: comment,

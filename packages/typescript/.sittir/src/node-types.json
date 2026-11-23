@@ -120,6 +120,20 @@
     ]
   },
   {
+    "type": "binary_expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "binary_expression_default",
+        "named": true
+      },
+      {
+        "type": "binary_expression_in",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "call_expression",
     "named": true,
     "subtypes": [
@@ -1663,12 +1677,12 @@
     }
   },
   {
-    "type": "binary_expression",
+    "type": "binary_expression_default",
     "named": true,
     "fields": {
       "left": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "expression",
@@ -1678,7 +1692,7 @@
       },
       "operator": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "!=",
@@ -1780,7 +1794,7 @@
       },
       "right": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "expression",
@@ -1788,16 +1802,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "binary_expression_in",
-          "named": true
-        }
-      ]
     }
   },
   {

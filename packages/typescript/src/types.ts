@@ -16,6 +16,9 @@ import type {
 	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
+	CoOptionalRows,
+	BranchHint,
+	BranchShapesOf,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -149,35 +152,15 @@ export type LeafStringMap = {
 	[TSKindId.QmarkQmarkEq]: '??=';
 	[TSKindId.DotDotDot]: '...';
 	[TSKindId.Qmark]: '?';
-	[TSKindId.AmpAmp]: '&&';
-	[TSKindId.PipePipe]: '||';
-	[TSKindId.GtGt]: '>>';
-	[TSKindId.GtGtGt]: '>>>';
-	[TSKindId.LtLt]: '<<';
-	[TSKindId.Amp]: '&';
-	[TSKindId.Caret]: '^';
-	[TSKindId.Pipe]: '|';
-	[TSKindId.Plus]: '+';
-	[TSKindId.Dash]: '-';
-	[TSKindId.Slash]: '/';
-	[TSKindId.Percent]: '%';
-	[TSKindId.StarStar]: '**';
-	[TSKindId.Lt]: '<';
-	[TSKindId.LtEq]: '<=';
-	[TSKindId.EqEq]: '==';
-	[TSKindId.EqEqEq]: '===';
-	[TSKindId.BangEq]: '!=';
-	[TSKindId.BangEqEq]: '!==';
-	[TSKindId.GtEq]: '>=';
-	[TSKindId.Gt]: '>';
-	[TSKindId.QmarkQmark]: '??';
-	[TSKindId.InstanceofKeyword]: 'instanceof';
 	[TSKindId.Bang]: '!';
 	[TSKindId.Tilde]: '~';
+	[TSKindId.Dash]: '-';
+	[TSKindId.Plus]: '+';
 	[TSKindId.VoidKeyword]: 'void';
 	[TSKindId.DeleteKeyword]: 'delete';
 	[TSKindId.Bquote]: '`';
 	[TSKindId.DollarLbrace]: '${';
+	[TSKindId.Slash]: '/';
 	[TSKindId.ThisKeyword]: 'this';
 	[TSKindId.SuperKeyword]: 'super';
 	[TSKindId.TrueKeyword]: 'true';
@@ -217,10 +200,30 @@ export type LeafStringMap = {
 	[TSKindId.UnknownKeyword]: 'unknown';
 	[TSKindId.NeverKeyword]: 'never';
 	[TSKindId.ObjectKeyword]: 'object';
+	[TSKindId.Lt]: '<';
+	[TSKindId.Gt]: '>';
 	[TSKindId.LbracePipe]: '{|';
 	[TSKindId.PipeRbrace]: '|}';
+	[TSKindId.Pipe]: '|';
+	[TSKindId.Amp]: '&';
 	[TSKindId.Comma]: ',';
 	[TSKindId.GlobalKeyword]: 'global';
+	[TSKindId.AmpAmp]: '&&';
+	[TSKindId.PipePipe]: '||';
+	[TSKindId.GtGt]: '>>';
+	[TSKindId.GtGtGt]: '>>>';
+	[TSKindId.LtLt]: '<<';
+	[TSKindId.Caret]: '^';
+	[TSKindId.Percent]: '%';
+	[TSKindId.StarStar]: '**';
+	[TSKindId.LtEq]: '<=';
+	[TSKindId.EqEq]: '==';
+	[TSKindId.EqEqEq]: '===';
+	[TSKindId.BangEq]: '!=';
+	[TSKindId.BangEqEq]: '!==';
+	[TSKindId.GtEq]: '>=';
+	[TSKindId.QmarkQmark]: '??';
+	[TSKindId.InstanceofKeyword]: 'instanceof';
 	[TSKindId.FromKeyword]: 'from';
 	[TSKindId.ExportKeyword]: 'export';
 	[TSKindId.Dquote]: '"';
@@ -343,78 +346,78 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[92, 'pipe_pipe_eq'],
 	[93, 'qmark_qmark_eq'],
 	[94, 'dot_dot_dot'],
-	[95, 'amp_amp'],
-	[96, 'pipe_pipe'],
-	[97, 'gt_gt'],
-	[98, 'gt_gt_gt'],
-	[99, 'lt_lt'],
-	[100, 'amp'],
-	[101, 'caret'],
-	[102, 'pipe'],
-	[103, 'plus'],
-	[104, 'dash'],
+	[95, 'bang'],
+	[96, 'tilde'],
+	[97, 'dash'],
+	[98, 'plus'],
+	[99, 'unescaped_double_string_fragment'],
+	[100, 'unescaped_single_string_fragment'],
+	[101, 'escape_sequence'],
+	[102, 'bquote'],
+	[103, 'bquote2'],
+	[104, 'dollar_lbrace'],
 	[105, 'slash'],
-	[106, 'percent'],
-	[107, 'star_star'],
-	[108, 'lt'],
-	[109, 'lt_eq'],
-	[110, 'eq_eq'],
-	[111, 'eq_eq_eq'],
-	[112, 'bang_eq'],
-	[113, 'bang_eq_eq'],
-	[114, 'gt_eq'],
-	[115, 'gt'],
-	[116, 'qmark_qmark'],
-	[117, 'bang'],
-	[118, 'tilde'],
-	[119, 'unescaped_double_string_fragment'],
-	[120, 'unescaped_single_string_fragment'],
-	[121, 'escape_sequence'],
-	[122, 'bquote'],
-	[123, 'bquote2'],
-	[124, 'dollar_lbrace'],
-	[125, 'slash2'],
-	[126, 'regex_pattern'],
-	[127, 'regex_flags'],
-	[128, 'private_property_identifier'],
-	[129, 'undefined'],
-	[130, 'at'],
-	[131, 'satisfies_keyword'],
-	[132, 'require_keyword'],
-	[133, 'implements_keyword'],
-	[134, 'interface_keyword'],
-	[135, 'enum_keyword'],
-	[136, 'dash_qmark_colon'],
-	[137, 'plus_qmark_colon'],
-	[138, 'qmark_colon'],
-	[139, 'asserts_keyword'],
-	[140, 'qmark'],
-	[141, 'infer_keyword'],
-	[142, 'is_keyword'],
-	[143, 'keyof_keyword'],
-	[144, 'unique'],
-	[145, 'unknown_keyword'],
-	[146, 'never_keyword'],
-	[147, 'lbrace_pipe'],
-	[148, 'pipe_rbrace'],
-	[149, 'abstract_keyword'],
-	[150, 'accessor_keyword'],
-	[151, 'of_keyword'],
-	[152, 'global_keyword'],
-	[153, 'comment_line'],
-	[154, 'comment_block'],
-	[155, 'number_hex'],
-	[156, 'number_float_point'],
-	[157, 'number_float_leading_point'],
-	[158, 'number_float_scientific'],
-	[159, 'number_legacy_octal'],
-	[160, 'number_decimal'],
-	[161, 'number_binary'],
-	[162, 'number_octal'],
-	[163, 'number_bigint_hex'],
-	[164, 'number_bigint_binary'],
-	[165, 'number_bigint_octal'],
-	[166, 'number_bigint_decimal'],
+	[106, 'slash2'],
+	[107, 'regex_pattern'],
+	[108, 'regex_flags'],
+	[109, 'private_property_identifier'],
+	[110, 'undefined'],
+	[111, 'at'],
+	[112, 'satisfies_keyword'],
+	[113, 'require_keyword'],
+	[114, 'implements_keyword'],
+	[115, 'interface_keyword'],
+	[116, 'enum_keyword'],
+	[117, 'dash_qmark_colon'],
+	[118, 'plus_qmark_colon'],
+	[119, 'qmark_colon'],
+	[120, 'asserts_keyword'],
+	[121, 'qmark'],
+	[122, 'infer_keyword'],
+	[123, 'is_keyword'],
+	[124, 'keyof_keyword'],
+	[125, 'unique'],
+	[126, 'unknown_keyword'],
+	[127, 'never_keyword'],
+	[128, 'lt'],
+	[129, 'gt'],
+	[130, 'lbrace_pipe'],
+	[131, 'pipe_rbrace'],
+	[132, 'pipe'],
+	[133, 'amp'],
+	[134, 'abstract_keyword'],
+	[135, 'accessor_keyword'],
+	[136, 'of_keyword'],
+	[137, 'global_keyword'],
+	[138, 'comment_line'],
+	[139, 'comment_block'],
+	[140, 'number_hex'],
+	[141, 'number_float_point'],
+	[142, 'number_float_leading_point'],
+	[143, 'number_float_scientific'],
+	[144, 'number_legacy_octal'],
+	[145, 'number_decimal'],
+	[146, 'number_binary'],
+	[147, 'number_octal'],
+	[148, 'number_bigint_hex'],
+	[149, 'number_bigint_binary'],
+	[150, 'number_bigint_octal'],
+	[151, 'number_bigint_decimal'],
+	[152, 'amp_amp'],
+	[153, 'pipe_pipe'],
+	[154, 'gt_gt'],
+	[155, 'gt_gt_gt'],
+	[156, 'lt_lt'],
+	[157, 'caret'],
+	[158, 'percent'],
+	[159, 'star_star'],
+	[160, 'lt_eq'],
+	[161, 'eq_eq'],
+	[162, 'eq_eq_eq'],
+	[163, 'bang_eq'],
+	[164, 'bang_eq_eq'],
+	[165, 'gt_eq'],
+	[166, 'qmark_qmark'],
 	[167, 'dquote'],
 	[168, 'dquote2'],
 	[169, 'squote'],
@@ -510,7 +513,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[259, 'member_expression'],
 	[260, 'subscript_expression'],
 	[261, '_lhs_expression'],
-	[503, '_lhs_expression'],
+	[504, '_lhs_expression'],
 	[262, 'assignment_expression'],
 	[263, '_augmented_assignment_lhs'],
 	[264, 'augmented_assignment_expression'],
@@ -655,109 +658,110 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[403, 'literal_type_negative_number'],
 	[404, 'number_bigint'],
 	[405, 'binary_expression_in'],
-	[406, 'empty_member'],
-	[407, 'class_body_member_method'],
-	[408, 'class_body_member_method_sig'],
-	[409, 'class_body_member_declaration'],
-	[410, 'index_signature_colon'],
-	[411, 'index_signature_mapped_type_clause'],
-	[412, 'import_statement_clause_from'],
-	[413, 'yield_expression_delegate'],
-	[414, 'optional_chain_marker'],
-	[415, 'import_specifier_name'],
-	[416, 'import_specifier_as'],
-	[417, 'parenthesized_expression_typed'],
-	[418, 'parenthesized_expression_sequence'],
-	[419, 'export_statement_default'],
-	[420, 'export_statement_equals_export'],
-	[421, 'export_statement_namespace_export'],
-	[422, 'call_expression_call'],
-	[423, 'call_expression_template_call'],
-	[424, 'call_expression_member'],
-	[425, 'string_double'],
-	[426, 'string_single'],
-	[427, 'update_expression_postfix'],
-	[428, 'update_expression_prefix'],
-	[429, 'arrow_function_parameter'],
-	[430, 'class_heritage_extends_clause'],
-	[431, 'import_clause_default_import'],
-	[432, 'export_statement_default_from'],
-	[433, 'export_statement_default_declaration'],
-	[434, 'export_statement_default_from_star_from'],
-	[435, 'export_statement_default_from_ns_from'],
-	[436, 'export_statement_default_from_clause_from'],
-	[437, 'export_statement_default_declaration_default_kw'],
-	[438, 'export_statement_default_declaration_default_kw_value'],
-	[439, 'variable_declarator_plain'],
-	[440, 'variable_declarator_definite'],
-	[441, 'meta_property_new_target'],
-	[442, 'meta_property_import_meta'],
-	[443, 'for_header_lhs'],
-	[444, 'for_header_var_kind'],
-	[445, 'for_header_let_const_kind'],
-	[446, 'for_header_using_kind'],
-	[447, 'for_initializer_let_const_kind'],
-	[448, 'for_initializer_var_kind'],
-	[449, 'for_initializer_using_kind'],
-	[450, '_call_signature_get_accessor_signature'],
-	[451, '_formal_parameters_get_accessor_signature'],
-	[452, '_formal_parameters_set_accessor_signature'],
-	[453, '_formal_parameters_elements_set_accessor_signature'],
-	[454, 'setter_parameter'],
-	[455, '_parameter_name_set_accessor_signature'],
-	[456, '_pattern_0_set_accessor_signature'],
-	[457, 'method_definition_plain'],
-	[458, 'method_definition_getter'],
-	[459, 'method_definition_setter'],
-	[460, 'method_signature_plain'],
-	[461, 'method_signature_getter'],
-	[462, 'method_signature_setter'],
-	[463, 'abstract_method_signature_plain'],
-	[464, 'abstract_method_signature_getter'],
-	[465, 'abstract_method_signature_setter'],
-	[466, 'public_field_definition_plain'],
-	[467, 'public_field_definition_accessor'],
-	[468, 'constructor_declaration'],
-	[469, '_call_signature_class_body_member_method'],
-	[470, '_method_definition_class_body_member_method'],
-	[471, '_parameter_name_receiver'],
-	[472, 'receiver_parameter_declaration'],
-	[473, '_parameter_name_formal_parameter'],
-	[474, 'formal_parameters_elements_receiver'],
-	[475, 'formal_parameters_elements_receiver_group'],
-	[476, 'program_repeat1'],
-	[477, 'variable_declaration_repeat1'],
-	[478, 'using_declaration_repeat1'],
-	[479, 'switch_body_repeat1'],
-	[480, 'object_repeat1'],
-	[481, 'object_pattern_repeat1'],
-	[482, 'array_repeat1'],
-	[483, 'array_pattern_repeat1'],
-	[484, 'class_repeat1'],
-	[485, 'sequence_expression_repeat1'],
-	[486, 'template_string_repeat1'],
-	[487, 'class_body_repeat1'],
-	[488, 'extends_clause_repeat1'],
-	[489, 'implements_clause_repeat1'],
-	[490, 'extends_type_clause_repeat1'],
-	[491, 'template_literal_type_repeat1'],
-	[492, 'export_specifiers_repeat1'],
-	[493, 'import_specifiers_repeat1'],
-	[494, 'formal_parameters_elements_repeat1'],
-	[495, 'enum_body_elements_repeat1'],
-	[496, 'types_repeat1'],
-	[497, 'type_parameters_elements_repeat1'],
-	[498, 'tuple_type_members_repeat1'],
-	[499, 'object_type_content_repeat1'],
-	[500, 'string_double_repeat1'],
-	[501, 'string_single_repeat1'],
-	[502, 'interface_body'],
-	[504, 'property_identifier'],
-	[505, 'shorthand_property_identifier'],
-	[506, 'shorthand_property_identifier_pattern'],
-	[507, 'statement_identifier'],
-	[508, 'this_type'],
-	[509, 'type_identifier'],
+	[406, 'binary_expression_default'],
+	[407, 'empty_member'],
+	[408, 'class_body_member_method'],
+	[409, 'class_body_member_method_sig'],
+	[410, 'class_body_member_declaration'],
+	[411, 'index_signature_colon'],
+	[412, 'index_signature_mapped_type_clause'],
+	[413, 'import_statement_clause_from'],
+	[414, 'yield_expression_delegate'],
+	[415, 'optional_chain_marker'],
+	[416, 'import_specifier_name'],
+	[417, 'import_specifier_as'],
+	[418, 'parenthesized_expression_typed'],
+	[419, 'parenthesized_expression_sequence'],
+	[420, 'export_statement_default'],
+	[421, 'export_statement_equals_export'],
+	[422, 'export_statement_namespace_export'],
+	[423, 'call_expression_call'],
+	[424, 'call_expression_template_call'],
+	[425, 'call_expression_member'],
+	[426, 'string_double'],
+	[427, 'string_single'],
+	[428, 'update_expression_postfix'],
+	[429, 'update_expression_prefix'],
+	[430, 'arrow_function_parameter'],
+	[431, 'class_heritage_extends_clause'],
+	[432, 'import_clause_default_import'],
+	[433, 'export_statement_default_from'],
+	[434, 'export_statement_default_declaration'],
+	[435, 'export_statement_default_from_star_from'],
+	[436, 'export_statement_default_from_ns_from'],
+	[437, 'export_statement_default_from_clause_from'],
+	[438, 'export_statement_default_declaration_default_kw'],
+	[439, 'export_statement_default_declaration_default_kw_value'],
+	[440, 'variable_declarator_plain'],
+	[441, 'variable_declarator_definite'],
+	[442, 'meta_property_new_target'],
+	[443, 'meta_property_import_meta'],
+	[444, 'for_header_lhs'],
+	[445, 'for_header_var_kind'],
+	[446, 'for_header_let_const_kind'],
+	[447, 'for_header_using_kind'],
+	[448, 'for_initializer_let_const_kind'],
+	[449, 'for_initializer_var_kind'],
+	[450, 'for_initializer_using_kind'],
+	[451, '_call_signature_get_accessor_signature'],
+	[452, '_formal_parameters_get_accessor_signature'],
+	[453, '_formal_parameters_set_accessor_signature'],
+	[454, '_formal_parameters_elements_set_accessor_signature'],
+	[455, 'setter_parameter'],
+	[456, '_parameter_name_set_accessor_signature'],
+	[457, '_pattern_0_set_accessor_signature'],
+	[458, 'method_definition_plain'],
+	[459, 'method_definition_getter'],
+	[460, 'method_definition_setter'],
+	[461, 'method_signature_plain'],
+	[462, 'method_signature_getter'],
+	[463, 'method_signature_setter'],
+	[464, 'abstract_method_signature_plain'],
+	[465, 'abstract_method_signature_getter'],
+	[466, 'abstract_method_signature_setter'],
+	[467, 'public_field_definition_plain'],
+	[468, 'public_field_definition_accessor'],
+	[469, 'constructor_declaration'],
+	[470, '_call_signature_class_body_member_method'],
+	[471, '_method_definition_class_body_member_method'],
+	[472, '_parameter_name_receiver'],
+	[473, 'receiver_parameter_declaration'],
+	[474, '_parameter_name_formal_parameter'],
+	[475, 'formal_parameters_elements_receiver'],
+	[476, 'formal_parameters_elements_receiver_group'],
+	[477, 'program_repeat1'],
+	[478, 'variable_declaration_repeat1'],
+	[479, 'using_declaration_repeat1'],
+	[480, 'switch_body_repeat1'],
+	[481, 'object_repeat1'],
+	[482, 'object_pattern_repeat1'],
+	[483, 'array_repeat1'],
+	[484, 'array_pattern_repeat1'],
+	[485, 'class_repeat1'],
+	[486, 'sequence_expression_repeat1'],
+	[487, 'template_string_repeat1'],
+	[488, 'class_body_repeat1'],
+	[489, 'extends_clause_repeat1'],
+	[490, 'implements_clause_repeat1'],
+	[491, 'extends_type_clause_repeat1'],
+	[492, 'template_literal_type_repeat1'],
+	[493, 'export_specifiers_repeat1'],
+	[494, 'import_specifiers_repeat1'],
+	[495, 'formal_parameters_elements_repeat1'],
+	[496, 'enum_body_elements_repeat1'],
+	[497, 'types_repeat1'],
+	[498, 'type_parameters_elements_repeat1'],
+	[499, 'tuple_type_members_repeat1'],
+	[500, 'object_type_content_repeat1'],
+	[501, 'string_double_repeat1'],
+	[502, 'string_single_repeat1'],
+	[503, 'interface_body'],
+	[505, 'property_identifier'],
+	[506, 'shorthand_property_identifier'],
+	[507, 'shorthand_property_identifier_pattern'],
+	[508, 'statement_identifier'],
+	[509, 'this_type'],
+	[510, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -857,78 +861,78 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[92, '||='],
 	[93, '??='],
 	[94, '...'],
-	[95, '&&'],
-	[96, '||'],
-	[97, '>>'],
-	[98, '>>>'],
-	[99, '<<'],
-	[100, '&'],
-	[101, '^'],
-	[102, '|'],
-	[103, '+'],
-	[104, '-'],
+	[95, '!'],
+	[96, '~'],
+	[97, '-'],
+	[98, '+'],
+	[99, 'string_fragment'],
+	[100, 'string_fragment'],
+	[101, 'escape_sequence'],
+	[102, '`'],
+	[103, '`'],
+	[104, '${'],
 	[105, '/'],
-	[106, '%'],
-	[107, '**'],
-	[108, '<'],
-	[109, '<='],
-	[110, '=='],
-	[111, '==='],
-	[112, '!='],
-	[113, '!=='],
-	[114, '>='],
-	[115, '>'],
-	[116, '??'],
-	[117, '!'],
-	[118, '~'],
-	[119, 'string_fragment'],
-	[120, 'string_fragment'],
-	[121, 'escape_sequence'],
-	[122, '`'],
-	[123, '`'],
-	[124, '${'],
-	[125, '/'],
-	[126, 'regex_pattern'],
-	[127, 'regex_flags'],
-	[128, 'private_property_identifier'],
-	[129, 'undefined'],
-	[130, '@'],
-	[131, 'satisfies'],
-	[132, 'require'],
-	[133, 'implements'],
-	[134, 'interface'],
-	[135, 'enum'],
-	[136, '-?:'],
-	[137, '+?:'],
-	[138, '?:'],
-	[139, 'asserts'],
-	[140, '?'],
-	[141, 'infer'],
-	[142, 'is'],
-	[143, 'keyof'],
-	[144, 'unique symbol'],
-	[145, 'unknown'],
-	[146, 'never'],
-	[147, '{|'],
-	[148, '|}'],
-	[149, 'abstract'],
-	[150, 'accessor'],
-	[151, 'of'],
-	[152, 'global'],
-	[153, 'comment_line'],
-	[154, 'comment_block'],
-	[155, 'number_hex'],
-	[156, 'number_float_point'],
-	[157, 'number_float_leading_point'],
-	[158, 'number_float_scientific'],
-	[159, 'number_legacy_octal'],
-	[160, 'number_decimal'],
-	[161, 'number_binary'],
-	[162, 'number_octal'],
-	[163, 'number_bigint_hex'],
-	[164, 'number_bigint_binary'],
-	[165, 'number_bigint_octal'],
-	[166, 'number_bigint_decimal'],
+	[106, '/'],
+	[107, 'regex_pattern'],
+	[108, 'regex_flags'],
+	[109, 'private_property_identifier'],
+	[110, 'undefined'],
+	[111, '@'],
+	[112, 'satisfies'],
+	[113, 'require'],
+	[114, 'implements'],
+	[115, 'interface'],
+	[116, 'enum'],
+	[117, '-?:'],
+	[118, '+?:'],
+	[119, '?:'],
+	[120, 'asserts'],
+	[121, '?'],
+	[122, 'infer'],
+	[123, 'is'],
+	[124, 'keyof'],
+	[125, 'unique symbol'],
+	[126, 'unknown'],
+	[127, 'never'],
+	[128, '<'],
+	[129, '>'],
+	[130, '{|'],
+	[131, '|}'],
+	[132, '|'],
+	[133, '&'],
+	[134, 'abstract'],
+	[135, 'accessor'],
+	[136, 'of'],
+	[137, 'global'],
+	[138, 'comment_line'],
+	[139, 'comment_block'],
+	[140, 'number_hex'],
+	[141, 'number_float_point'],
+	[142, 'number_float_leading_point'],
+	[143, 'number_float_scientific'],
+	[144, 'number_legacy_octal'],
+	[145, 'number_decimal'],
+	[146, 'number_binary'],
+	[147, 'number_octal'],
+	[148, 'number_bigint_hex'],
+	[149, 'number_bigint_binary'],
+	[150, 'number_bigint_octal'],
+	[151, 'number_bigint_decimal'],
+	[152, '&&'],
+	[153, '||'],
+	[154, '>>'],
+	[155, '>>>'],
+	[156, '<<'],
+	[157, '^'],
+	[158, '%'],
+	[159, '**'],
+	[160, '<='],
+	[161, '=='],
+	[162, '==='],
+	[163, '!='],
+	[164, '!=='],
+	[165, '>='],
+	[166, '??'],
 	[167, '"'],
 	[168, '"'],
 	[169, "'"],
@@ -1024,7 +1028,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[259, 'member_expression'],
 	[260, 'subscript_expression'],
 	[261, '_lhs_expression'],
-	[503, 'lhs_expression'],
+	[504, 'lhs_expression'],
 	[262, 'assignment_expression'],
 	[263, '_augmented_assignment_lhs'],
 	[264, 'augmented_assignment_expression'],
@@ -1169,109 +1173,110 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[403, 'literal_type_negative_number'],
 	[404, 'number_bigint'],
 	[405, 'binary_expression_in'],
-	[406, 'empty_member'],
-	[407, 'class_body_member_method'],
-	[408, 'class_body_member_method_sig'],
-	[409, 'class_body_member_declaration'],
-	[410, 'index_signature_colon'],
-	[411, 'index_signature_mapped_type_clause'],
-	[412, 'import_statement_clause_from'],
-	[413, 'yield_expression_delegate'],
-	[414, 'optional_chain_marker'],
-	[415, 'import_specifier_name'],
-	[416, 'import_specifier_as'],
-	[417, 'parenthesized_expression_typed'],
-	[418, 'parenthesized_expression_sequence'],
-	[419, 'export_statement_default'],
-	[420, 'export_statement_equals_export'],
-	[421, 'export_statement_namespace_export'],
-	[422, 'call_expression_call'],
-	[423, 'call_expression_template_call'],
-	[424, 'call_expression_member'],
-	[425, 'string_double'],
-	[426, 'string_single'],
-	[427, 'update_expression_postfix'],
-	[428, 'update_expression_prefix'],
-	[429, 'arrow_function_parameter'],
-	[430, 'class_heritage_extends_clause'],
-	[431, 'import_clause_default_import'],
-	[432, 'export_statement_default_from'],
-	[433, 'export_statement_default_declaration'],
-	[434, 'export_statement_default_from_star_from'],
-	[435, 'export_statement_default_from_ns_from'],
-	[436, 'export_statement_default_from_clause_from'],
-	[437, 'export_statement_default_declaration_default_kw'],
-	[438, 'export_statement_default_declaration_default_kw_value'],
-	[439, 'variable_declarator_plain'],
-	[440, 'variable_declarator_definite'],
-	[441, 'meta_property_new_target'],
-	[442, 'meta_property_import_meta'],
-	[443, 'for_header_lhs'],
-	[444, 'for_header_var_kind'],
-	[445, 'for_header_let_const_kind'],
-	[446, 'for_header_using_kind'],
-	[447, 'for_initializer_let_const_kind'],
-	[448, 'for_initializer_var_kind'],
-	[449, 'for_initializer_using_kind'],
-	[450, '_call_signature_get_accessor_signature'],
-	[451, 'formal_parameters'],
+	[406, 'binary_expression_default'],
+	[407, 'empty_member'],
+	[408, 'class_body_member_method'],
+	[409, 'class_body_member_method_sig'],
+	[410, 'class_body_member_declaration'],
+	[411, 'index_signature_colon'],
+	[412, 'index_signature_mapped_type_clause'],
+	[413, 'import_statement_clause_from'],
+	[414, 'yield_expression_delegate'],
+	[415, 'optional_chain_marker'],
+	[416, 'import_specifier_name'],
+	[417, 'import_specifier_as'],
+	[418, 'parenthesized_expression_typed'],
+	[419, 'parenthesized_expression_sequence'],
+	[420, 'export_statement_default'],
+	[421, 'export_statement_equals_export'],
+	[422, 'export_statement_namespace_export'],
+	[423, 'call_expression_call'],
+	[424, 'call_expression_template_call'],
+	[425, 'call_expression_member'],
+	[426, 'string_double'],
+	[427, 'string_single'],
+	[428, 'update_expression_postfix'],
+	[429, 'update_expression_prefix'],
+	[430, 'arrow_function_parameter'],
+	[431, 'class_heritage_extends_clause'],
+	[432, 'import_clause_default_import'],
+	[433, 'export_statement_default_from'],
+	[434, 'export_statement_default_declaration'],
+	[435, 'export_statement_default_from_star_from'],
+	[436, 'export_statement_default_from_ns_from'],
+	[437, 'export_statement_default_from_clause_from'],
+	[438, 'export_statement_default_declaration_default_kw'],
+	[439, 'export_statement_default_declaration_default_kw_value'],
+	[440, 'variable_declarator_plain'],
+	[441, 'variable_declarator_definite'],
+	[442, 'meta_property_new_target'],
+	[443, 'meta_property_import_meta'],
+	[444, 'for_header_lhs'],
+	[445, 'for_header_var_kind'],
+	[446, 'for_header_let_const_kind'],
+	[447, 'for_header_using_kind'],
+	[448, 'for_initializer_let_const_kind'],
+	[449, 'for_initializer_var_kind'],
+	[450, 'for_initializer_using_kind'],
+	[451, '_call_signature_get_accessor_signature'],
 	[452, 'formal_parameters'],
-	[453, 'formal_parameters_elements'],
-	[454, 'setter_parameter'],
-	[455, '_parameter_name_set_accessor_signature'],
-	[456, '_pattern_0_set_accessor_signature'],
-	[457, 'method_definition_plain'],
-	[458, 'method_definition_getter'],
-	[459, 'method_definition_setter'],
-	[460, 'method_signature_plain'],
-	[461, 'method_signature_getter'],
-	[462, 'method_signature_setter'],
-	[463, 'abstract_method_signature_plain'],
-	[464, 'abstract_method_signature_getter'],
-	[465, 'abstract_method_signature_setter'],
-	[466, 'public_field_definition_plain'],
-	[467, 'public_field_definition_accessor'],
-	[468, 'constructor_declaration'],
-	[469, '_call_signature_class_body_member_method'],
-	[470, '_method_definition_class_body_member_method'],
-	[471, '_parameter_name_receiver'],
-	[472, 'receiver_parameter_declaration'],
-	[473, '_parameter_name_formal_parameter'],
-	[474, 'formal_parameters_elements_receiver'],
-	[475, 'formal_parameters_elements_receiver_group'],
-	[476, 'program_repeat1'],
-	[477, 'variable_declaration_repeat1'],
-	[478, 'using_declaration_repeat1'],
-	[479, 'switch_body_repeat1'],
-	[480, 'object_repeat1'],
-	[481, 'object_pattern_repeat1'],
-	[482, 'array_repeat1'],
-	[483, 'array_pattern_repeat1'],
-	[484, 'class_repeat1'],
-	[485, 'sequence_expression_repeat1'],
-	[486, 'template_string_repeat1'],
-	[487, 'class_body_repeat1'],
-	[488, 'extends_clause_repeat1'],
-	[489, 'implements_clause_repeat1'],
-	[490, 'extends_type_clause_repeat1'],
-	[491, 'template_literal_type_repeat1'],
-	[492, 'export_specifiers_repeat1'],
-	[493, 'import_specifiers_repeat1'],
-	[494, 'formal_parameters_elements_repeat1'],
-	[495, 'enum_body_elements_repeat1'],
-	[496, 'types_repeat1'],
-	[497, 'type_parameters_elements_repeat1'],
-	[498, 'tuple_type_members_repeat1'],
-	[499, 'object_type_content_repeat1'],
-	[500, 'string_double_repeat1'],
-	[501, 'string_single_repeat1'],
-	[502, 'interface_body'],
-	[504, 'property_identifier'],
-	[505, 'shorthand_property_identifier'],
-	[506, 'shorthand_property_identifier_pattern'],
-	[507, 'statement_identifier'],
-	[508, 'this_type'],
-	[509, 'type_identifier'],
+	[453, 'formal_parameters'],
+	[454, 'formal_parameters_elements'],
+	[455, 'setter_parameter'],
+	[456, '_parameter_name_set_accessor_signature'],
+	[457, '_pattern_0_set_accessor_signature'],
+	[458, 'method_definition_plain'],
+	[459, 'method_definition_getter'],
+	[460, 'method_definition_setter'],
+	[461, 'method_signature_plain'],
+	[462, 'method_signature_getter'],
+	[463, 'method_signature_setter'],
+	[464, 'abstract_method_signature_plain'],
+	[465, 'abstract_method_signature_getter'],
+	[466, 'abstract_method_signature_setter'],
+	[467, 'public_field_definition_plain'],
+	[468, 'public_field_definition_accessor'],
+	[469, 'constructor_declaration'],
+	[470, '_call_signature_class_body_member_method'],
+	[471, '_method_definition_class_body_member_method'],
+	[472, '_parameter_name_receiver'],
+	[473, 'receiver_parameter_declaration'],
+	[474, '_parameter_name_formal_parameter'],
+	[475, 'formal_parameters_elements_receiver'],
+	[476, 'formal_parameters_elements_receiver_group'],
+	[477, 'program_repeat1'],
+	[478, 'variable_declaration_repeat1'],
+	[479, 'using_declaration_repeat1'],
+	[480, 'switch_body_repeat1'],
+	[481, 'object_repeat1'],
+	[482, 'object_pattern_repeat1'],
+	[483, 'array_repeat1'],
+	[484, 'array_pattern_repeat1'],
+	[485, 'class_repeat1'],
+	[486, 'sequence_expression_repeat1'],
+	[487, 'template_string_repeat1'],
+	[488, 'class_body_repeat1'],
+	[489, 'extends_clause_repeat1'],
+	[490, 'implements_clause_repeat1'],
+	[491, 'extends_type_clause_repeat1'],
+	[492, 'template_literal_type_repeat1'],
+	[493, 'export_specifiers_repeat1'],
+	[494, 'import_specifiers_repeat1'],
+	[495, 'formal_parameters_elements_repeat1'],
+	[496, 'enum_body_elements_repeat1'],
+	[497, 'types_repeat1'],
+	[498, 'type_parameters_elements_repeat1'],
+	[499, 'tuple_type_members_repeat1'],
+	[500, 'object_type_content_repeat1'],
+	[501, 'string_double_repeat1'],
+	[502, 'string_single_repeat1'],
+	[503, 'interface_body'],
+	[505, 'property_identifier'],
+	[506, 'shorthand_property_identifier'],
+	[507, 'shorthand_property_identifier_pattern'],
+	[508, 'statement_identifier'],
+	[509, 'this_type'],
+	[510, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1472,54 +1477,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.QmarkQmarkEq;
 		case 'dot_dot_dot':
 			return TSKindId.DotDotDot;
-		case 'amp_amp':
-			return TSKindId.AmpAmp;
-		case 'pipe_pipe':
-			return TSKindId.PipePipe;
-		case 'gt_gt':
-			return TSKindId.GtGt;
-		case 'gt_gt_gt':
-			return TSKindId.GtGtGt;
-		case 'lt_lt':
-			return TSKindId.LtLt;
-		case 'amp':
-			return TSKindId.Amp;
-		case 'caret':
-			return TSKindId.Caret;
-		case 'pipe':
-			return TSKindId.Pipe;
-		case 'plus':
-			return TSKindId.Plus;
-		case 'dash':
-			return TSKindId.Dash;
-		case 'slash':
-			return TSKindId.Slash;
-		case 'percent':
-			return TSKindId.Percent;
-		case 'star_star':
-			return TSKindId.StarStar;
-		case 'lt':
-			return TSKindId.Lt;
-		case 'lt_eq':
-			return TSKindId.LtEq;
-		case 'eq_eq':
-			return TSKindId.EqEq;
-		case 'eq_eq_eq':
-			return TSKindId.EqEqEq;
-		case 'bang_eq':
-			return TSKindId.BangEq;
-		case 'bang_eq_eq':
-			return TSKindId.BangEqEq;
-		case 'gt_eq':
-			return TSKindId.GtEq;
-		case 'gt':
-			return TSKindId.Gt;
-		case 'qmark_qmark':
-			return TSKindId.QmarkQmark;
 		case 'bang':
 			return TSKindId.Bang;
 		case 'tilde':
 			return TSKindId.Tilde;
+		case 'dash':
+			return TSKindId.Dash;
+		case 'plus':
+			return TSKindId.Plus;
 		case 'unescaped_double_string_fragment':
 			return TSKindId.UnescapedDoubleStringFragment;
 		case 'unescaped_single_string_fragment':
@@ -1532,6 +1497,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Bquote2;
 		case 'dollar_lbrace':
 			return TSKindId.DollarLbrace;
+		case 'slash':
+			return TSKindId.Slash;
 		case 'slash2':
 			return TSKindId.Slash2;
 		case 'regex_pattern':
@@ -1576,10 +1543,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnknownKeyword;
 		case 'never_keyword':
 			return TSKindId.NeverKeyword;
+		case 'lt':
+			return TSKindId.Lt;
+		case 'gt':
+			return TSKindId.Gt;
 		case 'lbrace_pipe':
 			return TSKindId.LbracePipe;
 		case 'pipe_rbrace':
 			return TSKindId.PipeRbrace;
+		case 'pipe':
+			return TSKindId.Pipe;
+		case 'amp':
+			return TSKindId.Amp;
 		case 'abstract_keyword':
 			return TSKindId.AbstractKeyword;
 		case 'accessor_keyword':
@@ -1616,6 +1591,36 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.NumberBigintOctal;
 		case 'number_bigint_decimal':
 			return TSKindId.NumberBigintDecimal;
+		case 'amp_amp':
+			return TSKindId.AmpAmp;
+		case 'pipe_pipe':
+			return TSKindId.PipePipe;
+		case 'gt_gt':
+			return TSKindId.GtGt;
+		case 'gt_gt_gt':
+			return TSKindId.GtGtGt;
+		case 'lt_lt':
+			return TSKindId.LtLt;
+		case 'caret':
+			return TSKindId.Caret;
+		case 'percent':
+			return TSKindId.Percent;
+		case 'star_star':
+			return TSKindId.StarStar;
+		case 'lt_eq':
+			return TSKindId.LtEq;
+		case 'eq_eq':
+			return TSKindId.EqEq;
+		case 'eq_eq_eq':
+			return TSKindId.EqEqEq;
+		case 'bang_eq':
+			return TSKindId.BangEq;
+		case 'bang_eq_eq':
+			return TSKindId.BangEqEq;
+		case 'gt_eq':
+			return TSKindId.GtEq;
+		case 'qmark_qmark':
+			return TSKindId.QmarkQmark;
 		case 'dquote':
 			return TSKindId.Dquote;
 		case 'dquote2':
@@ -2094,6 +2099,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.NumberBigint;
 		case 'binary_expression_in':
 			return TSKindId.BinaryExpressionIn;
+		case 'binary_expression_default':
+			return TSKindId.BinaryExpressionDefault;
 		case 'empty_member':
 			return TSKindId.EmptyMember;
 		case 'class_body_member_method':
@@ -2460,60 +2467,22 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.QmarkQmarkEq;
 		case '...':
 			return TSKindId.DotDotDot;
-		case '&&':
-			return TSKindId.AmpAmp;
-		case '||':
-			return TSKindId.PipePipe;
-		case '>>':
-			return TSKindId.GtGt;
-		case '>>>':
-			return TSKindId.GtGtGt;
-		case '<<':
-			return TSKindId.LtLt;
-		case '&':
-			return TSKindId.Amp;
-		case '^':
-			return TSKindId.Caret;
-		case '|':
-			return TSKindId.Pipe;
-		case '+':
-			return TSKindId.Plus;
-		case '-':
-			return TSKindId.Dash;
-		case '/':
-			return TSKindId.Slash;
-		case '%':
-			return TSKindId.Percent;
-		case '**':
-			return TSKindId.StarStar;
-		case '<':
-			return TSKindId.Lt;
-		case '<=':
-			return TSKindId.LtEq;
-		case '==':
-			return TSKindId.EqEq;
-		case '===':
-			return TSKindId.EqEqEq;
-		case '!=':
-			return TSKindId.BangEq;
-		case '!==':
-			return TSKindId.BangEqEq;
-		case '>=':
-			return TSKindId.GtEq;
-		case '>':
-			return TSKindId.Gt;
-		case '??':
-			return TSKindId.QmarkQmark;
 		case '!':
 			return TSKindId.Bang;
 		case '~':
 			return TSKindId.Tilde;
+		case '-':
+			return TSKindId.Dash;
+		case '+':
+			return TSKindId.Plus;
 		case 'string_fragment':
 			return TSKindId.UnescapedDoubleStringFragment;
 		case '`':
 			return TSKindId.Bquote;
 		case '${':
 			return TSKindId.DollarLbrace;
+		case '/':
+			return TSKindId.Slash;
 		case '@':
 			return TSKindId.At;
 		case 'satisfies':
@@ -2546,10 +2515,18 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.UnknownKeyword;
 		case 'never':
 			return TSKindId.NeverKeyword;
+		case '<':
+			return TSKindId.Lt;
+		case '>':
+			return TSKindId.Gt;
 		case '{|':
 			return TSKindId.LbracePipe;
 		case '|}':
 			return TSKindId.PipeRbrace;
+		case '|':
+			return TSKindId.Pipe;
+		case '&':
+			return TSKindId.Amp;
 		case 'abstract':
 			return TSKindId.AbstractKeyword;
 		case 'accessor':
@@ -2558,6 +2535,36 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.OfKeyword;
 		case 'global':
 			return TSKindId.GlobalKeyword;
+		case '&&':
+			return TSKindId.AmpAmp;
+		case '||':
+			return TSKindId.PipePipe;
+		case '>>':
+			return TSKindId.GtGt;
+		case '>>>':
+			return TSKindId.GtGtGt;
+		case '<<':
+			return TSKindId.LtLt;
+		case '^':
+			return TSKindId.Caret;
+		case '%':
+			return TSKindId.Percent;
+		case '**':
+			return TSKindId.StarStar;
+		case '<=':
+			return TSKindId.LtEq;
+		case '==':
+			return TSKindId.EqEq;
+		case '===':
+			return TSKindId.EqEqEq;
+		case '!=':
+			return TSKindId.BangEq;
+		case '!==':
+			return TSKindId.BangEqEq;
+		case '>=':
+			return TSKindId.GtEq;
+		case '??':
+			return TSKindId.QmarkQmark;
 		case '"':
 			return TSKindId.Dquote;
 		case "'":
@@ -2740,6 +2747,11 @@ export enum AugmentedAssignmentLhsKind {
 export enum DestructuringPatternKind {
 	ObjectPattern = 'object_pattern',
 	ArrayPattern = 'array_pattern'
+}
+
+export enum BinaryExpressionKind {
+	BinaryExpressionDefault = 'binary_expression_default',
+	BinaryExpressionIn = 'binary_expression_in'
 }
 
 export enum UpdateExpressionKind {
@@ -3708,8 +3720,7 @@ export interface CatchClause {
 			'catchClauseGroup',
 			T.CatchClauseGroup,
 			{ readonly parameter: 'parameter'; readonly type: 'type' },
-			true,
-			'_catch_clause_group'
+			true
 		>;
 	};
 	readonly catchClauseGroup: () => CatchClauseGroup | undefined;
@@ -4748,153 +4759,6 @@ export interface TernaryExpression {
 	readonly condition: () => Expression;
 	readonly consequence: () => Expression;
 	readonly alternative: () => Expression;
-}
-
-export interface BinaryExpression {
-	readonly $type: TSKindId.BinaryExpression;
-	readonly _left?: Expression;
-	readonly _operator?:
-		| TSKindId.AmpAmp
-		| TSKindId.PipePipe
-		| TSKindId.GtGt
-		| TSKindId.GtGtGt
-		| TSKindId.LtLt
-		| TSKindId.Amp
-		| TSKindId.Caret
-		| TSKindId.Pipe
-		| TSKindId.Plus
-		| TSKindId.Dash
-		| TSKindId.Star
-		| TSKindId.Slash
-		| TSKindId.Percent
-		| TSKindId.StarStar
-		| TSKindId.Lt
-		| TSKindId.LtEq
-		| TSKindId.EqEq
-		| TSKindId.EqEqEq
-		| TSKindId.BangEq
-		| TSKindId.BangEqEq
-		| TSKindId.GtEq
-		| TSKindId.Gt
-		| TSKindId.QmarkQmark
-		| TSKindId.InstanceofKeyword;
-	readonly _right?: Expression;
-	readonly _binary_expression_in?: BinaryExpressionIn;
-	readonly __slotNames__?: {
-		readonly _left: 'left';
-		readonly _operator: 'operator';
-		readonly _right: 'right';
-		readonly _binary_expression_in: 'binaryExpressionIn';
-	};
-	readonly __inputHints__?: {
-		readonly left?:
-			| KindEnum<
-					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
-					| TSKindId.Undefined
-					| TSKindId.ThisKeyword
-					| TSKindId.SuperKeyword
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.NullKeyword
-			  >
-			| Expression;
-		readonly operator?: KindEnum<
-			| '&&'
-			| '||'
-			| '>>'
-			| '>>>'
-			| '<<'
-			| '&'
-			| '^'
-			| '|'
-			| '+'
-			| '-'
-			| '*'
-			| '/'
-			| '%'
-			| '**'
-			| '<'
-			| '<='
-			| '=='
-			| '==='
-			| '!='
-			| '!=='
-			| '>='
-			| '>'
-			| '??'
-			| 'instanceof',
-			| TSKindId.AmpAmp
-			| TSKindId.PipePipe
-			| TSKindId.GtGt
-			| TSKindId.GtGtGt
-			| TSKindId.LtLt
-			| TSKindId.Amp
-			| TSKindId.Caret
-			| TSKindId.Pipe
-			| TSKindId.Plus
-			| TSKindId.Dash
-			| TSKindId.Star
-			| TSKindId.Slash
-			| TSKindId.Percent
-			| TSKindId.StarStar
-			| TSKindId.Lt
-			| TSKindId.LtEq
-			| TSKindId.EqEq
-			| TSKindId.EqEqEq
-			| TSKindId.BangEq
-			| TSKindId.BangEqEq
-			| TSKindId.GtEq
-			| TSKindId.Gt
-			| TSKindId.QmarkQmark
-			| TSKindId.InstanceofKeyword
-		>;
-		readonly right?:
-			| KindEnum<
-					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
-					| TSKindId.Undefined
-					| TSKindId.ThisKeyword
-					| TSKindId.SuperKeyword
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.NullKeyword
-			  >
-			| Expression;
-	};
-	readonly __slotHints__?: {
-		readonly left: SlotHint<NonNullable<T.BinaryExpression.Config>['left'], true>;
-		readonly operator: SlotHint<NonNullable<T.BinaryExpression.Config>['operator'], true>;
-		readonly right: SlotHint<NonNullable<T.BinaryExpression.Config>['right'], true>;
-		readonly binaryExpressionIn: SlotHint<T.BinaryExpressionIn, true>;
-	};
-	readonly left: () => Expression | undefined;
-	readonly operator: () =>
-		| TSKindId.AmpAmp
-		| TSKindId.PipePipe
-		| TSKindId.GtGt
-		| TSKindId.GtGtGt
-		| TSKindId.LtLt
-		| TSKindId.Amp
-		| TSKindId.Caret
-		| TSKindId.Pipe
-		| TSKindId.Plus
-		| TSKindId.Dash
-		| TSKindId.Star
-		| TSKindId.Slash
-		| TSKindId.Percent
-		| TSKindId.StarStar
-		| TSKindId.Lt
-		| TSKindId.LtEq
-		| TSKindId.EqEq
-		| TSKindId.EqEqEq
-		| TSKindId.BangEq
-		| TSKindId.BangEqEq
-		| TSKindId.GtEq
-		| TSKindId.Gt
-		| TSKindId.QmarkQmark
-		| TSKindId.InstanceofKeyword
-		| undefined;
-	readonly right: () => Expression | undefined;
-	readonly binaryExpressionIn: () => BinaryExpressionIn | undefined;
 }
 
 export interface UnaryExpression {
@@ -8845,6 +8709,7 @@ export interface NumberFloatPoint {
 		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly integer: () => string;
 	readonly fraction: () => string | undefined;
@@ -8870,6 +8735,7 @@ export interface NumberFloatLeadingPoint {
 		readonly exponentSign: SlotHint<'-' | '+', true>;
 		readonly exponent: SlotHint<string | number | bigint, true>;
 		readonly marker: SlotHint<'e' | 'E', true>;
+		readonly $branch: BranchHint<'exponentSign' | 'exponent' | 'marker', 'marker' | 'exponent', 'exponent'>;
 	};
 	readonly fraction: () => string;
 	readonly marker: () => 'e' | 'E' | undefined;
@@ -9031,6 +8897,148 @@ export interface BinaryExpressionIn {
 		readonly right: SlotHint<NonNullable<T.BinaryExpressionIn.Config>['right']>;
 	};
 	readonly left: () => Expression | PrivatePropertyIdentifier;
+	readonly right: () => Expression;
+}
+
+export interface BinaryExpressionDefault {
+	readonly $type: TSKindId.BinaryExpressionDefault;
+	readonly _left: Expression;
+	readonly _operator:
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.GtGt
+		| TSKindId.GtGtGt
+		| TSKindId.LtLt
+		| TSKindId.Amp
+		| TSKindId.Caret
+		| TSKindId.Pipe
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.StarStar
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.EqEq
+		| TSKindId.EqEqEq
+		| TSKindId.BangEq
+		| TSKindId.BangEqEq
+		| TSKindId.GtEq
+		| TSKindId.Gt
+		| TSKindId.QmarkQmark
+		| TSKindId.InstanceofKeyword;
+	readonly _right: Expression;
+	readonly __slotNames__?: {
+		readonly _left: 'left';
+		readonly _operator: 'operator';
+		readonly _right: 'right';
+	};
+	readonly __inputHints__?: {
+		readonly left:
+			| KindEnum<
+					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
+					| TSKindId.Undefined
+					| TSKindId.ThisKeyword
+					| TSKindId.SuperKeyword
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.NullKeyword
+			  >
+			| Expression;
+		readonly operator: KindEnum<
+			| '&&'
+			| '||'
+			| '>>'
+			| '>>>'
+			| '<<'
+			| '&'
+			| '^'
+			| '|'
+			| '+'
+			| '-'
+			| '*'
+			| '/'
+			| '%'
+			| '**'
+			| '<'
+			| '<='
+			| '=='
+			| '==='
+			| '!='
+			| '!=='
+			| '>='
+			| '>'
+			| '??'
+			| 'instanceof',
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.GtGt
+			| TSKindId.GtGtGt
+			| TSKindId.LtLt
+			| TSKindId.Amp
+			| TSKindId.Caret
+			| TSKindId.Pipe
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+			| TSKindId.StarStar
+			| TSKindId.Lt
+			| TSKindId.LtEq
+			| TSKindId.EqEq
+			| TSKindId.EqEqEq
+			| TSKindId.BangEq
+			| TSKindId.BangEqEq
+			| TSKindId.GtEq
+			| TSKindId.Gt
+			| TSKindId.QmarkQmark
+			| TSKindId.InstanceofKeyword
+		>;
+		readonly right:
+			| KindEnum<
+					'undefined' | 'this' | 'super' | 'true' | 'false' | 'null',
+					| TSKindId.Undefined
+					| TSKindId.ThisKeyword
+					| TSKindId.SuperKeyword
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.NullKeyword
+			  >
+			| Expression;
+	};
+	readonly __slotHints__?: {
+		readonly left: SlotHint<NonNullable<T.BinaryExpressionDefault.Config>['left']>;
+		readonly operator: SlotHint<NonNullable<T.BinaryExpressionDefault.Config>['operator']>;
+		readonly right: SlotHint<NonNullable<T.BinaryExpressionDefault.Config>['right']>;
+	};
+	readonly left: () => Expression;
+	readonly operator: () =>
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.GtGt
+		| TSKindId.GtGtGt
+		| TSKindId.LtLt
+		| TSKindId.Amp
+		| TSKindId.Caret
+		| TSKindId.Pipe
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.StarStar
+		| TSKindId.Lt
+		| TSKindId.LtEq
+		| TSKindId.EqEq
+		| TSKindId.EqEqEq
+		| TSKindId.BangEq
+		| TSKindId.BangEqEq
+		| TSKindId.GtEq
+		| TSKindId.Gt
+		| TSKindId.QmarkQmark
+		| TSKindId.InstanceofKeyword;
 	readonly right: () => Expression;
 }
 
@@ -11558,6 +11566,8 @@ export type PrimaryExpression =
 
 export type CallExpression = CallExpressionCall | CallExpressionTemplateCall | CallExpressionMember;
 
+export type BinaryExpression = BinaryExpressionDefault | BinaryExpressionIn;
+
 export type UpdateExpression = UpdateExpressionPostfix | UpdateExpressionPrefix;
 
 export type String = StringDouble | StringSingle;
@@ -11703,6 +11713,12 @@ export namespace CallExpression {
 	export type Kind = 'call_expression';
 	export type Bound = SupertypeSurface<CallExpression, BoundByKindId>;
 	export type Parsed = SupertypeSurface<CallExpression, ParsedByKindId>;
+}
+
+export namespace BinaryExpression {
+	export type Kind = 'binary_expression';
+	export type Bound = SupertypeSurface<BinaryExpression, BoundByKindId>;
+	export type Parsed = SupertypeSurface<BinaryExpression, ParsedByKindId>;
 }
 
 export namespace UpdateExpression {
@@ -11886,7 +11902,6 @@ export interface OptionsHintMap {
 	augmentedAssignmentExpression: AugmentedAssignmentExpression.Hints;
 	spreadElement: SpreadElement.Hints;
 	ternaryExpression: TernaryExpression.Hints;
-	binaryExpression: BinaryExpression.Hints;
 	unaryExpression: UnaryExpression.Hints;
 	sequenceExpression: SequenceExpression.Hints;
 	templateString: TemplateString.Hints;
@@ -11987,6 +12002,7 @@ export interface OptionsHintMap {
 	objectTypeContent: ObjectTypeContent.Hints;
 	literalTypeNegativeNumber: LiteralTypeNegativeNumber.Hints;
 	binaryExpressionIn: BinaryExpressionIn.Hints;
+	binaryExpressionDefault: BinaryExpressionDefault.Hints;
 	classBodyMemberMethod: ClassBodyMemberMethod.Hints;
 	classBodyMemberMethodSig: ClassBodyMemberMethodSig.Hints;
 	classBodyMemberDeclaration: ClassBodyMemberDeclaration.Hints;
@@ -12711,6 +12727,8 @@ export namespace Array {
 				readonly assignmentExpression?: { readonly after?: LayoutKindId };
 				readonly augmentedAssignmentExpression?: { readonly after?: LayoutKindId };
 				readonly awaitExpression?: { readonly after?: LayoutKindId };
+				readonly binaryExpressionDefault?: { readonly after?: LayoutKindId };
+				readonly binaryExpressionIn?: { readonly after?: LayoutKindId };
 				readonly callExpressionCall?: { readonly after?: LayoutKindId };
 				readonly callExpressionMember?: { readonly after?: LayoutKindId };
 				readonly callExpressionTemplateCall?: { readonly after?: LayoutKindId };
@@ -12973,14 +12991,6 @@ export namespace TernaryExpression {
 	}
 }
 
-export namespace BinaryExpression {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly operator?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-		};
-	}
-}
-
 export namespace UnaryExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -13010,6 +13020,8 @@ export namespace SequenceExpression {
 				readonly assignmentExpression?: { readonly after?: LayoutKindId };
 				readonly augmentedAssignmentExpression?: { readonly after?: LayoutKindId };
 				readonly awaitExpression?: { readonly after?: LayoutKindId };
+				readonly binaryExpressionDefault?: { readonly after?: LayoutKindId };
+				readonly binaryExpressionIn?: { readonly after?: LayoutKindId };
 				readonly callExpressionCall?: { readonly after?: LayoutKindId };
 				readonly callExpressionMember?: { readonly after?: LayoutKindId };
 				readonly callExpressionTemplateCall?: { readonly after?: LayoutKindId };
@@ -13087,6 +13099,8 @@ export namespace Arguments {
 				readonly assignmentExpression?: { readonly after?: LayoutKindId };
 				readonly augmentedAssignmentExpression?: { readonly after?: LayoutKindId };
 				readonly awaitExpression?: { readonly after?: LayoutKindId };
+				readonly binaryExpressionDefault?: { readonly after?: LayoutKindId };
+				readonly binaryExpressionIn?: { readonly after?: LayoutKindId };
 				readonly callExpressionCall?: { readonly after?: LayoutKindId };
 				readonly callExpressionMember?: { readonly after?: LayoutKindId };
 				readonly callExpressionTemplateCall?: { readonly after?: LayoutKindId };
@@ -14295,6 +14309,16 @@ export namespace LiteralTypeNegativeNumber {
 }
 
 export namespace BinaryExpressionIn {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly operator?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace BinaryExpressionDefault {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -15875,20 +15899,6 @@ export interface TernaryExpressionNs extends NodeNs<
 > {
 	readonly BuildArgs: TernaryExpression.BuildArgs;
 	readonly LooseArgs: TernaryExpression.LooseArgs;
-}
-export interface BinaryExpressionNs extends NodeNs<
-	BinaryExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	BinaryExpression.Bound,
-	never,
-	TSKindId.BinaryExpression,
-	BinaryExpression.Parsed,
-	never
-> {
-	readonly BuildArgs: BinaryExpression.BuildArgs;
-	readonly LooseArgs: BinaryExpression.LooseArgs;
 }
 export interface UnaryExpressionNs extends NodeNs<
 	UnaryExpression,
@@ -17544,6 +17554,20 @@ export interface BinaryExpressionInNs extends NodeNs<
 	readonly BuildArgs: BinaryExpressionIn.BuildArgs;
 	readonly LooseArgs: BinaryExpressionIn.LooseArgs;
 }
+export interface BinaryExpressionDefaultNs extends NodeNs<
+	BinaryExpressionDefault,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	BinaryExpressionDefault.Bound,
+	never,
+	TSKindId.BinaryExpressionDefault,
+	BinaryExpressionDefault.Parsed,
+	never
+> {
+	readonly BuildArgs: BinaryExpressionDefault.BuildArgs;
+	readonly LooseArgs: BinaryExpressionDefault.LooseArgs;
+}
 export interface ClassBodyMemberMethodNs extends NodeNs<
 	ClassBodyMemberMethod,
 	LeafScalarMap,
@@ -18574,7 +18598,6 @@ export interface NamespaceMap {
 	[TSKindId.AugmentedAssignmentExpression]: AugmentedAssignmentExpressionNs;
 	[TSKindId.SpreadElement]: SpreadElementNs;
 	[TSKindId.TernaryExpression]: TernaryExpressionNs;
-	[TSKindId.BinaryExpression]: BinaryExpressionNs;
 	[TSKindId.UnaryExpression]: UnaryExpressionNs;
 	[TSKindId.SequenceExpression]: SequenceExpressionNs;
 	[TSKindId.EscapeSequence]: EscapeSequenceNs;
@@ -18693,6 +18716,7 @@ export interface NamespaceMap {
 	[TSKindId.NumberBigintOctal]: NumberBigintOctalNs;
 	[TSKindId.NumberBigintDecimal]: NumberBigintDecimalNs;
 	[TSKindId.BinaryExpressionIn]: BinaryExpressionInNs;
+	[TSKindId.BinaryExpressionDefault]: BinaryExpressionDefaultNs;
 	[TSKindId.ClassBodyMemberMethod]: ClassBodyMemberMethodNs;
 	[TSKindId.ClassBodyMemberMethodSig]: ClassBodyMemberMethodSigNs;
 	[TSKindId.ClassBodyMemberDeclaration]: ClassBodyMemberDeclarationNs;
@@ -18858,7 +18882,6 @@ export interface BoundByKindId {
 	[TSKindId.AugmentedAssignmentExpression]: AugmentedAssignmentExpression.Bound;
 	[TSKindId.SpreadElement]: SpreadElement.Bound;
 	[TSKindId.TernaryExpression]: TernaryExpression.Bound;
-	[TSKindId.BinaryExpression]: BinaryExpression.Bound;
 	[TSKindId.UnaryExpression]: UnaryExpression.Bound;
 	[TSKindId.SequenceExpression]: SequenceExpression.Bound;
 	[TSKindId.EscapeSequence]: EscapeSequence.Bound;
@@ -18977,6 +19000,7 @@ export interface BoundByKindId {
 	[TSKindId.NumberBigintOctal]: NumberBigintOctal.Bound;
 	[TSKindId.NumberBigintDecimal]: NumberBigintDecimal.Bound;
 	[TSKindId.BinaryExpressionIn]: BinaryExpressionIn.Bound;
+	[TSKindId.BinaryExpressionDefault]: BinaryExpressionDefault.Bound;
 	[TSKindId.ClassBodyMemberMethod]: ClassBodyMemberMethod.Bound;
 	[TSKindId.ClassBodyMemberMethodSig]: ClassBodyMemberMethodSig.Bound;
 	[TSKindId.ClassBodyMemberDeclaration]: ClassBodyMemberDeclaration.Bound;
@@ -19114,7 +19138,6 @@ export interface ParsedByKindId {
 	[TSKindId.AugmentedAssignmentExpression]: AugmentedAssignmentExpression.Parsed;
 	[TSKindId.SpreadElement]: SpreadElement.Parsed;
 	[TSKindId.TernaryExpression]: TernaryExpression.Parsed;
-	[TSKindId.BinaryExpression]: BinaryExpression.Parsed;
 	[TSKindId.UnaryExpression]: UnaryExpression.Parsed;
 	[TSKindId.SequenceExpression]: SequenceExpression.Parsed;
 	[TSKindId.EscapeSequence]: EscapeSequence.Parsed;
@@ -19233,6 +19256,7 @@ export interface ParsedByKindId {
 	[TSKindId.NumberBigintOctal]: NumberBigintOctal.Parsed;
 	[TSKindId.NumberBigintDecimal]: NumberBigintDecimal.Parsed;
 	[TSKindId.BinaryExpressionIn]: BinaryExpressionIn.Parsed;
+	[TSKindId.BinaryExpressionDefault]: BinaryExpressionDefault.Parsed;
 	[TSKindId.ClassBodyMemberMethod]: ClassBodyMemberMethod.Parsed;
 	[TSKindId.ClassBodyMemberMethodSig]: ClassBodyMemberMethodSig.Parsed;
 	[TSKindId.ClassBodyMemberDeclaration]: ClassBodyMemberDeclaration.Parsed;
@@ -19399,35 +19423,15 @@ export type FixedTextKindId =
 	| TSKindId.QmarkQmarkEq
 	| TSKindId.DotDotDot
 	| TSKindId.Qmark
-	| TSKindId.AmpAmp
-	| TSKindId.PipePipe
-	| TSKindId.GtGt
-	| TSKindId.GtGtGt
-	| TSKindId.LtLt
-	| TSKindId.Amp
-	| TSKindId.Caret
-	| TSKindId.Pipe
-	| TSKindId.Plus
-	| TSKindId.Dash
-	| TSKindId.Slash
-	| TSKindId.Percent
-	| TSKindId.StarStar
-	| TSKindId.Lt
-	| TSKindId.LtEq
-	| TSKindId.EqEq
-	| TSKindId.EqEqEq
-	| TSKindId.BangEq
-	| TSKindId.BangEqEq
-	| TSKindId.GtEq
-	| TSKindId.Gt
-	| TSKindId.QmarkQmark
-	| TSKindId.InstanceofKeyword
 	| TSKindId.Bang
 	| TSKindId.Tilde
+	| TSKindId.Dash
+	| TSKindId.Plus
 	| TSKindId.VoidKeyword
 	| TSKindId.DeleteKeyword
 	| TSKindId.Bquote
 	| TSKindId.DollarLbrace
+	| TSKindId.Slash
 	| TSKindId.ThisKeyword
 	| TSKindId.SuperKeyword
 	| TSKindId.TrueKeyword
@@ -19467,10 +19471,30 @@ export type FixedTextKindId =
 	| TSKindId.UnknownKeyword
 	| TSKindId.NeverKeyword
 	| TSKindId.ObjectKeyword
+	| TSKindId.Lt
+	| TSKindId.Gt
 	| TSKindId.LbracePipe
 	| TSKindId.PipeRbrace
+	| TSKindId.Pipe
+	| TSKindId.Amp
 	| TSKindId.Comma
 	| TSKindId.GlobalKeyword
+	| TSKindId.AmpAmp
+	| TSKindId.PipePipe
+	| TSKindId.GtGt
+	| TSKindId.GtGtGt
+	| TSKindId.LtLt
+	| TSKindId.Caret
+	| TSKindId.Percent
+	| TSKindId.StarStar
+	| TSKindId.LtEq
+	| TSKindId.EqEq
+	| TSKindId.EqEqEq
+	| TSKindId.BangEq
+	| TSKindId.BangEqEq
+	| TSKindId.GtEq
+	| TSKindId.QmarkQmark
+	| TSKindId.InstanceofKeyword
 	| TSKindId.FromKeyword
 	| TSKindId.ExportKeyword
 	| TSKindId.Dquote
@@ -19546,7 +19570,6 @@ export interface TypeKeyOf {
 	[TSKindId.AugmentedAssignmentExpression]: 'augmentedAssignmentExpression';
 	[TSKindId.SpreadElement]: 'spreadElement';
 	[TSKindId.TernaryExpression]: 'ternaryExpression';
-	[TSKindId.BinaryExpression]: 'binaryExpression';
 	[TSKindId.UnaryExpression]: 'unaryExpression';
 	[TSKindId.SequenceExpression]: 'sequenceExpression';
 	[TSKindId.EscapeSequence]: 'escapeSequence';
@@ -19665,6 +19688,7 @@ export interface TypeKeyOf {
 	[TSKindId.NumberBigintOctal]: 'numberBigintOctal';
 	[TSKindId.NumberBigintDecimal]: 'numberBigintDecimal';
 	[TSKindId.BinaryExpressionIn]: 'binaryExpressionIn';
+	[TSKindId.BinaryExpressionDefault]: 'binaryExpressionDefault';
 	[TSKindId.ClassBodyMemberMethod]: 'classBodyMemberMethod';
 	[TSKindId.ClassBodyMemberMethodSig]: 'classBodyMemberMethodSig';
 	[TSKindId.ClassBodyMemberDeclaration]: 'classBodyMemberDeclaration';
@@ -20778,14 +20802,17 @@ export namespace CatchClause {
 	export type BuildArgs = [
 		config?:
 			| WithoutGroup<Partial<ConfigOf<T.CatchClause>>, OmitEach<NonNullable<T.CatchClauseGroup.Config>, '$type'>>
-			| (OmitEach<NonNullable<Partial<ConfigOf<T.CatchClause>>>, 'catchClauseGroup'> &
-					(T.CatchClauseGroup.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.Config>, '$type'>>))
+			| (OmitEach<NonNullable<Partial<ConfigOf<T.CatchClause>>>, 'catchClauseGroup'> & {
+					readonly catchClauseGroup?: never;
+			  } & (T.CatchClauseGroup.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.Config>, '$type'>>))
 	];
 	export type LooseArgs = [
 		config?:
 			| WithoutGroup<T.CatchClause.Loose, OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, '$type'>>
-			| (OmitEach<NonNullable<T.CatchClause.Loose>, 'catchClauseGroup'> &
-					(T.CatchClauseGroup.LooseArgs[0] | NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, '$type'>>))
+			| (OmitEach<NonNullable<T.CatchClause.Loose>, 'catchClauseGroup'> & { readonly catchClauseGroup?: never } & (
+						| T.CatchClauseGroup.LooseArgs[0]
+						| NoneOf<OmitEach<NonNullable<T.CatchClauseGroup.LooseConfig>, '$type'>>
+					))
 	];
 	export type Kind = TSKindId.CatchClause;
 }
@@ -21583,30 +21610,6 @@ export namespace TernaryExpression {
 	export type BuildArgs = [config: ConfigOf<T.TernaryExpression>];
 	export type LooseArgs = [config: T.TernaryExpression.Loose];
 	export type Kind = TSKindId.TernaryExpression;
-}
-export namespace BinaryExpression {
-	export type Config = ConfigFor<TSKindId.BinaryExpression>;
-	export interface Bound extends BoundOf<T.BinaryExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.BinaryExpression['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.BinaryExpression, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.BinaryExpression['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.BinaryExpression['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.BinaryExpression>;
-	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpression>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.BinaryExpression>>];
-	export type LooseArgs = [config?: T.BinaryExpression.Loose];
-	export type Kind = TSKindId.BinaryExpression;
 }
 export namespace UnaryExpression {
 	export type Config = ConfigFor<TSKindId.UnaryExpression>;
@@ -24833,15 +24836,16 @@ export namespace NumberFloatPoint {
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Bound extends BoundOf<T.NumberFloatPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	interface BoundSurface extends BoundOf<T.NumberFloatPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberFloatPoint['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed extends ParsedOf<T.NumberFloatPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export type Bound = BoundSurface & BranchShapesOf<BoundSurface, T.NumberFloatPoint, BoundByKindId>;
+	interface ParsedSurface extends ParsedOf<T.NumberFloatPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.NumberFloatPoint['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -24849,6 +24853,7 @@ export namespace NumberFloatPoint {
 		>;
 		readonly $snapshot: () => Snapshot<T.NumberFloatPoint['$type']>;
 	}
+	export type Parsed = ParsedSurface & BranchShapesOf<ParsedSurface, T.NumberFloatPoint, ParsedByKindId>;
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatPoint>, 'marker'>
 		| WidenSlots<
@@ -24861,14 +24866,24 @@ export namespace NumberFloatPoint {
 		OmitEach<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.NumberFloatPoint>, 'marker'>,
-			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.NumberFloatPoint.Options
-	];
-	export type LooseArgs = [config: T.NumberFloatPoint.Loose, options?: T.NumberFloatPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.NumberFloatPoint>, 'marker'>,
+				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.NumberFloatPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.NumberFloatPoint.Loose, options?: T.NumberFloatPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.NumberFloatPoint;
 }
 export namespace NumberFloatLeadingPoint {
@@ -24877,16 +24892,17 @@ export namespace NumberFloatLeadingPoint {
 		{ fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type Options = { readonly marker?: 'e' | 'E' };
-	export interface Bound extends BoundOf<T.NumberFloatLeadingPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	interface BoundSurface extends BoundOf<T.NumberFloatLeadingPoint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberFloatLeadingPoint['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
+		readonly $with: BoundWithNode<Bound, BoundByKindId, BoundSurface>;
 	}
-	export interface Parsed
+	export type Bound = BoundSurface & BranchShapesOf<BoundSurface, T.NumberFloatLeadingPoint, BoundByKindId>;
+	interface ParsedSurface
 		extends ParsedOf<T.NumberFloatLeadingPoint, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
 		readonly $type: T.NumberFloatLeadingPoint['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $with: WithNode<Parsed, BoundByKindId, ParsedSurface>;
 		readonly $query: () => QueryFacet<
-			this,
+			Parsed,
 			ParsedByKindId,
 			PortableQueryIds<PortableReads>,
 			KindMembers,
@@ -24894,6 +24910,7 @@ export namespace NumberFloatLeadingPoint {
 		>;
 		readonly $snapshot: () => Snapshot<T.NumberFloatLeadingPoint['$type']>;
 	}
+	export type Parsed = ParsedSurface & BranchShapesOf<ParsedSurface, T.NumberFloatLeadingPoint, ParsedByKindId>;
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>
 		| WidenSlots<
@@ -24906,14 +24923,24 @@ export namespace NumberFloatLeadingPoint {
 		OmitEach<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
 		{ fraction: number | bigint; exponent: number | bigint }
 	>;
-	export type BuildArgs = [
-		config: WidenSlots<
-			OmitRegistered<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
-			{ fraction: number | bigint; exponent: number | bigint }
-		>,
-		options?: T.NumberFloatLeadingPoint.Options
-	];
-	export type LooseArgs = [config: T.NumberFloatLeadingPoint.Loose, options?: T.NumberFloatLeadingPoint.Options];
+	export type BuildArgs = CoOptionalRows<
+		[
+			config: WidenSlots<
+				OmitRegistered<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
+				{ fraction: number | bigint; exponent: number | bigint }
+			>,
+			options?: T.NumberFloatLeadingPoint.Options
+		],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
+	export type LooseArgs = CoOptionalRows<
+		[config: T.NumberFloatLeadingPoint.Loose, options?: T.NumberFloatLeadingPoint.Options],
+		'exponentSign' | 'exponent',
+		'exponent',
+		'marker'
+	>;
 	export type Kind = TSKindId.NumberFloatLeadingPoint;
 }
 export namespace NumberFloatScientific {
@@ -25197,6 +25224,31 @@ export namespace BinaryExpressionIn {
 	export type BuildArgs = [config: ConfigOf<T.BinaryExpressionIn>];
 	export type LooseArgs = [config: T.BinaryExpressionIn.Loose];
 	export type Kind = TSKindId.BinaryExpressionIn;
+}
+export namespace BinaryExpressionDefault {
+	export type Config = ConfigFor<TSKindId.BinaryExpressionDefault>;
+	export interface Bound extends BoundOf<T.BinaryExpressionDefault, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.BinaryExpressionDefault['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.BinaryExpressionDefault, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.BinaryExpressionDefault['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.BinaryExpressionDefault['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.BinaryExpressionDefault>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BinaryExpressionDefault>;
+	export type BuildArgs = [config: ConfigOf<T.BinaryExpressionDefault>];
+	export type LooseArgs = [config: T.BinaryExpressionDefault.Loose];
+	export type Kind = TSKindId.BinaryExpressionDefault;
 }
 export namespace ClassBodyMemberMethod {
 	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMemberMethod>, 'terminator'>;

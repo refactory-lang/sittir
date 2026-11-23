@@ -21,6 +21,7 @@ import {
 	currentHandle,
 	admitChildren,
 	checkDelimited,
+	hasSlot,
 	hoistedWith,
 	hoistRead,
 	listElementsHop,
@@ -2795,6 +2796,7 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 		body: () => hydrateStoredSlot(node, '_body'),
 		parameter: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'parameter'),
 		type: _catch_clause_group === undefined ? undefined : () => groupField(_catch_clause_group, 'type'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -5761,109 +5763,6 @@ function buildTernaryExpression$with$consequence(this: Received<Held>, ...args: 
 }
 function buildTernaryExpression$with$alternative(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildTernaryExpression$with(receiverOf(this, '$with.alternative'), 'alternative', args);
-}
-
-export function buildBinaryExpression<
-	LeftSlot extends T.BinaryExpression.Config['left'],
-	RightSlot extends T.BinaryExpression.Config['right'],
-	BinaryExpressionInSlot extends T.BinaryExpression.Config['binaryExpressionIn']
->(
-	config?: RefusingConfig<
-		Partial<T.BinaryExpression.Config>,
-		{ left: LeftSlot; right: RightSlot; binaryExpressionIn: BinaryExpressionInSlot }
-	>
-): T.BinaryExpression.Bound;
-export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config> = {}): T.BinaryExpression.Bound {
-	currentHandle()?.admit(TSKindId.BinaryExpression, [config]);
-	const _left = rejectReservedText(
-		kindIdStorage<NonNullable<T.BinaryExpression['_left']>>(config.left),
-		'BinaryExpression.left',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _operator = kindIdStorage<NonNullable<T.BinaryExpression['_operator']>>(config.operator);
-	const _right = rejectReservedText(
-		kindIdStorage<NonNullable<T.BinaryExpression['_right']>>(config.right),
-		'BinaryExpression.right',
-		TSKindId.Identifier,
-		_reservedWords_buildIdentifier
-	);
-	const _binary_expression_in = config.binaryExpressionIn;
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'binary_expression', {
-			left: _left,
-			operator: _operator,
-			right: _right,
-			binaryExpressionIn: _binary_expression_in
-		});
-	const node = {
-		$type: TSKindId.BinaryExpression as const,
-		_left,
-		_operator,
-		_right,
-		_binary_expression_in,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		left: () => hydrateStoredSlot(node, '_left'),
-		operator: () => _operator,
-		right: () => hydrateStoredSlot(node, '_right'),
-		binaryExpressionIn: () => hydrateStoredSlot(node, '_binary_expression_in'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		left: buildBinaryExpression$with$left,
-		operator: buildBinaryExpression$with$operator,
-		right: buildBinaryExpression$with$right,
-		binaryExpressionIn: buildBinaryExpression$with$binaryExpressionIn,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.BinaryExpression.Bound;
-}
-
-function buildBinaryExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.BinaryExpression.Config;
-	switch (setter) {
-		case 'left':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['left']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, left: value }))
-			);
-		case 'operator':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, operator: value }))
-			);
-		case 'right':
-			return applySetter(args, (value?: Admit<NonNullable<T.BinaryExpression.Config>['right']>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, right: value }))
-			);
-		case 'binaryExpressionIn':
-			return applySetter(args, (value?: Admit<T.BinaryExpressionIn>) =>
-				rebuilt(node, handle, () => buildBinaryExpression({ ...config, binaryExpressionIn: value }))
-			);
-	}
-	throw new Error(`binary_expression has no $with.${setter}`);
-}
-function buildBinaryExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildBinaryExpression$with(receiverOf(this, '$with.left'), 'left', args);
-}
-function buildBinaryExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildBinaryExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
-}
-function buildBinaryExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildBinaryExpression$with(receiverOf(this, '$with.right'), 'right', args);
-}
-function buildBinaryExpression$with$binaryExpressionIn(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildBinaryExpression$with(receiverOf(this, '$with.binaryExpressionIn'), 'binaryExpressionIn', args);
 }
 
 export function buildUnaryExpression<ArgumentSlot extends T.UnaryExpression.Config['argument']>(
@@ -15481,6 +15380,7 @@ export function buildNumberFloatPoint(
 		marker: () => hydrateStoredSlot(node, '_marker'),
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15527,7 +15427,14 @@ function buildNumberFloatPoint$with(node: Held, setter: string, args: readonly u
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_point has no $with.${setter}`);
@@ -15619,6 +15526,7 @@ export function buildNumberFloatLeadingPoint(
 		marker: () => hydrateStoredSlot(node, '_marker'),
 		exponentSign: () => hydrateStoredSlot(node, '_exponent_sign'),
 		exponent: () => hydrateStoredSlot(node, '_exponent'),
+		$has: hasSlot,
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -15660,7 +15568,14 @@ function buildNumberFloatLeadingPoint$with(node: Held, setter: string, args: rea
 			);
 		case 'exponent':
 			return applySetter(args, (value?: Admit<string | number | bigint>) =>
-				rebuilt(node, handle, () => buildNumberFloatLeadingPoint({ ...config, exponent: value }, options))
+				rebuilt(node, handle, () =>
+					value === undefined
+						? buildNumberFloatLeadingPoint(
+								{ ...config, exponentSign: undefined, exponent: undefined },
+								{ ...options, marker: undefined }
+							)
+						: buildNumberFloatLeadingPoint({ ...config, exponent: value }, options)
+				)
 			);
 	}
 	throw new Error(`number_float_leading_point has no $with.${setter}`);
@@ -16313,6 +16228,91 @@ function buildBinaryExpressionIn$with$left(this: Received<Held>, ...args: unknow
 }
 function buildBinaryExpressionIn$with$right(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildBinaryExpressionIn$with(receiverOf(this, '$with.right'), 'right', args);
+}
+
+export function buildBinaryExpressionDefault<
+	LeftSlot extends T.BinaryExpressionDefault.Config['left'],
+	RightSlot extends T.BinaryExpressionDefault.Config['right']
+>(
+	config: RefusingConfig<T.BinaryExpressionDefault.Config, { left: LeftSlot; right: RightSlot }>
+): T.BinaryExpressionDefault.Bound;
+export function buildBinaryExpressionDefault(
+	config: T.BinaryExpressionDefault.Config
+): T.BinaryExpressionDefault.Bound {
+	currentHandle()?.admit(TSKindId.BinaryExpressionDefault, [config]);
+	const _left = rejectReservedText(
+		kindIdStorage<NonNullable<T.BinaryExpressionDefault['_left']>>(config.left),
+		'BinaryExpressionDefault.left',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const _operator = kindIdStorage<NonNullable<T.BinaryExpressionDefault['_operator']>>(config.operator);
+	const _right = rejectReservedText(
+		kindIdStorage<NonNullable<T.BinaryExpressionDefault['_right']>>(config.right),
+		'BinaryExpressionDefault.right',
+		TSKindId.Identifier,
+		_reservedWords_buildIdentifier
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'binary_expression_default', { left: _left, operator: _operator, right: _right });
+	const node = {
+		$type: TSKindId.BinaryExpressionDefault as const,
+		_left,
+		_operator,
+		_right,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		left: () => hydrateStoredSlot(node, '_left'),
+		operator: () => _operator,
+		right: () => hydrateStoredSlot(node, '_right'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: buildBinaryExpressionDefault$with$left,
+		operator: buildBinaryExpressionDefault$with$operator,
+		right: buildBinaryExpressionDefault$with$right,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.BinaryExpressionDefault.Bound;
+}
+
+function buildBinaryExpressionDefault$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.BinaryExpressionDefault.Config;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionDefault.Config>['left']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionDefault({ ...config, left: value }))
+			);
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionDefault.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionDefault({ ...config, operator: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<NonNullable<T.BinaryExpressionDefault.Config>['right']>) =>
+				rebuilt(node, handle, () => buildBinaryExpressionDefault({ ...config, right: value }))
+			);
+	}
+	throw new Error(`binary_expression_default has no $with.${setter}`);
+}
+function buildBinaryExpressionDefault$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpressionDefault$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function buildBinaryExpressionDefault$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpressionDefault$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildBinaryExpressionDefault$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildBinaryExpressionDefault$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
 export const buildEmptyMember: TSKindId.EmptyMember = TSKindId.EmptyMember;
@@ -23529,7 +23529,6 @@ export type FluentKindMap = {
 	augmented_assignment_expression: T.AugmentedAssignmentExpression.Bound;
 	spread_element: T.SpreadElement.Bound;
 	ternary_expression: T.TernaryExpression.Bound;
-	binary_expression: T.BinaryExpression.Bound;
 	unary_expression: T.UnaryExpression.Bound;
 	sequence_expression: T.SequenceExpression.Bound;
 	unescaped_double_string_fragment: T.UnescapedDoubleStringFragment;
@@ -23663,6 +23662,7 @@ export type FluentKindMap = {
 	number_bigint_octal: T.NumberBigintOctal.Bound;
 	number_bigint_decimal: T.NumberBigintDecimal.Bound;
 	binary_expression_in: T.BinaryExpressionIn.Bound;
+	binary_expression_default: T.BinaryExpressionDefault.Bound;
 	empty_member: T.EmptyMember;
 	class_body_member_method: T.ClassBodyMemberMethod.Bound;
 	class_body_member_method_sig: T.ClassBodyMemberMethodSig.Bound;
@@ -23813,7 +23813,6 @@ export const _factoryMap = {
 	augmented_assignment_expression: buildAugmentedAssignmentExpression,
 	spread_element: buildSpreadElement,
 	ternary_expression: buildTernaryExpression,
-	binary_expression: buildBinaryExpression,
 	unary_expression: buildUnaryExpression,
 	sequence_expression: buildSequenceExpression,
 	unescaped_double_string_fragment: buildUnescapedDoubleStringFragment,
@@ -23947,6 +23946,7 @@ export const _factoryMap = {
 	number_bigint_octal: buildNumberBigintOctal,
 	number_bigint_decimal: buildNumberBigintDecimal,
 	binary_expression_in: buildBinaryExpressionIn,
+	binary_expression_default: buildBinaryExpressionDefault,
 	empty_member: buildEmptyMember,
 	class_body_member_method: buildClassBodyMemberMethod,
 	class_body_member_method_sig: buildClassBodyMemberMethodSig,

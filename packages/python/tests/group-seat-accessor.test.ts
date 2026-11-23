@@ -41,7 +41,7 @@ describe('a group seat flattens its group fields onto the parent', () => {
 
 	it('stores the flattened key in its group under object storage', () => {
 		const rebuilt = sliceOf('a[1:2:3]\n', objects).$with.expression(objects.build.integer('9'));
-		expect(rebuilt._step).toBeDefined();
+		expect(rebuilt.$has('step')).toBe(true);
 	});
 });
 

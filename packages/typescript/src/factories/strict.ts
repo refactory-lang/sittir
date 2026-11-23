@@ -68,7 +68,6 @@ export {
 	buildAugmentedAssignmentExpression,
 	buildSpreadElement,
 	buildTernaryExpression,
-	buildBinaryExpression,
 	buildUnaryExpression,
 	buildSequenceExpression,
 	buildUnescapedDoubleStringFragment,
@@ -201,6 +200,7 @@ export {
 	buildNumberBigintOctal,
 	buildNumberBigintDecimal,
 	buildBinaryExpressionIn,
+	buildBinaryExpressionDefault,
 	buildEmptyMember,
 	buildClassBodyMemberMethod,
 	buildClassBodyMemberMethodSig,
@@ -289,6 +289,24 @@ export const catchClause$seated: Seat<
 	T.CatchClause.BuildArgs,
 	ReturnType<typeof F.buildCatchClause>
 > = K.catchClause$flatten$catchClauseGroup(F.buildCatchClause, F.buildCatchClauseGroup);
+
+export const numberFloatPoint$seated: Seat<
+	T.NumberFloatPoint.BuildArgs,
+	ReturnType<typeof F.buildNumberFloatPoint>,
+	false,
+	undefined,
+	{ integer: true; fraction: true; exponent: true },
+	'exponent'
+> = K.numberFloatPoint$branch(F.buildNumberFloatPoint);
+
+export const numberFloatLeadingPoint$seated: Seat<
+	T.NumberFloatLeadingPoint.BuildArgs,
+	ReturnType<typeof F.buildNumberFloatLeadingPoint>,
+	false,
+	undefined,
+	{ fraction: true; exponent: true },
+	'exponent'
+> = K.numberFloatLeadingPoint$branch(F.buildNumberFloatLeadingPoint);
 
 export const formalParametersElementsReceiver$seated: Seat<
 	T.FormalParametersElementsReceiver.BuildArgs,

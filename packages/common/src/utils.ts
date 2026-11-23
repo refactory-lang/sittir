@@ -418,6 +418,12 @@ export function nodeAddressOf(node: AnyUntypedNode): NodeAddress | undefined {
 	return handle === undefined ? undefined : { handle };
 }
 
+/** `node.$has(name)`: whether the slot `name` holds a value on this node, read through the node's own getter, so object and arena storage answer alike. Where the slot decides which shape a node has, a true answer narrows the node to its present shape and a false one to its absent shape. */
+export function hasSlot(this: object, name: string): boolean {
+	const read = (this as Readonly<Record<string, unknown>>)[name];
+	return typeof read === 'function' && (read as () => unknown).call(this) !== undefined;
+}
+
 /** `node.$trivia.leading(...)` and `.trailing(...)`: set the position and return the node, or read it with no items. */
 export function triviaSide(
 	node: object,

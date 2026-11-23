@@ -1015,13 +1015,22 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		}
 		const options = new Set(table.options?.[arm.builder!] ?? []);
 		if (entries.some(([key]) => options.has(key))) return fail(`${path}'s number arm takes a slot through its builder's options`);
-		const written = slots.map((slot): [string, Expression] => [slot, dot(id('parts'), slot)]);
-		const optioned = written.filter(([slot]) => options.has(slot));
+		const builtFrom = (names: readonly string[]): Statement => {
+			const written = names.map((slot): [string, Expression] => [slot, dot(id('parts'), slot)]);
+			const optioned = written.filter(([slot]) => options.has(slot));
+			return ret(call(callee, obj([...slotEntries(path, arm, others, input), ...written.filter(([slot]) => !options.has(slot))]), ...(optioned.length === 0 ? [] : [obj(optioned)])));
+		};
+		const named = new Map(Object.entries(parts));
+		const exponent = named.get('exponent');
+		const exponentParts = new Set(['exponent', 'marker', 'exponentSign'].map((part) => named.get(part)));
 		return [
 			...bigint,
 			constant('parts', call(id(uses('decimalSpelling')), scalar, obj(Object.entries(parts).map(([part, slot]) => [part, str(slot)])), arm.scientific === true ? t.true : t.false)),
 			when(binary(id('parts'), '===', id('undefined')), ret(call(id(uses('unspelled')), str(path), scalar))),
-			ret(call(callee, obj([...entries, ...written.filter(([slot]) => !options.has(slot))]), ...(optioned.length === 0 ? [] : [obj(optioned)])))
+			...(exponent === undefined || arm.scientific === true
+				? []
+				: [when(binary(dot(id('parts'), exponent), '===', id('undefined')), builtFrom(slots.filter((slot) => !exponentParts.has(slot))))]),
+			builtFrom(slots)
 		];
 	};
 

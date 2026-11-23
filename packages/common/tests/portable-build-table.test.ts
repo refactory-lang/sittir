@@ -172,13 +172,14 @@ describe('the portable build table', () => {
 	});
 
 	it("builds a form through its holder's mount, the step saying how the mount takes its input and which of its slot's forms it enters", () => {
-		const [left] = armOf('typescript', 'expression.binary.membership.in', typescript.kinds.BinaryExpression).slots.filter((slot) => slot.name === 'left' && slot.steps.length > 1);
-		expect(left!.steps[0]).toEqual({
-			key: 'binaryExpressionIn',
-			builder: 'binaryExpression.in',
-			mounted: { call: 'child', key: 'binaryExpressionIn' }
+		const [given] = armOf('typescript', 'clause.import.names', typescript.kinds.ImportClause).slots.filter((slot) => slot.name === 'default' && slot.steps.length > 1);
+		expect(given!.steps[0]).toEqual({
+			key: 'content',
+			builder: 'importClause.defaultImport',
+			mounted: { call: 'child', key: 'content' },
+			kinds: [typescript.kinds.ImportClauseDefaultImport]
 		});
-		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
+		expect(tables.typescript.table.builders['importClause.defaultImport']).toBe('config');
 		const clause = armsOf('typescript', 'statement.export')
 			.flatMap((arm) => arm.slots)
 			.find((slot) => slot.name === 'exportClause' && slot.steps[0]?.builder === 'exportStatementDefaultFrom.clauseFrom');
