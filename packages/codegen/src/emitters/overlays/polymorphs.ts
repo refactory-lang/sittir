@@ -1253,6 +1253,7 @@ export function emitPolymorphsOverlay(config: {
 			}
 			if (nestedParentKey !== undefined) {
 				uses.add(child.kind);
+				if (isBlankRoute(route)) continue;
 				sharedSetByPath.set(`${parent.key}.${name}`, nestedParentKey);
 				members.push({ key: name, ref: localRef(nestedParentKey) });
 				continue;

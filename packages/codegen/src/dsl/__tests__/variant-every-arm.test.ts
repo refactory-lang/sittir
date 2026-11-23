@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
+import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
+import { buildRuleCatalog } from '../../compiler/rule-catalog.ts';
+import { emitTables } from '../../__tests__/helpers/emit-tables.ts';
+import { subFactoriesOf } from '../../compiler/model/sub-factories.ts';
+import { isBlankRoute, flattenedVariantParents } from '../../compiler/model/ir-surface.ts';
 
 const BASE =
 	"expr: ($) => choice(prec.left(1, seq(field('left', $.num), '+', field('right', $.num))), prec.left(2, seq(field('left', $.num), '*', field('right', $.num))), prec.left(3, seq(field('left', $.num), '<', field('right', $.num))), seq('#', field('left', $.num), 'in', field('right', $.num))), num: () => /[0-9]+/";
@@ -31,5 +36,43 @@ describe("variant key '*' names every arm no other key names", () => {
 	it('refuses the key when every arm is named', async () => {
 		const raw = await run("{ 0: variant('a'), 1: variant('b'), 2: variant('c'), 3: variant('d'), '*': variant('e') }");
 		expect(raw.layerDiagnostics).toEqual([expect.objectContaining({ code: 'edit-entry-invalid', message: expect.stringMatching(/no such arm/) })]);
+	}, 60_000);
+});
+
+const CHOICE_OF_SYMBOLS =
+	"source: ($) => repeat($.holder), holder: ($) => seq('(', field('e', $.expr), ')'), expr: ($) => choice($.a, $.b, $.c), a: () => /a+/, b: () => /b+/, c: () => /c+/";
+
+const HIDDEN_CHOICE = CHOICE_OF_SYMBOLS.replaceAll('$.expr', '$._expr').replace('expr: ($)', '_expr: ($)');
+
+const runSymbols = (edits: string, rules = CHOICE_OF_SYMBOLS, owner = 'expr') => evaluateTempGrammar({ extras: '', rules }, '', { bindings: `edits: { ${owner}: ${edits} }` });
+
+describe("variant key '*' beside selector keys and direct arms", () => {
+	it('leaves an arm a selector key names out of the collected rule', async () => {
+		const raw = await runSymbols("{ '(a)': variant('a'), '*': variant('rest', { default: true }) }");
+		const parent = raw.rules.expr as { members: { name: string; annotations?: { variant?: string } }[] };
+		expect(parent.members.map((member) => [member.name, member.annotations?.variant])).toEqual([['a', 'a'], ['expr_rest', 'rest']]);
+		expect((raw.rules.expr_rest as { members: unknown[] }).members).toHaveLength(2);
+	}, 60_000);
+
+	it('gives a blank default over direct arms no route of its own under the holder', async () => {
+		for (const [rules, owner] of [[CHOICE_OF_SYMBOLS, 'expr'], [HIDDEN_CHOICE, '_expr']] as const) {
+			const raw = await runSymbols("{ 0: variant('a'), '*': variant('', { default: true }) }", rules, owner);
+			const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(raw.rules as never);
+			const nodeMap = assemblePredicted({ name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] } as never).nodeMap;
+			expect(subFactoriesOf(nodeMap.nodes.get('holder')!, nodeMap).entries.map((entry) => entry.name)).not.toContain('');
+			expect(emitTables(nodeMap).wiring).not.toMatch(/readonly "":|\{ ?"": |\$\$|\.\s*[,;)]/);
+			for (const parent of flattenedVariantParents(nodeMap)) expect(parent.variants.filter(isBlankRoute).length).toBeLessThanOrEqual(1);
+		}
+	}, 60_000);
+
+	it('gives a blank default that holds another variant parent no member of its own', async () => {
+		const rules =
+			"source: ($) => repeat($.holder), holder: ($) => seq('(', field('e', $.outer), ')'), outer: ($) => choice($.inner, $.c), inner: ($) => choice($.a, $.b), a: () => /a+/, b: () => /b+/, c: () => /c+/";
+		const raw = await evaluateTempGrammar({ extras: '', rules }, '', {
+			bindings: "edits: { inner: { 0: variant('x'), '*': variant('y', { default: true }) }, outer: { 1: variant('c'), '*': variant('', { default: true }) } }"
+		});
+		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(raw.rules as never);
+		const nodeMap = assemblePredicted({ name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] } as never).nodeMap;
+		expect(emitTables(nodeMap).wiring).not.toMatch(/readonly "":|\{ ?"": |\$\$|\.\s*[,;)]/);
 	}, 60_000);
 });

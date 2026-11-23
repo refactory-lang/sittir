@@ -274,7 +274,8 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 				return isArmDefault(value) ? clearSiblingDefaults(applied, segments) : applied;
 			}) ?? current;
 	}
-	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries) : rule;
+	const claimed = Object.hasOwn(patches, EVERY_ARM_KEY) ? claimedArms(original, Object.keys(patches).filter((key) => key !== EVERY_ARM_KEY && key !== '.')) : new Set<number>();
+	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries, claimed) : rule;
 }
 
 const DOT_ONLY_ENTRIES = {
@@ -385,14 +386,37 @@ function admittedVariantEntries(entries: ReadonlyArray<[string, VariantPlacehold
 	});
 }
 
-function collapseUnnamedArms(rule: RuntimeRule, named: ReadonlyArray<string>): { rule: RuntimeRule; at: number } | undefined {
+function claimedArms(original: RuntimeRule, keys: ReadonlyArray<string>): ReadonlySet<number> {
+	const { core } = peelPrecs(original);
+	const members = isChoiceType(core.type) ? membersOf(core) : [];
+	const claimed = new Set<number>();
+	for (const key of keys) {
+		const head = parsePath(key)[0];
+		if (head === undefined) continue;
+		if (head.kind === 'index') {
+			claimed.add(memberIndex(head.value, members.length));
+			continue;
+		}
+		const hit = new Set<RuntimeRule>();
+		try {
+			applyPath(original, [head], (member) => {
+				hit.add(member);
+				return member;
+			});
+		} catch (error) {
+			if (!(error instanceof ApplyPathSkip)) throw error;
+		}
+		members.forEach((member, i) => {
+			if (hit.has(member)) claimed.add(i);
+		});
+	}
+	return claimed;
+}
+
+function collapseUnnamedArms(rule: RuntimeRule, taken: ReadonlySet<number>): { rule: RuntimeRule; at: number } | undefined {
 	const { precs, core } = peelPrecs(rule);
 	if (precs.length > 0 || !isChoiceType(core.type)) return undefined;
 	const members = membersOf(core);
-	const taken = new Set(named.flatMap((key) => {
-		const head = parsePath(key)[0];
-		return head?.kind === 'index' ? [memberIndex(head.value, members.length)] : [];
-	}));
 	const rest = members.map((member, i) => ({ member, i })).filter(({ i }) => !taken.has(i));
 	if (rest.length === 0) return undefined;
 	const at = rest[0]!.i;
@@ -401,8 +425,8 @@ function collapseUnnamedArms(rule: RuntimeRule, named: ReadonlyArray<string>): {
 	return { rule: reconstructContainer(core, kept), at: kept.indexOf(body) };
 }
 
-function applyEveryArmVariant(rule: RuntimeRule, value: VariantPlaceholder, named: ReadonlyArray<string>): RuntimeRule {
-	const collapsed = collapseUnnamedArms(rule, named);
+function applyEveryArmVariant(rule: RuntimeRule, value: VariantPlaceholder, claimed: ReadonlySet<number>): RuntimeRule {
+	const collapsed = collapseUnnamedArms(rule, claimed);
 	if (collapsed === undefined) {
 		refuseVariantEntry(EVERY_ARM_KEY, 'the key names every arm of a choice that no other key names, and the rule has no such arm');
 		return rule;
@@ -417,7 +441,8 @@ function applyEveryArmVariant(rule: RuntimeRule, value: VariantPlaceholder, name
 
 function applyVariantPatches(
 	rule: RuntimeRule,
-	allEntries: ReadonlyArray<[string, VariantPlaceholder]>
+	allEntries: ReadonlyArray<[string, VariantPlaceholder]>,
+	claimed: ReadonlySet<number>
 ): RuntimeRule {
 	const admitted = admittedVariantEntries(allEntries);
 	const everyArm = admitted.find(([key]) => key === EVERY_ARM_KEY);
@@ -454,7 +479,7 @@ function applyVariantPatches(
 	for (const [key, value] of variantEntries) {
 		if (value.default === true && !missed.has(key) && !hoisted?.consumed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
 	}
-	if (everyArm !== undefined) result = applyEveryArmVariant(result, everyArm[1], variantEntries.map(([key]) => key));
+	if (everyArm !== undefined) result = applyEveryArmVariant(result, everyArm[1], claimed);
 	registerIfPureVariantChoice(result);
 	return result;
 }

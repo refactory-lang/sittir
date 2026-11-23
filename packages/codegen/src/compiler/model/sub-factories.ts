@@ -82,7 +82,7 @@ function textStorageOf(value: NodeOrTerminal, nodeMap: NodeMap): TextValueStorag
 type LabelledValue = NodeOrTerminal & { readonly variant: string };
 
 function isLabelled(value: NodeOrTerminal): value is LabelledValue {
-	return value.variant !== undefined;
+	return value.variant !== undefined && value.variant !== '';
 }
 
 function kindOfValue(value: NodeOrTerminal): string | undefined {
@@ -111,7 +111,7 @@ function armValuesOf(slot: AssembledNonterminal, nodeMap: NodeMap): readonly Lab
 			if (isLabelled(value)) out.push(value);
 			continue;
 		}
-		for (const ref of variants) if (isLabelled(ref) && ref.variant !== '') out.push({ ...ref, multiplicity: value.multiplicity });
+		for (const ref of variants) if (isLabelled(ref)) out.push({ ...ref, multiplicity: value.multiplicity });
 	}
 	return out;
 }

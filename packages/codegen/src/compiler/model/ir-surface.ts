@@ -212,6 +212,7 @@ export function variantAliasWires(
 	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
 	const aliases: AliasWire[] = [];
 	for (const variantChild of node.variantChildKinds) {
+		if (variantChild.name === '') continue;
 		const visible = variantChild.kind;
 		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
 		if (child === undefined || child.rawFactoryName === undefined) continue;
