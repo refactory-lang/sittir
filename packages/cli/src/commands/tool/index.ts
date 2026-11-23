@@ -47,6 +47,8 @@ import { propose14 } from './propose-14.ts';
 import { separatedLists } from './separated-lists.ts';
 import { testDurations } from './test-durations.ts';
 import { testFailures } from './test-failures.ts';
+import { typeErrors } from './type-errors.ts';
+import { cargoTestTally } from './cargo-test-tally.ts';
 import { testHistory } from './test-history.ts';
 import { textKindOverlap } from './text-kind-overlap.ts';
 import { spelledTrivia } from './spelled-trivia.ts';
@@ -108,6 +110,8 @@ export const toolModules: readonly CommandModule[] = [
 	testDurations,
 	testFailures,
 	testHistory,
+	typeErrors,
+	cargoTestTally,
 	textKindOverlap,
 	spelledTrivia,
 	triviaPlacement,

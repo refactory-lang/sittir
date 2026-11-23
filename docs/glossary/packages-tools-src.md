@@ -537,3 +537,43 @@ Reads the grammar.json at a path and returns the named rule in compact form. Thr
 ### `packages/tools/src/scripts/grammar-rule.ts::run`
 
 Prints one rule of `packages/<grammar>/.sittir/src/grammar.json` in compact form. Returns 0 when the rule was printed. Returns 1, printing the reason to stderr, when the grammar.json cannot be read, has no rule of that name, or holds a rule type the printer does not know.
+
+### `packages/tools/src/scripts/type-errors.ts::TypeErrorsOptions`
+
+Options for `run`: the type-check log to read, and whether to print JSON.
+
+### `packages/tools/src/scripts/type-errors.ts::PackageTypeErrors`
+
+One package's distinct errors, each counted in the package that holds its file, and the number of projects that reported them.
+
+### `packages/tools/src/scripts/type-errors.ts::TypeErrorSummary`
+
+The type errors of a type-check log: the error records, the distinct errors (each counted once), the repeats (records beyond the first for each distinct error), and the packages in order of their distinct-error counts, most first.
+
+### `packages/tools/src/scripts/type-errors.ts::summarizeTypeErrors`
+
+Counts the distinct type errors of a type-check log per package that holds their file. A project's record is resolved against the `packages/<name> type-check:` prefix that reported it, so a file shared by several projects (each re-checking it through a relative import) gives one key: its path, line, column and code. The total is the number of `error TS` records, counted by a regex independent of the parser. Refuses a log whose records do not all parse, whose distinct per-package counts disagree with the distinct keys, or whose distinct errors plus repeats do not add up to the records. Each package row also says how many projects reported its errors.
+
+### `packages/tools/src/scripts/type-errors.ts::run`
+
+Reads a type-check log and prints its per-package error counts and total, as text or JSON. Returns 0 when the log was counted. Returns 1, printing the reason to stderr, when the log cannot be read or is not fully read.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestTallyOptions`
+
+Options for `run`: the cargo test log to read, the storage label the run used (printed with the totals, not inferred from the log), and whether to print JSON.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestBinaryTally`
+
+One test binary's totals: the name from its `Running` or `Doc-tests` line, and the passed, failed and ignored counts from its `test result:` line.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestTally`
+
+The tally of one cargo test run for one storage: the storage label, the passed, failed and ignored totals across its binaries, whether the per-test lines checked those totals (`perTestChecked`), and each binary's own totals.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::summarizeCargoTests`
+
+Tallies a cargo test log. Each binary's totals come from its `test result:` line, and the crate name from the `Running` or `Doc-tests` line before it. When the log has per-test lines (`test ... ok`, `FAILED`, `ignored`, with or without a reason), their counts must equal the summed passed, failed and ignored, and the result has `perTestChecked` set. Throws when they disagree. A log with no per-test lines (a filtered or compacted run) is tallied from its result lines alone, with `perTestChecked` false, so the output says the per-test check was not run. Throws when the log has no result line at all.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::run`
+
+Tallies the cargo test log and prints the per-binary and total passed, failed and ignored counts, labelled with the storage, as text or JSON. Returns 0 when the log was tallied. Returns 1, printing the reason to stderr, when the log cannot be read, has no result line, or its totals do not match its per-test lines.
