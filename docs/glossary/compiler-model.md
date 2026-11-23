@@ -5761,6 +5761,10 @@ empty or a stutter of its group's name.
 
 The flattened variant parents, as stamped on the node map (`deriveFlattenedVariantParents`).
 
+### `packages/codegen/src/compiler/model/ir-surface.ts::isBlankRoute`
+
+Whether a flattened variant route is the blank default variant: it is a member of its parent and the parent's factory builds it, but it has no name, so the `ir` namespace, the guards and the seats beneath it skip it.
+
 ### `packages/codegen/src/compiler/model/ir-surface.ts::armRoutesOf`
 
 The arm routes, as stamped on the node map (`deriveArmRoutes`).

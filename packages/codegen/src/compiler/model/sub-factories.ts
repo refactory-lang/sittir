@@ -111,7 +111,7 @@ function armValuesOf(slot: AssembledNonterminal, nodeMap: NodeMap): readonly Lab
 			if (isLabelled(value)) out.push(value);
 			continue;
 		}
-		for (const ref of variants) if (isLabelled(ref)) out.push({ ...ref, multiplicity: value.multiplicity });
+		for (const ref of variants) if (isLabelled(ref) && ref.variant !== '') out.push({ ...ref, multiplicity: value.multiplicity });
 	}
 	return out;
 }
@@ -125,7 +125,7 @@ function claimantOf(entry: SubFactory): string {
 }
 
 export function variantArmsOf(node: AssembledSupertype): readonly { readonly name: string; readonly ref: NodeBackedRef }[] {
-	return (node.variantSubtypes ?? []).map((ref) => ({ name: lowerCamelCase(ref.variant!), ref }));
+	return (node.variantSubtypes ?? []).filter((ref) => ref.variant !== '').map((ref) => ({ name: lowerCamelCase(ref.variant!), ref }));
 }
 
 function isCallableArm(child: AssembledNode, isEmitted: IsEmittedPredicate): boolean {

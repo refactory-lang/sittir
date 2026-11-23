@@ -28,9 +28,9 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: "x",
-					value: ts.build.binaryExpression({
+					value: ts.build.binaryExpressionDefault({
 						left: ts.build.parenthesizedExpressionTyped({
-							expression: ts.build.binaryExpression({
+							expression: ts.build.binaryExpressionDefault({
 								left: "1",
 								operator: ts.kinds.Plus,
 								right: "2",
@@ -58,7 +58,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				}, ts.build.expressionStatement(ts.build.assignmentExpression({
 					left: "x",
 					right: ts.build.parenthesizedExpressionTyped({
-						expression: ts.build.binaryExpression({
+						expression: ts.build.binaryExpressionDefault({
 							left: "x",
 							operator: ts.kinds.Dash,
 							right: "1",
@@ -73,7 +73,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 						value: "0",
 					})],
 				}),
-				condition: ts.build.binaryExpression({
+				condition: ts.build.binaryExpressionDefault({
 					left: "i",
 					operator: ts.kinds.Lt,
 					right: "3",
@@ -185,7 +185,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: "k",
-					value: ts.build.binaryExpression({
+					value: ts.build.binaryExpressionDefault({
 						left: "x",
 						operator: ts.kinds.InstanceofKeyword,
 						right: ts.build.parenthesizedExpressionTyped({
@@ -197,7 +197,7 @@ export function rebuildKeywordOpenersTypescriptLoose() {
 				kind: ts.kinds.ConstKeyword,
 				declarators: [ts.build.variableDeclaratorPlain({
 					name: "inn",
-					value: ts.build.binaryExpression.in({
+					value: ts.build.binaryExpressionIn({
 						left: ts.build.stringDouble("a"),
 						right: ts.build.parenthesizedExpressionTyped({
 							expression: "obj",

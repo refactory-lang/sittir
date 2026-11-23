@@ -6,7 +6,7 @@ import { isAuthoredSupertype, isDeclaredSupertype } from './shared.ts';
 import { membershipKindsOf } from './membership.ts';
 import { collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
 import { wrapperChainFor, wrapperChainsOf } from '../compiler/model/wrapper-chain.ts';
-import { flattenedVariantParents, formRoutesOf, seatedFormKinds, type FlattenedVariantRoute, type FormRoute } from '../compiler/model/ir-surface.ts';
+import { flattenedVariantParents, formRoutesOf, isBlankRoute, seatedFormKinds, type FlattenedVariantRoute, type FormRoute } from '../compiler/model/ir-surface.ts';
 
 export interface EmitIsConfig {
 	grammar: string;
@@ -104,7 +104,7 @@ export function emitIs(config: EmitIsConfig): string {
 		if (memberKinds.length === 0) continue;
 		const guarded = isAuthoredSupertype(st);
 		const guardKey = guarded ? claimGuardKey(st) : node.typeKey!;
-		const variants = variantParents.find((parent) => parent.node === st)?.variants ?? [];
+		const variants = (variantParents.find((parent) => parent.node === st)?.variants ?? []).filter((route) => !isBlankRoute(route));
 		const own = findOwnKindEntry(kindEntries, kind);
 		supertypes.push({ kind, id: own?.id, member: own?.member, typeName, guardKey, memberKinds, memberIds, memberKindIds, variants, guarded });
 	}

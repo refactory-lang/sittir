@@ -74,7 +74,6 @@ export const buildAssignmentExpression = dispatched(() => backend().buildAssignm
 export const buildAugmentedAssignmentExpression = dispatched(() => backend().buildAugmentedAssignmentExpression);
 export const buildSpreadElement = dispatched(() => backend().buildSpreadElement);
 export const buildTernaryExpression = dispatched(() => backend().buildTernaryExpression);
-export const buildBinaryExpression = dispatched(() => backend().buildBinaryExpression);
 export const buildUnaryExpression = dispatched(() => backend().buildUnaryExpression);
 export const buildSequenceExpression = dispatched(() => backend().buildSequenceExpression);
 export const buildUnescapedDoubleStringFragment = dispatched(() => backend().buildUnescapedDoubleStringFragment);
@@ -215,6 +214,7 @@ export const buildNumberBigintBinary = dispatched(() => backend().buildNumberBig
 export const buildNumberBigintOctal = dispatched(() => backend().buildNumberBigintOctal);
 export const buildNumberBigintDecimal = dispatched(() => backend().buildNumberBigintDecimal);
 export const buildBinaryExpressionIn = dispatched(() => backend().buildBinaryExpressionIn);
+export const buildBinaryExpressionDefault = dispatched(() => backend().buildBinaryExpressionDefault);
 export const buildEmptyMember = O.buildEmptyMember;
 export const buildClassBodyMemberMethod = dispatched(() => backend().buildClassBodyMemberMethod);
 export const buildClassBodyMemberMethodSig = dispatched(() => backend().buildClassBodyMemberMethodSig);
@@ -384,7 +384,6 @@ export const _factoryMap = {
 	augmented_assignment_expression: buildAugmentedAssignmentExpression,
 	spread_element: buildSpreadElement,
 	ternary_expression: buildTernaryExpression,
-	binary_expression: buildBinaryExpression,
 	unary_expression: buildUnaryExpression,
 	sequence_expression: buildSequenceExpression,
 	unescaped_double_string_fragment: buildUnescapedDoubleStringFragment,
@@ -518,6 +517,7 @@ export const _factoryMap = {
 	number_bigint_octal: buildNumberBigintOctal,
 	number_bigint_decimal: buildNumberBigintDecimal,
 	binary_expression_in: buildBinaryExpressionIn,
+	binary_expression_default: buildBinaryExpressionDefault,
 	empty_member: buildEmptyMember,
 	class_body_member_method: buildClassBodyMemberMethod,
 	class_body_member_method_sig: buildClassBodyMemberMethodSig,

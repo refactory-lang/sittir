@@ -9,7 +9,8 @@ import {
 	insideLexicalToken,
 	memberIndex,
 	namedFieldCount,
-	ApplyPathSkip
+	ApplyPathSkip,
+	EVERY_ARM_KEY
 } from './transform-path.ts';
 import type { PathSegment } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
@@ -361,10 +362,66 @@ function partitionPatchesByVariant(patches: Record<number | string, PatchValue>)
 	return { variantEntries, otherEntries };
 }
 
+function refuseVariantEntry(key: string, message: string): void {
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({ code: 'edit-entry-invalid', ownerKind: owner, message: `edits: '${owner}' at '${key}': ${message}`, details: { kind: owner, path: key } });
+}
+
+function admittedVariantEntries(entries: ReadonlyArray<[string, VariantPlaceholder]>): Array<[string, VariantPlaceholder]> {
+	const minted = new Map<string, string>();
+	return entries.filter(([key, value]) => {
+		if (value.name === '' && value.default !== true) {
+			refuseVariantEntry(key, "a blank variant name takes { default: true }");
+			return false;
+		}
+		const name = variantMintName(value);
+		const first = minted.get(name);
+		if (first !== undefined) {
+			refuseVariantEntry(key, `variant '${name}' is already named at '${first}'; one variant name takes one key`);
+			return false;
+		}
+		minted.set(name, key);
+		return true;
+	});
+}
+
+function collapseUnnamedArms(rule: RuntimeRule, named: ReadonlyArray<string>): { rule: RuntimeRule; at: number } | undefined {
+	const { precs, core } = peelPrecs(rule);
+	if (precs.length > 0 || !isChoiceType(core.type)) return undefined;
+	const members = membersOf(core);
+	const taken = new Set(named.flatMap((key) => {
+		const head = parsePath(key)[0];
+		return head?.kind === 'index' ? [memberIndex(head.value, members.length)] : [];
+	}));
+	const rest = members.map((member, i) => ({ member, i })).filter(({ i }) => !taken.has(i));
+	if (rest.length === 0) return undefined;
+	const at = rest[0]!.i;
+	const body = rest.length === 1 ? rest[0]!.member : reconstructContainer(core, rest.map(({ member }) => member));
+	const kept = members.flatMap((member, i) => (i === at ? [body] : taken.has(i) ? [member] : []));
+	return { rule: reconstructContainer(core, kept), at: kept.indexOf(body) };
+}
+
+function applyEveryArmVariant(rule: RuntimeRule, value: VariantPlaceholder, named: ReadonlyArray<string>): RuntimeRule {
+	const collapsed = collapseUnnamedArms(rule, named);
+	if (collapsed === undefined) {
+		refuseVariantEntry(EVERY_ARM_KEY, 'the key names every arm of a choice that no other key names, and the rule has no such arm');
+		return rule;
+	}
+	const segments: PathSegment[] = [{ kind: 'index', value: collapsed.at }];
+	const applied = appliedAtSite(EVERY_ARM_KEY, () =>
+		wireWithPatchSites(patchSitesOf([[String(collapsed.at), value]]), () => applyPath(collapsed.rule, segments, (member, enclosing) => resolveAt(value, member, EVERY_ARM_KEY, enclosing)))
+	);
+	if (applied === undefined) return rule;
+	return value.default === true ? clearSiblingDefaults(applied, segments) : applied;
+}
+
 function applyVariantPatches(
 	rule: RuntimeRule,
-	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
+	allEntries: ReadonlyArray<[string, VariantPlaceholder]>
 ): RuntimeRule {
+	const admitted = admittedVariantEntries(allEntries);
+	const everyArm = admitted.find(([key]) => key === EVERY_ARM_KEY);
+	const variantEntries = admitted.filter(([key]) => key !== EVERY_ARM_KEY);
 	const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
 	const hoisted = wireWithPatchSites(patchSitesOf(ordered), () => tryHoistSiblingVariants(rule, ordered));
 	if (hoisted === null) {
@@ -394,10 +451,11 @@ function applyVariantPatches(
 			throw error;
 		}
 	}
-	registerIfPureVariantChoice(result);
 	for (const [key, value] of variantEntries) {
 		if (value.default === true && !missed.has(key) && !hoisted?.consumed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
 	}
+	if (everyArm !== undefined) result = applyEveryArmVariant(result, everyArm[1], variantEntries.map(([key]) => key));
+	registerIfPureVariantChoice(result);
 	return result;
 }
 

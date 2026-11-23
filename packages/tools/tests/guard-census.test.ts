@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../../codegen/src/compiler/generate.ts';
 import { AssembledEnum } from '../../codegen/src/compiler/model/node-map.ts';
-import { armIsForm, armRoutesOf, buildsHost, flattenedVariantParents, formRoutesOf, seatedFormKinds, type FormRoute } from '../../codegen/src/compiler/model/ir-surface.ts';
+import { armIsForm, armRoutesOf, buildsHost, flattenedVariantParents, formRoutesOf, isBlankRoute, seatedFormKinds, type FormRoute } from '../../codegen/src/compiler/model/ir-surface.ts';
 import { findOwnKindEntry } from '../../codegen/src/dsl/symbol-table.ts';
 import { collectKindEntries } from '../../codegen/src/emitters/kind-discriminant.ts';
 import { isDeclaredSupertype } from '../../codegen/src/emitters/shared.ts';
@@ -115,7 +115,7 @@ async function censusOf(grammar: string): Promise<Census> {
 	const hopsOfKind = (kind: string): Hop[] => {
 		const parent = flatByKind.get(kind);
 		if (parent) {
-			return parent.variants.map((v: any) => ({
+			return parent.variants.filter((v: any) => !isBlankRoute(v)).map((v: any) => ({
 				name: v.name,
 				child: v.nestedParentKey !== undefined ? (flatByKey.get(v.nestedParentKey) as any).node.kind : v.child.kind,
 				seated: false

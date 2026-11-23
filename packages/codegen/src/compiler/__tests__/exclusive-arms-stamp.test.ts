@@ -165,9 +165,13 @@ describe('arms stamp', () => {
 		let rust: NodeMap;
 		let typescript: NodeMap;
 		let typescriptSurface: (kind: string) => ReturnType<typeof builtTypeSurfaceOf>;
+		let rustSurface: (kind: string) => ReturnType<typeof builtTypeSurfaceOf>;
 
 		beforeAll(async () => {
-			rust = assemblePredicted(await evaluatePackage(grammarPackage('rust'))).nodeMap;
+			const assembledRust = assemblePredicted(await evaluatePackage(grammarPackage('rust')));
+			rust = assembledRust.nodeMap;
+			const rustKindEntries = collectKindEntries(rust, assembledRust.generatedIdTables);
+			rustSurface = (kind) => builtTypeSurfaceOf(rust.nodes.get(kind)!, rust, rustKindEntries);
 			const assembled = assemblePredicted(await evaluatePackage(grammarPackage('typescript')));
 			typescript = assembled.nodeMap;
 			const kindEntries = collectKindEntries(typescript, assembled.generatedIdTables);
@@ -178,10 +182,10 @@ describe('arms stamp', () => {
 			expect(held(rust, 'attribute_input')).toEqual({ value: [{ arm: 0, required: true }], arguments: [{ arm: 1, required: true }] });
 		});
 
-		it('prints the row of typescript binary_expression as the helper over its two arms', () => {
-			const surface = typescriptSurface('binary_expression')!;
+		it('prints the row of rust attribute_input as the helper over its two arms', () => {
+			const surface = rustSurface('attribute_input')!;
 			expect(surface.buildArgs).toMatch(/^ArmRows<\[config\?: /);
-			expect(surface.buildArgs).toContain("[['left' | 'operator' | 'right', 'left' | 'operator' | 'right'], ['binaryExpressionIn', 'binaryExpressionIn']]");
+			expect(surface.buildArgs).toContain("[['value', 'value'], ['arguments', 'arguments']]");
 			expect(surface.looseArgs).toMatch(/^ArmRows</);
 		});
 

@@ -47,7 +47,7 @@ import {
 } from '../../compiler/model/sub-factories.ts';
 import { localRef, memberAt, moduleRef, routesType, tableRef, withMembers, type BuilderSurface, type Member, type Ref } from './module.ts';
 import type { RefinedEntry } from './refines.ts';
-import { armRoutesOf, bundleKeyedNodes, flattenedVariantParents, hasOneSurface, isHoistedCompound, isNamespaceArm, type AliasWire, type FlattenedVariantParent } from '../../compiler/model/ir-surface.ts';
+import { armRoutesOf, bundleKeyedNodes, flattenedVariantParents, hasOneSurface, isBlankRoute, isHoistedCompound, isNamespaceArm, type AliasWire, type FlattenedVariantParent } from '../../compiler/model/ir-surface.ts';
 
 interface FlavorRefs<R = Ref> {
 	readonly strict: R;
@@ -1237,7 +1237,7 @@ export function emitPolymorphsOverlay(config: {
 				members.push({ key: name, ref: { value: id, type: `typeof ${id}` } });
 				continue;
 			}
-			const target = nestedParentKey === undefined ? variantRouteOf(child, `${parent.key}.${name}`) : defaultRoutes.get(nestedParentKey);
+			const target = nestedParentKey === undefined ? variantRouteOf(child, isBlankRoute(route) ? parent.key : `${parent.key}.${name}`) : defaultRoutes.get(nestedParentKey);
 			if (target?.set !== undefined) uses.add(target.set);
 			if (route.default && target !== undefined) {
 				if (isKindIdStored(child))
@@ -1257,7 +1257,7 @@ export function emitPolymorphsOverlay(config: {
 				members.push({ key: name, ref: localRef(nestedParentKey) });
 				continue;
 			}
-			members.push({ key: name, ref: (target as VariantRoute).value });
+			if (!isBlankRoute(route)) members.push({ key: name, ref: (target as VariantRoute).value });
 		}
 		const entryRef = withMembers(fallback?.callable, false, members);
 		locals.set(parent.key, entryRef);

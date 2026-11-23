@@ -571,9 +571,13 @@ still minted, as `ABSENT_VARIANT_NAME`.
 `bare`: the variant name of an optional variant choice's absent case when
 the grammar does not name it.
 
+### `packages/codegen/src/dsl/primitives/variant.ts::DEFAULT_VARIANT_NAME`
+
+`default`: the name a blank variant mints, so `variant('', { default: true })` on `binary_expression` mints the kind `binary_expression_default`. The variant label itself stays blank, which is why the kind has no build path and no guard key of its own.
+
 ### `packages/codegen/src/dsl/primitives/variant.ts::variant`
 
-Builds the placeholder; `options.absent` and `options.default` are carried only when set. Given a rule as its second argument, it is the direct form `variant(name, rule, options?)`: it returns a copy of the rule carrying the placeholder under `DIRECT_VARIANT_KEY`, which the layer pass applies at that arm's position exactly as the entry would (`transform/transform.ts::withDirectVariants`). `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
+Builds the placeholder; `options.absent` and `options.default` are carried only when set. Given a rule as its second argument, it is the direct form `variant(name, rule, options?)`: it returns a copy of the rule carrying the placeholder under `DIRECT_VARIANT_KEY`, which the layer pass applies at that arm's position exactly as the entry would (`transform/transform.ts::withDirectVariants`). `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`). A blank name takes `default: true` (otherwise the entry is refused) and mints `DEFAULT_VARIANT_NAME`; as the key `EVERY_ARM_KEY` it takes every arm no other key of the edit names.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::DIRECT_VARIANT_KEY`
 

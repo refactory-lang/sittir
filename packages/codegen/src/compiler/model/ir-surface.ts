@@ -71,6 +71,8 @@ export interface FlattenedVariantRoute {
 	readonly leaf?: true;
 }
 
+export const isBlankRoute = (route: FlattenedVariantRoute): boolean => route.name === '';
+
 export interface FlattenedVariantParent {
 	readonly key: string;
 	readonly node: AssembledSupertype;
@@ -601,7 +603,7 @@ function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantPar
 		if (isSoleContainer(containers, route.parent.kind, child.kind)) offer(contained, child, route);
 	};
 	for (const parent of flattened) {
-		for (const route of parent.variants) offer(declared, route.child, { parent: parent.node, name: route.name });
+		for (const route of parent.variants.filter((variant) => !isBlankRoute(variant))) offer(declared, route.child, { parent: parent.node, name: route.name });
 	}
 	for (const set of armRoutes.byKind.values()) {
 		for (const route of hostRoutesOf(set, armRoutes.kindEntries, nodeMap)) {

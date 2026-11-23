@@ -124,15 +124,6 @@ export const catchClause$flatten$catchClauseGroup =
 		return _fwd<ReturnType<PF>>(parent, seated ? { ...rest, catchClauseGroup: _c(child)(inner) } : rest, options);
 	};
 
-export const binaryExpression$branch =
-	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
-	(...args: readonly unknown[]): R =>
-		_s<R>(parent)(...args);
-export const binaryExpression$in =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ binaryExpressionIn: _c(child)(...args) });
-
 export const classHeritage$extendsClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
