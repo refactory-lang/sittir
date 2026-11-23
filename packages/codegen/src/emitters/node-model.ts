@@ -19,7 +19,8 @@ import {
 	storageKindOfRef,
 	delimiterPreferenceOf,
 	type DelimiterFacetRole,
-	AssembledList
+	AssembledList,
+	AssembledPunctuation
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { printRecordLines } from './record-lines.ts';
@@ -76,6 +77,7 @@ interface SerializedNodeBase {
 	builderPath?: readonly string[];
 	builderPathAlternates?: readonly (readonly string[])[];
 	seated?: true;
+	unbuildable?: true;
 	unit?: true;
 	layout?: true;
 	renamedFrom?: string;
@@ -250,6 +252,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		...(node.builderPath === undefined ? {} : { builderPath: node.builderPath }),
 		...(node.builderPathAlternates === undefined ? {} : { builderPathAlternates: node.builderPathAlternates }),
 		...(node.seated ? { seated: true } : {}),
+		...(node instanceof AssembledPunctuation && node.unbuildable ? { unbuildable: true } : {}),
 		...(node.unit ? { unit: true } : {}),
 		...(layoutKinds.has(node.kind) ? { layout: true } : {}),
 		...(node.renamedFrom !== undefined ? { renamedFrom: node.renamedFrom } : {}),

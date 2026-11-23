@@ -174,7 +174,6 @@ export {
 	buildEscapeSequenceSimple,
 	buildEscapeSequenceNamed,
 	buildLineContinuationNewline,
-	buildLineContinuationNul,
 	buildSimplePatternNegative,
 	buildExceptClauseExceptionList,
 	buildExceptClauseException,

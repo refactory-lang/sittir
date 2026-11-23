@@ -16111,8 +16111,6 @@ function leafLineContinuationNewline(tree: TreeHandle, entry: BuiltText, site: L
 	return node;
 }
 
-export const buildLineContinuationNul: TSKindId.LineContinuationNul = TSKindId.LineContinuationNul;
-
 export function buildSimplePatternNegative<V extends Admit<T.Integer | T.Float>>(
 	value: V & RefuseUndeclared<V>
 ): T.SimplePatternNegative.Bound;
@@ -19509,7 +19507,6 @@ export type FluentKindMap = {
 	escape_sequence_simple: T.EscapeSequenceSimple.Bound;
 	escape_sequence_named: T.EscapeSequenceNamed.Bound;
 	line_continuation_newline: T.LineContinuationNewline;
-	line_continuation_nul: T.LineContinuationNul;
 	simple_pattern_negative: T.SimplePatternNegative.Bound;
 	except_clause_exception_list: T.ExceptClauseExceptionList.Bound;
 	except_clause_exception: T.ExceptClauseException.Bound;
@@ -19723,7 +19720,6 @@ export const _factoryMap = {
 	escape_sequence_simple: buildEscapeSequenceSimple,
 	escape_sequence_named: buildEscapeSequenceNamed,
 	line_continuation_newline: buildLineContinuationNewline,
-	line_continuation_nul: buildLineContinuationNul,
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,
