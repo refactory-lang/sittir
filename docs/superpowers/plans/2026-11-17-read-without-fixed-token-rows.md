@@ -14,7 +14,7 @@ Where the work stands:
   - named fixed tokens leave query results (Task 6).
 
   Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below. A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec).
-- **Task 2** is done (`0a524d9eb`). **Task 3 is in progress.**
+- **Tasks 2 and 3** are done (`0a524d9eb`, `4e4ccad56`). **Task 3a is next.**
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -192,11 +192,11 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - Produces `NodeSite::Unit(trivia_store::Site<Address>)`.
 - Produces the derive call `records.role(route: &Route)`, made right after `records.meet(cursor)` in `routed`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `a_slot_content_read_writes_no_fixed_token_row`: typescript `f(a, b)` with `ReadRows::SlotContent` has an `arguments` run of exactly 2 rows (`a`, `b`), with cells naming rows 2 and 3. With `ReadRows::All` it has 5 rows, as the spec's figure shows.
   - `a_slot_content_read_holds_a_unit_by_its_kind`: rust `&mut T`'s `exclusive` and a typescript `expression_statement`'s automatic-semicolon terminator decode as `Cell::Unit { kind, row: None }`, the built form.
-- [ ] **Step 2: Run them.** Run `PARITY slot_content`. Expected: FAIL, `parse_records_with` is not found.
-- [ ] **Step 3: Implement the two modes.**
+- [x] **Step 2: Run them.** Run `PARITY slot_content`. Expected: FAIL, `parse_records_with` is not found.
+- [x] **Step 3: Implement the two modes.**
   - **Working list.** `OpenRun` keeps `entries` and `beside` as the working list, plus `kept: Vec<bool>`. An entry is kept when either:
     - its role is slot content held as a leaf or record, or trivia; or
     - it lies inside a kept row.
@@ -206,8 +206,8 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - **Writing.** `finish` writes only kept entries and recomputes each written row's `inner` over the kept entries.
   - **Units.** A unit cell is written with `row: None`.
   - **Seating.** `placed` reads the working list. A dropped fixed token counts as unnamed for seating. A dropped unit's site is `NodeSite::Unit` of its holder, slot word and item.
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `cargo test --workspace --no-default-features` is unchanged, since `parse_records` is still `All`.
-- [ ] **Step 5: Commit:** `feat(core): a read that writes slot content and trivia rows only, beside today's`.
+- [x] **Step 4: Run.** Run Step 2's command. Expected: PASS. `cargo test --workspace --no-default-features` is unchanged, since `parse_records` is still `All`.
+- [x] **Step 5: Commit:** `feat(core): a read that writes slot content and trivia rows only, beside today's`.
 
 ### Task 3a: The layout diagnostics answer for an arena tree
 

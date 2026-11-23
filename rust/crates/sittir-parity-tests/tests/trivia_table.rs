@@ -149,8 +149,15 @@ fn a_list_node_keeps_the_side_its_unit_item_would_take() {
 
 #[test]
 fn a_comment_before_an_automatic_semicolon_trails_the_expression() {
+    let comment = "/* c\n*/";
+    let case = Case::new(typescript(), "a /* c\n*/\nb\n");
+    case.holds("identifier", "a", Trailing, "comment_block", comment);
+}
+
+#[test]
+fn a_same_line_comment_after_an_automatic_semicolon_trails_the_statement() {
     let case = Case::new(typescript(), "a // c\nb\n");
-    case.holds("identifier", "a", Trailing, "comment_line", "// c");
+    case.holds("expression_statement", "a", Trailing, "comment_line", "// c");
 }
 
 #[test]
