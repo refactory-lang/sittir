@@ -9216,8 +9216,9 @@ export interface AttributeInput {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly value: SlotHint<NonNullable<T.AttributeInput.Config>['value'], true>;
-		readonly arguments: SlotHint<T.DelimTokenTree, true>;
+		readonly value: SlotHint<NonNullable<NonNullable<T.AttributeInput.Config>['value']>>;
+		readonly arguments: SlotHint<NonNullable<T.DelimTokenTree>>;
+		readonly $clears: { readonly value: 'arguments'; readonly arguments: 'value' };
 	};
 	readonly value: () => Expression | undefined;
 	readonly arguments: () => DelimTokenTree | undefined;

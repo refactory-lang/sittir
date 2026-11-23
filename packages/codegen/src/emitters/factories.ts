@@ -1045,8 +1045,8 @@ function defaultedValueExpr(
 	return emptyDefault ? `orDefault(${hoisted}, () => ${emptyDefault})` : hoisted;
 }
 
-function setterValueSignature(f: AssembledNonterminal, elemType: string): string {
-	if (isRequired(f)) return `value: ${admitNodes(elemType)}`;
+function setterValueSignature(f: AssembledNonterminal, elemType: string, required: boolean = isRequired(f)): string {
+	if (required) return `value: ${admitNodes(elemType)}`;
 	return `value?: ${admitNodes(elemType)}`;
 }
 
@@ -1122,12 +1122,13 @@ export function slotSetter(
 	f: AssembledNonterminal,
 	configType: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[],
+	required: boolean = isRequired(f)
 ): SlotSetter {
 	const restType = restSetterType(f, configType, nodeMap, kindEntries);
-	if (restType !== undefined) return { name: f.propertyName, input: restType, optional: !isRequired(f), rest: true };
+	if (restType !== undefined) return { name: f.propertyName, input: restType, optional: !required, rest: true };
 	const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
-	return { name: f.propertyName, input: elemType, optional: !isRequired(f), rest: false };
+	return { name: f.propertyName, input: required && !isRequired(f) ? `NonNullable<${elemType}>` : elemType, optional: !required, rest: false };
 }
 
 interface CoOptionalBranch {
@@ -1186,6 +1187,37 @@ export function exclusiveArmsOf(node: FieldCarryingNode, slots: readonly Assembl
 	return { keys: stamped.map((slot) => slot.propertyName), arms };
 }
 
+export function armCrossingClears(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): readonly AssembledNonterminal[] {
+	const found = exclusiveArmsOf(node, slots);
+	if (found === undefined) return [];
+	const holding = found.arms.filter((arm) => arm.keys.includes(slot.propertyName));
+	if (holding.length === 0) return [];
+	const kept = new Set(holding.flatMap((arm) => arm.keys));
+	return slots.filter((other) => found.keys.includes(other.propertyName) && !kept.has(other.propertyName));
+}
+
+export function armRequiredSlot(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): boolean {
+	const found = exclusiveArmsOf(node, slots);
+	if (found === undefined) return false;
+	const holding = found.arms.filter((arm) => arm.keys.includes(slot.propertyName));
+	return holding.length > 0 && holding.every((arm) => arm.needed.includes(slot.propertyName)) && found.arms.every((arm) => arm.needed.length > 0);
+}
+
+function setterRequired(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): boolean {
+	return isRequired(slot) || armRequiredSlot(node, slots, slot);
+}
+
+export function armClearsOfNode(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return new Map();
+	const found = exclusiveArmsOf(node, node.slots);
+	if (found === undefined) return new Map();
+	const clears = node.slots
+		.filter((slot) => found.keys.includes(slot.propertyName))
+		.map((slot) => [slot.propertyName, armCrossingClears(node, node.slots, slot).map((other) => other.propertyName)] as const)
+		.filter(([, cleared]) => cleared.length > 0);
+	return new Map(clears);
+}
+
 export function exclusiveArmsOfNode(node: AssembledNode): ExclusiveArms | undefined {
 	return isSlotBearingCompound(node) && !(node instanceof AssembledList) ? exclusiveArmsOf(node, node.slots) : undefined;
 }
@@ -1222,7 +1254,7 @@ function fieldCarryingBuiltTypeSurface(
 		const registeredHere = new Set(registeredSlots(node));
 		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		setters = [
-			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries)),
+			...slots.filter((f) => !registeredHere.has(f) && !formDefined.has(f.propertyName)).map((f) => slotSetter(f, configType, nodeMap, kindEntries, setterRequired(node, slots, f))),
 			...registeredSlots(node).map((f) => slotSetter(f, `T.${node.typeName}.Options`, nodeMap, kindEntries))
 		];
 	}
@@ -2198,10 +2230,13 @@ function fieldCarryingFactoryText(
 		};
 		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> => {
 			const set = call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`);
-			return setBy(f, { local: configAccess, input: `Partial<${configType}>`, partial: true }, `{ ${f.propertyName}: ${value} }`, {
-				body: branch?.needed.includes(f.propertyName) === true ? `${value} === undefined ? ${withoutBranch()} : ${set}` : set,
+			const crossed = armCrossingClears(node, slots, f);
+			const crossing = call(fn, `{ ...${configAccess}, ${crossed.map((other) => `${other.propertyName}: undefined`).join(', ')}, ${f.propertyName}: ${value} }${optionsArg}`);
+			const full = {
+				body: branch?.needed.includes(f.propertyName) === true ? `${value} === undefined ? ${withoutBranch()} : ${crossed.length === 0 ? set : crossing}` : crossed.length === 0 ? set : `${value} === undefined ? ${set} : ${crossing}`,
 				reads: optionsArg === '' ? [configAccess] : [configAccess, 'options']
-			});
+			};
+			return crossed.length > 0 ? full : setBy(f, { local: configAccess, input: `Partial<${configType}>`, partial: true }, `{ ${f.propertyName}: ${value} }`, full);
 		};
 		const formDefined = formDefinedProperties(nodeMap, node.kind);
 		for (const f of slots) {
@@ -2212,7 +2247,7 @@ function fieldCarryingFactoryText(
 				setters.push({ name: method, params: `...values: ${admitNodes(restType)}`, ...slotSet(f, `restItems(${JSON.stringify(method)}, values)`) });
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
-				const setterSig = setterValueSignature(f, elemType);
+				const setterSig = setterValueSignature(f, elemType, setterRequired(node, slots, f));
 				setters.push({ name: method, params: setterSig, ...slotSet(f, 'value') });
 			}
 		}

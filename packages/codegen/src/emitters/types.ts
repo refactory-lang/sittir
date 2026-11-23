@@ -96,6 +96,7 @@ import {
 } from './shared.ts';
 import { wrapperChainFor, type WrapperChain } from '../compiler/model/wrapper-chain.ts';
 import {
+	armClearsOfNode,
 	coOptionalBranchOfNode,
 	constructorTargetKind,
 	builtTypeSurfaceOf,
@@ -1126,6 +1127,11 @@ function emitSlotHints(
 	if (branch !== undefined) {
 		const union = (names: readonly string[]): string => names.map((name) => JSON.stringify(name)).join(' | ');
 		lines.push(`    readonly $branch: BranchHint<${union([...branch.keys, ...branch.options])}, ${union(branch.required)}, ${union(branch.needed)}>;`);
+	}
+	const clears = armClearsOfNode(node);
+	if (clears.size > 0) {
+		const entries = [...clears].map(([slot, cleared]) => `readonly ${slot}: ${cleared.map((name) => JSON.stringify(name)).join(' | ')}`);
+		lines.push(`    readonly $clears: { ${entries.join('; ')} };`);
 	}
 	if (listSlots.length > 0) {
 		lines.push('    readonly $listSlots: {');
