@@ -109,7 +109,7 @@ Navigation (`Nodes` over `RunNodes`, `rust/crates/sittir-core/src/arena/run_node
 
 - every record (child nodes with a record, trivia records);
 - every row: a variable-text leaf, a node with no record, and what lies under trivia;
-- each unit from its cell, with its kind and no span (`QueryItem::Unit`), at the place its holder kind's render body writes the unit's slot. No run entry is kept for it.
+- each unit from its cell or, for a boolean slot, its flag, with its kind and no span (`QueryItem::Unit`), at the place its holder kind's render body writes the unit's slot. No run entry is kept for it.
 
 The render body is the only source of that order:
 
@@ -209,7 +209,7 @@ The rule is the parsed-comments spec's and does not change.
 - **No side is placed on a fixed token.** `placed` seats a side only on a named child, and an anonymous fixed token is never named.
   - **Named fixed tokens.** For the named ones listed under navigation, a comment beside one is seated as if it were unnamed, as a built node seats it (the built form has no such child).
   - **Expected cases.** These are the only placements expected to change. The parity test lists each one: node, side, kind and span, before and after.
-- **Sides on a unit** are keyed by the unit's site (holder, slot word, item). The shared-arena spec gives that key ("Sides by site"), and a built unit's sides already use it (`trivia_store::Site`). Parsed sides are keyed by row today ("each parsed tree's by row", `trivia_store.rs`).
+- **Sides on a unit** are keyed by the unit's site (holder, slot word, item). The shared-arena spec gives that key ("Sides by site"), and a built unit's sides already use it (`trivia_store::Site`). Parsed sides are keyed by row today ("each parsed tree's by row", `trivia_store.rs`). A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec, "A side on a node that its holder keeps as a fixed token or a flag is not kept").
 
 ## ERROR, header-only records, zero width and MISSING
 
