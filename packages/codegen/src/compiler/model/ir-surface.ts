@@ -1,3 +1,4 @@
+import { isBlankVariantName } from '../../dsl/primitives/variant.ts';
 import type { NodeMap } from '../types.ts';
 import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import { stampSplicedEnvelopes } from './spliced-envelopes.ts';
@@ -70,8 +71,6 @@ export interface FlattenedVariantRoute {
 	readonly default?: true;
 	readonly leaf?: true;
 }
-
-export const isBlankRoute = (route: FlattenedVariantRoute): boolean => route.name === '';
 
 export interface FlattenedVariantParent {
 	readonly key: string;
@@ -212,7 +211,7 @@ export function variantAliasWires(
 	const claimedKinds = new Set(subs.flatMap((s) => (s.arm.via === 'node' ? [s.arm.child.kind] : [])));
 	const aliases: AliasWire[] = [];
 	for (const variantChild of node.variantChildKinds) {
-		if (variantChild.name === '') continue;
+		if (isBlankVariantName(variantChild.name)) continue;
 		const visible = variantChild.kind;
 		const child = nodeMap.nodes.get(visible) ?? nodeMap.nodes.get(`_${visible}`);
 		if (child === undefined || child.rawFactoryName === undefined) continue;
@@ -604,7 +603,7 @@ function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantPar
 		if (isSoleContainer(containers, route.parent.kind, child.kind)) offer(contained, child, route);
 	};
 	for (const parent of flattened) {
-		for (const route of parent.variants.filter((variant) => !isBlankRoute(variant))) offer(declared, route.child, { parent: parent.node, name: route.name });
+		for (const route of parent.variants.filter((variant) => !isBlankVariantName(variant.name))) offer(declared, route.child, { parent: parent.node, name: route.name });
 	}
 	for (const set of armRoutes.byKind.values()) {
 		for (const route of hostRoutesOf(set, armRoutes.kindEntries, nodeMap)) {

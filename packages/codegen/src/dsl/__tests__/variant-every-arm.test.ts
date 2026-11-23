@@ -3,8 +3,9 @@ import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
 import { buildRuleCatalog } from '../../compiler/rule-catalog.ts';
 import { emitTables } from '../../__tests__/helpers/emit-tables.ts';
+import { isBlankVariantName } from '../primitives/variant.ts';
 import { subFactoriesOf } from '../../compiler/model/sub-factories.ts';
-import { isBlankRoute, flattenedVariantParents } from '../../compiler/model/ir-surface.ts';
+import { flattenedVariantParents } from '../../compiler/model/ir-surface.ts';
 
 const BASE =
 	"expr: ($) => choice(prec.left(1, seq(field('left', $.num), '+', field('right', $.num))), prec.left(2, seq(field('left', $.num), '*', field('right', $.num))), prec.left(3, seq(field('left', $.num), '<', field('right', $.num))), seq('#', field('left', $.num), 'in', field('right', $.num))), num: () => /[0-9]+/";
@@ -61,7 +62,7 @@ describe("variant key '*' beside selector keys and direct arms", () => {
 			const nodeMap = assemblePredicted({ name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] } as never).nodeMap;
 			expect(subFactoriesOf(nodeMap.nodes.get('holder')!, nodeMap).entries.map((entry) => entry.name)).not.toContain('');
 			expect(emitTables(nodeMap).wiring).not.toMatch(/readonly "":|\{ ?"": |\$\$|\.\s*[,;)]/);
-			for (const parent of flattenedVariantParents(nodeMap)) expect(parent.variants.filter(isBlankRoute).length).toBeLessThanOrEqual(1);
+			for (const parent of flattenedVariantParents(nodeMap)) expect(parent.variants.filter((route) => isBlankVariantName(route.name)).length).toBeLessThanOrEqual(1);
 		}
 	}, 60_000);
 
@@ -74,5 +75,21 @@ describe("variant key '*' beside selector keys and direct arms", () => {
 		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(raw.rules as never);
 		const nodeMap = assemblePredicted({ name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] } as never).nodeMap;
 		expect(emitTables(nodeMap).wiring).not.toMatch(/readonly "":|\{ ?"": |\$\$|\.\s*[,;)]/);
+	}, 60_000);
+
+	it('keeps the arm two keys of one path name, whatever else the rule holds', async () => {
+		const rules =
+			"source: ($) => repeat($.holder), holder: ($) => seq('(', field('e', $.expr), ')'), expr: ($) => choice($.a, seq($.a, $.b), $.c), a: () => /a+/, b: () => /b+/, c: () => /c+/";
+		const raw = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { expr: { '1/0': variant('first'), '1/1': variant('second'), '*': variant('', { default: true }) } }" });
+		const parent = raw.rules.expr as { members: { name?: string; type: string; annotations?: { variant?: string } }[] };
+		expect(parent.members).toHaveLength(2);
+		expect(parent.members.map((member) => member.annotations?.variant)).toEqual(['', undefined]);
+		expect(JSON.stringify(raw.rules.expr_default)).not.toContain('"b"');
+	}, 60_000);
+
+	it('refuses the key on a rule whose body is a sequence, where the keyed variants hoist', async () => {
+		const rules = "source: ($) => repeat($.holder), holder: ($) => seq('(', choice($.a, $.b), ')'), a: () => /a+/, b: () => /b+/";
+		const raw = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { holder: { '1/0': variant('x'), '*': variant('', { default: true }) } }" });
+		expect(raw.layerDiagnostics).toEqual([expect.objectContaining({ code: 'edit-entry-invalid', message: expect.stringMatching(/no such arm/) })]);
 	}, 60_000);
 });

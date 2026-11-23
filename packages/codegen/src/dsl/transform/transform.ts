@@ -20,7 +20,7 @@ import { editedCopy, refuseSplitDisplays } from '../primitives/copy.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import { canonicalRuleText } from './token-forms.ts';
-import { ABSENT_VARIANT_NAME, directVariantOf, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
+import { ABSENT_VARIANT_NAME, directVariantOf, isBlankVariantName, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
 import { isRefinePlaceholder, refine, type RefinePlaceholder } from '../primitives/refine.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
@@ -371,7 +371,7 @@ function refuseVariantEntry(key: string, message: string): void {
 function admittedVariantEntries(entries: ReadonlyArray<[string, VariantPlaceholder]>): Array<[string, VariantPlaceholder]> {
 	const minted = new Map<string, string>();
 	return entries.filter(([key, value]) => {
-		if (value.name === '' && value.default !== true) {
+		if (isBlankVariantName(value.name) && value.default !== true) {
 			refuseVariantEntry(key, "a blank variant name takes { default: true }");
 			return false;
 		}
