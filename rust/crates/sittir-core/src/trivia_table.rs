@@ -249,14 +249,32 @@ pub fn owner(before: &[Sibling], entry: Span, after: &[Sibling], source: &str) -
 /// list's children, when that child lies at the list's edge and is not a
 /// unit kind; none for a node the surface does not expose in its place
 /// (`SurfaceKinds::exposes_in_place`), and then `kids` is never asked.
-pub fn edge_item<K: std::ops::Deref<Target = [Kid]>>(list: &Kid, kinds: SurfaceKinds, side: TriviaSide, kids: impl FnOnce() -> K) -> Option<Kid> {
+pub fn edge_item(nodes: &mut dyn Nodes<'_>, list: &Kid, kinds: SurfaceKinds, side: TriviaSide) -> Option<Kid> {
+    edge_item_from(list, kinds, side, || {
+        let leading = side == TriviaSide::Leading;
+        let mut item = nodes.edge(list.index, if leading { crate::options::Side::Before } else { crate::options::Side::After })?;
+        while !item.holder() {
+            item = if leading { nodes.next(item.index) } else { nodes.previous(item.index) }?;
+        }
+        Some(item)
+    })
+}
+
+/// `edge_item`, the holder nearest the edge on `side` among `kids`, which a
+/// caller already holds listed.
+pub(crate) fn edge_item_of(kids: &[Kid], list: &Kid, kinds: SurfaceKinds, side: TriviaSide) -> Option<Kid> {
+    edge_item_from(list, kinds, side, || {
+        let mut holders = kids.iter().filter(|kid| kid.holder());
+        (if side == TriviaSide::Leading { holders.next() } else { holders.next_back() }).copied()
+    })
+}
+
+fn edge_item_from(list: &Kid, kinds: SurfaceKinds, side: TriviaSide, holder: impl FnOnce() -> Option<Kid>) -> Option<Kid> {
     if list.leaf() || list.entry() || !kinds.exposes_in_place(list.grammar) {
         return None;
     }
-    let kids = kids();
-    let mut holders = kids.iter().filter(|kid| kid.holder());
-    let item = if side == TriviaSide::Leading { holders.next() } else { holders.next_back() }?;
-    kinds.takes_edge(item.grammar, item.span(), list.span(), side).then_some(*item)
+    let item = holder()?;
+    kinds.takes_edge(item.grammar, item.span(), list.span(), side).then_some(item)
 }
 
 /// The kinds of a grammar the assignment reads from its surface: the list
@@ -419,29 +437,20 @@ pub struct Walk {
     spans: Spans,
 }
 
-/// The bytes of each node under a walk's start: by its index less the
-/// start's where a subtree's indexes run on from its root's
-/// (`Nodes::bound`), else by its index.
-enum Spans {
-    Under { base: NodeIndex, spans: Vec<(u32, u32)> },
-    Met(std::collections::HashMap<NodeIndex, (u32, u32), crate::heap::IndexState>),
+/// The bytes of each node under a walk's start, by its index less the
+/// start's: a tree's subtree's indexes run on from its root's.
+struct Spans {
+    base: NodeIndex,
+    spans: Vec<(u32, u32)>,
 }
 
 impl Spans {
     fn set(&mut self, index: NodeIndex, span: (u32, u32)) {
-        match self {
-            Spans::Under { base, spans } => spans[index.offset_from(*base) as usize] = span,
-            Spans::Met(spans) => {
-                spans.insert(index, span);
-            }
-        }
+        self.spans[index.offset_from(self.base) as usize] = span;
     }
 
     fn get(&self, index: NodeIndex) -> (u32, u32) {
-        match self {
-            Spans::Under { base, spans } => spans[index.offset_from(*base) as usize],
-            Spans::Met(spans) => spans.get(&index).copied().unwrap_or_default(),
-        }
+        self.spans[index.offset_from(self.base) as usize]
     }
 }
 
@@ -486,10 +495,7 @@ pub fn walk(nodes: &mut dyn Nodes<'_>, index: NodeIndex, source: &str) -> Walk {
         at: u32,
         bounds: Bounds,
     }
-    let mut spans = match nodes.bound() {
-        Some(_) => Spans::Under { base: index, spans: vec![(0, 0); nodes.kid(index).count as usize] },
-        None => Spans::Met(std::collections::HashMap::default()),
-    };
+    let mut spans = Spans { base: index, spans: vec![(0, 0); nodes.kid(index).count as usize] };
     let mut tokens: Vec<Span> = Vec::new();
     let mut entries: Vec<NodeIndex> = Vec::new();
     let mut frames: Vec<Frame> = Vec::new();

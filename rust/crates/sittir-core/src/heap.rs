@@ -212,6 +212,27 @@ impl<K, V, S: Default> Default for CountedMap<K, V, S> {
     }
 }
 
+/// The most entries a table emptied between a call's answers keeps room for.
+const ANSWER_ROOM: usize = 64;
+
+/// `map`, emptied. A table one wide answer grew is given back, so emptying it
+/// after each later answer costs that answer's entries, not the wide one's.
+pub(crate) fn emptied<K, V, S: Default>(map: &mut HashMap<K, V, S>) {
+    if map.capacity() > ANSWER_ROOM {
+        *map = HashMap::default();
+    } else {
+        map.clear();
+    }
+}
+
+#[cfg(feature = "arena")]
+impl<K, V, S: Default> CountedMap<K, V, S> {
+    /// Holds nothing (`emptied`).
+    pub(crate) fn empty(&mut self) {
+        emptied(&mut self.0);
+    }
+}
+
 impl<K: Eq + Hash, V, S: BuildHasher + Default> CountedMap<K, V, S> {
     /// The value the map holds for `key`, or `None` when it holds none.
     #[must_use]

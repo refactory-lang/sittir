@@ -138,7 +138,7 @@ fn edge_rule<G: EngineGrammar>(grammar: G, options: sittir_core::options::Resolv
         for side in [TriviaSide::Leading, TriviaSide::Trailing] {
             let published = whole.edge_item(Source { nodes: &mut nodes, routes: &routes }, index, side);
             let list = nodes.kid(index);
-            let rule = sittir_core::trivia_table::edge_item(&list, kinds, side, || nodes.kids(index)).map(|item| item.index);
+            let rule = sittir_core::trivia_table::edge_item(&mut nodes, &list, kinds, side).map(|item| item.index);
             edges += usize::from(published.is_some());
             if rule != published {
                 found.push(format!("edge item {index} {side:?}: the rule gives {rule:?}, the placement publishes {published:?}"));

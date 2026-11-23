@@ -124,21 +124,21 @@ pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>
     }))
 }
 
-/// Each row of its run that a cell of the read's record at `holder` names
-/// for a node with no record of its own, with the cell's site, the
-/// record's shape found by `shape`.
-///
-/// # Errors
-///
-/// What reading the record or decoding a cell of it refuses.
-pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32) -> Result<Vec<(u32, CellSite)>, ArenaError> {
+/// Visits each row of its run that a cell of the read's record at `holder`
+/// names for a node with no record of its own, with the cell's site, the
+/// record's shape found by `shape`, until `visit` breaks.
+fn visit_row_sites<B>(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32, mut visit: impl FnMut(u32, CellSite) -> std::ops::ControlFlow<B>) -> Result<std::ops::ControlFlow<B>, ArenaError> {
+    use std::ops::ControlFlow::{Break, Continue};
     let (shape, words) = shape_of(arena, holder, shape, bits)?;
-    let mut sites = Vec::new();
     for &cell in shape.cells {
         match cell.run {
             None => {
                 let decoded = Cell::decode_parsed(slot_words(words, cell)?, cell, bits)?;
-                sites.extend(leaf_row(&decoded).map(|row| (row, CellSite { word: cell.word, item: 0 })));
+                if let Some(row) = leaf_row(&decoded) {
+                    if let Break(found) = visit(row, CellSite { word: cell.word, item: 0 }) {
+                        return Ok(Break(found));
+                    }
+                }
             }
             Some(width) => {
                 let word = slot_words(words, CellShape { width: 1, ..cell })?[0];
@@ -147,12 +147,53 @@ pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Op
                 }
                 for (item, held) in ListCell::of_word(CellWord(word), arena)?.items(arena, width)?.enumerate() {
                     let decoded = Cell::decode_parsed(held, cell, bits)?;
-                    sites.extend(leaf_row(&decoded).map(|row| (row, CellSite { word: cell.word, item: crate::types::narrow(item) })));
+                    if let Some(row) = leaf_row(&decoded) {
+                        if let Break(found) = visit(row, CellSite { word: cell.word, item: crate::types::narrow(item) }) {
+                            return Ok(Break(found));
+                        }
+                    }
                 }
             }
         }
     }
+    Ok(Continue(()))
+}
+
+/// Each row of its run that a cell of the read's record at `holder` names
+/// for a node with no record of its own, with the cell's site, the
+/// record's shape found by `shape`.
+///
+/// # Errors
+///
+/// What reading the record or decoding a cell of it refuses.
+pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32) -> Result<Vec<(u32, CellSite)>, ArenaError> {
+    let mut sites = Vec::new();
+    let std::ops::ControlFlow::Continue(()) = visit_row_sites::<std::convert::Infallible>(arena, holder, shape, bits, |row, site| {
+        sites.push((row, site));
+        std::ops::ControlFlow::Continue(())
+    })?;
     Ok(sites)
+}
+
+/// The name of the node kept at `site`, read from its holder's cells in
+/// place, with no list of them kept; none for a row no cell of its holder
+/// names, and for a flag.
+///
+/// # Errors
+///
+/// What reading the holder's cells refuses.
+pub(crate) fn site_name_in_place(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: super::NodeSite) -> Result<Option<crate::types::NodeId>, ArenaError> {
+    let (holder, entry) = match site {
+        super::NodeSite::Record(at) => return Ok(Some(crate::types::NodeId::record(at.0))),
+        super::NodeSite::Row { holder, entry } => (holder, entry),
+        super::NodeSite::Unit(site) => return Ok(Some(crate::types::NodeId::leaf(site.holder.0, site.word, site.item.0))),
+        super::NodeSite::Flag { .. } => return Ok(None),
+    };
+    let found = visit_row_sites(arena, holder, shape, bits, |row, site| if row == entry + 2 { std::ops::ControlFlow::Break(site) } else { std::ops::ControlFlow::Continue(()) })?;
+    Ok(match found {
+        std::ops::ControlFlow::Break(CellSite { word, item }) => Some(crate::types::NodeId::leaf(holder.0, word, item)),
+        std::ops::ControlFlow::Continue(()) => None,
+    })
 }
 
 /// Where the node `name` names is kept: its own record, or the row of its

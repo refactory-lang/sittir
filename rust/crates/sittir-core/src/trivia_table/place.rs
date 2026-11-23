@@ -1130,7 +1130,7 @@ impl<'t> Placer<'t, '_, '_> {
     /// The item a list node passes the extras and `ERROR`s of its `side`
     /// to (`trivia_table::edge_item`).
     fn edge_item(&mut self, list: &Kid, side: TriviaSide) -> Option<Kid> {
-        super::edge_item(list, self.kinds, side, || self.kids(list.index))
+        super::edge_item_of(&self.kids(list.index), list, self.kinds, side)
     }
 
     /// `kid`, or, while it is a list or wrapper node

@@ -8,7 +8,7 @@
 
 use std::collections::HashMap;
 
-use super::side::{NodeFacts, RunEntry};
+use super::side::{NodeFacts, RunEntries, RunEntry};
 use super::{Address, ArenaError, ArenaRead, BodySlot, Cell, CellShape, CellWord, EdgePart, ListCell, RecordShape, SideRecord};
 use crate::nodes::{Kid, Kids, Nodes};
 use crate::options::Side;
@@ -42,12 +42,32 @@ struct Met {
     kids: Option<Kids>,
 }
 
-/// A record's side record as a navigation has read it: its facts, where
-/// its run lies, and whether the run's entries are read into it yet.
+/// A record's side record as a navigation has read it: its facts and where
+/// its run lies.
 struct Read {
     side: SideRecord,
     run: Option<super::side::RunAt>,
-    listed: bool,
+}
+
+/// Where a read of a run last stood: the entry numbered `entry` of the run
+/// of `holder` starts at its word `word`.
+#[derive(Clone, Copy)]
+struct RunPlace {
+    holder: Address,
+    entry: u32,
+    word: u32,
+}
+
+/// The row a read last decoded: a render asks about one node many times in
+/// a row. `after` is the word of the run past it.
+#[derive(Clone, Copy)]
+struct LastRow {
+    holder: Address,
+    entry: u32,
+    facts: NodeFacts,
+    span: Span,
+    inner: u32,
+    after: u32,
 }
 
 #[derive(Default)]
@@ -56,6 +76,8 @@ struct Table {
     ids: HashMap<NodeSite, NodeIndex, crate::heap::IndexState>,
     sides: HashMap<Address, usize, crate::heap::IndexState>,
     read: Vec<Read>,
+    place: Option<RunPlace>,
+    last_row: Option<LastRow>,
     refused: Option<ArenaError>,
     spans: Option<Vec<std::ops::Range<Address>>>,
     bound: Option<Bound>,
@@ -85,6 +107,28 @@ impl RunTable {
     #[must_use]
     pub fn site(&self, index: NodeIndex) -> Option<NodeSite> {
         self.0.with(|table| table.met.get(index.0 as usize).map(|met| met.site))
+    }
+
+    /// Forgets what the last answer met, so a render's table holds one
+    /// answer: the root alone keeps its id, and no other id outlives it.
+    pub(crate) fn begin_answer(&self) {
+        self.0.with(|table| {
+            table.met.truncate(1);
+            if table.met.capacity() > 64 {
+                table.met.shrink_to(1);
+            }
+            let root = table.met.first_mut().map(|root| {
+                root.kids = None;
+                root.site
+            });
+            crate::heap::emptied(&mut table.ids);
+            table.ids.extend(root.map(|site| (site, NodeIndex::ROOT)));
+            crate::heap::emptied(&mut table.sides);
+            table.read.clear();
+            if table.read.capacity() > 64 {
+                table.read.shrink_to(0);
+            }
+        });
     }
 }
 
@@ -119,6 +163,7 @@ struct Walk<'a> {
 /// A child as its holder's body lists it: an entry of a run, with the
 /// record whose run holds it and its place there, or a unit or flag with no
 /// row, by its site and kind.
+#[derive(Clone, Copy)]
 enum Listed {
     Entry(Address, u32, RunEntry),
     Unit { site: NodeSite, kind: KindId, alias: Option<KindId>, field: Option<FieldId>, listed: bool },
@@ -299,7 +344,7 @@ fn holder_of(site: NodeSite) -> Address {
     }
 }
 
-impl Walk<'_> {
+impl<'a> Walk<'a> {
     fn site(&self, index: NodeIndex) -> Option<NodeSite> {
         self.table.met.get(index.0 as usize).map(|met| met.site)
     }
@@ -315,13 +360,16 @@ impl Walk<'_> {
 
     /// The last record on the rightmost path from the record at `at`.
     fn rightmost(&mut self, mut at: Address) -> Result<Address, ArenaError> {
-        while let Some(child) = self.run(at)?.iter().rev().find_map(|entry| match *entry {
-            RunEntry::Record { at, .. } => Some(at),
-            RunEntry::Row { .. } => None,
-        }) {
+        loop {
+            let mut child = None;
+            for entry in self.run_of(at)? {
+                if let RunEntry::Record { at, .. } = entry? {
+                    child = Some(at);
+                }
+            }
+            let Some(child) = child else { return Ok(at) };
             at = child;
         }
-        Ok(at)
     }
 
     /// The first and last record under the node kept at `of`, itself
@@ -332,15 +380,15 @@ impl Walk<'_> {
         match of {
             NodeSite::Record(at) => Ok(Some((at, self.rightmost(at)?))),
             NodeSite::Row { holder, entry } => {
-                let run = self.run(holder)?;
-                let Some(&RunEntry::Row { inner, .. }) = run.get(entry as usize) else { return Err(malformed("run row", holder)) };
-                let inside = run.get(entry as usize + 1..entry as usize + 1 + inner as usize).ok_or(malformed("run row entries", holder))?;
-                let mut records = inside.iter().filter_map(|entry| match *entry {
-                    RunEntry::Record { at, .. } => Some(at),
-                    RunEntry::Row { .. } => None,
-                });
-                let Some(first) = records.next() else { return Ok(None) };
-                let last = records.next_back().unwrap_or(first);
+                let (_, _, inner, mut entries) = self.row_at(holder, entry, "run row")?;
+                let (mut first, mut last) = (None, None);
+                for _ in 0..inner {
+                    if let RunEntry::Record { at, .. } = entries.next().ok_or(malformed("run row entries", holder))?? {
+                        first = first.or(Some(at));
+                        last = Some(at);
+                    }
+                }
+                let (Some(first), Some(last)) = (first, last) else { return Ok(None) };
                 Ok(Some((first, self.rightmost(last)?)))
             }
             NodeSite::Unit(_) | NodeSite::Flag { .. } => Ok(None),
@@ -372,7 +420,7 @@ impl Walk<'_> {
         let site = self.kept_at(site)?;
         if let (NodeSite::Row { holder, entry }, NodeSite::Row { holder: at, entry: row }) = (of, site) {
             if holder == at {
-                let Some(&RunEntry::Row { inner, .. }) = self.run(holder)?.get(entry as usize) else { return Err(malformed("run row", holder)) };
+                let (_, _, inner, _) = self.row_at(holder, entry, "run row")?;
                 return Ok(entry < row && row <= entry + inner);
             }
         }
@@ -396,22 +444,27 @@ impl Walk<'_> {
             return self.named_record(holder);
         }
         let entry = row.checked_sub(2).ok_or(malformed("cell row", holder))?;
-        let Some(&RunEntry::Row { facts, span, inner }) = self.run(holder)?.get(entry as usize) else { return Err(malformed("cell row", holder)) };
+        let (facts, span, inner, _) = self.row_at(holder, entry, "cell row")?;
         Ok(self.meet(NodeSite::Row { holder, entry }, facts, span, inner == 0, Parent::Unknown))
     }
 
     /// The node the row at `entry` of the run of `holder` lies under: the
     /// innermost row of the run that holds it, else the holder's node.
     fn above(&mut self, holder: Address, entry: u32) -> Result<NodeIndex, ArenaError> {
-        let run = self.run(holder)?;
+        let mut run = self.run_of(holder)?;
         let (mut at, mut inside) = (0, None);
         while at < entry as usize {
-            match *run.get(at).ok_or(malformed("run row entries", holder))? {
+            match run.next().ok_or(malformed("run row entries", holder))?? {
                 RunEntry::Row { facts, span, inner } if at + inner as usize >= entry as usize => {
                     inside = Some((at, facts, span));
                     at += 1;
                 }
-                RunEntry::Row { inner, .. } => at += 1 + inner as usize,
+                RunEntry::Row { inner, .. } => {
+                    for _ in 0..inner {
+                        run.next().ok_or(malformed("run row entries", holder))??;
+                    }
+                    at += 1 + inner as usize;
+                }
                 RunEntry::Record { .. } => at += 1,
             }
         }
@@ -428,7 +481,7 @@ impl Walk<'_> {
             return Ok(read);
         }
         let (side, run) = SideRecord::read_facts(self.arena, super::side_of(self.arena, at)?)?;
-        self.table.read.push(Read { side, run, listed: false });
+        self.table.read.push(Read { side, run });
         self.table.sides.insert(at, self.table.read.len() - 1);
         Ok(self.table.read.len() - 1)
     }
@@ -440,17 +493,46 @@ impl Walk<'_> {
         Ok(&self.table.read[read].side)
     }
 
-    /// The run of the record at `at`, its entries read on the first ask.
-    fn run(&mut self, at: Address) -> Result<&[RunEntry], ArenaError> {
+    /// The entries of the run of the record at `at`, read in place; none
+    /// for a record with no run.
+    fn run_of(&mut self, at: Address) -> Result<RunEntries<'a>, ArenaError> {
         let read = self.read(at)?;
-        let Read { side, run, listed } = &mut self.table.read[read];
-        if !*listed {
-            if let Some(run) = run {
-                side.run = run.entries(self.arena)?;
-            }
-            *listed = true;
+        self.table.read[read].run.map_or(Ok(RunEntries::default()), |run| run.in_place(self.arena))
+    }
+
+    /// The entries of the run of `holder` from the one numbered `entry` on,
+    /// reached from where the last read of that run stood when that lies
+    /// before it. `what` names a run that ends first.
+    fn entries_at(&mut self, holder: Address, entry: u32, what: &'static str) -> Result<RunEntries<'a>, ArenaError> {
+        let mut entries = self.run_of(holder)?;
+        let mut number = 0;
+        if let Some(place) = self.table.place.filter(|place| place.holder == holder && place.entry <= entry) {
+            entries = entries.at_word(place.word).ok_or(malformed(what, holder))?;
+            number = place.entry;
         }
-        Ok(&side.run)
+        while number < entry {
+            entries.next().ok_or(malformed(what, holder))??;
+            number += 1;
+        }
+        self.table.place = Some(RunPlace { holder, entry, word: entries.word() });
+        Ok(entries)
+    }
+
+    /// The row numbered `entry` of the run of `holder`, and the entries after
+    /// it; `what` names an entry that is no row.
+    fn row_at(&mut self, holder: Address, entry: u32, what: &'static str) -> Result<(NodeFacts, Span, u32, RunEntries<'a>), ArenaError> {
+        if let Some(row) = self.table.last_row.filter(|row| row.holder == holder && row.entry == entry) {
+            let entries = self.run_of(holder)?.at_word(row.after).ok_or(malformed(what, holder))?;
+            return Ok((row.facts, row.span, row.inner, entries));
+        }
+        let mut entries = self.entries_at(holder, entry, what)?;
+        match entries.next().transpose()? {
+            Some(RunEntry::Row { facts, span, inner }) => {
+                self.table.last_row = Some(LastRow { holder, entry, facts, span, inner, after: entries.word() });
+                Ok((facts, span, inner, entries))
+            }
+            _ => Err(malformed(what, holder)),
+        }
     }
 
     /// The record that is the node of the record at `at`: itself, or, for a
@@ -470,19 +552,18 @@ impl Walk<'_> {
     /// or flag of its record names a unit.
     fn childless(&mut self, at: Address) -> Result<bool, ArenaError> {
         let read = self.read(at)?;
-        match self.table.read[read].run.map(|run| run.first(self.arena)).transpose()? {
+        match self.table.read[read].run {
             None => return Ok(!self.holds_unit(at)?),
-            Some(RunEntry::Record { shared: true, .. }) => {}
-            Some(_) => return Ok(false),
+            Some(run) if !run.starts_shared(self.arena)? => return Ok(false),
+            Some(_) => {}
         }
-        let mut entry = 0;
-        loop {
-            match self.run(at)?.get(entry).copied() {
-                None => return Ok(!self.holds_unit(at)?),
-                Some(RunEntry::Record { at: content, shared: true }) if self.childless(content)? => entry += 1,
-                Some(_) => return Ok(false),
+        for entry in self.run_of(at)? {
+            match entry? {
+                RunEntry::Record { at: content, shared: true } if self.childless(content)? => {}
+                _ => return Ok(false),
             }
         }
+        Ok(!self.holds_unit(at)?)
     }
 
     /// Whether a cell or set flag of the record at `at` names a unit with no
@@ -547,15 +628,16 @@ impl Walk<'_> {
         Ok(self.meet(NodeSite::Record(at), facts, span, childless, parent))
     }
 
-    /// The children of the node whose record is at `at`, in the order its
-    /// render body writes them: each cell brings the run's entries up to the
-    /// one it names, so trivia keeps its place, a unit or set flag with no
-    /// row comes from its cell, and the rest of the run follows. A shared
-    /// content lists its own in place of itself.
-    fn listed_into(&mut self, at: Address, out: &mut Vec<Listed>) -> Result<(), ArenaError> {
+    /// Tells `visit` each child of the node whose record is at `at`, in the
+    /// order its render body writes them, until it answers false: each cell
+    /// brings the run's entries up to the one it names, so trivia keeps its
+    /// place, a unit or set flag with no row comes from its cell, and the
+    /// rest of the run follows. A shared content lists its own in place of
+    /// itself. False when `visit` ended it.
+    fn listed_into(&mut self, at: Address, visit: &mut dyn FnMut(Listed) -> Result<bool, ArenaError>) -> Result<bool, ArenaError> {
         let (shape_of, bits, _) = self.shape;
         let arena = self.arena;
-        let mut next = 0;
+        let mut rest = (self.run_of(at)?, 0);
         if let Some(shape) = shape_of(arena.header_kind(at, bits)?) {
             let words = arena.words(at, shape.words)?;
             for part in shape.order {
@@ -564,18 +646,26 @@ impl Walk<'_> {
                         let held = *words.get(word as usize).ok_or(malformed("flag word", at))?;
                         if held >> bit & 1 == 1 {
                             let token = *tokens.first().ok_or(malformed("flag keyword", at))?;
-                            out.push(Listed::Unit { site: NodeSite::Flag { holder: at, word, bit }, kind: token, alias: (token != kind).then_some(kind), field, listed: false });
+                            if !visit(Listed::Unit { site: NodeSite::Flag { holder: at, word, bit }, kind: token, alias: (token != kind).then_some(kind), field, listed: false })? {
+                                return Ok(false);
+                            }
                         }
                     }
                     BodySlot::Cell(cell) => {
                         let cell = *shape.cells.get(usize::from(cell)).ok_or(malformed("body slot cell", at))?;
                         let held = words.get(cell.word as usize..(cell.word + cell.width) as usize).ok_or(malformed("cell word", at))?;
                         match cell.run {
-                            None => self.list_cell(at, cell, 0, Cell::decode_parsed(held, cell, bits)?, &mut next, out)?,
+                            None => {
+                                if !self.list_cell(at, cell, 0, Cell::decode_parsed(held, cell, bits)?, &mut rest, visit)? {
+                                    return Ok(false);
+                                }
+                            }
                             Some(_) if held[0] == 0 => {}
                             Some(width) => {
                                 for (item, value) in ListCell::of_word(CellWord(held[0]), arena)?.items(arena, width)?.enumerate() {
-                                    self.list_cell(at, cell, item, Cell::decode_parsed(value, cell, bits)?, &mut next, out)?;
+                                    if !self.list_cell(at, cell, item, Cell::decode_parsed(value, cell, bits)?, &mut rest, visit)? {
+                                        return Ok(false);
+                                    }
                                 }
                             }
                         }
@@ -583,89 +673,208 @@ impl Walk<'_> {
                 }
             }
         }
-        self.list_through(at, usize::MAX, &mut next, out)
+        self.list_through(at, usize::MAX, &mut rest, visit)
     }
 
     /// Lists what the cell value `held`, item `item` of the slot `cell` of
-    /// the record at `at`, names.
-    fn list_cell(&mut self, at: Address, cell: CellShape, item: usize, held: Cell, next: &mut usize, out: &mut Vec<Listed>) -> Result<(), ArenaError> {
+    /// the record at `at`, names; false when `visit` ended the listing.
+    fn list_cell(&mut self, at: Address, cell: CellShape, item: usize, held: Cell, rest: &mut (RunEntries<'a>, usize), visit: &mut dyn FnMut(Listed) -> Result<bool, ArenaError>) -> Result<bool, ArenaError> {
         match held {
             Cell::Unit { kind, row: None } if kind != KindId::BLANK => {
                 let site = crate::trivia_store::Site { holder: at, word: cell.word, item: crate::types::ItemIndex(crate::types::narrow(item)) };
-                out.push(Listed::Unit { site: NodeSite::Unit(site), kind, alias: None, field: cell.field, listed: (cell.listed)(kind, self.shape.2) });
+                visit(Listed::Unit { site: NodeSite::Unit(site), kind, alias: None, field: cell.field, listed: (cell.listed)(kind, self.shape.2) })
             }
-            Cell::Unit { row: Some(row), .. } | Cell::ParsedLeaf { row, .. } if row.0 >= 2 => self.list_through(at, row.0 as usize - 2, next, out)?,
+            Cell::Unit { row: Some(row), .. } | Cell::ParsedLeaf { row, .. } if row.0 >= 2 => self.list_through(at, row.0 as usize - 2, rest, visit),
             Cell::Child { at: child, .. } => {
-                let found = self.run(at)?.get(*next..).and_then(|rest| rest.iter().position(|entry| matches!(*entry, RunEntry::Record { at, .. } if at == child)));
-                if let Some(found) = found {
-                    self.list_through(at, *next + found, next, out)?;
+                let (ahead, mut number) = rest.clone();
+                for entry in ahead {
+                    if matches!(entry?, RunEntry::Record { at, .. } if at == child) {
+                        return self.list_through(at, number, rest, visit);
+                    }
+                    number += 1;
+                }
+                Ok(true)
+            }
+            _ => Ok(true),
+        }
+    }
+
+    /// Lists the entries of the run of `at` from where `rest` stands through
+    /// the entry numbered `last`, a row with what lies inside it; false when
+    /// `visit` ended the listing.
+    fn list_through(&mut self, at: Address, last: usize, rest: &mut (RunEntries<'a>, usize), visit: &mut dyn FnMut(Listed) -> Result<bool, ArenaError>) -> Result<bool, ArenaError> {
+        while rest.1 <= last {
+            let Some(found) = rest.0.next().transpose()? else { break };
+            let (number, inner) = (rest.1, if let RunEntry::Row { inner, .. } = found { inner as usize } else { 0 });
+            for _ in 0..inner {
+                if rest.0.next().transpose()?.is_none() {
+                    break;
                 }
             }
-            _ => {}
-        }
-        Ok(())
-    }
-
-    /// Lists the entries of the run of `at` from `next` through the entry
-    /// numbered `last`, a row with what lies inside it.
-    fn list_through(&mut self, at: Address, last: usize, next: &mut usize, out: &mut Vec<Listed>) -> Result<(), ArenaError> {
-        while *next <= last {
-            let Some(&found) = self.run(at)?.get(*next) else { break };
-            match found {
-                RunEntry::Record { at: content, shared: true } => self.listed_into(content, out)?,
-                found => out.push(Listed::Entry(at, crate::types::narrow(*next), found)),
+            rest.1 += 1 + inner;
+            let go_on = match found {
+                RunEntry::Record { at: content, shared: true } => self.listed_into(content, visit)?,
+                found => visit(Listed::Entry(at, crate::types::narrow(number), found))?,
+            };
+            if !go_on {
+                return Ok(false);
             }
-            *next += 1 + match found {
-                RunEntry::Row { inner, .. } => inner as usize,
-                RunEntry::Record { .. } => 0,
-            };
         }
-        Ok(())
+        Ok(true)
     }
 
-    /// The entries inside the row at `entry` of the run of `holder`, one
-    /// level down.
-    fn inside(&mut self, holder: Address, entry: u32) -> Result<Vec<(Address, u32, RunEntry)>, ArenaError> {
-        let run = self.run(holder)?;
-        let Some(&RunEntry::Row { inner, .. }) = run.get(entry as usize) else { return Err(malformed("run row", holder)) };
+    /// Tells `visit` each entry directly inside the row at `entry` of the
+    /// run of `holder`, until it answers false.
+    fn row_into(&mut self, holder: Address, entry: u32, visit: &mut dyn FnMut(Listed) -> Result<bool, ArenaError>) -> Result<bool, ArenaError> {
+        let (_, _, inner, mut entries) = self.row_at(holder, entry, "run row")?;
         let (mut at, end) = (entry as usize + 1, entry as usize + 1 + inner as usize);
-        let mut out = Vec::new();
         while at < end {
-            let found = *run.get(at).ok_or(malformed("run row entries", holder))?;
-            out.push((holder, crate::types::narrow(at), found));
-            at += 1 + match found {
-                RunEntry::Row { inner, .. } => inner as usize,
-                RunEntry::Record { .. } => 0,
-            };
+            let found = entries.next().ok_or(malformed("run row entries", holder))??;
+            let nested = if let RunEntry::Row { inner, .. } = found { inner as usize } else { 0 };
+            for _ in 0..nested {
+                entries.next().ok_or(malformed("run row entries", holder))??;
+            }
+            if !visit(Listed::Entry(holder, crate::types::narrow(at), found))? {
+                return Ok(false);
+            }
+            at += 1 + nested;
         }
-        Ok(out)
+        Ok(true)
+    }
+
+    /// Tells `visit` each child of the node kept at `site`, until it answers
+    /// false.
+    fn list(&mut self, site: NodeSite, visit: &mut dyn FnMut(Listed) -> Result<bool, ArenaError>) -> Result<bool, ArenaError> {
+        match site {
+            NodeSite::Record(at) => self.listed_into(at, visit),
+            NodeSite::Row { holder, entry } => self.row_into(holder, entry, visit),
+            NodeSite::Unit(_) | NodeSite::Flag { .. } => Ok(true),
+        }
+    }
+
+    /// The child `one` of the node at `parent`, a unit placed at `at`, the
+    /// end of the child before it.
+    fn listed_kid(&mut self, parent: NodeIndex, one: Listed, at: u32) -> Result<Kid, ArenaError> {
+        let named = self.shape.2;
+        let kid = match one {
+            Listed::Entry(_, _, RunEntry::Record { at, .. }) => self.record(at, Parent::Node(parent))?,
+            Listed::Entry(holder, entry, RunEntry::Row { facts, span, inner }) => self.meet(NodeSite::Row { holder, entry }, facts, span, inner == 0, Parent::Node(parent)),
+            Listed::Unit { site, kind, alias, field, listed } => {
+                let facts = NodeFacts { kind, field, alias, named: listed || named(alias.unwrap_or(kind)), extra: false, missing: false, holds_error: false, abuts_next: false };
+                self.meet(site, facts, Span { start: at, end: at }, true, Parent::Node(parent))
+            }
+        };
+        Ok(self.table.met[kid.0 as usize].kid)
+    }
+
+    /// Where the child `one` ends, `at` being the end of the child before it.
+    fn listed_end(arena: &dyn ArenaRead, one: Listed, at: u32) -> Result<u32, ArenaError> {
+        match one {
+            Listed::Entry(_, _, RunEntry::Record { at: record, .. }) => {
+                let record = node_record(arena, record)?;
+                Ok(SideRecord::read_facts(arena, super::side_of(arena, record)?)?.0.at.ok_or(malformed("parsed record row", record))?.span.end)
+            }
+            Listed::Entry(_, _, RunEntry::Row { span, .. }) => Ok(span.end),
+            Listed::Unit { .. } => Ok(at),
+        }
     }
 
     fn kids_of(&mut self, index: NodeIndex) -> Result<Kids, ArenaError> {
         let site = self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
         let mut listed = Vec::new();
-        match site {
-            NodeSite::Record(at) => self.listed_into(at, &mut listed)?,
-            NodeSite::Row { holder, entry } => listed.extend(self.inside(holder, entry)?.into_iter().map(|(holder, entry, found)| Listed::Entry(holder, entry, found))),
-            NodeSite::Unit(_) | NodeSite::Flag { .. } => {}
-        }
-        let named = self.shape.2;
+        self.list(site, &mut |one| {
+            listed.push(one);
+            Ok(true)
+        })?;
         let mut at = self.table.met[index.0 as usize].kid.start;
         let mut kids = Vec::with_capacity(listed.len());
         for one in listed {
-            let kid = match one {
-                Listed::Entry(_, _, RunEntry::Record { at, .. }) => self.record(at, Parent::Node(index))?,
-                Listed::Entry(holder, entry, RunEntry::Row { facts, span, inner }) => self.meet(NodeSite::Row { holder, entry }, facts, span, inner == 0, Parent::Node(index)),
-                Listed::Unit { site, kind, alias, field, listed } => {
-                    let facts = NodeFacts { kind, field, alias, named: listed || named(alias.unwrap_or(kind)), extra: false, missing: false, holds_error: false, abuts_next: false };
-                    self.meet(site, facts, Span { start: at, end: at }, true, Parent::Node(index))
-                }
-            };
-            let kid = self.table.met[kid.0 as usize].kid;
+            let kid = self.listed_kid(index, one, at)?;
             at = kid.end;
             kids.push(kid);
         }
         Ok(kids.into())
+    }
+
+    /// The child of the node at `index` after (`Side::After`) or before
+    /// (`Side::Before`) the node at `index`, read without listing its
+    /// parent's children.
+    fn sibling(&mut self, index: NodeIndex, side: Side) -> Result<Option<Kid>, ArenaError> {
+        let Some(parent) = self.parent_of(index)? else { return Ok(None) };
+        let unknown = ArenaError::Malformed { what: "node id", word: index.0 };
+        let (target, holder) = (self.site(index).ok_or(unknown.clone())?, self.site(parent).ok_or(unknown)?);
+        let arena = self.arena;
+        let mut end = self.table.met[parent.0 as usize].kid.start;
+        let (mut before, mut found, mut reached) = (None, None, false);
+        self.list(holder, &mut |one| {
+            if reached {
+                found = Some((one, end));
+                return Ok(false);
+            }
+            let site = match one {
+                Listed::Entry(_, _, RunEntry::Record { at, .. }) => NodeSite::Record(node_record(arena, at)?),
+                Listed::Entry(holder, entry, RunEntry::Row { .. }) => NodeSite::Row { holder, entry },
+                Listed::Unit { site, .. } => site,
+            };
+            if site == target {
+                reached = true;
+                if side == Side::Before {
+                    found = before;
+                    return Ok(false);
+                }
+            } else {
+                before = Some((one, end));
+            }
+            end = Self::listed_end(arena, one, end)?;
+            Ok(true)
+        })?;
+        found.map(|(one, at)| self.listed_kid(parent, one, at)).transpose()
+    }
+
+    /// The first child of the node at `index` that ends past `byte`, read
+    /// without listing its children.
+    fn child_past(&mut self, index: NodeIndex, byte: u32) -> Result<Option<Kid>, ArenaError> {
+        let site = self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })?;
+        let arena = self.arena;
+        let mut end = self.table.met[index.0 as usize].kid.start;
+        let mut found = None;
+        self.list(site, &mut |one| {
+            let past = Self::listed_end(arena, one, end)?;
+            if past > byte {
+                found = Some((one, end));
+                return Ok(false);
+            }
+            end = past;
+            Ok(true)
+        })?;
+        found.map(|(one, at)| self.listed_kid(index, one, at)).transpose()
+    }
+
+    /// The first or last entry of the run of the record at `at` that is a
+    /// child, a shared content's in place of itself, with the record whose
+    /// run holds it and its number there.
+    fn run_edge(&mut self, at: Address, side: Side) -> Result<Option<Listed>, ArenaError> {
+        let (mut entries, mut number, mut last) = (self.run_of(at)?, 0_usize, None);
+        while let Some(entry) = entries.next().transpose()? {
+            let held = match entry {
+                RunEntry::Record { at: content, shared: true } => self.run_edge(content, side)?,
+                found => Some(Listed::Entry(at, crate::types::narrow(number), found)),
+            };
+            if held.is_some() {
+                if side == Side::Before {
+                    return Ok(held);
+                }
+                last = held;
+            }
+            let inner = if let RunEntry::Row { inner, .. } = entry { inner as usize } else { 0 };
+            for _ in 0..inner {
+                if entries.next().transpose()?.is_none() {
+                    break;
+                }
+            }
+            number += 1 + inner;
+        }
+        Ok(last)
     }
 
     /// The fixed token, unit or list separator the render body of the
@@ -694,7 +903,7 @@ impl Walk<'_> {
                         let edge = self.slot_edge(at, shape, BodySlot::Cell(cell), side, bits)?;
                         if !matches!(edge, SlotEdge::Absent) && self.side(at)?.delimiter.is_some_and(|set| set.has(flank)) {
                             let word = shape.cells.get(usize::from(cell)).ok_or(malformed("body slot cell", at))?.word;
-                            let held = SideRecord::read(self.arena, super::side_of(self.arena, at)?)?;
+                            let held = SideRecord::read_slots(self.arena, super::side_of(self.arena, at)?)?;
                             let stamped = held.slots.iter().find(|slot| slot.word == word).and_then(|slot| slot.separator);
                             return Ok(Some(stamped.or_else(|| arm(kind)).unwrap_or(separator)));
                         }
@@ -766,41 +975,82 @@ impl Walk<'_> {
 
     fn line_starts(&mut self, index: NodeIndex, source: &str) -> Result<Vec<u32>, ArenaError> {
         let (shape_of, bits, _) = self.shape;
-        let end = self.table.met[index.0 as usize].kid.end;
+        let arena = self.arena;
+        let met = &self.table.met[index.0 as usize];
+        let (site, root) = (met.site, met.kid);
+        let end = root.end;
+        let own_text = |at: Address| -> Result<bool, ArenaError> { Ok(shape_of(arena.header_kind(at, bits)?).is_some_and(|shape| shape.own_text)) };
         let mut starts = Vec::new();
-        let mut pending = vec![index];
-        while let Some(at) = pending.pop() {
-            let met = &self.table.met[at.0 as usize];
-            let (site, kid, facts) = (met.site, met.kid, met.facts);
-            let own_text = match site {
-                NodeSite::Record(record) => shape_of(self.arena.header_kind(record, bits)?).is_some_and(|shape| shape.own_text),
-                _ => false,
-            };
-            let token = match site {
-                NodeSite::Unit(_) | NodeSite::Flag { .. } => false,
-                _ if kid.entry() || own_text => true,
-                NodeSite::Row { .. } if kid.count == 1 => true,
-                _ => {
-                    if kid.count > 1 {
-                        pending.extend(self.kids(at).iter().map(|kid| kid.index));
-                    }
-                    false
-                }
-            };
-            if facts.abuts_next && kid.end < end {
-                starts.push(kid.end);
-            }
-            if !token {
-                continue;
-            }
-            let mut from = kid.start;
-            while let Some(found) = source.get(Span { start: from, end: kid.end }.range()).and_then(|text| text.find('\n')) {
+        let lines = |span: Span, starts: &mut Vec<u32>| {
+            let mut from = span.start;
+            while let Some(found) = source.get(Span { start: from, end: span.end }.range()).and_then(|text| text.find('\n')) {
                 let line = from + crate::types::narrow(found) + 1;
-                if line >= kid.end {
+                if line >= span.end {
                     break;
                 }
                 starts.push(line);
                 from = line;
+            }
+        };
+        let mut frames: Vec<(RunEntries<'a>, usize)> = Vec::new();
+        match site {
+            NodeSite::Unit(_) | NodeSite::Flag { .. } => {}
+            NodeSite::Record(at) => {
+                if root.entry() || own_text(at)? {
+                    lines(root.span(), &mut starts);
+                } else {
+                    frames.push((self.run_of(at)?, usize::MAX));
+                }
+            }
+            NodeSite::Row { holder, entry } => {
+                let (_, _, inner, entries) = self.row_at(holder, entry, "run row")?;
+                if root.entry() || inner == 0 {
+                    lines(root.span(), &mut starts);
+                } else {
+                    frames.push((entries, inner as usize));
+                }
+            }
+        }
+        while let Some((entries, left)) = frames.last_mut() {
+            if *left == 0 {
+                frames.pop();
+                continue;
+            }
+            let Some(entry) = entries.next().transpose()? else {
+                frames.pop();
+                continue;
+            };
+            *left -= 1;
+            match entry {
+                RunEntry::Record { at, shared: true } => {
+                    let run = self.run_of(at)?;
+                    frames.push((run, usize::MAX));
+                }
+                RunEntry::Record { at, shared: false } => {
+                    let (side, run) = SideRecord::read_facts(arena, super::side_of(arena, at)?)?;
+                    let facts = side.node.ok_or(malformed("parsed record facts", at))?;
+                    let span = side.at.ok_or(malformed("parsed record row", at))?.span;
+                    if facts.abuts_next && span.end < end {
+                        starts.push(span.end);
+                    }
+                    if facts.extra || crate::nodes::shown_as_error(facts.display()) || own_text(at)? {
+                        lines(span, &mut starts);
+                    } else if let Some(run) = run {
+                        frames.push((run.in_place(arena)?, usize::MAX));
+                    }
+                }
+                RunEntry::Row { facts, span, inner } => {
+                    if facts.abuts_next && span.end < end {
+                        starts.push(span.end);
+                    }
+                    if facts.extra || crate::nodes::shown_as_error(facts.display()) || inner == 0 {
+                        lines(span, &mut starts);
+                        for _ in 0..inner {
+                            entries.next().ok_or(malformed("run row entries", holder_of(site)))??;
+                        }
+                        *left = left.saturating_sub(inner as usize);
+                    }
+                }
             }
         }
         starts.sort_unstable();
@@ -813,17 +1063,15 @@ impl Walk<'_> {
         match self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })? {
             NodeSite::Record(at) => Ok(self.side(at)?.depth),
             NodeSite::Row { holder, entry } => {
-                let run = self.run(holder)?;
-                let Some(&RunEntry::Row { facts, inner, .. }) = run.get(entry as usize) else { return Err(malformed("run row", holder)) };
-                let inside = run.get(entry as usize + 1..entry as usize + 1 + inner as usize).ok_or(malformed("run row entries", holder))?;
-                let (rows, records): (i32, Vec<Address>) = inside.iter().fold((of(facts.kind), Vec::new()), |(rows, mut records), entry| match *entry {
-                    RunEntry::Row { facts, .. } => (rows + of(facts.kind), records),
-                    RunEntry::Record { at, .. } => {
-                        records.push(at);
-                        (rows, records)
-                    }
-                });
-                records.into_iter().try_fold(rows, |moved, at| Ok(moved + self.side(at)?.depth))
+                let (facts, _, inner, mut entries) = self.row_at(holder, entry, "run row")?;
+                let mut moved = of(facts.kind);
+                for _ in 0..inner {
+                    moved += match entries.next().ok_or(malformed("run row entries", holder))?? {
+                        RunEntry::Row { facts, .. } => of(facts.kind),
+                        RunEntry::Record { at, .. } => self.side(at)?.depth,
+                    };
+                }
+                Ok(moved)
             }
             NodeSite::Unit(_) | NodeSite::Flag { .. } => Ok(0),
         }
@@ -861,12 +1109,24 @@ impl Walk<'_> {
     /// The first or last child of the node at `index` with a place in the
     /// source: a unit its holder's cell or flag names has none.
     fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
-        let kids = self.kids(index);
-        let placed = |kid: &&Kid| !matches!(self.site(kid.index), Some(NodeSite::Unit(_) | NodeSite::Flag { .. }));
-        match side {
-            Side::Before => kids.iter().find(placed).copied(),
-            Side::After => kids.iter().rev().find(placed).copied(),
-        }
+        let found = self.edge_kid(index, side);
+        self.answer(found, None)
+    }
+
+    fn edge_kid(&mut self, index: NodeIndex, side: Side) -> Result<Option<Kid>, ArenaError> {
+        let found = match self.site(index).ok_or(ArenaError::Malformed { what: "node id", word: index.0 })? {
+            NodeSite::Record(at) => self.run_edge(at, side)?,
+            NodeSite::Row { holder, entry } => {
+                let mut last = None;
+                self.row_into(holder, entry, &mut |one| {
+                    last = Some(one);
+                    Ok(side == Side::After)
+                })?;
+                last
+            }
+            NodeSite::Unit(_) | NodeSite::Flag { .. } => None,
+        };
+        found.map(|one| self.listed_kid(index, one, 0)).transpose()
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
@@ -902,6 +1162,27 @@ impl<'t> Nodes<'t> for RunNodes<'t> {
 
     fn is_unit(&mut self, index: NodeIndex) -> bool {
         self.answering(|walk| matches!(walk.site(index), Some(NodeSite::Unit(_) | NodeSite::Flag { .. })))
+    }
+
+    fn child_past(&mut self, index: NodeIndex, byte: u32) -> Option<Kid> {
+        self.answering(|walk| {
+            let found = walk.child_past(index, byte);
+            walk.answer(found, None)
+        })
+    }
+
+    fn next(&mut self, index: NodeIndex) -> Option<Kid> {
+        self.answering(|walk| {
+            let found = walk.sibling(index, Side::After);
+            walk.answer(found, None)
+        })
+    }
+
+    fn previous(&mut self, index: NodeIndex) -> Option<Kid> {
+        self.answering(|walk| {
+            let found = walk.sibling(index, Side::Before);
+            walk.answer(found, None)
+        })
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {

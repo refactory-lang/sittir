@@ -98,7 +98,7 @@ impl<'a, T> RecordCtx<'a, T> {
         if at == Address::NONE {
             return Ok(super::SideRecord::default());
         }
-        super::SideRecord::read(self.arena, at)
+        super::SideRecord::read_slots(self.arena, at)
     }
 
     /// The cell the built word `word` holds.

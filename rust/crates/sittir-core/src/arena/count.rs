@@ -611,10 +611,12 @@ impl BuiltChunks {
         let side = super::borrowed::side_of(self, at)?;
         let run = if side == Address::NONE { None } else { SideRecord::read_facts(self, side)?.1 };
         let unnamed: Vec<Address> = match run {
-            Some(run) => run.entries(self)?.into_iter().filter_map(|entry| match entry {
-                RunEntry::Record { at, .. } if named.binary_search(&at).is_err() => Some(at),
-                _ => None,
-            }).collect(),
+            Some(run) => run.in_place(self)?.filter_map(|entry| match entry {
+                Ok(RunEntry::Record { at, .. }) if named.binary_search(&at).is_ok() => None,
+                Ok(RunEntry::Record { at, .. }) => Some(Ok(at)),
+                Ok(RunEntry::Row { .. }) => None,
+                Err(refused) => Some(Err(refused)),
+            }).collect::<Result<_, _>>()?,
             None => Vec::new(),
         };
         for run in runs {

@@ -183,6 +183,7 @@ impl RunEntry {
 
     /// The entry at the start of `words` and the words it takes.
     fn take(words: &[u32]) -> Result<(RunEntry, usize), ArenaError> {
+        RUN_ENTRIES_DECODED.with(|decoded| decoded.set(decoded.get() + 1));
         let &first = words.first().ok_or(malformed("run entry", 0))?;
         if first & packed::RECORD != 0 {
             let &[_, at] = words.first_chunk::<2>().ok_or(malformed("run record entry", first))?;
@@ -532,29 +533,35 @@ impl SideRecord {
     /// The side record at `at`, its spans left empty; an empty one at
     /// `Address::NONE`.
     pub fn read(arena: &dyn ArenaRead, at: Address) -> Result<SideRecord, ArenaError> {
-        Self::read_parts(arena, at, true).map(|(record, _)| record)
+        Self::read_parts(arena, at, true, true).map(|(record, _)| record)
+    }
+
+    /// The side record at `at` with its slots, its run left where it lies
+    /// and its spans left empty: what a render of a record reads.
+    pub(crate) fn read_slots(arena: &dyn ArenaRead, at: Address) -> Result<SideRecord, ArenaError> {
+        Self::read_parts(arena, at, true, false).map(|(record, _)| record)
     }
 
     /// The side record at `at` without its lists, its slots, its run and its
     /// spans left empty, and where its run lies: what naming a node and
     /// finding its parent read.
     pub(super) fn read_facts(arena: &dyn ArenaRead, at: Address) -> Result<(SideRecord, Option<RunAt>), ArenaError> {
-        Self::read_parts(arena, at, false).map(|(record, found)| (record, found.run))
+        Self::read_parts(arena, at, false, false).map(|(record, found)| (record, found.run))
     }
 
     /// The spans the side record at `at` holds (`SideRecord::spans`); none
     /// at `Address::NONE`.
     pub(super) fn spans_at(arena: &dyn ArenaRead, at: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
-        Self::read_parts(arena, at, false)?.1.spans.map_or(Ok(Vec::new()), |spans| spans.spans(arena))
+        Self::read_parts(arena, at, false, false)?.1.spans.map_or(Ok(Vec::new()), |spans| spans.spans(arena))
     }
 
     /// The starts the side record at `at` holds (`SideRecord::starts`);
     /// none at `Address::NONE`.
-    pub(super) fn starts_at(arena: &dyn ArenaRead, at: Address) -> Result<Option<Vec<u32>>, ArenaError> {
-        Self::read_parts(arena, at, false)?.1.starts.map(|starts| starts.starts(arena)).transpose()
+    pub(super) fn starts_at(arena: &dyn ArenaRead, at: Address) -> Result<Option<&[u32]>, ArenaError> {
+        Self::read_parts(arena, at, false, false)?.1.starts.map(|starts| starts.starts(arena)).transpose()
     }
 
-    fn read_parts(arena: &dyn ArenaRead, at: Address, lists: bool) -> Result<(SideRecord, ListsAt), ArenaError> {
+    fn read_parts(arena: &dyn ArenaRead, at: Address, slots: bool, entries: bool) -> Result<(SideRecord, ListsAt), ArenaError> {
         if at == Address::NONE {
             return Ok((SideRecord::default(), ListsAt::default()));
         }
@@ -601,9 +608,9 @@ impl SideRecord {
         }
         if has(mask::SLOTS) {
             let [count] = fields.array()?;
-            let entries = fields.take(count.checked_mul(SLOT_WORDS).ok_or(malformed("side record slot count", count))?)?;
-            let (entries, _) = entries.as_chunks::<{ SLOT_WORDS as usize }>();
-            record.slots = entries[..if lists { entries.len() } else { 0 }]
+            let held = fields.take(count.checked_mul(SLOT_WORDS).ok_or(malformed("side record slot count", count))?)?;
+            let (held, _) = held.as_chunks::<{ SLOT_WORDS as usize }>();
+            record.slots = held[..if slots { held.len() } else { 0 }]
                 .iter()
                 .map(|&[word, before, after, separator, space_before, space_after]| {
                     Ok(SideSlot {
@@ -655,7 +662,7 @@ impl SideRecord {
             if fields.take(len)?.is_empty() {
                 return Err(malformed("side record run", len));
             }
-            if lists {
+            if entries {
                 record.run = run.entries(arena)?;
             }
             found.run = Some(run);
@@ -723,12 +730,12 @@ struct StartsAt {
 
 impl StartsAt {
     /// The starts, each refused unless it is past the one before.
-    fn starts(self, arena: &dyn ArenaRead) -> Result<Vec<u32>, ArenaError> {
+    fn starts(self, arena: &dyn ArenaRead) -> Result<&[u32], ArenaError> {
         let words = arena.words(self.record, self.end)?.get(self.start as usize..).ok_or(ArenaError::OutOfBounds { chunk: self.record.chunk(), word: self.record.word(), len: self.end })?;
         if let Some(pair) = words.windows(2).find(|pair| pair[0] >= pair[1]) {
             return Err(malformed("side record starts", pair[1]));
         }
-        Ok(words.to_vec())
+        Ok(words)
     }
 }
 
@@ -739,7 +746,7 @@ impl StartsAt {
 /// # Errors
 ///
 /// What reading the source's entry and that side record refuses.
-pub fn read_entry_starts(arena: &dyn ArenaRead, source: Address) -> Result<Option<Vec<u32>>, ArenaError> {
+pub fn read_entry_starts(arena: &dyn ArenaRead, source: Address) -> Result<Option<&[u32]>, ArenaError> {
     super::source::Source::read_side_of(arena, source)?.map_or(Ok(None), |read| SideRecord::starts_at(arena, read))
 }
 
@@ -755,6 +762,17 @@ pub fn read_spans(arena: &dyn ArenaRead, source: Address) -> Result<Vec<std::ops
     super::source::Source::read_side_of(arena, source)?.map_or(Ok(Vec::new()), |read| SideRecord::spans_at(arena, read))
 }
 
+thread_local! {
+    static RUN_ENTRIES_DECODED: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+/// The run entries this thread has decoded: a diagnostic, so a test counts
+/// the entries a call decodes, never times them.
+#[must_use]
+pub fn run_entries_decoded() -> u64 {
+    RUN_ENTRIES_DECODED.with(std::cell::Cell::get)
+}
+
 /// Where a side record's run lies: its first word and its words.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) struct RunAt {
@@ -763,21 +781,55 @@ pub(super) struct RunAt {
 }
 
 impl RunAt {
-    /// The run's first entry.
-    pub(super) fn first(self, arena: &dyn ArenaRead) -> Result<RunEntry, ArenaError> {
-        RunEntry::take(arena.words(self.at, self.len)?).map(|(entry, _)| entry)
-    }
-
     /// The run's entries, in document order.
     pub(super) fn entries(self, arena: &dyn ArenaRead) -> Result<Vec<RunEntry>, ArenaError> {
-        let mut words = arena.words(self.at, self.len)?;
-        let mut run = Vec::new();
-        while !words.is_empty() {
-            let (entry, taken) = RunEntry::take(words)?;
-            run.push(entry);
-            words = &words[taken..];
+        self.in_place(arena)?.collect()
+    }
+
+    /// Whether the run's first entry is a shared content, read from the
+    /// entry's flag word alone.
+    pub(super) fn starts_shared(self, arena: &dyn ArenaRead) -> Result<bool, ArenaError> {
+        let &first = arena.words(self.at, self.len)?.first().ok_or(malformed("run entry", 0))?;
+        Ok(first & packed::RECORD != 0 && first & packed::SHARED != 0)
+    }
+
+    /// The run's entries, in document order, each decoded as it is reached.
+    pub(super) fn in_place(self, arena: &dyn ArenaRead) -> Result<RunEntries<'_>, ArenaError> {
+        Ok(RunEntries { words: arena.words(self.at, self.len)?, word: 0 })
+    }
+}
+
+/// A run's entries from one of them on, read in place.
+#[derive(Debug, Clone, Default)]
+pub(super) struct RunEntries<'a> {
+    words: &'a [u32],
+    word: u32,
+}
+
+impl<'a> RunEntries<'a> {
+    /// The word of the run the next entry starts at.
+    pub(super) fn word(&self) -> u32 {
+        self.word
+    }
+
+    /// These entries from the entry starting at word `word` of the run.
+    pub(super) fn at_word(self, word: u32) -> Option<RunEntries<'a>> {
+        Some(RunEntries { words: self.words.get(word.checked_sub(self.word)? as usize..)?, word })
+    }
+}
+
+impl Iterator for RunEntries<'_> {
+    type Item = Result<RunEntry, ArenaError>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.words.is_empty() {
+            return None;
         }
-        Ok(run)
+        Some(RunEntry::take(self.words).map(|(entry, taken)| {
+            self.words = &self.words[taken..];
+            self.word += crate::types::narrow(taken);
+            entry
+        }).inspect_err(|_| self.words = &[]))
     }
 }
 
@@ -840,7 +892,7 @@ mod tests {
         let at = record.write(&mut |words| arena.push(words)).expect("room");
         assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { spans: Vec::new(), starts: None, ..record.clone() }), "a read leaves the spans and the starts where they lie");
         assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
-        assert_eq!(SideRecord::starts_at(&arena, at), Ok(record.starts));
+        assert_eq!(SideRecord::starts_at(&arena, at), Ok(record.starts.as_deref()));
     }
 
     #[test]
@@ -862,7 +914,6 @@ mod tests {
         let entries = record.run.clone();
         assert_eq!(facts, SideRecord { slots: Vec::new(), run: Vec::new(), spans: Vec::new(), starts: None, ..record });
         let run = run.expect("a run");
-        assert_eq!(run.first(&arena), Ok(entries[0]));
         assert_eq!(run.entries(&arena), Ok(entries));
         assert_eq!(SideRecord::read_facts(&arena, Address::NONE), Ok((SideRecord::default(), None)));
     }
@@ -911,7 +962,7 @@ mod tests {
             assert_ne!(at, Address::NONE);
             assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { spans: Vec::new(), starts: None, ..record.clone() }));
             assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
-            assert_eq!(SideRecord::starts_at(&arena, at), Ok(record.starts));
+            assert_eq!(SideRecord::starts_at(&arena, at), Ok(record.starts.as_deref()));
         }
     }
 

@@ -418,6 +418,12 @@ pub trait Backing<G: EngineGrammar>: Sized {
     /// (`SourceTable::is_source_root`).
     fn is_source_root(&self, nodes: &mut Navigation<'_>, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool;
 
+    /// Forgets the nodes the last answer of a render met; true where this
+    /// backing's indexes last only as long as that answer.
+    fn forget_met(&self) -> bool {
+        false
+    }
+
     /// Where an `ERROR` read on its own came from (`ErrorRead::at`); none
     /// for a node nothing past the call can name.
     fn error_origin(&self, error: &Kid, ctx: &crate::read::ReadCtx<'_>) -> Option<crate::read::Origin>;
@@ -956,7 +962,7 @@ fn lookups<G: EngineGrammar, B: Backing<G>>(tree: &B) -> Lookups<'_, G, B> {
 }
 
 fn lookups_over<'t, G: EngineGrammar, B: Backing<G>>(tree: &'t B, nodes: Navigation<'t>) -> Lookups<'t, G, B> {
-    Lookups { tree, nodes, apart: HashMap::default(), ids: HashMap::default(), entries: EntryCursor::default(), grammar: std::marker::PhantomData }
+    Lookups { tree, nodes, apart: HashMap::default(), ids: HashMap::default(), entries: EntryCursor::default(), answers_alone: false, grammar: std::marker::PhantomData }
 }
 
 impl<G: EngineGrammar> Backing<G> for ParsedTree<G> {
@@ -1096,12 +1102,13 @@ pub struct Records<'a, G: EngineGrammar> {
     /// How the grammar lays a record of each kind out, and its kind bits:
     /// what finds a slot's site from its node's row and back.
     shape: crate::arena::ReadShape,
-    /// Each record's rows that a cell of it names, with the cell's site,
-    /// read once a record.
-    sites: PerCall<crate::arena::site::RowSites>,
+    /// The node the answer running was asked about, by its index, with the
+    /// name it was asked by: what names a row with no read of its holder's
+    /// cells.
+    asked: PerCall<Option<(NodeIndex, crate::types::NodeId)>>,
     /// The source's entry starts, read on the call's first frame
     /// (`Backing::entry_starts`); none where they could not be read.
-    entry_starts: PerCall<std::cell::OnceCell<Option<Vec<u32>>>>,
+    entry_starts: PerCall<std::cell::OnceCell<Option<std::borrow::Cow<'a, [u32]>>>>,
     /// The entry of the source the records were read from, which names its
     /// read's entry starts.
     source: crate::arena::Address,
@@ -1118,22 +1125,24 @@ pub struct Records<'a, G: EngineGrammar> {
 }
 
 #[cfg(feature = "arena")]
-impl<G: EngineGrammar> Records<'_, G> {
-    fn read_starts(&self) -> Option<Vec<u32>> {
-        let mut starts = crate::arena::read_entry_starts(self.built, self.source).ok()??;
+impl<'a, G: EngineGrammar> Records<'a, G> {
+    fn read_starts(&self) -> Option<std::borrow::Cow<'a, [u32]>> {
+        let stored = crate::arena::read_entry_starts(self.built, self.source).ok()??;
         let written = self.written_sites()?;
-        if !written.is_empty() {
-            let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape);
-            for (site, _) in written {
-                let held = if let crate::arena::NodeSite::Unit(unit) = site { crate::arena::NodeSite::Record(unit.holder) } else { site };
-                if let Some(index) = runs.index_at(held) {
-                    starts.push(runs.kid(index).start);
-                }
-            }
-            starts.sort_unstable();
-            starts.dedup();
+        if written.is_empty() {
+            return Some(std::borrow::Cow::Borrowed(stored));
         }
-        Some(starts)
+        let mut starts = stored.to_vec();
+        let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape);
+        for (site, _) in written {
+            let held = if let crate::arena::NodeSite::Unit(unit) = site { crate::arena::NodeSite::Record(unit.holder) } else { site };
+            if let Some(index) = runs.index_at(held) {
+                starts.push(runs.kid(index).start);
+            }
+        }
+        starts.sort_unstable();
+        starts.dedup();
+        Some(std::borrow::Cow::Owned(starts))
     }
 
     /// Where each side a write gave a node of the source is kept, the inside
@@ -1203,7 +1212,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         let crate::arena::NodeSite::Record(at) = self.table.site(index)? else { return None };
         let (shape, bits, _) = self.shape;
         let record = shape(crate::arena::ArenaRead::header_kind(self.built, at, bits).ok()?)?;
-        let side = crate::arena::SideRecord::read(self.built, crate::arena::side_of(self.built, at).ok()?).ok()?;
+        let side = crate::arena::SideRecord::read_slots(self.built, crate::arena::side_of(self.built, at).ok()?).ok()?;
         Some(side.slots.iter().filter(|slot| slot.separator.is_some()).filter_map(|slot| Some(crate::layout::SlotLayout { slot: record.cells.iter().find(|cell| cell.word == slot.word)?.key.to_string(), separator: slot.separator, ..crate::layout::SlotLayout::default() })).collect())
     }
 
@@ -1221,6 +1230,14 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
 
     fn grew(&self) {}
 
+    fn forget_met(&self) -> bool {
+        self.table.begin_answer();
+        self.asked.with(|asked| *asked = None);
+        self.caches.slots.lock().unwrap_or_else(std::sync::PoisonError::into_inner).empty();
+        self.caches.items.lock().unwrap_or_else(std::sync::PoisonError::into_inner).empty();
+        true
+    }
+
     fn nodes(&self) -> Navigation<'_> {
         Navigation::Runs(crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape))
     }
@@ -1228,10 +1245,14 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
     fn node_index(&self, nodes: &mut Navigation<'_>, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<NodeIndex> {
         let crate::slot::NodeIdOrCoordinate::NodeId { id, .. } = at else { return None };
         let site = self.named(id)?;
-        match nodes {
+        let index = match nodes {
             Navigation::Runs(runs) => runs.index_at(site),
             Navigation::Tree(_) => None,
+        }?;
+        if matches!(site, crate::arena::NodeSite::Row { .. }) {
+            self.asked.with(|asked| *asked = Some((index, id)));
         }
+        Some(index)
     }
 
     fn holds(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
@@ -1328,8 +1349,11 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
 impl<G: EngineGrammar> crate::read::NodeNames for Records<'_, G> {
     fn name(&self, index: NodeIndex) -> Option<crate::types::NodeId> {
         let site = self.table.site(index)?;
+        if let Some((_, name)) = self.asked.with(|asked| *asked).filter(|&(at, _)| at == index && matches!(site, crate::arena::NodeSite::Row { .. })) {
+            return Some(name);
+        }
         let (shape, bits, _) = self.shape;
-        self.sites.with(|known| crate::arena::site::site_name(self.built, shape, bits, site, known).ok().flatten())
+        crate::arena::site::site_name_in_place(self.built, shape, bits, site).ok().flatten()
     }
 }
 
@@ -1363,7 +1387,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
             built,
             table: crate::arena::RunTable::default(),
             shape: G::read_shape(),
-            sites: PerCall::default(),
+            asked: PerCall::default(),
             entry_starts: PerCall::default(),
             source,
             text,
@@ -1839,6 +1863,9 @@ struct Lookups<'t, G: EngineGrammar, B: Backing<G>> {
     ids: HashMap<crate::types::NodeId, NodeIndex, crate::heap::IndexState>,
     /// Where the call's frames stand in the tree's entry starts.
     entries: EntryCursor,
+    /// Whether these are a render's: each answer forgets the nodes the one
+    /// before it met (`Backing::forget_met`).
+    answers_alone: bool,
 }
 
 /// The node a source-table call names, as its lookups read it: its index
@@ -1890,6 +1917,15 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
     fn coordinate(&mut self, index: NodeIndex) -> Option<NodeCoordinate> {
         let kid = self.kid(index)?;
         Some(self.tree.read_ctx().coordinate_of(&kid))
+    }
+
+    /// Starts an answer of a render: where the backing names nodes by the
+    /// ids its navigations give them, what the last answer met is forgotten.
+    fn begin_answer(&mut self) {
+        if self.answers_alone && self.tree.forget_met() {
+            crate::heap::emptied(&mut self.ids);
+            crate::heap::emptied(&mut self.apart);
+        }
     }
 
     /// The index of the node `at` names, an id's kept for the call.
@@ -2232,7 +2268,7 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         }
         let list = self.kid(index)?;
         let kinds = self.tree.grammar().surface_kinds();
-        crate::trivia_table::edge_item(&list, kinds, side, || self.nodes.kids(index)).map(|item| item.index)
+        crate::trivia_table::edge_item(&mut self.nodes, &list, kinds, side).map(|item| item.index)
     }
 
     /// The sides `at` renders between, as the tree's table and writes give
@@ -2385,9 +2421,16 @@ impl<'t, G: EngineGrammar, B: Backing<G>> Seating<'t, G, B> {
         self.lookups.borrow().tree
     }
 
+    /// These lookups as a render's: each answer holds its nodes alone.
+    fn answering_alone(self) -> Self {
+        self.lookups.borrow_mut().answers_alone = true;
+        self
+    }
+
     /// The lookups and the node `at` names, when their tree holds it.
     fn own(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<(std::cell::RefMut<'_, Lookups<'t, G, B>>, Named)> {
         let mut lookups = self.lookups.borrow_mut();
+        lookups.begin_answer();
         let named = lookups.named(at)?;
         Some((lookups, named))
     }
@@ -2575,6 +2618,7 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for Seating<'_, G, B> {
 
     fn is_source_root(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         let mut lookups = self.lookups.borrow_mut();
+        lookups.begin_answer();
         let tree = lookups.tree;
         tree.is_source_root(&mut lookups.nodes, at)
     }
@@ -2966,7 +3010,7 @@ impl<'a, G: crate::arena::RecordGrammar> Trees<G, Records<'a, G>> for SourceReco
         use crate::arena::ArenaRead;
         if self.built.read_record(record.at) && G::shape(record.kind).is_none() {
             let unread = || -> Result<&str, crate::arena::ArenaError> {
-                let span = crate::arena::SideRecord::read(self.built, crate::arena::side_of(self.built, record.at)?)?.at.ok_or(crate::arena::ArenaError::Malformed { what: "parsed record row", word: record.at.0 })?.span;
+                let span = crate::arena::SideRecord::read_slots(self.built, crate::arena::side_of(self.built, record.at)?)?.at.ok_or(crate::arena::ArenaError::Malformed { what: "parsed record row", word: record.at.0 })?.span;
                 let source = crate::arena::source::Source::read(self.built, crate::arena::RunNodes::source_of(self.built, record.at)?)?;
                 source.text.get(span.range()).ok_or(crate::arena::ArenaError::Malformed { what: "cell span end", word: span.end })
             };
@@ -3058,7 +3102,7 @@ impl<'t, G: EngineGrammar, B: Backing<G>> ReadSources<'t, G, B> {
         let key = std::ptr::from_ref(tree).addr();
         let known = self.at.borrow().get(&key).copied();
         let at = known.unwrap_or_else(|| {
-            let at = self.read.push(tree.seating());
+            let at = self.read.push(tree.seating().answering_alone());
             self.at.borrow_mut().insert(key, at);
             at
         });
