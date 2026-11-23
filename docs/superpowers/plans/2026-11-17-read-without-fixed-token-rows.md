@@ -247,10 +247,9 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - **The query:** `EngineGrammar::delimiter` answers from the stored option where the backing holds records: arena reads the list record's side `DELIMITER`. A backing that holds tree-sitter's tree is object storage, whose read results live in the JavaScript nodes. It answers by the same `read::delimiter` call over the tree's children, at query time. The two differ only in when they run, which is the one difference between storages the maintainer allows (brainstorm, 2026-11-17).
 - **The render fallback goes.** A list whose delimiter option is unset takes the options' value, as a built list does: its generated prepare fills `ctx.options.delimiter_at(site)`.
 - **The list's separator at parse:**
-  - The read walk resolves each separated slot's separator once, while it holds the children: the kind most of its gaps take, a tie going to the options' arm, stored only where it differs from that arm.
-  - Object storage writes it into the node's layout (`ctx.layout`); arena writes it into `SideSlot::separator`.
-  - The render reads it where it reads a built node's (`LayoutTarget::slot`), and every gap of a rebuilt list writes it.
-  - `Lookups::node_slots` stops deriving from the tree, and `slot_separator` reads the stamp.
+  - One function resolves a separated slot's separator from its gaps: the kind most of them take, a tie going to the arm of the options the tree was read with, kept only where it differs from that arm. A render call's options never enter it.
+  - The arena walk calls it while it holds the children and stamps `SideSlot::separator`, and `Records` reads the stamp. Object storage calls it over the tree's children at lookup (`Lookups::node_slots`), since its tree still answers. As with the delimiter, the two differ only in when they run, and no object row or wire shape changes.
+  - Every gap of a rebuilt list writes the slot's separator, else the options'.
 
 **Files:**
 - Modify `rust/crates/sittir-node-macros/src/expand.rs` (`routed_body`, `flank_delimiter`, `list_inits`) and `hydrate.rs` (`routed`, `record_end`).
@@ -273,6 +272,7 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - [ ] **Step 1: Write the failing tests.**
   - `the_query_reads_the_stored_delimiter`, arena, over `read_fixtures(name)` for the five grammars: for every flanked list, `Plan::Delimiter` holds iff the list's side `DELIMITER` has the flag, on the `SlotContent` tree.
   - `parsed_lists_answer_their_separators_from_stamps`, both storages, over `read_fixtures(name)` for the five grammars. For every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's: `slot_separator`; `slot_layouts`. Nodes are matched by (grammar, display, span) in pre-order.
+  - `the_separator_is_resolved_against_the_options_a_tree_was_read_with`: a list whose majority is the read-time arm and one whose majority differs, each rebuilt and rendered with a render call's own separator option, render the same in object and arena.
   - `a_mixed_object_type_writes_the_lists_separator`, both storages, each with `b` edited through `$with`: typescript `type T = { a: string, b: number; c: boolean; d: string }` writes `;` in every gap, and the tied `type T = { a: string; b: number, c: boolean }` writes the options' arm in every gap.
   - `a_cleared_delimiter_takes_the_options`, in `rebuilt-list-trailing.test.ts`, both storages. The `arguments_elements` of rust `fn main() { f(a, b,); }`:
     - rebuilt through `$with.items` with its own items, renders `a, b,`;
