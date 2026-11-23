@@ -99,7 +99,7 @@ Every slot whose content is a choice among units is encoded by the cell's kind i
 
 An automatic semicolon that a slot holds is read by the cell's kind, not by a row's width: whether a token has width is a fact of its kind.
 
-A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form.
+A parsed unit cell then holds the kind alone. That is the cell a built record already writes for a unit ("A builder takes a unit as its kind id ... and stores the kind in the holder's cell"). Parsed and built unit cells become one form. Whether a query lists a unit is a fact of its holder, slot and kind: `any` in `x as any` is listed and `const` in `x as const` is not, in one slot. The derive stamps each slot's listed unit kinds and its `field` in the slot's `CellShape`, from the slot's `#[kind(...)]`, and nothing is stored per node.
 
 Unit rows are slot content, not fixed tokens; the maintainer ruled that they go too, in the same stage. The numbers list them apart.
 

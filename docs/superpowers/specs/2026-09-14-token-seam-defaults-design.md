@@ -18,7 +18,7 @@ Gluing by default has a failure class that spacing does not: two tokens written 
 
 ## Decision
 
-**An undeclared seam is a space.** Between two words, a word and a token, or two tokens, the writer puts one space unless a declaration makes the seam tight. Outside a list that admits no extras, a space can never change what the neighbours lex as, so the default is safe and the declared state is the aesthetic one. Beside such a list, a string's contents for example, a space would be content, so no default space is written there. A rebuilt node that no preference reaches renders as `f ( x )`: valid, ugly, and the formatter's business.
+**An undeclared seam is a space.** Between two words, a word and a token, or two tokens, the writer puts one space unless a declaration makes the seam tight. Outside a list that admits no extras, a space can never change what the neighbours lex as, so the default is safe and the declared state is the aesthetic one. Beside such a list, a string's contents for example, a space would be content, so there is no seam and no option addresses one (the user, 2026-11-23, removing python's `formatSpecifier.colon.after`, whose `Newline` made `f"{a:{w}}"` raise). The seam pass asks one question: the right side starts immediate, or either side is a list that admits no extras. A rebuilt node that no preference reaches renders as `f ( x )`: valid, ugly, and the formatter's business.
 
 **Tightness is declared on the token, then on the seam.** Two layers, the second overriding the first, and both are the one preference mechanism at two scopes:
 
