@@ -15577,6 +15577,10 @@ The slots a setter clears when it sets `slot` on a kind that is a required choic
 
 Whether a slot's setter takes no `undefined`: every arm that holds the slot requires it, and no arm of the choice requires nothing. Clearing such a slot would leave a node no arm describes, so it is a type error; a choice with an empty arm keeps the clearing form. The setter's input is made non-nullable (the config's optional property would otherwise let `undefined` through) and it loses its zero-argument form.
 
+### `packages/codegen/src/emitters/factories.ts::armClearsOfNode`
+
+For each slot of a kind that is a required choice of arms, the names of the slots its setter clears (`armCrossingClears`), omitting a slot that clears none. The node's `$clears` hint is printed from it, so the type a setter returns reads each cleared slot as `undefined` instead of the refinement an earlier setter in the chain gave it. Empty for a kind without arms and for a list.
+
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 
 What a hoisted slot's `$with` setter takes from the emitter: the storage key, the wrapper slot it sets through, whether the holder slot is optional, the list spec, the wrap expression, the kind the value may already be, and the placed setter bodies for a whole wrapper and for a list.

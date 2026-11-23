@@ -632,6 +632,8 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 		const method = f.propertyName;
 		const envelopeType = splicedEnvelopeType(f, nodeMap);
 		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;
+		const crossed = node instanceof AssembledList ? [] : armCrossingClears(node, node.slots, f);
+		const clearedKeys = crossed.map((other) => `${other.storageKey}: undefined, `).join('');
 		if (isMultiple(f) && restSlots.has(method)) {
 			const storageList = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
 			if (finalSeatOf(f) !== undefined && admitted !== '')
@@ -640,7 +642,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 			return {
 				name: method,
 				params: `...v: ${restType}`,
-				body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, `restItems(${JSON.stringify(method)}, v)`, nodeMap, kindEntries, node.typeName))} }, tree)`
+				body: `${wrapFn}({ ...$edited(data), ${clearedKeys}${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, `restItems(${JSON.stringify(method)}, v)`, nodeMap, kindEntries, node.typeName))} }, tree)`
 			};
 		}
 		const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>${admitted}${hasBlankArm(f) ? ' | null' : ''}`;
@@ -655,7 +657,6 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 		const setOf = (cleared: string): string =>
 			`${wrapFn}({ ...$edited(data), ${cleared}${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), input), nodeMap, kindEntries, node.typeName))}${branchDefaults} }, tree)`;
 		const set = setOf('');
-		const crossed = node instanceof AssembledList ? [] : armCrossingClears(node, node.slots, f);
 		return {
 			name: method,
 			params: `v: ${setterValueType}`,
@@ -664,7 +665,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 					? `v === undefined ? ${wrapFn}({ ...$edited(data), ${branch.storageKeys.map((key) => `${key}: undefined`).join(', ')} }, tree) : ${set}`
 					: crossed.length === 0
 						? set
-						: `v === undefined ? ${set} : ${setOf(crossed.map((other) => `${other.storageKey}: undefined, `).join(''))}`
+						: `v === undefined ? ${set} : ${setOf(clearedKeys)}`
 		};
 	});
 }

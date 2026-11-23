@@ -1203,6 +1203,17 @@ export function armRequiredSlot(node: FieldCarryingNode, slots: readonly Assembl
 	return holding.length > 0 && holding.every((arm) => arm.needed.includes(slot.propertyName)) && found.arms.every((arm) => arm.needed.length > 0);
 }
 
+export function armClearsOfNode(node: AssembledNode): ReadonlyMap<string, readonly string[]> {
+	if (!isSlotBearingCompound(node) || node instanceof AssembledList) return new Map();
+	const found = exclusiveArmsOf(node, node.slots);
+	if (found === undefined) return new Map();
+	const clears = node.slots
+		.filter((slot) => found.keys.includes(slot.propertyName))
+		.map((slot) => [slot.propertyName, armCrossingClears(node, node.slots, slot).map((other) => other.propertyName)] as const)
+		.filter(([, cleared]) => cleared.length > 0);
+	return new Map(clears);
+}
+
 export function exclusiveArmsOfNode(node: AssembledNode): ExclusiveArms | undefined {
 	return isSlotBearingCompound(node) && !(node instanceof AssembledList) ? exclusiveArmsOf(node, node.slots) : undefined;
 }

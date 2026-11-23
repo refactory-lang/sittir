@@ -46,3 +46,17 @@ export function aSetterForASlotItsArmRequiresTakesNoUndefined(): void {
 	// @ts-expect-error an attribute input needs one of its arms
 	bound.$with.arguments(undefined);
 }
+
+declare const parsed: T.AttributeInput.Parsed;
+
+export function aSwitchedArmReadsTheOldArmsSlotAsAbsent(): void {
+	const switched = parsed.$with.value(strictValue).$with.arguments(strictArguments);
+	const gone: undefined = switched.value();
+	// @ts-expect-error the value was cleared when the arguments were set
+	const kept: object = switched.value();
+	const back = switched.$with.value(strictValue);
+	const arguments_: undefined = back.arguments();
+	void gone;
+	void kept;
+	void arguments_;
+}

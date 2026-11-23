@@ -4860,6 +4860,12 @@ export interface BinaryExpression {
 		readonly operator: SlotHint<NonNullable<NonNullable<T.BinaryExpression.Config>['operator']>>;
 		readonly right: SlotHint<NonNullable<NonNullable<T.BinaryExpression.Config>['right']>>;
 		readonly binaryExpressionIn: SlotHint<NonNullable<T.BinaryExpressionIn>>;
+		readonly $clears: {
+			readonly left: 'binaryExpressionIn';
+			readonly operator: 'binaryExpressionIn';
+			readonly right: 'binaryExpressionIn';
+			readonly binaryExpressionIn: 'left' | 'operator' | 'right';
+		};
 	};
 	readonly left: () => Expression | undefined;
 	readonly operator: () =>

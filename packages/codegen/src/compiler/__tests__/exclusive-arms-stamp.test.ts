@@ -1,5 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
+import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
+import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
@@ -50,6 +52,28 @@ function slotOf(nodeMap: NodeMap, kind: string, field: string) {
 	if (!node || !isSlotBearingCompound(node)) throw new Error(`expected '${kind}' to assemble as a compound`);
 	return { node, slot: node.slots.find((candidate) => candidate.fieldName === field)! };
 }
+
+describe('arm-crossing setters emission', () => {
+	const listArm = (): { generatedIdTables: never; nodeMap: NodeMap } => {
+		const { rules: catalogRules, ruleCatalog } = buildRuleCatalog({
+			input: choice(field('items', { type: 'REPEAT1', content: sym('word') }), field('value', sym('digits'))),
+			...leaves
+		} as never);
+		const raw: RawGrammar = { name: 'synth', fileTypes: [], rules: catalogRules, ruleCatalog, evaluateSynthesized: new Set<string>(), extras: [], externals: [], supertypes: [], factoryInline: [], inline: [], conflicts: [], precedences: [], word: null, references: [] };
+		const assembled = assemblePredicted(raw);
+		return { generatedIdTables: assembled.generatedIdTables as never, nodeMap: assembled.nodeMap };
+	};
+
+	it('clears the scalar arm when a parsed rest setter sets the list arm', () => {
+		const wrap = emitWrap({ ...listArm(), grammar: 'synth' });
+		expect(wrap).toMatch(/_value: undefined, _items: /);
+	});
+
+	it('clears the scalar arm when a built rest setter sets the list arm', () => {
+		const factories = emitFactories({ ...listArm(), grammar: 'synth' });
+		expect(factories).toMatch(/value: undefined, items: restItems/);
+	});
+});
 
 describe('arm-crossing setters', () => {
 	it('clears the slots only the old arm held and keeps a shared one', () => {
