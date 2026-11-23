@@ -2873,7 +2873,7 @@ function wrapFieldDeclaration$with(node: Held, setter: string, args: readonly un
 								: wrapFieldDeclaration(
 										{
 											...$edited(data),
-											_name: undefined,
+											_name: [],
 											_type: undefined,
 											_field_declaration_arm: admitSlot(handle, 'field_declaration', 'fieldDeclarationArm', v)
 										},

@@ -11,7 +11,7 @@ import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
 import { armCrossingClears, armRequiredSlot, builtTypeSurfaceOf } from '../../emitters/factories.ts';
 import type { NodeMap, RawGrammar } from '../types.ts';
 
-function synthetic(rules: Record<string, unknown>): NodeMap {
+function assembledOf(rules: Record<string, unknown>): ReturnType<typeof assemblePredicted> {
 	const { rules: catalogRules, ruleCatalog } = buildRuleCatalog(rules as never);
 	const raw: RawGrammar = {
 		name: 'synth',
@@ -29,8 +29,10 @@ function synthetic(rules: Record<string, unknown>): NodeMap {
 		word: null,
 		references: []
 	};
-	return assemblePredicted(raw).nodeMap;
+	return assemblePredicted(raw);
 }
+
+const synthetic = (rules: Record<string, unknown>): NodeMap => assembledOf(rules).nodeMap;
 
 function held(nodeMap: NodeMap, kind: string): Record<string, readonly { arm: number; required: boolean }[] | undefined> {
 	const node = nodeMap.nodes.get(kind);
@@ -109,6 +111,16 @@ describe('arm-crossing setters', () => {
 		expect(crossing('right')).toEqual(['left']);
 		expect(crossing('left')).toEqual(['right']);
 		expect(crossing('shared')).toEqual([]);
+	});
+
+	it('clears a list on a parsed node with its empty form, and leaves the config absent', () => {
+		const assembled = assembledOf({
+			input: choice(seq(field('names', repeat1(sym('word'))), field('kind', sym('digits'))), field('other', sym('word'))),
+			...leaves
+		});
+		const surfaces = { nodeMap: assembled.nodeMap, generatedIdTables: assembled.generatedIdTables as never, grammar: 'synth' };
+		expect(emitWrap(surfaces)).toMatch(/_names: \[\],\s*_kind: undefined,\s*_other:/);
+		expect(emitFactories(surfaces)).toMatch(/names: undefined,\s*kind: undefined,\s*other: value/);
 	});
 
 	it('types a setter without undefined only for a slot its arm requires, and only when no arm is empty', () => {

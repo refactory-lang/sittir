@@ -1196,6 +1196,10 @@ export function armCrossingClears(node: FieldCarryingNode, slots: readonly Assem
 	return slots.filter((other) => found.keys.includes(other.propertyName) && !kept.has(other.propertyName));
 }
 
+export function clearedSlotEntries(cleared: readonly AssembledNonterminal[], surface: 'config' | 'storage'): readonly string[] {
+	return cleared.map((slot) => (surface === 'config' ? `${slot.propertyName}: undefined` : `${slot.storageKey}: ${isMultiple(slot) ? '[]' : 'undefined'}`));
+}
+
 export function armRequiredSlot(node: FieldCarryingNode, slots: readonly AssembledNonterminal[], slot: AssembledNonterminal): boolean {
 	const found = exclusiveArmsOf(node, slots);
 	if (found === undefined) return false;
@@ -2231,7 +2235,7 @@ function fieldCarryingFactoryText(
 		const slotSet = (f: AssembledNonterminal, value: string): Pick<SetterEntry, 'body' | 'reads'> => {
 			const set = call(fn, `{ ...${configAccess}, ${f.propertyName}: ${value} }${optionsArg}`);
 			const crossed = armCrossingClears(node, slots, f);
-			const crossing = call(fn, `{ ...${configAccess}, ${crossed.map((other) => `${other.propertyName}: undefined`).join(', ')}, ${f.propertyName}: ${value} }${optionsArg}`);
+			const crossing = call(fn, `{ ...${configAccess}, ${clearedSlotEntries(crossed, 'config').join(', ')}, ${f.propertyName}: ${value} }${optionsArg}`);
 			const full = {
 				body: branch?.needed.includes(f.propertyName) === true ? `${value} === undefined ? ${withoutBranch()} : ${crossed.length === 0 ? set : crossing}` : crossed.length === 0 ? set : `${value} === undefined ? ${set} : ${crossing}`,
 				reads: optionsArg === '' ? [configAccess] : [configAccess, 'options']

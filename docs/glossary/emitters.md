@@ -15493,7 +15493,7 @@ The arms of a kind's one required choice of arms, read from its slots' arm stamp
 
 ### `packages/codegen/src/emitters/factories.ts::armCrossingClears`
 
-The slots a setter clears when it sets `slot` on a kind that is a required choice of arms: every slot some arm holds that no arm holding `slot` holds. Setting a slot only another arm holds so gives that arm and drops the old arm's slots; a slot every arm holds clears nothing. Empty for a kind without arms and for a slot no arm holds. The built setters (objects and records) and the parsed setters emit it only for a defined value; clearing a slot with `undefined` clears that slot alone.
+The slots a setter clears when it sets `slot` on a kind that is a required choice of arms: every slot some arm holds that no arm holding `slot` holds. Setting a slot only another arm holds so gives that arm and drops the old arm's slots; a slot every arm holds clears nothing. Empty for a kind without arms and for a slot no arm holds. The built setters (objects and records) and the parsed setters emit it only for a defined value; clearing a slot with `undefined` clears that slot alone. `clearedSlotEntries` writes what each cleared slot becomes.
 
 ### `packages/codegen/src/emitters/factories.ts::armRequiredSlot`
 
@@ -15502,6 +15502,10 @@ Whether a slot's setter takes no `undefined`: every arm that holds the slot requ
 ### `packages/codegen/src/emitters/factories.ts::armClearsOfNode`
 
 For each slot of a kind that is a required choice of arms, the names of the slots its setter clears (`armCrossingClears`), omitting a slot that clears none. The node's `$clears` hint is printed from it, so the type a setter returns reads each cleared slot as `undefined` instead of the refinement an earlier setter in the chain gave it. Empty for a kind without arms and for a list.
+
+### `packages/codegen/src/emitters/factories.ts::clearedSlotEntries`
+
+The object entries that clear slots an arm-crossing setter leaves behind (`armCrossingClears`), one derivation for both surfaces. A built setter writes the `config` surface, where a cleared slot is `undefined` by its property name, because the other arm's config row types that key as `never`. A parsed setter writes the `storage` surface, where a list slot is always an array, so a cleared list takes `[]` and any other slot `undefined`, by its storage key.
 
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 

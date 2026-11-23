@@ -730,7 +730,7 @@ function wrapCastExpression$with(node: Held, setter: string, args: readonly unkn
 						: wrapCastExpression(
 								{
 									...$edited(data),
-									_type: undefined,
+									_type: [],
 									_value: undefined,
 									_cast_expression_arm: admitSlot(handle, 'cast_expression', 'castExpressionArm', v)
 								},

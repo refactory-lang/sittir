@@ -32,7 +32,7 @@ import {
 } from './shared.ts';
 import { formDefinedProperties } from './refine-emit.ts';
 import { chainReadsAsList, wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
-import { armCrossingClears, builtTypeSurfaceOf, chainItemsAt, anyShapes, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
+import { armCrossingClears, builtTypeSurfaceOf, chainItemsAt, anyShapes, clearedSlotEntries, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf, recordVerbatimPlaceOf } from './record-construction.ts';
@@ -633,7 +633,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 		const envelopeType = splicedEnvelopeType(f, nodeMap);
 		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;
 		const crossed = node instanceof AssembledList ? [] : armCrossingClears(node, node.slots, f);
-		const clearedKeys = crossed.map((other) => `${other.storageKey}: undefined, `).join('');
+		const clearedKeys = clearedSlotEntries(crossed, 'storage').map((entry) => `${entry}, `).join('');
 		if (isMultiple(f) && restSlots.has(method)) {
 			const storageList = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
 			if (finalSeatOf(f) !== undefined && admitted !== '')
