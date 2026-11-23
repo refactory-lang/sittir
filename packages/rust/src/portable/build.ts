@@ -1986,11 +1986,11 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('clause.let.pattern', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('clause.let.pattern', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('clause.let.pattern', value);
@@ -6370,11 +6370,11 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('declaration.parameter.variadic.pattern', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('declaration.parameter.variadic.pattern', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('declaration.parameter.variadic.pattern', value);
@@ -8219,11 +8219,11 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('declaration.variable.name', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('declaration.variable.name', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('declaration.variable.name', value);
@@ -63393,11 +63393,11 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.as.pattern', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.as.pattern', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.as.pattern', value);
@@ -63637,11 +63637,11 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.list.elements', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.list.elements', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.list.elements', value);
@@ -63838,11 +63838,11 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.mutable.pattern', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.mutable.pattern', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.mutable.pattern', value);
@@ -64039,11 +64039,11 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.or.left', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.or.left', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.or.left', value);
@@ -64240,11 +64240,11 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.or.right', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.or.right', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.or.right', value);
@@ -64441,11 +64441,11 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.or.right', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.or.right', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.or.right', value);
@@ -64465,7 +64465,7 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			return unbuilt('pattern.or.right', value);
 	}
 };
-type pattern_range_exclusive$419_right$Item =
+type pattern_range_exclusive$419_end$Item =
 	| 'crate'
 	| 'false'
 	| 'self'
@@ -64511,7 +64511,7 @@ type pattern_range_exclusive$419_right$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| RustMap['nodes']['literal.string.raw'];
-const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_right$Item) => {
+const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -64542,11 +64542,11 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 			)
 		)
 			return value;
-		return unseated('pattern.range.exclusive.right', value);
+		return unseated('pattern.range.exclusive.end', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'identifier.metavariable': {
 			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
 			return identifier_metavariable$127(value);
@@ -64554,9 +64554,9 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return literal_character$145(value);
@@ -64580,7 +64580,7 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 				value.content !== undefined
 			)
 				return literal_character$148(value);
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.number.float':
 			return literal_number_float$162(value);
 		case 'literal.number.integer':
@@ -64598,18 +64598,18 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 		case 'literal.string.bytes':
 			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.string.c':
 			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.string.raw':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		default:
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 	}
 };
-type pattern_range_exclusive$422_left$Item =
+type pattern_range_exclusive$422_start$Item =
 	| 'crate'
 	| 'false'
 	| 'self'
@@ -64655,7 +64655,7 @@ type pattern_range_exclusive$422_left$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| RustMap['nodes']['literal.string.raw'];
-const pattern_range_exclusive$422_left = (value: pattern_range_exclusive$422_left$Item) => {
+const pattern_range_exclusive$422_start = (value: pattern_range_exclusive$422_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -64686,11 +64686,11 @@ const pattern_range_exclusive$422_left = (value: pattern_range_exclusive$422_lef
 			)
 		)
 			return value;
-		return unseated('pattern.range.exclusive.left', value);
+		return unseated('pattern.range.exclusive.start', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 		case 'identifier.metavariable': {
 			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
 			return identifier_metavariable$127(value);
@@ -64698,9 +64698,9 @@ const pattern_range_exclusive$422_left = (value: pattern_range_exclusive$422_lef
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return literal_character$145(value);
@@ -64724,7 +64724,7 @@ const pattern_range_exclusive$422_left = (value: pattern_range_exclusive$422_lef
 				value.content !== undefined
 			)
 				return literal_character$148(value);
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 		case 'literal.number.float':
 			return literal_number_float$162(value);
 		case 'literal.number.integer':
@@ -64742,18 +64742,18 @@ const pattern_range_exclusive$422_left = (value: pattern_range_exclusive$422_lef
 		case 'literal.string.bytes':
 			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 		case 'literal.string.c':
 			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 		case 'literal.string.raw':
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 		default:
-			return unbuilt('pattern.range.exclusive.left', value);
+			return unbuilt('pattern.range.exclusive.start', value);
 	}
 };
-type pattern_range_inclusive$419_right$Item =
+type pattern_range_inclusive$419_end$Item =
 	| 'crate'
 	| 'false'
 	| 'self'
@@ -64799,7 +64799,7 @@ type pattern_range_inclusive$419_right$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| RustMap['nodes']['literal.string.raw'];
-const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_right$Item) => {
+const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
@@ -64830,11 +64830,11 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 			)
 		)
 			return value;
-		return unseated('pattern.range.inclusive.right', value);
+		return unseated('pattern.range.inclusive.end', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 		case 'identifier.metavariable': {
 			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
 			return identifier_metavariable$127(value);
@@ -64842,9 +64842,9 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return literal_character$145(value);
@@ -64868,7 +64868,7 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 				value.content !== undefined
 			)
 				return literal_character$148(value);
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 		case 'literal.number.float':
 			return literal_number_float$162(value);
 		case 'literal.number.integer':
@@ -64886,15 +64886,15 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 		case 'literal.string.bytes':
 			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 		case 'literal.string.c':
 			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 		case 'literal.string.raw':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 		default:
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.inclusive.end', value);
 	}
 };
 type pattern_reference$324_pattern$Item =
@@ -65074,11 +65074,11 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.reference.pattern', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.reference.pattern', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.reference.pattern', value);
@@ -65275,11 +65275,11 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.reference.value.pattern', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.reference.value.pattern', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.reference.value.pattern', value);
@@ -65583,11 +65583,11 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.struct.field.pattern', value);
@@ -65784,11 +65784,11 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.struct.tuple.fields', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.struct.tuple.fields', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.struct.tuple.fields', value);
@@ -66045,11 +66045,11 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('pattern.tuple.elements', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('pattern.tuple.elements', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('pattern.tuple.elements', value);
@@ -77774,11 +77774,11 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			if (value.left !== undefined && value.right === undefined) return pattern_range_exclusive$422(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$422(value);
 			return unbuilt('statement.loop.for_each.left', value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
 			return unbuilt('statement.loop.for_each.left', value);
 		case 'pattern.range.inclusive.legacy':
 			return unbuilt('statement.loop.for_each.left', value);
@@ -85782,37 +85782,33 @@ const pattern_or$387 = (input: PathInput<RustMap, 'pattern.or'>): ReturnType<typ
 const pattern_range_exclusive$419 = (
 	input: PathInput<RustMap, 'pattern.range.exclusive'>
 ): ReturnType<typeof b.rangePatternPrefix> => {
-	const unroutedSlot = unroutedIn(input, ['right']);
+	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
 	return b.rangePatternPrefix({
-		right:
-			input.right === undefined
-				? missing('pattern.range.exclusive.right')
-				: pattern_range_exclusive$419_right(input.right),
+		end: input.end === undefined ? missing('pattern.range.exclusive.end') : pattern_range_exclusive$419_end(input.end),
 		operator: 100
 	});
 };
 const pattern_range_exclusive$422 = (
 	input: PathInput<RustMap, 'pattern.range.exclusive'>
 ): ReturnType<typeof b.rangePatternWithLeft> => {
-	const unroutedSlot = unroutedIn(input, ['left']);
+	const unroutedSlot = unroutedIn(input, ['start']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
 	return b.rangePatternWithLeft({
-		left:
-			input.left === undefined ? missing('pattern.range.exclusive.left') : pattern_range_exclusive$422_left(input.left),
+		start:
+			input.start === undefined
+				? missing('pattern.range.exclusive.start')
+				: pattern_range_exclusive$422_start(input.start),
 		content: 421
 	});
 };
 const pattern_range_inclusive$419 = (
 	input: PathInput<RustMap, 'pattern.range.inclusive'>
 ): ReturnType<typeof b.rangePatternPrefix> => {
-	const unroutedSlot = unroutedIn(input, ['right']);
+	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.inclusive', unroutedSlot);
 	return b.rangePatternPrefix({
-		right:
-			input.right === undefined
-				? missing('pattern.range.inclusive.right')
-				: pattern_range_inclusive$419_right(input.right),
+		end: input.end === undefined ? missing('pattern.range.inclusive.end') : pattern_range_inclusive$419_end(input.end),
 		operator: 137
 	});
 };

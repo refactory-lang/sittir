@@ -18629,28 +18629,28 @@ function buildMacroDefinitionBrace$with$macroRules(this: Received<Held>, ...args
 	return buildMacroDefinitionBrace$with(receiverOf(this, '$with.macroRules'), 'macroRules', args);
 }
 
-export function buildRangePatternPrefix<RightSlot extends T.RangePatternPrefix.Config['right']>(
-	config: RefusingConfig<T.RangePatternPrefix.Config, { right: RightSlot }>
+export function buildRangePatternPrefix<EndSlot extends T.RangePatternPrefix.Config['end']>(
+	config: RefusingConfig<T.RangePatternPrefix.Config, { end: EndSlot }>
 ): T.RangePatternPrefix.Bound;
 export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
 	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-		'RangePatternPrefix.right',
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternPrefix['_end']>>(config.end),
+		'RangePatternPrefix.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, end: _end });
 	const node = {
 		$type: TSKindId.RangePatternPrefix as const,
 		_operator,
-		_right,
+		_end,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		operator: () => _operator,
-		right: () => hydrateStoredSlot(node, '_right'),
+		end: () => hydrateStoredSlot(node, '_end'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18663,7 +18663,7 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 	};
 	node.$with = {
 		operator: buildRangePatternPrefix$with$operator,
-		right: buildRangePatternPrefix$with$right,
+		end: buildRangePatternPrefix$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18678,9 +18678,9 @@ function buildRangePatternPrefix$with(node: Held, setter: string, args: readonly
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, operator: value }))
 			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, right: value }))
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, end: value }))
 			);
 	}
 	throw new Error(`range_pattern_prefix has no $with.${setter}`);
@@ -18688,35 +18688,35 @@ function buildRangePatternPrefix$with(node: Held, setter: string, args: readonly
 function buildRangePatternPrefix$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildRangePatternPrefix$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function buildRangePatternPrefix$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternPrefix$with(receiverOf(this, '$with.right'), 'right', args);
+function buildRangePatternPrefix$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternPrefix$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export function buildRangePatternWithLeftWithRight<RightSlot extends T.RangePatternWithLeftWithRight.Config['right']>(
-	config: RefusingConfig<T.RangePatternWithLeftWithRight.Config, { right: RightSlot }>
+export function buildRangePatternWithLeftWithRight<EndSlot extends T.RangePatternWithLeftWithRight.Config['end']>(
+	config: RefusingConfig<T.RangePatternWithLeftWithRight.Config, { end: EndSlot }>
 ): T.RangePatternWithLeftWithRight.Bound;
 export function buildRangePatternWithLeftWithRight(
 	config: T.RangePatternWithLeftWithRight.Config
 ): T.RangePatternWithLeftWithRight.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
 	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-		'RangePatternWithLeftWithRight.right',
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_end']>>(config.end),
+		'RangePatternWithLeftWithRight.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
+		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, end: _end });
 	const node = {
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
 		_operator,
-		_right,
+		_end,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		operator: () => _operator,
-		right: () => hydrateStoredSlot(node, '_right'),
+		end: () => hydrateStoredSlot(node, '_end'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18729,7 +18729,7 @@ export function buildRangePatternWithLeftWithRight(
 	};
 	node.$with = {
 		operator: buildRangePatternWithLeftWithRight$with$operator,
-		right: buildRangePatternWithLeftWithRight$with$right,
+		end: buildRangePatternWithLeftWithRight$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -18744,9 +18744,9 @@ function buildRangePatternWithLeftWithRight$with(node: Held, setter: string, arg
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, operator: value }))
 			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, right: value }))
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, end: value }))
 			);
 	}
 	throw new Error(`range_pattern_with_left_with_right has no $with.${setter}`);
@@ -18754,36 +18754,36 @@ function buildRangePatternWithLeftWithRight$with(node: Held, setter: string, arg
 function buildRangePatternWithLeftWithRight$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildRangePatternWithLeftWithRight$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function buildRangePatternWithLeftWithRight$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternWithLeftWithRight$with(receiverOf(this, '$with.right'), 'right', args);
+function buildRangePatternWithLeftWithRight$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternWithLeftWithRight$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
 export const buildRangePatternWithLeftBare: TSKindId.RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
 
 export function buildRangePatternWithLeft<
-	LeftSlot extends T.RangePatternWithLeft.Config['left'],
+	StartSlot extends T.RangePatternWithLeft.Config['start'],
 	ContentSlot extends T.RangePatternWithLeft.Config['content']
 >(
-	config: RefusingConfig<T.RangePatternWithLeft.Config, { left: LeftSlot; content: ContentSlot }>
+	config: RefusingConfig<T.RangePatternWithLeft.Config, { start: StartSlot; content: ContentSlot }>
 ): T.RangePatternWithLeft.Bound;
 export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [config]);
-	const _left = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-		'RangePatternWithLeft.left',
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternWithLeft['_start']>>(config.start),
+		'RangePatternWithLeft.start',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { start: _start, content: _content });
 	const node = {
 		$type: TSKindId.RangePatternWithLeft as const,
-		_left,
+		_start,
 		_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		left: () => hydrateStoredSlot(node, '_left'),
+		start: () => hydrateStoredSlot(node, '_start'),
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -18796,7 +18796,7 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		left: buildRangePatternWithLeft$with$left,
+		start: buildRangePatternWithLeft$with$start,
 		content: buildRangePatternWithLeft$with$content,
 		[RECEIVER]: node
 	};
@@ -18808,9 +18808,9 @@ function buildRangePatternWithLeft$with(node: Held, setter: string, args: readon
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.RangePatternWithLeft.Config;
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['left']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft({ ...config, left: value }))
+		case 'start':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['start']>) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeft({ ...config, start: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['content']>) =>
@@ -18819,8 +18819,8 @@ function buildRangePatternWithLeft$with(node: Held, setter: string, args: readon
 	}
 	throw new Error(`range_pattern_with_left has no $with.${setter}`);
 }
-function buildRangePatternWithLeft$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternWithLeft$with(receiverOf(this, '$with.left'), 'left', args);
+function buildRangePatternWithLeft$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternWithLeft$with(receiverOf(this, '$with.start'), 'start', args);
 }
 function buildRangePatternWithLeft$with$content(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildRangePatternWithLeft$with(receiverOf(this, '$with.content'), 'content', args);

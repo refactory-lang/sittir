@@ -10568,7 +10568,7 @@ export interface MacroDefinitionBrace {
 export interface RangePatternPrefix {
 	readonly $type: TSKindId.RangePatternPrefix;
 	readonly _operator: TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly _right:
+	readonly _end:
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10578,11 +10578,11 @@ export interface RangePatternPrefix {
 		| ScopedIdentifier;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
-		readonly _right: 'right';
+		readonly _end: 'end';
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'..=' | '..', TSKindId.DotDotEq | TSKindId.DotDot>;
-		readonly right:
+		readonly end:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
 					| TSKindId.TrueKeyword
@@ -10599,10 +10599,10 @@ export interface RangePatternPrefix {
 	};
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.RangePatternPrefix.Config>['operator']>;
-		readonly right: SlotHint<NonNullable<T.RangePatternPrefix.Config>['right']>;
+		readonly end: SlotHint<NonNullable<T.RangePatternPrefix.Config>['end']>;
 	};
 	readonly operator: () => TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly right: () =>
+	readonly end: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10615,7 +10615,7 @@ export interface RangePatternPrefix {
 export interface RangePatternWithLeftWithRight {
 	readonly $type: TSKindId.RangePatternWithLeftWithRight;
 	readonly _operator: TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly _right:
+	readonly _end:
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10625,11 +10625,11 @@ export interface RangePatternWithLeftWithRight {
 		| ScopedIdentifier;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
-		readonly _right: 'right';
+		readonly _end: 'end';
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
-		readonly right:
+		readonly end:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
 					| TSKindId.TrueKeyword
@@ -10646,10 +10646,10 @@ export interface RangePatternWithLeftWithRight {
 	};
 	readonly __slotHints__?: {
 		readonly operator: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>;
-		readonly right: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>;
+		readonly end: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['end']>;
 	};
 	readonly operator: () => TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly right: () =>
+	readonly end: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10661,7 +10661,7 @@ export interface RangePatternWithLeftWithRight {
 
 export interface RangePatternWithLeft {
 	readonly $type: TSKindId.RangePatternWithLeft;
-	readonly _left:
+	readonly _start:
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10671,11 +10671,11 @@ export interface RangePatternWithLeft {
 		| ScopedIdentifier;
 	readonly _content: RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 	readonly __slotNames__?: {
-		readonly _left: 'left';
+		readonly _start: 'start';
 		readonly _content: 'content';
 	};
 	readonly __inputHints__?: {
-		readonly left:
+		readonly start:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
 					| TSKindId.TrueKeyword
@@ -10694,10 +10694,10 @@ export interface RangePatternWithLeft {
 			| RangePatternWithLeftWithRight;
 	};
 	readonly __slotHints__?: {
-		readonly left: SlotHint<NonNullable<T.RangePatternWithLeft.Config>['left']>;
+		readonly start: SlotHint<NonNullable<T.RangePatternWithLeft.Config>['start']>;
 		readonly content: SlotHint<NonNullable<T.RangePatternWithLeft.Config>['content']>;
 	};
-	readonly left: () =>
+	readonly start: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable

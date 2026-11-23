@@ -920,18 +920,18 @@ export const records = {
 		words: 7,
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
-		right: { word: 3, width: 4, forms: 3, built: 3 }
+		end: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	RangePatternWithLeftWithRightNode: {
 		words: 7,
 		builtWords: 4,
 		operator: { word: 2, width: 1, forms: 2, built: 2 },
-		right: { word: 3, width: 4, forms: 3, built: 3 }
+		end: { word: 3, width: 4, forms: 3, built: 3 }
 	},
 	RangePatternWithLeftNode: {
 		words: 10,
 		builtWords: 4,
-		left: { word: 2, width: 4, forms: 3, built: 2 },
+		start: { word: 2, width: 4, forms: 3, built: 2 },
 		content: { word: 6, width: 4, forms: 3, built: 3 }
 	},
 	StructItemBraceNode: {

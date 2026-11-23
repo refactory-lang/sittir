@@ -50348,9 +50348,9 @@ export const build: PortableBuildTable = {
 						[359, 'path'],
 						[379, 'path'],
 						[380, 'content'],
-						[419, 'right'],
-						[420, 'right'],
-						[422, 'left']
+						[419, 'end'],
+						[420, 'end'],
+						[422, 'start']
 					]
 				},
 				{
@@ -50376,9 +50376,9 @@ export const build: PortableBuildTable = {
 						[359, 'path'],
 						[379, 'path'],
 						[380, 'content'],
-						[419, 'right'],
-						[420, 'right'],
-						[422, 'left']
+						[419, 'end'],
+						[420, 'end'],
+						[422, 'start']
 					]
 				},
 				{
@@ -50403,9 +50403,9 @@ export const build: PortableBuildTable = {
 						[359, 'path'],
 						[379, 'path'],
 						[380, 'content'],
-						[419, 'right'],
-						[420, 'right'],
-						[422, 'left']
+						[419, 'end'],
+						[420, 'end'],
+						[422, 'start']
 					]
 				},
 				{
@@ -50629,9 +50629,9 @@ export const build: PortableBuildTable = {
 						[416, 'name'],
 						[417, 'name'],
 						[418, 'name'],
-						[419, 'right'],
-						[420, 'right'],
-						[422, 'left'],
+						[419, 'end'],
+						[420, 'end'],
+						[422, 'start'],
 						[431, 'expression'],
 						[435, 'element'],
 						[435, 'length'],
@@ -50981,9 +50981,9 @@ export const build: PortableBuildTable = {
 						[394, 'expression'],
 						[397, 'body'],
 						[415, 'pattern'],
-						[419, 'right'],
-						[420, 'right'],
-						[422, 'left'],
+						[419, 'end'],
+						[420, 'end'],
+						[422, 'start'],
 						[431, 'expression'],
 						[435, 'element'],
 						[435, 'length'],
@@ -52820,17 +52820,17 @@ export const build: PortableBuildTable = {
 					builder: 'rangePatternPrefix',
 					slots: [
 						{
-							name: 'right',
+							name: 'end',
 							steps: [
 								{
-									key: 'right'
+									key: 'end'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [419, 'right'],
+									at: [419, 'end'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -52867,8 +52867,8 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['left'],
-							required: ['right']
+							absent: ['start'],
+							required: ['end']
 						}
 					]
 				},
@@ -52877,17 +52877,17 @@ export const build: PortableBuildTable = {
 					builder: 'rangePatternWithLeft',
 					slots: [
 						{
-							name: 'left',
+							name: 'start',
 							steps: [
 								{
-									key: 'left'
+									key: 'start'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [422, 'left'],
+									at: [422, 'start'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -52924,8 +52924,8 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['right'],
-							required: ['left']
+							absent: ['end'],
+							required: ['start']
 						}
 					]
 				},
@@ -52934,17 +52934,17 @@ export const build: PortableBuildTable = {
 					builder: 'rangePatternWithLeft',
 					slots: [
 						{
-							name: 'left',
+							name: 'start',
 							steps: [
 								{
-									key: 'left'
+									key: 'start'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [422, 'left'],
+									at: [422, 'start'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -52968,7 +52968,7 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'right',
+							name: 'end',
 							steps: [
 								{
 									key: 'content',
@@ -52980,14 +52980,14 @@ export const build: PortableBuildTable = {
 									kinds: [420]
 								},
 								{
-									key: 'right'
+									key: 'end'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [420, 'right'],
+									at: [420, 'end'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -53034,7 +53034,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['left', 'right']
+							required: ['end', 'start']
 						}
 					]
 				}
@@ -53048,17 +53048,17 @@ export const build: PortableBuildTable = {
 					builder: 'rangePatternPrefix',
 					slots: [
 						{
-							name: 'right',
+							name: 'end',
 							steps: [
 								{
-									key: 'right'
+									key: 'end'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [419, 'right'],
+									at: [419, 'end'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -53095,8 +53095,8 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							absent: ['left'],
-							required: ['right']
+							absent: ['start'],
+							required: ['end']
 						}
 					]
 				},
@@ -53105,17 +53105,17 @@ export const build: PortableBuildTable = {
 					builder: 'rangePatternWithLeft',
 					slots: [
 						{
-							name: 'left',
+							name: 'start',
 							steps: [
 								{
-									key: 'left'
+									key: 'start'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [422, 'left'],
+									at: [422, 'start'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -53139,7 +53139,7 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'right',
+							name: 'end',
 							steps: [
 								{
 									key: 'content',
@@ -53151,14 +53151,14 @@ export const build: PortableBuildTable = {
 									kinds: [420]
 								},
 								{
-									key: 'right'
+									key: 'end'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [420, 'right'],
+									at: [420, 'end'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -53205,7 +53205,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['left', 'right']
+							required: ['end', 'start']
 						}
 					]
 				}
@@ -53219,17 +53219,17 @@ export const build: PortableBuildTable = {
 					builder: 'rangePatternWithLeft',
 					slots: [
 						{
-							name: 'left',
+							name: 'start',
 							steps: [
 								{
-									key: 'left'
+									key: 'start'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [422, 'left'],
+									at: [422, 'start'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -53253,7 +53253,7 @@ export const build: PortableBuildTable = {
 							}
 						},
 						{
-							name: 'right',
+							name: 'end',
 							steps: [
 								{
 									key: 'content',
@@ -53265,14 +53265,14 @@ export const build: PortableBuildTable = {
 									kinds: [420]
 								},
 								{
-									key: 'right'
+									key: 'end'
 								}
 							],
 							multiple: false,
 							list: false,
 							seats: [
 								{
-									at: [420, 'right'],
+									at: [420, 'end'],
 									kinds: [
 										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
 										331, 332, 333, 334, 336, 367, 481
@@ -53319,7 +53319,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['left', 'right']
+							required: ['end', 'start']
 						}
 					]
 				}
@@ -59050,9 +59050,9 @@ export const build: PortableBuildTable = {
 		'409': ['tokens'],
 		'410': ['tokens'],
 		'415': ['pattern'],
-		'419': ['right'],
-		'420': ['right'],
-		'422': ['left'],
+		'419': ['end'],
+		'420': ['end'],
+		'422': ['start'],
 		'429': ['content'],
 		'430': ['content'],
 		'431': ['expression'],

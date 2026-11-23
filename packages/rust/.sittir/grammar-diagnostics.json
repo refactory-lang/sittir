@@ -1780,7 +1780,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.range.exclusive: right's step at content is not a plain slot"
+    "message": "pattern.range.exclusive: end's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -1788,7 +1788,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.range.inclusive: right's step at content is not a plain slot"
+    "message": "pattern.range.inclusive: end's step at content is not a plain slot"
   },
   {
     "scope": "grammar",
@@ -1796,7 +1796,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "pattern.range.inclusive.legacy: right's step at content is not a plain slot"
+    "message": "pattern.range.inclusive.legacy: end's step at content is not a plain slot"
   },
   {
     "scope": "grammar",

@@ -10548,9 +10548,9 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	},
 	398: { body: { move: { types: [], kinds: [310, 311] } } },
 	415: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
-	419: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
-	420: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
-	422: { left: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
+	419: { end: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
+	420: { end: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
+	422: { start: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
 	429: {
 		content: {
 			exclusive: { types: [], kinds: [252] },
@@ -11130,13 +11130,13 @@ declare module '../types.js' {
 		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };
 	}
 	interface RangePatternPrefix {
-		readonly __slotFlags__?: { readonly right: 'byte' };
+		readonly __slotFlags__?: { readonly end: 'byte' };
 	}
 	interface RangePatternWithLeftWithRight {
-		readonly __slotFlags__?: { readonly right: 'byte' };
+		readonly __slotFlags__?: { readonly end: 'byte' };
 	}
 	interface RangePatternWithLeft {
-		readonly __slotFlags__?: { readonly left: 'byte' };
+		readonly __slotFlags__?: { readonly start: 'byte' };
 	}
 	interface AttributedParameter {
 		readonly __slotFlags__?: { readonly content: 'exclusive' | 'mutable' | 'unsafe' | 'unsigned' | 'writable' };

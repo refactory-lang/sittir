@@ -25048,26 +25048,26 @@ function withMacroDefinitionBrace(node: object, setter: string, args: readonly u
 	throw new Error(`macro_definition_brace has no $with.${setter}`);
 }
 
-export function buildRangePatternPrefix<RightSlot extends T.RangePatternPrefix.Config['right']>(
-	config: RefusingConfig<T.RangePatternPrefix.Config, { right: RightSlot }>
+export function buildRangePatternPrefix<EndSlot extends T.RangePatternPrefix.Config['end']>(
+	config: RefusingConfig<T.RangePatternPrefix.Config, { end: EndSlot }>
 ): T.RangePatternPrefix.Bound;
 export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
 	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-		'RangePatternPrefix.right',
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternPrefix['_end']>>(config.end),
+		'RangePatternPrefix.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _end });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RangePatternPrefix as const);
 		storeCell(arena, record, 2, 2, _operator);
-		storeCell(arena, record, 3, 3, _right);
+		storeCell(arena, record, 3, 3, _end);
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternPrefix.Bound;
 	});
@@ -25079,33 +25079,33 @@ function buildRangePatternPrefix$patch(
 ): T.RangePatternPrefix.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
 	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-		'RangePatternPrefix.right',
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternPrefix['_end']>>(config.end),
+		'RangePatternPrefix.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _end });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RangePatternPrefix as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'end', _end));
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternPrefix.Bound;
 	});
 }
 function buildRangePatternPrefix$set(
 	source: object,
-	...[slot, input]: ['operator', Partial<T.RangePatternPrefix.Config>] | ['right', Partial<T.RangePatternPrefix.Config>]
+	...[slot, input]: ['operator', Partial<T.RangePatternPrefix.Config>] | ['end', Partial<T.RangePatternPrefix.Config>]
 ): T.RangePatternPrefix.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'operator':
-			case 'right':
+			case 'end':
 				return buildRangePatternPrefix$patch(source, { ...(inputs.config as T.RangePatternPrefix.Config), ...input });
 		}
 	}
@@ -25122,11 +25122,11 @@ function buildRangePatternPrefix$set(
 				_operator
 			) as unknown as T.RangePatternPrefix.Bound;
 		}
-		case 'right': {
+		case 'end': {
 			const config = input;
-			const _right = rejectKeywordText(
-				kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-				'RangePatternPrefix.right',
+			const _end = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternPrefix['_end']>>(config.end),
+				'RangePatternPrefix.end',
 				TSKindId.Identifier,
 				['self', 'super', 'crate']
 			);
@@ -25135,8 +25135,8 @@ function buildRangePatternPrefix$set(
 				TSKindId.RangePatternPrefix as const,
 				'range_pattern_prefix',
 				1,
-				'right',
-				_right
+				'end',
+				_end
 			) as unknown as T.RangePatternPrefix.Bound;
 		}
 	}
@@ -25148,37 +25148,37 @@ function withRangePatternPrefix(node: object, setter: string, args: readonly unk
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildRangePatternPrefix$set(node, 'operator', { operator: value }))
 			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix$set(node, 'right', { right: value }))
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternPrefix$set(node, 'end', { end: value }))
 			);
 	}
 	throw new Error(`range_pattern_prefix has no $with.${setter}`);
 }
 
-export function buildRangePatternWithLeftWithRight<RightSlot extends T.RangePatternWithLeftWithRight.Config['right']>(
-	config: RefusingConfig<T.RangePatternWithLeftWithRight.Config, { right: RightSlot }>
+export function buildRangePatternWithLeftWithRight<EndSlot extends T.RangePatternWithLeftWithRight.Config['end']>(
+	config: RefusingConfig<T.RangePatternWithLeftWithRight.Config, { end: EndSlot }>
 ): T.RangePatternWithLeftWithRight.Bound;
 export function buildRangePatternWithLeftWithRight(
 	config: T.RangePatternWithLeftWithRight.Config
 ): T.RangePatternWithLeftWithRight.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
 	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-		'RangePatternWithLeftWithRight.right',
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_end']>>(config.end),
+		'RangePatternWithLeftWithRight.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
+		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _end });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RangePatternWithLeftWithRight as const);
 		storeCell(arena, record, 2, 2, _operator);
-		storeCell(arena, record, 3, 3, _right);
+		storeCell(arena, record, 3, 3, _end);
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternWithLeftWithRight.Bound;
 	});
@@ -25190,21 +25190,21 @@ function buildRangePatternWithLeftWithRight$patch(
 ): T.RangePatternWithLeftWithRight.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
 	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-		'RangePatternWithLeftWithRight.right',
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_end']>>(config.end),
+		'RangePatternWithLeftWithRight.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
+		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _end });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RangePatternWithLeftWithRight as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'end', _end));
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternWithLeftWithRight.Bound;
 	});
@@ -25213,13 +25213,13 @@ function buildRangePatternWithLeftWithRight$set(
 	source: object,
 	...[slot, input]:
 		| ['operator', Partial<T.RangePatternWithLeftWithRight.Config>]
-		| ['right', Partial<T.RangePatternWithLeftWithRight.Config>]
+		| ['end', Partial<T.RangePatternWithLeftWithRight.Config>]
 ): T.RangePatternWithLeftWithRight.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'operator':
-			case 'right':
+			case 'end':
 				return buildRangePatternWithLeftWithRight$patch(source, {
 					...(inputs.config as T.RangePatternWithLeftWithRight.Config),
 					...input
@@ -25239,11 +25239,11 @@ function buildRangePatternWithLeftWithRight$set(
 				_operator
 			) as unknown as T.RangePatternWithLeftWithRight.Bound;
 		}
-		case 'right': {
+		case 'end': {
 			const config = input;
-			const _right = rejectKeywordText(
-				kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-				'RangePatternWithLeftWithRight.right',
+			const _end = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_end']>>(config.end),
+				'RangePatternWithLeftWithRight.end',
 				TSKindId.Identifier,
 				['self', 'super', 'crate']
 			);
@@ -25252,8 +25252,8 @@ function buildRangePatternWithLeftWithRight$set(
 				TSKindId.RangePatternWithLeftWithRight as const,
 				'range_pattern_with_left_with_right',
 				1,
-				'right',
-				_right
+				'end',
+				_end
 			) as unknown as T.RangePatternWithLeftWithRight.Bound;
 		}
 	}
@@ -25265,9 +25265,9 @@ function withRangePatternWithLeftWithRight(node: object, setter: string, args: r
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$set(node, 'operator', { operator: value }))
 			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$set(node, 'right', { right: value }))
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$set(node, 'end', { end: value }))
 			);
 	}
 	throw new Error(`range_pattern_with_left_with_right has no $with.${setter}`);
@@ -25276,27 +25276,27 @@ function withRangePatternWithLeftWithRight(node: object, setter: string, args: r
 export const buildRangePatternWithLeftBare: TSKindId.RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
 
 export function buildRangePatternWithLeft<
-	LeftSlot extends T.RangePatternWithLeft.Config['left'],
+	StartSlot extends T.RangePatternWithLeft.Config['start'],
 	ContentSlot extends T.RangePatternWithLeft.Config['content']
 >(
-	config: RefusingConfig<T.RangePatternWithLeft.Config, { left: LeftSlot; content: ContentSlot }>
+	config: RefusingConfig<T.RangePatternWithLeft.Config, { start: StartSlot; content: ContentSlot }>
 ): T.RangePatternWithLeft.Bound;
 export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [config]);
-	const _left = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-		'RangePatternWithLeft.left',
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternWithLeft['_start']>>(config.start),
+		'RangePatternWithLeft.start',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { start: _start, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _left, _content });
+	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _start, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.RangePatternWithLeft as const);
-		storeCell(arena, record, 2, 2, _left);
+		storeCell(arena, record, 2, 2, _start);
 		storeCell(arena, record, 3, 6, _content);
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternWithLeft.Bound;
@@ -25308,20 +25308,20 @@ function buildRangePatternWithLeft$patch(
 	config: T.RangePatternWithLeft.Config
 ): T.RangePatternWithLeft.Bound {
 	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [config]);
-	const _left = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-		'RangePatternWithLeft.left',
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternWithLeft['_start']>>(config.start),
+		'RangePatternWithLeft.start',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { start: _start, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _left, _content });
+	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _start, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.RangePatternWithLeft as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.RangePatternWithLeft.Bound;
@@ -25330,13 +25330,13 @@ function buildRangePatternWithLeft$patch(
 function buildRangePatternWithLeft$set(
 	source: object,
 	...[slot, input]:
-		| ['left', Partial<T.RangePatternWithLeft.Config>]
+		| ['start', Partial<T.RangePatternWithLeft.Config>]
 		| ['content', Partial<T.RangePatternWithLeft.Config>]
 ): T.RangePatternWithLeft.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'left':
+			case 'start':
 			case 'content':
 				return buildRangePatternWithLeft$patch(source, {
 					...(inputs.config as T.RangePatternWithLeft.Config),
@@ -25345,11 +25345,11 @@ function buildRangePatternWithLeft$set(
 		}
 	}
 	switch (slot) {
-		case 'left': {
+		case 'start': {
 			const config = input;
-			const _left = rejectKeywordText(
-				kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-				'RangePatternWithLeft.left',
+			const _start = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternWithLeft['_start']>>(config.start),
+				'RangePatternWithLeft.start',
 				TSKindId.Identifier,
 				['self', 'super', 'crate']
 			);
@@ -25358,8 +25358,8 @@ function buildRangePatternWithLeft$set(
 				TSKindId.RangePatternWithLeft as const,
 				'range_pattern_with_left',
 				0,
-				'left',
-				_left
+				'start',
+				_start
 			) as unknown as T.RangePatternWithLeft.Bound;
 		}
 		case 'content': {
@@ -25379,9 +25379,9 @@ function buildRangePatternWithLeft$set(
 function withRangePatternWithLeft(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['left']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft$set(node, 'left', { left: value }))
+		case 'start':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['start']>) =>
+				rebuilt(node, handle, () => buildRangePatternWithLeft$set(node, 'start', { start: value }))
 			);
 		case 'content':
 			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['content']>) =>

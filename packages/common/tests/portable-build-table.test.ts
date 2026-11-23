@@ -179,8 +179,8 @@ describe('the portable build table', () => {
 			mounted: { call: 'child', key: 'binaryExpressionIn' }
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
-		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((slot) => slot.name === 'right');
-		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' }, kinds: [rust.kinds.RangePatternWithLeftWithRight] });
+		const [end] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((slot) => slot.name === 'end');
+		expect(end!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' }, kinds: [rust.kinds.RangePatternWithLeftWithRight] });
 	});
 
 	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {

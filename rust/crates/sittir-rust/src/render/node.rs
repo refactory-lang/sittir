@@ -18716,8 +18716,8 @@ impl ::sittir_core::render::Render for DelimTokenTreeParenDelimTokensNodeSlotRec
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = RangePatternPrefixRightNodeSlotRecord)]
-pub enum RangePatternPrefixRightNodeSlot {
+#[node(choice, stamp = stamp, view = RangePatternPrefixEndNodeSlotRecord)]
+pub enum RangePatternPrefixEndNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
     #[kind(kind::RAW_STRING_LITERAL)]
@@ -18766,135 +18766,135 @@ pub enum RangePatternPrefixRightNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightNodeSlot {
+impl ::sittir_core::prepare::Prepare for RangePatternPrefixEndNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
         match self {
-            RangePatternPrefixRightNodeSlot::StringLiteral(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::RawStringLiteral(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralPlain(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEmpty(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::BooleanLiteral(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralHex(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::FloatLiteral(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::NegativeLiteral(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::Metavariable(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::Identifier(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            RangePatternPrefixRightNodeSlot::SelfModule => Ok(()),
-            RangePatternPrefixRightNodeSlot::Super(_) => Ok(()),
-            RangePatternPrefixRightNodeSlot::Crate(_) => Ok(()),
-            RangePatternPrefixRightNodeSlot::Verbatim(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::StringLiteral(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::RawStringLiteral(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralPlain(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEmpty(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::BooleanLiteral(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralHex(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::FloatLiteral(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::NegativeLiteral(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::Metavariable(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::Identifier(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            RangePatternPrefixEndNodeSlot::SelfModule => Ok(()),
+            RangePatternPrefixEndNodeSlot::Super(_) => Ok(()),
+            RangePatternPrefixEndNodeSlot::Crate(_) => Ok(()),
+            RangePatternPrefixEndNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            RangePatternPrefixRightNodeSlot::StringLiteral(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::RawStringLiteral(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedSimple(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedHex(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::CharLiteralPlain(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEmpty(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::BooleanLiteral(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralHex(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralBinary(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralOctal(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::FloatLiteral(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::NegativeLiteral(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::Metavariable(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::Identifier(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
-            RangePatternPrefixRightNodeSlot::SelfModule => None,
-            RangePatternPrefixRightNodeSlot::Super(edges) => Some(edges),
-            RangePatternPrefixRightNodeSlot::Crate(edges) => Some(edges),
-            RangePatternPrefixRightNodeSlot::Verbatim(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::StringLiteral(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::RawStringLiteral(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedSimple(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedHex(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::CharLiteralPlain(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEmpty(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::BooleanLiteral(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralHex(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralBinary(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralOctal(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::FloatLiteral(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::NegativeLiteral(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::Metavariable(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::Identifier(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
+            RangePatternPrefixEndNodeSlot::SelfModule => None,
+            RangePatternPrefixEndNodeSlot::Super(edges) => Some(edges),
+            RangePatternPrefixEndNodeSlot::Crate(edges) => Some(edges),
+            RangePatternPrefixEndNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            RangePatternPrefixRightNodeSlot::StringLiteral(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::RawStringLiteral(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::CharLiteralPlain(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::BooleanLiteral(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::FloatLiteral(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::NegativeLiteral(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::Metavariable(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::Identifier(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
-            RangePatternPrefixRightNodeSlot::SelfModule => None,
-            RangePatternPrefixRightNodeSlot::Super(_) => None,
-            RangePatternPrefixRightNodeSlot::Crate(_) => None,
-            RangePatternPrefixRightNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::StringLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::RawStringLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::CharLiteralPlain(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::BooleanLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::FloatLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::NegativeLiteral(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::Metavariable(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::Identifier(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            RangePatternPrefixEndNodeSlot::SelfModule => None,
+            RangePatternPrefixEndNodeSlot::Super(_) => None,
+            RangePatternPrefixEndNodeSlot::Crate(_) => None,
+            RangePatternPrefixEndNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            RangePatternPrefixRightNodeSlot::StringLiteral(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::FloatLiteral(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::NegativeLiteral(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::Metavariable(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::Identifier(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
-            RangePatternPrefixRightNodeSlot::SelfModule => None,
-            RangePatternPrefixRightNodeSlot::Super(_) => None,
-            RangePatternPrefixRightNodeSlot::Crate(_) => None,
-            RangePatternPrefixRightNodeSlot::Verbatim(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::NegativeLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::Metavariable(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::Identifier(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            RangePatternPrefixEndNodeSlot::SelfModule => None,
+            RangePatternPrefixEndNodeSlot::Super(_) => None,
+            RangePatternPrefixEndNodeSlot::Crate(_) => None,
+            RangePatternPrefixEndNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            RangePatternPrefixRightNodeSlot::StringLiteral(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::RawStringLiteral(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedSimple(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedHex(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralPlain(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::CharLiteralEmpty(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::BooleanLiteral(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::FloatLiteral(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::NegativeLiteral(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::Metavariable(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::Identifier(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
-            RangePatternPrefixRightNodeSlot::SelfModule => None,
-            RangePatternPrefixRightNodeSlot::Super(_) => None,
-            RangePatternPrefixRightNodeSlot::Crate(_) => None,
-            RangePatternPrefixRightNodeSlot::Verbatim(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::StringLiteral(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::RawStringLiteral(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedSimple(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedHex(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralPlain(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::CharLiteralEmpty(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::BooleanLiteral(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::FloatLiteral(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::NegativeLiteral(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::Metavariable(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::Identifier(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
+            RangePatternPrefixEndNodeSlot::SelfModule => None,
+            RangePatternPrefixEndNodeSlot::Super(_) => None,
+            RangePatternPrefixEndNodeSlot::Crate(_) => None,
+            RangePatternPrefixEndNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -18905,7 +18905,7 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for RangePatternPrefixRightNodeSlot {
+impl ::sittir_core::view::KindOf for RangePatternPrefixEndNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::StringLiteral(inner) => inner.kind_in(kinds),
@@ -18934,37 +18934,37 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixRightNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for RangePatternPrefixRightNodeSlot {
+impl ::sittir_core::render::Render for RangePatternPrefixEndNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RangePatternPrefixRightNodeSlot::StringLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::RawStringLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::CharLiteralEscapedHex(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::CharLiteralPlain(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::CharLiteralEmpty(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::BooleanLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralDecimal(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralHex(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralBinary(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::IntegerLiteralOctal(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::FloatLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::NegativeLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::Metavariable(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::Identifier(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::ScopedIdentifier(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlot::SelfModule => render_self_module(w),
-            RangePatternPrefixRightNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
-            RangePatternPrefixRightNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
-            RangePatternPrefixRightNodeSlot::Verbatim(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::StringLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::RawStringLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::CharLiteralEscapedHex(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::CharLiteralPlain(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::CharLiteralEmpty(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::BooleanLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralDecimal(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralHex(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralBinary(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::IntegerLiteralOctal(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::FloatLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::NegativeLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::Metavariable(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::Identifier(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::ScopedIdentifier(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlot::SelfModule => render_self_module(w),
+            RangePatternPrefixEndNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            RangePatternPrefixEndNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
+            RangePatternPrefixEndNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 ::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for RangePatternPrefixRightNodeSlotRecord<'_> {
+impl ::sittir_core::view::KindOf for RangePatternPrefixEndNodeSlotRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::StringLiteral(inner) => inner.kind_in(kinds),
@@ -18993,31 +18993,31 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixRightNodeSlotRecord<'_> {
     }
 }
 
-impl ::sittir_core::render::Render for RangePatternPrefixRightNodeSlotRecord<'_> {
+impl ::sittir_core::render::Render for RangePatternPrefixEndNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            RangePatternPrefixRightNodeSlotRecord::StringLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::NegativeLiteral(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::Metavariable(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::Identifier(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
-            RangePatternPrefixRightNodeSlotRecord::SelfModule => render_self_module(w),
-            RangePatternPrefixRightNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
-            RangePatternPrefixRightNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
-            RangePatternPrefixRightNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::StringLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::RawStringLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::CharLiteralEscapedSimple(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::CharLiteralEscapedHex(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::CharLiteralPlain(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::CharLiteralEmpty(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::BooleanLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::IntegerLiteralDecimal(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::IntegerLiteralHex(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::IntegerLiteralBinary(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::IntegerLiteralOctal(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::FloatLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::NegativeLiteral(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::Identifier(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            RangePatternPrefixEndNodeSlotRecord::SelfModule => render_self_module(w),
+            RangePatternPrefixEndNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            RangePatternPrefixEndNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
+            RangePatternPrefixEndNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -39401,9 +39401,9 @@ pub struct RangePatternPrefixNode {
     #[wire(key = "_operator")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
     pub operator: ::sittir_core::SlotValue<RangePatternPrefixOperatorNodeSlot>,
-    #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, word = 3, width = 4, forms = 3, built = 3)]
-    pub right: ::sittir_core::SlotValue<Box<RangePatternPrefixRightNodeSlot>>,
+    #[wire(key = "_end")]
+    #[slot(field = field::END, word = 3, width = 4, forms = 3, built = 3)]
+    pub end: ::sittir_core::SlotValue<Box<RangePatternPrefixEndNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for RangePatternPrefixNode {
@@ -39468,7 +39468,7 @@ fn prepare_range_pattern_prefix<N: RangePatternPrefixPrepare + ?Sized>(node: &mu
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(419), arms, ctx); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.end, overlay, ctx)?;
     Ok(())
 }
 
@@ -39483,9 +39483,9 @@ pub struct RangePatternWithLeftWithRightNode {
     #[wire(key = "_operator")]
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
     pub operator: ::sittir_core::SlotValue<RangePatternWithLeftWithRightOperatorNodeSlot>,
-    #[wire(key = "_right")]
-    #[slot(field = field::RIGHT, word = 3, width = 4, forms = 3, built = 3)]
-    pub right: ::sittir_core::SlotValue<Box<RangePatternPrefixRightNodeSlot>>,
+    #[wire(key = "_end")]
+    #[slot(field = field::END, word = 3, width = 4, forms = 3, built = 3)]
+    pub end: ::sittir_core::SlotValue<Box<RangePatternPrefixEndNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for RangePatternWithLeftWithRightNode {
@@ -39550,7 +39550,7 @@ fn prepare_range_pattern_with_left_with_right<N: RangePatternWithLeftWithRightPr
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(420), arms, ctx); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.right, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.end, overlay, ctx)?;
     Ok(())
 }
 
@@ -39593,9 +39593,9 @@ pub struct RangePatternWithLeftNode {
     pub layout: Option<Box<NodeLayout>>,
     #[height]
     height: u16,
-    #[wire(key = "_left")]
-    #[slot(field = field::LEFT, word = 2, width = 4, forms = 3, built = 2)]
-    pub left: ::sittir_core::SlotValue<Box<RangePatternPrefixRightNodeSlot>>,
+    #[wire(key = "_start")]
+    #[slot(field = field::START, word = 2, width = 4, forms = 3, built = 2)]
+    pub start: ::sittir_core::SlotValue<Box<RangePatternPrefixEndNodeSlot>>,
     #[wire(key = "_content")]
     #[slot(word = 6, width = 4, forms = 3, built = 3)]
     pub content: ::sittir_core::SlotValue<Box<RangePatternWithLeftContentNodeSlot>>,
@@ -39662,7 +39662,7 @@ fn prepare_range_pattern_with_left<N: RangePatternWithLeftPrepare + ?Sized>(node
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(422), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.left, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.start, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     Ok(())
 }
@@ -49152,7 +49152,7 @@ impl ::sittir_core::prepare::SeatTarget for DelimTokenTreeParenDelimTokensNodeSl
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for RangePatternPrefixRightNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for RangePatternPrefixEndNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::StringLiteral(t) => t.seat_target(table, ctx),
@@ -52905,22 +52905,22 @@ fn render_macro_definition_brace<N: MacroDefinitionBraceFields + ?Sized>(node: &
 }
 
 fn render_range_pattern_prefix<N: RangePatternPrefixFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let end = node.end();
     let operator = node.operator();
-    let right = node.right();
     w.edge(::sittir_core::types::KindId(419), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_BEFORE); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_EQ_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_PREFIX_DOT_DOT_AFTER); }
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
     w.edge(::sittir_core::types::KindId(419), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_range_pattern_with_left_with_right<N: RangePatternWithLeftWithRightFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let end = node.end();
     let operator = node.operator();
-    let right = node.right();
     w.edge(::sittir_core::types::KindId(420), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_BEFORE); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_BEFORE); }
@@ -52929,17 +52929,17 @@ fn render_range_pattern_with_left_with_right<N: RangePatternWithLeftWithRightFie
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(48)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_DOT_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(137)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_EQ_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(100)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_WITH_RIGHT_DOT_DOT_AFTER); }
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
     w.edge(::sittir_core::types::KindId(420), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_range_pattern_with_left<N: RangePatternWithLeftFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
-    let left = node.left();
+    let start = node.start();
     w.edge(::sittir_core::types::KindId(422), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
     if content.kind_in(&*w, &[::sittir_core::types::KindId(100), ::sittir_core::types::KindId(421)]) { w.site_at(options::SITE_RANGE_PATTERN_WITH_LEFT_DOT_DOT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
@@ -56852,7 +56852,7 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerNameNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ArrayExpressionListElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixOperatorNodeSlot, RangePatternWithLeftWithRightOperatorNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, MatchBlockArmsArmsNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, AttributedElementNode, ArrayExpressionListElementsNode, TupleExpressionElementsNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, ArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, ArrayExpressionSemiNode, ArrayExpressionListNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, StringCloseNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerNameNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ArrayExpressionListElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixEndNodeSlot, RangePatternPrefixOperatorNodeSlot, RangePatternWithLeftWithRightOperatorNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, MatchBlockArmsArmsNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, AttributedElementNode, ArrayExpressionListElementsNode, TupleExpressionElementsNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, ArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, ArrayExpressionSemiNode, ArrayExpressionListNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, StringCloseNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AbstractTypeNode>() == 120, "AbstractTypeNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -57516,11 +57516,11 @@ const _: () = assert!(::core::mem::size_of::<RangeExpressionPrefixNode>() == 56,
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RangePatternNode>() == 104, "RangePatternNode is not the 104 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<RangePatternPrefixEndNodeSlot>() == 192, "RangePatternPrefixEndNodeSlot is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RangePatternPrefixNode>() == 96, "RangePatternPrefixNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RangePatternPrefixOperatorNodeSlot>() == 1, "RangePatternPrefixOperatorNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
-#[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<RangePatternPrefixRightNodeSlot>() == 192, "RangePatternPrefixRightNodeSlot is not the 192 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<RangePatternWithLeftBareNode>() == 0, "RangePatternWithLeftBareNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

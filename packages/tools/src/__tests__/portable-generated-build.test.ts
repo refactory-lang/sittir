@@ -512,6 +512,21 @@ describe.each(STORAGES)('rust: a range pattern read through either claim of its 
 		expect(engine.render(built as never).toString()).toBe(pattern);
 		expect(runtime.read(built as never)).toEqual(structure);
 	});
+
+	it.each([
+		['d..', { start: 'd' }],
+		['..d', { end: 'd' }],
+		['d..e', { start: 'd', end: 'e' }],
+		['d..=e', { start: 'd', end: 'e' }],
+		['..=d', { end: 'd' }],
+		['d...e', { start: 'd', end: 'e' }]
+	] as const)('%s reads its bounds as start and end', async (pattern, bounds) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const { $path: path, ...slots } = [...structuresIn(runtime.read(engine.parse(`fn f() { match x { ${pattern} => a, } }\n`)))].find((candidate) => candidate.$path.startsWith('pattern.range'))!;
+		expect(path).toMatch(/^pattern\.range\./);
+		expect(slots).toEqual(bounds);
+	});
 });
 
 describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {

@@ -35563,7 +35563,7 @@ export interface RustMap extends V.GrammarMap {
 			readonly $forms: V.Form<'right', 'left'> | V.Form<'left' | 'right'>;
 		};
 		readonly 'pattern.range': {
-			readonly left:
+			readonly end:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35601,7 +35601,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly right:
+			readonly start:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35641,7 +35641,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.StringLiteral.Parsed;
 		};
 		readonly 'pattern.range.exclusive': {
-			readonly left:
+			readonly end:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35679,7 +35679,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly right:
+			readonly start:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35717,10 +35717,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly $forms: V.Form<'right', 'left'> | V.Form<'left', 'right'> | V.Form<'left' | 'right'>;
+			readonly $forms: V.Form<'end', 'start'> | V.Form<'start', 'end'> | V.Form<'end' | 'start'>;
 		};
 		readonly 'pattern.range.inclusive': {
-			readonly left:
+			readonly end:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35758,7 +35758,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly right:
+			readonly start:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35796,10 +35796,10 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly $forms: V.Form<'right', 'left'> | V.Form<'left' | 'right'>;
+			readonly $forms: V.Form<'end', 'start'> | V.Form<'end' | 'start'>;
 		};
 		readonly 'pattern.range.inclusive.legacy': {
-			readonly left:
+			readonly end:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35837,7 +35837,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly right:
+			readonly start:
 				| V.Read<RustMap, 'identifier'>
 				| V.Text<RustMap, 'identifier'>
 				| V.Read<RustMap, 'identifier.metavariable'>
@@ -35875,7 +35875,7 @@ export interface RustMap extends V.GrammarMap {
 				| T.RawStringLiteral.Parsed
 				| T.ScopedIdentifier.Parsed
 				| T.StringLiteral.Parsed;
-			readonly $forms: V.Form<'left' | 'right'>;
+			readonly $forms: V.Form<'end' | 'start'>;
 		};
 		readonly 'pattern.reference': {
 			readonly pattern:

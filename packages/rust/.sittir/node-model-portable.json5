@@ -14864,13 +14864,13 @@
       ],
       "slots": [
         {
-          "name": "right",
+          "name": "end",
           "route": "slot",
-          "slot": "right",
+          "slot": "end",
           "path": [
             {
               "owner": "range_pattern_prefix",
-              "slot": "right"
+              "slot": "end"
             }
           ]
         }
@@ -15035,18 +15035,18 @@
       ],
       "slots": [
         {
-          "name": "left",
+          "name": "start",
           "route": "slot",
-          "slot": "left",
+          "slot": "start",
           "path": [
             {
               "owner": "range_pattern_with_left",
-              "slot": "left"
+              "slot": "start"
             }
           ]
         },
         {
-          "name": "right",
+          "name": "end",
           "route": "nested",
           "via": [
             {
@@ -15057,7 +15057,7 @@
             }
           ],
           "parent": "range_pattern_with_left_with_right",
-          "slot": "right",
+          "slot": "end",
           "multiple": false,
           "path": [
             {
@@ -15066,7 +15066,7 @@
             },
             {
               "owner": "range_pattern_with_left_with_right",
-              "slot": "right"
+              "slot": "end"
             }
           ]
         }

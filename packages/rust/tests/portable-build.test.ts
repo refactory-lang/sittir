@@ -85,14 +85,15 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build(qualified)).toThrow(/identifier\.qualified.*holder/);
 	});
 
-	it("merges a range form's slots into its holder's through the form's mount, and builds a range without a left through the prefix form", () => {
-		expect(render(runtime.build({ $path: 'pattern.range.inclusive', left: 'a', right: 'b' }))).toBe('a..=b');
-		expect(render(runtime.build({ $path: 'pattern.range.exclusive', left: 'a', right: 'b' }))).toBe('a..b');
-		expect(render(runtime.build({ $path: 'pattern.range.inclusive', right: 'b' }))).toBe('..=b');
+	it("merges a range form's slots into its holder's through the form's mount, and builds a range without a start through the prefix form", () => {
+		expect(render(runtime.build({ $path: 'pattern.range.inclusive', start: 'a', end: 'b' }))).toBe('a..=b');
+		expect(render(runtime.build({ $path: 'pattern.range.exclusive', start: 'a', end: 'b' }))).toBe('a..b');
+		expect(render(runtime.build({ $path: 'pattern.range.exclusive', start: 'a' }))).toBe('a..');
+		expect(render(runtime.build({ $path: 'pattern.range.inclusive', end: 'b' }))).toBe('..=b');
 	});
 
 	it('refuses a bare range, whose operator only a refinement presets, naming the path', () => {
-		expect(() => runtime.build({ $path: 'pattern.range', left: 'a', right: 'b' })).toThrow(/pattern\.range does not build in rust/);
+		expect(() => runtime.build({ $path: 'pattern.range', start: 'a', end: 'b' })).toThrow(/pattern\.range does not build in rust/);
 	});
 
 	it("builds a function type's trait form through the mount that seats the form's input at its holder's key", () => {

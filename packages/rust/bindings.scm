@@ -425,7 +425,7 @@
 (range_pattern_with_left (range_pattern_with_left_with_right "...")) @pattern.range.inclusive.legacy
 (range_pattern_with_left (range_pattern_with_left_with_right "..")) @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_bare)) @pattern.range.exclusive
-(range_pattern_with_left (range_pattern_with_left_with_right right: (_) @right))
+(range_pattern_with_left (range_pattern_with_left_with_right end: (_) @end))
 (ref_pattern) @pattern.reference
 (reference_pattern) @pattern.reference.value
 (reference_pattern (mutable_specifier) @exclusive)

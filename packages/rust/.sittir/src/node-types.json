@@ -5533,7 +5533,7 @@
     "type": "range_pattern_prefix",
     "named": true,
     "fields": {
-      "right": {
+      "end": {
         "multiple": false,
         "required": true,
         "types": [
@@ -5573,7 +5573,7 @@
     "type": "range_pattern_with_left",
     "named": true,
     "fields": {
-      "left": {
+      "start": {
         "multiple": false,
         "required": true,
         "types": [
@@ -5632,7 +5632,7 @@
     "type": "range_pattern_with_left_with_right",
     "named": true,
     "fields": {
-      "right": {
+      "end": {
         "multiple": false,
         "required": true,
         "types": [

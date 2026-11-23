@@ -3775,12 +3775,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('range_pattern_prefix', () => {
 		it('factory produces correct type', () => {
-			const node = ir.rangePatternPrefix({ operator: '..=', right: TSKindId.SelfModule as never });
+			const node = ir.rangePatternPrefix({ operator: '..=', end: TSKindId.SelfModule as never });
 			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 			expectBuiltNode(node);
 		});
 		it('render produces non-empty string', () => {
-			const node = ir.rangePatternPrefix({ operator: '..=', right: TSKindId.SelfModule as never });
+			const node = ir.rangePatternPrefix({ operator: '..=', end: TSKindId.SelfModule as never });
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
@@ -3788,14 +3788,14 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('range_pattern_prefix sub-factories', () => {
 		it('dotDotEq builds the parent', () => {
-			const node = ir.rangePatternPrefix.dotDotEq({ right: TSKindId.SelfModule as never });
+			const node = ir.rangePatternPrefix.dotDotEq({ end: TSKindId.SelfModule as never });
 			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDotEq);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('dotDot builds the parent', () => {
-			const node = ir.rangePatternPrefix.dotDot({ right: TSKindId.SelfModule as never });
+			const node = ir.rangePatternPrefix.dotDot({ end: TSKindId.SelfModule as never });
 			expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 			const seated = (node as any).operator();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.DotDot);
@@ -3812,7 +3812,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('range_pattern_with_left', () => {
 		it('factory produces correct type', () => {
 			const node = ir.rangePatternWithLeft({
-				left: TSKindId.SelfModule as never,
+				start: TSKindId.SelfModule as never,
 				content: TSKindId.RangePatternWithLeftBare as never
 			});
 			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
@@ -3820,7 +3820,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.rangePatternWithLeft({
-				left: TSKindId.SelfModule as never,
+				start: TSKindId.SelfModule as never,
 				content: TSKindId.RangePatternWithLeftBare as never
 			});
 			const rendered = node.$render!();
@@ -3831,16 +3831,16 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('range_pattern_with_left sub-factories', () => {
 		it('withRight builds the parent', () => {
 			const node = ir.rangePatternWithLeft.withRight({
-				left: TSKindId.SelfModule as never,
+				start: TSKindId.SelfModule as never,
 				operator: '...',
-				right: TSKindId.SelfModule as never
+				end: TSKindId.SelfModule as never
 			});
 			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 			expect((node as any).content()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 		it('bare builds the parent', () => {
-			const node = ir.rangePatternWithLeft.bare({ left: TSKindId.SelfModule as never });
+			const node = ir.rangePatternWithLeft.bare({ start: TSKindId.SelfModule as never });
 			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 			const seated = (node as any).content();
 			expect(seated?.$text?.() ?? seated).toBe(TSKindId.RangePatternWithLeftBare);
@@ -3848,8 +3848,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('withRight.dotDotDot builds the parent', () => {
 			const node = ir.rangePatternWithLeft.withRight.dotDotDot({
-				left: TSKindId.SelfModule as never,
-				content: [{ right: TSKindId.SelfModule as never }]
+				start: TSKindId.SelfModule as never,
+				content: [{ end: TSKindId.SelfModule as never }]
 			});
 			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 			expect((node as any).content()).toBeDefined();
@@ -3857,8 +3857,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('withRight.dotDotEq builds the parent', () => {
 			const node = ir.rangePatternWithLeft.withRight.dotDotEq({
-				left: TSKindId.SelfModule as never,
-				content: [{ right: TSKindId.SelfModule as never }]
+				start: TSKindId.SelfModule as never,
+				content: [{ end: TSKindId.SelfModule as never }]
 			});
 			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 			expect((node as any).content()).toBeDefined();
@@ -3866,8 +3866,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('withRight.dotDot builds the parent', () => {
 			const node = ir.rangePatternWithLeft.withRight.dotDot({
-				left: TSKindId.SelfModule as never,
-				content: [{ right: TSKindId.SelfModule as never }]
+				start: TSKindId.SelfModule as never,
+				content: [{ end: TSKindId.SelfModule as never }]
 			});
 			expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 			expect((node as any).content()).toBeDefined();

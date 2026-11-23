@@ -570,6 +570,11 @@ export default grammar(enrich(base), wire({
 
 		range_pattern: [
 			{
+				'0/0': field('start'),
+				'0/1/0/1': field('end'),
+				'1/1': field('end')
+			},
+			{
 				'0/1/0': variant('with_right'),
 				'0/1/1': variant('bare'),
 				'1': variant('prefix')

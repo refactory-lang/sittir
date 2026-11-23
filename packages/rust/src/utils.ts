@@ -679,14 +679,14 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	419: [
 		['operator', 0, undefined, '_operator'],
-		['right', 1, undefined, '_right']
+		['end', 1, undefined, '_end']
 	],
 	420: [
 		['operator', 0, undefined, '_operator'],
-		['right', 1, undefined, '_right']
+		['end', 1, undefined, '_end']
 	],
 	422: [
-		['left', 0, undefined, '_left'],
+		['start', 0, undefined, '_start'],
 		['content', 1, undefined, '_content']
 	],
 	423: [
@@ -3378,41 +3378,39 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'range_pattern_prefix',
 		required: [
 			['_operator', 'operator'],
-			['_right', 'right']
+			['_end', 'end']
 		],
-		single: [['_right', 'RangePatternPrefix.right']],
-		nodeOnly: [['_right', 'RangePatternPrefix.right', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]]],
+		single: [['_end', 'RangePatternPrefix.end']],
+		nodeOnly: [['_end', 'RangePatternPrefix.end', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]]],
 		kindIds: [['_operator', 'RangePatternPrefix.operator', [100, 137]]],
-		config: ['operator', 'right']
+		config: ['operator', 'end']
 	},
 	420: {
 		kind: 'range_pattern_with_left_with_right',
 		required: [
 			['_operator', 'operator'],
-			['_right', 'right']
+			['_end', 'end']
 		],
-		single: [['_right', 'RangePatternWithLeftWithRight.right']],
-		nodeOnly: [
-			['_right', 'RangePatternWithLeftWithRight.right', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]]
-		],
+		single: [['_end', 'RangePatternWithLeftWithRight.end']],
+		nodeOnly: [['_end', 'RangePatternWithLeftWithRight.end', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]]],
 		kindIds: [['_operator', 'RangePatternWithLeftWithRight.operator', [48, 100, 137]]],
-		config: ['operator', 'right']
+		config: ['operator', 'end']
 	},
 	422: {
 		kind: 'range_pattern_with_left',
 		required: [
-			['_left', 'left'],
+			['_start', 'start'],
 			['_content', 'content']
 		],
 		single: [
-			['_left', 'RangePatternWithLeft.left'],
+			['_start', 'RangePatternWithLeft.start'],
 			['_content', 'RangePatternWithLeft.content']
 		],
 		nodeOnly: [
-			['_left', 'RangePatternWithLeft.left', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]],
+			['_start', 'RangePatternWithLeft.start', 'buildIdentifier(…)', [1, 125, 126, 127, 263, 329, 481]],
 			['_content', 'RangePatternWithLeft.content', 'a built RangePatternWithLeftWithRight', [420, 421]]
 		],
-		config: ['left', 'content']
+		config: ['start', 'content']
 	},
 	423: {
 		kind: 'struct_item_brace',

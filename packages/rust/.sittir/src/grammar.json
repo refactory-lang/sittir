@@ -14474,7 +14474,7 @@
         },
         {
           "type": "FIELD",
-          "name": "right",
+          "name": "end",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -14487,6 +14487,9 @@
                 "name": "_path"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ],
@@ -14525,7 +14528,7 @@
         },
         {
           "type": "FIELD",
-          "name": "right",
+          "name": "end",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -14538,6 +14541,9 @@
                 "name": "_path"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ],
@@ -14554,7 +14560,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "left",
+          "name": "start",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -14567,6 +14573,9 @@
                 "name": "_path"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {

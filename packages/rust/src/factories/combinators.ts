@@ -660,7 +660,7 @@ export const rangePatternWithLeft$withRight =
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'operator' || key === 'right') inner[key] = value;
+			if (key === 'operator' || key === 'end') inner[key] = value;
 			else rest[key] = value;
 		}
 		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);

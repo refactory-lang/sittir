@@ -5786,7 +5786,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "end"
 		},
 		{
 			"kind": "seam",
@@ -5800,7 +5800,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "left",
+			"name": "start",
 			"join": {
 				"previous": false,
 				"next": true
@@ -5830,7 +5830,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "end"
 		},
 		{
 			"kind": "seam",

@@ -10796,9 +10796,9 @@ export function resolveRangePatternPrefix_operator(
 	);
 }
 
-export function resolveRangePatternPrefix_right(
-	value: T.RangePatternPrefix.LooseConfig['right']
-): Admit<T.RangePatternPrefix['_right']> {
+export function resolveRangePatternPrefix_end(
+	value: T.RangePatternPrefix.LooseConfig['end']
+): Admit<T.RangePatternPrefix['_end']> {
 	return _keywordOr(
 		value,
 		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
@@ -10829,7 +10829,7 @@ export const coerceToRangePatternPrefix: ConfigSeat<
 	currentHandle()?.admit(TSKindId.RangePatternPrefix, [input]);
 	return F.buildRangePatternPrefix({
 		operator: resolveRangePatternPrefix_operator(input.operator),
-		right: resolveRangePatternPrefix_right(input.right)
+		end: resolveRangePatternPrefix_end(input.end)
 	});
 };
 
@@ -10842,9 +10842,9 @@ export function resolveRangePatternWithLeftWithRight_operator(
 	);
 }
 
-export function resolveRangePatternWithLeftWithRight_right(
-	value: T.RangePatternWithLeftWithRight.LooseConfig['right']
-): Admit<T.RangePatternWithLeftWithRight['_right']> {
+export function resolveRangePatternWithLeftWithRight_end(
+	value: T.RangePatternWithLeftWithRight.LooseConfig['end']
+): Admit<T.RangePatternWithLeftWithRight['_end']> {
 	return _keywordOr(
 		value,
 		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
@@ -10875,7 +10875,7 @@ export const coerceToRangePatternWithLeftWithRight: ConfigSeat<
 	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [input]);
 	return F.buildRangePatternWithLeftWithRight({
 		operator: resolveRangePatternWithLeftWithRight_operator(input.operator),
-		right: resolveRangePatternWithLeftWithRight_right(input.right)
+		end: resolveRangePatternWithLeftWithRight_end(input.end)
 	});
 };
 
@@ -10885,9 +10885,9 @@ export function coerceToRangePatternWithLeftBare(
 	return F.buildRangePatternWithLeftBare;
 }
 
-export function resolveRangePatternWithLeft_left(
-	value: T.RangePatternWithLeft.LooseConfig['left']
-): Admit<T.RangePatternWithLeft['_left']> {
+export function resolveRangePatternWithLeft_start(
+	value: T.RangePatternWithLeft.LooseConfig['start']
+): Admit<T.RangePatternWithLeft['_start']> {
 	return _keywordOr(
 		value,
 		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
@@ -10928,7 +10928,7 @@ export const coerceToRangePatternWithLeft: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildRangePatternWithLeft>;
 	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [input]);
 	return F.buildRangePatternWithLeft({
-		left: resolveRangePatternWithLeft_left(input.left),
+		start: resolveRangePatternWithLeft_start(input.start),
 		content: resolveRangePatternWithLeft_content(input.content)
 	});
 };

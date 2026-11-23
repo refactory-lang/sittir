@@ -168432,8 +168432,7 @@
                               }
                             },
                             "$type": 420,
-                            "_operator": 48,
-                            "_right": {
+                            "_end": {
                               "$_layout": {
                                 "trivia": {
                                   "leading": [
@@ -168443,9 +168442,10 @@
                               },
                               "$type": 141,
                               "_content": "5"
-                            }
+                            },
+                            "_operator": 48
                           },
-                          "_left": {
+                          "_start": {
                             "$type": 141,
                             "_content": "1"
                           }
@@ -168479,8 +168479,7 @@
                                   }
                                 },
                                 "$type": 420,
-                                "_operator": 48,
-                                "_right": {
+                                "_end": {
                                   "$_layout": {
                                     "trivia": {
                                       "leading": [
@@ -168490,9 +168489,10 @@
                                   },
                                   "$type": 141,
                                   "_content": "5"
-                                }
+                                },
+                                "_operator": 48
                               },
-                              "_left": {
+                              "_start": {
                                 "$type": 141,
                                 "_content": "1"
                               }
@@ -168525,13 +168525,13 @@
                           "$type": 422,
                           "_content": {
                             "$type": 420,
-                            "_operator": 48,
-                            "_right": {
+                            "_end": {
                               "$text": "c",
                               "$type": 1
-                            }
+                            },
+                            "_operator": 48
                           },
-                          "_left": {
+                          "_start": {
                             "$text": "b",
                             "$type": 1
                           }
@@ -168558,13 +168558,13 @@
                           "$type": 422,
                           "_content": {
                             "$type": 420,
-                            "_operator": 137,
-                            "_right": {
+                            "_end": {
                               "$text": "c",
                               "$type": 1
-                            }
+                            },
+                            "_operator": 137
                           },
-                          "_left": {
+                          "_start": {
                             "$text": "b",
                             "$type": 1
                           }
@@ -168584,7 +168584,7 @@
                       "_pattern": {
                         "$type": 422,
                         "_content": 421,
-                        "_left": {
+                        "_start": {
                           "$text": "d",
                           "$type": 1
                         }
@@ -168602,11 +168602,11 @@
                       "$type": 296,
                       "_pattern": {
                         "$type": 419,
-                        "_operator": 100,
-                        "_right": {
+                        "_end": {
                           "$text": "d",
                           "$type": 1
-                        }
+                        },
+                        "_operator": 100
                       }
                     }
                   },
@@ -168634,11 +168634,11 @@
                             }
                           },
                           "$type": 419,
-                          "_operator": 137,
-                          "_right": {
+                          "_end": {
                             "$type": 141,
                             "_content": "5"
-                          }
+                          },
+                          "_operator": 137
                         }
                       }
                     },
@@ -168773,7 +168773,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix right: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) body: (identifier)))))) statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) body: (boolean_literal)) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (boolean_literal)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix end: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal)))) body: (identifier)))))) statements: (expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (or_pattern_binary left: (or_pattern_prefix right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content))) right: (string_literal string_open: (string_open) elements: (string_content)))) body: (boolean_literal)) arms: (last_match_arm match: (match_pattern pattern: (wildcard_pattern)) body: (boolean_literal)))))))",
     "expectedSourceOut": "\nmatch x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}\n\nmatch name {\n  | \"IPV6_FLOWINFO\"\n  | \"IPV6_FLOWLABEL_MGR\"\n  | \"IPV6_FLOWINFO_SEND\" => true,\n  _ => false,\n}\n",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -168876,8 +168876,7 @@
                           }
                         },
                         "$type": 420,
-                        "_operator": 48,
-                        "_right": {
+                        "_end": {
                           "$_layout": {
                             "trivia": {
                               "leading": [
@@ -168887,9 +168886,10 @@
                           },
                           "$type": 141,
                           "_content": "5"
-                        }
+                        },
+                        "_operator": 48
                       },
-                      "_left": {
+                      "_start": {
                         "$type": 141,
                         "_content": "1"
                       }
@@ -168923,8 +168923,7 @@
                               }
                             },
                             "$type": 420,
-                            "_operator": 48,
-                            "_right": {
+                            "_end": {
                               "$_layout": {
                                 "trivia": {
                                   "leading": [
@@ -168934,9 +168933,10 @@
                               },
                               "$type": 141,
                               "_content": "5"
-                            }
+                            },
+                            "_operator": 48
                           },
-                          "_left": {
+                          "_start": {
                             "$type": 141,
                             "_content": "1"
                           }
@@ -168969,13 +168969,13 @@
                       "$type": 422,
                       "_content": {
                         "$type": 420,
-                        "_operator": 48,
-                        "_right": {
+                        "_end": {
                           "$text": "c",
                           "$type": 1
-                        }
+                        },
+                        "_operator": 48
                       },
-                      "_left": {
+                      "_start": {
                         "$text": "b",
                         "$type": 1
                       }
@@ -169002,13 +169002,13 @@
                       "$type": 422,
                       "_content": {
                         "$type": 420,
-                        "_operator": 137,
-                        "_right": {
+                        "_end": {
                           "$text": "c",
                           "$type": 1
-                        }
+                        },
+                        "_operator": 137
                       },
-                      "_left": {
+                      "_start": {
                         "$text": "b",
                         "$type": 1
                       }
@@ -169028,7 +169028,7 @@
                   "_pattern": {
                     "$type": 422,
                     "_content": 421,
-                    "_left": {
+                    "_start": {
                       "$text": "d",
                       "$type": 1
                     }
@@ -169046,11 +169046,11 @@
                   "$type": 296,
                   "_pattern": {
                     "$type": 419,
-                    "_operator": 100,
-                    "_right": {
+                    "_end": {
                       "$text": "d",
                       "$type": 1
-                    }
+                    },
+                    "_operator": 100
                   }
                 }
               },
@@ -169078,11 +169078,11 @@
                         }
                       },
                       "$type": 419,
-                      "_operator": 137,
-                      "_right": {
+                      "_end": {
                         "$type": 141,
                         "_content": "5"
-                      }
+                      },
+                      "_operator": 137
                     }
                   }
                 },
@@ -169110,7 +169110,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix right: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) body: (identifier))))))",
+    "expectedReparseTree": "(expression_statement (match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix end: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal)))) body: (identifier))))))",
     "expectedSourceOut": "match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -169334,8 +169334,7 @@
                         }
                       },
                       "$type": 420,
-                      "_operator": 48,
-                      "_right": {
+                      "_end": {
                         "$_layout": {
                           "trivia": {
                             "leading": [
@@ -169345,9 +169344,10 @@
                         },
                         "$type": 141,
                         "_content": "5"
-                      }
+                      },
+                      "_operator": 48
                     },
-                    "_left": {
+                    "_start": {
                       "$type": 141,
                       "_content": "1"
                     }
@@ -169381,8 +169381,7 @@
                             }
                           },
                           "$type": 420,
-                          "_operator": 48,
-                          "_right": {
+                          "_end": {
                             "$_layout": {
                               "trivia": {
                                 "leading": [
@@ -169392,9 +169391,10 @@
                             },
                             "$type": 141,
                             "_content": "5"
-                          }
+                          },
+                          "_operator": 48
                         },
-                        "_left": {
+                        "_start": {
                           "$type": 141,
                           "_content": "1"
                         }
@@ -169427,13 +169427,13 @@
                     "$type": 422,
                     "_content": {
                       "$type": 420,
-                      "_operator": 48,
-                      "_right": {
+                      "_end": {
                         "$text": "c",
                         "$type": 1
-                      }
+                      },
+                      "_operator": 48
                     },
-                    "_left": {
+                    "_start": {
                       "$text": "b",
                       "$type": 1
                     }
@@ -169460,13 +169460,13 @@
                     "$type": 422,
                     "_content": {
                       "$type": 420,
-                      "_operator": 137,
-                      "_right": {
+                      "_end": {
                         "$text": "c",
                         "$type": 1
-                      }
+                      },
+                      "_operator": 137
                     },
-                    "_left": {
+                    "_start": {
                       "$text": "b",
                       "$type": 1
                     }
@@ -169486,7 +169486,7 @@
                 "_pattern": {
                   "$type": 422,
                   "_content": 421,
-                  "_left": {
+                  "_start": {
                     "$text": "d",
                     "$type": 1
                   }
@@ -169504,11 +169504,11 @@
                 "$type": 296,
                 "_pattern": {
                   "$type": 419,
-                  "_operator": 100,
-                  "_right": {
+                  "_end": {
                     "$text": "d",
                     "$type": 1
-                  }
+                  },
+                  "_operator": 100
                 }
               }
             },
@@ -169536,11 +169536,11 @@
                       }
                     },
                     "$type": 419,
-                    "_operator": 137,
-                    "_right": {
+                    "_end": {
                       "$type": 141,
                       "_content": "5"
-                    }
+                    },
+                    "_operator": 137
                   }
                 }
               },
@@ -169567,7 +169567,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix right: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) body: (identifier)))))",
+    "expectedReparseTree": "(match_expression subject: (identifier) body: (match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix end: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal)))) body: (identifier)))))",
     "expectedSourceOut": "match x {\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -169786,8 +169786,7 @@
                       }
                     },
                     "$type": 420,
-                    "_operator": 48,
-                    "_right": {
+                    "_end": {
                       "$_layout": {
                         "trivia": {
                           "leading": [
@@ -169797,9 +169796,10 @@
                       },
                       "$type": 141,
                       "_content": "5"
-                    }
+                    },
+                    "_operator": 48
                   },
-                  "_left": {
+                  "_start": {
                     "$type": 141,
                     "_content": "1"
                   }
@@ -169833,8 +169833,7 @@
                           }
                         },
                         "$type": 420,
-                        "_operator": 48,
-                        "_right": {
+                        "_end": {
                           "$_layout": {
                             "trivia": {
                               "leading": [
@@ -169844,9 +169843,10 @@
                           },
                           "$type": 141,
                           "_content": "5"
-                        }
+                        },
+                        "_operator": 48
                       },
-                      "_left": {
+                      "_start": {
                         "$type": 141,
                         "_content": "1"
                       }
@@ -169879,13 +169879,13 @@
                   "$type": 422,
                   "_content": {
                     "$type": 420,
-                    "_operator": 48,
-                    "_right": {
+                    "_end": {
                       "$text": "c",
                       "$type": 1
-                    }
+                    },
+                    "_operator": 48
                   },
-                  "_left": {
+                  "_start": {
                     "$text": "b",
                     "$type": 1
                   }
@@ -169912,13 +169912,13 @@
                   "$type": 422,
                   "_content": {
                     "$type": 420,
-                    "_operator": 137,
-                    "_right": {
+                    "_end": {
                       "$text": "c",
                       "$type": 1
-                    }
+                    },
+                    "_operator": 137
                   },
-                  "_left": {
+                  "_start": {
                     "$text": "b",
                     "$type": 1
                   }
@@ -169938,7 +169938,7 @@
               "_pattern": {
                 "$type": 422,
                 "_content": 421,
-                "_left": {
+                "_start": {
                   "$text": "d",
                   "$type": 1
                 }
@@ -169956,11 +169956,11 @@
               "$type": 296,
               "_pattern": {
                 "$type": 419,
-                "_operator": 100,
-                "_right": {
+                "_end": {
                   "$text": "d",
                   "$type": 1
-                }
+                },
+                "_operator": 100
               }
             }
           },
@@ -169988,11 +169988,11 @@
                     }
                   },
                   "$type": 419,
-                  "_operator": 137,
-                  "_right": {
+                  "_end": {
                     "$type": 141,
                     "_content": "5"
-                  }
+                  },
+                  "_operator": 137
                 }
               }
             },
@@ -170014,7 +170014,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix right: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) body: (identifier))))",
+    "expectedReparseTree": "(match_block (match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix end: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal)))) body: (identifier))))",
     "expectedSourceOut": "{\n  a @ A(_) | b @ B(..) => a,\n  a @ 1 ... 5 => a,\n  Some(1 ... 5) => a,\n  a @ b...c => a,\n  a @ b..=c => a,\n  d.. => a,\n  ..d => d,\n  a @ ..=5 => a\n}",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -170224,8 +170224,7 @@
                     }
                   },
                   "$type": 420,
-                  "_operator": 48,
-                  "_right": {
+                  "_end": {
                     "$_layout": {
                       "trivia": {
                         "leading": [
@@ -170235,9 +170234,10 @@
                     },
                     "$type": 141,
                     "_content": "5"
-                  }
+                  },
+                  "_operator": 48
                 },
-                "_left": {
+                "_start": {
                   "$type": 141,
                   "_content": "1"
                 }
@@ -170271,8 +170271,7 @@
                         }
                       },
                       "$type": 420,
-                      "_operator": 48,
-                      "_right": {
+                      "_end": {
                         "$_layout": {
                           "trivia": {
                             "leading": [
@@ -170282,9 +170281,10 @@
                         },
                         "$type": 141,
                         "_content": "5"
-                      }
+                      },
+                      "_operator": 48
                     },
-                    "_left": {
+                    "_start": {
                       "$type": 141,
                       "_content": "1"
                     }
@@ -170317,13 +170317,13 @@
                 "$type": 422,
                 "_content": {
                   "$type": 420,
-                  "_operator": 48,
-                  "_right": {
+                  "_end": {
                     "$text": "c",
                     "$type": 1
-                  }
+                  },
+                  "_operator": 48
                 },
-                "_left": {
+                "_start": {
                   "$text": "b",
                   "$type": 1
                 }
@@ -170350,13 +170350,13 @@
                 "$type": 422,
                 "_content": {
                   "$type": 420,
-                  "_operator": 137,
-                  "_right": {
+                  "_end": {
                     "$text": "c",
                     "$type": 1
-                  }
+                  },
+                  "_operator": 137
                 },
-                "_left": {
+                "_start": {
                   "$text": "b",
                   "$type": 1
                 }
@@ -170376,7 +170376,7 @@
             "_pattern": {
               "$type": 422,
               "_content": 421,
-              "_left": {
+              "_start": {
                 "$text": "d",
                 "$type": 1
               }
@@ -170394,11 +170394,11 @@
             "$type": 296,
             "_pattern": {
               "$type": 419,
-              "_operator": 100,
-              "_right": {
+              "_end": {
                 "$text": "d",
                 "$type": 1
-              }
+              },
+              "_operator": 100
             }
           }
         },
@@ -170426,11 +170426,11 @@
                   }
                 },
                 "$type": 419,
-                "_operator": 137,
-                "_right": {
+                "_end": {
                   "$type": 141,
                   "_content": "5"
-                }
+                },
+                "_operator": 137
               }
             }
           },
@@ -170451,7 +170451,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix right: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) body: (identifier)))",
+    "expectedReparseTree": "(match_block_arms arms: (match_arm_with_comma match: (match_pattern pattern: (or_pattern_binary left: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (wildcard_pattern)))) right: (captured_pattern name: (identifier) pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (remaining_field_pattern)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_bare))) body: (identifier)) arms: (match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix end: (identifier))) body: (identifier)) arms: (last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal)))) body: (identifier)))",
     "expectedSourceOut": "a @ A(_) | b @ B(..) => a,\na @ 1 ... 5 => a,\nSome(1 ... 5) => a,\na @ b...c => a,\na @ b..=c => a,\nd.. => a,\n..d => d,\na @ ..=5 => a",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -170680,8 +170680,7 @@
                 }
               },
               "$type": 420,
-              "_operator": 48,
-              "_right": {
+              "_end": {
                 "$_layout": {
                   "trivia": {
                     "leading": [
@@ -170691,9 +170690,10 @@
                 },
                 "$type": 141,
                 "_content": "5"
-              }
+              },
+              "_operator": 48
             },
-            "_left": {
+            "_start": {
               "$type": 141,
               "_content": "1"
             }
@@ -170714,7 +170714,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))) body: (identifier))",
+    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))) body: (identifier))",
     "expectedSourceOut": "a @ 1 ... 5 => a,",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -170752,8 +170752,7 @@
                     }
                   },
                   "$type": 420,
-                  "_operator": 48,
-                  "_right": {
+                  "_end": {
                     "$_layout": {
                       "trivia": {
                         "leading": [
@@ -170763,9 +170762,10 @@
                     },
                     "$type": 141,
                     "_content": "5"
-                  }
+                  },
+                  "_operator": 48
                 },
-                "_left": {
+                "_start": {
                   "$type": 141,
                   "_content": "1"
                 }
@@ -170792,7 +170792,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))) body: (identifier))",
+    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))) body: (identifier))",
     "expectedSourceOut": "Some(1 ... 5) => a,",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -170823,13 +170823,13 @@
             "$type": 422,
             "_content": {
               "$type": 420,
-              "_operator": 48,
-              "_right": {
+              "_end": {
                 "$text": "c",
                 "$type": 1
-              }
+              },
+              "_operator": 48
             },
-            "_left": {
+            "_start": {
               "$text": "b",
               "$type": 1
             }
@@ -170850,7 +170850,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier))",
+    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier))",
     "expectedSourceOut": "a @ b...c => a,",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -170881,13 +170881,13 @@
             "$type": 422,
             "_content": {
               "$type": 420,
-              "_operator": 137,
-              "_right": {
+              "_end": {
                 "$text": "c",
                 "$type": 1
-              }
+              },
+              "_operator": 137
             },
-            "_left": {
+            "_start": {
               "$text": "b",
               "$type": 1
             }
@@ -170908,7 +170908,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))) body: (identifier))",
+    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))) body: (identifier))",
     "expectedSourceOut": "a @ b..=c => a,",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -170932,7 +170932,7 @@
         "_pattern": {
           "$type": 422,
           "_content": 421,
-          "_left": {
+          "_start": {
             "$text": "d",
             "$type": 1
           }
@@ -170952,7 +170952,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))) body: (identifier))",
+    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_bare))) body: (identifier))",
     "expectedSourceOut": "d.. => a,",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -170975,11 +170975,11 @@
         "$type": 296,
         "_pattern": {
           "$type": 419,
-          "_operator": 100,
-          "_right": {
+          "_end": {
             "$text": "d",
             "$type": 1
-          }
+          },
+          "_operator": 100
         }
       }
     },
@@ -170996,7 +170996,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix right: (identifier))) body: (identifier))",
+    "expectedReparseTree": "(match_arm_with_comma match: (match_pattern pattern: (range_pattern_prefix end: (identifier))) body: (identifier))",
     "expectedSourceOut": "..d => d,",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171195,8 +171195,7 @@
               }
             },
             "$type": 420,
-            "_operator": 48,
-            "_right": {
+            "_end": {
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -171206,9 +171205,10 @@
               },
               "$type": 141,
               "_content": "5"
-            }
+            },
+            "_operator": 48
           },
-          "_left": {
+          "_start": {
             "$type": 141,
             "_content": "1"
           }
@@ -171228,7 +171228,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))",
+    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))",
     "expectedSourceOut": "a @ 1 ... 5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171259,8 +171259,7 @@
                   }
                 },
                 "$type": 420,
-                "_operator": 48,
-                "_right": {
+                "_end": {
                   "$_layout": {
                     "trivia": {
                       "leading": [
@@ -171270,9 +171269,10 @@
                   },
                   "$type": 141,
                   "_content": "5"
-                }
+                },
+                "_operator": 48
               },
-              "_left": {
+              "_start": {
                 "$type": 141,
                 "_content": "1"
               }
@@ -171298,7 +171298,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))))",
+    "expectedReparseTree": "(match_pattern pattern: (tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))))",
     "expectedSourceOut": "Some(1 ... 5)",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171322,13 +171322,13 @@
           "$type": 422,
           "_content": {
             "$type": 420,
-            "_operator": 48,
-            "_right": {
+            "_end": {
               "$text": "c",
               "$type": 1
-            }
+            },
+            "_operator": 48
           },
-          "_left": {
+          "_start": {
             "$text": "b",
             "$type": 1
           }
@@ -171348,7 +171348,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))",
+    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier)))))",
     "expectedSourceOut": "a @ b...c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171372,13 +171372,13 @@
           "$type": 422,
           "_content": {
             "$type": 420,
-            "_operator": 137,
-            "_right": {
+            "_end": {
               "$text": "c",
               "$type": 1
-            }
+            },
+            "_operator": 137
           },
-          "_left": {
+          "_start": {
             "$text": "b",
             "$type": 1
           }
@@ -171398,7 +171398,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))))",
+    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier)))))",
     "expectedSourceOut": "a @ b..=c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171415,7 +171415,7 @@
       "_pattern": {
         "$type": 422,
         "_content": 421,
-        "_left": {
+        "_start": {
           "$text": "d",
           "$type": 1
         }
@@ -171434,7 +171434,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_pattern pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_bare)))",
+    "expectedReparseTree": "(match_pattern pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_bare)))",
     "expectedSourceOut": "d..",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171450,11 +171450,11 @@
       "$type": 296,
       "_pattern": {
         "$type": 419,
-        "_operator": 100,
-        "_right": {
+        "_end": {
           "$text": "d",
           "$type": 1
-        }
+        },
+        "_operator": 100
       }
     },
     "kind": "render",
@@ -171470,7 +171470,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_pattern pattern: (range_pattern_prefix right: (identifier)))",
+    "expectedReparseTree": "(match_pattern pattern: (range_pattern_prefix end: (identifier)))",
     "expectedSourceOut": "..d",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171499,11 +171499,11 @@
             }
           },
           "$type": 419,
-          "_operator": 137,
-          "_right": {
+          "_end": {
             "$type": 141,
             "_content": "5"
-          }
+          },
+          "_operator": 137
         }
       }
     },
@@ -171520,7 +171520,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal))))",
+    "expectedReparseTree": "(match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal))))",
     "expectedSourceOut": "a @ ..=5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -171981,8 +171981,7 @@
             }
           },
           "$type": 420,
-          "_operator": 48,
-          "_right": {
+          "_end": {
             "$_layout": {
               "trivia": {
                 "leading": [
@@ -171992,9 +171991,10 @@
             },
             "$type": 141,
             "_content": "5"
-          }
+          },
+          "_operator": 48
         },
-        "_left": {
+        "_start": {
           "$type": 141,
           "_content": "1"
         }
@@ -172013,7 +172013,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))",
+    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))",
     "expectedSourceOut": "a @ 1 ... 5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172035,13 +172035,13 @@
         "$type": 422,
         "_content": {
           "$type": 420,
-          "_operator": 48,
-          "_right": {
+          "_end": {
             "$text": "c",
             "$type": 1
-          }
+          },
+          "_operator": 48
         },
-        "_left": {
+        "_start": {
           "$text": "b",
           "$type": 1
         }
@@ -172060,7 +172060,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))",
+    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))",
     "expectedSourceOut": "a @ b...c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172082,13 +172082,13 @@
         "$type": 422,
         "_content": {
           "$type": 420,
-          "_operator": 137,
-          "_right": {
+          "_end": {
             "$text": "c",
             "$type": 1
-          }
+          },
+          "_operator": 137
         },
-        "_left": {
+        "_start": {
           "$text": "b",
           "$type": 1
         }
@@ -172107,7 +172107,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier))))",
+    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier))))",
     "expectedSourceOut": "a @ b..=c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172134,11 +172134,11 @@
           }
         },
         "$type": 419,
-        "_operator": 137,
-        "_right": {
+        "_end": {
           "$type": 141,
           "_content": "5"
-        }
+        },
+        "_operator": 137
       }
     },
     "kind": "render",
@@ -172154,7 +172154,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))",
+    "expectedReparseTree": "(captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal)))",
     "expectedSourceOut": "a @ ..=5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172261,8 +172261,7 @@
                 }
               },
               "$type": 420,
-              "_operator": 48,
-              "_right": {
+              "_end": {
                 "$_layout": {
                   "trivia": {
                     "leading": [
@@ -172272,9 +172271,10 @@
                 },
                 "$type": 141,
                 "_content": "5"
-              }
+              },
+              "_operator": 48
             },
-            "_left": {
+            "_start": {
               "$type": 141,
               "_content": "1"
             }
@@ -172299,7 +172299,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))))",
+    "expectedReparseTree": "(tuple_struct_pattern type: (identifier) fields: (patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))))",
     "expectedSourceOut": "Some(1 ... 5)",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172390,8 +172390,7 @@
               }
             },
             "$type": 420,
-            "_operator": 48,
-            "_right": {
+            "_end": {
               "$_layout": {
                 "trivia": {
                   "leading": [
@@ -172401,9 +172400,10 @@
               },
               "$type": 141,
               "_content": "5"
-            }
+            },
+            "_operator": 48
           },
-          "_left": {
+          "_start": {
             "$type": 141,
             "_content": "1"
           }
@@ -172423,7 +172423,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(patterns item: (range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal))))",
+    "expectedReparseTree": "(patterns item: (range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal))))",
     "expectedSourceOut": "1 ... 5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172446,8 +172446,7 @@
           }
         },
         "$type": 420,
-        "_operator": 48,
-        "_right": {
+        "_end": {
           "$_layout": {
             "trivia": {
               "leading": [
@@ -172457,9 +172456,10 @@
           },
           "$type": 141,
           "_content": "5"
-        }
+        },
+        "_operator": 48
       },
-      "_left": {
+      "_start": {
         "$type": 141,
         "_content": "1"
       }
@@ -172477,7 +172477,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))",
+    "expectedReparseTree": "(range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))",
     "expectedSourceOut": "1 ... 5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172500,8 +172500,7 @@
           }
         },
         "$type": 420,
-        "_operator": 48,
-        "_right": {
+        "_end": {
           "$_layout": {
             "trivia": {
               "leading": [
@@ -172511,9 +172510,10 @@
           },
           "$type": 141,
           "_content": "5"
-        }
+        },
+        "_operator": 48
       },
-      "_left": {
+      "_start": {
         "$type": 141,
         "_content": "1"
       }
@@ -172531,7 +172531,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left left: (integer_literal_decimal) (range_pattern_with_left_with_right right: (integer_literal_decimal)))",
+    "expectedReparseTree": "(range_pattern_with_left start: (integer_literal_decimal) (range_pattern_with_left_with_right end: (integer_literal_decimal)))",
     "expectedSourceOut": "1 ... 5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172547,13 +172547,13 @@
       "$type": 422,
       "_content": {
         "$type": 420,
-        "_operator": 48,
-        "_right": {
+        "_end": {
           "$text": "c",
           "$type": 1
-        }
+        },
+        "_operator": 48
       },
-      "_left": {
+      "_start": {
         "$text": "b",
         "$type": 1
       }
@@ -172571,7 +172571,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))",
+    "expectedReparseTree": "(range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier)))",
     "expectedSourceOut": "b...c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172587,13 +172587,13 @@
       "$type": 422,
       "_content": {
         "$type": 420,
-        "_operator": 137,
-        "_right": {
+        "_end": {
           "$text": "c",
           "$type": 1
-        }
+        },
+        "_operator": 137
       },
-      "_left": {
+      "_start": {
         "$text": "b",
         "$type": 1
       }
@@ -172611,7 +172611,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left left: (identifier) (range_pattern_with_left_with_right right: (identifier)))",
+    "expectedReparseTree": "(range_pattern_with_left start: (identifier) (range_pattern_with_left_with_right end: (identifier)))",
     "expectedSourceOut": "b..=c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172626,7 +172626,7 @@
     "input": {
       "$type": 422,
       "_content": 421,
-      "_left": {
+      "_start": {
         "$text": "d",
         "$type": 1
       }
@@ -172644,7 +172644,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left left: (identifier) (range_pattern_with_left_bare))",
+    "expectedReparseTree": "(range_pattern_with_left start: (identifier) (range_pattern_with_left_bare))",
     "expectedSourceOut": "d..",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172803,8 +172803,7 @@
     "grammar": "rust",
     "input": {
       "$type": 420,
-      "_operator": 48,
-      "_right": {
+      "_end": {
         "$_layout": {
           "trivia": {
             "leading": [
@@ -172814,7 +172813,8 @@
         },
         "$type": 141,
         "_content": "5"
-      }
+      },
+      "_operator": 48
     },
     "kind": "render",
     "options": {
@@ -172829,7 +172829,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left_with_right right: (integer_literal_decimal))",
+    "expectedReparseTree": "(range_pattern_with_left_with_right end: (integer_literal_decimal))",
     "expectedSourceOut": "... 5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172843,8 +172843,7 @@
     "grammar": "rust",
     "input": {
       "$type": 420,
-      "_operator": 48,
-      "_right": {
+      "_end": {
         "$_layout": {
           "trivia": {
             "leading": [
@@ -172854,7 +172853,8 @@
         },
         "$type": 141,
         "_content": "5"
-      }
+      },
+      "_operator": 48
     },
     "kind": "render",
     "options": {
@@ -172869,7 +172869,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left_with_right right: (integer_literal_decimal))",
+    "expectedReparseTree": "(range_pattern_with_left_with_right end: (integer_literal_decimal))",
     "expectedSourceOut": "... 5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172883,11 +172883,11 @@
     "grammar": "rust",
     "input": {
       "$type": 420,
-      "_operator": 48,
-      "_right": {
+      "_end": {
         "$text": "c",
         "$type": 1
-      }
+      },
+      "_operator": 48
     },
     "kind": "render",
     "options": {
@@ -172902,7 +172902,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left_with_right right: (identifier))",
+    "expectedReparseTree": "(range_pattern_with_left_with_right end: (identifier))",
     "expectedSourceOut": "...c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172916,11 +172916,11 @@
     "grammar": "rust",
     "input": {
       "$type": 420,
-      "_operator": 137,
-      "_right": {
+      "_end": {
         "$text": "c",
         "$type": 1
-      }
+      },
+      "_operator": 137
     },
     "kind": "render",
     "options": {
@@ -172935,7 +172935,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_with_left_with_right right: (identifier))",
+    "expectedReparseTree": "(range_pattern_with_left_with_right end: (identifier))",
     "expectedSourceOut": "..=c",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172949,11 +172949,11 @@
     "grammar": "rust",
     "input": {
       "$type": 419,
-      "_operator": 100,
-      "_right": {
+      "_end": {
         "$text": "d",
         "$type": 1
-      }
+      },
+      "_operator": 100
     },
     "kind": "render",
     "options": {
@@ -172968,7 +172968,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_prefix right: (identifier))",
+    "expectedReparseTree": "(range_pattern_prefix end: (identifier))",
     "expectedSourceOut": "..d",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -172982,11 +172982,11 @@
     "grammar": "rust",
     "input": {
       "$type": 419,
-      "_operator": 137,
-      "_right": {
+      "_end": {
         "$type": 141,
         "_content": "5"
-      }
+      },
+      "_operator": 137
     },
     "kind": "render",
     "options": {
@@ -173001,7 +173001,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(range_pattern_prefix right: (integer_literal_decimal))",
+    "expectedReparseTree": "(range_pattern_prefix end: (integer_literal_decimal))",
     "expectedSourceOut": "..=5",
     "grammar": "rust",
     "kind": "roundtrip",
@@ -173037,11 +173037,11 @@
               }
             },
             "$type": 419,
-            "_operator": 137,
-            "_right": {
+            "_end": {
               "$type": 141,
               "_content": "5"
-            }
+            },
+            "_operator": 137
           }
         }
       },
@@ -173060,7 +173060,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix right: (integer_literal_decimal)))) body: (identifier))",
+    "expectedReparseTree": "(last_match_arm match: (match_pattern pattern: (captured_pattern name: (identifier) pattern: (range_pattern_prefix end: (integer_literal_decimal)))) body: (identifier))",
     "expectedSourceOut": "a @ ..=5 => a",
     "grammar": "rust",
     "kind": "roundtrip",
