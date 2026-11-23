@@ -162,11 +162,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly semi: Routes<Table>['usingDeclaration$semi'];
 	};
 	readonly catchClause: Table['catchClause$seated'];
-	readonly binaryExpression$in: Seat<
-		ArgsOf<Table['buildBinaryExpressionIn']>,
-		ReturnType<Table['binaryExpression$seated']>
-	>;
-	readonly binaryExpression: Table['binaryExpression$seated'] & { readonly in: Routes<Table>['binaryExpression$in'] };
 	readonly classHeritage$extendsClause: Seat<
 		ArgsOf<Table['buildClassHeritageExtendsClause']>,
 		ReturnType<typeof F.buildClassHeritage>
@@ -1897,6 +1892,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly templateCall: Table['buildCallExpressionTemplateCall'];
 		readonly member: Table['buildCallExpressionMember'];
 	};
+	readonly binaryExpression: Table['buildBinaryExpressionDefault'] & { readonly in: Table['buildBinaryExpressionIn'] };
 	readonly updateExpression: Table['buildUpdateExpressionPostfix'] & {
 		readonly postfix: Table['buildUpdateExpressionPostfix'];
 		readonly prefix: Table['buildUpdateExpressionPrefix'];
@@ -1954,7 +1950,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$binary$in: Seat<
-		ArgsOf<Routes<Table>['binaryExpression$in']>,
+		ArgsOf<Table['buildBinaryExpressionIn']>,
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$update$postfix: Seat<
@@ -2314,7 +2310,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly augmentedAssignmentExpression: Table['buildAugmentedAssignmentExpression'];
 	readonly spreadElement: Table['buildSpreadElement'];
 	readonly ternaryExpression: Table['buildTernaryExpression'];
-	readonly binaryExpression: Routes<Table>['binaryExpression'];
 	readonly unaryExpression: Table['buildUnaryExpression'];
 	readonly sequenceExpression: Table['buildSequenceExpression'];
 	readonly templateString: Table['buildTemplateString'];
@@ -2419,6 +2414,8 @@ export interface Ir<Table extends AnyTable> {
 	readonly numberFloatScientific: Table['buildNumberFloatScientific'];
 	readonly numberBinary: Table['buildNumberBinary'];
 	readonly numberOctal: Table['buildNumberOctal'];
+	readonly binaryExpressionIn: Table['buildBinaryExpressionIn'];
+	readonly binaryExpressionDefault: Table['buildBinaryExpressionDefault'];
 	readonly classBodyMemberMethod: Routes<Table>['classBodyMemberMethod'];
 	readonly classBodyMemberMethodSig: Routes<Table>['classBodyMemberMethodSig'];
 	readonly classBodyMemberDeclaration: Table['buildClassBodyMemberDeclaration'];
@@ -2471,6 +2468,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly forHeader: Routes<Table>['forHeader'];
 	readonly parenthesizedExpression: Routes<Table>['parenthesizedExpression'];
 	readonly callExpression: Routes<Table>['callExpression'];
+	readonly binaryExpression: Routes<Table>['binaryExpression'];
 	readonly updateExpression: Routes<Table>['updateExpression'];
 	readonly string: Routes<Table>['string'];
 	readonly comment: Routes<Table>['comment'];
@@ -2729,13 +2727,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const catchClause: Routes<Table>['catchClause'] = $at('catchClause$seated');
-	const binaryExpression$in: Routes<Table>['binaryExpression$in'] = K.binaryExpression$in(
-		$at('binaryExpression$seated'),
-		$at('buildBinaryExpressionIn')
-	);
-	const binaryExpression: Routes<Table>['binaryExpression'] = Object.freeze(
-		Object.assign(delegate($at('binaryExpression$seated')), { in: binaryExpression$in } as const)
-	);
 	const classHeritage$extendsClause: Routes<Table>['classHeritage$extendsClause'] = K.classHeritage$extendsClause(
 		F.buildClassHeritage,
 		$at('buildClassHeritageExtendsClause')
@@ -3751,6 +3742,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		templateCall: $at('buildCallExpressionTemplateCall'),
 		member: $at('buildCallExpressionMember')
 	} as const);
+	const binaryExpression: Routes<Table>['binaryExpression'] = Object.freeze(
+		Object.assign(delegate($at('buildBinaryExpressionDefault')), { in: $at('buildBinaryExpressionIn') } as const)
+	);
 	const updateExpression: Routes<Table>['updateExpression'] = Object.freeze(
 		Object.assign(delegate($at('buildUpdateExpressionPostfix')), {
 			postfix: $at('buildUpdateExpressionPostfix'),
@@ -4162,7 +4156,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		augmentedAssignmentExpression: $at('buildAugmentedAssignmentExpression'),
 		spreadElement: $at('buildSpreadElement'),
 		ternaryExpression: $at('buildTernaryExpression'),
-		binaryExpression: binaryExpression,
 		unaryExpression: $at('buildUnaryExpression'),
 		sequenceExpression: $at('buildSequenceExpression'),
 		templateString: $at('buildTemplateString'),
@@ -4267,6 +4260,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		numberFloatScientific: $at('buildNumberFloatScientific'),
 		numberBinary: $at('buildNumberBinary'),
 		numberOctal: $at('buildNumberOctal'),
+		binaryExpressionIn: $at('buildBinaryExpressionIn'),
+		binaryExpressionDefault: $at('buildBinaryExpressionDefault'),
 		classBodyMemberMethod: classBodyMemberMethod,
 		classBodyMemberMethodSig: classBodyMemberMethodSig,
 		classBodyMemberDeclaration: $at('buildClassBodyMemberDeclaration'),
@@ -4319,6 +4314,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		forHeader: forHeader,
 		parenthesizedExpression: parenthesizedExpression,
 		callExpression: callExpression,
+		binaryExpression: binaryExpression,
 		updateExpression: updateExpression,
 		string: string,
 		comment: comment,

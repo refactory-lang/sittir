@@ -496,7 +496,7 @@ Applies a path-keyed patch set. A `narrow` entry is queued, with its path, for t
 
 ### `packages/codegen/src/dsl/transform/transform.ts::applyVariantPatches`
 
-Apply a patch set's `variant()` entries. Arms of one choice that the entries give the same name are first made one arm, a choice of those arms in their order, at the first one's place (`mergedSharedVariantArms`): a name is one kind, so java's `update_expression` names its `x++` and `x--` arms `postfix` and gets one `update_expression_postfix` whose operator is an enum slot, rather than a second mint overwriting the first. The other entries on that choice are re-addressed to the arms' new places; the merged entry is the default when any of its arms was. Then try the whole-arm hoist
+Apply a patch set's `variant()` entries. Arms of one choice that the entries give the same name are first made one arm, a choice of those arms in their order, at the first one's place (`gatheredVariantArms`): a name is one kind, so java's `update_expression` names its `x++` and `x--` arms `postfix` and gets one `update_expression_postfix` whose operator is an enum slot, rather than a second mint overwriting the first. The other entries on that choice, and any key inside an arm that moved, are re-addressed to the arms' new places; the merged entry is the default when any of its arms was. Then try the whole-arm hoist
 (`tryHoistSiblingVariants`) first, resolve every entry it did not consume per
 arm, then register the parent for flattening when it ended as a pure choice of
 its own variants. An absent variant only exists in the hoisted form, so when
@@ -506,6 +506,8 @@ prints why the hoist bailed. The hoist runs with every variant entry as the acti
 applies them together; each remaining entry runs as its own site, through `appliedAtSite`. After the
 parent is registered, the sibling defaults of every `default: true` entry are cleared, in the set's
 order, except for an entry whose path matched nothing.
+
+Before anything applies, `admittedVariantEntries` refuses an entry with a blank name and no `default: true`, and an entry whose minted name an earlier key already took, unless the name is not blank and the keys are different arms of one choice (`edit-entry-invalid`). `everyArmEntries` then expands the `EVERY_ARM_KEY` entry into one entry for each arm no other key names, so those arms take the same gathering as arms named alike: they become one rule at the first such arm's place, and each keeps its own precedence. The parent registers for flattening after it, so a choice whose arms all end as variants is a supertype. The rule must be a choice with no precedence wrapper of its own, and some arm must be unnamed, or the entry is refused.
 
 #### body
 
@@ -1797,6 +1799,10 @@ including a hoisted rule whose annotation lives on a named precedence wrapper.
 ### `packages/codegen/src/dsl/transform/transform-path.ts::memberIndex`
 
 Resolves a member index against a member count. A negative index counts from the end (`length + index`); any other index is returned unchanged.
+
+### `packages/codegen/src/dsl/transform/transform-path.ts::EVERY_ARM_KEY`
+
+`*`: the edit key that names every arm of the rule's choice that no other key of the same edit names. It takes only `variant()`; the arms become one rule (`applyEveryArmVariant`), each keeping its own precedence. `parsePath` still refuses `*` as a path segment.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::namedFieldCount`
 

@@ -1,3 +1,4 @@
+import { isBlankVariantName } from '../../dsl/primitives/variant.ts';
 import type { PortableMountCall } from '@sittir/types';
 import { emitShapeFailure } from '../../compiler/diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../../compiler/types.ts';
@@ -1237,7 +1238,7 @@ export function emitPolymorphsOverlay(config: {
 				members.push({ key: name, ref: { value: id, type: `typeof ${id}` } });
 				continue;
 			}
-			const target = nestedParentKey === undefined ? variantRouteOf(child, `${parent.key}.${name}`) : defaultRoutes.get(nestedParentKey);
+			const target = nestedParentKey === undefined ? variantRouteOf(child, isBlankVariantName(route.name) ? parent.key : `${parent.key}.${name}`) : defaultRoutes.get(nestedParentKey);
 			if (target?.set !== undefined) uses.add(target.set);
 			if (route.default && target !== undefined) {
 				if (isKindIdStored(child))
@@ -1253,11 +1254,12 @@ export function emitPolymorphsOverlay(config: {
 			}
 			if (nestedParentKey !== undefined) {
 				uses.add(child.kind);
+				if (isBlankVariantName(route.name)) continue;
 				sharedSetByPath.set(`${parent.key}.${name}`, nestedParentKey);
 				members.push({ key: name, ref: localRef(nestedParentKey) });
 				continue;
 			}
-			members.push({ key: name, ref: (target as VariantRoute).value });
+			if (!isBlankVariantName(route.name)) members.push({ key: name, ref: (target as VariantRoute).value });
 		}
 		const entryRef = withMembers(fallback?.callable, false, members);
 		locals.set(parent.key, entryRef);

@@ -14,6 +14,9 @@ export interface VariantOptions {
 }
 
 export const ABSENT_VARIANT_NAME = 'bare';
+export const DEFAULT_VARIANT_NAME = 'default';
+
+export const isBlankVariantName = (name: string | undefined): boolean => name === '';
 
 export function isVariantPlaceholder(v: unknown): v is VariantPlaceholder {
 	return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'variant';
@@ -41,7 +44,7 @@ export function directVariantOf(rule: unknown): VariantPlaceholder | undefined {
 }
 
 export function variantMintName(v: VariantPlaceholder): string {
-	return [...(v.nestedUnder ?? []), v.name].join('_');
+	return [...(v.nestedUnder ?? []), isBlankVariantName(v.name) ? DEFAULT_VARIANT_NAME : v.name].join('_');
 }
 
 export function variantOwnerKind(parentKind: string, v: VariantPlaceholder): string {

@@ -103,13 +103,13 @@ export function everyCallingConventionRefusesANegativeLiteral(): void {
 }
 
 export function aNegativeLiteralIsRefusedAtAnyDepth(): void {
-	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: 2 } });
-	ir.array([{ $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: 2 }]);
+	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpressionDefault, left: 1, operator: '+', right: 2 } });
+	ir.array([{ $type: TSKindId.BinaryExpressionDefault, left: 1, operator: '+', right: 2 }]);
 
 	// @ts-expect-error a negative literal is refused in a config nested in another
-	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpression, left: -1, operator: '+', right: 2 } });
+	ir.returnStatement({ expression: { $type: TSKindId.BinaryExpressionDefault, left: -1, operator: '+', right: 2 } });
 	// @ts-expect-error a negative literal is refused in a config nested in a list item
-	ir.array([{ $type: TSKindId.BinaryExpression, left: 1, operator: '+', right: -2 }]);
+	ir.array([{ $type: TSKindId.BinaryExpressionDefault, left: 1, operator: '+', right: -2 }]);
 }
 
 export function anOptionalLooseInputRefusesAnInlineNegativeBigint(): void {

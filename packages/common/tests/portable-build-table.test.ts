@@ -172,13 +172,6 @@ describe('the portable build table', () => {
 	});
 
 	it("builds a form through its holder's mount, the step saying how the mount takes its input and which of its slot's forms it enters", () => {
-		const [left] = armOf('typescript', 'expression.binary.membership.in', typescript.kinds.BinaryExpression).slots.filter((slot) => slot.name === 'left' && slot.steps.length > 1);
-		expect(left!.steps[0]).toEqual({
-			key: 'binaryExpressionIn',
-			builder: 'binaryExpression.in',
-			mounted: { call: 'child', key: 'binaryExpressionIn' }
-		});
-		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
 		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((slot) => slot.name === 'right');
 		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' }, kinds: [rust.kinds.RangePatternWithLeftWithRight] });
 	});

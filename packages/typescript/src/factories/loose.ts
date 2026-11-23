@@ -68,7 +68,6 @@ export {
 	coerceToAugmentedAssignmentExpression as buildAugmentedAssignmentExpression,
 	coerceToSpreadElement as buildSpreadElement,
 	coerceToTernaryExpression as buildTernaryExpression,
-	coerceToBinaryExpression as buildBinaryExpression,
 	coerceToUnaryExpression as buildUnaryExpression,
 	coerceToSequenceExpression as buildSequenceExpression,
 	coerceToUnescapedDoubleStringFragment as buildUnescapedDoubleStringFragment,
@@ -201,6 +200,7 @@ export {
 	coerceToNumberBigintOctal as buildNumberBigintOctal,
 	coerceToNumberBigintDecimal as buildNumberBigintDecimal,
 	coerceToBinaryExpressionIn as buildBinaryExpressionIn,
+	coerceToBinaryExpressionDefault as buildBinaryExpressionDefault,
 	coerceToEmptyMember as buildEmptyMember,
 	coerceToClassBodyMemberMethod as buildClassBodyMemberMethod,
 	coerceToClassBodyMemberMethodSig as buildClassBodyMemberMethodSig,
@@ -289,11 +289,6 @@ export const catchClause$seated: Seat<
 	T.CatchClause.LooseArgs,
 	ReturnType<typeof C.coerceToCatchClause>
 > = K.catchClause$flatten$catchClauseGroup(C.coerceToCatchClause, C.coerceToCatchClauseGroup);
-
-export const binaryExpression$seated: Seat<
-	T.BinaryExpression.LooseArgs,
-	ReturnType<typeof C.coerceToBinaryExpression>
-> = K.binaryExpression$branch(C.coerceToBinaryExpression);
 
 export const numberFloatPoint$seated: Seat<
 	T.NumberFloatPoint.LooseArgs,

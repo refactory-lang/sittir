@@ -989,110 +989,74 @@
 			"field": "await_expression_after"
 		}
 	],
-	"binary_expression": [
+	"binary_expression_default": [
 		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "left",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "left"
-						}
-					]
-				}
-			]
+			"kind": "seam",
+			"field": "binary_expression_default_before"
+		},
+		{
+			"kind": "slot",
+			"name": "left"
 		},
 		{
 			"kind": "if",
 			"arms": [
 				{
 					"test": "operator",
+					"kinds": [
+						"instanceof_keyword"
+					],
 					"body": [
 						{
-							"kind": "if",
-							"arms": [
-								{
-									"test": "operator",
-									"kinds": [
-										"instanceof_keyword"
-									],
-									"body": [
-										{
-											"kind": "wordSeam"
-										}
-									]
-								}
-							],
-							"fallback": [
-								{
-									"kind": "seam",
-									"field": "operator_before"
-								}
-							]
-						},
-						{
-							"kind": "slot",
-							"name": "operator"
-						},
-						{
-							"kind": "if",
-							"arms": [
-								{
-									"test": "operator",
-									"kinds": [
-										"instanceof_keyword"
-									],
-									"body": [
-										{
-											"kind": "wordSeam"
-										}
-									]
-								}
-							],
-							"fallback": [
-								{
-									"kind": "seam",
-									"field": "operator_after"
-								}
-							]
+							"kind": "wordSeam"
 						}
 					]
 				}
+			],
+			"fallback": [
+				{
+					"kind": "seam",
+					"field": "operator_before"
+				}
 			]
+		},
+		{
+			"kind": "slot",
+			"name": "operator"
 		},
 		{
 			"kind": "if",
 			"arms": [
 				{
-					"test": "right",
+					"test": "operator",
+					"kinds": [
+						"instanceof_keyword"
+					],
 					"body": [
 						{
-							"kind": "slot",
-							"name": "right",
-							"join": {
-								"previous": true,
-								"next": true
-							}
+							"kind": "wordSeam"
 						}
 					]
+				}
+			],
+			"fallback": [
+				{
+					"kind": "seam",
+					"field": "operator_after"
 				}
 			]
 		},
 		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "binary_expression_in",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "binary_expression_in"
-						}
-					]
-				}
-			]
+			"kind": "slot",
+			"name": "right",
+			"join": {
+				"previous": true,
+				"next": true
+			}
+		},
+		{
+			"kind": "seam",
+			"field": "binary_expression_default_after"
 		}
 	],
 	"binary_expression_in": [

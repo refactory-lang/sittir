@@ -340,7 +340,8 @@ export default grammar(enrich(base), wire({
 		},
 		hash_bang_line: { '.': regex(/#!(?<content>.*)/) },
 		binary_expression: {
-			24: variant('in')
+			24: variant('in'),
+			'*': variant('', { default: true })
 		},
 		object: {
 			1: field('properties')
@@ -664,8 +665,7 @@ export default grammar(enrich(base), wire({
 	],
 	extras: ($, previous) => [...(previous ?? [])],
 	expectDiagnostics: {
-		'unclassifiable-shape': ['binary_expression', 'public_field_definition_plain'],
-		'union-slot-mixed-row': ['binary_expression'],
+		'unclassifiable-shape': ['public_field_definition_plain'],
 		'rule-reauthored-without-cause': ['object_type']
 	},
 	rules: {

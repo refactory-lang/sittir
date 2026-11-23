@@ -26,7 +26,7 @@ import {
 	variantMintName,
 	type VariantPlaceholder
 } from '../primitives/variant.ts';
-import { applyPath, ApplyPathSkip, parsePath } from '../transform/transform-path.ts';
+import { applyPath, ApplyPathSkip, EVERY_ARM_KEY, parsePath } from '../transform/transform-path.ts';
 import type { SitePaths } from '../transform/token-forms.ts';
 import { renameNameList, renameRule } from './symbol-renames.ts';
 import { assertNoRenamedExternal, liftRenames, resolveLiftNames, type LiftName } from './lift-names.ts';
@@ -907,7 +907,9 @@ type PatchKeyCheck<Rule, M, Minted extends string, Replaced extends string = nev
 	readonly [Path in keyof M]: Path extends string | number
 		? string extends Path
 			? M[Path]
-			: `${Path}` extends `${Replaced}/${string}`
+			: `${Path}` extends typeof EVERY_ARM_KEY
+				? M[Path]
+				: `${Path}` extends `${Replaced}/${string}`
 				? M[Path]
 				: IsPath<Rule, `${Path}`, Minted> extends true
 					? M[Path]
@@ -1477,7 +1479,7 @@ function authoredSites<P, S>(
 		if (!entry) continue;
 		for (const set of patchSetsOf(entry)) {
 			for (const [key, patch] of Object.entries(set)) {
-				if (!marks(patch)) continue;
+				if (!marks(patch) || key === EVERY_ARM_KEY) continue;
 				const path = parsePath(key);
 				const indices = path.flatMap((segment) => (segment.kind === 'index' ? [segment.value] : []));
 				if (indices.length === path.length) sites.set(kind, [...(sites.get(kind) ?? []), siteOf(indices, patch)]);
@@ -1702,6 +1704,7 @@ function defaultAbsentVariantName(kind: string, patchMap: PatchMap): string | un
 	const variants = Object.entries(patchMap).filter((entry): entry is [string, VariantPlaceholder] => isVariantPlaceholder(entry[1]));
 	if (variants.some(([, v]) => v.absent === true)) return undefined;
 	const throughOptional = variants.some(([key]) => {
+		if (key === EVERY_ARM_KEY) return false;
 		const segs = parsePath(key);
 		return segs.length === 3 && segs.every((s) => s.kind === 'index') && (segs[1] as { value: number }).value === 0;
 	});

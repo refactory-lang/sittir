@@ -9,7 +9,8 @@ import {
 	insideLexicalToken,
 	memberIndex,
 	namedFieldCount,
-	ApplyPathSkip
+	ApplyPathSkip,
+	EVERY_ARM_KEY
 } from './transform-path.ts';
 import type { PathSegment } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
@@ -19,7 +20,7 @@ import { editedCopy, refuseSplitDisplays } from '../primitives/copy.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
 import { canonicalRuleText } from './token-forms.ts';
-import { ABSENT_VARIANT_NAME, directVariantOf, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
+import { ABSENT_VARIANT_NAME, directVariantOf, isBlankVariantName, isVariantPlaceholder, variant, variantMintName, variantOwnerKind } from '../primitives/variant.ts';
 import { isRefinePlaceholder, refine, type RefinePlaceholder } from '../primitives/refine.ts';
 import type { VariantPlaceholder } from '../primitives/variant.ts';
 import { isArmDefault } from '../primitives/arm.ts';
@@ -275,7 +276,8 @@ function applyPathPatches(original: RuntimeRule, patches: Record<number | string
 				return isArmDefault(value) ? clearSiblingDefaults(applied, segments) : applied;
 			}) ?? current;
 	}
-	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries) : rule;
+	const claimed = Object.hasOwn(patches, EVERY_ARM_KEY) ? claimedArms(original, Object.keys(patches).filter((key) => key !== EVERY_ARM_KEY && key !== '.')) : new Set<number>();
+	return variantEntries.length > 0 ? applyVariantPatches(rule, variantEntries, claimed) : rule;
 }
 
 const DOT_ONLY_ENTRIES = {
@@ -365,65 +367,169 @@ function partitionPatchesByVariant(patches: Record<number | string, PatchValue>)
 
 type VariantEntry = [string, VariantPlaceholder];
 
-function sharedNameGroups(entries: ReadonlyArray<VariantEntry>): Map<string, VariantEntry[]> {
-	const byChoice = new Map<string, VariantEntry[]>();
-	for (const entry of entries) {
-		const [key, v] = entry;
-		const cut = key.lastIndexOf('/');
-		if (v.absent === true || !/^-?\d+$/.test(key.slice(cut + 1))) continue;
-		const at = cut < 0 ? '.' : key.slice(0, cut);
-		byChoice.set(at, [...(byChoice.get(at) ?? []), entry]);
-	}
-	return new Map([...byChoice].filter(([, siblings]) => new Set(siblings.map(([, v]) => variantMintName(v))).size < siblings.length));
+function refuseVariantEntry(key: string, message: string): void {
+	const owner = wireGetCurrentRuleKind() ?? '';
+	wireRefuse({ code: 'edit-entry-invalid', ownerKind: owner, message: `edits: '${owner}' at '${key}': ${message}`, details: { kind: owner, path: key } });
 }
 
-function mergedSharedVariantArms(rule: RuntimeRule, entries: ReadonlyArray<VariantEntry>): { rule: RuntimeRule; entries: VariantEntry[] } {
-	const rekeyed = new Map<string, VariantEntry | null>();
-	let merged = rule;
-	for (const [at, siblings] of sharedNameGroups(entries)) {
-		merged = applyPath(merged, parsePath(at), (choice) => {
-			if (!isChoiceType(choice.type)) return choice;
-			const members = membersOf(choice);
-			const indexOf = ([key]: VariantEntry): number => memberIndex(Number(key.slice(key.lastIndexOf('/') + 1)), members.length);
-			const armsOf = new Map<string, VariantEntry[]>();
-			for (const entry of [...siblings].sort((a, b) => indexOf(a) - indexOf(b))) {
-				const name = variantMintName(entry[1]);
-				armsOf.set(name, [...(armsOf.get(name) ?? []), entry]);
-			}
-			const named = new Map(siblings.map((entry) => [indexOf(entry), armsOf.get(variantMintName(entry[1]))!]));
-			const rebuilt: RuntimeRule[] = [];
-			members.forEach((member, i) => {
-				const arms = named.get(i);
-				if (arms !== undefined && indexOf(arms[0]!) !== i) return;
-				const keyAt = (placeholder: VariantPlaceholder): VariantEntry => [at === '.' ? String(rebuilt.length) : `${at}/${rebuilt.length}`, placeholder];
-				if (arms === undefined || arms.length === 1) {
-					if (arms !== undefined) rekeyed.set(arms[0]![0], keyAt(arms[0]![1]));
-					rebuilt.push(member);
-					return;
-				}
-				const [first, ...rest] = arms;
-				const placeholder = arms.some(([, v]) => v.default === true) ? { ...first![1], default: true as const } : first![1];
-				rekeyed.set(first![0], keyAt(placeholder));
-				for (const [key] of rest) rekeyed.set(key, null);
-				rebuilt.push({ type: 'CHOICE', members: arms.map((entry) => members[indexOf(entry)]!) } as unknown as RuntimeRule);
+function choiceArmKey(key: string): { readonly at: string; readonly arm: number } | undefined {
+	const cut = key.lastIndexOf('/');
+	const tail = key.slice(cut + 1);
+	return /^-?\d+$/.test(tail) ? { at: cut < 0 ? '.' : key.slice(0, cut), arm: Number(tail) } : undefined;
+}
+
+function choiceAt(rule: RuntimeRule, at: string): RuntimeRule | undefined {
+	const held: RuntimeRule[] = [];
+	try {
+		applyPath(rule, parsePath(at), (member) => {
+			held.push(member);
+			return member;
+		});
+	} catch (error) {
+		if (!(error instanceof ApplyPathSkip)) throw error;
+	}
+	return held.length === 1 && isChoiceType(held[0]!.type) ? held[0] : undefined;
+}
+
+function isOtherArmOfChoice(rule: RuntimeRule, other: string, key: string): boolean {
+	const [a, b] = [choiceArmKey(other), choiceArmKey(key)];
+	if (a === undefined || a.at !== b?.at) return false;
+	const choice = choiceAt(rule, a.at);
+	if (choice === undefined) return false;
+	const length = membersOf(choice).length;
+	return memberIndex(a.arm, length) !== memberIndex(b.arm, length);
+}
+
+function admittedVariantEntries(rule: RuntimeRule, entries: ReadonlyArray<VariantEntry>): VariantEntry[] {
+	const minted = new Map<string, readonly string[]>();
+	return entries.filter(([key, value]) => {
+		if (isBlankVariantName(value.name) && value.default !== true) {
+			refuseVariantEntry(key, 'a blank variant name takes { default: true }');
+			return false;
+		}
+		const name = variantMintName(value);
+		const named = minted.get(name) ?? [];
+		const gathers = !isBlankVariantName(value.name) && value.absent !== true && named.every((other) => isOtherArmOfChoice(rule, other, key));
+		if (named.length > 0 && !gathers) {
+			refuseVariantEntry(key, `variant '${name}' is already named at '${named[0]}'; one variant name takes one key, or the arms of one choice`);
+			return false;
+		}
+		minted.set(name, [...named, key]);
+		return true;
+	});
+}
+
+function claimedArms(original: RuntimeRule, keys: ReadonlyArray<string>): ReadonlySet<number> {
+	const { core } = peelPrecs(original);
+	const members = isChoiceType(core.type) ? membersOf(core) : [];
+	const claimed = new Set<number>();
+	for (const key of keys) {
+		const head = parsePath(key)[0];
+		if (head === undefined) continue;
+		if (head.kind === 'index') {
+			claimed.add(memberIndex(head.value, members.length));
+			continue;
+		}
+		const hit = new Set<RuntimeRule>();
+		try {
+			applyPath(original, [head], (member) => {
+				hit.add(member);
+				return member;
 			});
-			return reconstructContainer(choice, rebuilt);
+		} catch (error) {
+			if (!(error instanceof ApplyPathSkip)) throw error;
+		}
+		members.forEach((member, i) => {
+			if (hit.has(member)) claimed.add(i);
 		});
 	}
-	return {
-		rule: merged,
-		entries: entries.flatMap((entry) => {
-			const next = rekeyed.get(entry[0]);
-			return next === undefined ? [entry] : next === null ? [] : [next];
-		})
-	};
+	return claimed;
+}
+
+function everyArmEntries(rule: RuntimeRule, entries: ReadonlyArray<VariantEntry>, claimed: ReadonlySet<number>): VariantEntry[] {
+	const every = entries.find(([key]) => key === EVERY_ARM_KEY);
+	const keyed = entries.filter(([key]) => key !== EVERY_ARM_KEY);
+	if (every === undefined) return keyed;
+	const { precs, core } = peelPrecs(rule);
+	const arms = precs.length === 0 && isChoiceType(core.type) ? membersOf(core).flatMap((_, i) => (claimed.has(i) ? [] : [i])) : [];
+	if (arms.length === 0) {
+		refuseVariantEntry(EVERY_ARM_KEY, 'the key names every arm of a choice that no other key names, and the rule has no such arm');
+		return keyed;
+	}
+	return [...keyed, ...arms.map((arm): VariantEntry => [String(arm), every[1]])];
+}
+
+function sharedNameChoice(entries: ReadonlyArray<VariantEntry>): readonly [string, VariantEntry[]] | undefined {
+	const byChoice = new Map<string, VariantEntry[]>();
+	for (const entry of entries) {
+		const armKey = entry[1].absent === true ? undefined : choiceArmKey(entry[0]);
+		if (armKey !== undefined) byChoice.set(armKey.at, [...(byChoice.get(armKey.at) ?? []), entry]);
+	}
+	const shared = [...byChoice].filter(([, siblings]) => new Set(siblings.map(([, value]) => variantMintName(value))).size < siblings.length);
+	return shared.sort(([a], [b]) => parsePath(b).length - parsePath(a).length)[0];
+}
+
+function gatherChoiceArms(choice: RuntimeRule, at: string, siblings: ReadonlyArray<VariantEntry>) {
+	const members = membersOf(choice);
+	const indexOf = ([key]: VariantEntry): number => memberIndex(choiceArmKey(key)!.arm, members.length);
+	const keyAt = (position: number): string => (at === '.' ? String(position) : `${at}/${position}`);
+	const armsOf = new Map<string, VariantEntry[]>();
+	for (const entry of [...siblings].sort((a, b) => indexOf(a) - indexOf(b))) {
+		const name = variantMintName(entry[1]);
+		armsOf.set(name, [...(armsOf.get(name) ?? []), entry]);
+	}
+	const named = new Map(siblings.map((entry) => [indexOf(entry), armsOf.get(variantMintName(entry[1]))!]));
+	const rebuilt: RuntimeRule[] = [];
+	const placed = new Map<number, string>();
+	const rekeyed = new Map<string, VariantEntry | null>();
+	members.forEach((member, i) => {
+		const arms = named.get(i);
+		if (arms !== undefined && indexOf(arms[0]!) !== i) return;
+		const position = rebuilt.length;
+		if (arms === undefined || arms.length === 1) {
+			placed.set(i, String(position));
+			if (arms !== undefined) rekeyed.set(arms[0]![0], [keyAt(position), arms[0]![1]]);
+			rebuilt.push(member);
+			return;
+		}
+		const [first, ...rest] = arms;
+		arms.forEach((entry, within) => placed.set(indexOf(entry), `${position}/${within}`));
+		rekeyed.set(first![0], [keyAt(position), arms.some(([, value]) => value.default === true) ? { ...first![1], default: true as const } : first![1]]);
+		for (const [key] of rest) rekeyed.set(key, null);
+		rebuilt.push(reconstructContainer(choice, arms.map((entry) => members[indexOf(entry)]!)));
+	});
+	return { choice: reconstructContainer(choice, rebuilt), placed, rekeyed, length: members.length };
+}
+
+function keyThroughGathered(key: string, at: string, placed: ReadonlyMap<number, string>, length: number): string {
+	const prefix = at === '.' ? '' : `${at}/`;
+	if (!key.startsWith(prefix)) return key;
+	const [head, ...rest] = key.slice(prefix.length).split('/');
+	if (head === undefined || rest.length === 0 || !/^-?\d+$/.test(head)) return key;
+	const moved = placed.get(memberIndex(Number(head), length));
+	return moved === undefined ? key : [`${prefix}${moved}`, ...rest].join('/');
+}
+
+function gatheredVariantArms(rule: RuntimeRule, entries: ReadonlyArray<VariantEntry>): { rule: RuntimeRule; entries: VariantEntry[] } {
+	const shared = sharedNameChoice(entries);
+	if (shared === undefined) return { rule, entries: [...entries] };
+	const [at, siblings] = shared;
+	const gathered = gatherChoiceArms(choiceAt(rule, at)!, at, siblings);
+	const next = entries.flatMap(([key, value]): VariantEntry[] => {
+		const moved = gathered.rekeyed.get(key);
+		if (moved === null) return [];
+		return [moved ?? [keyThroughGathered(key, at, gathered.placed, gathered.length), value]];
+	});
+	return gatheredVariantArms(applyPath(rule, parsePath(at), () => gathered.choice), next);
 }
 
 function applyVariantPatches(
 	original: RuntimeRule,
-	authored: ReadonlyArray<[string, VariantPlaceholder]>
+	authored: ReadonlyArray<VariantEntry>,
+	claimed: ReadonlySet<number>
 ): RuntimeRule {
-	const { rule, entries: variantEntries } = mergedSharedVariantArms(original, authored);
+	const admitted = admittedVariantEntries(original, authored);
+	const { rule, entries: variantEntries } = gatheredVariantArms(original, everyArmEntries(original, admitted, claimed));
 	const ordered = [...variantEntries].sort(([a], [b]) => parsePath(b).length - parsePath(a).length);
 	const hoisted = wireWithPatchSites(patchSitesOf(ordered), () => tryHoistSiblingVariants(rule, ordered));
 	if (hoisted === null) {
@@ -453,10 +559,10 @@ function applyVariantPatches(
 			throw error;
 		}
 	}
-	registerIfPureVariantChoice(result);
 	for (const [key, value] of variantEntries) {
 		if (value.default === true && !missed.has(key) && !hoisted?.consumed.has(key)) result = clearSiblingDefaults(result, parsePath(key));
 	}
+	registerIfPureVariantChoice(result);
 	return result;
 }
 

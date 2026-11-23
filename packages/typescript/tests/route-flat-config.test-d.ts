@@ -11,6 +11,5 @@ export function aRouteWhoseParentKeysSitInOtherMembersTakesTheArmsOwnConfig(): v
 	// @ts-expect-error operator sits only in the other members of the choice, so it cannot be present beside the arm
 	ir.binaryExpression.in({ left: a, operator: '+', right: a });
 
-	ir.binaryExpression({ binaryExpressionIn: { left: a, right: a } });
 	ir.binaryExpression({ left: a, operator: '+', right: a });
 }

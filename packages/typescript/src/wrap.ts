@@ -5321,143 +5321,6 @@ function wrapTernaryExpression$with$alternative(this: Received<Held>, ...args: u
 	return wrapTernaryExpression$with(receiverOf(this, '$with.alternative'), 'alternative', args);
 }
 
-export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle): T.BinaryExpression.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.BinaryExpression as const,
-		left() {
-			return hydrateSlot<T.Expression | undefined>(this, '_left', tree);
-		},
-		operator() {
-			return this._operator;
-		},
-		right() {
-			return hydrateSlot<T.Expression | undefined>(this, '_right', tree);
-		},
-		binaryExpressionIn() {
-			return hydrateSlot<T.BinaryExpressionIn | undefined>(this, '_binary_expression_in', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		left: wrapBinaryExpression$with$left,
-		operator: wrapBinaryExpression$with$operator,
-		right: wrapBinaryExpression$with$right,
-		binaryExpressionIn: wrapBinaryExpression$with$binaryExpressionIn,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.BinaryExpression.Parsed;
-}
-function wrapBinaryExpression$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.BinaryExpression;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'left':
-			return applySetter(args, (v: NonNullable<T.BinaryExpression['_left']>) =>
-				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapBinaryExpression({ ...$edited(data), _left: admitSlot(handle, 'binary_expression', 'left', v) }, tree)
-						: wrapBinaryExpression(
-								{
-									...$edited(data),
-									_binary_expression_in: undefined,
-									_left: admitSlot(handle, 'binary_expression', 'left', v)
-								},
-								tree
-							)
-				)
-			);
-		case 'operator':
-			return applySetter(args, (v: NonNullable<T.BinaryExpression['_operator']>) =>
-				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapBinaryExpression(
-								{ ...$edited(data), _operator: admitSlot(handle, 'binary_expression', 'operator', v) },
-								tree
-							)
-						: wrapBinaryExpression(
-								{
-									...$edited(data),
-									_binary_expression_in: undefined,
-									_operator: admitSlot(handle, 'binary_expression', 'operator', v)
-								},
-								tree
-							)
-				)
-			);
-		case 'right':
-			return applySetter(args, (v: NonNullable<T.BinaryExpression['_right']>) =>
-				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapBinaryExpression(
-								{ ...$edited(data), _right: admitSlot(handle, 'binary_expression', 'right', v) },
-								tree
-							)
-						: wrapBinaryExpression(
-								{
-									...$edited(data),
-									_binary_expression_in: undefined,
-									_right: admitSlot(handle, 'binary_expression', 'right', v)
-								},
-								tree
-							)
-				)
-			);
-		case 'binaryExpressionIn':
-			return applySetter(args, (v: NonNullable<T.BinaryExpression['_binary_expression_in']>) =>
-				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapBinaryExpression(
-								{
-									...$edited(data),
-									_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
-								},
-								tree
-							)
-						: wrapBinaryExpression(
-								{
-									...$edited(data),
-									_left: undefined,
-									_operator: undefined,
-									_right: undefined,
-									_binary_expression_in: admitSlot(handle, 'binary_expression', 'binaryExpressionIn', v)
-								},
-								tree
-							)
-				)
-			);
-	}
-	throw new Error(`binary_expression has no $with.${setter}`);
-}
-function wrapBinaryExpression$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBinaryExpression$with(receiverOf(this, '$with.left'), 'left', args);
-}
-function wrapBinaryExpression$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBinaryExpression$with(receiverOf(this, '$with.operator'), 'operator', args);
-}
-function wrapBinaryExpression$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBinaryExpression$with(receiverOf(this, '$with.right'), 'right', args);
-}
-function wrapBinaryExpression$with$binaryExpressionIn(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapBinaryExpression$with(receiverOf(this, '$with.binaryExpressionIn'), 'binaryExpressionIn', args);
-}
-
 export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle): T.UnaryExpression.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -15106,6 +14969,92 @@ function wrapBinaryExpressionIn$with$right(this: Received<Held>, ...args: unknow
 	return wrapBinaryExpressionIn$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
+export function wrapBinaryExpressionDefault(
+	data: T.BinaryExpressionDefault,
+	tree: TreeHandle
+): T.BinaryExpressionDefault.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.BinaryExpressionDefault as const,
+		left() {
+			return hydrateSlot<T.Expression>(this, '_left', tree);
+		},
+		operator() {
+			return this._operator;
+		},
+		right() {
+			return hydrateSlot<T.Expression>(this, '_right', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		left: wrapBinaryExpressionDefault$with$left,
+		operator: wrapBinaryExpressionDefault$with$operator,
+		right: wrapBinaryExpressionDefault$with$right,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.BinaryExpressionDefault.Parsed;
+}
+function wrapBinaryExpressionDefault$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.BinaryExpressionDefault;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (v: NonNullable<T.BinaryExpressionDefault['_left']>) =>
+				rebuilt(node, handle, () =>
+					wrapBinaryExpressionDefault(
+						{ ...$edited(data), _left: admitSlot(handle, 'binary_expression_default', 'left', v) },
+						tree
+					)
+				)
+			);
+		case 'operator':
+			return applySetter(args, (v: NonNullable<T.BinaryExpressionDefault['_operator']>) =>
+				rebuilt(node, handle, () =>
+					wrapBinaryExpressionDefault(
+						{ ...$edited(data), _operator: admitSlot(handle, 'binary_expression_default', 'operator', v) },
+						tree
+					)
+				)
+			);
+		case 'right':
+			return applySetter(args, (v: NonNullable<T.BinaryExpressionDefault['_right']>) =>
+				rebuilt(node, handle, () =>
+					wrapBinaryExpressionDefault(
+						{ ...$edited(data), _right: admitSlot(handle, 'binary_expression_default', 'right', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`binary_expression_default has no $with.${setter}`);
+}
+function wrapBinaryExpressionDefault$with$left(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBinaryExpressionDefault$with(receiverOf(this, '$with.left'), 'left', args);
+}
+function wrapBinaryExpressionDefault$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBinaryExpressionDefault$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function wrapBinaryExpressionDefault$with$right(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapBinaryExpressionDefault$with(receiverOf(this, '$with.right'), 'right', args);
+}
+
 export function wrapClassBodyMemberMethod(
 	data: T.ClassBodyMemberMethod,
 	tree: TreeHandle
@@ -24699,51 +24648,6 @@ function viewTernaryExpression(data: RecordPosition, tree: TreeHandle): T.Ternar
 	return node as unknown as T.TernaryExpression.Parsed;
 }
 
-function viewBinaryExpression$left(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 2, 4, 3, 0, 2);
-}
-function viewBinaryExpression$operator(this: RecordHandle) {
-	return childSlot(this, 6, 1, 2, 0, 3);
-}
-function viewBinaryExpression$right(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 7, 4, 3, 0, 4);
-}
-function viewBinaryExpression$binaryExpressionIn(this: RecordHandle) {
-	return viewSlot<T.BinaryExpressionIn | undefined>(this, 11, 3, 1, 0, 5);
-}
-function viewBinaryExpression(data: RecordPosition, tree: TreeHandle): T.BinaryExpression.Parsed {
-	const node = {
-		$type: TSKindId.BinaryExpression as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		left: viewBinaryExpression$left,
-		operator: viewBinaryExpression$operator,
-		right: viewBinaryExpression$right,
-		binaryExpressionIn: viewBinaryExpression$binaryExpressionIn,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = {
-		left: $with$left,
-		operator: $with$operator,
-		right: $with$right,
-		binaryExpressionIn: $with$binaryExpressionIn,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.BinaryExpression.Parsed;
-}
-
 function viewUnaryExpression$operator(this: RecordHandle) {
 	return childSlot(this, 2, 1, 2, 0, 2);
 }
@@ -29536,6 +29440,41 @@ function viewBinaryExpressionIn(data: RecordPosition, tree: TreeHandle): T.Binar
 	return node as unknown as T.BinaryExpressionIn.Parsed;
 }
 
+function viewBinaryExpressionDefault$left(this: RecordHandle) {
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+}
+function viewBinaryExpressionDefault$operator(this: RecordHandle) {
+	return childSlot(this, 6, 1, 2, 0, 3);
+}
+function viewBinaryExpressionDefault$right(this: RecordHandle) {
+	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 4);
+}
+function viewBinaryExpressionDefault(data: RecordPosition, tree: TreeHandle): T.BinaryExpressionDefault.Parsed {
+	const node = {
+		$type: TSKindId.BinaryExpressionDefault as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		left: viewBinaryExpressionDefault$left,
+		operator: viewBinaryExpressionDefault$operator,
+		right: viewBinaryExpressionDefault$right,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { left: $with$left, operator: $with$operator, right: $with$right, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.BinaryExpressionDefault.Parsed;
+}
+
 function viewClassBodyMemberMethod$decorators(this: RecordHandle) {
 	return hoistRead(
 		viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2),
@@ -32594,9 +32533,6 @@ function $with$attributeKind(this: Received<RecordPosition>, ...args: unknown[])
 function $with$automaticSemicolon(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.automaticSemicolon'), _wrap, 'automaticSemicolon', args);
 }
-function $with$binaryExpressionIn(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.binaryExpressionIn'), _wrap, 'binaryExpressionIn', args);
-}
 function $with$body(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.body'), _wrap, 'body', args);
 }
@@ -32988,7 +32924,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 		wrapAugmentedAssignmentExpression(d as unknown as T.AugmentedAssignmentExpression, t),
 	[TSKindId.SpreadElement]: (d, t) => wrapSpreadElement(d as unknown as T.SpreadElement, t),
 	[TSKindId.TernaryExpression]: (d, t) => wrapTernaryExpression(d as unknown as T.TernaryExpression, t),
-	[TSKindId.BinaryExpression]: (d, t) => wrapBinaryExpression(d as unknown as T.BinaryExpression, t),
 	[TSKindId.UnaryExpression]: (d, t) => wrapUnaryExpression(d as unknown as T.UnaryExpression, t),
 	[TSKindId.SequenceExpression]: (d, t) => wrapSequenceExpression(d as unknown as T.SequenceExpression, t),
 	[TSKindId.EscapeSequence]: (d, t) => wrapEscapeSequence(d as unknown as T.EscapeSequence, t),
@@ -33125,6 +33060,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.NumberBigintOctal]: (d, t) => wrapNumberBigintOctal(d as unknown as T.NumberBigintOctal, t),
 	[TSKindId.NumberBigintDecimal]: (d, t) => wrapNumberBigintDecimal(d as unknown as T.NumberBigintDecimal, t),
 	[TSKindId.BinaryExpressionIn]: (d, t) => wrapBinaryExpressionIn(d as unknown as T.BinaryExpressionIn, t),
+	[TSKindId.BinaryExpressionDefault]: (d, t) =>
+		wrapBinaryExpressionDefault(d as unknown as T.BinaryExpressionDefault, t),
 	[TSKindId.ClassBodyMemberMethod]: (d, t) => wrapClassBodyMemberMethod(d as unknown as T.ClassBodyMemberMethod, t),
 	[TSKindId.ClassBodyMemberMethodSig]: (d, t) =>
 		wrapClassBodyMemberMethodSig(d as unknown as T.ClassBodyMemberMethodSig, t),
@@ -33300,7 +33237,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.AugmentedAssignmentExpression]: viewAugmentedAssignmentExpression,
 	[TSKindId.SpreadElement]: viewSpreadElement,
 	[TSKindId.TernaryExpression]: viewTernaryExpression,
-	[TSKindId.BinaryExpression]: viewBinaryExpression,
 	[TSKindId.UnaryExpression]: viewUnaryExpression,
 	[TSKindId.SequenceExpression]: viewSequenceExpression,
 	[TSKindId.EscapeSequence]: viewEscapeSequence,
@@ -33419,6 +33355,7 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.NumberBigintOctal]: viewNumberBigintOctal,
 	[TSKindId.NumberBigintDecimal]: viewNumberBigintDecimal,
 	[TSKindId.BinaryExpressionIn]: viewBinaryExpressionIn,
+	[TSKindId.BinaryExpressionDefault]: viewBinaryExpressionDefault,
 	[TSKindId.ClassBodyMemberMethod]: viewClassBodyMemberMethod,
 	[TSKindId.ClassBodyMemberMethodSig]: viewClassBodyMemberMethodSig,
 	[TSKindId.ClassBodyMemberDeclaration]: viewClassBodyMemberDeclaration,

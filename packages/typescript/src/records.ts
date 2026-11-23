@@ -325,14 +325,6 @@ export const records = {
 		consequence: { word: 6, width: 4, forms: 3, built: 3 },
 		alternative: { word: 10, width: 4, forms: 3, built: 4 }
 	},
-	BinaryExpressionNode: {
-		words: 14,
-		builtWords: 6,
-		left: { word: 2, width: 4, forms: 3, built: 2 },
-		operator: { word: 6, width: 1, forms: 2, built: 3 },
-		right: { word: 7, width: 4, forms: 3, built: 4 },
-		binary_expression_in: { word: 11, width: 3, forms: 1, built: 5 }
-	},
 	UnaryExpressionNode: {
 		words: 7,
 		builtWords: 4,
@@ -855,6 +847,13 @@ export const records = {
 		builtWords: 4,
 		left: { word: 2, width: 4, forms: 3, built: 2 },
 		right: { word: 6, width: 4, forms: 3, built: 3 }
+	},
+	BinaryExpressionDefaultNode: {
+		words: 11,
+		builtWords: 5,
+		left: { word: 2, width: 4, forms: 3, built: 2 },
+		operator: { word: 6, width: 1, forms: 2, built: 3 },
+		right: { word: 7, width: 4, forms: 3, built: 4 }
 	},
 	ClassBodyMemberMethodNode: {
 		words: 43,

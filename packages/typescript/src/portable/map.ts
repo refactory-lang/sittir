@@ -28,7 +28,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -117,7 +116,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -245,7 +245,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -359,7 +358,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -419,7 +419,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -533,7 +532,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -579,7 +579,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -669,7 +668,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -731,7 +731,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -845,7 +844,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -1006,7 +1006,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -1120,7 +1119,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -1245,7 +1245,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -1359,7 +1358,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -1711,7 +1711,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -1825,7 +1824,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -1969,7 +1969,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -2083,7 +2082,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -2157,7 +2157,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -2271,7 +2270,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -2345,7 +2345,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -2459,7 +2458,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -2533,7 +2533,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -2647,7 +2646,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -2695,7 +2695,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -2784,7 +2783,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -2825,7 +2825,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -2914,7 +2913,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -2964,7 +2964,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -3053,7 +3052,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -3144,7 +3144,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -3233,7 +3232,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -3283,7 +3283,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -3372,7 +3371,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -3463,7 +3463,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -3552,7 +3551,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -3602,7 +3602,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -3691,7 +3690,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -3782,7 +3782,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -3871,7 +3870,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -3921,7 +3921,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -4010,7 +4009,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -4101,7 +4101,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -4190,7 +4189,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -4235,7 +4235,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -4324,7 +4323,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -4420,7 +4420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -4509,7 +4508,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -4605,7 +4605,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -4694,7 +4693,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -4790,7 +4790,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -4879,7 +4878,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -4980,7 +4980,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -5069,7 +5068,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -5184,7 +5184,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -5298,7 +5297,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -5354,7 +5354,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -5443,7 +5442,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -5558,7 +5558,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -5672,7 +5671,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -5728,7 +5728,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -5817,7 +5816,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -5932,7 +5932,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -6046,7 +6045,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -6102,7 +6102,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -6191,7 +6190,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -6306,7 +6306,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -6420,7 +6419,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -6471,7 +6471,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -6560,7 +6559,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -6669,7 +6669,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -6758,7 +6757,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -6867,7 +6867,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -6956,7 +6955,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -7065,7 +7065,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -7154,7 +7153,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -7263,7 +7263,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -7352,7 +7351,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -7461,7 +7461,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -7550,7 +7549,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -7659,7 +7659,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -7748,7 +7747,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -7857,7 +7857,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -7946,7 +7945,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -8060,7 +8060,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -8149,7 +8148,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -8239,7 +8239,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -8328,7 +8327,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -8378,7 +8378,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -8467,7 +8466,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -8520,7 +8520,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -8634,7 +8633,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -8741,7 +8741,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -8830,7 +8829,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -8883,7 +8883,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -8997,7 +8996,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -9104,7 +9104,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -9193,7 +9192,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -9246,7 +9246,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -9360,7 +9359,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -9467,7 +9467,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -9556,7 +9555,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -9609,7 +9609,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -9723,7 +9722,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -9830,7 +9830,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -9919,7 +9918,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -10009,7 +10009,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -10098,7 +10097,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -10148,7 +10148,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -10237,7 +10236,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -10327,7 +10327,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -10416,7 +10415,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -10466,7 +10466,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -10555,7 +10554,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -10645,7 +10645,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -10734,7 +10733,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -10784,7 +10784,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -10873,7 +10872,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -10931,7 +10931,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -11045,7 +11044,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -11102,7 +11102,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -11191,7 +11190,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -11249,7 +11249,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -11363,7 +11362,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -11420,7 +11420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -11509,7 +11508,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -11567,7 +11567,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -11681,7 +11680,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -11738,7 +11738,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -11827,7 +11826,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -11885,7 +11885,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -11999,7 +11998,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -12056,7 +12056,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -12145,7 +12144,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -12235,7 +12235,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -12324,7 +12323,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -12369,7 +12369,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -12458,7 +12457,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -12555,7 +12555,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -12644,7 +12643,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -12741,7 +12741,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -12830,7 +12829,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -12927,7 +12927,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -13016,7 +13015,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -13113,7 +13113,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -13202,7 +13201,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -13254,7 +13254,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -13343,7 +13342,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -13395,7 +13395,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -13484,7 +13483,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -13536,7 +13536,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -13625,7 +13624,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -13677,7 +13677,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -13766,7 +13765,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -13863,7 +13863,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -13952,7 +13951,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -14049,7 +14049,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -14138,7 +14137,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -14235,7 +14235,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -14324,7 +14323,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -14421,7 +14421,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -14510,7 +14509,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -14562,7 +14562,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -14651,7 +14650,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -14703,7 +14703,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -14792,7 +14791,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -14844,7 +14844,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -14933,7 +14932,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -15280,7 +15280,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -15394,7 +15393,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -15461,7 +15461,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -15575,7 +15574,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -15643,7 +15643,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -15757,7 +15756,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -15865,7 +15865,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -15954,7 +15953,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -16068,7 +16068,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -16157,7 +16156,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -16271,7 +16271,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -16360,7 +16359,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -16474,7 +16474,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -16563,7 +16562,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -16677,7 +16677,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -16766,7 +16765,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -17197,7 +17197,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -17286,7 +17285,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -17391,7 +17391,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -17480,7 +17479,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -17544,7 +17544,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -17633,7 +17632,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -17674,7 +17674,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -17763,7 +17762,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -17807,7 +17807,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -17896,7 +17895,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -18109,7 +18109,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -18198,7 +18197,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -18253,7 +18253,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -18342,7 +18341,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -18396,7 +18396,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -18485,7 +18484,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -18540,7 +18540,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -18629,7 +18628,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -18684,7 +18684,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -18773,7 +18772,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -18828,7 +18828,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -18917,7 +18916,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -18972,7 +18972,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -19061,7 +19060,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -19116,7 +19116,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -19205,7 +19204,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -19260,7 +19260,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -19349,7 +19348,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -19404,7 +19404,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -19493,7 +19492,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -19548,7 +19548,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -19637,7 +19636,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -19692,7 +19692,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -19781,7 +19780,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -19836,7 +19836,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -19925,7 +19924,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -19980,7 +19980,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -20069,7 +20068,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -20124,7 +20124,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -20213,7 +20212,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -20268,7 +20268,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -20357,7 +20356,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -20412,7 +20412,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -20501,7 +20500,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -20545,7 +20545,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -20634,7 +20633,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -20678,7 +20678,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -20767,7 +20766,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -20808,7 +20808,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -20897,7 +20896,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -20920,6 +20920,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.add': {
 			readonly left:
@@ -20940,7 +20941,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21029,7 +21029,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21070,7 +21071,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21159,7 +21159,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21182,6 +21183,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.divide': {
 			readonly left:
@@ -21202,7 +21204,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21291,7 +21292,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21332,7 +21334,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21421,7 +21422,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21444,6 +21446,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.exponent': {
 			readonly left:
@@ -21464,7 +21467,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21553,7 +21555,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21594,7 +21597,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21683,7 +21685,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21706,6 +21709,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.modulo': {
 			readonly left:
@@ -21726,7 +21730,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21815,7 +21818,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21856,7 +21860,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -21945,7 +21948,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -21968,6 +21972,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.multiply': {
 			readonly left:
@@ -21988,7 +21993,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22077,7 +22081,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -22118,7 +22123,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22207,7 +22211,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -22230,6 +22235,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.subtract': {
 			readonly left:
@@ -22250,7 +22256,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22339,7 +22344,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -22380,7 +22386,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22469,7 +22474,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -22492,6 +22498,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.bitwise.and': {
 			readonly left:
@@ -22512,7 +22519,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22601,7 +22607,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -22642,7 +22649,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22731,7 +22737,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -22754,6 +22761,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.bitwise.or': {
 			readonly left:
@@ -22774,7 +22782,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22863,7 +22870,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -22904,7 +22912,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -22993,7 +23000,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23016,6 +23024,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.bitwise.xor': {
 			readonly left:
@@ -23036,7 +23045,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -23125,7 +23133,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23166,7 +23175,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -23255,7 +23263,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23278,6 +23287,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.coalesce': {
 			readonly left:
@@ -23298,7 +23308,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -23387,7 +23396,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23428,7 +23438,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -23517,7 +23526,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23540,6 +23550,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.equal': {
 			readonly left:
@@ -23560,7 +23571,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -23649,7 +23659,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23690,7 +23701,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -23779,7 +23789,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23802,6 +23813,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.greater': {
 			readonly left:
@@ -23822,7 +23834,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -23911,7 +23922,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -23952,7 +23964,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24041,7 +24052,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -24064,6 +24076,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.greater_equal': {
 			readonly left:
@@ -24084,7 +24097,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24173,7 +24185,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -24214,7 +24227,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24303,7 +24315,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -24326,6 +24339,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.less': {
 			readonly left:
@@ -24346,7 +24360,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24435,7 +24448,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -24476,7 +24490,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24565,7 +24578,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -24588,6 +24602,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.less_equal': {
 			readonly left:
@@ -24608,7 +24623,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24697,7 +24711,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -24738,7 +24753,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24827,7 +24841,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -24850,6 +24865,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.loose_equal': {
 			readonly left:
@@ -24870,7 +24886,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -24959,7 +24974,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25000,7 +25016,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -25089,7 +25104,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25112,6 +25128,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.loose_not_equal': {
 			readonly left:
@@ -25132,7 +25149,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -25221,7 +25237,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25262,7 +25279,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -25351,7 +25367,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25374,6 +25391,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.comparison.not_equal': {
 			readonly left:
@@ -25394,7 +25412,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -25483,7 +25500,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25524,7 +25542,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -25613,7 +25630,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25636,6 +25654,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.logical.and': {
 			readonly left:
@@ -25656,7 +25675,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -25745,7 +25763,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25786,7 +25805,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -25875,7 +25893,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -25898,6 +25917,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.logical.or': {
 			readonly left:
@@ -25918,7 +25938,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26007,7 +26026,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26048,7 +26068,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26137,7 +26156,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26160,6 +26180,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.membership.in': {
 			readonly left:
@@ -26180,7 +26201,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26269,7 +26289,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26310,7 +26331,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26399,7 +26419,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26443,7 +26464,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26532,7 +26552,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26573,7 +26594,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26662,7 +26682,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26685,6 +26706,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.shift.left': {
 			readonly count:
@@ -26705,7 +26727,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26794,7 +26815,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26835,7 +26857,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -26924,7 +26945,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -26947,6 +26969,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'count' | 'operand'>;
 		};
 		readonly 'expression.binary.shift.right': {
 			readonly count:
@@ -26967,7 +26990,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -27056,7 +27078,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -27097,7 +27120,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -27186,7 +27208,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -27209,6 +27232,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'count' | 'operand'>;
 		};
 		readonly 'expression.binary.shift.right_unsigned': {
 			readonly count:
@@ -27229,7 +27253,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -27318,7 +27341,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -27359,7 +27383,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -27448,7 +27471,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -27471,6 +27495,7 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
+			readonly $forms: V.Form<'count' | 'operand'>;
 		};
 		readonly 'expression.call': {
 			readonly arguments:
@@ -27492,7 +27517,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -27581,7 +27605,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -27623,7 +27648,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -27714,7 +27738,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -27808,7 +27833,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -27897,7 +27921,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -28157,7 +28182,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -28246,7 +28270,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -28404,7 +28429,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -28493,7 +28517,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -28587,7 +28612,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -28676,7 +28700,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -28769,7 +28794,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -28858,7 +28882,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -28902,7 +28927,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -28991,7 +29015,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -29211,7 +29236,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -29300,7 +29324,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -29368,7 +29393,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -29457,7 +29481,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -29498,7 +29523,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -29587,7 +29611,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -29628,7 +29653,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -29717,7 +29741,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -29836,7 +29861,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -29950,7 +29974,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -29999,7 +30024,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -30090,7 +30114,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -30184,7 +30209,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -30274,7 +30298,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -30319,7 +30344,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -30408,7 +30432,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -30522,7 +30547,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -30636,7 +30660,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -30685,7 +30710,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -30776,7 +30800,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -30824,7 +30849,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -30914,7 +30938,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -31015,7 +31040,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 								| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 								| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 								| V.Read<TypeScriptMap, 'expression.await'>
-								| V.Read<TypeScriptMap, 'expression.binary'>
 								| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 								| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 								| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -31104,7 +31128,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 								| T.AssignmentExpression.Parsed
 								| T.AugmentedAssignmentExpression.Parsed
 								| T.AwaitExpression.Parsed
-								| T.BinaryExpression.Parsed
+								| T.BinaryExpressionDefault.Parsed
+								| T.BinaryExpressionIn.Parsed
 								| T.CallExpressionCall.Parsed
 								| T.CallExpressionMember.Parsed
 								| T.CallExpressionTemplateCall.Parsed
@@ -31149,7 +31174,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -31238,7 +31262,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -31282,7 +31307,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -31372,7 +31396,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -31414,7 +31439,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -31503,7 +31527,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -31547,7 +31572,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -31636,7 +31660,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -31679,7 +31704,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -31768,7 +31792,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -31812,7 +31837,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -31901,7 +31925,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -31945,7 +31970,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32034,7 +32058,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -32078,7 +32103,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32167,7 +32191,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -32211,7 +32236,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32300,7 +32324,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -32344,7 +32369,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32433,7 +32457,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -32477,7 +32502,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32566,7 +32590,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -32610,7 +32635,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32699,7 +32723,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -32742,7 +32767,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32831,7 +32855,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -32875,7 +32900,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -32964,7 +32988,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -33008,7 +33033,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -33097,7 +33121,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -33140,7 +33165,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -33229,7 +33253,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -33285,7 +33310,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -33399,7 +33423,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -33604,7 +33629,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -33693,7 +33717,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -33770,7 +33795,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -33859,7 +33883,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -33903,7 +33928,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -33992,7 +34016,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -34080,7 +34105,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -34194,7 +34218,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -34275,7 +34300,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -34364,7 +34388,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -34445,7 +34470,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -34534,7 +34558,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -34591,7 +34616,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -34705,7 +34729,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -34798,7 +34823,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -34912,7 +34936,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -34962,7 +34987,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -35054,7 +35078,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -35096,7 +35121,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -35186,7 +35210,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -35231,7 +35256,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -35324,7 +35348,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -35379,7 +35404,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -35493,7 +35517,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -35556,7 +35581,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -35670,7 +35694,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -35737,7 +35762,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -35851,7 +35875,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -35914,7 +35939,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -36028,7 +36052,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -36077,7 +36102,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -36167,7 +36191,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -36223,7 +36248,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -36337,7 +36361,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -36395,7 +36420,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -36485,7 +36509,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -36544,7 +36569,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 				| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 				| V.Read<TypeScriptMap, 'expression.await'>
-				| V.Read<TypeScriptMap, 'expression.binary'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 				| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>
@@ -36658,7 +36682,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.AssignmentExpression.Parsed
 				| T.AugmentedAssignmentExpression.Parsed
 				| T.AwaitExpression.Parsed
-				| T.BinaryExpression.Parsed
+				| T.BinaryExpressionDefault.Parsed
+				| T.BinaryExpressionIn.Parsed
 				| T.CallExpressionCall.Parsed
 				| T.CallExpressionMember.Parsed
 				| T.CallExpressionTemplateCall.Parsed
@@ -38195,32 +38220,31 @@ export interface TypeScriptMap extends V.GrammarMap {
 			readonly 'expression.assignment.compound.shift_right_unsigned': TSKindId.AugmentedAssignmentExpression;
 			readonly 'expression.assignment.compound.subtract': TSKindId.AugmentedAssignmentExpression;
 			readonly 'expression.await': TSKindId.AwaitExpression;
-			readonly 'expression.binary': TSKindId.BinaryExpression;
-			readonly 'expression.binary.arithmetic.add': TSKindId.BinaryExpression;
-			readonly 'expression.binary.arithmetic.divide': TSKindId.BinaryExpression;
-			readonly 'expression.binary.arithmetic.exponent': TSKindId.BinaryExpression;
-			readonly 'expression.binary.arithmetic.modulo': TSKindId.BinaryExpression;
-			readonly 'expression.binary.arithmetic.multiply': TSKindId.BinaryExpression;
-			readonly 'expression.binary.arithmetic.subtract': TSKindId.BinaryExpression;
-			readonly 'expression.binary.bitwise.and': TSKindId.BinaryExpression;
-			readonly 'expression.binary.bitwise.or': TSKindId.BinaryExpression;
-			readonly 'expression.binary.bitwise.xor': TSKindId.BinaryExpression;
-			readonly 'expression.binary.coalesce': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.equal': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.greater': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.greater_equal': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.less': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.less_equal': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.loose_equal': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.loose_not_equal': TSKindId.BinaryExpression;
-			readonly 'expression.binary.comparison.not_equal': TSKindId.BinaryExpression;
-			readonly 'expression.binary.logical.and': TSKindId.BinaryExpression;
-			readonly 'expression.binary.logical.or': TSKindId.BinaryExpression;
-			readonly 'expression.binary.membership.in': TSKindId.BinaryExpression;
-			readonly 'expression.binary.membership.instanceof': TSKindId.BinaryExpression;
-			readonly 'expression.binary.shift.left': TSKindId.BinaryExpression;
-			readonly 'expression.binary.shift.right': TSKindId.BinaryExpression;
-			readonly 'expression.binary.shift.right_unsigned': TSKindId.BinaryExpression;
+			readonly 'expression.binary.arithmetic.add': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.arithmetic.divide': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.arithmetic.exponent': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.arithmetic.modulo': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.arithmetic.multiply': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.arithmetic.subtract': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.bitwise.and': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.bitwise.or': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.bitwise.xor': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.coalesce': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.equal': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.greater': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.greater_equal': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.less': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.less_equal': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.loose_equal': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.loose_not_equal': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.comparison.not_equal': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.logical.and': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.logical.or': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.membership.in': TSKindId.BinaryExpressionIn;
+			readonly 'expression.binary.membership.instanceof': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.shift.left': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.shift.right': TSKindId.BinaryExpressionDefault;
+			readonly 'expression.binary.shift.right_unsigned': TSKindId.BinaryExpressionDefault;
 			readonly 'expression.call': TSKindId.CallExpressionCall | TSKindId.CallExpressionMember;
 			readonly 'expression.call.construct': TSKindId.NewExpression;
 			readonly 'expression.call.construct.bare': TSKindId.NewExpression;

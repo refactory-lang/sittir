@@ -866,16 +866,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect((node as any).expression()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('delegate.binary builds the parent', () => {
-			const node = ir.yieldExpression.delegate.binary({
-				left: TSKindId.Undefined as never,
-				operator: '&&',
-				right: TSKindId.Undefined as never
-			});
-			expect(node.$type).toBe(TSKindId.YieldExpression);
-			expect((node as any).expression()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('delegate.ternary builds the parent', () => {
 			const node = ir.yieldExpression.delegate.ternary({
 				condition: TSKindId.Undefined as never,
@@ -894,15 +884,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('delegate.yield builds the parent', () => {
 			const node = ir.yieldExpression.delegate.yield(TSKindId.Undefined as never);
-			expect(node.$type).toBe(TSKindId.YieldExpression);
-			expect((node as any).expression()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('delegate.binary.in builds the parent', () => {
-			const node = ir.yieldExpression.delegate.binary.in({
-				left: TSKindId.Undefined as never,
-				right: TSKindId.Undefined as never
-			});
 			expect(node.$type).toBe(TSKindId.YieldExpression);
 			expect((node as any).expression()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
@@ -1387,36 +1368,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('binary_expression', () => {
-		it('factory produces correct type', () => {
-			const node = ir.binaryExpression({
-				left: TSKindId.Undefined as never,
-				operator: '&&',
-				right: TSKindId.Undefined as never
-			});
-			expect(node.$type).toBe(TSKindId.BinaryExpression);
-			expectBuiltNode(node);
-		});
-		it('render produces non-empty string', () => {
-			const node = ir.binaryExpression({
-				left: TSKindId.Undefined as never,
-				operator: '&&',
-				right: TSKindId.Undefined as never
-			});
-			const rendered = node.$render!();
-			expect(rendered.length).toBeGreaterThan(0);
-		});
-	});
-
-	describe('binary_expression sub-factories', () => {
-		it('in builds the parent', () => {
-			const node = ir.binaryExpression.in({ left: TSKindId.Undefined as never, right: TSKindId.Undefined as never });
-			expect(node.$type).toBe(TSKindId.BinaryExpression);
-			expect((node as any).binaryExpressionIn()?.$type).toBe(TSKindId.BinaryExpressionIn);
-			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
 
@@ -3748,6 +3699,40 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.numberBigintDecimal('1');
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('binary_expression_in', () => {
+		it('factory produces correct type', () => {
+			const node = ir.binaryExpressionIn({ left: TSKindId.Undefined as never, right: TSKindId.Undefined as never });
+			expect(node.$type).toBe(TSKindId.BinaryExpressionIn);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.binaryExpressionIn({ left: TSKindId.Undefined as never, right: TSKindId.Undefined as never });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('binary_expression_default', () => {
+		it('factory produces correct type', () => {
+			const node = ir.binaryExpressionDefault({
+				left: TSKindId.Undefined as never,
+				operator: '&&',
+				right: TSKindId.Undefined as never
+			});
+			expect(node.$type).toBe(TSKindId.BinaryExpressionDefault);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.binaryExpressionDefault({
+				left: TSKindId.Undefined as never,
+				operator: '&&',
+				right: TSKindId.Undefined as never
+			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
 		});
