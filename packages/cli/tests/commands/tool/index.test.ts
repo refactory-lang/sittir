@@ -10,6 +10,7 @@ const EXPECTED = [
 	'bench-storage',
 	'bindings-inventory',
 	'bootstrap-grammar',
+	'cargo-test-tally',
 	'check-baseline',
 	'check-perf',
 	'classify',

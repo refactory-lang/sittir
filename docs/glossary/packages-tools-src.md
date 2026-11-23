@@ -557,3 +557,23 @@ Counts the errors of a type-check log per package. A log has no total line (tsrs
 ### `packages/tools/src/scripts/type-errors.ts::run`
 
 Reads a type-check log and prints its per-package error counts and total, as text or JSON. Returns 0 when the log was counted. Returns 1, printing the reason to stderr, when the log cannot be read or is not fully read.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestTallyOptions`
+
+Options for `run`: the cargo test log to read, the storage label the run used (printed with the totals, not inferred from the log), and whether to print JSON.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestBinaryTally`
+
+One test binary's totals: the name from its `Running` or `Doc-tests` line, and the passed, failed and ignored counts from its `test result:` line.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::CargoTestTally`
+
+The tally of one cargo test run for one storage: the storage label, the passed, failed and ignored totals across its binaries, and each binary's own totals.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::summarizeCargoTests`
+
+Tallies a cargo test log. Each binary's totals come from its `test result:` line, and the crate name from the `Running` or `Doc-tests` line before it. The totals are checked against an independent count of the per-test lines (`test ... ok`, `FAILED`, `ignored`): the summed passed, failed and ignored must equal those counts. Throws when they disagree, or when the log has no result line at all, so a truncated log (for example one cut short before a failing binary) is never tallied silently.
+
+### `packages/tools/src/scripts/cargo-test-tally.ts::run`
+
+Tallies the cargo test log and prints the per-binary and total passed, failed and ignored counts, labelled with the storage, as text or JSON. Returns 0 when the log was tallied. Returns 1, printing the reason to stderr, when the log cannot be read, has no result line, or its totals do not match its per-test lines.

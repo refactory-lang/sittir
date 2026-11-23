@@ -125,6 +125,7 @@ export { run as testFailures, type TestFailuresOptions } from './scripts/test-fa
 export { run as testDurations, type TestDurationsOptions } from './scripts/test-durations.ts';
 export { run as grammarRule, type GrammarRuleOptions } from './scripts/grammar-rule.ts';
 export { run as typeErrors, type TypeErrorsOptions } from './scripts/type-errors.ts';
+export { run as cargoTestTally, type CargoTestTallyOptions } from './scripts/cargo-test-tally.ts';
 
 export {
 	runCountsCli,

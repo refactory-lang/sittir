@@ -944,6 +944,22 @@ Count the type errors in a type-check log per package, checked against the log's
 pnpm exec tsx packages/cli/src/cli.ts tool type-errors [options]
 ```
 
+### `tool cargo-test-tally`
+
+Tally passed, failed and ignored tests in a cargo test log, per binary and in total, for one storage
+
+**Options**
+
+- `--log <path>` — Cargo test output (stdout and stderr together)
+- `--storage <label>` — The storage the run used, such as object or arena (labels the output only)
+- `--json` — Machine-readable JSON output
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool cargo-test-tally [options]
+```
+
 ### `tool text-kind-overlap`
 
 List texts a higher-ranked candidate text kind takes from a lower-ranked one in the same loose slot
