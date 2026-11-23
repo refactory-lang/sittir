@@ -491,6 +491,7 @@ const VOCABULARY_IMPORTS = [
 	'NoneOf',
 	'GatedList',
 	'WithoutGroup',
+	'ArmRows',
 	'CoOptionalRows',
 	'BranchHint',
 	'BranchShapesOf',

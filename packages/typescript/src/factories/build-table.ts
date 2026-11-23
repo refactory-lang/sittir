@@ -164,9 +164,9 @@ export interface Routes<Table extends AnyTable> {
 	readonly catchClause: Table['catchClause$seated'];
 	readonly binaryExpression$in: Seat<
 		ArgsOf<Table['buildBinaryExpressionIn']>,
-		ReturnType<Table['buildBinaryExpression']>
+		ReturnType<Table['binaryExpression$seated']>
 	>;
-	readonly binaryExpression: Table['buildBinaryExpression'] & { readonly in: Routes<Table>['binaryExpression$in'] };
+	readonly binaryExpression: Table['binaryExpression$seated'] & { readonly in: Routes<Table>['binaryExpression$in'] };
 	readonly classHeritage$extendsClause: Seat<
 		ArgsOf<Table['buildClassHeritageExtendsClause']>,
 		ReturnType<typeof F.buildClassHeritage>
@@ -1934,7 +1934,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$binary: Seat<
-		ArgsOf<Table['buildBinaryExpression']>,
+		ArgsOf<Routes<Table>['binaryExpression']>,
 		ReturnType<typeof F.buildYieldExpressionDelegate>
 	>;
 	readonly yieldExpressionDelegate$ternary: Seat<
@@ -2721,11 +2721,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const catchClause: Routes<Table>['catchClause'] = $at('catchClause$seated');
 	const binaryExpression$in: Routes<Table>['binaryExpression$in'] = K.binaryExpression$in(
-		$at('buildBinaryExpression'),
+		$at('binaryExpression$seated'),
 		$at('buildBinaryExpressionIn')
 	);
 	const binaryExpression: Routes<Table>['binaryExpression'] = Object.freeze(
-		Object.assign(delegate($at('buildBinaryExpression')), { in: binaryExpression$in } as const)
+		Object.assign(delegate($at('binaryExpression$seated')), { in: binaryExpression$in } as const)
 	);
 	const classHeritage$extendsClause: Routes<Table>['classHeritage$extendsClause'] = K.classHeritage$extendsClause(
 		F.buildClassHeritage,
@@ -3774,7 +3774,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		$at('buildUnaryExpression')
 	);
 	const yieldExpressionDelegate$binary: Routes<Table>['yieldExpressionDelegate$binary'] =
-		K.yieldExpressionDelegate$binary(F.buildYieldExpressionDelegate, $at('buildBinaryExpression'));
+		K.yieldExpressionDelegate$binary(F.buildYieldExpressionDelegate, binaryExpression);
 	const yieldExpressionDelegate$ternary: Routes<Table>['yieldExpressionDelegate$ternary'] =
 		K.yieldExpressionDelegate$ternary(F.buildYieldExpressionDelegate, $at('buildTernaryExpression'));
 	const yieldExpressionDelegate$update: Routes<Table>['yieldExpressionDelegate$update'] =

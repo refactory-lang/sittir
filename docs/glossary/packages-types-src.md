@@ -2048,3 +2048,7 @@ What `NumericInput` refuses, as a value an argument list holds or not, the way `
 ### `packages/types/src/index.ts::NumericRefusals`
 
 The refusals `RefuseNumeric` reports, named once: `a bare number` when the bare value is a literal `NumericLiteral` refuses, and the numeric slots of a config that hold one (`RefusedSlots`). `never` when nothing is refused, which `RefuseNumeric` tests against.
+
+### `packages/types/src/index.ts::ArmRows`
+
+The argument tuples of a builder whose rule is a required choice of arms that hold different slots: one tuple per arm, each needing the keys its arm requires and naming none that only another arm holds, so mixing arms and an empty config are type errors. A key every arm holds is in each tuple. A row that leads with an optional config keeps it optional in a tuple only when that arm requires nothing. A config member that is not an object, or is a built node, is in every tuple. The tuples are a union and not overloads, because `ArgsOf` and `Parameters` read only an overload's last signature. An arm's config replaces the keys it requires instead of intersecting them (`Omit` then `Required<Pick>`): intersecting a slot's widened union with itself multiplies its members and overflows the checker on a kind reached through a flattened group.

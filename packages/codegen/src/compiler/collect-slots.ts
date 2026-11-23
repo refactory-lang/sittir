@@ -8,7 +8,7 @@ import {
 	SUPERTYPE,
 	SYMBOL,
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, ChoiceRule, RuleBase, Multiplicity, SeqRule, SimplifiedRule } from '../types/rule.ts';
+import type { AnyRule, ChoiceRule, RuleBase, RuleId, Multiplicity, SeqRule, SimplifiedRule } from '../types/rule.ts';
 import { isLiteralChoiceContent } from '../dsl/rule-patterns.ts';
 import type { RuleMetadata } from '../types/rule-metadata-brand.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
@@ -18,10 +18,12 @@ import {
 	type AssembleDiagnosticsCollector,
 	type DeriveCtx,
 	type NodeOrTerminal,
+	type SlotArms,
 	deriveValuesForRule,
 	dedupeValues,
 	extractSeparatorKindId,
 	extractSeparatorString,
+	isRequired,
 	mergeDelimiterMode,
 	mergeSlotsByName,
 	mergeSourceRuleIds,
@@ -160,7 +162,8 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 					hasLeadingDelimiter: prev.hasLeadingDelimiter || slot.hasLeadingDelimiter,
 					trailingDelimiter: mergeDelimiterMode([prev.trailingDelimiter, slot.trailingDelimiter]),
 					leadingDelimiter: mergeDelimiterMode([prev.leadingDelimiter, slot.leadingDelimiter]),
-					sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds)
+					sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds),
+					arms: mergeArmsHeld(prev.arms, slot.arms)
 				})
 			);
 		}
@@ -171,6 +174,27 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 		instances.map((slot) => (isPresentInEveryArm(slot.name) ? slot : relaxToOptional(slot)))
 	);
 	return [...namedOut, ...unnamedOut];
+}
+
+function mergeArmsHeld(a: SlotArms | undefined, b: SlotArms | undefined): SlotArms | undefined {
+	if (a === undefined || b === undefined) return a ?? b;
+	return { choice: a.choice, held: [...a.held, ...b.held.filter((h) => !a.held.some((g) => g.arm === h.arm))] };
+}
+
+function stampArms(
+	armSlots: AssembledNonterminal[][],
+	rule: SimplifiedRule,
+	kindForName: string | undefined,
+	diagnostics: AssembleDiagnosticsCollector | undefined
+): AssembledNonterminal[][] {
+	const choice = (rule as { id?: RuleId }).id;
+	if (choice === undefined || armSlots.length < 2) return armSlots;
+	const names = new Set(armSlots.flat().map((slot) => slot.name));
+	if ([...names].every((name) => armSlots.every((arm) => arm.some((slot) => slot.name === name)))) return armSlots;
+	if (armSlots.some((arm) => arm.some((slot) => slot.arms !== undefined))) {
+		recordUnclassifiableShape(kindForName, rule, 'nested-arms', diagnostics);
+	}
+	return armSlots.map((arm, index) => arm.map((slot) => slot.with({ arms: { choice, held: [{ arm: index, required: isRequired(slot) }] } })));
 }
 
 function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
@@ -470,7 +494,7 @@ function resolveMember(
 				const armSlots = rule.members.map((m) =>
 					mergeSlotsByName(collectSlotsWithin(m, kindForName, deriveCtx, armMult, choiceSep, diagnostics))
 				);
-				return mergeChoiceArms(armSlots);
+				return mergeChoiceArms(armMult === 'array' || armMult === 'nonEmptyArray' ? armSlots : stampArms(armSlots, rule, kindForName, diagnostics));
 			}
 			if (!simplifyArmStage.isSlotNode(rule)) return [];
 			const slot = buildSlot(rule, kindForName, deriveCtx, inherited, inheritedSeparator, undefined, diagnostics);

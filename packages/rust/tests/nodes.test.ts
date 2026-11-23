@@ -350,7 +350,10 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('attribute sub-factories', () => {
 		it('input builds the parent', () => {
-			const node = ir.attribute.input({ path: TSKindId.SelfModule as never });
+			const node = ir.attribute.input({
+				path: TSKindId.SelfModule as never,
+				value: { $type: TSKindId.Identifier, text: 'test' } as never
+			});
 			expect(node.$type).toBe(TSKindId.Attribute);
 			expect((node as any).input()?.$type).toBe(TSKindId.AttributeInput);
 			expect(node.$render!().length).toBeGreaterThan(0);

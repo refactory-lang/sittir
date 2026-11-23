@@ -16,6 +16,7 @@ import type {
 	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
+	ArmRows,
 	GrammarTypeMap,
 	NodeMethods,
 	HoldsTrivia,
@@ -25412,8 +25413,16 @@ export namespace AttributeInput {
 	}
 	export type Loose = LooseFor<TSKindId.AttributeInput>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AttributeInput>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.AttributeInput>>];
-	export type LooseArgs = [config?: T.AttributeInput.Loose];
+	export type BuildArgs = ArmRows<
+		[config?: Partial<ConfigOf<T.AttributeInput>>],
+		'value' | 'arguments',
+		[['value', 'value'], ['arguments', 'arguments']]
+	>;
+	export type LooseArgs = ArmRows<
+		[config?: T.AttributeInput.Loose],
+		'value' | 'arguments',
+		[['value', 'value'], ['arguments', 'arguments']]
+	>;
 	export type Kind = TSKindId.AttributeInput;
 }
 export namespace ClosureExpressionBlock {

@@ -6283,6 +6283,10 @@ its branch or absent with it; a required one is what makes the branch present.
 branch nested in another stamped branch records an `unclassifiable-shape`
 diagnostic (`nested-optional-branch`), which blocks.
 
+### `packages/codegen/src/compiler/model/node-map.ts::SlotArms`
+
+Which arms of one required choice hold a slot, and whether each arm requires it. `choice` is the rule id of the choice whose arms the slot came from; `held` lists, per arm index, whether the slot is required inside that arm. A slot every arm holds carries an entry for each arm. Only a choice whose arms hold different slots is stamped, so a choice whose arms hold the same slots leaves its slots without one. The stamp is set where the arms merge and read by the factory emitter, which types the builder's config as one config per arm.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
 Whether a render rule has a seam at the first or last edge of its arms.
