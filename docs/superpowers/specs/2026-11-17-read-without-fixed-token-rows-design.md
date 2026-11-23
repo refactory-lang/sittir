@@ -144,8 +144,9 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
   - Where the chain reaches a node whose edge is a fixed token or a unit, the token's kind comes from the node kind's render body: its first (last) part, read against the record's cells when that part is a slot, so the edge is the one the record's own render would write.
   - A fixed token is fixed for its kind, or for the polymorph form that is the record's kind. A choice among literal texts is a slot (a `kindEnum` or `mixedEnum` slot), so its edge is the cell's kind.
   - The per-kind leading and trailing fixed token is generated with the crate from `render-bodies.json`, the source of fixed tokens, as one fact per kind. It is never derived from text at run time.
+  - A list's separator at a record's edge follows the same rule, and nothing new is stored for it. The list's `delimiter` says whether a separator sits at that edge. Its kind is the list's resolved separator: `SideSlot::separator`, else the arm of the options the tree was read with. A zero-width automatic semicolon is no trailing delimiter, so that edge goes on to the last item.
 - **Identity.** `edge_levels` tests whether the coordinate's node is this node by `kid.span() != coord.span`. That becomes a test by index: the coordinate carries its node's index.
-- **Proof.** A parity test compares the levels on every fixture, for each parsed node and side, before and after.
+- **Proof.** A parity test compares the levels on every fixture, for each parsed node and side, before and after. A chain that ends in a list's separator can differ where the source's token there is not the list's resolved separator. Those chains are listed, and their proof is the render: every fixture's rendered bytes are unchanged on both storages.
 
 ### Depth moves: `Lookups::depth_move`
 
