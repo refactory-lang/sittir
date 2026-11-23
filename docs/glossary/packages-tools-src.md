@@ -489,3 +489,31 @@ Compares the failures of a current report with an older one. A failure's key is 
 ### `packages/tools/src/scripts/vitest-report.ts::readVitestReport`
 
 Reads one vitest JSON report from a path and checks that it is one: `testResults`, `numTotalTests` and `numFailedTests` must be present. Throws, naming the path, when it is not, so a file that is not a report is never read as one.
+
+### `packages/tools/src/scripts/vitest-report.ts::repoRelativeFile`
+
+A test file's path in a vitest report, made relative to the repository root with `/` separators, so every report tool names a file the same way.
+
+### `packages/tools/src/scripts/test-durations.ts::TestDurationsOptions`
+
+Options for `run`: the report path (default `.vitest-report.json` in the working directory), whether to print JSON, and how many of the slowest tests to show.
+
+### `packages/tools/src/scripts/test-durations.ts::FileDuration`
+
+One test file's row: its repo-relative path, its duration in milliseconds (the report's end time minus its start time, which is the time the file held a worker), and the number of assertions it ran.
+
+### `packages/tools/src/scripts/test-durations.ts::SlowTest`
+
+One test's duration: its repo-relative file, a ` > `, and its full name, with the duration the reporter recorded for it in milliseconds. Tests the reporter gave no duration (skipped ones) are not listed.
+
+### `packages/tools/src/scripts/test-durations.ts::DurationSummary`
+
+The duration result: the per-file rows, longest first, the worker time (the sum of the per-file durations), and the slowest tests, longest first.
+
+### `packages/tools/src/scripts/test-durations.ts::summarizeDurations`
+
+Builds the duration summary of a parsed vitest JSON report. A file's duration is its end time minus its start time; a file without both times, or one that ends before it starts, throws, so a report whose timing is missing is never summarized with a silent zero. Throws when the sum of the printed rows differs from the sum over the report's files, so worker time always equals the per-file durations it is printed beside. Keeps the `slowest` longest tests, ties broken by name.
+
+### `packages/tools/src/scripts/test-durations.ts::run`
+
+Reads the vitest JSON report and prints its per-file durations, the slowest tests and the worker-seconds, as text or JSON. Returns 0 when the report was summarized. Returns 1, printing the reason to stderr, when the report cannot be read, is not a vitest report, or lacks the timing a duration needs.

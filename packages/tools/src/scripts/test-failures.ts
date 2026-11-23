@@ -1,9 +1,7 @@
-import { relative, resolve, sep } from 'node:path';
-
-import { REPO_ROOT } from '@sittir/codegen/grammars';
+import { resolve } from 'node:path';
 
 import type { VitestJsonReport } from './record-test-run.ts';
-import { readVitestReport } from './vitest-report.ts';
+import { readVitestReport, repoRelativeFile } from './vitest-report.ts';
 
 export interface TestFailuresOptions {
 	report?: string;
@@ -71,10 +69,6 @@ function failureSignature(message: string): string {
 		.replace(DIGIT_RUN, '#');
 }
 
-function repoRelative(name: string): string {
-	return relative(REPO_ROOT, name).split(sep).join('/');
-}
-
 function packageOf(file: string): string {
 	return /(?:^|\/)packages\/([^/]+)\//.exec(file)?.[1] ?? '(root)';
 }
@@ -82,7 +76,7 @@ function packageOf(file: string): string {
 function collectFailures(report: VitestJsonReport): TestFailure[] {
 	const failures: TestFailure[] = [];
 	for (const result of report.testResults) {
-		const file = repoRelative(result.name);
+		const file = repoRelativeFile(result.name);
 		for (const assertion of result.assertionResults) {
 			if (assertion.status !== 'failed') continue;
 			failures.push({ file, fullName: assertion.fullName, message: assertion.failureMessages[0] ?? '' });

@@ -25,6 +25,7 @@ Developer diagnostics live behind the unified `sittir` CLI (`@sittir/cli`). Pref
 - `probe-parity` — template coverage for one kind
 - `profile` — unified failure aggregation across validators
 - `test-failures` — groups a vitest JSON report's failures by error message (`--report <path>`, `--json`); `--against <older report>` lists the new, fixed and unchanged failures by test name and refuses a comparison that does not reconcile
+- `test-durations` — per-file durations, the slowest tests and worker-seconds of a vitest JSON report (`--report <path>`, `--slowest <n>`, `--json`)
 - `check-baseline` / `check-perf` / `check-jinja` — regression gates and invariant checks
 - `propose-14` — signature-conformance ratchet: per-module classification table (`--table`), committed-baseline regression gate (`--update` to lower the baseline in a sweep PR)
 - `list-kinds`, `classify`, `phantom-kinds`, `field-provenance`, `grammar-diagnostics`, `assemble-shape-census` (per-modelType histogram of the rule shape each `Assembled*` constructor receives) — discovery tools

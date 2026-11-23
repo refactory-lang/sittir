@@ -860,6 +860,22 @@ Census separated-list shapes: flank-carrying (visible-kind hoist) vs flankless (
 pnpm exec tsx packages/cli/src/cli.ts tool separated-lists [options]
 ```
 
+### `tool test-durations`
+
+Per-file durations, the slowest tests and worker-seconds of a vitest JSON report
+
+**Options**
+
+- `--report <path>` — Vitest JSON report (default: .vitest-report.json in the cwd)
+- `--json` — Machine-readable JSON output
+- `--slowest <n>` — Slowest tests shown (default: `10`)
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool test-durations [options]
+```
+
 ### `tool test-failures`
 
 Group the failures in a vitest JSON report by error message
