@@ -8,6 +8,7 @@ import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import { stampDisplay } from '../display-name.ts';
 import { FIXTURE_LINE_ENDINGS } from '../../../__tests__/helpers/node-map-fixtures.ts';
+import { joinsOutsideLists, NO_JOINS } from '../join-seams/index.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -22,6 +23,7 @@ const kindEntries = [
 	{ kind: 'lbrace', anon: true, symbolName: '{', literalText: '{', member: 'Lbrace', id: 9 },
 	{ kind: 'fn', anon: true, symbolName: 'fn', literalText: 'fn', member: 'Fn', id: 10 },
 	{ kind: 'semi', anon: true, symbolName: ';', literalText: ';', member: 'Semi', id: 11 },
+	{ kind: 'dquote', anon: true, symbolName: '"', literalText: '"', member: 'Dquote', id: 12 },
 	{ kind: 'tight', member: 'Tight', id: 90 },
 	{ kind: 'space', member: 'Space', id: 91 },
 	{ kind: 'newline', member: 'Newline', id: 92 },
@@ -52,7 +54,7 @@ function nodeMapOf(
 	const slotByRuleId = new Map(
 		Object.entries(slots).map(([id, name]) => [
 			id,
-			{ name, values: (opts.slotKinds?.[id] ?? []).map((kind) => ({ node: { kind }, multiplicity: 'array' })) }
+			{ name, sourceRuleIds: [id], values: (opts.slotKinds?.[id] ?? []).map((kind) => ({ node: { kind }, multiplicity: 'array' })) }
 		])
 	);
 	return {
@@ -643,6 +645,48 @@ describe('seamRenderRules', () => {
 		expect(seamRenderRules(spaceRenderRules(config), config).rules).toBe(rules);
 	});
 
+	describe('beside a list that admits no extras', () => {
+		const fragments = (list: object) => sym('fragment', { id: 'r8', multiplicity: 'array', fieldName: 'elements', ...list });
+		const quoted = (list: object) => ({ string: seq(str('"'), fragments(list), str('"')) });
+		const seamDefaults = (rules: Record<string, RenderRule>): Record<string, string> => {
+			const nodeMap = nodeMapOf(rules, { r8: 'elements' });
+			const config = { nodeMap, kindEntries };
+			const sites = spacingSitesOf(seamRenderRules(spaceRenderRules(config), config), nodeMap);
+			return Object.fromEntries(sites.filter((site) => site.spacing.at === 'seam').map((site) => [site.address, site.defaultArm]));
+		};
+
+		it('stamps the list with every rule id its slot holds', () => {
+			const nodeMap = nodeMapOf(quoted({ immediate: true, absorbedIds: ['r9'] }), { r8: 'elements' });
+			(nodeMap.slotByRuleId.get('r8') as unknown as { sourceRuleIds: string[] }).sourceRuleIds = ['r8', 'r9'];
+			expect([...spaceRenderRules({ nodeMap, kindEntries }).noExtrasLists!].sort()).toEqual(['r8', 'r9']);
+		});
+
+		it('writes no seam on either side, so a rebuilt "" stays empty', () => {
+			expect(seamDefaults(quoted({ immediate: true }))).toEqual({});
+		});
+
+		it('writes no seam where the list is the edge of a nested group', () => {
+			expect(seamDefaults({ string: seq(seq(str('"'), fragments({ immediate: true })), str('"')) })).toEqual({});
+		});
+
+		it('keeps the default space beside a list whose gaps may hold extras', () => {
+			expect(seamDefaults(quoted({}))).toEqual({ dquote_after: 'space', dquote_before: 'space' });
+		});
+	});
+});
+
+describe('joinsOutsideLists', () => {
+	it('takes the rule ids of the lists out of both join arms and leaves the rest', () => {
+		const joins = { ...NO_JOINS, joinsNext: new Set(['a', 'b']), joinsPrevious: new Set(['b', 'c']), pairs: ['{{'] } as never;
+		const out = joinsOutsideLists(joins, new Set(['b']) as never);
+		expect([...out.joinsNext]).toEqual(['a']);
+		expect([...out.joinsPrevious]).toEqual(['c']);
+		expect(out.pairs).toEqual(['{{']);
+	});
+
+	it('returns the joins it was given where there are no lists', () => {
+		expect(joinsOutsideLists(NO_JOINS, undefined)).toBe(NO_JOINS);
+	});
 });
 
 describe('a seated child edge', () => {

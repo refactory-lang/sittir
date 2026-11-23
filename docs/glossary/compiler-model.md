@@ -3378,6 +3378,9 @@ The catalog kinds of a list's separator token arms (`AssembledList.separatorToke
  * unchanged; the arms of every separator gap are that supertype's members
  * less `indent`/`dedent` (`whitespaceKindsOf`), the arms of a flank all of them
  * (`layoutKindsOf`).
+ * A list whose content admits no extras gets no choice. Its rule id and its
+ * slot's source rule ids are stamped as `noExtrasLists`, which the seam pass
+ * and the render's join facts read.
  * Assemble and the factory surface never see the injected choices. The
  * declared defaults are not validated here: `seamRenderRules`, the pass
  * that follows the seam-stamping dry run, validates them once over every
@@ -3583,7 +3586,8 @@ itself a nested seq contributes its edge member: the seam then goes inside
 the group, first for a `_before`, last for an `_after`, so an optional
 clause such as `optional(seq('=', value))` carries `eq_before` and renders
 it only when the clause does. The default arm is still the parent
-boundary's stamp.
+boundary's stamp. A boundary `admitsNoSeam` answers yes for gets no seam,
+on the members or on their choice arms.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::edgeMember`
 
@@ -6283,6 +6287,10 @@ or a symbol carrying `literal`.
 
 Whether a render rule has a seam at the first or last edge of its arms.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoSeam`
+
+The seam pass's one question about a boundary: the right member starts immediate, or either member is, or ends at that side in, a list that admits no extras. A boundary answering yes gets no seam and so no option addresses it, because a space there would be content or a parse error. A nested group counts by its edge member, a choice counts if any arm does.
+
 ### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorValueClassOf`
 
 The value class a slot's low-level accessor belongs to: `boolean` for a boolean slot, `flags` for a bitflag slot, `list` for a multiple slot, `choice` for a kind enum or text enum, and `single` otherwise.
@@ -6386,3 +6394,7 @@ Whether `slot` is the last slot of some chain: a slot the hoisted surface reads 
 ### `packages/codegen/src/compiler/model/wrapper-chain.ts::isListHop`
 
 Whether hop `hop` of a chain is a list or holds one: its wrapper is a list node or the wrapper's slot is multiple. The one per-hop list fact: `chainWrapExpr` spreads items at such a hop, `hoistedCardinality` makes the hoisted slot multiple, and `chainReadsAsList` reads the slot as a list.
+
+### `packages/codegen/src/compiler/model/join-seams/index.ts::joinsOutsideLists`
+
+The join facts a render reads: `joinsNext` and `joinsPrevious` without the rule ids of the lists that admit no extras. A space inside such a list is content, so the join guard must not write one there even when two items' characters would lex as one token. Python's `f"a {{{b}"` holds `{{` then `{b}`, and a separating space would change the string's value. The pairs, kinds and seam ids are unchanged, and the facts come back as given when no lists are stamped. The unreached-seam check keeps reading the full facts, since a seam inside such a list is still held by its rule.

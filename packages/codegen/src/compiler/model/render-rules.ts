@@ -70,6 +70,7 @@ export interface RenderRules {
 	readonly declared?: ReadonlyMap<string, DeclaredArm>;
 	readonly edgeArms?: ReadonlyMap<string, EdgeArmDefault>;
 	readonly unitEdges?: ReadonlyMap<string, SpacingPart>;
+	readonly noExtrasLists?: ReadonlySet<RuleId>;
 }
 
 export interface RenderRulesConfig {
@@ -79,6 +80,7 @@ export interface RenderRulesConfig {
 	readonly whitespaceText?: ReadonlyMap<string, string>;
 	readonly normalizedRules?: Record<string, RenderRule>;
 	readonly choiceArmNodes?: ReadonlySet<RenderRule>;
+	readonly noExtrasLists?: ReadonlySet<RuleId>;
 }
 
 function isImmediateRight(rule: RenderRule | undefined, config: RenderRulesConfig): boolean {
@@ -205,21 +207,38 @@ function gapAddressesOf(gap: { readonly token?: string }): readonly SpacingAddre
 
 const walker = new RuleWalker<RenderRule>();
 
-function collectGaps(config: RenderRulesConfig, rules: Readonly<Record<string, RenderRule>>): Map<RuleId, Gap> {
+function collectGaps(
+	config: RenderRulesConfig,
+	rules: Readonly<Record<string, RenderRule>>
+): { readonly gaps: ReadonlyMap<RuleId, Gap>; readonly noExtrasLists: ReadonlySet<RuleId> } {
 	const externals = new Set(ruleListParts(config.nodeMap.externals ?? []).names);
 	const gaps = new Map<RuleId, Gap>();
+	const noExtrasLists = new Set<RuleId>();
 	for (const [kind, rule] of Object.entries(rules)) {
 		walker.fold(rule, undefined, (_, r) => {
 			const id = bag(r).id;
 			if (id === undefined || !isRepeated(r) || gaps.has(id)) return undefined;
-			const slot = config.nodeMap.slotByRuleId.get(id)?.name;
-			if (slot === undefined || admitsNoExtras(r, rules, externals)) return undefined;
+			const slot = config.nodeMap.slotByRuleId.get(id);
+			if (slot === undefined) return undefined;
+			if (admitsNoExtras(r, rules, externals)) {
+				for (const listed of [id, ...slot.sourceRuleIds]) noExtrasLists.add(listed);
+				return undefined;
+			}
 			const gap = gapOf(kind, r, config);
-			if (gap !== undefined) gaps.set(id, { kind, slot, id, ...gap });
+			if (gap !== undefined) gaps.set(id, { kind, slot: slot.name, id, ...gap });
 			return undefined;
 		});
 	}
-	return gaps;
+	return { gaps, noExtrasLists };
+}
+
+function holdsNoExtrasList(rule: RenderRule, side: 'first' | 'last', config: RenderRulesConfig): boolean {
+	const r = bag(rule);
+	if (isRepeated(rule)) return r.id !== undefined && config.noExtrasLists?.has(r.id) === true;
+	if (r.content !== undefined) return holdsNoExtrasList(r.content, side, config);
+	if (r.members === undefined || r.members.length === 0) return false;
+	if (r.type === CHOICE) return r.members.some((member) => holdsNoExtrasList(member, side, config));
+	return r.type === SEQ && holdsNoExtrasList(r.members[side === 'first' ? 0 : r.members.length - 1]!, side, config);
 }
 
 function flankedSlots(gaps: ReadonlyMap<RuleId, Gap>): Map<string, Gap> {
@@ -402,7 +421,7 @@ export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyM
 	const whitespaceKinds = whitespaceKindsOf(config.nodeMap);
 	const symbols = whitespaceSymbols(config.nodeMap, whitespaceKinds);
 	if (symbols === undefined) return { rules };
-	const gaps = collectGaps(config, rules);
+	const { gaps, noExtrasLists } = collectGaps(config, rules);
 	const flankSyms = flankSymbols(config);
 	const flanked = flankSyms === undefined ? new Map<string, Gap>() : flankedSlots(gaps);
 	const resolver = new DefaultResolver(config.nodeMap, declared);
@@ -415,7 +434,7 @@ export function spaceRenderRules(config: RenderRulesConfig, declared?: ReadonlyM
 	};
 	const out: Record<string, RenderRule> = {};
 	for (const [kind, rule] of Object.entries(rules)) out[kind] = visit(walker.map(rule, visit));
-	return { rules: out };
+	return { rules: out, noExtrasLists };
 }
 
 export function admitsDepth(site: { readonly arms: readonly string[] }): boolean {
@@ -719,6 +738,10 @@ export function hasArmEdgeSeams(rule: RenderRule, side: 'first' | 'last'): boole
 	});
 }
 
+function admitsNoSeam(left: RenderRule, right: RenderRule, config: RenderRulesConfig): boolean {
+	return isImmediateWhenPresent(right, config) || holdsNoExtrasList(left, 'last', config) || holdsNoExtrasList(right, 'first', config);
+}
+
 function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfig, resolver: DefaultResolver, seams: SeamArms): RenderRule {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined || r.members.length < 2 || flanksOf(rule) !== undefined) return rule;
@@ -727,7 +750,7 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 	for (let i = 1; i < r.members.length; i++) {
 		const left = members[members.length - 1]!;
 		let right = r.members[i]!;
-		if (!isAnyWhitespaceChoice(left) && !isAnyWhitespaceChoice(right)) {
+		if (!isAnyWhitespaceChoice(left) && !isAnyWhitespaceChoice(right) && !admitsNoSeam(r.members[i - 1]!, r.members[i]!, config)) {
 			const leftArms =
 				seamNameOf(left, config) === undefined ? withArmEdgeSeams(left, 'last', kind, config, resolver, seams) : undefined;
 			if (leftArms !== undefined) {
@@ -743,16 +766,15 @@ function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfi
 			const leftNow = members[members.length - 1]!;
 			const leftEdge = edgeMember(leftNow, 'last');
 			const rightEdge = edgeMember(right, 'first');
-			const rightImmediate = isImmediateWhenPresent(r.members[i]!, config);
 			const leftToken = seamNameOf(leftEdge ?? leftNow, config);
 			const rightToken = seamNameOf(rightEdge ?? right, config);
-			if (!rightImmediate && leftToken !== undefined && !(leftEdge !== undefined && isAnyWhitespaceChoice(leftEdge))) {
+			if (leftToken !== undefined && !(leftEdge !== undefined && isAnyWhitespaceChoice(leftEdge))) {
 				const seam = seamChoice(kind, { at: 'seam', token: leftToken, side: 'after' }, resolver, seams, undefined, isKeywordSeam(leftEdge ?? leftNow, config));
 				if (leftEdge === undefined) members.push(seam);
 				else members[members.length - 1] = withEdgeSeam(leftNow, seam, 'last');
 				changed = true;
 			}
-			if (!rightImmediate && rightToken !== undefined && !(rightEdge !== undefined && isAnyWhitespaceChoice(rightEdge))) {
+			if (rightToken !== undefined && !(rightEdge !== undefined && isAnyWhitespaceChoice(rightEdge))) {
 				const seam = seamChoice(kind, { at: 'seam', token: rightToken, side: 'before' }, resolver, seams, undefined, isKeywordSeam(rightEdge ?? right, config));
 				if (rightEdge === undefined) members.push(seam);
 				else right = withEdgeSeam(right, seam, 'first');
@@ -872,7 +894,8 @@ export function seamRenderRules(
 	const inlined = inlinedRuleNames(spaced.rules);
 	const flankSyms = flankSymbols(config);
 	const seams: SeamArms = flankSyms === undefined ? { arms: whitespaceKinds, symbols } : { arms: layoutKindsOf(config.nodeMap), symbols: flankSyms };
-	const immediateConfig: RenderRulesConfig = { ...config, normalizedRules: spaced.rules };
+	const noExtrasLists = spaced.noExtrasLists ?? new Set<RuleId>();
+	const immediateConfig: RenderRulesConfig = { ...config, normalizedRules: spaced.rules, noExtrasLists };
 	const tokenInterior = (kind: string): boolean => config.nodeMap.nodes.get(kind)?.triviaInterior === true;
 	const build = (): RenderRules => {
 		const resolver = new DefaultResolver(config.nodeMap, declared);
@@ -897,7 +920,7 @@ export function seamRenderRules(
 			if (seatedUnits.has(kind)) unitEdges.set(kind, seamPartOf(kindEdgeSeam(seamed, kind, 'after', immediateConfig, resolver, seams)));
 			out[kind] = (ownsKindEdges(kind, config.nodeMap) || grammarRoot) && !insideTrivia ? withKindEdges(seamed, kind, immediateConfig, resolver, seams, edgeArms) : seamed;
 		}
-		return { rules: out, edgeArms, unitEdges };
+		return { rules: out, edgeArms, unitEdges, noExtrasLists };
 	};
 	const result = build();
 	const sites = spacingSitesOf(result, config.nodeMap);
