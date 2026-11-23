@@ -3,7 +3,9 @@ import { assemblePredicted, linkPredicted, predictedRawGrammarOf, rawIdTablesOf,
 import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 import { emitAll } from '../../../emitters/emit.ts';
 import { unexpectableExpectEntries } from '../../diagnostics/grammar-diagnostics.ts';
-import { assemble, AssembleCtx } from '../../assemble.ts';
+import { collectKindEntries } from '../../../emitters/kind-discriminant.ts';
+import { runTemplateEmitter } from '../../../emitters/templates.ts';
+import { assemble, AssembleCtx, hydrateSlotRefs } from '../../assemble.ts';
 import { normalizeGrammar } from '../../normalize.ts';
 import { stampIrSurface } from '../ir-surface.ts';
 import { NO_JOINS } from '../join-seams/index.ts';
@@ -36,12 +38,17 @@ describe('a choice its one slot claims', () => {
 		expect(refusals(seq(str('{'), repeat(choice(seq(field('items', sym('name')), str(';')), field('items', sym('number')))), str('}'))).map((failure) => failure.code)).toEqual(['slot-choice-text-lost']);
 	});
 
-	it('passes an arm with text beside a literal arm, whose value the slot holds', () => {
-		expect(refusals(seq(str('yield'), choice(seq(str('return'), sym('name')), str('break'))))).toEqual([]);
+	it('keeps a bare literal beside an arm with text out of the slot', () => {
+		for (const literal of ['break', 'name']) {
+			const rule = seq(str('yield'), choice(seq(str('return'), sym('name')), str(literal)));
+			const holder = modelOf(rule).nodeMap.nodes.get('holder') as unknown as { slots: readonly { values: readonly { value?: string }[] }[] };
+			expect(refusals(rule)).toEqual([]);
+			expect(holder.slots.flatMap((slot) => slot.values).filter((value) => value.value !== undefined)).toEqual([]);
+		}
 	});
 
-	it('refuses an arm with text beside a literal spelled as a kind that arm admits', () => {
-		expect(refusals(seq(str('yield'), choice(seq(str('return'), sym('name')), str('name')))).map((failure) => failure.code)).toEqual(['slot-choice-text-lost']);
+	it('refuses two bare literals beside an arm with text, which the slot being absent cannot tell apart', () => {
+		expect(refusals(seq(str('yield'), choice(seq(str('return'), sym('name')), str('break'), str('stop')))).map((failure) => failure.code)).toEqual(['slot-choice-text-lost']);
 	});
 
 	it('passes when each arm with text is identified by the kinds it admits', () => {
@@ -51,6 +58,22 @@ describe('a choice its one slot claims', () => {
 	it('passes when every arm writes the same text', () => {
 		expect(refusals(choice(seq(str('('), field('value', sym('name'))), seq(str('('), field('value', sym('number')))))).toEqual([]);
 	});
+});
+
+describe('a bare literal beside an arm with text', () => {
+	it('is written when the slot is absent', async () => {
+		const rules = `source: ($) => repeat($.holder), holder: ($) => seq('yield', choice(seq('return', $.name), 'break'), ';'), name: ($) => /[a-z]+/`;
+		const raw = await evaluateTempGrammar({ extras: '/\\s/', rules }, '');
+		const normalized = normalizeGrammar(linkPredicted(raw, { generatedIdTables: withFixtureLexicalRanks(rawIdTablesOf(raw)) }));
+		const nodeMap = assemble(AssembleCtx.from(normalized));
+		hydrateSlotRefs(nodeMap, { inline: new Set(raw.inline) });
+		type Part = { kind: string; text?: string; arms?: { test: string; kinds?: string[]; body: Part[] }[]; fallback?: Part[] };
+		const body = runTemplateEmitter({ grammar: 'synth', nodeMap, kindEntries: collectKindEntries(nodeMap, normalized.generatedIdTables), joins: NO_JOINS }).bodies.get('holder') as unknown as Part[];
+		const texts = (parts: readonly Part[] | undefined) => (parts ?? []).filter((part) => part.kind === 'text').map((part) => part.text);
+		const gate = body.find((part) => part.kind === 'if');
+		expect(gate?.arms?.map((arm) => [arm.test, arm.kinds, texts(arm.body)])).toEqual([['name', undefined, ['return']]]);
+		expect(texts(gate?.fallback)).toEqual(['break']);
+	}, 60_000);
 });
 
 describe('a choice whose arms are fixed tokens alone', () => {

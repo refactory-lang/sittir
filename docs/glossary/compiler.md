@@ -1106,6 +1106,9 @@ The classification left after every structural check: an all-text subtree is `'p
  * carries distinct named fields — meaning the arms contribute their own field
  * slots rather than forming a single value union. Such a choice must be
  * distributed into its arms (and merged by name), not collapsed to one slot.
+ * A choice stamped `literalArmIsText` is structural too: simplify has
+ * stripped its arm's text, but its bare literal is fixed text written
+ * when the other arm's slot is absent, never a value of that slot.
  */
 ```
 
@@ -3991,7 +3994,9 @@ The rule's annotation payload, when it has one.
  * then recomputes every seq's own stamp bottom-up (a seq is nonterminal
  * iff any member is). An optional or repeated reference keeps `true`: it
  * carries presence. `simplifySeqRule` strips every `false` member; the
- * template emitter renders a `false` reference as fixed text.
+ * template emitter renders a `false` reference as fixed text. A single
+ * choice of one bare literal and one arm with text and a slot is stamped
+ * `literalArmIsText` here, while that arm's text is still in the rule.
  */
 ```
 
@@ -7787,6 +7792,10 @@ A rule's attributes without its id and absorbed ids. A factored seq takes these 
 ### `packages/codegen/src/compiler/flatten.ts::withoutSelfVariant`
 
 A seq that is kind K's root drops `variantOf: K` and the `definedBy` that goes with it, because a kind is not a variant of itself. The label reaches the root when arms labelled as K's variants factor into one seq. Other annotations, such as `hoisted`, stay. A SYMBOL or ALIAS root keeps its label, because `variantChildrenOf` reads it as a real variant child.
+
+### `packages/codegen/src/compiler/flatten.ts::hasLiteralBesideTextArm`
+
+Whether an unfielded choice has exactly two arms, one a bare literal and the other a seq holding both fixed text and a slot: `choice(seq('return', $.expression), 'break')`. The slot being present or absent tells those two forms apart, so the literal is fixed text and not a value of the slot. Two literals, a third arm, a field on the choice or a repeated or optional choice leave the slot's presence unable to name the form, so the choice is not stamped and stays subject to the `slot-choice-text-lost` refusal.
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::foldedSymbols`
 

@@ -1294,12 +1294,6 @@ const withoutSlotJoins = (body: Body): Body => body.map((n) => (n.kind === 'slot
 const isLiteralOnly = (body: Body): boolean =>
 	body.every((n) => n.kind === 'text' || n.kind === 'space' || n.kind === 'seam' || n.kind === 'adjacent');
 
-function armLiteral(arm: RenderRule): string | undefined {
-	const parts = arm.type === SEQ ? arm.members.filter((member) => !isSeamChoice(member as RenderRule)) : [arm];
-	const [only] = parts;
-	return parts.length === 1 && only?.type === STRING ? only.value : undefined;
-}
-
 export function emitKindGatedLiterals(
 	rule: Extract<RenderRule, { type: 'CHOICE' }>,
 	fieldName: string | undefined,
@@ -1315,13 +1309,7 @@ export function emitKindGatedLiterals(
 	const arms: KindGatedArm[] = [];
 	let key: string | undefined;
 	const beforeSlots = new Set(ctx.emittedSlotNames);
-	const heldValues = new Set(lookupSlot(rule, ctx)?.values.filter(isTerminalValue).map((value) => value.value));
 	for (const member of rule.members) {
-		const literal = armLiteral(member);
-		if (literal !== undefined && heldValues.has(literal)) {
-			arms.push({ prefix: undefined, residual: EMPTY, kinds: [], literal });
-			continue;
-		}
 		const arm = fieldName === undefined ? member : withFieldOnCarriers(member, fieldName);
 		const kinds = armSlotKinds(arm);
 		if (kinds === undefined) return bail(`arm carries no single slot: ${JSON.stringify(arm).slice(0, 160)}`);
@@ -1377,7 +1365,6 @@ interface KindGatedArm {
 	prefix: Body | undefined;
 	residual: Body;
 	kinds: readonly string[];
-	literal?: string;
 }
 
 function kindGates(bodies: readonly { body: Body; kinds: readonly string[] }[], key: string): IfArm[] {
@@ -1395,9 +1382,9 @@ function kindGates(bodies: readonly { body: Body; kinds: readonly string[] }[], 
 }
 
 function leadGatedLiterals(arms: readonly KindGatedArm[], key: string, prefix: Body, ctx: EmitCtx): Body | undefined {
-	const parts = arms.map((arm) => ({ lead: arm.prefix?.slice(0, -1) ?? EMPTY, residual: arm.residual, kinds: arm.kinds, literal: arm.literal }));
+	const parts = arms.map((arm) => ({ lead: arm.prefix?.slice(0, -1) ?? EMPTY, residual: arm.residual, kinds: arm.kinds }));
 	if (!parts.every((part) => isLiteralOnly(part.lead))) return undefined;
-	const concrete = parts.map((part) => new Set(part.literal === undefined ? part.kinds.flatMap((kind) => concreteKindsOf(kind, ctx.nodeMap)) : [part.literal]));
+	const concrete = parts.map((part) => new Set(part.kinds.flatMap((kind) => concreteKindsOf(kind, ctx.nodeMap))));
 	if (concrete.some((kinds) => kinds.size === 0)) return undefined;
 	for (const [i, a] of parts.entries()) {
 		for (const [j, b] of parts.entries()) {

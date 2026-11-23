@@ -8915,7 +8915,7 @@ expression arm ends in `;` and its declaration arms do not, so the `;` is
 written when the initializer is an expression; the condition's `empty_statement`
 arm carries its own `;`, so the gate names the expression kinds only. Arms
 with the same residual merge their kinds. Nothing else about the choice
-qualifies: an arm without a slot (the literal-fallback shape) unless the slot holds that literal as a value (C#'s `yield break` beside `yield return x`, where the other arm's text is gated on its kinds and the literal writes itself as the slot), an arm with
+qualifies: an arm without a slot (the literal-fallback shape), an arm with
 two, or a residual that is not literal-only leave the choice to the other
 resolutions. Arms whose text before the slot differs, and a lone fixed-text
 leaf arm beside arms that put text before the slot, have that text gated the

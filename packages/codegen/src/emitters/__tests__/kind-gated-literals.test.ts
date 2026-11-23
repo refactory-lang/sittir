@@ -105,22 +105,10 @@ describe('emitRule — arms whose text before the slot differs, gated on the kin
 	});
 });
 
-describe('emitRule — an arm with text beside a literal the slot holds', () => {
-	const holding = { ...vSlot, values: [{ kind: 'expr', multiplicity: 'single' }, { kind: 'break', value: 'break', multiplicity: 'single' }] };
+describe('emitRule — an arm with text beside a bare literal', () => {
 	const yieldChoice = { ...(choice(seq(str('return'), v('expr')), str('break')) as object), id: 'v' } as unknown as RenderRule;
 
-	it('writes the text only for the kinds its arm admits (`yield return x`, `yield break`)', () => {
-		expect(shape(emitRule(yieldChoice, ctxWithKinds({ expr: branch('expr') }, { v: holding })))).toEqual([{ if: [['v', ['expr'], ['return']]] }, { slot: 'v' }]);
-	});
-
-	it('reads a held literal through the seams spacing stamps around it', () => {
-		const seam = (fieldName: string) => ({ type: CHOICE, nonterminal: true, fieldName, members: [{ type: SYMBOL, name: '_tight', nonterminal: true, annotations: { spacing: { at: 'seam', token: 'break', side: 'before' }, arm: 'tight', default: true } }] }) as unknown as RenderRule;
-		const flanked = { type: SEQ, nonterminal: true, members: [seam('break_before'), str('break'), seam('break_after')] } as unknown as RenderRule;
-		const rule = { ...(choice(seq(str('return'), v('expr')), flanked) as object), id: 'v' } as unknown as RenderRule;
-		expect(shape(emitRule(rule, ctxWithKinds({ expr: branch('expr') }, { v: holding })))).toEqual([{ if: [['v', ['expr'], ['return']]] }, { slot: 'v' }]);
-	});
-
-	it('leaves a literal the slot does not hold to the other resolutions', () => {
+	it('leaves the literal to the other resolutions', () => {
 		expect(emitKindGatedLiterals(yieldChoice as Extract<RenderRule, { type: 'CHOICE' }>, undefined, ctxWithKinds({ expr: branch('expr') }))).toBeUndefined();
 	});
 });

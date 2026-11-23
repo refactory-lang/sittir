@@ -91,6 +91,7 @@ function strongestArmMultiplicity(rule: AnyRule): Multiplicity | undefined {
 }
 
 export function isStructuralChoice(rule: ChoiceRule<'simplify'>): boolean {
+	if (rule.literalArmIsText === true) return true;
 	if (sharedArmFieldName(rule) !== undefined) return false;
 	return rule.members.some((m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m, simplifyArmStage));
 }
@@ -358,7 +359,7 @@ function resolveMember(
 				if (partition.structuredArms.length > 0 || partition.structuredNamedArms.length > 0) {
 					recordUnclassifiableShape(kindForName, rule, 'choice-with-structured-arms', diagnostics);
 				}
-				if (partition.unionArms.length > 0) {
+				if (partition.unionArms.length > 0 && rule.literalArmIsText !== true) {
 					const ruleId = (rule as { id?: string }).id;
 					const site = `choice ${ruleId ?? '(no id)'}`;
 					const effectiveMult =

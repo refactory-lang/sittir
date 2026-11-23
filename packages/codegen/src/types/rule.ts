@@ -139,6 +139,7 @@ export type OptionalRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 export type ChoiceRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof CHOICE;
 	readonly members: Rule<T>[];
+	readonly literalArmIsText?: true;
 };
 
 export type DelimiterMode = 'mandatory' | 'optional';

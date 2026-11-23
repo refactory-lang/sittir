@@ -154,8 +154,8 @@ function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp
 		if (rule.type === CHOICE) {
 			const labels = (field: string): number => rule.members.filter((m) => m.fieldName === field).length;
 			const labelled = (m: RenderRule): boolean => m.type === SYMBOL && m.nonterminal === false && m.fieldName !== undefined && isSingle(m) && labels(m.fieldName) === 1;
-			if (!rule.members.some(labelled)) return rule;
-			return { ...rule, members: rule.members.map((m) => (labelled(m) ? { ...m, nonterminal: true } : m)) };
+			const seated = rule.members.some(labelled) ? { ...rule, members: rule.members.map((m) => (labelled(m) ? { ...m, nonterminal: true } : m)) } : rule;
+			return isSingle(seated) && hasLiteralBesideTextArm(seated) ? { ...seated, literalArmIsText: true } : seated;
 		}
 		return rule;
 	};
@@ -165,6 +165,14 @@ function stampTerminality(rules: Record<string, RenderRule>, wordMatcher: RegExp
 	const out: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) out[name] = isLayoutBody(rule) ? rule : stamp(ruleWalker.map(rule, stamp));
 	return out;
+}
+
+function hasLiteralBesideTextArm(rule: ChoiceRule<'normalize'>): boolean {
+	if (rule.fieldName !== undefined || rule.members.length !== 2) return false;
+	const isText = (member: RenderRule): boolean => member.type === STRING && member.nonterminal !== true;
+	const literal = rule.members.find(isText);
+	const arm = rule.members.find((member) => member !== literal);
+	return literal !== undefined && arm?.type === SEQ && arm.members.some(isText) && arm.members.some((member) => member.nonterminal === true);
 }
 
 const ruleWalker = new RuleWalker<RenderRule>();
