@@ -14,6 +14,7 @@ Where the work stands:
   - named fixed tokens leave query results (Task 6).
 
   Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below. A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec).
+- **Task 2** is done (`0a524d9eb`). **Task 3 is in progress.**
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -154,7 +155,7 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - `RecordShape::edges: [&'static [EdgePart]; 2]` for `Side::Before` and `Side::After`.
 - `pub enum EdgePart { Token(KindId), Slot(BodySlot), Guarded { slot: BodySlot, token: KindId } }`.
 
-- [ ] **Step 1: Write the failing codegen tests.**
+- [x] **Step 1: Write the failing codegen tests.**
   - `bodySlotOrder(rust reference_type)` equals `['lifetime', 'exclusive', 'type']`.
   - `bodySlotOrder(typescript subscript_expression)` equals `['object', 'optional_chain', 'index']`.
   - `bodyEdgeParts(rust let_declaration, 'before')` equals `[{ token: 'let' }]`.
@@ -162,23 +163,23 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - `bodyEdgeParts(rust let_declaration, 'after')` equals `[{ token: ';' }]`.
   - A `text` part inside an `if` arm on slot `s` gives `{ guarded: 's', token }`.
   - A `seam` part gives nothing.
-- [ ] **Step 2: Run the codegen tests.** Run `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-body.test.ts`. Expected: FAIL, `bodySlotOrder` is not defined.
-- [ ] **Step 3: Implement the two functions.**
+- [x] **Step 2: Run the codegen tests.** Run `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-body.test.ts`. Expected: FAIL, `bodySlotOrder` is not defined.
+- [x] **Step 3: Implement the two functions.**
   - `bodySlotOrder(body: RenderPart[]): string[]` takes each slot at its first appearance across arms. Throw when two arms order two slots both ways: none does today, which the spec states.
   - `bodyEdgeParts(body: RenderPart[], side: 'before' | 'after'): EdgePartSpec[]` reads parts from that edge and stops at the first unconditional `Token` or required slot.
   - Token kinds resolve through the catalog's kind ids, never by text at run time.
   - `render-module.ts` stamps `#[node(order = [...], edges = ([...], [...]))]` on every struct with `words`.
   - It also fails generation when a kind whose body has an `indent` or `dedent` part has no `words`, with the diagnostic "`<kind>` writes a depth part but is read with no record".
-- [ ] **Step 4: Add the derive attributes.** `attrs.rs` parses `order` and `edges`; `expand.rs` emits them in `RecordCells::shape`.
-- [ ] **Step 5: Write the failing Rust test.** `record_shapes_order_cells_as_their_bodies_write_them` in `stage_one_parity.rs` asserts:
+- [x] **Step 4: Add the derive attributes.** `attrs.rs` parses `order` and `edges`; `expand.rs` emits them in `RecordCells::shape`.
+- [x] **Step 5: Write the failing Rust test.** `record_shapes_order_cells_as_their_bodies_write_them` in `stage_one_parity.rs` asserts:
   - rust `reference_type`'s `order` is `lifetime`'s cell, `exclusive`'s flag, then `type`'s cell;
   - every record kind of the five grammars has one `order` entry for each cell and each flag.
-- [ ] **Step 6: Regenerate and run.**
+- [x] **Step 6: Regenerate and run.**
   - Regenerate each grammar: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <lang> --all --output packages/<lang>/src`.
   - Run `PARITY record_shapes`. Expected: PASS.
   - The codegen tests also pass.
   - `pnpm run validate:history` is unchanged per row.
-- [ ] **Step 7: Commit:** `feat(codegen): each record kind's slot order and edge parts, from its render body`.
+- [x] **Step 7: Commit:** `feat(codegen): each record kind's slot order and edge parts, from its render body`.
 
 ### Task 3: The walk's two modes
 
