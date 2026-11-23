@@ -88,11 +88,10 @@ These rows are from the spec's § Public surfaces, approved by the maintainer. T
 | addon `siblings` | a unit sibling has no span; a named fixed token is no sibling | 6 |
 | addon `descendants` / `readDescendants`, `$children`, `$descendants` | a named fixed token of a pair in the spec's "What navigation lists" is no longer yielded (29,447 items across the census corpora); every other item is unchanged; resume paths renumber | 6, 9 |
 | *new:* `$query()` views (`$children`, `$descendants`, `ofType`, `where`, `find` and the rest) | a query for such a token's kind finds none of them; a query for the holder's kind finds each, as for a built node: `ofType(kinds.SelfParameter)` matches `&self`, and `ofType(kinds.Self)` finds nothing inside it | 6, 9 |
-| *new:* a parsed list whose delimiter option is cleared (`$with.delimiter(undefined)`) | it renders the options' trailing separator, where it rendered its source's: rust `f(a, b,)` renders `a, b`. `.delimiter` and `_delimiter` are unchanged | 4 |
 | `$text`, `lineStartsInsideTokens`, the parse's error list | unchanged | 1, 7 |
-| `$snapshot` | lists no fixed token (Task 1's test); its `_delimiter` changes as the delimiter row says | 1, 4 |
+| `$snapshot` | lists no fixed token (Task 1's test) | 1 |
 
-Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), still guarded by `Engine::with_store` and `record_nodes.rs::field_fits`. `NodeSite` gains `Unit`, `RecordShape` gains `order` and `edges`, and `SourceTable::last_list_child_kind`, `engine::last_list_child` and `prepare::source_trailing_delimiter` go, as second derivations of a list's delimiter.
+Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), still guarded by `Engine::with_store` and `record_nodes.rs::field_fits`. `NodeSite` gains `Unit`, `RecordShape` gains `order` and `edges`, and `SourceTable::last_list_child_kind` and `engine::last_list_child` go, as second derivations of a list's delimiter.
 
 ## File map
 
@@ -239,13 +238,13 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - What duplicates is the readers. One fact has three derivations:
   1. **The parse's:** `read::delimiter`, a span test, or a count test when the end item is a scalar unit.
   2. **The query's:** on every `Plan::Delimiter` evaluation, the generated `ReadNode::delimiter` re-runs `routes` and `read::delimiter` over `ParsedTree::nodes()`. In arena storage that navigation is the run rows, which Task 9 strips of separators. Python's portable `trailingComma` flag goes through this reader.
-  3. **The render's fallback:** `prepare::source_trailing_delimiter` → `SourceTable::last_list_child_kind` → `engine::last_list_child`, a width-and-kind test. It is reached only by a list with a source and no delimiter, that is, after `$with.delimiter(undefined)`.
+  3. **The render's fallback:** `prepare::source_trailing_delimiter` → `SourceTable::last_list_child_kind` → `engine::last_list_child`, a width-and-kind test. It is reached by a list with a source and no delimiter: a list after `$with.delimiter(undefined)`, and a built list seated where a parsed list was.
 - A list's separator has no resolution at read. `Lookups::node_slots` derives it at render from the majority of the tree's gaps, cached per tree. An item keeps none.
 
 **What changes:**
 - **The delimiter at parse:** unchanged.
 - **The query:** `EngineGrammar::delimiter` answers from the stored option where the backing holds records: arena reads the list record's side `DELIMITER`. A backing that holds tree-sitter's tree is object storage, whose read results live in the JavaScript nodes. It answers by the same `read::delimiter` call over the tree's children, at query time. The two differ only in when they run, which is the one difference between storages the maintainer allows (brainstorm, 2026-11-17).
-- **The render fallback goes.** A list whose delimiter option is unset takes the options' value, as a built list does: its generated prepare fills `ctx.options.delimiter_at(site)`.
+- **The render fallback's second reader goes.** A list rebuilt from a source list takes the trailing flag of that source's resolved delimiter, through the query above, and the leading flag from the options. A list with no source takes the options' value: its generated prepare fills `ctx.options.delimiter_at(site)`.
 - **The list's separator at parse:**
   - One function resolves a separated slot's separator from its gaps: the kind most of them take, a tie going to the arm of the options the tree was read with, kept only where it differs from that arm. A render call's options never enter it.
   - The arena walk calls it while it holds the children and stamps `SideSlot::separator`, and `Records` reads the stamp. Object storage calls it over the tree's children at lookup (`Lookups::node_slots`), since its tree still answers. As with the delimiter, the two differ only in when they run, and no object row or wire shape changes.
@@ -257,7 +256,7 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - Modify `rust/crates/sittir-core/src/engine.rs`: `EngineGrammar::delimiter`, plus `Lookups::node_slots` and `slot_separator`.
 - Modify `arena/hydrate.rs` and `arena/prep.rs`.
 - Modify `packages/codegen/src/emitters/native-crate.ts` (the generated `EngineGrammar::delimiter`) and `render-module.ts` (`prepareStructImpl`: the options' delimiter). Update `emitters/__tests__/render-module-emit.test.ts`.
-- Delete `prepare::source_trailing_delimiter` and its test table `ListTrees`, and `engine::last_list_child`.
+- `prepare::source_trailing_delimiter` reads the source list's resolved delimiter. Delete `engine::last_list_child`.
 - Delete every `SourceTable::last_list_child_kind`: `render.rs` twice, `engine.rs` three times, and `napi_engine.rs::ArenaSources`.
 - Delete `render-module.ts::sourceTrailingSeparator` and its glossary entry.
 - Delete five tests in `rust/crates/sittir-core/tests/engine_tree.rs`: `last_list_child_of`, `a_list_the_tree_holds_no_node_for_ends_in_its_holder_child_within_its_span`, `a_comment_in_a_list_span_is_not_its_last_child`, `a_single_item_list_spanning_its_item_ends_in_that_item` and `a_list_the_tree_holds_a_node_for_ends_in_that_node_child`.
@@ -267,26 +266,27 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - Consumes Task 3's `parse_records_with`.
 - Produces the walk's stamp of a list's separator in `SideSlot::separator`.
 - `EngineGrammar::delimiter(self, nodes, at)` keeps its signature.
-- Drops `prepare::source_trailing_delimiter`, `SourceTable::last_list_child_kind`, `engine::last_list_child` and codegen's `sourceTrailingSeparator`.
+- Drops `SourceTable::last_list_child_kind`, `engine::last_list_child` and codegen's `sourceTrailingSeparator`.
 
 - [ ] **Step 1: Write the failing tests.**
   - `the_query_reads_the_stored_delimiter`, arena, over `read_fixtures(name)` for the five grammars: for every flanked list, `Plan::Delimiter` holds iff the list's side `DELIMITER` has the flag, on the `SlotContent` tree.
   - `parsed_lists_answer_their_separators_from_stamps`, both storages, over `read_fixtures(name)` for the five grammars. For every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's: `slot_separator`; `slot_layouts`. Nodes are matched by (grammar, display, span) in pre-order.
   - `the_separator_is_resolved_against_the_options_a_tree_was_read_with`: a list whose majority is the read-time arm and one whose majority differs, each rebuilt and rendered with a render call's own separator option, render the same in object and arena.
   - `a_mixed_object_type_writes_the_lists_separator`, both storages, each with `b` edited through `$with`: typescript `type T = { a: string, b: number; c: boolean; d: string }` writes `;` in every gap, and the tied `type T = { a: string; b: number, c: boolean }` writes the options' arm in every gap.
-  - `a_cleared_delimiter_takes_the_options`, in `rebuilt-list-trailing.test.ts`, both storages. The `arguments_elements` of rust `fn main() { f(a, b,); }`:
+  - `a_rebuilt_list_keeps_its_sources_trailing_delimiter`, in `rebuilt-list-trailing.test.ts`, both storages. The `arguments_elements` of rust `fn main() { f(a, b,); }`:
     - rebuilt through `$with.items` with its own items, renders `a, b,`;
-    - after `$with.delimiter(undefined)` and the same rebuild, renders `a, b`;
-    - after the same, under an engine whose `delimiter` option at that site is trailing, renders `a, b,`.
+    - after `$with.delimiter(undefined)` and the same rebuild, renders `a, b,`;
+    - a built list seated in its place through the holder's `$with` renders `a, b,`;
+    - the same three over `f(a, b)`, under an engine whose `delimiter` option at that site is trailing, render `a, b`.
   - `delimiter-parity.test.ts` runs under `nodeStorage: 'arena'` as well as object.
 - [ ] **Step 2: Run them.** Run `PARITY the_query_reads`, `PARITY parsed_lists`, `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts packages/typescript/tests/edited-object-type.test.ts packages/tools/tests/portable/delimiter-parity.test.ts`. Expected:
   - `the_query_reads…` FAILs: the `SlotContent` tree has no separator rows to count.
   - `parsed_lists…` FAILs on the `SlotContent` tree.
-  - `a_cleared_delimiter…` FAILs, rendering `a, b,`.
+  - `a_rebuilt_list_keeps…` PASSes: it pins today's behaviour through the change.
 - [ ] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
 - [ ] **Step 4: Run.**
   - Step 2's commands. Expected: PASS.
-  - `validate:history` per row, both storages. Expected: no row moves. A cleared delimiter is the one behaviour change, and only `$with.delimiter(undefined)` reaches it (not checked: that the validator never clears a delimiter).
+  - `validate:history` per row, both storages. Expected: no row moves.
   - The full unit suite.
 - [ ] **Step 5: Commit:** `feat(core): a list's delimiter and separators are resolved once in the read, and its readers take the resolved option`.
 
