@@ -468,7 +468,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 		const exact = input.slots[owner]?.[name];
 		const spelled = factsIn(arm, name).flatMap((fact) => fact.spellings.map((spelling) => spelling.item.$path));
 		if (spelled.length === 0) return exact;
-		return { paths: [...new Set([...(exact?.paths ?? []), ...spelled])].sort(), texts: exact?.texts ?? [], unmapped: exact?.unmapped ?? [], string: exact?.string ?? false, numbers: exact?.numbers ?? [], optional: true };
+		return { paths: [...new Set([...(exact?.paths ?? []), ...spelled])].sort(), texts: exact?.texts ?? [], unmapped: exact?.unmapped ?? [], string: exact?.string ?? false, scalars: exact?.scalars ?? [], optional: true };
 	};
 	const factChainOf = (arm: PortableBuildArm): readonly (readonly PortableContainer[])[] => {
 		const slots = [...new Set((arm.facts ?? []).map((fact) => fact.slot))];
@@ -759,25 +759,42 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 	};
 
 	type Scalar = keyof NonNullable<PortableSlotRoute['takers']>;
+	const BOOLEANS = ['true', 'false'] as const;
+	const takesNumbers = (slot: PortableSlotRoute): boolean => (['integer', 'float', 'bigint'] as const).some((scalar) => slot.takers?.[scalar] !== undefined);
 	const takerFit = (slot: PortableSlotRoute, scalar: Scalar): { readonly path: string; readonly fit: Fitting } | undefined => {
 		const path = slot.takers?.[scalar];
-		const kind = path === undefined ? undefined : rowOf(path)?.builds?.[scalar];
-		const fit = kind === undefined ? undefined : fittingOf(path!, slot.seats).find(({ arm }) => arm.kind === kind && arm.scalar === scalar);
-		return fit === undefined ? undefined : { path: path!, fit };
+		if (path === undefined) return undefined;
+		const takes =
+			scalar === 'true' || scalar === 'false'
+				? (arm: PortableBuildArm) => arm.literal?.value === (scalar === 'true')
+				: (arm: PortableBuildArm) => arm.kind === rowOf(path)?.builds?.[scalar] && arm.scalar === scalar;
+		const fit = fittingOf(path, slot.seats).find(({ arm }) => takes(arm));
+		return fit === undefined ? undefined : { path, fit };
 	};
 
-	const numberCases = (slot: PortableSlotRoute, value: Expression, admitted: readonly string[], taken: (scalar: Scalar) => Statement, plain: { readonly bigint: () => Statement; readonly number: () => readonly Statement[] }): Statement[] => {
-		const { takers } = slot;
-		if (takers === undefined) return [...(admitted.includes('bigint') ? [when(typeIs(value, 'bigint'), block(plain.bigint()))] : []), when(typeIs(value, 'number'), block(...plain.number()))];
+	const numberCases = (slot: PortableSlotRoute, value: Expression, admitted: readonly string[], taken: (scalar: Scalar) => Statement, plain: { readonly bigint: () => Statement; readonly number: () => readonly Statement[] }, at?: string): Statement[] => {
+		const takers = slot.takers ?? {};
+		if (!takesNumbers(slot)) return at !== undefined ? [] : [...(admitted.includes('bigint') ? [when(typeIs(value, 'bigint'), block(plain.bigint()))] : []), when(typeIs(value, 'number'), block(...plain.number()))];
 		const [integer, float] = [takerFit(slot, 'integer'), takerFit(slot, 'float')];
 		const numbers = integer !== undefined && integer.fit.arm === float?.fit.arm ? [taken('integer')] : [when(call(dot(id('Number'), 'isSafeInteger'), value), block(taken('integer'))), taken('float')];
-		return [
-			...(takers.bigint === undefined && !admitted.includes('bigint') ? [] : [when(typeIs(value, 'bigint'), block(taken('bigint')))]),
-			...(takers.integer === undefined && takers.float === undefined && !admitted.includes('number') ? [] : [when(typeIs(value, 'number'), block(...numbers))])
-		];
+		const bigints = at === undefined ? takers.bigint !== undefined || admitted.includes('bigint') : takers.bigint === at;
+		const numbered = at === undefined ? takers.integer !== undefined || takers.float !== undefined || admitted.includes('number') : takers.integer === at || takers.float === at;
+		return [...(bigints ? [when(typeIs(value, 'bigint'), block(taken('bigint')))] : []), ...(numbered ? [when(typeIs(value, 'number'), block(...numbers))] : [])];
 	};
 
-	const numberBranches = (owner: string, slot: PortableSlotRoute, skip: number, value: Expression, admitted: readonly string[]): Statement[] => {
+	const booleanCases = (slot: PortableSlotRoute, value: Expression, admitted: readonly string[], taken: (scalar: Scalar) => Statement, refused: () => Statement, at?: string): Statement[] => {
+		const values = BOOLEANS.filter((scalar) => slot.takers?.[scalar] !== undefined && (at === undefined || slot.takers?.[scalar] === at));
+		const untaken = at === undefined && BOOLEANS.some((scalar) => admitted.includes(scalar) && slot.takers?.[scalar] === undefined);
+		if (values.length === 0 && !untaken) return [];
+		return [when(typeIs(value, 'boolean'), block(...values.map((scalar) => when(binary(value, '===', scalar), taken(scalar))), ...(untaken ? [refused()] : [])))];
+	};
+
+	const scalarCases = (slot: PortableSlotRoute, value: Expression, admitted: readonly string[], taken: (scalar: Scalar) => Statement, plain: Parameters<typeof numberCases>[4], refused: () => Statement, at?: string): Statement[] => [
+		...numberCases(slot, value, admitted, taken, plain, at),
+		...booleanCases(slot, value, admitted, taken, refused, at)
+	];
+
+	const scalarBranches = (owner: string, slot: PortableSlotRoute, skip: number, value: Expression, admitted: readonly string[], at?: string): Statement[] => {
 		const refused = (scalar: string): Statement => ret(call(id(uses('unnumbered')), str(`${owner}.${slot.name}`), str(scalar)));
 		const taken = (scalar: Scalar): Statement => {
 			const path = slot.takers?.[scalar];
@@ -785,7 +802,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 			const by = takerFit(slot, scalar);
 			return (by === undefined ? undefined : placedArm(path, slot, by.fit, skip, obj([['$path', str(path)], ['$value', value]]))) ?? unbuilt(`${owner}.${slot.name}`, obj([['$path', str(path)]]));
 		};
-		return numberCases(slot, value, admitted, taken, { bigint: () => refused('bigint'), number: () => placedByKind(owner, slot, skip, value, true) });
+		return scalarCases(slot, value, admitted, taken, { bigint: () => refused('bigint'), number: () => placedByKind(owner, slot, skip, value, true) }, () => raise(str(`portable build: ${owner}.${slot.name} builds no boolean`)), at);
 	};
 
 	const slotFunction = (owner: string, arm: PortableBuildArm, slot: PortableSlotRoute, skip: number, seats = slot.seats): string => {
@@ -828,12 +845,13 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 	};
 
 	const itemTypeOf = (name: string, { exact, structures, decided, tails, valued, valuedPaths, free }: ExactSlot, texts: boolean): Statement => {
-		const valueOf = (path: string): TypeNode => union([...new Set(valued.flatMap(([scalar, taker]) => (taker === path ? [scalar === 'bigint' ? 'bigint' : 'number'] : [])))]);
+		const scalarType = (scalar: string): TypeNode => (scalar === 'true' ? t.literalType(t.true) : scalar === 'false' ? t.literalType(t.false) : scalar === 'integer' || scalar === 'float' ? 'number' : scalar);
+		const valueOf = (path: string): TypeNode => union([...new Set(valued.flatMap(([scalar, taker]) => (taker === path ? [scalar === 'integer' || scalar === 'float' ? 'number' : scalar] : [])))].map(scalarType));
 		const items: TypeNode[] = [
 			...(exact.string || (texts && !free && exact.texts.length === 0) ? ['string'] : []),
 			...exact.texts.map((literal) => t.literalType(str(literal))),
 			...exact.paths.filter(textTyped).map((path) => typeRef(uses('Text'), input.map, t.literalType(str(path)))),
-			...exact.numbers,
+			...exact.scalars.map(scalarType),
 			...exact.paths
 				.filter((path) => viewed.has(path))
 				.flatMap((path) => {
@@ -869,7 +887,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 		if (takesHoles(slot) && (slot.multiple || skip > 0)) statements.push(when(binary(value, '===', 'null'), ret('null')));
 		const text = stringBranch(owner, arm, at.exact, slot, skip, value, every, at.texted);
 		if (text !== undefined) statements.push(when(typeIs(value, 'string'), block(...text)));
-		statements.push(...numberBranches(owner, slot, skip, value, at.exact.numbers));
+		statements.push(...scalarBranches(owner, slot, skip, value, at.exact.scalars));
 		statements.push(when(call(id(uses('isNode')), value), block(...placedByKind(owner, slot, skip, value, false))));
 		const refused = () => unbuilt(`${owner}.${slot.name}`, value);
 		statements.push(
@@ -877,7 +895,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 				at,
 				value,
 				(path) => caseOf(owner, arm, path, slot, skip, value, every),
-				() => [...numberBranches(owner, slot, skip, dot(value, '$value'), at.exact.numbers), refused()],
+				(path) => [...scalarBranches(owner, slot, skip, dot(value, '$value'), at.exact.scalars, path), refused()],
 				refused,
 				() => t.throwStatement(t.newExpression({ function: 'Error', arguments: t.arguments(str(`${owner}.${slot.name} takes no structure`)) }))
 			)
@@ -961,15 +979,17 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 				)
 			);
 		}
-		const scalarKinds = (given: Expression): Statement[] =>
-			numberCases(slot, given, at.exact.numbers, (scalar) => {
+		const scalarKinds = (given: Expression, path?: string): Statement[] => {
+			const taken = (scalar: Scalar): Statement => {
 				const kind = takerFit(slot, scalar)?.fit.arm.kind;
 				return kind === undefined ? none() : ret(num(kind));
-			}, { bigint: none, number: () => [ret(given)] });
+			};
+			return scalarCases(slot, given, at.exact.scalars, taken, { bigint: none, number: () => [ret(given)] }, none, path);
+		};
 		statements.push(...scalarKinds(value));
 		statements.push(when(call(id(uses('isNode')), value), ret(dot(value, '$type'))));
 		const fitting = { ...at, structures: at.structures.filter((path) => fittingOf(path, slot.seats).length > 0) };
-		statements.push(...structureCases(fitting, value, (path) => choiceKinds(path, slot, value), () => [...scalarKinds(dot(value, '$value')), none()], none, none));
+		statements.push(...structureCases(fitting, value, (path) => choiceKinds(path, slot, value), (path) => [...scalarKinds(dot(value, '$value'), path), none()], none, none));
 		slotFunctions.set(name, [itemTypeOf(name, at, texts), constant(name, arrow('value', `${name}$Item`, block(...statements), union(['number', 'undefined'])))]);
 		return name;
 	};

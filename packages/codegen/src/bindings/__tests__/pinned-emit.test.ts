@@ -108,8 +108,8 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'statement.expression': {
-					expression: { paths: ['expression.await'], texts: [], unmapped: [], string: false, numbers: [], optional: false },
-					label: { paths: [], texts: [], unmapped: [], string: false, numbers: [], optional: true }
+					expression: { paths: ['expression.await'], texts: [], unmapped: [], string: false, scalars: [], optional: false },
+					label: { paths: [], texts: [], unmapped: [], string: false, scalars: [], optional: true }
 				}
 			},
 			viewed: ['expression.await'],
@@ -166,7 +166,7 @@ describe('the pinned child emits a portable build module', () => {
 					'expression.collection.list': { root: true, arms: [{ kind: 1, builder: 'array', when: [], slots: [{ name: 'elements', steps: [{ key: 'elements' }], multiple: true, seats: [{ at: [1, 'elements'], kinds: [7, 9] }] }], presets: [], flags: {} }] }
 				}
 			},
-			slots: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, numbers: [], optional: true } } },
+			slots: { 'expression.collection.list': { elements: { paths: [], texts: [], unmapped: [], string: false, scalars: [], optional: true } } },
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -216,8 +216,8 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'statement.block': {
-					statements: { paths: [], texts: [], unmapped: [], string: false, numbers: [], optional: true },
-					label: { paths: [], texts: ['a', 'b'], unmapped: [], string: false, numbers: [], optional: true }
+					statements: { paths: [], texts: [], unmapped: [], string: false, scalars: [], optional: true },
+					label: { paths: [], texts: ['a', 'b'], unmapped: [], string: false, scalars: [], optional: true }
 				}
 			},
 			viewed: [],
@@ -272,10 +272,10 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'identifier.qualified': {
-					qualifier: { paths: ['identifier.qualified'], texts: [], unmapped: [], string: true, numbers: [], optional: true },
-					name: { paths: [], texts: [], unmapped: [], string: true, numbers: [], optional: false },
-					marker: { paths: [], texts: ['*'], unmapped: [], string: false, numbers: [], optional: true },
-					note: { paths: [], texts: [], unmapped: [], string: true, numbers: [], optional: true }
+					qualifier: { paths: ['identifier.qualified'], texts: [], unmapped: [], string: true, scalars: [], optional: true },
+					name: { paths: [], texts: [], unmapped: [], string: true, scalars: [], optional: false },
+					marker: { paths: [], texts: ['*'], unmapped: [], string: false, scalars: [], optional: true },
+					note: { paths: [], texts: [], unmapped: [], string: true, scalars: [], optional: true }
 				}
 			},
 			viewed: ['identifier.qualified'],
@@ -321,7 +321,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			slots: { 'element.macro.token_binding': { fragment: { paths: ['element.macro.fragment'], texts: ['block', 'expr'], unmapped: [], string: false, numbers: [], optional: false } } },
+			slots: { 'element.macro.token_binding': { fragment: { paths: ['element.macro.fragment'], texts: ['block', 'expr'], unmapped: [], string: false, scalars: [], optional: false } } },
 			viewed: [],
 			textPaths: ['element.macro.fragment'],
 			textInputs: [],
@@ -416,7 +416,7 @@ describe('the pinned child emits a portable build module', () => {
 	it('narrows text to the fixed choices of a direct builder\'s seat, and refuses any other', async () => {
 		const route = { name: 'content', steps: [{ key: 'content' }], multiple: false, seats: [{ at: [4, 'content'], kinds: [], text: true }] };
 		const table = { builders: { escape: 'direct' }, paths: { 'literal.character': { root: true, arms: [{ kind: 4, builder: 'escape', when: [], slots: [route], presets: [], flags: {} }] } } };
-		const slots = { 'literal.character': { content: { paths: [], texts: [], unmapped: [], string: true, numbers: [], optional: false } } };
+		const slots = { 'literal.character': { content: { paths: [], texts: [], unmapped: [], string: true, scalars: [], optional: false } } };
 		const { text } = await runPinned('portableBuild', {
 			grammar: 'typescript',
 			node: 'TypeScriptNode',
@@ -476,7 +476,7 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'statement.return': {
-					expression: { paths: ['literal.number.float', 'literal.number.integer'], texts: [], unmapped: [], string: false, numbers: ['bigint', 'number'], optional: false }
+					expression: { paths: ['literal.number.float', 'literal.number.integer'], texts: [], unmapped: [], string: false, scalars: ['bigint', 'number'], optional: false }
 				}
 			},
 			viewed: ['literal.number.float', 'literal.number.integer'],
@@ -524,7 +524,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			slots: { 'expression.unary': { operator: { paths: [], texts: [], unmapped: [], string: false, numbers: ['bigint', 'number'], optional: false } } },
+			slots: { 'expression.unary': { operator: { paths: [], texts: [], unmapped: [], string: false, scalars: ['bigint', 'number'], optional: false } } },
 			viewed: [],
 			textPaths: [],
 			textInputs: [],
@@ -610,7 +610,7 @@ describe('the pinned child emits a portable build module', () => {
 						'expression.generator': { root: false, arms: [{ kind: 2, builder: 'generatorExpression', when: [], slots: [], presets: [], flags: {} }] }
 					}
 				},
-				slots: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+				slots: { 'expression.call': { arguments: { paths: [...paths], texts: [], unmapped: [], string: false, scalars: [], optional: false } } },
 				viewed: [...paths],
 				textPaths: [],
 				textInputs: [],
@@ -678,7 +678,7 @@ describe('the pinned child emits a portable build module', () => {
 					'identifier.qualified': { root: false, arms: [{ kind: 8, builder: 'dottedName', when: [], slots: [], presets: [], flags: {} }] }
 				}
 			},
-			slots: { 'declaration.function': { body: { paths: [...viewed], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+			slots: { 'declaration.function': { body: { paths: [...viewed], texts: [], unmapped: [], string: false, scalars: [], optional: false } } },
 			viewed: [...viewed],
 			textPaths: [],
 			textInputs: [],
@@ -697,7 +697,7 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text.includes('case undefined:')).toBe(switched);
 	}, 60_000);
 
-	const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional });
+	const exact = (optional: boolean) => ({ paths: ['statement.block'], texts: [], unmapped: [], string: false, scalars: [], optional });
 	const functionWithBody: PinnedInput<'portableBuild'> = {
 		grammar: 'python',
 		node: 'PythonNode',
@@ -763,10 +763,10 @@ describe('the pinned child emits a portable build module', () => {
 			},
 			slots: {
 				'declaration.function': {
-					body: { paths: ['statement.block'], texts: [], unmapped: [], string: false, numbers: [], optional: false },
-					doc: { paths: ['literal.string'], texts: [], unmapped: [], string: false, numbers: [], optional: true },
-					typeParameters: { paths: ['declaration.type_parameter'], texts: [], unmapped: [], string: false, numbers: [], optional: true },
-					parameters: { paths: ['declaration.parameter'], texts: [], unmapped: [], string: false, numbers: [], optional: false }
+					body: { paths: ['statement.block'], texts: [], unmapped: [], string: false, scalars: [], optional: false },
+					doc: { paths: ['literal.string'], texts: [], unmapped: [], string: false, scalars: [], optional: true },
+					typeParameters: { paths: ['declaration.type_parameter'], texts: [], unmapped: [], string: false, scalars: [], optional: true },
+					parameters: { paths: ['declaration.parameter'], texts: [], unmapped: [], string: false, scalars: [], optional: false }
 				}
 			},
 			viewed: ['statement.block', 'literal.string', 'declaration.type_parameter', 'declaration.parameter'],
@@ -844,7 +844,7 @@ describe('the pinned child emits a portable build module', () => {
 
 	it("picks an arm by the render options' variant as the interpreter does: by whether the texts its slots hold are ones the arm's seats spell", async () => {
 		const statements = (seats: readonly PortableSeat[]): PortableSlotRoute => ({ name: 'statements', steps: [{ key: 'statements' }], multiple: true, list: true, seats });
-		const set = (paths: readonly string[], string: boolean) => ({ paths, texts: [], unmapped: [], string, numbers: [], optional: false });
+		const set = (paths: readonly string[], string: boolean) => ({ paths, texts: [], unmapped: [], string, scalars: [], optional: false });
 		const { text, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
 			node: 'PythonNode',
@@ -893,7 +893,7 @@ describe('the pinned child emits a portable build module', () => {
 	}, 60_000);
 
 	it('places an arm whose seats set flags on it in the seat that sets the flags the input states, and builds it without them, as the interpreter does', async () => {
-		const set = (paths: readonly string[], string = false) => ({ paths, texts: [], unmapped: [], string, numbers: [], optional: false });
+		const set = (paths: readonly string[], string = false) => ({ paths, texts: [], unmapped: [], string, scalars: [], optional: false });
 		const statements: PortableSlotRoute = {
 			name: 'statements',
 			steps: [{ key: 'statements' }],
@@ -942,7 +942,7 @@ describe('the pinned child emits a portable build module', () => {
 	}, 60_000);
 
 	it("picks an arm by the kinds a slot builds, sends a path the arm's kinds test excludes to another arm, and reports no unplaced arm for that path", async () => {
-		const set = (paths: readonly string[]) => ({ paths, texts: [], unmapped: [], string: false, numbers: [], optional: false });
+		const set = (paths: readonly string[]) => ({ paths, texts: [], unmapped: [], string: false, scalars: [], optional: false });
 		const expression = (kind: number, kinds: readonly number[]): PortableSlotRoute => ({ name: 'expression', steps: [{ key: 'expression' }], multiple: false, list: false, seats: [{ at: [kind, 'expression'], kinds }] });
 		const nullary = (kind: number, builder: string) => ({ root: true, arms: [{ kind, builder, when: [], slots: [], presets: [], flags: {} }] });
 		const { text, diagnostics } = await runPinned('portableBuild', {
@@ -1007,7 +1007,7 @@ describe('the pinned child emits a portable build module', () => {
 					}
 				}
 			},
-			slots: { 'expression.unary': { operand: { paths: ['literal.number'], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+			slots: { 'expression.unary': { operand: { paths: ['literal.number'], texts: [], unmapped: [], string: false, scalars: [], optional: false } } },
 			viewed: ['expression.unary', 'literal.number'],
 			textPaths: [],
 			textInputs: [],
@@ -1048,7 +1048,7 @@ describe('the pinned child emits a portable build module', () => {
 					'type.primitive.boolean': { root: false, arms: [{ kind: 41, builder: 'typeIdentifier', when: [], slots: [], presets: [], flags: {} }] }
 				}
 			},
-			slots: { 'declaration.parameter': { type: { paths: ['identifier.qualified', 'type.primitive.boolean'], texts: [], unmapped: [], string: false, numbers: [], optional: false } } },
+			slots: { 'declaration.parameter': { type: { paths: ['identifier.qualified', 'type.primitive.boolean'], texts: [], unmapped: [], string: false, scalars: [], optional: false } } },
 			viewed: ['declaration.parameter', 'identifier.qualified', 'type.primitive.boolean'],
 			textPaths: [],
 			textInputs: [],
@@ -1089,7 +1089,7 @@ describe('the pinned child emits a portable build module', () => {
 			]
 		};
 		const method = (facts: readonly PortableSpelledFact[], slots: readonly PortableSlotRoute[] = []) => [{ kind: 361, builder: 'functionDefinition', when: [], slots, presets: [], flags: {}, facts }];
-		const set = (paths: readonly string[], optional = true, string = false) => ({ paths, texts: [], unmapped: [], string, numbers: [], optional });
+		const set = (paths: readonly string[], optional = true, string = false) => ({ paths, texts: [], unmapped: [], string, scalars: [], optional });
 		const { text: module, diagnostics } = await runPinned('portableBuild', {
 			grammar: 'python',
 			node: 'PythonNode',

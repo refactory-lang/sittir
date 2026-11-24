@@ -89,12 +89,13 @@ export const PORTABLE_BUILD_TSCONFIG = 'tsconfig.portable-build.json';
 const portableBuildTsconfigText = `${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [`../src/${PORTABLE_BUILD_FILE}`] }, null, '\t')}\n`;
 
 export async function portableBuildTypeDiagnostics(grammar: string, sittirDir: string): Promise<GrammarDiagnostic[]> {
-	const tsconfig = join(sittirDir, PORTABLE_BUILD_TSCONFIG);
-	const module = join(dirname(sittirDir), 'src', PORTABLE_BUILD_FILE);
+	const dir = resolve(sittirDir);
+	const tsconfig = join(dir, PORTABLE_BUILD_TSCONFIG);
+	const module = join(dirname(dir), 'src', PORTABLE_BUILD_FILE);
 	await writeFile(tsconfig, portableBuildTsconfigText);
 	return tsrsDiagnostics(tsconfig, REPO_ROOT)
-		.filter((d) => d.file !== undefined && resolve(REPO_ROOT, d.file) === module)
-		.map((d): GrammarDiagnostic => ({ scope: 'grammar', grammar, code: 'portable-emit-type', severity: 'warning', canProceed: true, message: `${PORTABLE_BUILD_FILE}:${d.line}: ${d.code} ${d.message}` }));
+		.filter((d) => d.file === undefined || resolve(REPO_ROOT, d.file) === module)
+		.map((d): GrammarDiagnostic => ({ scope: 'grammar', grammar, code: 'portable-emit-type', severity: 'warning', canProceed: true, message: `${d.file === undefined ? '' : `${PORTABLE_BUILD_FILE}:${d.line}: `}${d.code} ${d.message}` }));
 }
 
 export async function runTreeSitterGenerate(pkg: GrammarPackage): Promise<void> {

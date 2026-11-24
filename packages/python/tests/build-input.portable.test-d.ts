@@ -98,6 +98,10 @@ type Returned = V.BuildInput<PythonMap, 'statement.return'>['expression'];
 export const integerReturned: Returned = 1;
 export const floatReturned: Returned = 1.5;
 export const bigintReturned: Returned = 10n;
+export const trueReturned: Returned = true;
+export const falseReturned: Returned = false;
+// @ts-expect-error a function's name holds no boolean path, so no build takes a bare boolean there
+export const booleanName: V.BuildInput<PythonMap, 'declaration.function'>['name'] = true;
 export const orReturned: Returned = { $path: 'expression.binary.bitwise.or', left: 'a', right: 'b' };
 // @ts-expect-error expression.binary has no arm in python's build table, so no build takes it
 export const familyReturned: Returned = { $path: 'expression.binary', left: 'a', right: 'b' };

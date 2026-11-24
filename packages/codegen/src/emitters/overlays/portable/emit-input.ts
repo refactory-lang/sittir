@@ -3,7 +3,7 @@ export interface PortableEmitSlot {
 	readonly texts: readonly string[];
 	readonly unmapped: readonly string[];
 	readonly string: boolean;
-	readonly numbers: readonly ('bigint' | 'number')[];
+	readonly scalars: readonly ('bigint' | 'number' | 'true' | 'false')[];
 	readonly optional: boolean;
 }
 

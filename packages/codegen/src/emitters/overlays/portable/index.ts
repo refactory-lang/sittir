@@ -142,7 +142,7 @@ function emitSlotsOf(
 					texts: set.texts,
 					unmapped: set.unmapped,
 					string: set.scalars.includes('string'),
-					numbers: [...new Set(set.kinds.flatMap((at) => scalars.get(at) ?? []))].sort(),
+					scalars: [...new Set(set.kinds.flatMap((at) => scalars.get(at) ?? []))].sort(),
 					optional: optional(path, slot)
 				}
 			]))

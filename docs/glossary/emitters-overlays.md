@@ -349,7 +349,7 @@ Per path in the portable map, the sorted unique flags of its build arms, in code
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapInputsOf`
 
-Per path in the portable map, the input shapes that path accepts, sorted by codepoint. A text-built path always accepts a bare `string`, and a number path accepts its scalars (`scalarInputsOf`), so a slot whose type holds it admits a bare number. A path whose scalar build is shared with another path's build also accepts `{ readonly $path; readonly $value }` for the owning path.
+Per path in the portable map, the input shapes that path accepts, sorted by codepoint. A text-built path always accepts a bare `string`, and a number or boolean path accepts its scalars (`scalarInputsOf`), so a slot whose type holds it admits a bare number or that bare boolean. A path whose scalar build is shared with another path's build also accepts `{ readonly $path; readonly $value }` for the owning path.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapNeverOf`
 
@@ -365,7 +365,7 @@ Per path, the slots whose structure without `$path` is read as one decided path,
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::ScalarInput`
 
-The TypeScript type a number path's scalar takes in the map's inputs: `number` for an integer or a float, `bigint` for a bigint.
+The TypeScript type a path's bare scalar takes in the map's inputs: `number` for an integer or a float, `bigint` for a bigint, and `true` or `false` for the value a literal arm reads.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapDecidedOf`
 
@@ -373,7 +373,7 @@ Derives `MapDecided` once, from the exact sets: for each path and slot, the slot
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::scalarInputsOf`
 
-Per path the build table builds from a scalar (`builds`), the sorted TypeScript types of those scalars (`ScalarInput`). The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number, and the generated slot function's parameter takes the same types.
+Per path the build table builds from a scalar, the sorted TypeScript types of those scalars (`ScalarInput`): the types of the numbers its `builds` arms take, and, for a path whose every arm is a literal arm that reads a value, `true` or `false` for each. The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number and one that holds a boolean path admits that bare boolean, and the generated slot function's parameter takes the same types.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFactsOf`
 
@@ -417,7 +417,7 @@ The emitted module's text and its diagnostics.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitSlot`
 
-One slot of one path as its generated slot function types the value: the paths it takes, the token texts it takes, the unclaimed kinds it holds, whether it takes bare text, the scalar types a bare number in it may have (the scalar inputs of its number paths), and whether it is optional.
+One slot of one path as its generated slot function types the value: the paths it takes, the token texts it takes, the unclaimed kinds it holds, whether it takes bare text, the bare scalars it takes (the scalar inputs of its paths: the types of a number, and `true` or `false` where a path's literal arms read that value), and whether it is optional.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableOwnTextClaim`
 

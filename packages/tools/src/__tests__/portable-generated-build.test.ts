@@ -617,6 +617,27 @@ describe.each(GRAMMARS)('the generated portable build of %s, on a literal path',
 	});
 });
 
+describe.each(GRAMMARS)('the portable builds of %s, given a bare boolean', (grammar) => {
+	it.each(STORAGES)('build it through the slot\'s boolean path as its structure builds, and refuse it where the slot holds no boolean path, in %s storage', async (nodeStorage) => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild(grammar)) as object);
+		const outcome = (run: () => unknown): string => textOrRefused((node) => engine.render(node), run);
+		const run = functionAt(generated, 'statement.return') as PathFunction;
+		for (const value of [true, false]) {
+			const structure = (runtime.read(engine.parse(grammar === 'rust' ? `fn f() { return ${value}; }` : `return ${grammar === 'python' ? (value ? 'True' : 'False') : value}${grammar === 'typescript' ? ';' : ''}`)) as { readonly statements: readonly PortableStructure[] }).statements;
+			const read = (grammar === 'rust' ? (structure[0] as unknown as { readonly statements: readonly PortableStructure[] }).statements[0] : structure[0])!;
+			const bare = { $path: 'statement.return', expression: value };
+			const text = outcome(() => run(read));
+			expect(text).not.toBe('refused');
+			expect([outcome(() => run(bare)), outcome(() => runtime.build(bare))]).toEqual([text, text]);
+		}
+		const named = { $path: 'declaration.function', name: true, parameters: [], statements: [] };
+		const declare = functionAt(generated, named.$path) as PathFunction | undefined;
+		expect([declare === undefined ? 'refused' : outcome(() => declare(named)), outcome(() => runtime.build(named))]).toEqual(['refused', 'refused']);
+	});
+});
+
 describe.each(STORAGES)('python: a literal token in a slot, in %s storage', (nodeStorage) => {
 	it('builds return True and return None through the generated slot function', async () => {
 		using engine = await createEngine(await languageByName('python'), { api: 'strict', nodeStorage });

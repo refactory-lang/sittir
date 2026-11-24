@@ -41915,6 +41915,9 @@ export interface RustMap extends V.GrammarMap {
 	readonly inputs: {
 		readonly 'comment.text': string;
 		readonly identifier: string;
+		readonly 'literal.boolean': false | true;
+		readonly 'literal.boolean.false': false;
+		readonly 'literal.boolean.true': true;
 		readonly 'literal.character': string;
 		readonly 'literal.number.float': string | number;
 		readonly 'literal.number.integer': number;

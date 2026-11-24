@@ -22041,6 +22041,8 @@ export interface PythonMap extends V.GrammarMap {
 		readonly 'clause.import.relative.prefix': string;
 		readonly 'expression.interpolation.conversion': string;
 		readonly identifier: string;
+		readonly 'literal.boolean.false': false;
+		readonly 'literal.boolean.true': true;
 		readonly 'literal.number.float': number;
 		readonly 'literal.number.float.leading_point': number;
 		readonly 'literal.number.float.scientific': number;

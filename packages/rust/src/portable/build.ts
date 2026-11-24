@@ -324,7 +324,9 @@ type clause_else$291_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -848,7 +850,11 @@ type clause_else$291_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -871,6 +877,12 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -1505,6 +1517,18 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('clause.else.statements', value);
 		default:
 			return unbuilt('clause.else.statements', value);
 	}
@@ -1535,7 +1559,9 @@ type clause_else$291_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -1784,7 +1810,11 @@ type clause_else$291_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -1802,6 +1832,10 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -2134,6 +2168,12 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('clause.else.trailingExpression', value);
 		default:
 			return unbuilt('clause.else.trailingExpression', value);
 	}
@@ -2374,7 +2414,9 @@ type clause_let$288_pattern$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -2468,7 +2510,11 @@ type clause_let$288_pattern$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -2486,6 +2532,10 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -2621,6 +2671,12 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('clause.let.pattern', value);
 		default:
 			return unbuilt('clause.let.pattern', value);
 	}
@@ -2635,7 +2691,9 @@ type clause_let$288_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -2884,7 +2942,11 @@ type clause_let$288_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const clause_let$288_value = (value: clause_let$288_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -2902,6 +2964,10 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -3234,6 +3300,12 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('clause.let.value', value);
 		default:
 			return unbuilt('clause.let.value', value);
 	}
@@ -3248,7 +3320,9 @@ type clause_let_chain$289_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'clause.let'>
 	| TailInput<RustMap, 'clause.let', 'let'>
 	| RustMap['nodes']['clause.let']
@@ -3503,7 +3577,11 @@ type clause_let_chain$289_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -3521,6 +3599,10 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -3859,6 +3941,12 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('clause.let.chain.left', value);
 		default:
 			return unbuilt('clause.let.chain.left', value);
 	}
@@ -3873,7 +3961,9 @@ type clause_let_chain$289_rights$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'clause.let'>
 	| TailInput<RustMap, 'clause.let', 'let'>
 	| RustMap['nodes']['clause.let']
@@ -4125,7 +4215,11 @@ type clause_let_chain$289_rights$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -4143,6 +4237,10 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -4478,6 +4576,12 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('clause.let.chain.rights', value);
 		default:
 			return unbuilt('clause.let.chain.rights', value);
 	}
@@ -5136,7 +5240,9 @@ type declaration_constant$205_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -5385,7 +5491,11 @@ type declaration_constant$205_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_constant$205_value = (value: declaration_constant$205_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -5403,6 +5513,10 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -5735,6 +5849,12 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('declaration.constant.value', value);
 		default:
 			return unbuilt('declaration.constant.value', value);
 	}
@@ -6001,7 +6121,9 @@ type declaration_member_enum_member$200_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -6250,7 +6372,11 @@ type declaration_member_enum_member$200_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_member_enum_member$200_value = (value: declaration_member_enum_member$200_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -6268,6 +6394,10 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -6600,6 +6730,12 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('declaration.member.enum_member.value', value);
 		default:
 			return unbuilt('declaration.member.enum_member.value', value);
 	}
@@ -8112,7 +8248,9 @@ type declaration_parameter_variadic$232_pattern$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -8206,7 +8344,11 @@ type declaration_parameter_variadic$232_pattern$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_parameter_variadic$232_pattern = (value: declaration_parameter_variadic$232_pattern$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -8224,6 +8366,10 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -8359,6 +8505,12 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('declaration.parameter.variadic.pattern', value);
 		default:
 			return unbuilt('declaration.parameter.variadic.pattern', value);
 	}
@@ -9007,7 +9159,9 @@ type declaration_type_parameter_value$220_default$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'literal.boolean.false'>
@@ -9057,7 +9211,11 @@ type declaration_type_parameter_value$220_default$Item =
 	| RustMap['nodes']['literal.string.raw']
 	| BuildInput<RustMap, 'statement.block'>
 	| TailInput<RustMap, 'statement.block', 'block'>
-	| RustMap['nodes']['statement.block'];
+	| RustMap['nodes']['statement.block']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_type_parameter_value$220_default = (value: declaration_type_parameter_value$220_default$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -9068,6 +9226,10 @@ const declaration_type_parameter_value$220_default = (value: declaration_type_pa
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -9155,6 +9317,12 @@ const declaration_type_parameter_value$220_default = (value: declaration_type_pa
 		case 'block':
 		case 'statement.block':
 			return statement_block$313(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('declaration.type_parameter.value.default', value);
 		default:
 			return unbuilt('declaration.type_parameter.value.default', value);
 	}
@@ -9381,7 +9549,9 @@ type declaration_variable$206_name$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -9475,7 +9645,11 @@ type declaration_variable$206_name$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_variable$206_name = (value: declaration_variable$206_name$Item) => {
 	if (typeof value === 'string') {
 		if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
@@ -9484,6 +9658,9 @@ const declaration_variable$206_name = (value: declaration_variable$206_name$Item
 	if (typeof value === 'number') {
 		if (seated(value, [1])) return value;
 		return unseated('declaration.variable.name', value);
+	}
+	if (typeof value === 'boolean') {
+		throw new Error('portable build: declaration.variable.name builds no boolean');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -9786,7 +9963,9 @@ type declaration_variable$206_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -10035,7 +10214,11 @@ type declaration_variable$206_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_variable$206_value = (value: declaration_variable$206_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -10053,6 +10236,10 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -10385,6 +10572,12 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('declaration.variable.value', value);
 		default:
 			return unbuilt('declaration.variable.value', value);
 	}
@@ -10413,7 +10606,9 @@ type declaration_variable$223_name$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -10507,7 +10702,11 @@ type declaration_variable$223_name$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_variable$223_name = (value: declaration_variable$223_name$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -10525,6 +10724,10 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -10660,6 +10863,12 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('declaration.variable.name', value);
 		default:
 			return unbuilt('declaration.variable.name', value);
 	}
@@ -10862,7 +11071,9 @@ type declaration_variable$223_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -11111,7 +11322,11 @@ type declaration_variable$223_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const declaration_variable$223_value = (value: declaration_variable$223_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -11129,6 +11344,10 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -11461,6 +11680,12 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('declaration.variable.value', value);
 		default:
 			return unbuilt('declaration.variable.value', value);
 	}
@@ -11487,7 +11712,9 @@ type element_attributed$363_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -11736,7 +11963,11 @@ type element_attributed$363_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_attributed$363_value = (value: element_attributed$363_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -11754,6 +11985,10 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -12086,6 +12321,12 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('element.attributed.value', value);
 		default:
 			return unbuilt('element.attributed.value', value);
 	}
@@ -12326,7 +12567,9 @@ type element_macro_token_repetition$188_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_repetition'>
 	| TailInput<RustMap, 'element.macro.token_repetition', 'token_repetition'>
 	| RustMap['nodes']['element.macro.token_repetition']
@@ -12383,7 +12626,11 @@ type element_macro_token_repetition$188_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_repetition$188_tokens = (value: element_macro_token_repetition$188_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -12587,6 +12834,10 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
 		if (
@@ -12685,6 +12936,14 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		default:
 			return unbuilt('element.macro.token_repetition.tokens', value);
@@ -12845,7 +13104,9 @@ type element_macro_token_repetition_pattern$185_tokenPatterns$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_binding'>
 	| TailInput<RustMap, 'element.macro.token_binding', 'token_binding'>
 	| RustMap['nodes']['element.macro.token_binding']
@@ -12905,7 +13166,11 @@ type element_macro_token_repetition_pattern$185_tokenPatterns$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_repetition_pattern$185_tokenPatterns = (
 	value: element_macro_token_repetition_pattern$185_tokenPatterns$Item
 ) => {
@@ -13111,6 +13376,10 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
 		if (
@@ -13212,6 +13481,14 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		default:
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
@@ -13329,7 +13606,9 @@ type element_macro_token_tree$408_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_repetition'>
 	| TailInput<RustMap, 'element.macro.token_repetition', 'token_repetition'>
 	| RustMap['nodes']['element.macro.token_repetition']
@@ -13386,7 +13665,11 @@ type element_macro_token_tree$408_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -13590,6 +13873,10 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
 		if (
@@ -13688,6 +13975,14 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.tokens', value);
@@ -13805,7 +14100,9 @@ type element_macro_token_tree$409_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_repetition'>
 	| TailInput<RustMap, 'element.macro.token_repetition', 'token_repetition'>
 	| RustMap['nodes']['element.macro.token_repetition']
@@ -13862,7 +14159,11 @@ type element_macro_token_tree$409_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -14066,6 +14367,10 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
 		if (
@@ -14164,6 +14469,14 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.tokens', value);
@@ -14281,7 +14594,9 @@ type element_macro_token_tree$410_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_repetition'>
 	| TailInput<RustMap, 'element.macro.token_repetition', 'token_repetition'>
 	| RustMap['nodes']['element.macro.token_repetition']
@@ -14338,7 +14653,11 @@ type element_macro_token_tree$410_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -14542,6 +14861,10 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
 		if (
@@ -14640,6 +14963,14 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.tokens', value);
@@ -14757,7 +15088,9 @@ type element_macro_token_tree_brace$410_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_repetition'>
 	| TailInput<RustMap, 'element.macro.token_repetition', 'token_repetition'>
 	| RustMap['nodes']['element.macro.token_repetition']
@@ -14814,7 +15147,11 @@ type element_macro_token_tree_brace$410_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tree_brace$410_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -15018,6 +15355,10 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
 		if (
@@ -15116,6 +15457,14 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
@@ -15233,7 +15582,9 @@ type element_macro_token_tree_bracket$409_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_repetition'>
 	| TailInput<RustMap, 'element.macro.token_repetition', 'token_repetition'>
 	| RustMap['nodes']['element.macro.token_repetition']
@@ -15290,7 +15641,11 @@ type element_macro_token_tree_bracket$409_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_tree_bracket$409_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -15494,6 +15849,10 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
 		if (
@@ -15592,6 +15951,14 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
@@ -15710,7 +16077,9 @@ type element_macro_token_tree_delimited$411_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
 	| TailInput<RustMap, 'element.macro.token_tree.delimited.brace', 'brace'>
 	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
@@ -15761,7 +16130,11 @@ type element_macro_token_tree_delimited$411_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_delimited$411_tokens = (value: element_macro_token_tree_delimited$411_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -15967,6 +16340,10 @@ const element_macro_token_tree_delimited$411_tokens = (value: element_macro_toke
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [5, 260, 411, 412, 413])) return value;
 		if (
@@ -16057,6 +16434,14 @@ const element_macro_token_tree_delimited$411_tokens = (value: element_macro_toke
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
@@ -16175,7 +16560,9 @@ type element_macro_token_tree_delimited$412_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
 	| TailInput<RustMap, 'element.macro.token_tree.delimited.brace', 'brace'>
 	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
@@ -16226,7 +16613,11 @@ type element_macro_token_tree_delimited$412_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_delimited$412_tokens = (value: element_macro_token_tree_delimited$412_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -16432,6 +16823,10 @@ const element_macro_token_tree_delimited$412_tokens = (value: element_macro_toke
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [5, 260, 411, 412, 413])) return value;
 		if (
@@ -16522,6 +16917,14 @@ const element_macro_token_tree_delimited$412_tokens = (value: element_macro_toke
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
@@ -16640,7 +17043,9 @@ type element_macro_token_tree_delimited$413_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
 	| TailInput<RustMap, 'element.macro.token_tree.delimited.brace', 'brace'>
 	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
@@ -16691,7 +17096,11 @@ type element_macro_token_tree_delimited$413_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_delimited$413_tokens = (value: element_macro_token_tree_delimited$413_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -16897,6 +17306,10 @@ const element_macro_token_tree_delimited$413_tokens = (value: element_macro_toke
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [5, 260, 411, 412, 413])) return value;
 		if (
@@ -16987,6 +17400,14 @@ const element_macro_token_tree_delimited$413_tokens = (value: element_macro_toke
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
@@ -17105,7 +17526,9 @@ type element_macro_token_tree_delimited_brace$413_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
 	| TailInput<RustMap, 'element.macro.token_tree.delimited.brace', 'brace'>
 	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
@@ -17156,7 +17579,11 @@ type element_macro_token_tree_delimited_brace$413_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_delimited_brace$413_tokens = (
 	value: element_macro_token_tree_delimited_brace$413_tokens$Item
 ) => {
@@ -17364,6 +17791,10 @@ const element_macro_token_tree_delimited_brace$413_tokens = (
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [5, 260, 411, 412, 413])) return value;
 		if (
@@ -17454,6 +17885,14 @@ const element_macro_token_tree_delimited_brace$413_tokens = (
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
@@ -17572,7 +18011,9 @@ type element_macro_token_tree_delimited_bracket$412_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
 	| TailInput<RustMap, 'element.macro.token_tree.delimited.brace', 'brace'>
 	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
@@ -17623,7 +18064,11 @@ type element_macro_token_tree_delimited_bracket$412_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_delimited_bracket$412_tokens = (
 	value: element_macro_token_tree_delimited_bracket$412_tokens$Item
 ) => {
@@ -17831,6 +18276,10 @@ const element_macro_token_tree_delimited_bracket$412_tokens = (
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [5, 260, 411, 412, 413])) return value;
 		if (
@@ -17921,6 +18370,14 @@ const element_macro_token_tree_delimited_bracket$412_tokens = (
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
@@ -18039,7 +18496,9 @@ type element_macro_token_tree_delimited_paren$411_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_tree.delimited.brace'>
 	| TailInput<RustMap, 'element.macro.token_tree.delimited.brace', 'brace'>
 	| RustMap['nodes']['element.macro.token_tree.delimited.brace']
@@ -18090,7 +18549,11 @@ type element_macro_token_tree_delimited_paren$411_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_delimited_paren$411_tokens = (
 	value: element_macro_token_tree_delimited_paren$411_tokens$Item
 ) => {
@@ -18298,6 +18761,10 @@ const element_macro_token_tree_delimited_paren$411_tokens = (
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [5, 260, 411, 412, 413])) return value;
 		if (
@@ -18388,6 +18855,14 @@ const element_macro_token_tree_delimited_paren$411_tokens = (
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
@@ -18505,7 +18980,9 @@ type element_macro_token_tree_paren$408_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_repetition'>
 	| TailInput<RustMap, 'element.macro.token_repetition', 'token_repetition'>
 	| RustMap['nodes']['element.macro.token_repetition']
@@ -18562,7 +19039,11 @@ type element_macro_token_tree_paren$408_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tree_paren$408_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -18766,6 +19247,10 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 187, 188, 408, 409, 410])) return value;
 		if (
@@ -18864,6 +19349,14 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
@@ -18981,7 +19474,9 @@ type element_macro_token_tree_pattern$405_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_binding'>
 	| TailInput<RustMap, 'element.macro.token_binding', 'token_binding'>
 	| RustMap['nodes']['element.macro.token_binding']
@@ -19041,7 +19536,11 @@ type element_macro_token_tree_pattern$405_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_tree_pattern$405_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -19245,6 +19744,10 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
 		if (
@@ -19346,6 +19849,14 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
@@ -19463,7 +19974,9 @@ type element_macro_token_tree_pattern$406_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_binding'>
 	| TailInput<RustMap, 'element.macro.token_binding', 'token_binding'>
 	| RustMap['nodes']['element.macro.token_binding']
@@ -19523,7 +20036,11 @@ type element_macro_token_tree_pattern$406_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_tree_pattern$406_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -19727,6 +20244,10 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
 		if (
@@ -19828,6 +20349,14 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
@@ -19945,7 +20474,9 @@ type element_macro_token_tree_pattern$407_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_binding'>
 	| TailInput<RustMap, 'element.macro.token_binding', 'token_binding'>
 	| RustMap['nodes']['element.macro.token_binding']
@@ -20005,7 +20536,11 @@ type element_macro_token_tree_pattern$407_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_tree_pattern$407_tokens$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -20209,6 +20744,10 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
 		if (
@@ -20310,6 +20849,14 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
@@ -20427,7 +20974,9 @@ type element_macro_token_tree_pattern_brace$407_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_binding'>
 	| TailInput<RustMap, 'element.macro.token_binding', 'token_binding'>
 	| RustMap['nodes']['element.macro.token_binding']
@@ -20487,7 +21036,11 @@ type element_macro_token_tree_pattern_brace$407_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_pattern_brace$407_tokens = (
 	value: element_macro_token_tree_pattern_brace$407_tokens$Item
 ) => {
@@ -20693,6 +21246,10 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
 		if (
@@ -20794,6 +21351,14 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
@@ -20911,7 +21476,9 @@ type element_macro_token_tree_pattern_bracket$406_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_binding'>
 	| TailInput<RustMap, 'element.macro.token_binding', 'token_binding'>
 	| RustMap['nodes']['element.macro.token_binding']
@@ -20971,7 +21538,11 @@ type element_macro_token_tree_pattern_bracket$406_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_pattern_bracket$406_tokens = (
 	value: element_macro_token_tree_pattern_bracket$406_tokens$Item
 ) => {
@@ -21177,6 +21748,10 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
 		if (
@@ -21278,6 +21853,14 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		case 'string.raw':
 		case 'literal.string.raw':
+			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
@@ -21395,7 +21978,9 @@ type element_macro_token_tree_pattern_paren$405_tokens$Item =
 	| Text<RustMap, 'type.primitive.integral.int8'>
 	| Text<RustMap, 'type.primitive.integral.size'>
 	| Text<RustMap, 'type.primitive.string'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.macro.token_binding'>
 	| TailInput<RustMap, 'element.macro.token_binding', 'token_binding'>
 	| RustMap['nodes']['element.macro.token_binding']
@@ -21455,7 +22040,11 @@ type element_macro_token_tree_pattern_paren$405_tokens$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_macro_token_tree_pattern_paren$405_tokens = (
 	value: element_macro_token_tree_pattern_paren$405_tokens$Item
 ) => {
@@ -21661,6 +22250,10 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 		}
 		return b.nonSpecialToken(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false) return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
+	}
 	if (isNode(value)) {
 		if (seated(value, [127, 183, 184, 185, 405, 406, 407])) return value;
 		if (
@@ -21763,6 +22356,14 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.nonSpecialToken(literal_boolean$116({ $path: 'literal.boolean', $value: value.$value }));
+				if (value.$value === false)
+					return b.nonSpecialToken(literal_boolean$117({ $path: 'literal.boolean', $value: value.$value }));
+			}
+			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 		default:
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 	}
@@ -21777,7 +22378,9 @@ type element_struct_base$286_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -22026,7 +22629,11 @@ type element_struct_base$286_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_struct_base$286_value = (value: element_struct_base$286_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -22044,6 +22651,10 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22376,6 +22987,12 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('element.struct.base.value', value);
 		default:
 			return unbuilt('element.struct.base.value', value);
 	}
@@ -22514,7 +23131,9 @@ type element_struct_field$285_value$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -22763,7 +23382,11 @@ type element_struct_field$285_value$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const element_struct_field$285_value = (value: element_struct_field$285_value$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -22781,6 +23404,10 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -23113,6 +23740,12 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('element.struct.field.value', value);
 		default:
 			return unbuilt('element.struct.field.value', value);
 	}
@@ -23353,7 +23986,9 @@ type expression_assignment$271_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -23602,7 +24237,11 @@ type expression_assignment$271_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment$271_left = (value: expression_assignment$271_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -23620,6 +24259,10 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -23952,6 +24595,12 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.left', value);
 		default:
 			return unbuilt('expression.assignment.left', value);
 	}
@@ -23966,7 +24615,9 @@ type expression_assignment$271_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -24215,7 +24866,11 @@ type expression_assignment$271_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment$271_right = (value: expression_assignment$271_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -24233,6 +24888,10 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24565,6 +25224,12 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.right', value);
 		default:
 			return unbuilt('expression.assignment.right', value);
 	}
@@ -24579,7 +25244,9 @@ type expression_assignment_compound_add$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -24828,7 +25495,11 @@ type expression_assignment_compound_add$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_add$272_left = (value: expression_assignment_compound_add$272_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -24846,6 +25517,10 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -25178,6 +25853,12 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.add.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.add.left', value);
 	}
@@ -25192,7 +25873,9 @@ type expression_assignment_compound_add$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -25441,7 +26124,11 @@ type expression_assignment_compound_add$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_add$272_right = (value: expression_assignment_compound_add$272_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -25459,6 +26146,10 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -25791,6 +26482,12 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.add.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.add.right', value);
 	}
@@ -25805,7 +26502,9 @@ type expression_assignment_compound_bitwise_and$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -26054,7 +26753,11 @@ type expression_assignment_compound_bitwise_and$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_bitwise_and$272_left = (
 	value: expression_assignment_compound_bitwise_and$272_left$Item
 ) => {
@@ -26074,6 +26777,10 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -26406,6 +27113,12 @@ const expression_assignment_compound_bitwise_and$272_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 	}
@@ -26420,7 +27133,9 @@ type expression_assignment_compound_bitwise_and$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -26669,7 +27384,11 @@ type expression_assignment_compound_bitwise_and$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_bitwise_and$272_right = (
 	value: expression_assignment_compound_bitwise_and$272_right$Item
 ) => {
@@ -26689,6 +27408,10 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -27021,6 +27744,12 @@ const expression_assignment_compound_bitwise_and$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 	}
@@ -27035,7 +27764,9 @@ type expression_assignment_compound_bitwise_or$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -27284,7 +28015,11 @@ type expression_assignment_compound_bitwise_or$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_bitwise_or$272_left = (
 	value: expression_assignment_compound_bitwise_or$272_left$Item
 ) => {
@@ -27304,6 +28039,10 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -27636,6 +28375,12 @@ const expression_assignment_compound_bitwise_or$272_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 	}
@@ -27650,7 +28395,9 @@ type expression_assignment_compound_bitwise_or$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -27899,7 +28646,11 @@ type expression_assignment_compound_bitwise_or$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_bitwise_or$272_right = (
 	value: expression_assignment_compound_bitwise_or$272_right$Item
 ) => {
@@ -27919,6 +28670,10 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28251,6 +29006,12 @@ const expression_assignment_compound_bitwise_or$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 	}
@@ -28265,7 +29026,9 @@ type expression_assignment_compound_bitwise_xor$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -28514,7 +29277,11 @@ type expression_assignment_compound_bitwise_xor$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_bitwise_xor$272_left = (
 	value: expression_assignment_compound_bitwise_xor$272_left$Item
 ) => {
@@ -28534,6 +29301,10 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28866,6 +29637,12 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 	}
@@ -28880,7 +29657,9 @@ type expression_assignment_compound_bitwise_xor$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -29129,7 +29908,11 @@ type expression_assignment_compound_bitwise_xor$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_bitwise_xor$272_right = (
 	value: expression_assignment_compound_bitwise_xor$272_right$Item
 ) => {
@@ -29149,6 +29932,10 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -29481,6 +30268,12 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 	}
@@ -29495,7 +30288,9 @@ type expression_assignment_compound_divide$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -29744,7 +30539,11 @@ type expression_assignment_compound_divide$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_divide$272_left = (value: expression_assignment_compound_divide$272_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -29762,6 +30561,10 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -30094,6 +30897,12 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.divide.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.divide.left', value);
 	}
@@ -30108,7 +30917,9 @@ type expression_assignment_compound_divide$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -30357,7 +31168,11 @@ type expression_assignment_compound_divide$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_divide$272_right = (
 	value: expression_assignment_compound_divide$272_right$Item
 ) => {
@@ -30377,6 +31192,10 @@ const expression_assignment_compound_divide$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -30709,6 +31528,12 @@ const expression_assignment_compound_divide$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.divide.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.divide.right', value);
 	}
@@ -30723,7 +31548,9 @@ type expression_assignment_compound_modulo$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -30972,7 +31799,11 @@ type expression_assignment_compound_modulo$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_modulo$272_left = (value: expression_assignment_compound_modulo$272_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -30990,6 +31821,10 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31322,6 +32157,12 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.modulo.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 	}
@@ -31336,7 +32177,9 @@ type expression_assignment_compound_modulo$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -31585,7 +32428,11 @@ type expression_assignment_compound_modulo$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_modulo$272_right = (
 	value: expression_assignment_compound_modulo$272_right$Item
 ) => {
@@ -31605,6 +32452,10 @@ const expression_assignment_compound_modulo$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31937,6 +32788,12 @@ const expression_assignment_compound_modulo$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.modulo.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 	}
@@ -31951,7 +32808,9 @@ type expression_assignment_compound_multiply$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -32200,7 +33059,11 @@ type expression_assignment_compound_multiply$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_multiply$272_left = (
 	value: expression_assignment_compound_multiply$272_left$Item
 ) => {
@@ -32220,6 +33083,10 @@ const expression_assignment_compound_multiply$272_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -32552,6 +33419,12 @@ const expression_assignment_compound_multiply$272_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.multiply.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 	}
@@ -32566,7 +33439,9 @@ type expression_assignment_compound_multiply$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -32815,7 +33690,11 @@ type expression_assignment_compound_multiply$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_multiply$272_right = (
 	value: expression_assignment_compound_multiply$272_right$Item
 ) => {
@@ -32835,6 +33714,10 @@ const expression_assignment_compound_multiply$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -33167,6 +34050,12 @@ const expression_assignment_compound_multiply$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.multiply.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 	}
@@ -33181,7 +34070,9 @@ type expression_assignment_compound_shift_left$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -33430,7 +34321,11 @@ type expression_assignment_compound_shift_left$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_shift_left$272_left = (
 	value: expression_assignment_compound_shift_left$272_left$Item
 ) => {
@@ -33450,6 +34345,10 @@ const expression_assignment_compound_shift_left$272_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -33782,6 +34681,12 @@ const expression_assignment_compound_shift_left$272_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 	}
@@ -33796,7 +34701,9 @@ type expression_assignment_compound_shift_left$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -34045,7 +34952,11 @@ type expression_assignment_compound_shift_left$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_shift_left$272_right = (
 	value: expression_assignment_compound_shift_left$272_right$Item
 ) => {
@@ -34065,6 +34976,10 @@ const expression_assignment_compound_shift_left$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -34397,6 +35312,12 @@ const expression_assignment_compound_shift_left$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 	}
@@ -34411,7 +35332,9 @@ type expression_assignment_compound_shift_right$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -34660,7 +35583,11 @@ type expression_assignment_compound_shift_right$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_shift_right$272_left = (
 	value: expression_assignment_compound_shift_right$272_left$Item
 ) => {
@@ -34680,6 +35607,10 @@ const expression_assignment_compound_shift_right$272_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -35012,6 +35943,12 @@ const expression_assignment_compound_shift_right$272_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 	}
@@ -35026,7 +35963,9 @@ type expression_assignment_compound_shift_right$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -35275,7 +36214,11 @@ type expression_assignment_compound_shift_right$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_shift_right$272_right = (
 	value: expression_assignment_compound_shift_right$272_right$Item
 ) => {
@@ -35295,6 +36238,10 @@ const expression_assignment_compound_shift_right$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -35627,6 +36574,12 @@ const expression_assignment_compound_shift_right$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 	}
@@ -35641,7 +36594,9 @@ type expression_assignment_compound_subtract$272_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -35890,7 +36845,11 @@ type expression_assignment_compound_subtract$272_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_subtract$272_left = (
 	value: expression_assignment_compound_subtract$272_left$Item
 ) => {
@@ -35910,6 +36869,10 @@ const expression_assignment_compound_subtract$272_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -36242,6 +37205,12 @@ const expression_assignment_compound_subtract$272_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.subtract.left', value);
 		default:
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 	}
@@ -36256,7 +37225,9 @@ type expression_assignment_compound_subtract$272_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -36505,7 +37476,11 @@ type expression_assignment_compound_subtract$272_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_assignment_compound_subtract$272_right = (
 	value: expression_assignment_compound_subtract$272_right$Item
 ) => {
@@ -36525,6 +37500,10 @@ const expression_assignment_compound_subtract$272_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -36857,6 +37836,12 @@ const expression_assignment_compound_subtract$272_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.assignment.compound.subtract.right', value);
 		default:
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 	}
@@ -36871,7 +37856,9 @@ type expression_await$307_expression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -37120,7 +38107,11 @@ type expression_await$307_expression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_await$307_expression = (value: expression_await$307_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -37138,6 +38129,10 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -37470,6 +38465,12 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.await.expression', value);
 		default:
 			return unbuilt('expression.await.expression', value);
 	}
@@ -37484,7 +38485,9 @@ type expression_binary_arithmetic_add$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -37733,7 +38736,11 @@ type expression_binary_arithmetic_add$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_add$270_left = (value: expression_binary_arithmetic_add$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -37751,6 +38758,10 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -38083,6 +39094,12 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.add.left', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 	}
@@ -38097,7 +39114,9 @@ type expression_binary_arithmetic_add$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -38346,7 +39365,11 @@ type expression_binary_arithmetic_add$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_add$270_right = (value: expression_binary_arithmetic_add$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -38364,6 +39387,10 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -38696,6 +39723,12 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.add.right', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 	}
@@ -38710,7 +39743,9 @@ type expression_binary_arithmetic_divide$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -38959,7 +39994,11 @@ type expression_binary_arithmetic_divide$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_divide$270_left = (value: expression_binary_arithmetic_divide$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -38977,6 +40016,10 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -39309,6 +40352,12 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 	}
@@ -39323,7 +40372,9 @@ type expression_binary_arithmetic_divide$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -39572,7 +40623,11 @@ type expression_binary_arithmetic_divide$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_divide$270_right = (value: expression_binary_arithmetic_divide$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -39590,6 +40645,10 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -39922,6 +40981,12 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 	}
@@ -39936,7 +41001,9 @@ type expression_binary_arithmetic_modulo$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -40185,7 +41252,11 @@ type expression_binary_arithmetic_modulo$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_arithmetic_modulo$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -40203,6 +41274,10 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -40535,6 +41610,12 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 	}
@@ -40549,7 +41630,9 @@ type expression_binary_arithmetic_modulo$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -40798,7 +41881,11 @@ type expression_binary_arithmetic_modulo$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_arithmetic_modulo$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -40816,6 +41903,10 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -41148,6 +42239,12 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 	}
@@ -41162,7 +42259,9 @@ type expression_binary_arithmetic_multiply$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -41411,7 +42510,11 @@ type expression_binary_arithmetic_multiply$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_multiply$270_left = (value: expression_binary_arithmetic_multiply$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -41429,6 +42532,10 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -41761,6 +42868,12 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 	}
@@ -41775,7 +42888,9 @@ type expression_binary_arithmetic_multiply$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -42024,7 +43139,11 @@ type expression_binary_arithmetic_multiply$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_multiply$270_right = (
 	value: expression_binary_arithmetic_multiply$270_right$Item
 ) => {
@@ -42044,6 +43163,10 @@ const expression_binary_arithmetic_multiply$270_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -42376,6 +43499,12 @@ const expression_binary_arithmetic_multiply$270_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 	}
@@ -42390,7 +43519,9 @@ type expression_binary_arithmetic_subtract$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -42639,7 +43770,11 @@ type expression_binary_arithmetic_subtract$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_subtract$270_left = (value: expression_binary_arithmetic_subtract$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -42657,6 +43792,10 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -42989,6 +44128,12 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 	}
@@ -43003,7 +44148,9 @@ type expression_binary_arithmetic_subtract$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -43252,7 +44399,11 @@ type expression_binary_arithmetic_subtract$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_arithmetic_subtract$270_right = (
 	value: expression_binary_arithmetic_subtract$270_right$Item
 ) => {
@@ -43272,6 +44423,10 @@ const expression_binary_arithmetic_subtract$270_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -43604,6 +44759,12 @@ const expression_binary_arithmetic_subtract$270_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		default:
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 	}
@@ -43618,7 +44779,9 @@ type expression_binary_bitwise_and$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -43867,7 +45030,11 @@ type expression_binary_bitwise_and$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise_and$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -43885,6 +45052,10 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -44217,6 +45388,12 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.bitwise.and.left', value);
 		default:
 			return unbuilt('expression.binary.bitwise.and.left', value);
 	}
@@ -44231,7 +45408,9 @@ type expression_binary_bitwise_and$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -44480,7 +45659,11 @@ type expression_binary_bitwise_and$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwise_and$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -44498,6 +45681,10 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -44830,6 +46017,12 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.bitwise.and.right', value);
 		default:
 			return unbuilt('expression.binary.bitwise.and.right', value);
 	}
@@ -44844,7 +46037,9 @@ type expression_binary_bitwise_or$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -45093,7 +46288,11 @@ type expression_binary_bitwise_or$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_or$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -45111,6 +46310,10 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -45443,6 +46646,12 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.bitwise.or.left', value);
 		default:
 			return unbuilt('expression.binary.bitwise.or.left', value);
 	}
@@ -45457,7 +46666,9 @@ type expression_binary_bitwise_or$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -45706,7 +46917,11 @@ type expression_binary_bitwise_or$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise_or$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -45724,6 +46939,10 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -46056,6 +47275,12 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.bitwise.or.right', value);
 		default:
 			return unbuilt('expression.binary.bitwise.or.right', value);
 	}
@@ -46070,7 +47295,9 @@ type expression_binary_bitwise_xor$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -46319,7 +47546,11 @@ type expression_binary_bitwise_xor$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise_xor$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -46337,6 +47568,10 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -46669,6 +47904,12 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.bitwise.xor.left', value);
 		default:
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 	}
@@ -46683,7 +47924,9 @@ type expression_binary_bitwise_xor$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -46932,7 +48175,11 @@ type expression_binary_bitwise_xor$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwise_xor$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -46950,6 +48197,10 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -47282,6 +48533,12 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.bitwise.xor.right', value);
 		default:
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 	}
@@ -47296,7 +48553,9 @@ type expression_binary_comparison_equal$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -47545,7 +48804,11 @@ type expression_binary_comparison_equal$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_equal$270_left = (value: expression_binary_comparison_equal$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -47563,6 +48826,10 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -47895,6 +49162,12 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.equal.left', value);
 		default:
 			return unbuilt('expression.binary.comparison.equal.left', value);
 	}
@@ -47909,7 +49182,9 @@ type expression_binary_comparison_equal$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -48158,7 +49433,11 @@ type expression_binary_comparison_equal$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_equal$270_right = (value: expression_binary_comparison_equal$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -48176,6 +49455,10 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -48508,6 +49791,12 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.equal.right', value);
 		default:
 			return unbuilt('expression.binary.comparison.equal.right', value);
 	}
@@ -48522,7 +49811,9 @@ type expression_binary_comparison_greater$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -48771,7 +50062,11 @@ type expression_binary_comparison_greater$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_greater$270_left = (value: expression_binary_comparison_greater$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -48789,6 +50084,10 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -49121,6 +50420,12 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.greater.left', value);
 		default:
 			return unbuilt('expression.binary.comparison.greater.left', value);
 	}
@@ -49135,7 +50440,9 @@ type expression_binary_comparison_greater$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -49384,7 +50691,11 @@ type expression_binary_comparison_greater$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_greater$270_right = (value: expression_binary_comparison_greater$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -49402,6 +50713,10 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -49734,6 +51049,12 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.greater.right', value);
 		default:
 			return unbuilt('expression.binary.comparison.greater.right', value);
 	}
@@ -49748,7 +51069,9 @@ type expression_binary_comparison_greater_equal$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -49997,7 +51320,11 @@ type expression_binary_comparison_greater_equal$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_greater_equal$270_left = (
 	value: expression_binary_comparison_greater_equal$270_left$Item
 ) => {
@@ -50017,6 +51344,10 @@ const expression_binary_comparison_greater_equal$270_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -50349,6 +51680,12 @@ const expression_binary_comparison_greater_equal$270_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		default:
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 	}
@@ -50363,7 +51700,9 @@ type expression_binary_comparison_greater_equal$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -50612,7 +51951,11 @@ type expression_binary_comparison_greater_equal$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_greater_equal$270_right = (
 	value: expression_binary_comparison_greater_equal$270_right$Item
 ) => {
@@ -50632,6 +51975,10 @@ const expression_binary_comparison_greater_equal$270_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -50964,6 +52311,12 @@ const expression_binary_comparison_greater_equal$270_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		default:
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 	}
@@ -50978,7 +52331,9 @@ type expression_binary_comparison_less$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -51227,7 +52582,11 @@ type expression_binary_comparison_less$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_less$270_left = (value: expression_binary_comparison_less$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -51245,6 +52604,10 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -51577,6 +52940,12 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.less.left', value);
 		default:
 			return unbuilt('expression.binary.comparison.less.left', value);
 	}
@@ -51591,7 +52960,9 @@ type expression_binary_comparison_less$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -51840,7 +53211,11 @@ type expression_binary_comparison_less$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_less$270_right = (value: expression_binary_comparison_less$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -51858,6 +53233,10 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -52190,6 +53569,12 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.less.right', value);
 		default:
 			return unbuilt('expression.binary.comparison.less.right', value);
 	}
@@ -52204,7 +53589,9 @@ type expression_binary_comparison_less_equal$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -52453,7 +53840,11 @@ type expression_binary_comparison_less_equal$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_less_equal$270_left = (
 	value: expression_binary_comparison_less_equal$270_left$Item
 ) => {
@@ -52473,6 +53864,10 @@ const expression_binary_comparison_less_equal$270_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -52805,6 +54200,12 @@ const expression_binary_comparison_less_equal$270_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		default:
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 	}
@@ -52819,7 +54220,9 @@ type expression_binary_comparison_less_equal$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -53068,7 +54471,11 @@ type expression_binary_comparison_less_equal$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_less_equal$270_right = (
 	value: expression_binary_comparison_less_equal$270_right$Item
 ) => {
@@ -53088,6 +54495,10 @@ const expression_binary_comparison_less_equal$270_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -53420,6 +54831,12 @@ const expression_binary_comparison_less_equal$270_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		default:
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 	}
@@ -53434,7 +54851,9 @@ type expression_binary_comparison_not_equal$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -53683,7 +55102,11 @@ type expression_binary_comparison_not_equal$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_not_equal$270_left = (
 	value: expression_binary_comparison_not_equal$270_left$Item
 ) => {
@@ -53703,6 +55126,10 @@ const expression_binary_comparison_not_equal$270_left = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -54035,6 +55462,12 @@ const expression_binary_comparison_not_equal$270_left = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		default:
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 	}
@@ -54049,7 +55482,9 @@ type expression_binary_comparison_not_equal$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -54298,7 +55733,11 @@ type expression_binary_comparison_not_equal$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_comparison_not_equal$270_right = (
 	value: expression_binary_comparison_not_equal$270_right$Item
 ) => {
@@ -54318,6 +55757,10 @@ const expression_binary_comparison_not_equal$270_right = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -54650,6 +56093,12 @@ const expression_binary_comparison_not_equal$270_right = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		default:
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 	}
@@ -54664,7 +56113,9 @@ type expression_binary_logical_and$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -54913,7 +56364,11 @@ type expression_binary_logical_and$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_logical_and$270_left = (value: expression_binary_logical_and$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -54931,6 +56386,10 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -55263,6 +56722,12 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.logical.and.left', value);
 		default:
 			return unbuilt('expression.binary.logical.and.left', value);
 	}
@@ -55277,7 +56742,9 @@ type expression_binary_logical_and$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -55526,7 +56993,11 @@ type expression_binary_logical_and$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_logical_and$270_right = (value: expression_binary_logical_and$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -55544,6 +57015,10 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -55876,6 +57351,12 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.logical.and.right', value);
 		default:
 			return unbuilt('expression.binary.logical.and.right', value);
 	}
@@ -55890,7 +57371,9 @@ type expression_binary_logical_or$270_left$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -56139,7 +57622,11 @@ type expression_binary_logical_or$270_left$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_logical_or$270_left = (value: expression_binary_logical_or$270_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -56157,6 +57644,10 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -56489,6 +57980,12 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.logical.or.left', value);
 		default:
 			return unbuilt('expression.binary.logical.or.left', value);
 	}
@@ -56503,7 +58000,9 @@ type expression_binary_logical_or$270_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -56752,7 +58251,11 @@ type expression_binary_logical_or$270_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_logical_or$270_right = (value: expression_binary_logical_or$270_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -56770,6 +58273,10 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -57102,6 +58609,12 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.logical.or.right', value);
 		default:
 			return unbuilt('expression.binary.logical.or.right', value);
 	}
@@ -57116,7 +58629,9 @@ type expression_binary_shift_left$270_count$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -57365,7 +58880,11 @@ type expression_binary_shift_left$270_count$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_shift_left$270_count = (value: expression_binary_shift_left$270_count$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -57383,6 +58902,10 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -57715,6 +59238,12 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.shift.left.count', value);
 		default:
 			return unbuilt('expression.binary.shift.left.count', value);
 	}
@@ -57729,7 +59258,9 @@ type expression_binary_shift_left$270_operand$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -57978,7 +59509,11 @@ type expression_binary_shift_left$270_operand$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_shift_left$270_operand = (value: expression_binary_shift_left$270_operand$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -57996,6 +59531,10 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -58328,6 +59867,12 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.shift.left.operand', value);
 		default:
 			return unbuilt('expression.binary.shift.left.operand', value);
 	}
@@ -58342,7 +59887,9 @@ type expression_binary_shift_right$270_count$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -58591,7 +60138,11 @@ type expression_binary_shift_right$270_count$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_shift_right$270_count = (value: expression_binary_shift_right$270_count$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -58609,6 +60160,10 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -58941,6 +60496,12 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.shift.right.count', value);
 		default:
 			return unbuilt('expression.binary.shift.right.count', value);
 	}
@@ -58955,7 +60516,9 @@ type expression_binary_shift_right$270_operand$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -59204,7 +60767,11 @@ type expression_binary_shift_right$270_operand$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_binary_shift_right$270_operand = (value: expression_binary_shift_right$270_operand$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -59222,6 +60789,10 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -59554,6 +61125,12 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.binary.shift.right.operand', value);
 		default:
 			return unbuilt('expression.binary.shift.right.operand', value);
 	}
@@ -59632,7 +61209,9 @@ type expression_cast_conversion$273_expression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -59881,7 +61460,11 @@ type expression_cast_conversion$273_expression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_cast_conversion$273_expression = (value: expression_cast_conversion$273_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -59899,6 +61482,10 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -60231,6 +61818,12 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.cast.conversion.expression', value);
 		default:
 			return unbuilt('expression.cast.conversion.expression', value);
 	}
@@ -60433,7 +62026,9 @@ type expression_collection_list$435_elements$item$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.attributed'>
 	| TailInput<RustMap, 'element.attributed', 'attributed'>
 	| RustMap['nodes']['element.attributed']
@@ -60685,7 +62280,11 @@ type expression_collection_list$435_elements$item$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_collection_list$435_elements$item = (value: expression_collection_list$435_elements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -60703,6 +62302,10 @@ const expression_collection_list$435_elements$item = (value: expression_collecti
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -61038,6 +62641,12 @@ const expression_collection_list$435_elements$item = (value: expression_collecti
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.collection.list.elements', value);
 		default:
 			return unbuilt('expression.collection.list.elements', value);
 	}
@@ -61052,7 +62661,9 @@ type expression_collection_list_repeat$434_element$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -61301,7 +62912,11 @@ type expression_collection_list_repeat$434_element$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_collection_list_repeat$434_element = (value: expression_collection_list_repeat$434_element$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -61319,6 +62934,10 @@ const expression_collection_list_repeat$434_element = (value: expression_collect
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -61651,6 +63270,12 @@ const expression_collection_list_repeat$434_element = (value: expression_collect
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.collection.list.repeat.element', value);
 		default:
 			return unbuilt('expression.collection.list.repeat.element', value);
 	}
@@ -61665,7 +63290,9 @@ type expression_collection_list_repeat$434_length$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -61914,7 +63541,11 @@ type expression_collection_list_repeat$434_length$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_collection_list_repeat$434_length = (value: expression_collection_list_repeat$434_length$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -61932,6 +63563,10 @@ const expression_collection_list_repeat$434_length = (value: expression_collecti
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -62264,6 +63899,12 @@ const expression_collection_list_repeat$434_length = (value: expression_collecti
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.collection.list.repeat.length', value);
 		default:
 			return unbuilt('expression.collection.list.repeat.length', value);
 	}
@@ -62342,7 +63983,9 @@ type expression_collection_tuple$280_elements$item$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'element.attributed'>
 	| TailInput<RustMap, 'element.attributed', 'attributed'>
 	| RustMap['nodes']['element.attributed']
@@ -62594,7 +64237,11 @@ type expression_collection_tuple$280_elements$item$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_collection_tuple$280_elements$item = (value: expression_collection_tuple$280_elements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -62612,6 +64259,10 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -62947,6 +64598,12 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.collection.tuple.elements', value);
 		default:
 			return unbuilt('expression.collection.tuple.elements', value);
 	}
@@ -63268,7 +64925,9 @@ type expression_lambda$369_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -63792,7 +65451,11 @@ type expression_lambda$369_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_lambda$369_statements = (value: expression_lambda$369_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -63815,6 +65478,12 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -64449,6 +66118,18 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('expression.lambda.statements', value);
 		default:
 			return unbuilt('expression.lambda.statements', value);
 	}
@@ -64463,7 +66144,9 @@ type expression_lambda$369_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -64712,7 +66395,11 @@ type expression_lambda$369_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_lambda$369_trailingExpression = (value: expression_lambda$369_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -64730,6 +66417,10 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -65062,6 +66753,12 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.lambda.trailingExpression', value);
 		default:
 			return unbuilt('expression.lambda.trailingExpression', value);
 	}
@@ -65077,7 +66774,9 @@ type expression_lambda$370_body$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -65323,7 +67022,11 @@ type expression_lambda$370_body$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -65343,6 +67046,10 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -65672,6 +67379,12 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.lambda.body', value);
 		default:
 			return unbuilt('expression.lambda.body', value);
 	}
@@ -65753,7 +67466,9 @@ type expression_lambda$370_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -66277,7 +67992,11 @@ type expression_lambda$370_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_lambda$370_statements = (value: expression_lambda$370_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -66300,6 +68019,12 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -66934,6 +68659,18 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('expression.lambda.statements', value);
 		default:
 			return unbuilt('expression.lambda.statements', value);
 	}
@@ -66948,7 +68685,9 @@ type expression_lambda$370_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -67197,7 +68936,11 @@ type expression_lambda$370_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_lambda$370_trailingExpression = (value: expression_lambda$370_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -67215,6 +68958,10 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -67547,6 +69294,12 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.lambda.trailingExpression', value);
 		default:
 			return unbuilt('expression.lambda.trailingExpression', value);
 	}
@@ -67561,7 +69314,9 @@ type expression_member$308_object$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -67810,7 +69565,11 @@ type expression_member$308_object$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_member$308_object = (value: expression_member$308_object$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -67828,6 +69587,10 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -68160,6 +69923,12 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.member.object', value);
 		default:
 			return unbuilt('expression.member.object', value);
 	}
@@ -68225,7 +69994,9 @@ type expression_parenthesized$279_expression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -68474,7 +70245,11 @@ type expression_parenthesized$279_expression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_parenthesized$279_expression = (value: expression_parenthesized$279_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -68492,6 +70267,10 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -68824,6 +70603,12 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.parenthesized.expression', value);
 		default:
 			return unbuilt('expression.parenthesized.expression', value);
 	}
@@ -68838,7 +70623,9 @@ type expression_propagate$268_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -69087,7 +70874,11 @@ type expression_propagate$268_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_propagate$268_argument = (value: expression_propagate$268_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -69105,6 +70896,10 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -69437,6 +71232,12 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.propagate.argument', value);
 		default:
 			return unbuilt('expression.propagate.argument', value);
 	}
@@ -69451,7 +71252,9 @@ type expression_range$391_start$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -69700,7 +71503,11 @@ type expression_range$391_start$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range$391_start = (value: expression_range$391_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -69718,6 +71525,10 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -70050,6 +71861,12 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.start', value);
 		default:
 			return unbuilt('expression.range.start', value);
 	}
@@ -70064,7 +71881,9 @@ type expression_range$392_end$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -70313,7 +72132,11 @@ type expression_range$392_end$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range$392_end = (value: expression_range$392_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -70331,6 +72154,10 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -70663,6 +72490,12 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.end', value);
 		default:
 			return unbuilt('expression.range.end', value);
 	}
@@ -70677,7 +72510,9 @@ type expression_range_exclusive$390_end$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -70926,7 +72761,11 @@ type expression_range_exclusive$390_end$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_exclusive$390_end = (value: expression_range_exclusive$390_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -70945,6 +72784,10 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -71276,6 +73119,12 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.exclusive.end', value);
 		default:
 			return unbuilt('expression.range.exclusive.end', value);
 	}
@@ -71290,7 +73139,9 @@ type expression_range_exclusive$390_start$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -71539,7 +73390,11 @@ type expression_range_exclusive$390_start$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_exclusive$390_start = (value: expression_range_exclusive$390_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -71558,6 +73413,10 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -71889,6 +73748,12 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.exclusive.start', value);
 		default:
 			return unbuilt('expression.range.exclusive.start', value);
 	}
@@ -71903,7 +73768,9 @@ type expression_range_exclusive$391_start$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -72152,7 +74019,11 @@ type expression_range_exclusive$391_start$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_exclusive$391_start = (value: expression_range_exclusive$391_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -72171,6 +74042,10 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -72502,6 +74377,12 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.exclusive.start', value);
 		default:
 			return unbuilt('expression.range.exclusive.start', value);
 	}
@@ -72516,7 +74397,9 @@ type expression_range_exclusive$392_end$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -72765,7 +74648,11 @@ type expression_range_exclusive$392_end$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_exclusive$392_end = (value: expression_range_exclusive$392_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -72783,6 +74670,10 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -73115,6 +75006,12 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.exclusive.end', value);
 		default:
 			return unbuilt('expression.range.exclusive.end', value);
 	}
@@ -73129,7 +75026,9 @@ type expression_range_inclusive$390_end$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -73378,7 +75277,11 @@ type expression_range_inclusive$390_end$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_inclusive$390_end = (value: expression_range_inclusive$390_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -73396,6 +75299,10 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -73728,6 +75635,12 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.inclusive.end', value);
 		default:
 			return unbuilt('expression.range.inclusive.end', value);
 	}
@@ -73742,7 +75655,9 @@ type expression_range_inclusive$390_start$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -73991,7 +75906,11 @@ type expression_range_inclusive$390_start$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_inclusive$390_start = (value: expression_range_inclusive$390_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -74009,6 +75928,10 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -74341,6 +76264,12 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.inclusive.start', value);
 		default:
 			return unbuilt('expression.range.inclusive.start', value);
 	}
@@ -74355,7 +76284,9 @@ type expression_range_inclusive_legacy$390_end$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -74604,7 +76535,11 @@ type expression_range_inclusive_legacy$390_end$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_inclusive_legacy$390_end = (value: expression_range_inclusive_legacy$390_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -74622,6 +76557,10 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -74954,6 +76893,12 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.inclusive.legacy.end', value);
 		default:
 			return unbuilt('expression.range.inclusive.legacy.end', value);
 	}
@@ -74968,7 +76913,9 @@ type expression_range_inclusive_legacy$390_start$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -75217,7 +77164,11 @@ type expression_range_inclusive_legacy$390_start$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_range_inclusive_legacy$390_start = (value: expression_range_inclusive_legacy$390_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -75235,6 +77186,10 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -75567,6 +77522,12 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.range.inclusive.legacy.start', value);
 		default:
 			return unbuilt('expression.range.inclusive.legacy.start', value);
 	}
@@ -75581,7 +77542,9 @@ type expression_reference$371_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -75830,7 +77793,11 @@ type expression_reference$371_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_reference$371_argument = (value: expression_reference$371_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -75849,6 +77816,10 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -76180,6 +78151,12 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.reference.argument', value);
 		default:
 			return unbuilt('expression.reference.argument', value);
 	}
@@ -76194,7 +78171,9 @@ type expression_reference$372_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -76443,7 +78422,11 @@ type expression_reference$372_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_reference$372_argument = (value: expression_reference$372_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -76462,6 +78445,10 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -76793,6 +78780,12 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.reference.argument', value);
 		default:
 			return unbuilt('expression.reference.argument', value);
 	}
@@ -76807,7 +78800,9 @@ type expression_reference$373_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -77056,7 +79051,11 @@ type expression_reference$373_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_reference$373_argument = (value: expression_reference$373_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -77075,6 +79074,10 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -77406,6 +79409,12 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.reference.argument', value);
 		default:
 			return unbuilt('expression.reference.argument', value);
 	}
@@ -77420,7 +79429,9 @@ type expression_reference$374_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -77669,7 +79680,11 @@ type expression_reference$374_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_reference$374_argument = (value: expression_reference$374_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -77688,6 +79703,10 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -78019,6 +80038,12 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.reference.argument', value);
 		default:
 			return unbuilt('expression.reference.argument', value);
 	}
@@ -78033,7 +80058,9 @@ type expression_subscript$306_index$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -78282,7 +80309,11 @@ type expression_subscript$306_index$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_subscript$306_index = (value: expression_subscript$306_index$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -78300,6 +80331,10 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -78632,6 +80667,12 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.subscript.index', value);
 		default:
 			return unbuilt('expression.subscript.index', value);
 	}
@@ -78646,7 +80687,9 @@ type expression_subscript$306_object$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -78895,7 +80938,11 @@ type expression_subscript$306_object$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_subscript$306_object = (value: expression_subscript$306_object$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -78913,6 +80960,10 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -79245,6 +81296,12 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.subscript.object', value);
 		default:
 			return unbuilt('expression.subscript.object', value);
 	}
@@ -79259,7 +81316,9 @@ type expression_unary_deref$267_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -79508,7 +81567,11 @@ type expression_unary_deref$267_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_unary_deref$267_argument = (value: expression_unary_deref$267_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -79526,6 +81589,10 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -79858,6 +81925,12 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.unary.deref.argument', value);
 		default:
 			return unbuilt('expression.unary.deref.argument', value);
 	}
@@ -79872,7 +81945,9 @@ type expression_unary_negation$267_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -80121,7 +82196,11 @@ type expression_unary_negation$267_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_unary_negation$267_argument = (value: expression_unary_negation$267_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -80139,6 +82218,10 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -80471,6 +82554,12 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.unary.negation.argument', value);
 		default:
 			return unbuilt('expression.unary.negation.argument', value);
 	}
@@ -80485,7 +82574,9 @@ type expression_unary_not$267_argument$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -80734,7 +82825,11 @@ type expression_unary_not$267_argument$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_unary_not$267_argument = (value: expression_unary_not$267_argument$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -80752,6 +82847,10 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -81084,6 +83183,12 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.unary.not.argument', value);
 		default:
 			return unbuilt('expression.unary.not.argument', value);
 	}
@@ -81098,7 +83203,9 @@ type expression_yield$275_expression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -81347,7 +83454,11 @@ type expression_yield$275_expression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const expression_yield$275_expression = (value: expression_yield$275_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -81365,6 +83476,10 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -81697,6 +83812,12 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('expression.yield.expression', value);
 		default:
 			return unbuilt('expression.yield.expression', value);
 	}
@@ -82457,7 +84578,9 @@ type pattern_as$325_pattern$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -82551,7 +84674,11 @@ type pattern_as$325_pattern$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -82569,6 +84696,10 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -82704,6 +84835,12 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.as.pattern', value);
 		default:
 			return unbuilt('pattern.as.pattern', value);
 	}
@@ -82763,7 +84900,9 @@ type pattern_list$317_elements$item$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -82857,7 +84996,11 @@ type pattern_list$317_elements$item$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -82875,6 +85018,10 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -83010,6 +85157,12 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.list.elements', value);
 		default:
 			return unbuilt('pattern.list.elements', value);
 	}
@@ -83024,7 +85177,9 @@ type pattern_mutable$322_pattern$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -83118,7 +85273,11 @@ type pattern_mutable$322_pattern$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -83136,6 +85295,10 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -83271,6 +85434,12 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.mutable.pattern', value);
 		default:
 			return unbuilt('pattern.mutable.pattern', value);
 	}
@@ -83285,7 +85454,9 @@ type pattern_or$386_left$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -83379,7 +85550,11 @@ type pattern_or$386_left$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -83397,6 +85572,10 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -83532,6 +85711,12 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.or.left', value);
 		default:
 			return unbuilt('pattern.or.left', value);
 	}
@@ -83546,7 +85731,9 @@ type pattern_or$386_right$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -83640,7 +85827,11 @@ type pattern_or$386_right$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -83659,6 +85850,10 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -83793,6 +85988,12 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.or.right', value);
 		default:
 			return unbuilt('pattern.or.right', value);
 	}
@@ -83807,7 +86008,9 @@ type pattern_or$387_right$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -83901,7 +86104,11 @@ type pattern_or$387_right$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -83919,6 +86126,10 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -84054,6 +86265,12 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.or.right', value);
 		default:
 			return unbuilt('pattern.or.right', value);
 	}
@@ -84067,7 +86284,9 @@ type pattern_range$421_start$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -84120,7 +86339,11 @@ type pattern_range$421_start$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range$421_start = (value: pattern_range$421_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -84140,6 +86363,10 @@ const pattern_range$421_start = (value: pattern_range$421_start$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -84232,6 +86459,12 @@ const pattern_range$421_start = (value: pattern_range$421_start$Item) => {
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.start', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.start', value);
 		default:
 			return unbuilt('pattern.range.start', value);
 	}
@@ -84245,7 +86478,9 @@ type pattern_range_exclusive$419_end$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -84298,7 +86533,11 @@ type pattern_range_exclusive$419_end$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -84319,6 +86558,10 @@ const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -84410,6 +86653,12 @@ const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.exclusive.end', value);
 		default:
 			return unbuilt('pattern.range.exclusive.end', value);
 	}
@@ -84423,7 +86672,9 @@ type pattern_range_exclusive$420_end$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -84476,7 +86727,11 @@ type pattern_range_exclusive$420_end$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_exclusive$420_end = (value: pattern_range_exclusive$420_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -84497,6 +86752,10 @@ const pattern_range_exclusive$420_end = (value: pattern_range_exclusive$420_end$
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -84588,6 +86847,12 @@ const pattern_range_exclusive$420_end = (value: pattern_range_exclusive$420_end$
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.exclusive.end', value);
 		default:
 			return unbuilt('pattern.range.exclusive.end', value);
 	}
@@ -84601,7 +86866,9 @@ type pattern_range_exclusive$420_start$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -84654,7 +86921,11 @@ type pattern_range_exclusive$420_start$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_exclusive$420_start = (value: pattern_range_exclusive$420_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -84675,6 +86946,10 @@ const pattern_range_exclusive$420_start = (value: pattern_range_exclusive$420_st
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -84766,6 +87041,12 @@ const pattern_range_exclusive$420_start = (value: pattern_range_exclusive$420_st
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.exclusive.start', value);
 		default:
 			return unbuilt('pattern.range.exclusive.start', value);
 	}
@@ -84779,7 +87060,9 @@ type pattern_range_exclusive$421_start$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -84832,7 +87115,11 @@ type pattern_range_exclusive$421_start$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_exclusive$421_start = (value: pattern_range_exclusive$421_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -84853,6 +87140,10 @@ const pattern_range_exclusive$421_start = (value: pattern_range_exclusive$421_st
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -84944,6 +87235,12 @@ const pattern_range_exclusive$421_start = (value: pattern_range_exclusive$421_st
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.exclusive.start', value);
 		default:
 			return unbuilt('pattern.range.exclusive.start', value);
 	}
@@ -84957,7 +87254,9 @@ type pattern_range_inclusive$419_end$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -85010,7 +87309,11 @@ type pattern_range_inclusive$419_end$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -85031,6 +87334,10 @@ const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -85122,6 +87429,12 @@ const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.inclusive.end', value);
 		default:
 			return unbuilt('pattern.range.inclusive.end', value);
 	}
@@ -85135,7 +87448,9 @@ type pattern_range_inclusive$420_end$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -85188,7 +87503,11 @@ type pattern_range_inclusive$420_end$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_inclusive$420_end = (value: pattern_range_inclusive$420_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -85209,6 +87528,10 @@ const pattern_range_inclusive$420_end = (value: pattern_range_inclusive$420_end$
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -85300,6 +87623,12 @@ const pattern_range_inclusive$420_end = (value: pattern_range_inclusive$420_end$
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.inclusive.end', value);
 		default:
 			return unbuilt('pattern.range.inclusive.end', value);
 	}
@@ -85313,7 +87642,9 @@ type pattern_range_inclusive$420_start$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -85366,7 +87697,11 @@ type pattern_range_inclusive$420_start$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_inclusive$420_start = (value: pattern_range_inclusive$420_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -85386,6 +87721,10 @@ const pattern_range_inclusive$420_start = (value: pattern_range_inclusive$420_st
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -85478,6 +87817,12 @@ const pattern_range_inclusive$420_start = (value: pattern_range_inclusive$420_st
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.inclusive.start', value);
 		default:
 			return unbuilt('pattern.range.inclusive.start', value);
 	}
@@ -85491,7 +87836,9 @@ type pattern_range_inclusive_legacy$420_end$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -85544,7 +87891,11 @@ type pattern_range_inclusive_legacy$420_end$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_inclusive_legacy$420_end = (value: pattern_range_inclusive_legacy$420_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -85564,6 +87915,10 @@ const pattern_range_inclusive_legacy$420_end = (value: pattern_range_inclusive_l
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -85656,6 +88011,12 @@ const pattern_range_inclusive_legacy$420_end = (value: pattern_range_inclusive_l
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
 		default:
 			return unbuilt('pattern.range.inclusive.legacy.end', value);
 	}
@@ -85669,7 +88030,9 @@ type pattern_range_inclusive_legacy$420_start$Item =
 	| Text<RustMap, 'identifier'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'identifier'>
 	| RustMap['nodes']['identifier']
 	| BuildInput<RustMap, 'identifier.metavariable'>
@@ -85722,7 +88085,11 @@ type pattern_range_inclusive_legacy$420_start$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| TailInput<RustMap, 'literal.string.raw', 'string.raw'>
-	| RustMap['nodes']['literal.string.raw'];
+	| RustMap['nodes']['literal.string.raw']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_range_inclusive_legacy$420_start = (value: pattern_range_inclusive_legacy$420_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -85742,6 +88109,10 @@ const pattern_range_inclusive_legacy$420_start = (value: pattern_range_inclusive
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -85834,6 +88205,12 @@ const pattern_range_inclusive_legacy$420_start = (value: pattern_range_inclusive
 		case 'string.raw':
 		case 'literal.string.raw':
 			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
 		default:
 			return unbuilt('pattern.range.inclusive.legacy.start', value);
 	}
@@ -85848,7 +88225,9 @@ type pattern_reference$324_pattern$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -85942,7 +88321,11 @@ type pattern_reference$324_pattern$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -85960,6 +88343,10 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -86095,6 +88482,12 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.reference.pattern', value);
 		default:
 			return unbuilt('pattern.reference.pattern', value);
 	}
@@ -86109,7 +88502,9 @@ type pattern_reference_value$326_pattern$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -86203,7 +88598,11 @@ type pattern_reference_value$326_pattern$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_pattern$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -86221,6 +88620,10 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -86356,6 +88759,12 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.reference.value.pattern', value);
 		default:
 			return unbuilt('pattern.reference.value.pattern', value);
 	}
@@ -86481,7 +88890,9 @@ type pattern_struct_field$415_pattern$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -86575,7 +88986,11 @@ type pattern_struct_field$415_pattern$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_pattern$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -86593,6 +89008,10 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -86728,6 +89147,12 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.struct.field.pattern', value);
 		default:
 			return unbuilt('pattern.struct.field.pattern', value);
 	}
@@ -86742,7 +89167,9 @@ type pattern_struct_tuple$318_fields$item$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -86836,7 +89263,11 @@ type pattern_struct_tuple$318_fields$item$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fields$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -86854,6 +89285,10 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -86989,6 +89424,12 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.struct.tuple.fields', value);
 		default:
 			return unbuilt('pattern.struct.tuple.fields', value);
 	}
@@ -87039,7 +89480,9 @@ type pattern_tuple$316_elements$item$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -87136,7 +89579,11 @@ type pattern_tuple$316_elements$item$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -87154,6 +89601,10 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -87316,6 +89767,12 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('pattern.tuple.elements', value);
 		default:
 			return unbuilt('pattern.tuple.elements', value);
 	}
@@ -87344,7 +89801,9 @@ type statement_block$313_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -87868,7 +90327,11 @@ type statement_block$313_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block$313_statements = (value: statement_block$313_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -87891,6 +90354,12 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -88525,6 +90994,18 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.block.statements', value);
 		default:
 			return unbuilt('statement.block.statements', value);
 	}
@@ -88539,7 +91020,9 @@ type statement_block$313_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -88788,7 +91271,11 @@ type statement_block$313_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block$313_trailingExpression = (value: statement_block$313_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -88806,6 +91293,10 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -89138,6 +91629,12 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.block.trailingExpression', value);
 		default:
 			return unbuilt('statement.block.trailingExpression', value);
 	}
@@ -89154,7 +91651,9 @@ type statement_block_async$310_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -89678,7 +92177,11 @@ type statement_block_async$310_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_async$310_statements = (value: statement_block_async$310_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -89701,6 +92204,12 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -90335,6 +92844,18 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.block.async.statements', value);
 		default:
 			return unbuilt('statement.block.async.statements', value);
 	}
@@ -90349,7 +92870,9 @@ type statement_block_async$310_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -90598,7 +93121,11 @@ type statement_block_async$310_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_async$310_trailingExpression = (value: statement_block_async$310_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -90616,6 +93143,10 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -90948,6 +93479,12 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.block.async.trailingExpression', value);
 		default:
 			return unbuilt('statement.block.async.trailingExpression', value);
 	}
@@ -90964,7 +93501,9 @@ type statement_block_const$300_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -91488,7 +94027,11 @@ type statement_block_const$300_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_const$300_statements = (value: statement_block_const$300_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -91511,6 +94054,12 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -92145,6 +94694,18 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.block.const.statements', value);
 		default:
 			return unbuilt('statement.block.const.statements', value);
 	}
@@ -92159,7 +94720,9 @@ type statement_block_const$300_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -92408,7 +94971,11 @@ type statement_block_const$300_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_const$300_trailingExpression = (value: statement_block_const$300_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -92426,6 +94993,10 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -92758,6 +95329,12 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.block.const.trailingExpression', value);
 		default:
 			return unbuilt('statement.block.const.trailingExpression', value);
 	}
@@ -92774,7 +95351,9 @@ type statement_block_generator$311_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -93298,7 +95877,11 @@ type statement_block_generator$311_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_generator$311_statements = (value: statement_block_generator$311_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -93321,6 +95904,12 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -93955,6 +96544,18 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.block.generator.statements', value);
 		default:
 			return unbuilt('statement.block.generator.statements', value);
 	}
@@ -93969,7 +96570,9 @@ type statement_block_generator$311_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -94218,7 +96821,11 @@ type statement_block_generator$311_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_generator$311_trailingExpression = (
 	value: statement_block_generator$311_trailingExpression$Item
 ) => {
@@ -94238,6 +96845,10 @@ const statement_block_generator$311_trailingExpression = (
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -94570,6 +97181,12 @@ const statement_block_generator$311_trailingExpression = (
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.block.generator.trailingExpression', value);
 		default:
 			return unbuilt('statement.block.generator.trailingExpression', value);
 	}
@@ -94586,7 +97203,9 @@ type statement_block_try$312_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -95110,7 +97729,11 @@ type statement_block_try$312_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_try$312_statements = (value: statement_block_try$312_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -95133,6 +97756,12 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -95767,6 +98396,18 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.block.try.statements', value);
 		default:
 			return unbuilt('statement.block.try.statements', value);
 	}
@@ -95781,7 +98422,9 @@ type statement_block_try$312_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -96030,7 +98673,11 @@ type statement_block_try$312_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_try$312_trailingExpression = (value: statement_block_try$312_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -96048,6 +98695,10 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -96380,6 +99031,12 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.block.try.trailingExpression', value);
 		default:
 			return unbuilt('statement.block.try.trailingExpression', value);
 	}
@@ -96396,7 +99053,9 @@ type statement_block_unsafe$309_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -96920,7 +99579,11 @@ type statement_block_unsafe$309_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -96943,6 +99606,12 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -97577,6 +100246,18 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.block.unsafe.statements', value);
 		default:
 			return unbuilt('statement.block.unsafe.statements', value);
 	}
@@ -97591,7 +100272,9 @@ type statement_block_unsafe$309_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -97840,7 +100523,11 @@ type statement_block_unsafe$309_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_block_unsafe$309_trailingExpression = (value: statement_block_unsafe$309_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -97858,6 +100545,10 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -98190,6 +100881,12 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.block.unsafe.trailingExpression', value);
 		default:
 			return unbuilt('statement.block.unsafe.trailingExpression', value);
 	}
@@ -98204,7 +100901,9 @@ type statement_break$304_expression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -98453,7 +101152,11 @@ type statement_break$304_expression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_break$304_expression = (value: statement_break$304_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -98471,6 +101174,10 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -98803,6 +101510,12 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.break.expression', value);
 		default:
 			return unbuilt('statement.break.expression', value);
 	}
@@ -98853,7 +101566,9 @@ type statement_if$287_condition$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'clause.let'>
 	| TailInput<RustMap, 'clause.let', 'let'>
 	| RustMap['nodes']['clause.let']
@@ -99108,7 +101823,11 @@ type statement_if$287_condition$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -99126,6 +101845,10 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -99464,6 +102187,12 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.if.condition', value);
 		default:
 			return unbuilt('statement.if.condition', value);
 	}
@@ -99480,7 +102209,9 @@ type statement_if$287_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -100004,7 +102735,11 @@ type statement_if$287_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_if$287_statements = (value: statement_if$287_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -100027,6 +102762,12 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -100661,6 +103402,18 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.if.statements', value);
 		default:
 			return unbuilt('statement.if.statements', value);
 	}
@@ -100675,7 +103428,9 @@ type statement_if$287_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -100924,7 +103679,11 @@ type statement_if$287_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_if$287_trailingExpression = (value: statement_if$287_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -100942,6 +103701,10 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -101274,6 +104037,12 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.if.trailingExpression', value);
 		default:
 			return unbuilt('statement.if.trailingExpression', value);
 	}
@@ -101424,7 +104193,9 @@ type statement_loop$298_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -101948,7 +104719,11 @@ type statement_loop$298_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop$298_statements = (value: statement_loop$298_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -101971,6 +104746,12 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -102605,6 +105386,18 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.loop.statements', value);
 		default:
 			return unbuilt('statement.loop.statements', value);
 	}
@@ -102619,7 +105412,9 @@ type statement_loop$298_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -102868,7 +105663,11 @@ type statement_loop$298_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop$298_trailingExpression = (value: statement_loop$298_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -102886,6 +105685,10 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -103218,6 +106021,12 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.loop.trailingExpression', value);
 		default:
 			return unbuilt('statement.loop.trailingExpression', value);
 	}
@@ -103246,7 +106055,9 @@ type statement_loop_for_each$299_left$Item =
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'pattern.struct.rest'>
 	| Text<RustMap, 'pattern.wildcard'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.call.macro'>
 	| TailInput<RustMap, 'expression.call.macro', 'macro'>
 	| RustMap['nodes']['expression.call.macro']
@@ -103340,7 +106151,11 @@ type statement_loop_for_each$299_left$Item =
 	| RustMap['nodes']['pattern.tuple']
 	| BuildInput<RustMap, 'statement.block.const'>
 	| TailInput<RustMap, 'statement.block.const', 'const'>
-	| RustMap['nodes']['statement.block.const'];
+	| RustMap['nodes']['statement.block.const']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_left$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -103358,6 +106173,10 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -103493,6 +106312,12 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 		case 'const':
 		case 'statement.block.const':
 			return statement_block_const$300(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.loop.for_each.left', value);
 		default:
 			return unbuilt('statement.loop.for_each.left', value);
 	}
@@ -103507,7 +106332,9 @@ type statement_loop_for_each$299_right$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -103756,7 +106583,11 @@ type statement_loop_for_each$299_right$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_right$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -103774,6 +106605,10 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -104106,6 +106941,12 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.loop.for_each.right', value);
 		default:
 			return unbuilt('statement.loop.for_each.right', value);
 	}
@@ -104122,7 +106963,9 @@ type statement_loop_for_each$299_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -104646,7 +107489,11 @@ type statement_loop_for_each$299_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop_for_each$299_statements = (value: statement_loop_for_each$299_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -104669,6 +107516,12 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -105303,6 +108156,18 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.loop.for_each.statements', value);
 		default:
 			return unbuilt('statement.loop.for_each.statements', value);
 	}
@@ -105317,7 +108182,9 @@ type statement_loop_for_each$299_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -105566,7 +108433,11 @@ type statement_loop_for_each$299_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop_for_each$299_trailingExpression = (value: statement_loop_for_each$299_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -105584,6 +108455,10 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -105916,6 +108791,12 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.loop.for_each.trailingExpression', value);
 		default:
 			return unbuilt('statement.loop.for_each.trailingExpression', value);
 	}
@@ -105930,7 +108811,9 @@ type statement_loop_while$297_condition$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'clause.let'>
 	| TailInput<RustMap, 'clause.let', 'let'>
 	| RustMap['nodes']['clause.let']
@@ -106185,7 +109068,11 @@ type statement_loop_while$297_condition$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop_while$297_condition = (value: statement_loop_while$297_condition$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -106203,6 +109090,10 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -106541,6 +109432,12 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.loop.while.condition', value);
 		default:
 			return unbuilt('statement.loop.while.condition', value);
 	}
@@ -106571,7 +109468,9 @@ type statement_loop_while$297_statements$Item =
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
 	| Text<RustMap, 'statement.empty'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'attribute'>
 	| RustMap['nodes']['attribute']
 	| BuildInput<RustMap, 'declaration.constant'>
@@ -107095,7 +109994,11 @@ type statement_loop_while$297_statements$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop_while$297_statements = (value: statement_loop_while$297_statements$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -107118,6 +110021,12 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			);
 		}
 		return b.expressionStatement.withSemi(literal_number_float$162({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement.withSemi(literal_boolean$116({ $path: 'literal.boolean', $value: value }));
+		if (value === false)
+			return b.expressionStatement.withSemi(literal_boolean$117({ $path: 'literal.boolean', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -107752,6 +110661,18 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 		case 'return':
 		case 'statement.return':
 			return b.expressionStatement.withSemi(statement_return$274(value));
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.expressionStatement.withSemi(
+						literal_boolean$116({ $path: 'literal.boolean', $value: value.$value })
+					);
+				if (value.$value === false)
+					return b.expressionStatement.withSemi(
+						literal_boolean$117({ $path: 'literal.boolean', $value: value.$value })
+					);
+			}
+			return unbuilt('statement.loop.while.statements', value);
 		default:
 			return unbuilt('statement.loop.while.statements', value);
 	}
@@ -107766,7 +110687,9 @@ type statement_loop_while$297_trailingExpression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -108015,7 +110938,11 @@ type statement_loop_while$297_trailingExpression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_loop_while$297_trailingExpression = (value: statement_loop_while$297_trailingExpression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -108033,6 +110960,10 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -108365,6 +111296,12 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.loop.while.trailingExpression', value);
 		default:
 			return unbuilt('statement.loop.while.trailingExpression', value);
 	}
@@ -108379,7 +111316,9 @@ type statement_return$274_expression$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -108628,7 +111567,11 @@ type statement_return$274_expression$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const statement_return$274_expression = (value: statement_return$274_expression$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -108646,6 +111589,10 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -108978,6 +111925,12 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('statement.return.expression', value);
 		default:
 			return unbuilt('statement.return.expression', value);
 	}
@@ -109180,7 +112133,9 @@ type type_array$240_length$Item =
 	| Text<RustMap, 'identifier.receiver'>
 	| Text<RustMap, 'literal.character'>
 	| Text<RustMap, 'literal.number.float'>
+	| false
 	| number
+	| true
 	| BuildInput<RustMap, 'expression.assignment'>
 	| TailInput<RustMap, 'expression.assignment', 'assignment'>
 	| RustMap['nodes']['expression.assignment']
@@ -109429,7 +112384,11 @@ type type_array$240_length$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| TailInput<RustMap, 'statement.return', 'return'>
-	| RustMap['nodes']['statement.return'];
+	| RustMap['nodes']['statement.return']
+	| {
+			readonly $path: 'literal.boolean';
+			readonly $value: true | false;
+	  };
 const type_array$240_length = (value: type_array$240_length$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
@@ -109447,6 +112406,10 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value });
+		if (value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -109779,6 +112742,12 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 		case 'return':
 		case 'statement.return':
 			return statement_return$274(value);
+		case 'literal.boolean':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true) return literal_boolean$116({ $path: 'literal.boolean', $value: value.$value });
+				if (value.$value === false) return literal_boolean$117({ $path: 'literal.boolean', $value: value.$value });
+			}
+			return unbuilt('type.array.length', value);
 		default:
 			return unbuilt('type.array.length', value);
 	}

@@ -137,7 +137,9 @@ type argument_named$237_value$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -402,6 +404,10 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -677,7 +683,9 @@ type clause_case_match$161_guard$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -942,6 +950,10 @@ const clause_case_match$161_guard = (value: clause_case_match$161_guard$Item) =>
 			return b.ifClause(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.ifClause(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.ifClause(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.ifClause(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -1218,7 +1230,9 @@ type clause_case_match$161_pattern$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'identifier.qualified'>
 	| TailInput<PythonMap, 'identifier.qualified', 'qualified'>
 	| PythonMap['nodes']['identifier.qualified']
@@ -1380,6 +1394,14 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 			);
 		}
 		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.casePattern(b.simplePattern(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value })));
+		if (value === false)
+			return b.casePattern(
+				b.simplePattern(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [280])) return value;
@@ -1552,7 +1574,9 @@ type clause_case_match$161_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -1953,6 +1977,20 @@ const clause_case_match$161_statements$item = (value: clause_case_match$161_stat
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -2524,7 +2562,9 @@ type clause_comprehension_for$249_rights$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -2789,6 +2829,10 @@ const clause_comprehension_for$249_rights = (value: clause_comprehension_for$249
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -3074,7 +3118,9 @@ type clause_comprehension_if$250_condition$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -3339,6 +3385,10 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -3620,7 +3670,9 @@ type clause_else$158_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -4021,6 +4073,20 @@ const clause_else$158_statements$item = (value: clause_else$158_statements$item$
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -4532,7 +4598,9 @@ type clause_else_if$157_condition$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -4797,6 +4865,10 @@ const clause_else_if$157_condition = (value: clause_else_if$157_condition$Item) 
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -5078,7 +5150,9 @@ type clause_else_if$157_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -5479,6 +5553,20 @@ const clause_else_if$157_statements$item = (value: clause_else_if$157_statements
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -5996,7 +6084,9 @@ type clause_finally$166_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -6397,6 +6487,20 @@ const clause_finally$166_statements$item = (value: clause_finally$166_statements
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -7012,7 +7116,9 @@ type declaration_function$170_decorators$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -7277,6 +7383,11 @@ const declaration_function$170_decorators = (value: declaration_function$170_dec
 			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.decorator(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.decorator(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -7601,6 +7712,14 @@ type declaration_function$170_doc$Item =
 	| TailInput<PythonMap, 'literal.string.unicode', 'unicode'>
 	| PythonMap['nodes']['literal.string.unicode']
 	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
+	| {
 			readonly $path: 'literal.number.float';
 			readonly $value: number;
 	  }
@@ -7654,6 +7773,28 @@ const declaration_function$170_doc = (value: declaration_function$170_doc$Item) 
 				)
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+						)
+					)
+				)
+			);
+		if (value === false)
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+						)
+					)
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (
@@ -7723,20 +7864,39 @@ const declaration_function$170_doc = (value: declaration_function$170_doc$Item) 
 		case 'unicode':
 		case 'literal.string.unicode':
 			return unbuilt('declaration.function.doc', value);
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+		case 'literal.boolean.false':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === false)
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value.$value })
+									)
 								)
 							)
 						)
-					)
-				);
+					);
 			}
+			return unbuilt('declaration.function.doc', value);
+		case 'literal.boolean.true':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+			}
+			return unbuilt('declaration.function.doc', value);
+		case 'literal.number.float':
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlock(
@@ -7763,19 +7923,6 @@ const declaration_function$170_doc = (value: declaration_function$170_doc$Item) 
 			}
 			return unbuilt('declaration.function.doc', value);
 		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlock(
@@ -7810,30 +7957,6 @@ const declaration_function$170_doc = (value: declaration_function$170_doc$Item) 
 								b.expressionStatement(
 									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
 								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
 							)
 						)
 					)
@@ -7942,7 +8065,9 @@ type declaration_function$170_returnType$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -8223,6 +8348,10 @@ const declaration_function$170_returnType = (value: declaration_function$170_ret
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -8520,7 +8649,9 @@ type declaration_function$170_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -8921,6 +9052,20 @@ const declaration_function$170_statements$item = (value: declaration_function$17
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -9498,7 +9643,9 @@ type declaration_member_constructor$316_decorators$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -9763,6 +9910,11 @@ const declaration_member_constructor$316_decorators = (value: declaration_member
 			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.decorator(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.decorator(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -10109,7 +10261,9 @@ type declaration_member_constructor$316_returnType$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -10390,6 +10544,10 @@ const declaration_member_constructor$316_returnType = (value: declaration_member
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -10687,7 +10845,9 @@ type declaration_member_constructor$316_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -11090,6 +11250,20 @@ const declaration_member_constructor$316_statements$item = (
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -11673,6 +11847,14 @@ type declaration_member_property_getter$361_decorators$Item =
 	| BuildInput<PythonMap, 'identifier'>
 	| PythonMap['nodes']['identifier']
 	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
+	| {
 			readonly $path: 'literal.number.float';
 			readonly $value: number;
 	  }
@@ -11700,6 +11882,11 @@ const declaration_member_property_getter$361_decorators = (
 		}
 		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.decorator(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.decorator(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -11719,12 +11906,19 @@ const declaration_member_property_getter$361_decorators = (
 			return unbuilt('declaration.member.property.getter.decorators', value);
 		case 'identifier':
 			return b.decorator(identifier$1(value));
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
+		case 'literal.boolean.false':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === false)
+					return b.decorator(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value.$value }));
 			}
+			return unbuilt('declaration.member.property.getter.decorators', value);
+		case 'literal.boolean.true':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.decorator(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.getter.decorators', value);
+		case 'literal.number.float':
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
@@ -11733,11 +11927,6 @@ const declaration_member_property_getter$361_decorators = (
 			}
 			return unbuilt('declaration.member.property.getter.decorators', value);
 		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
@@ -11750,12 +11939,6 @@ const declaration_member_property_getter$361_decorators = (
 				return b.decorator(
 					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
 				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
 			}
 			return unbuilt('declaration.member.property.getter.decorators', value);
 		default:
@@ -11816,6 +11999,14 @@ type declaration_member_property_getter$361_doc$Item =
 	| TailInput<PythonMap, 'literal.string.unicode', 'unicode'>
 	| PythonMap['nodes']['literal.string.unicode']
 	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
+	| {
 			readonly $path: 'literal.number.float';
 			readonly $value: number;
 	  }
@@ -11869,6 +12060,28 @@ const declaration_member_property_getter$361_doc = (value: declaration_member_pr
 				)
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+						)
+					)
+				)
+			);
+		if (value === false)
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+						)
+					)
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (
@@ -11938,20 +12151,39 @@ const declaration_member_property_getter$361_doc = (value: declaration_member_pr
 		case 'unicode':
 		case 'literal.string.unicode':
 			return unbuilt('declaration.member.property.getter.doc', value);
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+		case 'literal.boolean.false':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === false)
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value.$value })
+									)
 								)
 							)
 						)
-					)
-				);
+					);
 			}
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.boolean.true':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+			}
+			return unbuilt('declaration.member.property.getter.doc', value);
+		case 'literal.number.float':
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlock(
@@ -11978,19 +12210,6 @@ const declaration_member_property_getter$361_doc = (value: declaration_member_pr
 			}
 			return unbuilt('declaration.member.property.getter.doc', value);
 		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlock(
@@ -12025,30 +12244,6 @@ const declaration_member_property_getter$361_doc = (value: declaration_member_pr
 								b.expressionStatement(
 									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
 								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
 							)
 						)
 					)
@@ -12094,7 +12289,9 @@ type declaration_member_property_getter$361_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -12497,6 +12694,20 @@ const declaration_member_property_getter$361_statements$item = (
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -13008,7 +13219,9 @@ type declaration_member_property_getter$361_type$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -13289,6 +13502,10 @@ const declaration_member_property_getter$361_type = (value: declaration_member_p
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -13617,6 +13834,14 @@ type declaration_member_property_setter$361_decorators$Item =
 	| BuildInput<PythonMap, 'identifier'>
 	| PythonMap['nodes']['identifier']
 	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
+	| {
 			readonly $path: 'literal.number.float';
 			readonly $value: number;
 	  }
@@ -13644,6 +13869,11 @@ const declaration_member_property_setter$361_decorators = (
 		}
 		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.decorator(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.decorator(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -13663,12 +13893,19 @@ const declaration_member_property_setter$361_decorators = (
 			return unbuilt('declaration.member.property.setter.decorators', value);
 		case 'identifier':
 			return b.decorator(identifier$1(value));
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
+		case 'literal.boolean.false':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === false)
+					return b.decorator(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value.$value }));
 			}
+			return unbuilt('declaration.member.property.setter.decorators', value);
+		case 'literal.boolean.true':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.decorator(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value.$value }));
+			}
+			return unbuilt('declaration.member.property.setter.decorators', value);
+		case 'literal.number.float':
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
@@ -13677,11 +13914,6 @@ const declaration_member_property_setter$361_decorators = (
 			}
 			return unbuilt('declaration.member.property.setter.decorators', value);
 		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.decorator(
-					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-				);
-			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
@@ -13694,12 +13926,6 @@ const declaration_member_property_setter$361_decorators = (
 				return b.decorator(
 					literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
 				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value }));
-				}
-				return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }));
 			}
 			return unbuilt('declaration.member.property.setter.decorators', value);
 		default:
@@ -13760,6 +13986,14 @@ type declaration_member_property_setter$361_doc$Item =
 	| TailInput<PythonMap, 'literal.string.unicode', 'unicode'>
 	| PythonMap['nodes']['literal.string.unicode']
 	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
+	| {
 			readonly $path: 'literal.number.float';
 			readonly $value: number;
 	  }
@@ -13813,6 +14047,28 @@ const declaration_member_property_setter$361_doc = (value: declaration_member_pr
 				)
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+						)
+					)
+				)
+			);
+		if (value === false)
+			return b.suiteBlock(
+				b.block(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+						)
+					)
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (
@@ -13882,20 +14138,39 @@ const declaration_member_property_setter$361_doc = (value: declaration_member_pr
 		case 'unicode':
 		case 'literal.string.unicode':
 			return unbuilt('declaration.member.property.setter.doc', value);
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+		case 'literal.boolean.false':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === false)
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value.$value })
+									)
 								)
 							)
 						)
-					)
-				);
+					);
 			}
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.boolean.true':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.suiteBlock(
+						b.block(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+			}
+			return unbuilt('declaration.member.property.setter.doc', value);
+		case 'literal.number.float':
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlock(
@@ -13922,19 +14197,6 @@ const declaration_member_property_setter$361_doc = (value: declaration_member_pr
 			}
 			return unbuilt('declaration.member.property.setter.doc', value);
 		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlock(
@@ -13969,30 +14231,6 @@ const declaration_member_property_setter$361_doc = (value: declaration_member_pr
 								b.expressionStatement(
 									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
 								)
-							)
-						)
-					)
-				);
-			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlock(
-						b.block(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlock(
-					b.block(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
 							)
 						)
 					)
@@ -14103,7 +14341,9 @@ type declaration_member_property_setter$361_returnType$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -14386,6 +14626,10 @@ const declaration_member_property_setter$361_returnType = (
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -14683,7 +14927,9 @@ type declaration_member_property_setter$361_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -15086,6 +15332,20 @@ const declaration_member_property_setter$361_statements$item = (
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -15632,7 +15892,9 @@ type declaration_parameter_defaulted$204_default$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -15897,6 +16159,10 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -16239,7 +16505,9 @@ type declaration_parameter_typed$230_type$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -16520,6 +16788,10 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -16811,7 +17083,9 @@ type declaration_parameter_typed_default$205_default$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -17078,6 +17352,10 @@ const declaration_parameter_typed_default$205_default = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -17377,7 +17655,9 @@ type declaration_parameter_typed_default$205_type$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -17658,6 +17938,10 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -17949,7 +18233,9 @@ type declaration_type_class$179_bases$item$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'argument.named'>
 	| TailInput<PythonMap, 'argument.named', 'named'>
 	| PythonMap['nodes']['argument.named']
@@ -18225,6 +18511,10 @@ const declaration_type_class$179_bases$item = (value: declaration_type_class$179
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18511,7 +18801,9 @@ type declaration_type_class$179_decorators$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -18776,6 +19068,11 @@ const declaration_type_class$179_decorators = (value: declaration_type_class$179
 			return b.decorator(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.decorator(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.decorator(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.decorator(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -19100,6 +19397,14 @@ type declaration_type_class$179_doc$Item =
 	| TailInput<PythonMap, 'literal.string.unicode', 'unicode'>
 	| PythonMap['nodes']['literal.string.unicode']
 	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
+	| {
 			readonly $path: 'literal.number.float';
 			readonly $value: number;
 	  }
@@ -19157,6 +19462,28 @@ const declaration_type_class$179_doc = (value: declaration_type_class$179_doc$It
 				)
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.suiteBlockClassDeclaration(
+				b.blockClassDeclaration(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+						)
+					)
+				)
+			);
+		if (value === false)
+			return b.suiteBlockClassDeclaration(
+				b.blockClassDeclaration(
+					b.simpleStatements(
+						b.simpleStatementsElements(
+							b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+						)
+					)
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (
@@ -19230,20 +19557,39 @@ const declaration_type_class$179_doc = (value: declaration_type_class$179_doc$It
 		case 'unicode':
 		case 'literal.string.unicode':
 			return unbuilt('declaration.type.class.doc', value);
-		case 'literal.number.float':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
+		case 'literal.boolean.false':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === false)
+					return b.suiteBlockClassDeclaration(
+						b.blockClassDeclaration(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value.$value })
+									)
 								)
 							)
 						)
-					)
-				);
+					);
 			}
+			return unbuilt('declaration.type.class.doc', value);
+		case 'literal.boolean.true':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.suiteBlockClassDeclaration(
+						b.blockClassDeclaration(
+							b.simpleStatements(
+								b.simpleStatementsElements(
+									b.expressionStatement(
+										literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value.$value })
+									)
+								)
+							)
+						)
+					);
+			}
+			return unbuilt('declaration.type.class.doc', value);
+		case 'literal.number.float':
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlockClassDeclaration(
@@ -19270,19 +19616,6 @@ const declaration_type_class$179_doc = (value: declaration_type_class$179_doc$It
 			}
 			return unbuilt('declaration.type.class.doc', value);
 		case 'literal.number.integer':
-			if (typeof value.$value === 'bigint') {
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(
-									literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value.$value })
-								)
-							)
-						)
-					)
-				);
-			}
 			if (typeof value.$value === 'number') {
 				if (Number.isSafeInteger(value.$value)) {
 					return b.suiteBlockClassDeclaration(
@@ -19322,30 +19655,6 @@ const declaration_type_class$179_doc = (value: declaration_type_class$179_doc$It
 					)
 				);
 			}
-			if (typeof value.$value === 'number') {
-				if (Number.isSafeInteger(value.$value)) {
-					return b.suiteBlockClassDeclaration(
-						b.blockClassDeclaration(
-							b.simpleStatements(
-								b.simpleStatementsElements(
-									b.expressionStatement(
-										literal_number_integer$100({ $path: 'literal.number.integer', $value: value.$value })
-									)
-								)
-							)
-						)
-					);
-				}
-				return b.suiteBlockClassDeclaration(
-					b.blockClassDeclaration(
-						b.simpleStatements(
-							b.simpleStatementsElements(
-								b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value.$value }))
-							)
-						)
-					)
-				);
-			}
 			return unbuilt('declaration.type.class.doc', value);
 		default:
 			return unbuilt('declaration.type.class.doc', value);
@@ -19362,7 +19671,9 @@ type declaration_type_class$179_members$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -19769,6 +20080,20 @@ const declaration_type_class$179_members$item = (value: declaration_type_class$1
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [156, 159, 162, 163, 164, 167, 179, 316, 317, 361])) return value;
@@ -20485,7 +20810,9 @@ type declaration_type_type_alias$178_value$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -20766,6 +21093,10 @@ const declaration_type_type_alias$178_value = (value: declaration_type_type_alia
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -21117,7 +21448,9 @@ type declaration_variable$302_value$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -21399,6 +21732,10 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21755,7 +22092,9 @@ type declaration_variable$303_type$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -22036,6 +22375,10 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -22387,7 +22730,9 @@ type declaration_variable$304_type$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -22668,6 +23013,10 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -22959,7 +23308,9 @@ type declaration_variable$304_value$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -23241,6 +23592,10 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -23533,7 +23888,9 @@ type element_pair$242_key$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -23798,6 +24155,10 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24073,7 +24434,9 @@ type element_pair$242_value$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -24338,6 +24701,10 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24613,7 +24980,9 @@ type element_spread$173_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -24878,6 +25247,10 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -25153,7 +25526,9 @@ type element_spread_map$174_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -25418,6 +25793,10 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -25744,7 +26123,9 @@ type expression_assignment$148_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -26009,6 +26390,10 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -26344,7 +26729,9 @@ type expression_assignment_compound_add$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -26620,6 +27007,10 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -26968,7 +27359,9 @@ type expression_assignment_compound_bitwise_and$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -27246,6 +27639,10 @@ const expression_assignment_compound_bitwise_and$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -27594,7 +27991,9 @@ type expression_assignment_compound_bitwise_or$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -27872,6 +28271,10 @@ const expression_assignment_compound_bitwise_or$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28220,7 +28623,9 @@ type expression_assignment_compound_bitwise_xor$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -28498,6 +28903,10 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28844,7 +29253,9 @@ type expression_assignment_compound_divide$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -29122,6 +29533,10 @@ const expression_assignment_compound_divide$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -29470,7 +29885,9 @@ type expression_assignment_compound_exponent$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -29748,6 +30165,10 @@ const expression_assignment_compound_exponent$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -30096,7 +30517,9 @@ type expression_assignment_compound_floor_divide$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -30374,6 +30797,10 @@ const expression_assignment_compound_floor_divide$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -30722,7 +31149,9 @@ type expression_assignment_compound_matrix_multiply$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -31000,6 +31429,10 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31346,7 +31779,9 @@ type expression_assignment_compound_modulo$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -31624,6 +32059,10 @@ const expression_assignment_compound_modulo$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31972,7 +32411,9 @@ type expression_assignment_compound_multiply$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -32250,6 +32691,10 @@ const expression_assignment_compound_multiply$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -32598,7 +33043,9 @@ type expression_assignment_compound_shift_left$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -32876,6 +33323,10 @@ const expression_assignment_compound_shift_left$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -33224,7 +33675,9 @@ type expression_assignment_compound_shift_right$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -33502,6 +33955,10 @@ const expression_assignment_compound_shift_right$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -33850,7 +34307,9 @@ type expression_assignment_compound_subtract$222_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -34128,6 +34587,10 @@ const expression_assignment_compound_subtract$222_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -34414,7 +34877,9 @@ type expression_await$262_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -34624,6 +35089,10 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -34844,7 +35313,9 @@ type expression_binary_arithmetic_add$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -35054,6 +35525,10 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -35274,7 +35749,9 @@ type expression_binary_arithmetic_add$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -35484,6 +35961,10 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -35704,7 +36185,9 @@ type expression_binary_arithmetic_divide$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -35914,6 +36397,10 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -36134,7 +36621,9 @@ type expression_binary_arithmetic_divide$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -36344,6 +36833,10 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -36564,7 +37057,9 @@ type expression_binary_arithmetic_exponent$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -36774,6 +37269,10 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -36994,7 +37493,9 @@ type expression_binary_arithmetic_exponent$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -37206,6 +37707,10 @@ const expression_binary_arithmetic_exponent$214_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -37426,7 +37931,9 @@ type expression_binary_arithmetic_floor_divide$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -37638,6 +38145,10 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -37858,7 +38369,9 @@ type expression_binary_arithmetic_floor_divide$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -38070,6 +38583,10 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -38290,7 +38807,9 @@ type expression_binary_arithmetic_modulo$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -38500,6 +39019,10 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -38720,7 +39243,9 @@ type expression_binary_arithmetic_modulo$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -38930,6 +39455,10 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -39150,7 +39679,9 @@ type expression_binary_arithmetic_multiply$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -39360,6 +39891,10 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -39580,7 +40115,9 @@ type expression_binary_arithmetic_multiply$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -39792,6 +40329,10 @@ const expression_binary_arithmetic_multiply$214_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -40012,7 +40553,9 @@ type expression_binary_arithmetic_subtract$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -40222,6 +40765,10 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -40442,7 +40989,9 @@ type expression_binary_arithmetic_subtract$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -40654,6 +41203,10 @@ const expression_binary_arithmetic_subtract$214_right = (
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -40874,7 +41427,9 @@ type expression_binary_bitwise_and$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -41084,6 +41639,10 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -41304,7 +41863,9 @@ type expression_binary_bitwise_and$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -41514,6 +42075,10 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -41734,7 +42299,9 @@ type expression_binary_bitwise_or$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -41944,6 +42511,10 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -42164,7 +42735,9 @@ type expression_binary_bitwise_or$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -42374,6 +42947,10 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -42594,7 +43171,9 @@ type expression_binary_bitwise_xor$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -42804,6 +43383,10 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -43024,7 +43607,9 @@ type expression_binary_bitwise_xor$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -43234,6 +43819,10 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -43537,7 +44126,9 @@ type expression_binary_comparison_chain$218_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -43747,6 +44338,10 @@ const expression_binary_comparison_chain$218_left = (value: expression_binary_co
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -43967,7 +44562,9 @@ type expression_binary_logical_and$213_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -44232,6 +44829,10 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -44507,7 +45108,9 @@ type expression_binary_logical_and$213_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -44772,6 +45375,10 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -45047,7 +45654,9 @@ type expression_binary_logical_or$213_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -45312,6 +45921,10 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -45587,7 +46200,9 @@ type expression_binary_logical_or$213_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -45852,6 +46467,10 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -46127,7 +46746,9 @@ type expression_binary_matrix_multiply$214_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -46337,6 +46958,10 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -46557,7 +47182,9 @@ type expression_binary_matrix_multiply$214_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -46767,6 +47394,10 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -46987,7 +47618,9 @@ type expression_binary_shift_left$214_count$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -47197,6 +47830,10 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -47417,7 +48054,9 @@ type expression_binary_shift_left$214_operand$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -47627,6 +48266,10 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -47847,7 +48490,9 @@ type expression_binary_shift_right$214_count$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -48057,6 +48702,10 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -48277,7 +48926,9 @@ type expression_binary_shift_right$214_operand$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -48487,6 +49138,10 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -48707,7 +49362,9 @@ type expression_call$229_arguments$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'argument.named'>
 	| TailInput<PythonMap, 'argument.named', 'named'>
 	| PythonMap['nodes']['argument.named']
@@ -48990,6 +49647,16 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 		return b.argumentList(
 			b.argumentListElements(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.argumentList(
+				b.argumentListElements(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+			);
+		if (value === false)
+			return b.argumentList(
+				b.argumentListElements(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [246])) return value;
@@ -49277,7 +49944,9 @@ type expression_call$229_arguments$item$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'argument.named'>
 	| TailInput<PythonMap, 'argument.named', 'named'>
 	| PythonMap['nodes']['argument.named']
@@ -49553,6 +50222,10 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -49839,7 +50512,9 @@ type expression_call$229_function$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -50049,6 +50724,10 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -50269,7 +50948,9 @@ type expression_collection_list$238_elements$item$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'element.spread'>
 	| TailInput<PythonMap, 'element.spread', 'spread'>
 	| PythonMap['nodes']['element.spread']
@@ -50545,6 +51226,10 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -50858,7 +51543,9 @@ type expression_collection_set$239_elements$item$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'element.spread'>
 	| TailInput<PythonMap, 'element.spread', 'spread'>
 	| PythonMap['nodes']['element.spread']
@@ -51134,6 +51821,10 @@ const expression_collection_set$239_elements$item = (value: expression_collectio
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -51420,7 +52111,9 @@ type expression_collection_tuple$240_elements$item$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'element.spread'>
 	| TailInput<PythonMap, 'element.spread', 'spread'>
 	| PythonMap['nodes']['element.spread']
@@ -51696,6 +52389,10 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -51982,7 +52679,9 @@ type expression_collection_tuple_bare$186_elements$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -52250,6 +52949,10 @@ const expression_collection_tuple_bare$186_elements = (value: expression_collect
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -52528,7 +53231,9 @@ type expression_comprehension_generator$246_body$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -52793,6 +53498,10 @@ const expression_comprehension_generator$246_body = (value: expression_comprehen
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -53097,7 +53806,9 @@ type expression_comprehension_list$243_body$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -53362,6 +54073,10 @@ const expression_comprehension_list$243_body = (value: expression_comprehension_
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -53705,7 +54420,9 @@ type expression_comprehension_set$245_body$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -53970,6 +54687,10 @@ const expression_comprehension_set$245_body = (value: expression_comprehension_s
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -54272,7 +54993,9 @@ type expression_conditional$251_alternative$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -54537,6 +55260,10 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -54812,7 +55539,9 @@ type expression_conditional$251_condition$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -55077,6 +55806,10 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -55352,7 +56085,9 @@ type expression_conditional$251_consequence$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -55617,6 +56352,10 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -55892,7 +56631,9 @@ type expression_interpolation$360_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -56168,6 +56909,10 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -56511,7 +57256,9 @@ type expression_lambda$219_body$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -56776,6 +57523,10 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -57051,7 +57802,9 @@ type expression_lambda$219_body$kind$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -57316,6 +58069,10 @@ const expression_lambda$219_body$kind = (value: expression_lambda$219_body$kind$
 			return 100;
 		}
 		return 101;
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return 69;
+		if (value === false) return 70;
 	}
 	if (isNode(value)) return value.$type;
 	switch (value.$path) {
@@ -57718,7 +58475,9 @@ type expression_lambda$220_body$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -57983,6 +58742,10 @@ const expression_lambda$220_body = (value: expression_lambda$220_body$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -58408,7 +59171,9 @@ type expression_parenthesized$247_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -58679,6 +59444,10 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -58960,7 +59729,9 @@ type expression_subscript$227_index$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -59231,6 +60002,11 @@ const expression_subscript$227_index = (value: expression_subscript$227_index$It
 			return b.subscripts(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.subscripts(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.subscripts(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.subscripts(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (seated(value, [272])) return value;
@@ -59513,7 +60289,9 @@ type expression_subscript$227_object$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -59723,6 +60501,10 @@ const expression_subscript$227_object = (value: expression_subscript$227_object$
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -59943,7 +60725,9 @@ type expression_unary_bitwise_not$215_argument$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -60153,6 +60937,10 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -60373,7 +61161,9 @@ type expression_unary_negation$215_argument$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -60583,6 +61373,10 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -60803,7 +61597,9 @@ type expression_unary_not$212_argument$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -61068,6 +61864,10 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -61343,7 +62143,9 @@ type expression_unary_plus$215_argument$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.await'>
 	| TailInput<PythonMap, 'expression.await', 'await'>
 	| PythonMap['nodes']['expression.await']
@@ -61553,6 +62355,10 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -61773,7 +62579,9 @@ type expression_yield$225_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -62041,6 +62849,10 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -62325,7 +63137,9 @@ type file$133_statements$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -62726,6 +63540,20 @@ const file$133_statements = (value: file$133_statements$Item) => {
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -63261,7 +64089,9 @@ type identifier_qualified$187_qualifier$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -63539,6 +64369,9 @@ const identifier_qualified$187_qualifier = (value: identifier_qualified$187_qual
 	if (typeof value === 'number') {
 		if (seated(value, [187])) return value;
 		return unseated('identifier.qualified.qualifier', value);
+	}
+	if (typeof value === 'boolean') {
+		throw new Error('portable build: identifier.qualified.qualifier builds no boolean');
 	}
 	if (isNode(value)) {
 		if (seated(value, [187])) return value;
@@ -63844,7 +64677,9 @@ type identifier_qualified$236_qualifier$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -64125,6 +64960,10 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -64781,7 +65620,9 @@ type pattern_as$190_pattern$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'identifier.qualified'>
 	| TailInput<PythonMap, 'identifier.qualified', 'qualified'>
 	| PythonMap['nodes']['identifier.qualified']
@@ -64940,6 +65781,14 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 			);
 		}
 		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.casePattern(b.simplePattern(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value })));
+		if (value === false)
+			return b.casePattern(
+				b.simplePattern(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -65504,7 +66353,9 @@ type pattern_list$203_elements$item$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.member'>
 	| TailInput<PythonMap, 'expression.member', 'member'>
 	| PythonMap['nodes']['expression.member']
@@ -65661,6 +66512,9 @@ const pattern_list$203_elements$item = (value: pattern_list$203_elements$item$It
 	if (typeof value === 'number') {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
 		return unseated('pattern.list.elements', value);
+	}
+	if (typeof value === 'boolean') {
+		throw new Error('portable build: pattern.list.elements builds no boolean');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
@@ -65823,7 +66677,9 @@ type pattern_list$284_elements$item$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.member'>
 	| TailInput<PythonMap, 'expression.member', 'member'>
 	| PythonMap['nodes']['expression.member']
@@ -65990,6 +66846,14 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 			);
 		}
 		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.casePattern(b.simplePattern(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value })));
+		if (value === false)
+			return b.casePattern(
+				b.simplePattern(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -66189,7 +67053,9 @@ type pattern_or$191_left$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'identifier.qualified'>
 	| TailInput<PythonMap, 'identifier.qualified', 'qualified'>
 	| PythonMap['nodes']['identifier.qualified']
@@ -66338,6 +67204,10 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -66494,7 +67364,9 @@ type pattern_or$191_right$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'identifier.qualified'>
 	| TailInput<PythonMap, 'identifier.qualified', 'qualified'>
 	| PythonMap['nodes']['identifier.qualified']
@@ -66643,6 +67515,10 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -66957,7 +67833,9 @@ type pattern_struct$196_fields$item$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'identifier.qualified'>
 	| TailInput<PythonMap, 'identifier.qualified', 'qualified'>
 	| PythonMap['nodes']['identifier.qualified']
@@ -67116,6 +67994,14 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 			);
 		}
 		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.casePattern(b.simplePattern(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value })));
+		if (value === false)
+			return b.casePattern(
+				b.simplePattern(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -67317,7 +68203,9 @@ type pattern_struct_field$194_pattern$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'identifier.qualified'>
 	| TailInput<PythonMap, 'identifier.qualified', 'qualified'>
 	| PythonMap['nodes']['identifier.qualified']
@@ -67466,6 +68354,10 @@ const pattern_struct_field$194_pattern = (value: pattern_struct_field$194_patter
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -67623,7 +68515,9 @@ type pattern_tuple$202_elements$item$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.member'>
 	| TailInput<PythonMap, 'expression.member', 'member'>
 	| PythonMap['nodes']['expression.member']
@@ -67780,6 +68674,9 @@ const pattern_tuple$202_elements$item = (value: pattern_tuple$202_elements$item$
 	if (typeof value === 'number') {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
 		return unseated('pattern.tuple.elements', value);
+	}
+	if (typeof value === 'boolean') {
+		throw new Error('portable build: pattern.tuple.elements builds no boolean');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
@@ -67942,7 +68839,9 @@ type pattern_tuple$283_elements$item$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.member'>
 	| TailInput<PythonMap, 'expression.member', 'member'>
 	| PythonMap['nodes']['expression.member']
@@ -68109,6 +69008,14 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 			);
 		}
 		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.casePattern(b.simplePattern(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value })));
+		if (value === false)
+			return b.casePattern(
+				b.simplePattern(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -68281,7 +69188,9 @@ type pattern_tuple_bare$223_elements$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.member'>
 	| TailInput<PythonMap, 'expression.member', 'member'>
 	| PythonMap['nodes']['expression.member']
@@ -68438,6 +69347,9 @@ const pattern_tuple_bare$223_elements = (value: pattern_tuple_bare$223_elements$
 	if (typeof value === 'number') {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
 		return unseated('pattern.tuple.bare.elements', value);
+	}
+	if (typeof value === 'boolean') {
+		throw new Error('portable build: pattern.tuple.bare.elements builds no boolean');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 201, 202, 203, 206, 226, 227])) return value;
@@ -68600,7 +69512,9 @@ type pattern_tuple_bare$280_elements$Item =
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| Text<PythonMap, 'pattern.wildcard'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.member'>
 	| TailInput<PythonMap, 'expression.member', 'member'>
 	| PythonMap['nodes']['expression.member']
@@ -68767,6 +69681,14 @@ const pattern_tuple_bare$280_elements = (value: pattern_tuple_bare$280_elements$
 			);
 		}
 		return b.casePattern(b.simplePattern(literal_number_float$101({ $path: 'literal.number.float', $value: value })));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.casePattern(b.simplePattern(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value })));
+		if (value === false)
+			return b.casePattern(
+				b.simplePattern(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [190, 194])) return b.casePattern(value);
@@ -68937,7 +69859,9 @@ type statement_assert$146_expressions$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -69202,6 +70126,10 @@ const statement_assert$146_expressions = (value: statement_assert$146_expression
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -69477,7 +70405,9 @@ type statement_delete$151_expressions$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -69745,6 +70675,10 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -70149,7 +71083,9 @@ type statement_exec$177_inClauses$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -70414,6 +71350,10 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -70740,7 +71680,9 @@ type statement_if$156_condition$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -71005,6 +71947,10 @@ const statement_if$156_condition = (value: statement_if$156_condition$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -71286,7 +72232,9 @@ type statement_if$156_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -71687,6 +72635,20 @@ const statement_if$156_statements$item = (value: statement_if$156_statements$ite
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -72326,7 +73288,9 @@ type statement_loop_for_each$162_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -72594,6 +73558,10 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -72878,7 +73846,9 @@ type statement_loop_for_each$162_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -73279,6 +74249,20 @@ const statement_loop_for_each$162_statements$item = (value: statement_loop_for_e
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -73804,7 +74788,9 @@ type statement_loop_while$163_condition$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -74069,6 +75055,10 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -74350,7 +75340,9 @@ type statement_loop_while$163_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -74751,6 +75743,20 @@ const statement_loop_while$163_statements$item = (value: statement_loop_while$16
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -75276,7 +76282,9 @@ type statement_match$159_subject$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -75544,6 +76552,10 @@ const statement_match$159_subject = (value: statement_match$159_subject$Item) =>
 			return b.subjects(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.subjects(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.subjects(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.subjects(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (seated(value, [266])) return value;
@@ -75853,7 +76865,9 @@ type statement_resource$167_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -76254,6 +77268,20 @@ const statement_resource$167_statements$item = (value: statement_resource$167_st
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -76781,7 +77809,9 @@ type statement_return$150_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -77049,6 +78079,10 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -77327,7 +78361,9 @@ type statement_throw$152_cause$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -77592,6 +78628,10 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -77867,7 +78907,9 @@ type statement_throw$152_expression$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -78135,6 +79177,10 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
 		}
 		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -78455,7 +79501,9 @@ type statement_try$164_statements$item$Item =
 	| Text<PythonMap, 'statement.continue'>
 	| Text<PythonMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'declaration.constant'>
 	| TailInput<PythonMap, 'declaration.constant', 'constant'>
 	| PythonMap['nodes']['declaration.constant']
@@ -78856,6 +79904,20 @@ const statement_try$164_statements$item = (value: statement_try$164_statements$i
 				b.expressionStatement(literal_number_float$101({ $path: 'literal.number.float', $value: value }))
 			)
 		);
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }))
+				)
+			);
+		if (value === false)
+			return b.simpleStatements(
+				b.simpleStatementsElements(
+					b.expressionStatement(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }))
+				)
+			);
 	}
 	if (isNode(value)) {
 		if (seated(value, [134, 156, 159, 162, 163, 164, 167, 170, 179])) return value;
@@ -79367,7 +80429,9 @@ type type_constrained$235_baseType$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -79648,6 +80712,10 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -79939,7 +81007,9 @@ type type_constrained$235_constraint$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -80220,6 +81290,10 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -80535,7 +81609,9 @@ type type_generic$233_typeArguments$item$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -80816,6 +81892,10 @@ const type_generic$233_typeArguments$item = (value: type_generic$233_typeArgumen
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -81143,7 +82223,9 @@ type type_union$234_left$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -81424,6 +82506,10 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -81715,7 +82801,9 @@ type type_union$234_right$Item =
 	| Text<PythonMap, 'literal.number.integer'>
 	| Text<PythonMap, 'literal.number.integer.imaginary'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<PythonMap, 'expression.assignment'>
 	| TailInput<PythonMap, 'expression.assignment', 'assignment'>
 	| PythonMap['nodes']['expression.assignment']
@@ -81996,6 +83084,10 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 			return b.type(literal_number_integer$100({ $path: 'literal.number.integer', $value: value }));
 		}
 		return b.type(literal_number_float$101({ $path: 'literal.number.float', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.type(literal_boolean_true$69({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false) return b.type(literal_boolean_false$70({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (

@@ -115,7 +115,8 @@ export interface PortableSeat {
  * absent and reads `[]` when it is present and empty, and a build makes the empty container for `[]` and leaves it out for an absent slot.
  * `takers` names, for each scalar type, the path a bare number of that type builds through here: of the paths whose `builds` arm for that
  * type sits in one of the slot's seats, the one inside none of the others. A safe integer is an `integer`, any other number a `float`. In a
- * slot with takers a number is always a number, never a kind id.
+ * slot with takers a number is always a number, never a kind id. Its `true` and `false` name the path a bare boolean builds through, the
+ * same way, from the paths whose literal arm reads that value.
  */
 export interface PortableSlotRoute {
 	readonly name: string;
@@ -127,7 +128,7 @@ export interface PortableSlotRoute {
 	readonly seats: readonly PortableSeat[];
 	readonly requires?: readonly (readonly string[])[];
 	readonly reads?: readonly number[];
-	readonly takers?: Readonly<Partial<Record<NonNullable<PortableBuildArm['scalar']>, string>>>;
+	readonly takers?: Readonly<Partial<Record<NonNullable<PortableBuildArm['scalar']> | 'true' | 'false', string>>>;
 }
 
 /** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id (with `presence`, a keyword alone in a presence slot, which a builder takes as `true`), a token's text (with `builder`, the leaf builder that builds that text where the slot holds a leaf node; with `among`, the canonical texts a read may hold there without contradicting it, of which `text` is the one built), or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the slot routed to those steps, or the slots routed beneath them, as its input, and no input when no slot reaches them. */

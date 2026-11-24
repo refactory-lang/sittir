@@ -38058,6 +38058,8 @@ export interface TypeScriptMap extends V.GrammarMap {
 	readonly inputs: {
 		readonly 'comment.html': string;
 		readonly identifier: string;
+		readonly 'literal.boolean.false': false;
+		readonly 'literal.boolean.true': true;
 		readonly 'literal.number': string | bigint | number;
 		readonly 'literal.number.float': number | { readonly $path: 'literal.number'; readonly $value: number };
 		readonly 'literal.number.float.leading_point': number;

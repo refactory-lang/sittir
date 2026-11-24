@@ -100,7 +100,9 @@ type attribute_call$287_arguments$item$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'element.spread'>
 	| TailInput<TypeScriptMap, 'element.spread', 'spread'>
 	| TypeScriptMap['nodes']['element.spread']
@@ -409,6 +411,10 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -1181,7 +1187,9 @@ type clause_case_default$231_statements$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -1588,6 +1596,12 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -2094,7 +2108,9 @@ type clause_case_switch$230_statements$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -2501,6 +2517,12 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -3005,7 +3027,9 @@ type clause_case_switch$230_value$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -3313,6 +3337,10 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -3936,7 +3964,9 @@ type clause_else$212_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -4343,6 +4373,12 @@ const clause_else$212_statements$item = (value: clause_else$212_statements$item$
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -5077,7 +5113,9 @@ type clause_finally$233_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -5484,6 +5522,12 @@ const clause_finally$233_statements$item = (value: clause_finally$233_statements
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -7263,7 +7307,9 @@ type declaration_member_constructor$469_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -7672,6 +7718,12 @@ const declaration_member_constructor$469_statements$item = (
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -8233,7 +8285,9 @@ type declaration_member_constructor_private$469_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -8642,6 +8696,12 @@ const declaration_member_constructor_private$469_statements$item = (
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -9203,7 +9263,9 @@ type declaration_member_constructor_protected$469_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -9612,6 +9674,12 @@ const declaration_member_constructor_protected$469_statements$item = (
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -10173,7 +10241,9 @@ type declaration_member_constructor_public$469_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -10582,6 +10652,12 @@ const declaration_member_constructor_public$469_statements$item = (
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -11086,7 +11162,9 @@ type declaration_member_enum_member$324_name$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -11397,6 +11475,12 @@ const declaration_member_enum_member$324_name = (value: declaration_member_enum_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.computedPropertyName(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.computedPropertyName(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (seated(value, [109, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 273, 277, 404, 426, 427, 505]))
@@ -11731,7 +11815,9 @@ type declaration_member_enum_member$324_value$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -12036,6 +12122,10 @@ const declaration_member_enum_member$324_value = (value: declaration_member_enum
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -12368,7 +12458,9 @@ type declaration_member_enum_member$388_name$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -12679,6 +12771,12 @@ const declaration_member_enum_member$388_name = (value: declaration_member_enum_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.computedPropertyName(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.computedPropertyName(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (seated(value, [109, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 273, 277, 404, 426, 427, 505]))
@@ -14361,7 +14459,9 @@ type declaration_member_static_block$290_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -14770,6 +14870,12 @@ const declaration_member_static_block$290_statements$item = (
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -15319,7 +15425,9 @@ type declaration_module$316_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -15726,6 +15834,12 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -16275,7 +16389,9 @@ type declaration_module_external$315_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -16684,6 +16800,12 @@ const declaration_module_external$315_statements$item = (
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -17550,7 +17672,9 @@ type declaration_parameter$328_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -17855,6 +17979,10 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -18595,7 +18723,9 @@ type declaration_parameter$329_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -18900,6 +19030,10 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -19645,7 +19779,9 @@ type declaration_parameter_private$328_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -19950,6 +20086,10 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -20690,7 +20830,9 @@ type declaration_parameter_private$329_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -20995,6 +21137,10 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -21740,7 +21886,9 @@ type declaration_parameter_protected$328_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -22045,6 +22193,10 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -22785,7 +22937,9 @@ type declaration_parameter_protected$329_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -23090,6 +23244,10 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -23835,7 +23993,9 @@ type declaration_parameter_public$328_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -24140,6 +24300,10 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -24880,7 +25044,9 @@ type declaration_parameter_public$329_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -25185,6 +25351,10 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -25930,7 +26100,9 @@ type declaration_parameter_receiver$473_default$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -26235,6 +26407,10 @@ const declaration_parameter_receiver$473_default = (value: declaration_parameter
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -27555,7 +27731,9 @@ type declaration_variable$440_value$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -27860,6 +28038,10 @@ const declaration_variable$440_value = (value: declaration_variable$440_value$It
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -28900,7 +29082,9 @@ type declaration_variable_pattern$440_value$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -29205,6 +29389,10 @@ const declaration_variable_pattern$440_value = (value: declaration_variable_patt
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -29681,7 +29869,9 @@ type element_spread$267_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -29986,6 +30176,10 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31218,7 +31412,9 @@ type expression_assignment$262_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -31523,6 +31719,10 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -31915,7 +32115,9 @@ type expression_assignment_compound_add$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -32220,6 +32422,10 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -32612,7 +32818,9 @@ type expression_assignment_compound_and$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -32917,6 +33125,10 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -33311,7 +33523,9 @@ type expression_assignment_compound_bitwise_and$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -33618,6 +33832,10 @@ const expression_assignment_compound_bitwise_and$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -34012,7 +34230,9 @@ type expression_assignment_compound_bitwise_or$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -34319,6 +34539,10 @@ const expression_assignment_compound_bitwise_or$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -34713,7 +34937,9 @@ type expression_assignment_compound_bitwise_xor$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -35020,6 +35246,10 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -35414,7 +35644,9 @@ type expression_assignment_compound_coalesce$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -35721,6 +35953,10 @@ const expression_assignment_compound_coalesce$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -36113,7 +36349,9 @@ type expression_assignment_compound_divide$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -36420,6 +36658,10 @@ const expression_assignment_compound_divide$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -36814,7 +37056,9 @@ type expression_assignment_compound_exponent$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -37121,6 +37365,10 @@ const expression_assignment_compound_exponent$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -37513,7 +37761,9 @@ type expression_assignment_compound_modulo$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -37820,6 +38070,10 @@ const expression_assignment_compound_modulo$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -38214,7 +38468,9 @@ type expression_assignment_compound_multiply$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -38521,6 +38777,10 @@ const expression_assignment_compound_multiply$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -38913,7 +39173,9 @@ type expression_assignment_compound_or$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -39218,6 +39480,10 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -39612,7 +39878,9 @@ type expression_assignment_compound_shift_left$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -39919,6 +40187,10 @@ const expression_assignment_compound_shift_left$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -40313,7 +40585,9 @@ type expression_assignment_compound_shift_right$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -40620,6 +40894,10 @@ const expression_assignment_compound_shift_right$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -41014,7 +41292,9 @@ type expression_assignment_compound_shift_right_unsigned$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -41321,6 +41601,10 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -41715,7 +41999,9 @@ type expression_assignment_compound_subtract$264_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -42022,6 +42308,10 @@ const expression_assignment_compound_subtract$264_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -42354,7 +42644,9 @@ type expression_await$258_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -42659,6 +42951,10 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -42991,7 +43287,9 @@ type expression_binary_arithmetic_add$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -43296,6 +43594,10 @@ const expression_binary_arithmetic_add$406_left = (value: expression_binary_arit
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -43628,7 +43930,9 @@ type expression_binary_arithmetic_add$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -43933,6 +44237,10 @@ const expression_binary_arithmetic_add$406_right = (value: expression_binary_ari
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -44265,7 +44573,9 @@ type expression_binary_arithmetic_divide$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -44570,6 +44880,10 @@ const expression_binary_arithmetic_divide$406_left = (value: expression_binary_a
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -44902,7 +45216,9 @@ type expression_binary_arithmetic_divide$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -45207,6 +45523,10 @@ const expression_binary_arithmetic_divide$406_right = (value: expression_binary_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -45539,7 +45859,9 @@ type expression_binary_arithmetic_exponent$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -45844,6 +46166,10 @@ const expression_binary_arithmetic_exponent$406_left = (value: expression_binary
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -46176,7 +46502,9 @@ type expression_binary_arithmetic_exponent$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -46483,6 +46811,10 @@ const expression_binary_arithmetic_exponent$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -46815,7 +47147,9 @@ type expression_binary_arithmetic_modulo$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -47120,6 +47454,10 @@ const expression_binary_arithmetic_modulo$406_left = (value: expression_binary_a
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -47452,7 +47790,9 @@ type expression_binary_arithmetic_modulo$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -47757,6 +48097,10 @@ const expression_binary_arithmetic_modulo$406_right = (value: expression_binary_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -48089,7 +48433,9 @@ type expression_binary_arithmetic_multiply$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -48394,6 +48740,10 @@ const expression_binary_arithmetic_multiply$406_left = (value: expression_binary
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -48726,7 +49076,9 @@ type expression_binary_arithmetic_multiply$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -49033,6 +49385,10 @@ const expression_binary_arithmetic_multiply$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -49365,7 +49721,9 @@ type expression_binary_arithmetic_subtract$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -49670,6 +50028,10 @@ const expression_binary_arithmetic_subtract$406_left = (value: expression_binary
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -50002,7 +50364,9 @@ type expression_binary_arithmetic_subtract$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -50309,6 +50673,10 @@ const expression_binary_arithmetic_subtract$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -50641,7 +51009,9 @@ type expression_binary_bitwise_and$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -50946,6 +51316,10 @@ const expression_binary_bitwise_and$406_left = (value: expression_binary_bitwise
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -51278,7 +51652,9 @@ type expression_binary_bitwise_and$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -51583,6 +51959,10 @@ const expression_binary_bitwise_and$406_right = (value: expression_binary_bitwis
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -51915,7 +52295,9 @@ type expression_binary_bitwise_or$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -52220,6 +52602,10 @@ const expression_binary_bitwise_or$406_left = (value: expression_binary_bitwise_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -52552,7 +52938,9 @@ type expression_binary_bitwise_or$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -52857,6 +53245,10 @@ const expression_binary_bitwise_or$406_right = (value: expression_binary_bitwise
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -53189,7 +53581,9 @@ type expression_binary_bitwise_xor$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -53494,6 +53888,10 @@ const expression_binary_bitwise_xor$406_left = (value: expression_binary_bitwise
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -53826,7 +54224,9 @@ type expression_binary_bitwise_xor$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -54131,6 +54531,10 @@ const expression_binary_bitwise_xor$406_right = (value: expression_binary_bitwis
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -54463,7 +54867,9 @@ type expression_binary_coalesce$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -54768,6 +55174,10 @@ const expression_binary_coalesce$406_left = (value: expression_binary_coalesce$4
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -55100,7 +55510,9 @@ type expression_binary_coalesce$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -55405,6 +55817,10 @@ const expression_binary_coalesce$406_right = (value: expression_binary_coalesce$
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -55737,7 +56153,9 @@ type expression_binary_comparison_equal$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -56042,6 +56460,10 @@ const expression_binary_comparison_equal$406_left = (value: expression_binary_co
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -56374,7 +56796,9 @@ type expression_binary_comparison_equal$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -56679,6 +57103,10 @@ const expression_binary_comparison_equal$406_right = (value: expression_binary_c
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -57011,7 +57439,9 @@ type expression_binary_comparison_greater$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -57316,6 +57746,10 @@ const expression_binary_comparison_greater$406_left = (value: expression_binary_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -57648,7 +58082,9 @@ type expression_binary_comparison_greater$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -57953,6 +58389,10 @@ const expression_binary_comparison_greater$406_right = (value: expression_binary
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -58285,7 +58725,9 @@ type expression_binary_comparison_greater_equal$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -58592,6 +59034,10 @@ const expression_binary_comparison_greater_equal$406_left = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -58924,7 +59370,9 @@ type expression_binary_comparison_greater_equal$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -59231,6 +59679,10 @@ const expression_binary_comparison_greater_equal$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -59563,7 +60015,9 @@ type expression_binary_comparison_less$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -59868,6 +60322,10 @@ const expression_binary_comparison_less$406_left = (value: expression_binary_com
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -60200,7 +60658,9 @@ type expression_binary_comparison_less$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -60505,6 +60965,10 @@ const expression_binary_comparison_less$406_right = (value: expression_binary_co
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -60837,7 +61301,9 @@ type expression_binary_comparison_less_equal$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -61144,6 +61610,10 @@ const expression_binary_comparison_less_equal$406_left = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -61476,7 +61946,9 @@ type expression_binary_comparison_less_equal$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -61783,6 +62255,10 @@ const expression_binary_comparison_less_equal$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -62115,7 +62591,9 @@ type expression_binary_comparison_loose_equal$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -62422,6 +62900,10 @@ const expression_binary_comparison_loose_equal$406_left = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -62754,7 +63236,9 @@ type expression_binary_comparison_loose_equal$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -63061,6 +63545,10 @@ const expression_binary_comparison_loose_equal$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -63393,7 +63881,9 @@ type expression_binary_comparison_loose_not_equal$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -63700,6 +64190,10 @@ const expression_binary_comparison_loose_not_equal$406_left = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -64032,7 +64526,9 @@ type expression_binary_comparison_loose_not_equal$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -64339,6 +64835,10 @@ const expression_binary_comparison_loose_not_equal$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -64671,7 +65171,9 @@ type expression_binary_comparison_not_equal$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -64978,6 +65480,10 @@ const expression_binary_comparison_not_equal$406_left = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -65310,7 +65816,9 @@ type expression_binary_comparison_not_equal$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -65617,6 +66125,10 @@ const expression_binary_comparison_not_equal$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -65949,7 +66461,9 @@ type expression_binary_logical_and$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -66254,6 +66768,10 @@ const expression_binary_logical_and$406_left = (value: expression_binary_logical
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -66586,7 +67104,9 @@ type expression_binary_logical_and$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -66891,6 +67411,10 @@ const expression_binary_logical_and$406_right = (value: expression_binary_logica
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -67223,7 +67747,9 @@ type expression_binary_logical_or$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -67528,6 +68054,10 @@ const expression_binary_logical_or$406_left = (value: expression_binary_logical_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -67860,7 +68390,9 @@ type expression_binary_logical_or$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -68165,6 +68697,10 @@ const expression_binary_logical_or$406_right = (value: expression_binary_logical
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -68497,7 +69033,9 @@ type expression_binary_membership_in$405_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -68802,6 +69340,10 @@ const expression_binary_membership_in$405_left = (value: expression_binary_membe
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -69134,7 +69676,9 @@ type expression_binary_membership_in$405_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -69439,6 +69983,10 @@ const expression_binary_membership_in$405_right = (value: expression_binary_memb
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -69771,7 +70319,9 @@ type expression_binary_membership_instanceof$406_left$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -70078,6 +70628,10 @@ const expression_binary_membership_instanceof$406_left = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -70410,7 +70964,9 @@ type expression_binary_membership_instanceof$406_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -70717,6 +71273,10 @@ const expression_binary_membership_instanceof$406_right = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -71049,7 +71609,9 @@ type expression_binary_shift_left$406_count$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -71354,6 +71916,10 @@ const expression_binary_shift_left$406_count = (value: expression_binary_shift_l
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -71686,7 +72252,9 @@ type expression_binary_shift_left$406_operand$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -71991,6 +72559,10 @@ const expression_binary_shift_left$406_operand = (value: expression_binary_shift
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -72323,7 +72895,9 @@ type expression_binary_shift_right$406_count$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -72628,6 +73202,10 @@ const expression_binary_shift_right$406_count = (value: expression_binary_shift_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -72960,7 +73538,9 @@ type expression_binary_shift_right$406_operand$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -73265,6 +73845,10 @@ const expression_binary_shift_right$406_operand = (value: expression_binary_shif
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -73597,7 +74181,9 @@ type expression_binary_shift_right_unsigned$406_count$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -73904,6 +74490,10 @@ const expression_binary_shift_right_unsigned$406_count = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -74236,7 +74826,9 @@ type expression_binary_shift_right_unsigned$406_operand$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -74543,6 +75135,10 @@ const expression_binary_shift_right_unsigned$406_operand = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -74875,7 +75471,9 @@ type expression_call$423_arguments$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'element.spread'>
 	| TailInput<TypeScriptMap, 'element.spread', 'spread'>
 	| TypeScriptMap['nodes']['element.spread']
@@ -75183,6 +75781,11 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 			return b.arguments(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.arguments(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.arguments(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.arguments(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -75518,7 +76121,9 @@ type expression_call$423_arguments$item$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'element.spread'>
 	| TailInput<TypeScriptMap, 'element.spread', 'spread'>
 	| TypeScriptMap['nodes']['element.spread']
@@ -75827,6 +76432,10 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -76164,7 +76773,9 @@ type expression_call$423_function$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -76471,6 +77082,10 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -77089,7 +77704,9 @@ type expression_call$425_arguments$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'element.spread'>
 	| TailInput<TypeScriptMap, 'element.spread', 'spread'>
 	| TypeScriptMap['nodes']['element.spread']
@@ -77397,6 +78014,11 @@ const expression_call$425_arguments = (value: expression_call$425_arguments$Item
 			return b.arguments(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.arguments(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.arguments(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.arguments(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -77732,7 +78354,9 @@ type expression_call$425_arguments$item$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'element.spread'>
 	| TailInput<TypeScriptMap, 'element.spread', 'spread'>
 	| TypeScriptMap['nodes']['element.spread']
@@ -78041,6 +78665,10 @@ const expression_call$425_arguments$item = (value: expression_call$425_arguments
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -78378,7 +79006,9 @@ type expression_call$425_function$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -78683,6 +79313,10 @@ const expression_call$425_function = (value: expression_call$425_function$Item) 
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -79297,7 +79931,9 @@ type expression_call_construct$257_arguments$item$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'element.spread'>
 	| TailInput<TypeScriptMap, 'element.spread', 'spread'>
 	| TypeScriptMap['nodes']['element.spread']
@@ -79606,6 +80242,10 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -79941,7 +80581,9 @@ type expression_call_construct$257_function$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.call'>
 	| TailInput<TypeScriptMap, 'expression.call', 'call'>
 	| TypeScriptMap['nodes']['expression.call']
@@ -80066,6 +80708,10 @@ const expression_call_construct$257_function = (value: expression_call_construct
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -80502,7 +81148,9 @@ type expression_call_construct_bare$257_function$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.call'>
 	| TailInput<TypeScriptMap, 'expression.call', 'call'>
 	| TypeScriptMap['nodes']['expression.call']
@@ -80627,6 +81275,10 @@ const expression_call_construct_bare$257_function = (value: expression_call_cons
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -81077,7 +81729,9 @@ type expression_call_template$424_function$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.call'>
 	| TailInput<TypeScriptMap, 'expression.call', 'call'>
 	| TypeScriptMap['nodes']['expression.call']
@@ -81208,6 +81862,10 @@ const expression_call_template$424_function = (value: expression_call_template$4
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -81362,7 +82020,9 @@ type expression_cast_assertion$306_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -81667,6 +82327,10 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -82288,7 +82952,9 @@ type expression_cast_assertion_angle_bracket$305_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -82595,6 +83261,10 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -83503,7 +84173,9 @@ type expression_cast_non_null$300_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -83808,6 +84480,10 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -84140,7 +84816,9 @@ type expression_cast_satisfies$307_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -84445,6 +85123,10 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -85063,7 +85745,9 @@ type expression_collection_list$242_elements$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'element.spread'>
 	| TailInput<TypeScriptMap, 'element.spread', 'spread'>
 	| TypeScriptMap['nodes']['element.spread']
@@ -85372,6 +86056,10 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -85821,7 +86509,9 @@ type expression_conditional$268_alternative$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -86126,6 +86816,10 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -86458,7 +87152,9 @@ type expression_conditional$268_condition$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -86763,6 +87459,10 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -87095,7 +87795,9 @@ type expression_conditional$268_consequence$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -87400,6 +88102,10 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -87732,7 +88438,9 @@ type expression_instantiation$308_function$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -88041,6 +88749,10 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -88664,7 +89376,9 @@ type expression_instantiation$357_function$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -88960,6 +89674,9 @@ const expression_instantiation$357_function = (value: expression_instantiation$3
 	if (typeof value === 'number') {
 		if (seated(value, [1, 354, 355])) return value;
 		return unseated('expression.instantiation.function', value);
+	}
+	if (typeof value === 'boolean') {
+		throw new Error('portable build: expression.instantiation.function builds no boolean');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 354, 355])) return value;
@@ -89543,7 +90260,9 @@ type expression_interpolation$275_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -89851,6 +90570,10 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -90186,7 +90909,9 @@ type expression_parenthesized$418_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -90494,6 +91219,10 @@ const expression_parenthesized$418_expression = (value: expression_parenthesized
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -91115,7 +91844,9 @@ type expression_parenthesized$419_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -91404,6 +92135,9 @@ const expression_parenthesized$419_expression = (value: expression_parenthesized
 	if (typeof value === 'number') {
 		if (seated(value, [272])) return value;
 		return unseated('expression.parenthesized.expression', value);
+	}
+	if (typeof value === 'boolean') {
+		throw new Error('portable build: expression.parenthesized.expression builds no boolean');
 	}
 	if (isNode(value)) {
 		if (seated(value, [272])) return value;
@@ -91699,7 +92433,9 @@ type expression_parenthesized$419_expression$kind$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -91990,6 +92726,9 @@ const expression_parenthesized$419_expression$kind = (
 	if (typeof value === 'number') {
 		return value;
 	}
+	if (typeof value === 'boolean') {
+		return undefined;
+	}
 	if (isNode(value)) return value.$type;
 	switch (value.$path) {
 		case 'sequence':
@@ -92010,7 +92749,9 @@ type expression_sequence$272_expressions$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -92315,6 +93056,10 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -92647,7 +93392,9 @@ type expression_subscript$260_index$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -92955,6 +93702,10 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -93290,7 +94041,9 @@ type expression_subscript$260_object$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -93595,6 +94348,10 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -93927,7 +94684,9 @@ type expression_unary_bitwise_not$270_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -94232,6 +94991,10 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -94564,7 +95327,9 @@ type expression_unary_delete$270_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -94869,6 +95634,10 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -95201,7 +95970,9 @@ type expression_unary_negation$270_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -95506,6 +96277,10 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -95838,7 +96613,9 @@ type expression_unary_not$270_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -96143,6 +96920,10 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -96475,7 +97256,9 @@ type expression_unary_plus$270_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -96780,6 +97563,10 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -97112,7 +97899,9 @@ type expression_unary_typeof$270_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -97417,6 +98206,10 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -97749,7 +98542,9 @@ type expression_unary_void$270_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -98054,6 +98849,10 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -98386,7 +99185,9 @@ type expression_update_decrement$428_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -98691,6 +99492,10 @@ const expression_update_decrement$428_argument = (value: expression_update_decre
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -99023,7 +99828,9 @@ type expression_update_decrement$429_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -99328,6 +100135,10 @@ const expression_update_decrement$429_argument = (value: expression_update_decre
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -99660,7 +100471,9 @@ type expression_update_increment$428_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -99965,6 +100778,10 @@ const expression_update_increment$428_argument = (value: expression_update_incre
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -100297,7 +101114,9 @@ type expression_update_increment$429_argument$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -100602,6 +101421,10 @@ const expression_update_increment$429_argument = (value: expression_update_incre
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -100934,7 +101757,9 @@ type expression_yield$237_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -101239,6 +102064,10 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -102238,7 +103067,9 @@ type pattern_assignment$240_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -102543,6 +103374,10 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -103044,7 +103879,9 @@ type pattern_object_assignment$241_right$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -103349,6 +104186,10 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -103772,7 +104613,9 @@ type statement_block$211_statements$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -104179,6 +105022,12 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -104731,7 +105580,9 @@ type statement_export$421_value$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -105036,6 +105887,10 @@ const statement_export$421_value = (value: statement_export$421_value$Item) => {
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -105575,7 +106430,9 @@ type statement_if$213_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -105982,6 +106839,12 @@ const statement_if$213_statements$item = (value: statement_if$213_statements$ite
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -106553,7 +107416,9 @@ type statement_labeled$228_body$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -106960,6 +107825,12 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -107490,7 +108361,9 @@ type statement_loop_counted$215_condition$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -107800,6 +108673,10 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -108135,7 +109012,9 @@ type statement_loop_counted$215_increment$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -108443,6 +109322,10 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -108780,7 +109663,9 @@ type statement_loop_counted$215_initializer$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.variable.constant'>
 	| TailInput<TypeScriptMap, 'declaration.variable.constant', 'constant'>
 	| TypeScriptMap['nodes']['declaration.variable.constant']
@@ -109100,6 +109985,10 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -109471,7 +110360,9 @@ type statement_loop_counted$215_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -109878,6 +110769,12 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -110429,7 +111326,9 @@ type statement_loop_do_while$219_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -110836,6 +111735,12 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -111382,7 +112287,9 @@ type statement_loop_for_each$216_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -111789,6 +112696,12 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -112340,7 +113253,9 @@ type statement_loop_while$218_statements$item$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -112747,6 +113662,12 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -113251,7 +114172,9 @@ type statement_return$225_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -113559,6 +114482,10 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -113896,7 +114823,9 @@ type statement_scope$221_body$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| Text<TypeScriptMap, 'statement.empty'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'declaration.ambient'>
 	| TailInput<TypeScriptMap, 'declaration.ambient', 'ambient'>
 	| TypeScriptMap['nodes']['declaration.ambient']
@@ -114303,6 +115232,12 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 			return b.expressionStatement(literal_number$145({ $path: 'literal.number', $value: value }));
 		}
 		return b.expressionStatement(literal_number$141({ $path: 'literal.number', $value: value }));
+	}
+	if (typeof value === 'boolean') {
+		if (value === true)
+			return b.expressionStatement(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.expressionStatement(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
 	}
 	if (isNode(value)) {
 		if (
@@ -114876,7 +115811,9 @@ type statement_throw$226_expression$Item =
 	| Text<TypeScriptMap, 'identifier.super'>
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'expression.assignment'>
 	| TailInput<TypeScriptMap, 'expression.assignment', 'assignment'>
 	| TypeScriptMap['nodes']['expression.assignment']
@@ -115184,6 +116121,10 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (
@@ -117156,6 +118097,14 @@ type type_import$336_source$Item =
 	| PathInput<TypeScriptMap, 'literal.string'>
 	| TypeScriptMap['nodes']['literal.string']
 	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
+	| {
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
 	  };
@@ -117189,6 +118138,11 @@ const type_import$336_source = (value: type_import$336_source$Item) => {
 		}
 		return b.arguments(literal_number$141({ $path: 'literal.number', $value: value }));
 	}
+	if (typeof value === 'boolean') {
+		if (value === true) return b.arguments(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value }));
+		if (value === false)
+			return b.arguments(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value }));
+	}
 	if (isNode(value)) {
 		if (
 			seated(
@@ -117209,6 +118163,18 @@ const type_import$336_source = (value: type_import$336_source$Item) => {
 			if ((value.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
 				return b.arguments(literal_string$426(value));
 			return b.arguments(literal_string$427(value));
+		case 'literal.boolean.false':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === false)
+					return b.arguments(literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value.$value }));
+			}
+			return unbuilt('type.import.source', value);
+		case 'literal.boolean.true':
+			if (typeof value.$value === 'boolean') {
+				if (value.$value === true)
+					return b.arguments(literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value.$value }));
+			}
+			return unbuilt('type.import.source', value);
 		case 'literal.number':
 			if (typeof value.$value === 'bigint') {
 				return b.arguments(literal_number$151({ $path: 'literal.number', $value: value.$value }));
@@ -117227,6 +118193,14 @@ const type_import$336_source = (value: type_import$336_source$Item) => {
 type type_import$356_source$Item =
 	| PathInput<TypeScriptMap, 'literal.string'>
 	| TypeScriptMap['nodes']['literal.string']
+	| {
+			readonly $path: 'literal.boolean.false';
+			readonly $value: false;
+	  }
+	| {
+			readonly $path: 'literal.boolean.true';
+			readonly $value: true;
+	  }
 	| {
 			readonly $path: 'literal.number';
 			readonly $value: number | bigint;
@@ -118317,7 +119291,9 @@ const type_intersection$382_right = (value: type_intersection$382_right$Item) =>
 type type_literal$362_value$Item =
 	| Text<TypeScriptMap, 'literal.number.integer'>
 	| bigint
+	| false
 	| number
+	| true
 	| BuildInput<TypeScriptMap, 'literal.boolean.false'>
 	| TailInput<TypeScriptMap, 'literal.boolean.false', 'false'>
 	| TypeScriptMap['nodes']['literal.boolean.false']
@@ -118385,6 +119361,10 @@ const type_literal$362_value = (value: type_literal$362_value$Item) => {
 			return literal_number$145({ $path: 'literal.number', $value: value });
 		}
 		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'boolean') {
+		if (value === true) return literal_boolean_true$281({ $path: 'literal.boolean.true', $value: value });
+		if (value === false) return literal_boolean_false$282({ $path: 'literal.boolean.false', $value: value });
 	}
 	if (isNode(value)) {
 		if (

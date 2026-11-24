@@ -219,14 +219,20 @@ const spellingType = (text: readonly string[]): string =>
 
 const SCALAR_TYPES = { integer: 'number', float: 'number', bigint: 'bigint' } as const;
 
-export type ScalarInput = (typeof SCALAR_TYPES)[keyof typeof SCALAR_TYPES];
+export type ScalarInput = (typeof SCALAR_TYPES)[keyof typeof SCALAR_TYPES] | 'true' | 'false';
+
+const literalValuesOf = (built: PortableBuildTable['paths'][string]): readonly ScalarInput[] =>
+	built.arms.length > 0 && built.arms.every((arm) => arm.literal?.value !== undefined) ? built.arms.map((arm) => (arm.literal!.value ? 'true' : 'false')) : [];
 
 export const scalarInputsOf = (table: PortableBuildTable): ReadonlyMap<string, readonly ScalarInput[]> =>
 	new Map(
 		Object.entries(table.paths)
-			.filter(([, built]) => built.builds !== undefined)
 			.sort(([a], [b]) => byCodepoint(a, b))
-			.map(([path, built]) => [path, [...new Set((Object.keys(built.builds!) as (keyof typeof SCALAR_TYPES)[]).map((scalar) => SCALAR_TYPES[scalar]))].sort(byCodepoint)])
+			.map(([path, built]): [string, ScalarInput[]] => [
+				path,
+				[...new Set([...(Object.keys(built.builds ?? {}) as (keyof typeof SCALAR_TYPES)[]).map((scalar) => SCALAR_TYPES[scalar]), ...literalValuesOf(built)])].sort(byCodepoint)
+			])
+			.filter(([, inputs]) => inputs.length > 0)
 	);
 
 export function mapInputsOf(typedInput: PortableTypedInput): readonly (readonly [path: string, inputs: readonly string[]])[] {
