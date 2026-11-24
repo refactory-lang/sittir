@@ -25,7 +25,7 @@ import { runTemplateEmitter } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { generatedFieldIds, type GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { listViewOwners, wrappedItemLists } from '../factories.ts';
-import { isTextLeaf, slotKindNames } from '../shared.ts';
+import { isTextLeaf, slotAliases, slotKindNames } from '../shared.ts';
 import {
 	AbstractAssembledCompound,
 	AssembledAlias,
@@ -764,6 +764,18 @@ describe('node read facts', () => {
 		const [item] = slotKindNames(listItemSlot(list)!);
 		const nested = { ...ctx, nodeMap: { ...ctx.nodeMap, nodes: new Map([...nodeMap.nodes, [item!, stored]]) } };
 		expect(() => nodeArgs(list, ownId(list), nested, list.slots)).not.toThrow();
+	});
+
+	it('gives an alias with a storage kind no content admission, since a slot holding it takes only the display', () => {
+		const list = node('FieldInitializerListElementsNode');
+		const slot = listItemSlot(list)!;
+		const [item] = slotKindNames(slot);
+		const envelope = node('TypeIdentifierNode');
+		if (!(envelope instanceof AssembledAlias)) throw new Error('the envelope is an alias');
+		const stored = Object.assign(Object.create(envelope) as AssembledAlias, { aliasStorageNode: node('ArgumentsNode') });
+		const holding = (alias: AssembledAlias): NodeMap => ({ ...ctx.nodeMap, nodes: new Map([...model.nodeMap.nodes, [item!, alias]]) });
+		expect(slotAliases(slot, holding(envelope))).toContain(envelope);
+		expect(slotAliases(slot, holding(stored))).not.toContain(stored);
 	});
 
 	it('refuses an envelope that holds more than one list, since its record is one list\'s', () => {

@@ -188,7 +188,7 @@ export function slotAliases(f: AssembledNonterminal, nodeMap: NodeMap): Assemble
 	const aliases: AssembledAlias[] = [];
 	for (const kind of expandAndDedupeContentTypes(slotKindNames(f), nodeMap)) {
 		const node = nodeMap.nodes.get(kind);
-		if (node instanceof AssembledAlias && node.rawFactoryName !== undefined) aliases.push(node);
+		if (node instanceof AssembledAlias && node.rawFactoryName !== undefined && node.aliasStorageNode === undefined) aliases.push(node);
 	}
 	return aliases;
 }

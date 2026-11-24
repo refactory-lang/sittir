@@ -6097,7 +6097,7 @@ The compile-time proof, inside a kind's namespace, that each of its non-empty li
 
 ### `packages/codegen/src/emitters/types.ts::aliasContentTypeExpr`
 
-The content type of an AssembledAlias with one slot: the slot's storage type, except that a kind-enum slot names its member ids (`TSKindId.X | …`) rather than `number`. `<Alias>.Types` in the alias's namespace is this type resolved to its `.Bound` forms through `SupertypeSurface` over the `.Bound` map (a kind id passes through), so the public name never names a storage interface; it is referenced by the interface's `__aliasContent__` brand and by every construction input that admits the alias's content.
+The content type of an AssembledAlias with one slot and no storage kind (an alias envelope over a storage kind has no content type, so no `__aliasContent__` brand and no `.Types`): the slot's storage type, except that a kind-enum slot names its member ids (`TSKindId.X | …`) rather than `number`. `<Alias>.Types` in the alias's namespace is this type resolved to its `.Bound` forms through `SupertypeSurface` over the `.Bound` map (a kind id passes through), so the public name never names a storage interface; it is referenced by the interface's `__aliasContent__` brand and by every construction input that admits the alias's content.
 
 ### `packages/codegen/src/emitters/types.ts::emitRefineFormSubNamespaces`
 
@@ -13370,7 +13370,7 @@ The anchored pattern constant a text leaf's factory declares: its `_leafRe_<fact
 
 ### `packages/codegen/src/emitters/shared.ts::slotAliases`
 
-The AssembledAlias kinds a slot holds, after supertype expansion, that have a raw factory. Each is a transparent wrapper the slot's builder applies itself, so the slot's input admits the alias's content (`T.<Alias>.Types`) alongside the built alias.
+The AssembledAlias kinds a slot holds, after supertype expansion, that have a raw factory and no storage kind. An alias envelope over a storage kind (`aliasStorageNode`) is left out: a slot holding the display admits only the display, never the storage's node re-kinded. Each is a transparent wrapper the slot's builder applies itself, so the slot's input admits the alias's content (`T.<Alias>.Types`) alongside the built alias.
 
 ### `packages/codegen/src/emitters/factories.ts::kindIdsOf`
 

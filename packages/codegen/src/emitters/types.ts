@@ -1003,7 +1003,7 @@ function emitNodeSurfaceInterfaces(lines: string[], node: AssembledNode, nodeMap
 type LookupUnion = (parts: readonly string[]) => string | undefined;
 
 function aliasContentTypeExpr(node: AssembledNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | undefined {
-	if (!(node instanceof AssembledAlias) || node.slots.length !== 1) return undefined;
+	if (!(node instanceof AssembledAlias) || node.slots.length !== 1 || node.aliasStorageNode !== undefined) return undefined;
 	const content = node.slots[0]!;
 	const storage = storageFieldTypeExpr(content, nodeMap, fieldTypeExpr(content, nodeMap), kindEntries);
 	if (resolveFieldStorageInfo(content, nodeMap).kind !== 'kindEnum') return storage;
