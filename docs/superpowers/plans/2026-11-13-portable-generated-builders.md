@@ -248,11 +248,13 @@ What the census checked, so the task needs no new probe:
 ### Task 5: The projection emitter
 
 **Files:**
-- Create: `packages/codegen/src/emitters/overlays/portable/emit-project.ts`
+- Create: `packages/codegen/src/emitters/overlays/portable/emit/project.ts`
 - Generated: `packages/<lang>/src/portable/project.ts`
 - Test: `packages/tools/src/__tests__/portable-generated-project.test.ts`
 
-- [ ] **Step 1: Prototype first,** on the spec's eight paths, and bring brainstorm the generated getter case and its size beside today's read. The claim test `(#eq? @_self "self")` compiles to code.
+**Status:** in progress on `feat/portable-projection-emitter`. Step 1 is done. Before any projection code, three duplications were removed, each with byte-identical output: one emit syntax module (e927210fe), one import-free module of plan and read-table shapes (b55a6cd51), and readable flags stamped on the arm (64c4fbadb). The emitter, folded, is 0a32e2e7c, plus the match plan's slash escape (fa34adc86). Over every path it is 1.35× (python), 1.48× (typescript) and 1.67× (rust) of the interpreter (52.3K) plus the read rows it replaces. Open option: a shared helper for each path case's assembly would cut the per-kind functions (58–73% of the module); it is decided from Step 4's parse timings, not size alone. The error carry waits for `parseErrorsOf`.
+
+- [x] **Step 1: Prototype first,** on the spec's eight paths, and bring brainstorm the generated getter case and its size beside today's read. The claim test `(#eq? @_self "self")` compiles to code.
 - [ ] **Step 2: The failing test.** For every corpus node in all three grammars, in both storages, the generated projection equals today's read, except for listed rows:
   - the python getter has no `parameters`;
   - typescript `identifier.qualified`'s honest slots, moved here from the portable-grammar-map plan.
