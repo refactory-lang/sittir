@@ -277,6 +277,7 @@ What the census checked, so the task needs no new probe:
 ### Task 7: Gates and ratchets
 
 - [ ] **Step 1: Retire the conformance mirror** (`tool portable-conformance` and its ceilings). The generated modules' type-check replaces it.
+  - The mirror is today the only check of `packages/<lang>/tests/*.portable.test-d.ts`, which each package's `tsconfig.json` excludes. Those files move into a type-check lane the workspace type-check runs, and that lane fails if any of them is excluded from it, so retiring the mirror leaves no type test unchecked.
 - [ ] **Step 2: Add the emit-diagnostic ratchet,** per grammar, at Task 4's counts. An MVP path with any diagnostic fails generation once the user names the sets.
 - [ ] **Step 3: Run every gate:** the ratchets, validate history against base, the suite, the workspace type-check, and the times against the baseline.
 - [ ] **Step 4: Open the PR** with `Owner: sittir-design` on the first line, the API rows (every public export added, changed or removed, before → after), the counts and the times. Brainstorm reviews, and the merge needs the user's word.
