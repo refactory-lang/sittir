@@ -1452,11 +1452,15 @@ export function refusingParam(
 const OPTIONAL_REFUSING = /^\.\.\.(\w+): \[(.*)\] & (RefuseUndeclared<\w+(?:, .+)?>)$/;
 const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUndeclared<\w+(?:, [^,]+(?:, true)?)?>)((?:, .*)?)$/;
 
+export function appendParam(params: string, param: string): string {
+	return params === '' ? param : `${params}, ${param}`;
+}
+
 export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
 	const optional = OPTIONAL_REFUSING.exec(refusing.params);
 	return {
 		typeParams: refusing.typeParams,
-		params: optional === null ? `${refusing.params}, ${trailing}` : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
+		params: optional === null ? appendParam(refusing.params, trailing) : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
 	};
 }
 

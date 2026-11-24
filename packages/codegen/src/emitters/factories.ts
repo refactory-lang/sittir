@@ -120,6 +120,7 @@ import {
 	quoteKey,
 	refuseUndeclared,
 	refusingParam,
+	appendParam,
 	withTrailingParam,
 	type RefusingParams,
 	spelledReadImports
@@ -1624,13 +1625,13 @@ function withTrailingOptions(surface: FactorySurface, optionsType: string): Fact
 	const trailing = `options?: ${optionsType}`;
 	return {
 		...surface,
-		params: `${surface.params}, ${trailing}`,
+		params: appendParam(surface.params, trailing),
 		...(surface.generic === undefined ? {} : { generic: withTrailingParam(surface.generic, trailing) }),
-		looseParams: `${surface.looseParams}, ${trailing}`,
-		rowParams: `${surface.rowParams}, ${trailing}`,
-		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
+		looseParams: appendParam(surface.looseParams, trailing),
+		rowParams: appendParam(surface.rowParams, trailing),
+		rowLooseParams: appendParam(surface.rowLooseParams, trailing),
 		arity: surface.arity === undefined ? undefined : surface.arity + 1,
-		args: `${surface.args}, options`
+		args: appendParam(surface.args, 'options')
 	};
 }
 
@@ -1832,7 +1833,7 @@ function forwardedConstruction(
 	const targetParams = targetSurface?.params;
 	const surfaceOverloads = (surfaceOf: typeof targetSurface, trailing?: string): readonly string[] | undefined =>
 		(surfaceOf?.paramsOverloads ?? (surfaceOf?.params === undefined ? [] : [surfaceOf.params])).map((params) =>
-			trailing === undefined || takesOptions(params) ? params : `${params}, ${trailing}`
+			trailing === undefined || takesOptions(params) ? params : appendParam(params, trailing)
 		);
 	const targetOverloads = withheld
 		? []

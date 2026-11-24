@@ -15541,6 +15541,10 @@ The imports a file needs for spelled reads: `spelledMember` when any slot of the
 
 The type text of a spelled slot: its members as a union of string literals, or undefined when the slot has no spelled read.
 
+### `packages/codegen/src/emitters/shared.ts::appendParam`
+
+Joins a parameter, argument or row entry after an existing list. When the list is empty the entry stands alone, so a zero-argument target that gains options emits `options?: …` rather than a leading comma.
+
 ### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
 
 One error from type-checker output: the file, position, code and message from its first line, and the indented lines that follow it.
