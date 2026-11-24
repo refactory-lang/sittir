@@ -276,7 +276,7 @@ Today's pinned vocabulary reader isn't affected. Codegen already runs it in a ch
   The type is `{ readonly $path?: P }` there. The generated slot function reads a structure without `$path` as that path, with no `switch`.
 - **A bare scalar coerces** where the slot's paths include a value path that builds it, as the loose builders coerce:
   - a `number` or `bigint` goes to the path whose `builds` row takes it (an integral number to `builds.integer`, any other number to `builds.float`, a `bigint` to `builds.bigint`);
-  - `true` and `false` go to the boolean paths;
+  - `true` and `false` go to the boolean paths: each value to a path every one of whose arms reads that value (`literal.boolean.true`, `literal.boolean.false`). A path that picks between the two by `$value`, as rust's `literal.boolean` does, takes neither alone, so no slot's input gains a `$value`-tagged boolean shape for it;
   - a string goes to the slot's leaf, as today.
   
   The type admits the scalar exactly where a path builds it. A slot where two paths take the same scalar and neither is beneath the other is `portable-emit-unfit-slot`; otherwise the outermost takes it (an integer goes to `literal.number.integer`, not `.hex`; ruled 2026-11-17, "The outermost path takes it").
