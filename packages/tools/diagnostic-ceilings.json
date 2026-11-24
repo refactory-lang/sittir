@@ -1,5 +1,5 @@
 {
 	"python": { "portable-value-unshaped": 1 },
 	"rust": { "portable-integer-partial": 3 },
-	"typescript": { "built-render-parse-ast-mismatch": 4, "read-render-parse-folded-mismatch": 7, "regex-pattern-rewritten": 1 }
+	"typescript": { "read-render-parse-folded-mismatch": 3, "regex-pattern-rewritten": 1 }
 }

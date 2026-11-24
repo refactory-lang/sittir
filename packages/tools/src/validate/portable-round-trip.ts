@@ -1,7 +1,7 @@
 import { portableRuntime, type PortableCarry } from '@sittir/common/engine';
 import { classifierOf } from '@sittir/common/portable';
 import type { AnyUntypedNode, PortableStructure } from '@sittir/types';
-import { createStrictNativeEngine, loadCorpusEntries, loadDelimiterSpellings, loadLanguageForGrammar, loadNodeModel, treeParser, type CorpusEntry } from './common.ts';
+import { createStrictNativeEngine, loadCorpusEntries, loadDelimiterSpellings, loadFlagTokens, loadLanguageForGrammar, loadNodeModel, treeParser, type CorpusEntry } from './common.ts';
 import { loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
 
 export type PortableRoundTripStage = 'read' | 'build' | 'render' | 'reparse' | 'ast';
@@ -55,6 +55,7 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 	let astMatchPass = 0;
 	let spellingNormalized = 0;
 	const delimiters = await loadDelimiterSpellings(grammar);
+	const flags = await loadFlagTokens(grammar);
 	const errors: PortableRoundTripFailure[] = [];
 	const astMismatches: PortableRoundTripFailure[] = [];
 	const carried: PortableRoundTripCarried[] = [];
@@ -85,7 +86,7 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 		}
 		using tree = parser.parse(source);
 		try {
-			const tolerance = { listSeparators, tolerated: [], delimiters, normalized: [] as string[] };
+			const tolerance = { listSeparators, tolerated: [], delimiters, flags, normalized: [] as string[] };
 			const outcome = renderReparse(built, root, root, tree.root, true, ctx, tolerance);
 			if (outcome.status === 'excluded') errors.push({ entry: name, stage: 'reparse', message: outcome.reason, rendered: outcome.rendered });
 			else if (outcome.status === 'failed') errors.push({ entry: name, stage: 'reparse', message: outcome.message, rendered: outcome.rendered });

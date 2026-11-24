@@ -1695,6 +1695,10 @@ The context in which a render is reparsed.
 
 The delimiter spellings the comparison reads, loaded per grammar.
 
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::flags`
+
+The flag tokens the comparison reads, loaded per grammar. Where two nodes of one kind hold the same flags in another order and agree on everything else, the comparison passes and records the reorder in `tolerated`; a changed set of flags, or a reorder of any other child, still mismatches.
+
 ### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::normalized`
 
 The spellings the comparison normalizes before it compares extras and trivia.
@@ -1786,6 +1790,18 @@ The token interior the delimiter reads.
 ### `packages/tools/src/validate/common.ts::loadDelimiterSpellings`
 
 Loads each delimiter's spelling record for a grammar: its interior, and its facets with their spellings from the grammar's portable build table. A delimiter with no interior is left out.
+
+### `packages/tools/src/validate/common.ts::FlagTokens`
+
+The tokens a kind's flags are written as in a parse: the anonymous tokens by text and the named children by kind. They come from the values of the kind's boolean-storage slots in the node model, so no kind or token is listed by hand.
+
+### `packages/tools/src/validate/common.ts::loadFlagTokens`
+
+Loads each flag-holding kind's flag tokens for a grammar, from the loaded node model. The AST comparison reads them to accept the same flags of one kind in another order.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::flagTokens`
+
+Each kind's flag tokens, from the loaded node model, by kind.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::delimiterFacets`
 

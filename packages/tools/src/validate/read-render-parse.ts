@@ -67,7 +67,9 @@ import {
 	kindViewOf,
 	sameSpelledMeaning,
 	loadDelimiterSpellings,
-	type DelimiterSpelling
+	loadFlagTokens,
+	type DelimiterSpelling,
+	type FlagTokens
 } from './common.ts';
 import { deriveReparseHosts } from './reparse-derive.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
@@ -257,6 +259,7 @@ export interface AstTolerance {
 	readonly listSeparators: Readonly<Record<string, readonly string[]>>;
 	readonly tolerated: string[];
 	readonly delimiters?: Readonly<Record<string, DelimiterSpelling>>;
+	readonly flags?: Readonly<Record<string, FlagTokens>>;
 	readonly normalized?: string[];
 	readonly ownSideExtras?: readonly Extra[];
 }
@@ -271,6 +274,32 @@ export function astStructuralDiff(
 ): string | null {
 	const structural = structuralDiff(a, b, path, variantChildKinds, tolerance, identity);
 	return structural ?? (path === '' ? extrasDiff(a, b, tolerance) : null);
+}
+
+function flagKey(child: TSNode): string {
+	return child.isNamed ? `named ${child.type}` : `anon ${child.text}`;
+}
+
+function flagReordered(a: TSNode, aChildren: readonly TSNode[], bChildren: readonly TSNode[], path: string, tolerance?: AstTolerance): TSNode[] | undefined {
+	const flags = tolerance?.flags?.[a.type];
+	if (flags === undefined) return undefined;
+	const isFlag = (child: TSNode): boolean => (child.isNamed ? flags.named.has(child.type) : flags.anon.has(child.text));
+	const slots = aChildren.flatMap((child, i) => (isFlag(child) ? [i] : []));
+	if (slots.length < 2 || slots.some((i) => !isFlag(bChildren[i]!))) return undefined;
+	if (bChildren.filter(isFlag).length !== slots.length) return undefined;
+	const wanted = slots.map((i) => flagKey(aChildren[i]!));
+	const pool = slots.map((i) => bChildren[i]!);
+	if (wanted.every((key, j) => key === flagKey(pool[j]!))) return undefined;
+	const ordered: TSNode[] = [];
+	for (const key of wanted) {
+		const at = pool.findIndex((child) => flagKey(child) === key);
+		if (at < 0) return undefined;
+		ordered.push(pool.splice(at, 1)[0]!);
+	}
+	const out = [...bChildren];
+	slots.forEach((i, j) => (out[i] = ordered[j]!));
+	tolerance?.tolerated.push(`${path || a.type}: flags ${slots.map((i) => flagKey(bChildren[i]!).replace(/^\w+ /, '')).join(' ')} reordered to ${wanted.map((key) => key.replace(/^\w+ /, '')).join(' ')}`);
+	return out;
 }
 
 function structuralDiff(
@@ -337,6 +366,7 @@ function structuralDiff(
 		const extra = bChildren[bChildren.length - 1]!;
 		if (extra.startIndex === extra.endIndex) bChildren.pop();
 	}
+	if (aChildren.length === bChildren.length) bChildren = flagReordered(a, aChildren, bChildren, path, tolerance) ?? bChildren;
 	if (aChildren.length !== bChildren.length) {
 		const aDesc = aChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
 		const bDesc = bChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
@@ -1001,6 +1031,7 @@ export async function validateReadRenderParse(
 	const trivia: ValidatorSkip[] = [];
 	const spellingNormalized: SpellingNormalizedCandidate[] = [];
 	const delimiters = await loadDelimiterSpellings(grammar);
+	const flags = await loadFlagTokens(grammar);
 	// A read refused while an entry is walked or a candidate materialized
 	// fails that entry: no refusal is a warning.
 	let refused: AccessorThrowRecord[] = [];
@@ -1177,7 +1208,7 @@ export async function validateReadRenderParse(
 							shouldStop = options.stopOnFirstFailure === true;
 						};
 						const ownSideExtras = ownSideExtrasOf(cand.node, (span) => spans.slice(span));
-						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [], ...(data === undefined ? { ownSideExtras } : {}) };
+						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, flags, normalized: [], ...(data === undefined ? { ownSideExtras } : {}) };
 						const outcome = reparse(data ?? (() => nativeEngine.diagnostics.renderTemplates(cand.node as AnyUntypedNode)), tolerance);
 						if (outcome.status === 'excluded') {
 							excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
@@ -1187,7 +1218,7 @@ export async function validateReadRenderParse(
 							failed(outcome.message, outcome.rendered);
 							continue;
 						}
-						const ownTolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, normalized: [], ownSideExtras };
+						const ownTolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, flags, normalized: [], ownSideExtras };
 						const own = reparse(ownRender(cand.node), ownTolerance);
 						if (own.status !== 'round-trip') {
 							failed(`own render: ${own.status === 'failed' ? own.message : own.reason}`, own.rendered);
