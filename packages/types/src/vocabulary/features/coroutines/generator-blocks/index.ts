@@ -1,4 +1,5 @@
 export type * from './expression.ts';
+export type * from './statement.ts';
 
 import type { Coroutines } from '../index.ts';
 import type { RustExpressions } from '../../rust-expressions/index.ts';

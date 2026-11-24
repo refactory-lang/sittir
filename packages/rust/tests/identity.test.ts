@@ -61,7 +61,7 @@ describe.each([
 
 describe.each([
 	['a let declaration', 'fn b() { let x = 1; let y = 2; }\n', engine.kinds.LetDeclaration],
-	['a variant arm', 'fn b() { let r = 0..1; let s = 2..3; }\n', engine.kinds.RangeExpressionBinary]
+	['a variant arm', 'fn b() { let r = 0..1; let s = 2..3; }\n', engine.kinds.RangeExpressionBounded]
 ] as const)('a descendants query over %s', (_, source, kind) => {
 	it('reads only the matches not already registered, and no ancestor', () => {
 		const root = engine.parse(source, { depth: 1 });
@@ -105,7 +105,7 @@ describe('a variant arm a query reached', () => {
 	it('is returned by its accessor with no native read of its own', () => {
 		const root = engine.parse('fn b() { let r = 0..1; }\n', { depth: 1 });
 		const reads = countingReads(root);
-		const [arm] = root.$query().$descendants.ofType(engine.kinds.RangeExpressionBinary);
+		const [arm] = root.$query().$descendants.ofType(engine.kinds.RangeExpressionBounded);
 		const armReads = [...reads];
 		expect(armReads.length).toBe(1);
 		reads.length = 0;

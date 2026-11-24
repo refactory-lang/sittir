@@ -40,8 +40,8 @@ describe('a python constructor declaration', () => {
 		const nodes = py.parse('class A:\n    def __init__(self):\n        pass\n    def m(self):\n        pass\ndef f():\n    pass\n').$query().$descendants;
 		const typesOf = (kind: Parameters<typeof nodes.ofType>[0]) => Array.from(nodes.ofType(kind)).map((node) => (typeof node === 'number' ? node : node.$type));
 		expect(typesOf(portable.kinds.declaration.function)).toEqual([kinds.FunctionDefinition]);
-		expect(typesOf(portable.kinds.declaration.constructor)).toEqual([kinds.ConstructorDeclaration]);
-		expect(typesOf(portable.kinds.declaration.method)).toEqual([kinds.MethodDeclaration]);
+		expect(typesOf(portable.kinds.declaration.member.constructor)).toEqual([kinds.ConstructorDeclaration]);
+		expect(typesOf(portable.kinds.declaration.member.method)).toEqual([kinds.MethodDeclaration]);
 	});
 
 	it('builds from its parameters and body with the name stamped, and reads back as itself', () => {

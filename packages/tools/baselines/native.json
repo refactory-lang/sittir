@@ -3,59 +3,45 @@
     "baselineCounterChange": {
         "grammars": {
             "typescript": {
-                "builtRenderParse": {
-                    "cases": {
-                        "expression_statement": {
-                            "from": 50,
-                            "to": 48
-                        }
-                    },
-                    "from": {
-                        "pass": 2560,
-                        "total": 2560
-                    },
-                    "to": {
-                        "pass": 2558,
-                        "total": 2558
-                    }
-                },
-                "factoryStorage": {
-                    "cases": {
-                        "expression_statement": {
-                            "from": 25,
-                            "to": 24
-                        }
-                    },
-                    "from": {
-                        "pass": 1355,
-                        "total": 1355
-                    },
-                    "to": {
-                        "pass": 1354,
-                        "total": 1354
-                    }
-                },
                 "parityFixtures": {
                     "cases": {
-                        "expression_statement": {
-                            "from": 47,
-                            "to": 45
+                        "lexical_declaration": {
+                            "from": 36,
+                            "to": 35
                         }
                     },
                     "from": {
-                        "pass": 2990,
-                        "total": 2990
+                        "pass": 2988,
+                        "total": 2988
                     },
                     "to": {
                         "pass": 2988,
                         "total": 2988
                     }
                 }
+            },
+            "rust": {
+                "from": {
+                    "cases": {
+                        "range_pattern_with_left_bare": {
+                            "from": 1,
+                            "to": 0
+                        }
+                    },
+                    "from": {
+                        "pass": 256,
+                        "total": 256
+                    },
+                    "to": {
+                        "pass": 255,
+                        "total": 255
+                    }
+                }
             }
         },
-        "reason": "A TypeScript namespace is a declaration, never an expression. On master, expression listed internal_module among its arms, so namespace Foo {} before a newline or the end of a file read as expression_statement(internal_module, automatic_semicolon). That form no longer exists: such a namespace reads as internal_module, a statement. No node goes untested: every lost case is a fixture of the removed form, the expression_statement cases taken from the corpus entry \"Namespaces as internal modules\" (namespace Foo {} and namespace Bar { var x; }). factoryStorage loses 1 (25 -> 24), builtRenderParse 2 (50 -> 48) and parityFixtures 2 (47 -> 45), and each row's total drops by the same count, with every remaining case passing."
+        "reason": "A classic for header's initializer is a header kind of its own, never a lexical_declaration. On the base, a corpus fixture of the form for (let i = 0; ...) read its initializer as lexical_declaration; it now reads as for_initializer_let_const_kind, so lexical_declaration loses 1 case (36 -> 35) and for_initializer_let_const_kind gains the same one. No node goes untested: the fixture still passes under the kind that now owns it, and the row's total stays 2988/2988 with every case passing. A rust range pattern's forms are three flat kinds. range_pattern_with_left_bare no longer exists, and it was never in the base's kinds, so the check does not count it as departed. The form it held, a.., now reads under range_pattern_lower_bounded, so the from row's 256 -> 255 loses no coverage."
     },
-    "commit": "2609b97",
+    "commit": "908c32f",
     "grammars": {
         "python": {
             "kinds": [
@@ -1515,13 +1501,13 @@
                 "pointer_type_const",
                 "pointer_type_mut",
                 "qualified_type",
-                "range_expression_bare",
-                "range_expression_binary",
-                "range_expression_postfix",
-                "range_expression_prefix",
-                "range_pattern_prefix",
-                "range_pattern_with_left",
-                "range_pattern_with_left_with_right",
+                "range_expression_bounded",
+                "range_expression_lower_bounded",
+                "range_expression_unbounded",
+                "range_expression_upper_bounded",
+                "range_pattern_bounded",
+                "range_pattern_lower_bounded",
+                "range_pattern_upper_bounded",
                 "raw_string_literal",
                 "raw_string_literal_end",
                 "raw_string_literal_start",
@@ -1746,13 +1732,13 @@
                     "pointer_type_const": 4,
                     "pointer_type_mut": 7,
                     "qualified_type": 2,
-                    "range_expression_bare": 1,
-                    "range_expression_binary": 11,
-                    "range_expression_postfix": 2,
-                    "range_expression_prefix": 1,
-                    "range_pattern_prefix": 2,
-                    "range_pattern_with_left": 5,
-                    "range_pattern_with_left_with_right": 4,
+                    "range_expression_bounded": 11,
+                    "range_expression_lower_bounded": 2,
+                    "range_expression_unbounded": 1,
+                    "range_expression_upper_bounded": 1,
+                    "range_pattern_bounded": 4,
+                    "range_pattern_lower_bounded": 1,
+                    "range_pattern_upper_bounded": 2,
                     "raw_string_literal": 9,
                     "receiver_parameter_declaration": 1,
                     "ref_pattern": 4,
@@ -1837,12 +1823,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3795,
-                "total": 3795
+                "pass": 3791,
+                "total": 3791
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 3089,
+                    "astMatchPass": 3090,
                     "casesByKind": {
                         "_let_chain": 6,
                         "abstract_type": 14,
@@ -1981,13 +1967,13 @@
                         "pointer_type_const": 6,
                         "pointer_type_mut": 12,
                         "qualified_type": 4,
-                        "range_expression_bare": 2,
-                        "range_expression_binary": 6,
-                        "range_expression_postfix": 2,
-                        "range_expression_prefix": 2,
-                        "range_pattern_prefix": 2,
-                        "range_pattern_with_left": 2,
-                        "range_pattern_with_left_with_right": 1,
+                        "range_expression_bounded": 6,
+                        "range_expression_lower_bounded": 2,
+                        "range_expression_unbounded": 2,
+                        "range_expression_upper_bounded": 2,
+                        "range_pattern_bounded": 2,
+                        "range_pattern_lower_bounded": 2,
+                        "range_pattern_upper_bounded": 2,
                         "raw_string_literal": 6,
                         "receiver_parameter_declaration": 2,
                         "ref_pattern": 4,
@@ -2071,8 +2057,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 3089,
-                    "total": 3089
+                    "pass": 3090,
+                    "total": 3090
                 },
                 "coverage": {
                     "casesByKind": {
@@ -2209,12 +2195,12 @@
                         "pointer_type_const": 1,
                         "pointer_type_mut": 1,
                         "qualified_type": 1,
-                        "range_expression_binary": 1,
-                        "range_expression_postfix": 1,
-                        "range_expression_prefix": 1,
-                        "range_pattern_prefix": 1,
-                        "range_pattern_with_left": 1,
-                        "range_pattern_with_left_with_right": 1,
+                        "range_expression_bounded": 1,
+                        "range_expression_lower_bounded": 1,
+                        "range_expression_upper_bounded": 1,
+                        "range_pattern_bounded": 1,
+                        "range_pattern_lower_bounded": 1,
+                        "range_pattern_upper_bounded": 1,
                         "raw_string_literal": 1,
                         "receiver_parameter_declaration": 1,
                         "ref_pattern": 1,
@@ -2440,13 +2426,13 @@
                         "pointer_type_const": 3,
                         "pointer_type_mut": 6,
                         "qualified_type": 2,
-                        "range_expression_bare": 1,
-                        "range_expression_binary": 3,
-                        "range_expression_postfix": 1,
-                        "range_expression_prefix": 1,
-                        "range_pattern_prefix": 1,
-                        "range_pattern_with_left": 1,
-                        "range_pattern_with_left_with_right": 1,
+                        "range_expression_bounded": 3,
+                        "range_expression_lower_bounded": 1,
+                        "range_expression_unbounded": 1,
+                        "range_expression_upper_bounded": 1,
+                        "range_pattern_bounded": 1,
+                        "range_pattern_lower_bounded": 1,
+                        "range_pattern_upper_bounded": 1,
                         "raw_string_literal": 3,
                         "receiver_parameter_declaration": 1,
                         "ref_pattern": 2,
@@ -2692,14 +2678,13 @@
                         "pointer_type_const": 1,
                         "pointer_type_mut": 1,
                         "qualified_type": 1,
-                        "range_expression_bare": 1,
-                        "range_expression_binary": 1,
-                        "range_expression_postfix": 1,
-                        "range_expression_prefix": 1,
-                        "range_pattern_prefix": 1,
-                        "range_pattern_with_left": 1,
-                        "range_pattern_with_left_bare": 1,
-                        "range_pattern_with_left_with_right": 1,
+                        "range_expression_bounded": 1,
+                        "range_expression_lower_bounded": 1,
+                        "range_expression_unbounded": 1,
+                        "range_expression_upper_bounded": 1,
+                        "range_pattern_bounded": 1,
+                        "range_pattern_lower_bounded": 1,
+                        "range_pattern_upper_bounded": 1,
                         "raw_string_literal": 1,
                         "raw_string_literal_content": 1,
                         "receiver_parameter_declaration": 1,
@@ -2794,8 +2779,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 256,
-                    "total": 256
+                    "pass": 255,
+                    "total": 255
                 },
                 "roundtrip": {
                     "astMatchPass": 149,
@@ -3025,7 +3010,7 @@
                 "assignment_pattern",
                 "augmented_assignment_expression",
                 "await_expression",
-                "binary_expression",
+                "binary_expression_default",
                 "binary_expression_in",
                 "break_statement",
                 "call_expression_call",
@@ -3089,6 +3074,9 @@
                 "for_header_using_kind",
                 "for_header_var_kind",
                 "for_in_statement",
+                "for_initializer_let_const_kind",
+                "for_initializer_using_kind",
+                "for_initializer_var_kind",
                 "for_statement",
                 "formal_parameters",
                 "formal_parameters_elements",
@@ -3259,7 +3247,7 @@
                     "asserts_annotation": 2,
                     "assignment_expression": 4,
                     "augmented_assignment_expression": 2,
-                    "binary_expression": 17,
+                    "binary_expression_default": 17,
                     "break_statement": 6,
                     "call_expression_call": 19,
                     "call_expression_member": 1,
@@ -3311,6 +3299,7 @@
                     "flow_maybe_type": 4,
                     "for_header_lhs": 2,
                     "for_in_statement": 2,
+                    "for_initializer_let_const_kind": 1,
                     "for_statement": 3,
                     "formal_parameters": 92,
                     "formal_parameters_elements": 50,
@@ -3343,7 +3332,7 @@
                     "interface_declaration": 17,
                     "internal_module": 6,
                     "intersection_type": 13,
-                    "lexical_declaration": 36,
+                    "lexical_declaration": 35,
                     "literal_type": 31,
                     "literal_type_negative_number": 2,
                     "lookup_type": 12,
@@ -3435,7 +3424,7 @@
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2558,
+                    "astMatchPass": 2560,
                     "casesByKind": {
                         "_lhs_expression": 56,
                         "abstract_class_declaration": 6,
@@ -3454,7 +3443,7 @@
                         "asserts_annotation": 4,
                         "assignment_expression": 6,
                         "augmented_assignment_expression": 2,
-                        "binary_expression": 14,
+                        "binary_expression_default": 14,
                         "break_statement": 4,
                         "call_expression_call": 24,
                         "call_expression_member": 2,
@@ -3506,6 +3495,7 @@
                         "flow_maybe_type": 4,
                         "for_header_lhs": 4,
                         "for_in_statement": 4,
+                        "for_initializer_let_const_kind": 2,
                         "for_statement": 4,
                         "formal_parameters": 82,
                         "formal_parameters_elements": 52,
@@ -3624,8 +3614,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2558,
-                    "total": 2558
+                    "pass": 2560,
+                    "total": 2560
                 },
                 "coverage": {
                     "casesByKind": {
@@ -3653,7 +3643,7 @@
                         "assignment_pattern": 1,
                         "augmented_assignment_expression": 1,
                         "await_expression": 1,
-                        "binary_expression": 1,
+                        "binary_expression_default": 1,
                         "binary_expression_in": 1,
                         "break_statement": 1,
                         "call_expression_call": 1,
@@ -3714,6 +3704,9 @@
                         "for_header_using_kind": 1,
                         "for_header_var_kind": 1,
                         "for_in_statement": 1,
+                        "for_initializer_let_const_kind": 1,
+                        "for_initializer_using_kind": 1,
+                        "for_initializer_var_kind": 1,
                         "for_statement": 1,
                         "formal_parameters": 1,
                         "formal_parameters_elements": 1,
@@ -3849,11 +3842,11 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 217,
-                    "total": 217
+                    "pass": 220,
+                    "total": 220
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1354,
+                    "astMatchPass": 1355,
                     "casesByKind": {
                         "_lhs_expression": 28,
                         "abstract_class_declaration": 3,
@@ -3872,7 +3865,7 @@
                         "asserts_annotation": 2,
                         "assignment_expression": 3,
                         "augmented_assignment_expression": 1,
-                        "binary_expression": 7,
+                        "binary_expression_default": 7,
                         "break_statement": 2,
                         "call_expression_call": 12,
                         "call_expression_member": 1,
@@ -3924,6 +3917,7 @@
                         "flow_maybe_type": 2,
                         "for_header_lhs": 2,
                         "for_in_statement": 2,
+                        "for_initializer_let_const_kind": 1,
                         "for_statement": 2,
                         "formal_parameters": 41,
                         "formal_parameters_elements": 26,
@@ -4042,8 +4036,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1354,
-                    "total": 1354
+                    "pass": 1355,
+                    "total": 1355
                 },
                 "from": {
                     "casesByKind": {
@@ -4065,7 +4059,7 @@
                         "asserts_annotation": 1,
                         "assignment_expression": 1,
                         "augmented_assignment_expression": 1,
-                        "binary_expression": 1,
+                        "binary_expression_default": 1,
                         "break_statement": 1,
                         "call_expression_call": 1,
                         "call_expression_member": 1,
@@ -4121,6 +4115,7 @@
                         "flow_maybe_type": 1,
                         "for_header_lhs": 1,
                         "for_in_statement": 1,
+                        "for_initializer_let_const_kind": 1,
                         "for_statement": 1,
                         "formal_parameters": 1,
                         "formal_parameters_elements": 1,
@@ -4250,8 +4245,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 200,
-                    "total": 200
+                    "pass": 201,
+                    "total": 201
                 },
                 "roundtrip": {
                     "astMatchPass": 118,
@@ -4265,7 +4260,7 @@
     },
     "totals": {
         "fail": 2,
-        "pass": 26815,
-        "total": 26817
+        "pass": 26818,
+        "total": 26820
     }
 }

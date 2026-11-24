@@ -2,17 +2,11 @@ import type { GrammarMap, Slot } from '../../map.ts';
 import type { SubKindOf, Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
-		readonly value?: Slot<
-			G,
-			K,
-			'value',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>;
-		// t only
+	export namespace Member {
+		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
+			readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
+			// t only
+		}
 	}
 	export interface Variable<G extends GrammarMap, K extends Under<'declaration.variable'> = 'declaration.variable'> {
 		readonly declarators?: Slot<
@@ -40,19 +34,11 @@ export namespace Declaration {
 				| V.Declaration.Variable.Reassignable<G>
 			>[];
 		}
-		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> extends SubKindOf<V.Declaration.Variable<G, K>, 'type'> {
+		export interface Pattern<G extends GrammarMap, K extends Under<'declaration.variable.pattern'> = 'declaration.variable.pattern'> extends SubKindOf<V.Declaration.Variable<G, K>, 'name' | 'type' | 'value'> {
 			// claimed by t
 			readonly $path: K;
-			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Any<G>>;
-			readonly value?: Slot<
-				G,
-				K,
-				'value',
-				| V.Declaration.Module<G>
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-			>;
+			readonly name: Slot<G, K, 'name', V.Pattern.Any<G>>;
+			readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
 		}
 		export interface Reassignable<G extends GrammarMap, K extends Under<'declaration.variable.reassignable'> = 'declaration.variable.reassignable'> extends SubKindOf<V.Declaration.Variable<G, K>, 'declarators'> {
 			// claimed by t

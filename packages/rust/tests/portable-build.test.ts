@@ -7,11 +7,39 @@ type Node = { readonly $type: number };
 
 const runtime = await portableRuntime(await createEngine(rust, { api: 'strict' }));
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
-const fn = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };
+const fn = { $path: 'declaration.function', name: 'f', parameters: [], statements: [] };
 const parameter = (type: unknown) => ({ $path: 'declaration.parameter', name: 'x', type });
 
 describe('the portable build through the strict table', () => {
-	it('builds a function from its members, an empty parameter list leaving out the optional list it would fill', () => {
+	it("reads a function's and a method's block as their statements and the expression they end with, and builds the block from them", () => {
+		const firstOf = (source: string): Readonly<Record<string, unknown>> => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly Readonly<Record<string, unknown>>[] }).statements[0]!;
+		const fn = firstOf('fn f() { a; 1 }');
+		expect(fn).toEqual({ $path: 'declaration.function', name: 'f', parameters: [], statements: ['a'], trailingExpression: { $path: 'literal.number.integer', $value: 1 } });
+		expect(render(runtime.build(fn as never))).toBe('fn f() {\n    a;\n    1\n}');
+		const method = (firstOf('impl S { fn m(&self) { a; } }').members as readonly Readonly<Record<string, unknown>>[])[0]!;
+		expect(method).toMatchObject({ $path: 'declaration.member.method', name: 'm', statements: ['a'] });
+		expect(method).not.toHaveProperty('body');
+		expect(render(runtime.build(method as never))).toBe('fn m(&self) {\n    a;\n}');
+	});
+	it("reads an if's and an else's blocks as their statements and the expressions they end with, and an else's bare if as its one statement, which builds bare", () => {
+		const ifOf = (source: string): unknown =>
+			(runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly { readonly statements: readonly unknown[] }[] }).statements[0]!.statements[0];
+		const valued = ifOf('fn f() { if c { a; 1 } else { b; 2 } }');
+		const one = (value: number) => ({ $path: 'literal.number.integer', $value: value });
+		expect(valued).toEqual({ $path: 'statement.if', condition: 'c', statements: ['a'], trailingExpression: one(1), alternative: { $path: 'clause.else', statements: ['b'], trailingExpression: one(2) } });
+		expect(render(runtime.build(valued as never))).toBe('if c {\n    a;\n    1\n} else {\n    b;\n    2\n}');
+		const elseIf = ifOf('fn f() { if c {} else if d {} }');
+		expect(elseIf).toEqual(ifOf('fn f() { if c {} else { if d {} } }'));
+		expect(render(runtime.build(elseIf as never))).toBe('if c {} else if d {}');
+	});
+
+	it("reads a loop's block as its statements and the expression they end with, and builds the block from them", () => {
+		const [loop] = (runtime.read(runtime.engine.parse('fn f() { loop { a; 1 } }')) as { readonly statements: readonly { readonly statements: readonly unknown[] }[] }).statements[0]!.statements;
+		expect(loop).toEqual({ $path: 'statement.loop', statements: ['a'], trailingExpression: { $path: 'literal.number.integer', $value: 1 } });
+		expect(render(runtime.build(loop as never))).toBe('loop {\n    a;\n    1\n}');
+	});
+
+	it('builds a function from its slots, an empty parameter list leaving out the optional list it would fill', () => {
 		expect(render(runtime.build(fn))).toBe('fn f() {}');
 	});
 
@@ -26,7 +54,7 @@ describe('the portable build through the strict table', () => {
 	it("builds a visibility refinement through its holder's mount, a scope's token or path through the scope's", () => {
 		expect(render(runtime.build({ ...fn, $path: 'declaration.function.private' }))).toBe('pub(self) fn f() {}');
 		expect(render(runtime.build({ ...fn, $path: 'declaration.function.public.internal' }))).toBe('pub(crate) fn f() {}');
-		expect(render(runtime.build({ $path: 'declaration.struct.public.restricted', name: 'S', scope: 'a', body: [] }))).toBe('pub(in a) struct S {}');
+		expect(render(runtime.build({ $path: 'declaration.type.struct.public.restricted', name: 'S', scope: 'a', fields: [] }))).toBe('pub(in a) struct S {}');
 	});
 
 	it('builds a block comment from its content text, through the one form its content seat holds', () => {
@@ -34,17 +62,17 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('builds an expression in a statement list through the statement form its kind takes', () => {
-		const loop = { $path: 'statement.loop', body: { $path: 'statement.block', statements: [] } };
+		const loop = { $path: 'statement.loop', statements: [] };
 		expect(render(runtime.build({ $path: 'file', statements: ['x', loop] }))).toBe('x;\nloop {}\n');
 	});
 
-	it("presets an arithmetic refinement's operator, and builds text members through their slot's leaf", () => {
+	it("presets an arithmetic refinement's operator, and builds text slots through their grammar slot's leaf", () => {
 		expect(render(runtime.build({ $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }))).toBe('a + b');
 	});
 
-	it('builds a struct with a body as the brace form, and one without as the unit form', () => {
-		expect((runtime.build({ $path: 'declaration.struct', name: 'S', body: [] }) as Node).$type).toBe(rust.kinds.StructItemBrace);
-		expect((runtime.build({ $path: 'declaration.struct', name: 'S' }) as Node).$type).toBe(rust.kinds.StructItemUnit);
+	it('builds a struct with fields as the brace form, and one without as the unit form', () => {
+		expect((runtime.build({ $path: 'declaration.type.struct', name: 'S', fields: [] }) as Node).$type).toBe(rust.kinds.StructItemBrace);
+		expect((runtime.build({ $path: 'declaration.type.struct', name: 'S' }) as Node).$type).toBe(rust.kinds.StructItemUnit);
 	});
 
 	it('places a parameter in the container its list holds, and hands a kind id to its slot as it is', () => {
@@ -57,14 +85,16 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build(qualified)).toThrow(/identifier\.qualified.*holder/);
 	});
 
-	it("merges a range form's members into its holder's through the form's mount, and builds a range without a left through the prefix form", () => {
-		expect(render(runtime.build({ $path: 'pattern.range.inclusive', left: 'a', right: 'b' }))).toBe('a..=b');
-		expect(render(runtime.build({ $path: 'pattern.range.exclusive', left: 'a', right: 'b' }))).toBe('a..b');
-		expect(render(runtime.build({ $path: 'pattern.range.inclusive', right: 'b' }))).toBe('..=b');
+	it("merges a range form's slots into its holder's through the form's mount, and builds a range without a start through the prefix form", () => {
+		expect(render(runtime.build({ $path: 'pattern.range.inclusive', start: 'a', end: 'b' }))).toBe('a..=b');
+		expect(render(runtime.build({ $path: 'pattern.range.exclusive', start: 'a', end: 'b' }))).toBe('a..b');
+		expect(render(runtime.build({ $path: 'pattern.range.exclusive', start: 'a' }))).toBe('a..');
+		expect(render(runtime.build({ $path: 'pattern.range.inclusive', end: 'b' }))).toBe('..=b');
 	});
 
-	it('refuses a bare range, whose operator only a refinement presets, naming the path', () => {
-		expect(() => runtime.build({ $path: 'pattern.range', left: 'a', right: 'b' })).toThrow(/pattern\.range does not build in rust/);
+	it('builds a bare range with no operator to choose, and refuses one whose operator only a refinement presets', () => {
+		expect(render(runtime.build({ $path: 'pattern.range', start: 'a' }))).toBe('a..');
+		expect(() => runtime.build({ $path: 'pattern.range', start: 'a', end: 'b' })).toThrow(/pattern\.range: range_pattern_lower_bounded has no slot/);
 	});
 
 	it("builds a function type's trait form through the mount that seats the form's input at its holder's key", () => {
@@ -92,7 +122,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('refuses text where no seat builds text, and a list where the slot holds one value', () => {
-		expect(() => runtime.build({ ...fn, body: 'x' })).toThrow(/declaration\.function's body has no route that seats the text "x"/);
+		expect(() => runtime.build({ ...fn, whereClause: 'x' })).toThrow(/declaration\.function's whereClause has no route that seats the text "x"/);
 		expect(() => runtime.build({ ...fn, name: ['f'] })).toThrow(/declaration\.function's name holds one value, not a list/);
 	});
 
@@ -120,7 +150,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('refuses a path the language does not build, naming the path and the language', () => {
-		expect(() => runtime.build({ $path: 'declaration.class', name: 'C' })).toThrow(/declaration\.class.*rust/);
+		expect(() => runtime.build({ $path: 'declaration.type.class', name: 'C' })).toThrow(/declaration\.type\.class.*rust/);
 	});
 
 	it('refuses a flag the picked kind has no step for, naming the flag and the kind', () => {
@@ -129,13 +159,13 @@ describe('the portable build through the strict table', () => {
 
 	it("places a receiver at the key its holder takes flattened, and the parameters after it in the group the holder takes as arguments", () => {
 		const receiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
-		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter('u8')], body: fn.body }))).toBe('fn f(&self, x: u8) {}');
+		expect(render(runtime.build({ $path: 'declaration.member.method', name: 'f', receiver, parameters: [parameter('u8')], statements: fn.statements }))).toBe('fn f(&self, x: u8) {}');
 	});
 
 	it('puts a built node in place of the slot a refinement presets, and a list in the seat that seats every item', () => {
 		const field = { $path: 'expression.member', object: 'a', property: 'b' };
 		expect(render(runtime.build({ $path: 'expression.call.member', function: field, arguments: [] }))).toBe('a.b()');
-		const variant = { $path: 'declaration.enum_member.tuple', name: 'B', body: [{ $path: 'declaration.field', type: 'T' }] };
-		expect(render(runtime.build({ $path: 'declaration.enum', name: 'O', body: [variant] }))).toBe('enum O {\n    B(T),\n}');
+		const variant = { $path: 'declaration.member.enum_member.tuple', name: 'B', fields: [{ $path: 'declaration.member.field', type: 'T' }] };
+		expect(render(runtime.build({ $path: 'declaration.type.enum', name: 'O', members: [variant] }))).toBe('enum O {\n    B(T),\n}');
 	});
 });

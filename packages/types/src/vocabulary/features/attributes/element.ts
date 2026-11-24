@@ -6,16 +6,7 @@ export namespace Element {
 		// claimed by r
 		readonly $path: K;
 		readonly attributes: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];
-		readonly value: Slot<
-			G,
-			K,
-			'value',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-			| V.Type.Primitive<G>
-		>;
+		readonly value: Slot<G, K, 'value', V.Expression.Any<G>>;
 	}
 	export namespace Struct {
 		export interface Field<G extends GrammarMap, K extends Under<'element.struct.field'> = 'element.struct.field'> {

@@ -5,8 +5,10 @@ export namespace Declaration {
 		readonly generator?: Flag;
 		// t only
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly generator?: Flag;
-		// t only
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+			readonly generator?: Flag;
+			// t only
+		}
 	}
 }

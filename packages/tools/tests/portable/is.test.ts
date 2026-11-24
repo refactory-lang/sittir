@@ -1,5 +1,7 @@
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { portableRowHasFacts } from '@sittir/common/engine';
+import { classifierOf, portable as shared } from '@sittir/common/portable';
 import type { PortableRows } from '@sittir/types';
 import python from '../../../python/src/index.ts';
 import { rows as pythonRows } from '../../../python/src/portable/index.ts';
@@ -51,7 +53,7 @@ async function surfaces(name: keyof typeof languages) {
 		if (hit === undefined) throw new Error(`no ${kind}${text === undefined ? '' : ` '${text}'`} in ${JSON.stringify(source)}`);
 		return hit;
 	};
-	return { engine, located, at, idsAt, paths, find, kindName };
+	return { engine, located, at, idsAt, paths, find, kindName, rows };
 }
 
 describe('portable is: python', async () => {
@@ -61,36 +63,36 @@ describe('portable is: python', async () => {
 	it('reads a method in a class body as a method, a kind of its own, decorated or not', () => {
 		const c = find(SOURCE, 'method_declaration', undefined, 1);
 		const m = find(SOURCE, 'method_declaration', undefined, 2);
-		expect(at('declaration.method')(c)).toBe(true);
-		expect(at('declaration.method')(m)).toBe(true);
+		expect(at('declaration.member.method')(c)).toBe(true);
+		expect(at('declaration.member.method')(m)).toBe(true);
 	});
 
 	it('reads __init__ in a class body as the constructor, neither method, special method nor function', () => {
 		const init = find(SOURCE, 'constructor_declaration');
-		expect(at('declaration.constructor')(init)).toBe(true);
-		expect(at('declaration.method')(init)).toBe(false);
-		expect(at('declaration.method.special')(init)).toBe(false);
+		expect(at('declaration.member.constructor')(init)).toBe(true);
+		expect(at('declaration.member.method')(init)).toBe(false);
+		expect(at('declaration.member.method.special')(init)).toBe(false);
 		expect(at('declaration.function')(init)).toBe(false);
 	});
 
 	it.skip('reads a decorated method as static by its decorator (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const s = find(SOURCE, 'method_declaration');
 		const c = find(SOURCE, 'method_declaration', undefined, 1);
-		expect(at('declaration.method.static')(s)).toBe(true);
-		expect(at('declaration.method.static')(c)).toBe(false);
+		expect(at('declaration.member.method.static')(s)).toBe(true);
+		expect(at('declaration.member.method.static')(c)).toBe(false);
 	});
 
 	it('reads a decorated method in a class body as a method, not a function', () => {
 		const s = find(SOURCE, 'method_declaration');
-		expect(at('declaration.method')(s)).toBe(true);
+		expect(at('declaration.member.method')(s)).toBe(true);
 		expect(at('declaration.function')(s)).toBe(false);
 	});
 
 	it('reads a dunder outside a class body as a plain function, neither constructor nor special', () => {
 		const init = find('def __init__(self): pass\n', 'function_definition');
 		expect(at('declaration.function')(init)).toBe(true);
-		expect(at('declaration.constructor')(init)).toBe(false);
-		expect(at('declaration.method.special')(init)).toBe(false);
+		expect(at('declaration.member.constructor')(init)).toBe(false);
+		expect(at('declaration.member.method.special')(init)).toBe(false);
 	});
 
 	it('tests a string prefix through the hidden string_start capture', () => {
@@ -134,8 +136,8 @@ describe('portable is: python', async () => {
 
 	it('keeps the constructor and call paths though a function owns those names', () => {
 		const init = find(SOURCE, 'constructor_declaration');
-		expect(at('declaration.constructor')).not.toBe(Function.prototype.constructor);
-		expect(at('declaration.constructor')(init)).toBe(true);
+		expect(at('declaration.member.constructor')).not.toBe(Function.prototype.constructor);
+		expect(at('declaration.member.constructor')(init)).toBe(true);
 		expect(at('expression.call')).not.toBe(Function.prototype.call);
 	});
 
@@ -312,15 +314,15 @@ describe('portable is: rust', async () => {
 	it('reads a method in an impl as a method by its kind, the alias the parser gives it there, and not as a function', () => {
 		const SOURCE = 'struct S;\nimpl S {\n    fn a(x: u8) {}\n    fn m(&self) {}\n    fn z() {}\n    fn n(&mut self, x: u8) {}\n}\n';
 		const methods = [0, 1, 2, 3].map((nth) => find(SOURCE, 'method_declaration', undefined, nth));
-		for (const method of methods) expect(at('declaration.method')(method)).toBe(true);
+		for (const method of methods) expect(at('declaration.member.method')(method)).toBe(true);
 		for (const method of methods) expect(at('declaration.function')(method)).toBe(false);
 	});
 
 	it.skip('tells a method with a receiver from an associated function, whatever order the impl lists them in (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
 		const SOURCE = 'struct S;\nimpl S {\n    fn a(x: u8) {}\n    fn m(&self) {}\n    fn z() {}\n    fn n(&mut self, x: u8) {}\n}\n';
 		const [a, m, z, n] = [0, 1, 2, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
-		for (const fn of [m!, n!]) expect(at('declaration.method.static')(fn)).toBe(false);
-		for (const fn of [a!, z!]) expect(at('declaration.method.static')(fn)).toBe(true);
+		for (const fn of [m!, n!]) expect(at('declaration.member.method.static')(fn)).toBe(false);
+		for (const fn of [a!, z!]) expect(at('declaration.member.method.static')(fn)).toBe(true);
 	});
 
 	it('reads a static item as a variable, and a visible one by its crossing', () => {
@@ -360,12 +362,12 @@ describe('portable is: rust', async () => {
 		const SOURCE = 'struct T(u8, pub u16);\nstruct U;\n';
 		const tuple = find(SOURCE, 'struct_item_tuple');
 		const unit = find(SOURCE, 'struct_item_unit');
-		expect(at('declaration.struct.tuple')(tuple)).toBe(true);
-		expect(at('declaration.struct.unit')(tuple)).toBe(false);
-		expect(at('declaration.struct.unit')(unit)).toBe(true);
-		expect(at('declaration.struct')(unit)).toBe(true);
+		expect(at('declaration.type.struct.tuple')(tuple)).toBe(true);
+		expect(at('declaration.type.struct.unit')(tuple)).toBe(false);
+		expect(at('declaration.type.struct.unit')(unit)).toBe(true);
+		expect(at('declaration.type.struct')(unit)).toBe(true);
 		const field = find(SOURCE, 'attributed_ordered_field', 'pub u16');
-		expect(at('declaration.field')(field)).toBe(true);
+		expect(at('declaration.member.field')(field)).toBe(true);
 	});
 
 	it('reads an array repeat expression by its form', () => {
@@ -378,9 +380,9 @@ describe('portable is: rust', async () => {
 
 	it('pins a prefix range pattern by its operator, and never reads a range with a left bound as exclusive by default', () => {
 		const SOURCE = 'fn f(x: u8) { match x { ..=5 => 0, ..9 => 1, 1..=5 => 2, _ => 3 } }\n';
-		const inclusive = find(SOURCE, 'range_pattern_prefix', '..=5');
-		const exclusive = find(SOURCE, 'range_pattern_prefix', '..9');
-		const left = find(SOURCE, 'range_pattern_with_left', '1..=5');
+		const inclusive = find(SOURCE, 'range_pattern_upper_bounded', '..=5');
+		const exclusive = find(SOURCE, 'range_pattern_upper_bounded', '..9');
+		const left = find(SOURCE, 'range_pattern_bounded', '1..=5');
 		expect(at('pattern.range.inclusive')(inclusive)).toBe(true);
 		expect(at('pattern.range.exclusive')(inclusive)).toBe(false);
 		expect(at('pattern.range.exclusive')(exclusive)).toBe(true);
@@ -391,7 +393,7 @@ describe('portable is: rust', async () => {
 
 	it('reads a range with a left bound by its operator, as tree-sitter matches the claims', () => {
 		const SOURCE = 'fn f() { match x { 1..=5 => {}, 1...5 => {}, 1..5 => {}, 1.. => {}, _ => {} } }\n';
-		const ranges = ['1..=5', '1...5', '1..5', '1..'].map((text) => find(SOURCE, 'range_pattern_with_left', text));
+		const ranges = ['1..=5', '1...5', '1..5', '1..'].map((text) => find(SOURCE, text === '1..' ? 'range_pattern_lower_bounded' : 'range_pattern_bounded', text));
 		expect(ranges.map((n) => at('pattern.range.inclusive')(n))).toEqual([true, true, false, false]);
 		expect(ranges.map((n) => at('pattern.range.exclusive')(n))).toEqual([false, false, true, true]);
 		expect(ranges.map((n) => at('pattern.range')(n))).toEqual([true, true, true, true]);
@@ -400,15 +402,15 @@ describe('portable is: rust', async () => {
 	it('pins a range expression by its operator, and reads a range open at either end as exclusive', () => {
 		const SOURCE = 'fn f() { let a = 1..=2; let b = 1...2; let c = 1..2; let d = 1..; let e = ..2; let g = ..; }\n';
 		for (const text of ['1..=2', '1...2']) {
-			const range = find(SOURCE, 'range_expression_binary', text);
+			const range = find(SOURCE, 'range_expression_bounded', text);
 			expect(at('expression.range.inclusive')(range), text).toBe(true);
 			expect(at('expression.range.exclusive')(range), text).toBe(false);
 		}
 		for (const [kind, text] of [
-			['range_expression_binary', '1..2'],
-			['range_expression_postfix', '1..'],
-			['range_expression_prefix', '..2'],
-			['range_expression_bare', undefined]
+			['range_expression_bounded', '1..2'],
+			['range_expression_lower_bounded', '1..'],
+			['range_expression_upper_bounded', '..2'],
+			['range_expression_unbounded', undefined]
 		] as const) {
 			const range = find(SOURCE, kind, text);
 			expect(at('expression.range.exclusive')(range), kind).toBe(true);
@@ -533,9 +535,9 @@ describe('portable is: typescript', async () => {
 	it('keeps each path whose last segment a function owns', () => {
 		for (const [path, owned] of [
 			['expression.call', Function.prototype.call],
-			['declaration.signature.call', Function.prototype.call],
+			['declaration.member.signature.call', Function.prototype.call],
 			['attribute.call', Function.prototype.call],
-			['declaration.constructor', Function.prototype.constructor],
+			['declaration.member.constructor', Function.prototype.constructor],
 			['type.function.constructor', Function.prototype.constructor]
 		] as const) {
 			expect(typeof at(path), path).toBe('function');
@@ -546,14 +548,14 @@ describe('portable is: typescript', async () => {
 	it('reads a constructor as the constructor, and a method, field or overload named constructor as what it is', () => {
 		const SOURCE = 'class A {\n  private constructor(a: number) {}\n  static constructor() {}\n}\ndeclare class B {\n  constructor: Function;\n  constructor(a: string);\n}\n';
 		const declared = find(SOURCE, 'constructor_declaration');
-		expect(at('declaration.constructor')(declared)).toBe(true);
-		expect(at('declaration.constructor.private')(declared)).toBe(true);
-		expect(at('declaration.method')(declared)).toBe(false);
+		expect(at('declaration.member.constructor')(declared)).toBe(true);
+		expect(at('declaration.member.constructor.private')(declared)).toBe(true);
+		expect(at('declaration.member.method')(declared)).toBe(false);
 		const method = find(SOURCE, 'method_definition_plain');
-		expect(at('declaration.method')(method)).toBe(true);
-		expect(at('declaration.constructor')(method)).toBe(false);
-		expect(at('declaration.constructor')(find(SOURCE, 'public_field_definition_plain'))).toBe(false);
-		expect(at('declaration.constructor')(find(SOURCE, 'method_signature_plain'))).toBe(false);
+		expect(at('declaration.member.method')(method)).toBe(true);
+		expect(at('declaration.member.constructor')(method)).toBe(false);
+		expect(at('declaration.member.constructor')(find(SOURCE, 'public_field_definition_plain'))).toBe(false);
+		expect(at('declaration.member.constructor')(find(SOURCE, 'method_signature_plain'))).toBe(false);
 	});
 
 	it('reads a catch clause as the one catch kind, with or without its binding', () => {
@@ -566,7 +568,7 @@ describe('portable is: typescript', async () => {
 
 	it('reads an enum member through the wildcard claim under the enum body\'s elements', () => {
 		const member = find('enum E { A, B = 1 }\n', 'enum_assignment');
-		expect(at('declaration.enum_member')(member)).toBe(true);
+		expect(at('declaration.member.enum_member')(member)).toBe(true);
 	});
 
 	it('holds a supertype\'s path for a variant that reads by a claim of its own', () => {
@@ -578,18 +580,18 @@ describe('portable is: typescript', async () => {
 	it('reads a method by its visibility keyword, which the reader holds as the modifier\'s member kind', () => {
 		const SOURCE = 'class C { private a() {} protected b() {} public c() {} d() {} }\n';
 		const methods = [0, 1, 2, 3].map((n) => find(SOURCE, 'method_definition_plain', undefined, n));
-		expect(methods.map((n) => at('declaration.method.private')(n))).toEqual([true, false, false, false]);
-		expect(methods.map((n) => at('declaration.method.protected')(n))).toEqual([false, true, false, false]);
-		expect(methods.map((n) => at('declaration.method.public')(n))).toEqual([false, false, true, false]);
-		expect(methods.map((n) => at('declaration.method')(n))).toEqual([true, true, true, true]);
+		expect(methods.map((n) => at('declaration.member.method.private')(n))).toEqual([true, false, false, false]);
+		expect(methods.map((n) => at('declaration.member.method.protected')(n))).toEqual([false, true, false, false]);
+		expect(methods.map((n) => at('declaration.member.method.public')(n))).toEqual([false, false, true, false]);
+		expect(methods.map((n) => at('declaration.member.method')(n))).toEqual([true, true, true, true]);
 	});
 
 	it('reads a mapped index signature by its form', () => {
 		const SOURCE = 'type M = { [K in keyof T]: T[K] };\ninterface I { [k: string]: number }\n';
 		const mapped = find(SOURCE, 'index_signature_mapped_type_clause');
 		const colon = find(SOURCE, 'index_signature_colon');
-		expect(at('declaration.signature.index.mapped')(mapped)).toBe(true);
-		expect(at('declaration.signature.index.mapped')(colon)).toBe(false);
+		expect(at('declaration.member.signature.index.mapped')(mapped)).toBe(true);
+		expect(at('declaration.member.signature.index.mapped')(colon)).toBe(false);
 	});
 
 	it('pins a typeof import by its keyword, and reads a type-only import as an import', () => {
@@ -676,19 +678,19 @@ describe('portable is: typescript', async () => {
 		const method = find(SOURCE, 'method_definition_plain');
 		const auto = find(SOURCE, 'public_field_definition_accessor');
 		const field = find(SOURCE, 'public_field_definition_plain');
-		expect(at('declaration.property.getter')(getter)).toBe(true);
-		expect(at('declaration.property')(getter)).toBe(true);
-		expect(at('declaration.method')(getter)).toBe(false);
-		expect(at('declaration.property.setter')(setter)).toBe(true);
-		expect(at('declaration.property.getter')(setter)).toBe(false);
-		expect(at('declaration.property.getter.private')(privateGetter)).toBe(true);
-		expect(at('declaration.method.private')(privateGetter)).toBe(false);
-		expect(at('declaration.method')(method)).toBe(true);
-		expect(at('declaration.property')(method)).toBe(false);
-		expect(at('declaration.property')(auto)).toBe(true);
-		expect(at('declaration.field')(auto)).toBe(false);
-		expect(at('declaration.field')(field)).toBe(true);
-		expect(at('declaration.property')(field)).toBe(false);
+		expect(at('declaration.member.property.getter')(getter)).toBe(true);
+		expect(at('declaration.member.property')(getter)).toBe(true);
+		expect(at('declaration.member.method')(getter)).toBe(false);
+		expect(at('declaration.member.property.setter')(setter)).toBe(true);
+		expect(at('declaration.member.property.getter')(setter)).toBe(false);
+		expect(at('declaration.member.property.getter.private')(privateGetter)).toBe(true);
+		expect(at('declaration.member.method.private')(privateGetter)).toBe(false);
+		expect(at('declaration.member.method')(method)).toBe(true);
+		expect(at('declaration.member.property')(method)).toBe(false);
+		expect(at('declaration.member.property')(auto)).toBe(true);
+		expect(at('declaration.member.field')(auto)).toBe(false);
+		expect(at('declaration.member.field')(field)).toBe(true);
+		expect(at('declaration.member.property')(field)).toBe(false);
 	});
 
 	it('reads an accessor signature as a property signature, abstract or not', () => {
@@ -697,13 +699,13 @@ describe('portable is: typescript', async () => {
 		const method = find(SOURCE, 'method_signature_plain');
 		const setter = find(SOURCE, 'abstract_method_signature_setter');
 		const abstractMethod = find(SOURCE, 'abstract_method_signature_plain');
-		expect(at('declaration.property.signature.getter')(getter)).toBe(true);
-		expect(at('declaration.method.signature')(getter)).toBe(false);
-		expect(at('declaration.method.signature')(method)).toBe(true);
-		expect(at('declaration.property.signature.abstract.setter')(setter)).toBe(true);
-		expect(at('declaration.property.signature')(setter)).toBe(true);
-		expect(at('declaration.method.signature.abstract')(setter)).toBe(false);
-		expect(at('declaration.method.signature.abstract')(abstractMethod)).toBe(true);
+		expect(at('declaration.member.property.signature.getter')(getter)).toBe(true);
+		expect(at('declaration.member.method.signature')(getter)).toBe(false);
+		expect(at('declaration.member.method.signature')(method)).toBe(true);
+		expect(at('declaration.member.property.signature.abstract.setter')(setter)).toBe(true);
+		expect(at('declaration.member.property.signature')(setter)).toBe(true);
+		expect(at('declaration.member.method.signature.abstract')(setter)).toBe(false);
+		expect(at('declaration.member.method.signature.abstract')(abstractMethod)).toBe(true);
 	});
 
 	it('reads a negative literal type as a negative number', () => {
@@ -780,6 +782,25 @@ describe('portable is: the root of a file', () => {
 	}
 });
 
+describe('portable is: a namespace', () => {
+	const SOURCE = 'class A {\n  m() {}\n}\nconst l = [1, 2];\n';
+	const sharedAt = (path: string): Guard => path.split('.').reduce<unknown>((g, s) => (g as Record<string, unknown>)[s], shared.is) as Guard;
+
+	it("reads a node under a namespace as the namespace, through the language's guards and the shared ones", async () => {
+		const { at, find } = await surfaces('typescript');
+		const method = find(SOURCE, 'method_definition_plain');
+		const declared = find(SOURCE, 'class_declaration');
+		const list = find(SOURCE, 'array');
+		for (const is of [at, sharedAt]) {
+			expect(is('declaration.member')(method)).toBe(true);
+			expect(is('declaration.member')(declared)).toBe(false);
+			expect(is('declaration.type')(declared)).toBe(true);
+			expect(is('expression.collection')(list)).toBe(true);
+			expect(is('expression.collection')(method)).toBe(false);
+		}
+	});
+});
+
 describe('portable is agrees with one classification', () => {
 	const SOURCES = {
 		python: 'import os\nclass A(B):\n    @staticmethod\n    def s(x: int = 1) -> str:\n        return f"{x}" + b"y".decode()\nwhile x > 0:\n    x -= 1\n',
@@ -788,7 +809,8 @@ describe('portable is agrees with one classification', () => {
 	} as const;
 	for (const name of Object.keys(SOURCES) as (keyof typeof SOURCES)[]) {
 		it(`${name}: each guard names facts of one classification and admits the node's kind`, async () => {
-			const { located, at, idsAt, paths } = await surfaces(name);
+			const { located, at, idsAt, paths, rows } = await surfaces(name);
+			const readOf = classifierOf(rows);
 			const canonical = new Map<Guard, string>();
 			for (const path of paths()) {
 				const known = canonical.get(at(path));
@@ -796,10 +818,10 @@ describe('portable is agrees with one classification', () => {
 			}
 			for (const node of located(SOURCES[name])) {
 				const held = [...canonical].filter(([guard]) => guard(node)).map(([, path]) => path);
-				const deepest = held.reduce((a, b) => (b.split('.').length > a.split('.').length ? b : a), held[0] ?? '');
+				const read = readOf(node);
 				for (const path of held) {
-					const facts = path.split('.').map((fact) => fact.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('(?:\\.[^.]+)*\\.');
-					expect(deepest, path).toMatch(new RegExp(`^${facts}(?:\\.[^.]+)*$`));
+					const row = rows.table.paths[path];
+					expect(read === undefined ? row?.exact : portableRowHasFacts(path, row?.targets, read), `${path} holds for a node that reads as ${read}`).toBe(true);
 					expect(idsAt(path)).toContain(kindOf(node));
 				}
 			}
@@ -823,7 +845,7 @@ describe('portable is: each kind under its neutral name', () => {
 			['{1: 2}\n', 'dictionary', 'expression.collection.map'],
 			['"""x"""\n', 'string', 'literal.string.multiline'],
 			['for x in y:\n    pass\n', 'for_statement', 'statement.loop.for_each'],
-			['class A:\n    def __add__(self, o): pass\n', 'method_declaration', 'declaration.method.special']
+			['class A:\n    def __add__(self, o): pass\n', 'method_declaration', 'declaration.member.method.special']
 		],
 		rust: [
 			['extern crate foo;\n', 'extern_crate_declaration', 'statement.import.package'],
@@ -831,7 +853,7 @@ describe('portable is: each kind under its neutral name', () => {
 			['fn f() { a::b(); }\n', 'call_expression', 'expression.call.qualified'],
 			['fn f() -> Option<u8> { x?; None }\n', 'try_expression', 'expression.propagate'],
 			["fn f() { let c = 'a'; }\n", 'char_literal_plain', 'literal.character'],
-			['fn f() { let g = gen { yield 1; }; }\n', 'gen_block', 'expression.block.generator']
+			['fn f() { let g = gen { yield 1; }; }\n', 'gen_block', 'statement.block.generator']
 		],
 		typescript: [
 			['for (const x of y) {}\n', 'for_in_statement', 'statement.loop.for_each'],

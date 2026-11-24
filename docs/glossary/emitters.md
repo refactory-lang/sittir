@@ -206,7 +206,7 @@ by kind and slot (interiorSlotGuards); the raw builder tests a slot value agains
 
 ```text
 // `as const` narrows the literal type to the specific TSKindId member
-// (e.g. `TSKindId.RangeExpressionBinary`), keeping `$type` discriminable
+// (e.g. `TSKindId.RangeExpressionBounded`), keeping `$type` discriminable
 // for kind-narrowing in consumers — `is.functionItem(node)` etc. all
 // match against the const-enum value, not the widened `number` type.
 // Factory output remains structurally compatible with `AnyUntypedNode`
@@ -9608,7 +9608,7 @@ The grammar's `descriptor.ts`, the language descriptor. A namespace cannot merge
 
 Every id a kind's values are stored under, by kind, gathered from every
 literal component before the literal list dedupes by kind and text. A
-hidden fixed-text kind (rust's `_range_expression_bare`) is spliced out of
+hidden fixed-text kind (rust's `_range_expression_unbounded`) is spliced out of
 the parse tree, so its values arrive under the token that spells it (`..`);
 the fixed literal's own decoder accepts these ids beside its own
 (`collectFixedLiterals`).
@@ -11529,7 +11529,7 @@ A separated list's `$with` setters for its options, one per `listOptionKeys` key
 
 ### `packages/codegen/src/emitters/wrap.ts::namedUnitKindIds`
 
-The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind catalog's `anon` and `hidden` stamps (named and visible, as node-types lists them): an empty statement's `;`, `true`, `self`, not a `$` or `{`, and not a hidden unit such as a layout member (`_space`) or rust's `_range_expression_bare`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
+The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind catalog's `anon` and `hidden` stamps (named and visible, as node-types lists them): an empty statement's `;`, `true`, `self`, not a `$` or `{`, and not a hidden unit such as a layout member (`_space`) or rust's `_range_expression_unbounded`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
 
 ### `packages/codegen/src/emitters/wrap.ts::unitKindIdsWhere`
 
@@ -13676,7 +13676,7 @@ projected like any other, and an optional pattern slot is an optional named grou
 
 ### `packages/codegen/src/emitters/interior.ts::interiorSlotGuards`
 
-The anchored regex literal of each pattern and enum slot in a lexed kind's interior, by slot name, with the name of the constant that holds it (`_slotRe_<factory>_<slot>`): a pattern slot's own pattern, an enum slot's arms longest first (`interiorEnumArms`), each through `anchoredLeafRegexLiteral`. A slot whose pattern yields no literal is left out. `buildLeafReConsts` exports one constant per entry from the raw factories module, and the raw builder's per-slot guard reads it there; the loose coercer imports the content slot's constant as `spelledInterior`'s `accepts`, so the strip and the guard test the same object.
+The anchored regex literal of each pattern and enum slot in a lexed kind's interior, by slot name, with the name of the constant that holds it (`_slotRe_<factory>_<slot>`): a pattern slot's own pattern, an enum slot's arms longest first (`interiorEnumArms`), each through `anchoredLeafRegexLiteral`. An enum slot also carries its `values`. A slot whose pattern yields no literal is left out. `buildLeafReConsts` exports one constant per entry from the raw factories module, and the raw builder's per-slot guard reads it there; the loose coercer imports the content slot's constant as `spelledInterior`'s `accepts`, so the strip and the guard test the same object.
 
 ### `packages/codegen/src/emitters/interior.ts::walkInterior`
 
@@ -14621,6 +14621,14 @@ The field name a verbatim value is stored under in a record.
 
 The render seam a fixed text writes. An indent or dedent depth text gives the kinds its depth break breaks at; a whitespace-only text gives the layout kinds it names; any other text gives `undefined` and is written as text.
 
+### `packages/codegen/src/emitters/render-module.ts::numberedSlotsOf`
+
+A kind's native node slots in number order, the list `nodeSlotNumbers` numbers (`structSlotsOf`): its named and unnamed slots in model order, then the named slots of a hidden helper that an unnamed single slot stands for, each forced optional. A node that is not compound has none. Codegen's family coverage check (`overlays/portable/covered.ts::familyCoverageOf`) fills a kind's tested slots from it, so the slot a case holds under a number is the one a plan names by it.
+
+### `packages/codegen/src/emitters/render-module.ts::StructSlot`
+
+A slot of a kind's native node struct: the model slot, the node that owns it (the kind itself, or the hidden helper its slot comes from), and whether the struct holds it optional although its model slot may be required, as it does a helper's slot.
+
 ### `packages/codegen/src/emitters/shared.ts::EnumArm`
 
 One arm of an enum: its kind and its name.
@@ -15329,6 +15337,58 @@ Whether a number shape has every part it needs to read a number.
 
 The number shapes of a node map, by kind.
 
+### `packages/codegen/src/emitters/interior.ts::DECIMAL_PARTS`
+
+The decimal parts a number kind's slots can spell, in the order a spelling writes them: integer, fraction, exponent, marker, exponent sign. Each is a key of `PortableDecimalParts`. `numberSlotsOf` returns a kind's numeric slots in this order and refuses a numeric slot that is none of them.
+
+### `packages/codegen/src/emitters/interior.ts::numberSlotsOf`
+
+The slots a number kind's value is written from, for a kind with a number shape; none for any other kind. When the kind's builder takes no config, they are the slots of its lexed content's number spelling. When it takes a config, they are the numeric slots that spell their own base, or, with none, its lexed content's spelling or its base prefix and digits (`prefixedDigits`); two or more must each be a decimal part (`DECIMAL_PARTS`) and come back in that order, else the emit fails with `portable-vocabulary-mismatch`. The factory map stamps them, less the kind's options, as the slots' `valueSource`.
+
+### `packages/codegen/src/emitters/interior.ts::numberSlotsSpellValue`
+
+Whether a number kind's slots spell its value. One slot does only when its number shape has the base of the kind's whole text, so the digits before a point, or after a fixed one, are not the number. A float kind with no number slots does only when its whole text can hold a fraction, so a kind that requires an exponent cannot. When this is false the arm's `numeric` is empty: it takes no `$value`, and a read keeps its node.
+
+### `packages/codegen/src/emitters/interior.ts::prefixedDigits`
+
+The base-prefix slot and the digits slot of a config kind whose prefix is a choice of its own: the whole text has a prefixed integer shape, the interior opens with an enum slot holding that prefix, and one slot holds digits of that base. Empty for any other kind.
+
+### `packages/codegen/src/emitters/interior.ts::InteriorTextForm`
+
+How a token kind with one text slot spells a value: its fixed text, with a NUL where the slot sits, and the pattern of the slot.
+
+### `packages/codegen/src/emitters/interior.ts::interiorTextForm`
+
+The text form of a kind whose interior holds the named slot and nothing else besides fixed text. A kind with a flag or a second slot has none, because its value is not spelled by that one slot.
+
+### `packages/codegen/src/emitters/interior.ts::textFormsCollide`
+
+Whether one slot value could be spelled by both forms with different fixed text, so that building it through the wrong form changes what the source means. Two forms with the same fixed text never collide. A pattern with no automaton counts as colliding, since carrying the node is always safe and a guess is not.
+
+### `packages/codegen/src/emitters/interior.ts::RoutedTextForm`
+
+An arm's text form together with the name of the portable slot that routes to it.
+
+### `packages/codegen/src/emitters/interior.ts::collidesWithEarlier`
+
+Whether the arm at this position shares a portable slot with an arm before it and collides with that arm's text form. A build tries arms in table order and takes the first whose pattern admits the value, so only the later arm loses its values, and its read carries the parsed node. Go's rune escape is the case: `'\n'` read as `n` would rebuild as the plain rune `'n'`.
+
+### `packages/codegen/src/emitters/interior.ts::InteriorTextForm::fixed`
+
+The kind's fixed text in order, with a NUL at the slot.
+
+### `packages/codegen/src/emitters/interior.ts::InteriorTextForm::pattern`
+
+The pattern of the slot's text, or the alternatives of its enum values.
+
+### `packages/codegen/src/emitters/interior.ts::RoutedTextForm::name`
+
+The portable slot the arm routes to this form.
+
+### `packages/codegen/src/emitters/interior.ts::RoutedTextForm::form`
+
+The arm's text form.
+
 ### `packages/codegen/src/emitters/interior.ts::bareNumberShape`
 
 The number shape of the bare value a kind's loose entry takes as its whole text: the shape of its interior when the kind is a lexed leaf that takes a bare string, otherwise that of its sole numeric slot, `undefined` when it takes none. `numericInputRefusal` (the coercer's own refusal) and `numericSeatRefusal` (a seat's) both read it, so a bare number is judged one way wherever it is refused.
@@ -15405,9 +15465,29 @@ The diagnostics raised while building the table.
 
 Builds the portable build table and its diagnostics from the build input.
 
+A claim's child kind becomes an arm's preset only where its grammar slot admits that kind in the bound node model. A receiver claim written against the source parser (typescript's `(required_parameter pattern: (this))`, rust's `(parameter name: (self))`) names a slot the bound parser splits off into `receiver_parameter_declaration`, so the plain parameter builds no receiver arm: it would build a tree its own parser can't produce.
+
+A path whose arms no pick test tells apart builds each arm at the holder slots that take it alone. An arm only one seat takes (one holder kind and slot) is that seat's own form, reached only from its holder. When exactly one arm of the group is taken by more than one seat, it is the path's root build, the arm a structure with no holder builds; otherwise the path has none. So typescript's `f<T>` builds at the root as its instantiation expression and the form `typeof f<T>` holds only at the type query's seat, python's bare tuple builds at the root as its expression list, and python's `*x`, whose forms each sit in several seats, has no root build. The rule reads which seats take an arm's kind, never how the grammar layer wrote the rule.
+
 ### `packages/codegen/src/emitters/overlays/portable/build.ts::emitPortableBuild`
 
 Emits the portable build module source, with the diagnostics it raised.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::unreadListItems`
+
+The first route of an arm, and its step, that leaves some items of a list unread. A step with `kinds` that holds a list takes only the items of those kinds; the read drops the rest. They are read only where another route of the arm reads the holder of that list, or one of its holders, whole (its steps are a prefix of the route's, each taking at least what the route's step takes), or where the routes that reach the same step take, between them, every kind its grammar slot holds (`held`). Python's docstring routes, which take the first statement of a body's block where it is a string, are read whole beside the arm's `body` route, which reads the body. The build table refuses an arm this finds anything in: no grammar has one.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::landsTwice`
+
+The first route of an arm, and the landing it shares, where two routes of one slot land on the same grammar slot through the same containers and their kinds overlap. A route's kinds are its `reads`; a route without `reads` reads every kind its grammar slot holds, so it overlaps any other. Routes whose kinds don't overlap may share a landing: typescript's `else` reads a lone `if` through one route of its body and every other statement through another. The build table refuses an arm this finds anything in, as a vocabulary mismatch.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::directBuilderUnfilled`
+
+Whether an arm has nothing to pass to a direct builder whose kind requires a slot: no route, preset, flag, number or text value fills it. Such an arm keeps no builder and is seated like a kind without one of its own, so it builds through its holder. A direct builder whose one slot is optional is still called bare.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput::textChoices`
+
+The fixed texts of each enum seat the table holds, keyed by holder kind id and slot key, passed on as the emit input's `textChoices`. They stay out of the generated table.
 
 ### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::build`
 
@@ -15592,3 +15672,7 @@ A hoisted read over a built holder: the hop expressions and whether the read is 
 ### `packages/codegen/src/emitters/node-members.ts::withHoists`
 
 Each setter entry of a node that reads a hoisted slot, given its hoist: `$with` on that slot sets through the existing wrapper chain instead of replacing the stored slot.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitInput::textChoices`
+
+The fixed texts each enum slot of a token's interior admits, keyed by the holder's kind id and the slot's key. A text value bound for a direct builder at such a seat is narrowed to them and any other text is refused, because that builder's parameter is the union of those texts rather than `string`.

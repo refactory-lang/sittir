@@ -15,15 +15,17 @@ export namespace Declaration {
 			| V.Type.Any<G>
 		>;
 	}
-	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
-		readonly type: Slot<
-			G,
-			K,
-			'type',
-			| V.Clause.Bounds.Removed<G>
-			| V.Expression.Call.Macro<G>
-			| V.Identifier.Any<G>
-			| V.Type.Any<G>
-		>;
+	export namespace Member {
+		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
+			readonly type: Slot<
+				G,
+				K,
+				'type',
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| V.Identifier.Any<G>
+				| V.Type.Any<G>
+			>;
+		}
 	}
 }

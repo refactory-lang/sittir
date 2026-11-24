@@ -2668,8 +2668,8 @@ function buildSwitchBody$with$cases(this: Received<Held>, ...args: unknown[]): u
 
 export function buildSwitchCase<
 	ValueSlot extends T.SwitchCase.Config['value'],
-	BodiesSlot extends T.SwitchCase.Config['bodies']
->(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; bodies: BodiesSlot }>): T.SwitchCase.Bound;
+	StatementsSlot extends T.SwitchCase.Config['statements']
+>(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; statements: StatementsSlot }>): T.SwitchCase.Bound;
 export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound {
 	currentHandle()?.admit(TSKindId.SwitchCase, [config]);
 	const _value = rejectReservedText(
@@ -2678,17 +2678,17 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
+	const _statements = listStorage<NonNullable<T.SwitchCase['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, statements: _statements });
 	const node = {
 		$type: TSKindId.SwitchCase as const,
 		_value,
-		_body,
+		_statements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		value: () => hydrateStoredSlot(node, '_value'),
-		bodies: () => hydrateStoredSlots(node, '_body'),
+		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2699,7 +2699,7 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { value: buildSwitchCase$with$value, bodies: buildSwitchCase$with$bodies, [RECEIVER]: node };
+	node.$with = { value: buildSwitchCase$with$value, statements: buildSwitchCase$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchCase.Bound;
 }
@@ -2712,14 +2712,14 @@ function buildSwitchCase$with(node: Held, setter: string, args: readonly unknown
 			return applySetter(args, (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
 				rebuilt(node, handle, () => buildSwitchCase({ ...config, value: value }))
 			);
-		case 'bodies':
+		case 'statements':
 			return applySetter(
 				args,
 				(
 					...values: Admit<
-						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][]
+						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['statements']>, readonly unknown[]>[number][]
 					>
-				) => rebuilt(node, handle, () => buildSwitchCase({ ...config, bodies: restItems('bodies', values) }))
+				) => rebuilt(node, handle, () => buildSwitchCase({ ...config, statements: restItems('statements', values) }))
 			);
 	}
 	throw new Error(`switch_case has no $with.${setter}`);
@@ -2727,8 +2727,8 @@ function buildSwitchCase$with(node: Held, setter: string, args: readonly unknown
 function buildSwitchCase$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildSwitchCase$with(receiverOf(this, '$with.value'), 'value', args);
 }
-function buildSwitchCase$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildSwitchCase$with(receiverOf(this, '$with.bodies'), 'bodies', args);
+function buildSwitchCase$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchCase$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
@@ -2736,15 +2736,15 @@ export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
 ): T.SwitchDefault.Bound;
 export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	currentHandle()?.admit(TSKindId.SwitchDefault, children);
-	const _body = children;
+	const _statements = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_default', { bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_default', { statements: _statements });
 	const node = {
 		$type: TSKindId.SwitchDefault as const,
-		_body,
+		_statements,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		bodies: () => hydrateStoredSlots(node, '_body'),
+		statements: () => hydrateStoredSlots(node, '_statements'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2754,7 +2754,7 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { bodies: buildSwitchDefault$with$bodies, [RECEIVER]: node };
+	node.$with = { statements: buildSwitchDefault$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchDefault.Bound;
 }
@@ -2762,15 +2762,15 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 function buildSwitchDefault$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
-		case 'bodies':
+		case 'statements':
 			return applySetter(args, (...vs: Admit<T.Statement>[]) =>
-				rebuilt(node, handle, () => buildSwitchDefault(...restItems('bodies', vs)))
+				rebuilt(node, handle, () => buildSwitchDefault(...restItems('statements', vs)))
 			);
 	}
 	throw new Error(`switch_default has no $with.${setter}`);
 }
-function buildSwitchDefault$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildSwitchDefault$with(receiverOf(this, '$with.bodies'), 'bodies', args);
+function buildSwitchDefault$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildSwitchDefault$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function buildCatchClause<
@@ -3004,16 +3004,22 @@ export function buildObject(): T.EmptyObject;
 export function buildObject<
 	A extends Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.Object.Bound;
 export function buildObject(
 	...children: Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 ): T.Object.Bound {
@@ -3073,16 +3079,22 @@ export function buildObjectPattern(): T.EmptyObjectPattern;
 export function buildObjectPattern<
 	A extends Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.ObjectPattern.Bound;
 export function buildObjectPattern(
 	...children: Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 ): T.ObjectPattern.Bound {
@@ -3283,10 +3295,10 @@ function buildObjectAssignmentPattern$with$right(this: Received<Held>, ...args: 
 }
 
 export function buildArray(): T.EmptyArray;
-export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArray<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Array.Bound;
-export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
+export function buildArray(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Array.elements'),
@@ -3331,10 +3343,12 @@ function buildArray$with$elements(this: Received<Held>, ...args: unknown[]): unk
 }
 
 export function buildArrayPattern(): T.EmptyArrayPattern;
-export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPattern)[]>>(
+export function buildArrayPattern<A extends Admit<((T.Pattern | T.AssignmentPattern) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.ArrayPattern.Bound;
-export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
+export function buildArrayPattern(
+	...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>
+): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
 	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
@@ -6266,10 +6280,10 @@ export const buildNull: TSKindId.Null = TSKindId.Null;
 export const buildUndefined: TSKindId.Undefined = TSKindId.Undefined;
 
 export function buildArguments(): T.EmptyArguments;
-export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArguments<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Arguments.Bound;
-export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
+export function buildArguments(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Arguments.elements'),
@@ -11198,7 +11212,7 @@ function buildTypeQuerySubscriptExpression$with$index(this: Received<Held>, ...a
 export function buildTypeQueryCallExpression<V extends Admit<T.Arguments>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
-export function buildTypeQueryCallExpression<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildTypeQueryCallExpression<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
 export function buildTypeQueryCallExpression(...args: unknown[]) {
@@ -19663,6 +19677,178 @@ function buildForHeaderUsingKindAwait$with$terminator(this: Received<Held>, ...a
 	return buildForHeaderUsingKindAwait$with(receiverOf(this, '$with.terminator'), 'terminator', args);
 }
 
+export function buildForInitializerLetConstKind<
+	DeclaratorsSlot extends T.ForInitializerLetConstKind.Config['declarators']
+>(
+	config: RefusingConfig<T.ForInitializerLetConstKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerLetConstKind.Bound;
+export function buildForInitializerLetConstKind(
+	config: T.ForInitializerLetConstKind.Config
+): T.ForInitializerLetConstKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerLetConstKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_let_const_kind', { kind: _kind, declarators: _declarators });
+	const node = {
+		$type: TSKindId.ForInitializerLetConstKind as const,
+		_kind,
+		_declarators,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		kind: () => _kind,
+		declarators: () => hydrateStoredSlots(node, '_declarators'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		kind: buildForInitializerLetConstKind$with$kind,
+		declarators: buildForInitializerLetConstKind$with$declarators,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerLetConstKind.Bound;
+}
+
+function buildForInitializerLetConstKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInitializerLetConstKind.Config;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerLetConstKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerLetConstKind({ ...config, kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerLetConstKind({ ...config, declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_let_const_kind has no $with.${setter}`);
+}
+function buildForInitializerLetConstKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerLetConstKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildForInitializerLetConstKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerLetConstKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
+export function buildForInitializerVarKind<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.ForInitializerVarKind.Bound;
+export function buildForInitializerVarKind(
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.ForInitializerVarKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerVarKind, children);
+	const _declarators = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'for_initializer_var_kind', { declarators: _declarators });
+	const node = {
+		$type: TSKindId.ForInitializerVarKind as const,
+		_declarators,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		declarators: () => hydrateStoredSlots(node, '_declarators'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { declarators: buildForInitializerVarKind$with$declarators, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerVarKind.Bound;
+}
+
+function buildForInitializerVarKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	switch (setter) {
+		case 'declarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildForInitializerVarKind(...restItems('declarators', vs)))
+			);
+	}
+	throw new Error(`for_initializer_var_kind has no $with.${setter}`);
+}
+function buildForInitializerVarKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerVarKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
+export function buildForInitializerUsingKind<DeclaratorsSlot extends T.ForInitializerUsingKind.Config['declarators']>(
+	config: RefusingConfig<T.ForInitializerUsingKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerUsingKind.Bound;
+export function buildForInitializerUsingKind(
+	config: T.ForInitializerUsingKind.Config
+): T.ForInitializerUsingKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerUsingKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_using_kind', { kind: _kind, declarators: _declarators });
+	const node = {
+		$type: TSKindId.ForInitializerUsingKind as const,
+		_kind,
+		_declarators,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		kind: () => _kind,
+		declarators: () => hydrateStoredSlots(node, '_declarators'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		kind: buildForInitializerUsingKind$with$kind,
+		declarators: buildForInitializerUsingKind$with$declarators,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerUsingKind.Bound;
+}
+
+function buildForInitializerUsingKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.ForInitializerUsingKind.Config;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerUsingKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerUsingKind({ ...config, kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerUsingKind({ ...config, declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_using_kind has no $with.${setter}`);
+}
+function buildForInitializerUsingKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerUsingKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function buildForInitializerUsingKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildForInitializerUsingKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
 	TSKindId.FormalParametersGetAccessorSignature;
 
@@ -23517,6 +23703,9 @@ export type FluentKindMap = {
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
 	for_header_using_kind: T.ForHeaderUsingKind.Bound;
+	for_initializer_let_const_kind: T.ForInitializerLetConstKind.Bound;
+	for_initializer_var_kind: T.ForInitializerVarKind.Bound;
+	for_initializer_using_kind: T.ForInitializerUsingKind.Bound;
 	_formal_parameters_get_accessor_signature: T.FormalParametersGetAccessorSignature;
 	_formal_parameters_set_accessor_signature: T.FormalParametersSetAccessorSignature.Bound;
 	_formal_parameters_elements_set_accessor_signature: T.FormalParametersElementsSetAccessorSignature.Bound;
@@ -23798,6 +23987,9 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
+	for_initializer_let_const_kind: buildForInitializerLetConstKind,
+	for_initializer_var_kind: buildForInitializerVarKind,
+	for_initializer_using_kind: buildForInitializerUsingKind,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,

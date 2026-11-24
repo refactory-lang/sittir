@@ -2387,10 +2387,6 @@
 			"text": ":"
 		},
 		{
-			"kind": "seam",
-			"field": "colon_after"
-		},
-		{
 			"kind": "slot",
 			"name": "elements"
 		},
@@ -4333,11 +4329,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "content",
-			"join": {
-				"previous": true,
-				"next": true
-			}
+			"name": "content"
 		},
 		{
 			"kind": "slot",
@@ -4355,11 +4347,7 @@
 	"string_content": [
 		{
 			"kind": "slot",
-			"name": "elements",
-			"join": {
-				"previous": true,
-				"next": false
-			}
+			"name": "elements"
 		}
 	],
 	"string_end": [

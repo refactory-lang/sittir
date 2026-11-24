@@ -5,8 +5,8 @@ export namespace Pattern {
 	export interface Range<G extends GrammarMap, K extends Under<'pattern.range'> = 'pattern.range'> extends SubKindOf<V.Pattern<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly left?: Slot<G, K, 'left', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
-		readonly right?: Slot<G, K, 'right', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
+		readonly end?: Slot<G, K, 'end', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
+		readonly start?: Slot<G, K, 'start', V.Identifier.Any<G> | V.Literal.Any<G> | string>;
 	}
 	export namespace Range {
 		export interface Exclusive<G extends GrammarMap, K extends Under<'pattern.range.exclusive'> = 'pattern.range.exclusive'> extends SubKindOf<V.Pattern.Range<G, K>> {

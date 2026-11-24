@@ -18,3 +18,11 @@ describe('an empty list builds through the form whose list can be empty', () => 
 		expect(render(runtime.build({ $path: 'expression.lambda', parameters: 'a', body: 'x' } as never))).toBe('a => x');
 	});
 });
+
+describe('a switch holds its cases', () => {
+	it('reads an empty switch as no cases, and builds it back', () => {
+		const statement = (runtime.read(runtime.engine.parse('switch (x) {}\n')) as { readonly statements: readonly unknown[] }).statements[0];
+		expect(statement).toEqual({ $path: 'statement.switch', value: { $path: 'expression.parenthesized', expression: 'x' }, cases: [] });
+		expect(render(runtime.build(statement as never))).toBe('switch (x) {}');
+	});
+});

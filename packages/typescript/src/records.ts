@@ -179,9 +179,9 @@ export const records = {
 		words: 7,
 		builtWords: 4,
 		value: { word: 2, width: 4, forms: 3, built: 2 },
-		body: { word: 6, width: 1, run: 4, forms: 3, built: 3 }
+		statements: { word: 6, width: 1, run: 4, forms: 3, built: 3 }
 	},
-	SwitchDefaultNode: { words: 3, builtWords: 3, body: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
+	SwitchDefaultNode: { words: 3, builtWords: 3, statements: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
 	CatchClauseNode: {
 		words: 15,
 		builtWords: 4,
@@ -1067,6 +1067,23 @@ export const records = {
 		terminator: { word: 7, width: 1, forms: 18, built: 4 },
 		operator: { word: 8, width: 1, forms: 2, built: 5 },
 		right: { word: 9, width: 4, forms: 3, built: 6 }
+	},
+	ForInitializerLetConstKindNode: {
+		words: 4,
+		builtWords: 4,
+		kind: { word: 2, width: 1, forms: 2, built: 2 },
+		declarators: { word: 3, width: 1, run: 3, forms: 1, built: 3 }
+	},
+	ForInitializerVarKindNode: {
+		words: 3,
+		builtWords: 3,
+		declarators: { word: 2, width: 1, run: 3, forms: 1, built: 2 }
+	},
+	ForInitializerUsingKindNode: {
+		words: 4,
+		builtWords: 4,
+		kind: { word: 2, width: 1, forms: 2, built: 2 },
+		declarators: { word: 3, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	FormalParametersSetAccessorSignatureNode: {
 		words: 16,

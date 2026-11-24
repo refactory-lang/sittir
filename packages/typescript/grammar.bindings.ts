@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "dcf62b2f959a68a93c964b39caa25c714d6f87428f845af95741503a752a6819";
+export const hash = "890cb7a8b6700e33a18c93d95de33821764fc500a46ab6a8c5a210caf793000c";
 
 export const renames = {
 	program: "file",
@@ -27,7 +27,7 @@ export const renames = {
 	ambient_declaration_module: "module_property_declaration",
 	internal_module: "module_declaration",
 	module: "external_module_declaration",
-	class_static_block: "static_block_statement",
+	class_static_block: "static_block_declaration",
 	function_signature: "signature_function_declaration",
 	call_signature: "call_signature_declaration",
 	construct_signature: "construct_signature_declaration",
@@ -62,8 +62,8 @@ export const renames = {
 	arrow_function: "lambda_expression",
 	yield_expression_delegate: "delegate_yield_expression",
 	template_substitution: "interpolation_expression",
-	object: "object_collection_expression",
-	array: "list_collection_expression",
+	object: "object_expression",
+	array: "list_expression",
 	as_expression: "assertion_cast_expression",
 	satisfies_expression: "satisfies_cast_expression",
 	non_null_expression: "non_null_cast_expression",
@@ -150,6 +150,8 @@ export default grammar(
 			primary_type: { "-17": alias("qualified_identifier") },
 			program: { "0/0": field("shebang") },
 			satisfies_expression: { "2": field("type") },
+			switch_case: { "3": field("statements") },
+			switch_default: { "2": field("statements") },
 			try_statement: { "2/0": field("handlers") },
 			tuple_type: { "1/0": field("tuple_type_members") },
 			type_parameter: { "3": field("default") },

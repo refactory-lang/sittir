@@ -1,4 +1,5 @@
 export type * from './clause.ts';
+export type * from './expression.ts';
 
 import type { MatchExpressions } from '../index.ts';
 

@@ -9,16 +9,6 @@ export namespace Type {
 		// pt only
 		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | string | V.Identifier.Qualified<G>>;
 		// r only
-		readonly typeArguments?: Slot<
-			G,
-			K,
-			'typeArguments',
-			| V.Element.TypeArgument<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Type.Any<G>
-		>[];
+		readonly typeArguments?: Slot<G, K, 'typeArguments', V.Type.AnyWithTypeArgument<G>>[];
 	}
 }

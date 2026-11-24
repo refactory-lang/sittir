@@ -22,4 +22,7 @@ export namespace Declaration {
 			readonly $path: K;
 		}
 	}
+	export namespace Member {
+		export type Macro<G extends GrammarMap> = V.Expression.Call.Macro<G>;
+	}
 }

@@ -5,26 +5,8 @@ export namespace Expression {
 	export interface Range<G extends GrammarMap, K extends Under<'expression.range'> = 'expression.range'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly end?: Slot<
-			G,
-			K,
-			'end',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-			| V.Type.Primitive<G>
-		>;
-		readonly start?: Slot<
-			G,
-			K,
-			'start',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-			| V.Type.Primitive<G>
-		>;
+		readonly end?: Slot<G, K, 'end', V.Expression.Any<G>>;
+		readonly start?: Slot<G, K, 'start', V.Expression.Any<G>>;
 	}
 	export namespace Range {
 		export interface Exclusive<G extends GrammarMap, K extends Under<'expression.range.exclusive'> = 'expression.range.exclusive'> extends SubKindOf<V.Expression.Range<G, K>> {

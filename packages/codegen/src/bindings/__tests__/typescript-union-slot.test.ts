@@ -6,10 +6,10 @@ import { PORTABLE_NODE_MODEL_FILE, grammarPackage, nodeModelPath } from '../../g
 const dir = grammarPackage('typescript').dir;
 const read = (...parts: string[]): string => readFileSync(join(dir, ...parts), 'utf8');
 
-type Member = { readonly name: string; readonly route: string; readonly slot?: string; readonly except?: readonly string[]; readonly path?: unknown };
-const members = (): readonly Member[] => {
-	const model = JSON.parse(readFileSync(nodeModelPath('typescript', PORTABLE_NODE_MODEL_FILE), 'utf8')) as { kinds: Record<string, { members?: readonly Member[] }> };
-	return model.kinds.export_statement_default_declaration?.members ?? [];
+type SlotRecord = { readonly name: string; readonly route: string; readonly slot?: string; readonly except?: readonly string[]; readonly path?: unknown };
+const slots = (): readonly SlotRecord[] => {
+	const model = JSON.parse(readFileSync(nodeModelPath('typescript', PORTABLE_NODE_MODEL_FILE), 'utf8')) as { kinds: Record<string, { slots?: readonly SlotRecord[] }> };
+	return model.kinds.export_statement_default_declaration?.slots ?? [];
 };
 
 describe('the TypeScript export default declaration, a union slot', () => {
@@ -26,8 +26,8 @@ describe('the TypeScript export default declaration, a union slot', () => {
 		expect(read('.sittir', 'grammar-diagnostics.json')).not.toContain('union-slot-routed');
 	});
 
-	it('routes the declaration member to the content slot, except the default keyword', () => {
-		expect(members().find((m) => m.name === 'declaration' && m.route === 'slot')).toEqual({
+	it('routes the declaration slot to the content grammar slot, except the default keyword', () => {
+		expect(slots().find((m) => m.name === 'declaration' && m.route === 'slot')).toEqual({
 			name: 'declaration',
 			route: 'slot',
 			slot: 'content',
@@ -37,7 +37,7 @@ describe('the TypeScript export default declaration, a union slot', () => {
 	});
 
 	it('routes the nested declaration through the default keyword', () => {
-		expect(members().find((m) => m.name === 'declaration' && m.route === 'nested')).toMatchObject({
+		expect(slots().find((m) => m.name === 'declaration' && m.route === 'nested')).toMatchObject({
 			route: 'nested',
 			via: [{ kind: 'export_statement_default_declaration_default_kw' }],
 			parent: 'export_statement_default_declaration_default_kw',

@@ -133,7 +133,7 @@ describe('readTestOf', () => {
 		]);
 	});
 
-	it('compares a member slot by its parser routes, and a pin by its slot\'s', async () => {
+	it('compares a slot by its parser routes, and a pin by its grammar slot\'s', async () => {
 		expect(
 			await testsOf(
 				[
@@ -186,7 +186,7 @@ describe('readTestOf', () => {
 	});
 
 	it('negates a type test over every node a list step reaches', async () => {
-		expect(await testsOf('((fn (params (param (_) @r))) @declaration.method.static (#not-kind-eq? @r "self" "plain"))', 'fn')).toEqual([
+		expect(await testsOf('((fn (params (param (_) @_r))) @declaration.method.static (#not-kind-eq? @_r "self" "plain"))', 'fn')).toEqual([
 			[
 				'declaration.method.static',
 				[{ up: 0, via: [SLOTS['fn.params'], SLOTS['params.items']], plan: { op: 'not', of: { op: 'is', types: [31, 32], ...SLOTS['param.element'] } } }]
@@ -221,7 +221,7 @@ describe('readTestOf', () => {
 		]);
 	});
 
-	it('tests a member capture on an optional slot as holding no node of another kind', async () => {
+	it('tests a slot capture on an optional grammar slot as holding no node of another kind', async () => {
 		const model = new Map([...MODEL, ['opt', node('opt', [slot('element', ['self', 'plain'], { required: false })])]]);
 		const input: GrammarInput = { grammar: 'g', bindings: await readBindings('(opt (self) @receiver) @declaration.parameter.receiver'), model, textTokens: new Set(), layoutSlots: [], vocabulary: EMPTY_VOCABULARY };
 		const [entry] = resolveRoutes(input).readEntries.get('opt') ?? [];
@@ -260,7 +260,7 @@ describe('readTestOf', () => {
 	});
 
 	it('refuses a type test that names a kind with no type', async () => {
-		await expect(testsOf('((fn (params (param (self) @r))) @declaration.method (#kind-eq? @r "nope"))', 'fn')).rejects.toThrow(
+		await expect(testsOf('((fn (params (param (self) @_r))) @declaration.method (#kind-eq? @_r "nope"))', 'fn')).rejects.toThrow(
 			/declaration\.method.*nope/
 		);
 	});

@@ -11,3 +11,8 @@ export const readsFitInputs: [Unfit] extends [never] ? true : Unfit = true;
 declare const sequence: At<'expression.sequence'>;
 
 export const grouped: In<'expression.parenthesized'> = { $path: 'expression.parenthesized', expression: sequence };
+
+declare const extended: At<'clause.extends'>['types'][number];
+export const oneExtended: In<'clause.extends'> = { $path: 'clause.extends', types: [extended] };
+// @ts-expect-error an extends clause holds at least one type
+export const noneExtended: In<'clause.extends'> = { $path: 'clause.extends', types: [] };

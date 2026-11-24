@@ -150,4 +150,4 @@ export { bootstrapGrammar, type BootstrapGrammarOptions } from './bootstrap/gram
 export { fetchUpstreamCorpus, type CorpusSource, type FetchCorpusOptions } from './corpus/fetch.ts';
 export { run as portableConformance, portableConformance as computePortableConformance, formatConformance, type ConformanceReport, type PortableConformanceOptions } from './portable/conformance.ts';
 export { run as portableAdmission, portableAdmission as computePortableAdmission, formatAdmission, type AdmissionReport, type PortableAdmissionOptions } from './portable/admission.ts';
-export { featureGuard, guardRows, heldBy, holdsMember, holdsPath, UNHELD_MEMBERS, type GuardRow, type Held } from './portable/feature-guard.ts';
+export { featureGuard, guardRows, heldBy, holdsSlot, holdsPath, UNHELD_SLOTS, type GuardRow, type Held } from './portable/feature-guard.ts';

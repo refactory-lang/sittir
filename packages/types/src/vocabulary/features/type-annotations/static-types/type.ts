@@ -15,15 +15,7 @@ export namespace Type {
 			| V.Type.Any<G>
 		>;
 		// r only
-		readonly length?: Slot<
-			G,
-			K,
-			'length',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-		>;
+		readonly length?: Slot<G, K, 'length', V.Expression.Any<G>>;
 		// r only
 		readonly type?: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		// t only
@@ -33,22 +25,7 @@ export namespace Type {
 		readonly $path: K;
 		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		// r only
-		readonly parameters: Slot<
-			G,
-			K,
-			'parameters',
-			| V.Clause.Bounds.Removed<G>
-			| V.Expression.Call.Macro<G>
-			| V.Identifier.Any<G>
-			| V.Declaration.Parameter<G>
-			| V.Declaration.Parameter.Private<G>
-			| V.Declaration.Parameter.Protected<G>
-			| V.Declaration.Parameter.Public<G>
-			| V.Declaration.Parameter.Receiver<G>
-			| V.Declaration.Parameter.Variadic<G>
-			| string
-			| V.Type.Any<G>
-		>[];
+		readonly parameters: Slot<G, K, 'parameters', V.Declaration.Parameter.AnyWithType<G> | V.Clause.Bounds.Removed<G> | string>[];
 		readonly returnType?: Slot<
 			G,
 			K,

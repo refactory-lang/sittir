@@ -11,14 +11,7 @@ export namespace Clause {
 			// claimed by p
 			readonly $path: K;
 			readonly trailingComma?: Flag;
-			readonly left: Slot<
-				G,
-				K,
-				'left',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Pattern.Any<G>
-			>;
+			readonly left: Slot<G, K, 'left', V.Pattern.Any<G>>;
 			readonly rights: Slot<
 				G,
 				K,

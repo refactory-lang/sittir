@@ -1,4 +1,4 @@
-import { withAnnotations } from './annotations.ts';
+import { annotationsOf, withAnnotations } from './annotations.ts';
 import type { Rule, RuleAnnotations } from '../types/rule.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
 import { collectSymbolRefs } from '../util/reachable-rules.ts';
@@ -56,10 +56,6 @@ function armDisplayOf(arm: ArmShape): string | undefined {
 
 function isDisplayedLiteral(arm: ArmShape): boolean {
 	return arm.type === 'ALIAS' && arm.named === true && arm.content?.type === 'STRING';
-}
-
-function annotationsOf(arm: ArmShape): RuleAnnotations | undefined {
-	return arm.type === 'ALIAS' ? arm.content?.annotations : arm.annotations;
 }
 
 function refOf(arm: ArmShape): string {

@@ -10,8 +10,8 @@ const runtime = await portableRuntime(await sharedEngine(() => createEngine(rust
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 const expressionOf = (source: string): Read => {
 	const file = runtime.read(runtime.engine.parse(`fn m() { ${source}; }`)) as Read;
-	const body = (file.statements as readonly Read[])[0]!.body as Read;
-	return (body.statements as readonly Read[])[0]!;
+	const fn = (file.statements as readonly Read[])[0]!;
+	return (fn.statements as readonly Read[])[0]!;
 };
 const roundTrip = (source: string): string => render(runtime.build(runtime.read(runtime.engine.parse(source)) as never));
 const argument = (name: string) => ({ $path: 'element.type_argument', argument: name, bounds: [] });
@@ -48,6 +48,6 @@ describe("a turbofish call's type arguments are the call's member", () => {
 		const typed = { arguments: [], typeArguments: [argument('T')] };
 		expect(() => runtime.build({ $path: 'expression.call', function: member, ...typed } as never)).toThrow(/no rust form of expression.member sits in/);
 		expect(() => runtime.build({ $path: 'expression.call.member', function: 'f', ...typed } as never)).toThrow(/function has no route that seats the text "f"/);
-		expect(() => runtime.build({ $path: 'expression.call.macro', function: 'm', ...typed } as never)).toThrow(/macro_invocation has no member typeArguments/);
+		expect(() => runtime.build({ $path: 'expression.call.macro', function: 'm', ...typed } as never)).toThrow(/macro_invocation has no slot typeArguments/);
 	});
 });

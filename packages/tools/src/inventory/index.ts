@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { relative } from 'node:path';
+import { portableRowHasFacts } from '@sittir/common/engine';
 import { bindingIssues, compileQuery } from './bindings.ts';
 import {
 	type GrammarBindings,
@@ -7,15 +8,19 @@ import {
 	type GrammarInput,
 	type NodeModelRecord,
 	type GrammarBindingsReport,
+	aliasTargets,
 	bindingGrammars,
 	bindingsModulePath,
 	bindingsPath,
 	bindingsStaleness,
+	boundKindName,
+	byCodepoint,
 	derive,
 	deriveGrammarBindings,
 	grammarBindingsHash,
 	grammarInput,
 	loadBindingsHash,
+	modelNode,
 	printBindingsModule,
 	readVocabulary,
 	resolveRoutes,
@@ -30,7 +35,7 @@ export { VOCABULARY_DIR };
 export interface BindingsInventoryOptions {
 	readonly grammars?: readonly string[];
 	readonly check?: boolean;
-	readonly members?: boolean;
+	readonly slots?: boolean;
 	readonly write?: boolean;
 }
 
@@ -79,8 +84,8 @@ export interface BindingsModule {
 	readonly report: GrammarBindingsReport;
 }
 
-export function vocabularyMembers(vocabulary: Vocabulary): ReadonlyMap<string, ReadonlySet<string>> {
-	return new Map([...vocabulary.kinds.keys()].map((path) => [path, new Set(vocabulary.members(path).keys())]));
+export function vocabularySlots(vocabulary: Vocabulary): ReadonlyMap<string, ReadonlySet<string>> {
+	return new Map([...vocabulary.kinds.keys()].map((path) => [path, new Set(vocabulary.slots(path).keys())]));
 }
 
 export async function bindingsModule(grammar: GrammarName): Promise<BindingsModule> {
@@ -96,7 +101,8 @@ export async function bindingsModule(grammar: GrammarName): Promise<BindingsModu
 		base,
 		wordMatcher: unbound.nodeMap.wordMatcher,
 			layerRules: layer.rules,
-		vocabMembers: vocabularyMembers(input.vocabulary),
+		vocabSlots: vocabularySlots(input.vocabulary),
+		shortened: input.vocabulary.shortened,
 		routes: resolveRoutes(input),
 		model: input.model
 	});
@@ -142,7 +148,7 @@ export function grammarBindingsSummary(grammar: string, { bindings, report }: Om
 	const lines = [
 		`${grammar}: ${Object.keys(bindings.renames).length} renames, ${Object.keys(report.aliases).length} aliases, ${report.fieldRenames.length} field renames, ${report.fieldWraps.length} field wraps, ${bindings.splits.length} splits, ${sites} patch sites (${bindings.patches.size} rules)`,
 		`  claims realized as kinds ${pct(report.realizedKinds.length + report.realizedByParent.length, report.claims)} (${report.realizedByParent.length} by the parent)`,
-		`  members realized as field names ${pct(report.realizedMembers.length, report.members)}; implicit routes fielded ${report.implicitMembers.length}${report.implicitMembers.length > 0 ? ` (${report.implicitMembers.join(', ')})` : ''}`
+		`  slots realized as field names ${pct(report.realizedSlots.length, report.slots)}; implicit routes fielded ${report.implicitSlots.length}${report.implicitSlots.length > 0 ? ` (${report.implicitSlots.join(', ')})` : ''}`
 	];
 	const byCause = new Map<string, string[]>();
 	for (const r of report.residue) (byCause.get(r.cause) ?? byCause.set(r.cause, []).get(r.cause)!).push(r.row);
@@ -161,11 +167,11 @@ export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): 
 	for (const v of d.allvocab) {
 		if (!vocabulary.kinds.has(v)) out.push(`${v}: claimed, but no vocabulary interface has this kind`);
 	}
-	const undeclared = (v: string, member: string, how: string): void => {
-		if (vocabulary.kinds.has(v) && !vocabulary.members(v).has(member)) out.push(`${v}.${member}: ${how}, but its interface does not declare it`);
+	const undeclared = (v: string, slot: string, how: string): void => {
+		if (vocabulary.kinds.has(v) && !vocabulary.slots(v).has(slot)) out.push(`${v}.${slot}: ${how}, but its interface does not declare it`);
 	};
-	for (const [v, members] of d.members) {
-		for (const member of members.keys()) undeclared(v, member, 'routed');
+	for (const [v, slots] of d.slots) {
+		for (const slot of slots.keys()) undeclared(v, slot, 'routed');
 	}
 	for (const [v, holes] of d.holes) {
 		for (const hole of holes.keys()) undeclared(v, hole, 'templated');
@@ -173,11 +179,45 @@ export function vocabularyDisagreements(d: Derivation, vocabulary: Vocabulary): 
 	return out.sort();
 }
 
+const KIND_SETS: readonly string[] = ['expression', 'type', 'pattern', 'statement', 'declaration.member'];
+
+export interface KindSetRow {
+	readonly grammar: string;
+	readonly namespace: string;
+	readonly rule: string;
+	readonly uncovered: readonly string[];
+	readonly unadmitted: readonly string[];
+}
+
+export function kindSetRows(input: GrammarInput): KindSetRow[] {
+	const { readEntries, containers } = resolveRoutes(input);
+	const { aliases, shortened } = input.vocabulary;
+	const readsOf = (kind: string, seen: Set<string>): string[] => {
+		if (seen.has(kind)) return [];
+		seen.add(kind);
+		const subtypes = modelNode(input.model, kind)?.subtypes ?? [];
+		if (subtypes.length > 0) return subtypes.flatMap((subtype) => readsOf(subtype, seen));
+		const read = readEntries.get(kind) ?? [];
+		return read.length > 0 ? read.map((entry) => entry.vocab) : (containers.get(kind)?.kinds ?? []).flatMap((inner) => readsOf(inner, seen));
+	};
+	return KIND_SETS.flatMap((namespace) => {
+		const rule = [boundKindName(namespace, true, shortened), namespace].find((name) => (modelNode(input.model, name)?.subtypes.length ?? 0) > 0);
+		if (rule === undefined) return [];
+		const read = [...new Set(readsOf(rule, new Set()))];
+		const targets = aliasTargets(namespace, aliases);
+		const unadmitted = aliases.filter((alias) => alias.path.startsWith(`${namespace}.`) && !read.some((at) => portableRowHasFacts(alias.path, aliasTargets(alias.path, aliases), at)));
+		return [{ grammar: input.grammar, namespace, rule, uncovered: read.filter((at) => !portableRowHasFacts(namespace, targets, at)).sort(byCodepoint), unadmitted: unadmitted.map((alias) => alias.path) }];
+	});
+}
+
+const kindSetLine = ({ grammar, namespace, rule, uncovered, unadmitted }: KindSetRow): string =>
+	`  ${grammar} ${namespace} (${rule}): ${uncovered.length} admitted with no alias [${uncovered.join(', ')}]; ${unadmitted.length} aliases the rule does not admit [${unadmitted.join(', ')}]`;
+
 export function summarize(d: Derivation): string {
 	const lines: string[] = [];
 	const total = [...d.unmapped.values()].reduce((a, b) => a + b, 0);
 	lines.push(
-		`vocab kinds ${d.allvocab.size}, prefixes ${d.prefixes.size}, content-derived ${d.contentDerived.size}, members ${[...d.members.values()].reduce((a, m) => a + m.size, 0)}`
+		`vocab kinds ${d.allvocab.size}, prefixes ${d.prefixes.size}, content-derived ${d.contentDerived.size}, slots ${[...d.slots.values()].reduce((a, m) => a + m.size, 0)}`
 	);
 	lines.push(
 		`refinements ${d.refinements.size}, unmapped references ${total} over ${d.unmapped.size} kinds, set-inclusion cycles ${d.cycles.length === 0 ? 'none' : d.cycles.join('; ')}`
@@ -199,9 +239,9 @@ export function summarize(d: Derivation): string {
 	return lines.join('\n');
 }
 
-export function membersTable(d: Derivation): string {
+export function slotsTable(d: Derivation): string {
 	const lines: string[] = [];
-	for (const v of [...d.members.keys()].sort()) {
+	for (const v of [...d.slots.keys()].sort()) {
 		const claimers = d.claimers.get(v) ?? new Set();
 		if (claimers.size < 2 || d.refinements.has(v)) continue;
 		lines.push(
@@ -210,7 +250,7 @@ export function membersTable(d: Derivation): string {
 				.sort()
 				.join('')}]`
 		);
-		for (const [cm, f] of [...(d.members.get(v) ?? [])].sort(([a], [b]) => a.localeCompare(b))) {
+		for (const [cm, f] of [...(d.slots.get(v) ?? [])].sort(([a], [b]) => a.localeCompare(b))) {
 			const tag = [...f.grammars]
 				.map((g) => g.charAt(0))
 				.sort()
@@ -246,7 +286,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 	}
 	const d = await deriveVocabulary(grammars);
 	process.stdout.write(`${summarize(d)}\n`);
-	if (opts.members) process.stdout.write(`${membersTable(d)}\n`);
+	if (opts.slots) process.stdout.write(`${slotsTable(d)}\n`);
 	if (opts.check) {
 		const vocabulary = await readVocabulary(VOCABULARY_DIR);
 		const disagreements = vocabularyDisagreements(d, vocabulary);
@@ -254,6 +294,7 @@ export async function run(opts: BindingsInventoryOptions): Promise<number> {
 		process.stdout.write(
 			`bindings and vocabulary: ${disagreements.length === 0 ? 'agree' : `${disagreements.length} disagreements\n  ${disagreements.join('\n  ')}`}\n`
 		);
+		process.stdout.write(`kind-set rules and aliases:\n${(await loadInputs(grammars)).flatMap(kindSetRows).map(kindSetLine).join('\n')}\n`);
 	}
 	if (d.cycles.length > 0 || d.untargeted.length > 0 || d.uncaptured.length > 0 || d.unknownPredicates.length > 0 || d.wildcardContainers.length > 0 || d.unenteredForms.length > 0)
 		code = 1;

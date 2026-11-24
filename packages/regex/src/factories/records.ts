@@ -101,10 +101,10 @@ function withPattern(node: object, setter: string, args: readonly unknown[]): un
 	throw new Error(`pattern has no $with.${setter}`);
 }
 
-export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
+export function buildAlternation<A extends NonEmptyArray<Admit<T.Term> | null>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Alternation.Bound;
-export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
+export function buildAlternation(...children: NonEmptyArray<Admit<T.Term> | null>): T.Alternation.Bound {
 	currentHandle()?.admit(TSKindId.Alternation, children);
 	const _terms = admitHoles(children, 'Alternation.terms');
 	const handle = currentHandle();
@@ -119,7 +119,7 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 	});
 }
 
-function buildAlternation$patch(source: object, ...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
+function buildAlternation$patch(source: object, ...children: NonEmptyArray<Admit<T.Term> | null>): T.Alternation.Bound {
 	currentHandle()?.admit(TSKindId.Alternation, children);
 	const _terms = admitHoles(children, 'Alternation.terms');
 	const handle = currentHandle();

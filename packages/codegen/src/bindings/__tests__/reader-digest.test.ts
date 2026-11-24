@@ -19,24 +19,31 @@ afterEach(() => {
 
 describe('readerDigest covers the module closure and the extra inputs', () => {
 	it('is the same on two calls with unchanged files', () => {
-		expect(readerDigest(root, 'a.ts', ['extra.txt'])).toBe(readerDigest(root, 'a.ts', ['extra.txt']));
+		expect(readerDigest(root, ['a.ts'], ['extra.txt'])).toBe(readerDigest(root, ['a.ts'], ['extra.txt']));
 	});
 
 	it('moves when a module in the closure changes', () => {
-		const before = readerDigest(root, 'a.ts', ['extra.txt']);
+		const before = readerDigest(root, ['a.ts'], ['extra.txt']);
 		writeFileSync(join(root, 'b.ts'), 'export const b = 2;\n');
-		expect(readerDigest(root, 'a.ts', ['extra.txt'])).not.toBe(before);
+		expect(readerDigest(root, ['a.ts'], ['extra.txt'])).not.toBe(before);
 	});
 
 	it('moves when an extra input changes', () => {
-		const before = readerDigest(root, 'a.ts', ['extra.txt']);
+		const before = readerDigest(root, ['a.ts'], ['extra.txt']);
 		writeFileSync(join(root, 'extra.txt'), 'input two\n');
-		expect(readerDigest(root, 'a.ts', ['extra.txt'])).not.toBe(before);
+		expect(readerDigest(root, ['a.ts'], ['extra.txt'])).not.toBe(before);
+	});
+
+	it('moves when a module in another entry\'s closure changes', () => {
+		writeFileSync(join(root, 'c.ts'), "import './outside.ts';\nexport const c = 1;\n");
+		const before = readerDigest(root, ['a.ts', 'c.ts'], ['extra.txt']);
+		writeFileSync(join(root, 'outside.ts'), 'export const o = 2;\n');
+		expect(readerDigest(root, ['a.ts', 'c.ts'], ['extra.txt'])).not.toBe(before);
 	});
 
 	it('stays when a file outside the closure changes', () => {
-		const before = readerDigest(root, 'a.ts', ['extra.txt']);
+		const before = readerDigest(root, ['a.ts'], ['extra.txt']);
 		writeFileSync(join(root, 'outside.ts'), 'export const o = 2;\n');
-		expect(readerDigest(root, 'a.ts', ['extra.txt'])).toBe(before);
+		expect(readerDigest(root, ['a.ts'], ['extra.txt'])).toBe(before);
 	});
 });

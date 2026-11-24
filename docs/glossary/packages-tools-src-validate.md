@@ -2063,6 +2063,10 @@ The grammars to check. When absent, every grammar that has bindings is checked.
 
 Runs the conformance check for each grammar and prints each report. A grammar with no typed module prints a line saying so. Returns 0.
 
+### `packages/tools/src/portable/conformance.ts::portableBuildTypeErrors`
+
+Type-checks a grammar's generated build module, and everything it imports, with tsrs, and returns the diagnostics; an empty list means it type-checks. The program is a probe that re-exports the module, under the package's own tsconfig (`probeDiagnostics`).
+
 ### `packages/tools/src/portable/conformance.ts::portableTypeTests`
 
 A grammar's portable type tests: the files in its tests directory that match the portable type-test glob, sorted.
@@ -2094,6 +2098,14 @@ The grammars to check.
 ### `packages/tools/src/portable/admission.ts::run`
 
 The admission command: prints the formatted report and returns 0.
+
+### `packages/tools/src/portable/admission.ts::AdmissionRaw`
+
+One grammar's raw-node arms, by group. `kind` and `value` count the claimed kinds that a raw arm in the per-kind group or the per-value group admits, each kind once however many slots admit it. The admission ratchet gates these counts. `perSlot` counts the arms themselves, one per slot that admits a kind. A slot that reads a list through a container counts its items' arms, so lifting one list onto several holders raises `perSlot` but not the gated counts. The report keeps `perSlot`, and nothing gates it.
+
+### `packages/tools/src/portable/feature-guard.ts::UNHELD_SLOTS`
+
+The slots of a composed feature that the guard doesn't require a grammar's bindings to hold, as `path.slot` keys. Every other slot a composed feature owns is a `composed-not-claimed` row when the bindings hold none of it.
 
 ### `packages/tools/src/validate/backer-parity.ts::backerParityOf`
 

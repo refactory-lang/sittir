@@ -9,7 +9,7 @@ export namespace Declaration {
 		}
 	}
 	export namespace TypeParameter {
-		export interface Lifetime<G extends GrammarMap, K extends Under<'declaration.type_parameter.lifetime'> = 'declaration.type_parameter.lifetime'> extends SubKindOf<V.Declaration.TypeParameter<G, K>> {
+		export interface Lifetime<G extends GrammarMap, K extends Under<'declaration.type_parameter.lifetime'> = 'declaration.type_parameter.lifetime'> extends SubKindOf<V.Declaration.TypeParameter<G, K>, 'attributes' | 'const' | 'default' | 'name'> {
 			// claimed by r
 			readonly $path: K;
 			readonly const?: never;

@@ -6,15 +6,7 @@ export namespace Element {
 		export interface Base<G extends GrammarMap, K extends Under<'element.struct.base'> = 'element.struct.base'> extends SubKindOf<V.Element.Struct<G, K>> {
 			// claimed by r
 			readonly $path: K;
-			readonly value: Slot<
-				G,
-				K,
-				'value',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Statement.Any<G>
-			>;
+			readonly value: Slot<G, K, 'value', V.Expression.Any<G>>;
 		}
 	}
 }

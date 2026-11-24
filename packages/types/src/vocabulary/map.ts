@@ -1,3 +1,4 @@
+import type { NonEmptyArray } from '../index.ts';
 import type { NamedFlags } from './utils.ts';
 
 export interface GrammarMap {
@@ -6,6 +7,8 @@ export interface GrammarMap {
 	readonly inputs: object;
 	readonly nodes: object;
 	readonly flags: object;
+	readonly facts: object;
+	readonly decided: object;
 }
 
 export interface Contract<F extends object> extends GrammarMap {
@@ -14,6 +17,8 @@ export interface Contract<F extends object> extends GrammarMap {
 	readonly inputs: { readonly [P in keyof TextPaths['texts'] | TextValued<Contract<F>>]: string };
 	readonly nodes: {};
 	readonly flags: {};
+	readonly facts: {};
+	readonly decided: {};
 }
 
 export interface Paths<G extends GrammarMap> {}
@@ -70,10 +75,11 @@ export type Slot<G extends GrammarMap, P extends string, M extends string, D> = 
 
 export type Text<G extends GrammarMap, P extends string> = Override<G, P, '$text', string>;
 
-export interface Form<R extends PropertyKey = never, A extends PropertyKey = never, M extends object = {}> {
+export interface Form<R extends PropertyKey = never, A extends PropertyKey = never, M extends object = {}, N extends PropertyKey = never> {
 	readonly required: R;
 	readonly absent: A;
 	readonly members: M;
+	readonly nonEmpty: N;
 }
 
 type FormsAt<G extends GrammarMap, P> = [P] extends [keyof G['overrides']]
@@ -82,11 +88,17 @@ type FormsAt<G extends GrammarMap, P> = [P] extends [keyof G['overrides']]
 		: []
 	: [];
 
+type NonEmptyOf<T> = T extends readonly (infer E)[] ? NonEmptyArray<E> : T;
+
+type NonEmptyMembers<R, Members, NonEmpty extends PropertyKey> = {
+	readonly [M in NonEmpty & (keyof R | keyof Members)]-?: NonEmptyOf<Exclude<M extends keyof Members ? Members[M] : M extends keyof R ? R[M] : never, undefined>>;
+};
+
 type Applied<R, F> =
-	F extends Form<infer Required, infer Absent, infer Members>
-		? Omit<R, Required | Absent | keyof Members> & {
-				readonly [M in Required & keyof R]-?: Exclude<R[M], undefined>;
-			} & { readonly [M in Absent & keyof R]?: never } & Members
+	F extends Form<infer Required, infer Absent, infer Members, infer NonEmpty>
+		? Omit<R, Required | Absent | keyof Members | NonEmpty> & {
+				readonly [M in Exclude<Required, NonEmpty> & keyof R]-?: Exclude<R[M], undefined>;
+			} & { readonly [M in Absent & keyof R]?: never } & ([NonEmpty] extends [never] ? Members : Omit<Members, NonEmpty> & NonEmptyMembers<R, Members, NonEmpty>)
 		: never;
 
 export type Formed<G extends GrammarMap, R> = R extends { readonly $path: infer P }
@@ -116,7 +128,7 @@ interface Misfit<P, M> {
 }
 
 type FormMisfit<G extends GrammarMap, P extends keyof Defaults<G>, F> =
-	F extends Form<PropertyKey, PropertyKey, infer Members>
+	F extends Form<PropertyKey, PropertyKey, infer Members, PropertyKey>
 		? {
 				readonly [M in keyof Members]-?: M extends keyof Defaults<G>[P]
 					? Within<

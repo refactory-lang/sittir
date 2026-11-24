@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { AssembledLexedPattern } from '../../compiler/model/node-map.ts';
 import { CHOICE, FIELD, PATTERN, SEQ, STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 import { flatten } from '../../compiler/flatten.ts';
-import { assertUnambiguous, interiorEntryPattern, interiorOf, type InteriorEntry } from '../interior.ts';
+import { assertUnambiguous, collidesWithEarlier, interiorEntryPattern, interiorOf, interiorTextForm, numberSlotsOf, numberSlotsSpellValue, textFormsCollide, type InteriorEntry } from '../interior.ts';
 
 describe('interiorEntryPattern', () => {
 	it('escapes literals and names slots, flags and enums', () => {
@@ -67,5 +67,77 @@ describe('interiorOf', () => {
 			]
 		}, kindEntries));
 		expect(() => interiorOf(node)).toThrow(/'shape' is a lexed kind but member of type PATTERN is neither template text nor a slot/);
+	});
+});
+
+describe('text forms of a path', () => {
+	const plain = { fixed: "'\0'", pattern: "[^'\\\\]" };
+	const escape = { fixed: "'\\\0'", pattern: 'a|b|f|n|r|t|v' };
+	const octal = { fixed: "'\\\0'", pattern: '[0-7]{3}' };
+
+	it('collide when a value of both is spelled with different fixed text', () => {
+		expect(textFormsCollide(plain, escape)).toBe(true);
+	});
+
+	it('do not collide when the fixed text is the same or no value is shared', () => {
+		expect(textFormsCollide(escape, { ...escape })).toBe(false);
+		expect(textFormsCollide(plain, octal)).toBe(false);
+	});
+
+	it('collide when a pattern cannot be decided', () => {
+		expect(textFormsCollide(plain, { ...escape, pattern: '(?=a)a' })).toBe(true);
+	});
+
+	it('mark only the later of two forms on one slot', () => {
+		const forms = [{ name: 'content', form: plain }, { name: 'content', form: octal }, { name: 'content', form: escape }];
+		expect(forms.map((_, at) => collidesWithEarlier(forms, at))).toEqual([false, false, true]);
+	});
+
+	it('leave forms on another slot and arms with no form alone', () => {
+		const forms = [{ name: 'content', form: plain }, undefined, { name: 'other', form: escape }];
+		expect(forms.map((_, at) => collidesWithEarlier(forms, at))).toEqual([false, false, false]);
+	});
+
+	it('read a kind with one slot between fixed text, and refuse one with two slots', () => {
+		const lexed = (members: readonly object[], kindEntries: readonly GeneratedKindEntry[]): AssembledLexedPattern => {
+			const flat = { ...(flatten({ type: SEQ, members } as never) as object), lexed: true } as never;
+			return new AssembledLexedPattern('shape', flat, flat, { kindEntries });
+		};
+		const slot = (name: string, value: string) => ({ type: FIELD, name, content: { type: PATTERN, value } });
+		const quote = { type: STRING, value: "'" };
+		const one = withGeneratedIdTablesNode((kindEntries) => lexed([quote, slot('content', '[a-z]'), quote], kindEntries));
+		expect(interiorTextForm(one, 'content')).toEqual({ fixed: "'\0'", pattern: '[a-z]' });
+		const two = withGeneratedIdTablesNode((kindEntries) => lexed([slot('content', '[a-z]'), quote, slot('rest', '[0-9]')], kindEntries));
+		expect(interiorTextForm(two, 'content')).toBeUndefined();
+	});
+});
+
+describe('the slots that spell a lexed number', () => {
+	const lexed = (members: readonly object[], kindEntries: readonly GeneratedKindEntry[]): AssembledLexedPattern => {
+		const flat = { ...(flatten({ type: SEQ, members } as never) as object), lexed: true } as never;
+		return new AssembledLexedPattern('shape', flat, flat, { kindEntries });
+	};
+	const slot = (name: string, value: string) => ({ type: FIELD, name, content: { type: PATTERN, value } });
+	const prefix = { type: FIELD, name: 'prefix', content: { type: CHOICE, members: [{ type: STRING, value: '0b' }, { type: STRING, value: '0B' }] } };
+
+	it('takes a base prefix in its own slot together with the digits after it', () => {
+		const node = withGeneratedIdTablesNode((kindEntries) => lexed([prefix, slot('content', '[01]+')], kindEntries));
+		expect(numberSlotsOf(node, true).map((held) => held.name)).toEqual(['prefix', 'content']);
+		expect(numberSlotsSpellValue(node, true)).toBe(true);
+	});
+
+	it('spells a value from digits before a closing marker', () => {
+		const node = withGeneratedIdTablesNode((kindEntries) => lexed([slot('content', '[0-9]+'), { type: STRING, value: 'i' }], kindEntries));
+		expect(numberSlotsSpellValue(node, false)).toBe(true);
+	});
+
+	it('spells no value from the digits before a point, with the rest in an unnamed slot', () => {
+		const node = withGeneratedIdTablesNode((kindEntries) => lexed([slot('content', '[0-9]+'), { type: STRING, value: '.' }, slot('content2', '[0-9]*')], kindEntries));
+		expect(numberSlotsSpellValue(node, true)).toBe(false);
+	});
+
+	it('spells no value from the digits after a fixed point', () => {
+		const node = withGeneratedIdTablesNode((kindEntries) => lexed([{ type: STRING, value: '.' }, slot('content', '[0-9]+')], kindEntries));
+		expect(numberSlotsSpellValue(node, false)).toBe(false);
 	});
 });

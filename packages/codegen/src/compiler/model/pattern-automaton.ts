@@ -462,6 +462,25 @@ export function includesNonEmpty(inner: PatternDfa, outer: PatternDfa): boolean 
 	return true;
 }
 
+export function patternsMeet(a: PatternDfa, b: PatternDfa): boolean {
+	if (a.states[0]!.accepting && b.states[0]!.accepting) return true;
+	const seen = new Set<string>(['0 0']);
+	const stack: (readonly [number, number])[] = [[0, 0]];
+	while (stack.length > 0) {
+		const [x, y] = stack.pop()!;
+		for (const left of a.states[x]!.edges)
+			for (const right of b.states[y]!.edges) {
+				if (!left.set.meets(right.set)) continue;
+				if (a.states[left.to]!.accepting && b.states[right.to]!.accepting) return true;
+				const key = `${left.to} ${right.to}`;
+				if (seen.has(key)) continue;
+				seen.add(key);
+				stack.push([left.to, right.to]);
+			}
+	}
+	return false;
+}
+
 function readFrom(dfa: PatternDfa, at: number, text: string): number | undefined {
 	let state: number | undefined = at;
 	for (const char of text) {

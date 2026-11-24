@@ -47,23 +47,23 @@ function unionMatch(left: LeadMatch, right: LeadMatch): Named {
 const matchKey = (match: LeadMatch): string =>
 	JSON.stringify([match.kind, match.within?.field ?? null, (match.within?.admits ?? []).map(matchKey)]);
 
-function nameVariants(match: LeadMatch, claims: readonly ClaimFact[]): Named {
+function nameVariants(match: LeadMatch, claims: readonly ClaimFact[], shortened: ReadonlySet<string>): Named {
 	if (match.within === undefined) return { match };
 	const key = matchKey(match);
 	const vocabs = [...new Set(claims.flatMap((c) => (c.toplevel && c.within.length === 0 && c.match !== undefined && matchKey(c.match) === key ? [c.vocab] : [])))];
 	if (vocabs.length > 1) return { refused: `two claims name one variant: ${vocabs.join(', ')}` };
 	const admits: LeadMatch[] = [];
 	for (const admit of match.within.admits) {
-		const named = nameVariants(admit, claims);
+		const named = nameVariants(admit, claims, shortened);
 		if ('refused' in named) return named;
 		admits.push(named.match);
 	}
 	const [vocab] = vocabs;
-	return { match: { kind: match.kind, within: { field: match.within.field, admits }, ...(vocab === undefined ? {} : { as: boundKindName(vocab, isParserHiddenName(match.kind)) }) } };
+	return { match: { kind: match.kind, within: { field: match.within.field, admits }, ...(vocab === undefined ? {} : { as: boundKindName(vocab, isParserHiddenName(match.kind), shortened) }) } };
 }
 
-export function deriveLeads(input: { readonly file: string; readonly base: RawGrammar; readonly facts: BindingFacts }): LeadDerivation {
-	const { file, base, facts } = input;
+export function deriveLeads(input: { readonly file: string; readonly base: RawGrammar; readonly facts: BindingFacts; readonly shortened: ReadonlySet<string> }): LeadDerivation {
+	const { file, base, facts, shortened } = input;
 	const symbols = renameAwareSymbolSource({ ...symbolFactsOf(base), kindEntries: predictedEntriesOf(base.predictedKinds) });
 	const diagnostics: GrammarDiagnostic[] = [];
 	const refuse = (list: string, lines: readonly number[], reason: string): void => {
@@ -82,16 +82,16 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 		return rule === undefined ? undefined : fieldedHeadListOf(rule as Rule<'normalize'>, symbols)?.elementName;
 	};
 	const byList = new Map<string, LeadClaim[]>();
-	for (const member of facts.members) {
-		if (member.leadMatch === undefined || (member.route !== 'nested' && member.route !== 'rename')) continue;
-		const list = member.route === 'nested' ? member.parent : member.owner;
+	for (const slot of facts.slots) {
+		if (slot.leadMatch === undefined || (slot.route !== 'nested' && slot.route !== 'rename')) continue;
+		const list = slot.route === 'nested' ? slot.parent : slot.owner;
 		const item = itemOf(list);
 		if (item === undefined) continue;
-		if ('refused' in member.leadMatch) {
-			refuse(list, [member.leadMatch.line], member.leadMatch.refused);
+		if ('refused' in slot.leadMatch) {
+			refuse(list, [slot.leadMatch.line], slot.leadMatch.refused);
 			continue;
 		}
-		(byList.get(list) ?? byList.set(list, []).get(list)!).push({ item, field: member.name, line: member.leadMatch.line, match: member.leadMatch.match });
+		(byList.get(list) ?? byList.set(list, []).get(list)!).push({ item, field: slot.name, line: slot.leadMatch.line, match: slot.leadMatch.match });
 	}
 	const leads: Lead[] = [];
 	const ctx = verbCtxOf(base as unknown as GrammarRecord);
@@ -106,7 +106,7 @@ export function deriveLeads(input: { readonly file: string; readonly base: RawGr
 		}
 		let union: Named = { match: first.match };
 		for (const claim of claims.slice(1)) if ('match' in union) union = unionMatch(union.match, claim.match);
-		const named = 'match' in union ? nameVariants(union.match, facts.claims) : union;
+		const named = 'match' in union ? nameVariants(union.match, facts.claims, shortened) : union;
 		if ('refused' in named) {
 			refuse(list, lines, named.refused);
 			continue;

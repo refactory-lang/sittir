@@ -23,17 +23,17 @@ describe('a class field keeps abstract, override and readonly as flags of one ki
 		expect(engine.parse(classWith(modifiers)).$errors.length).toBeGreaterThan(0);
 	});
 
-	it('reads declaration.field with both flags and rebuilds the source', () => {
+	it('reads declaration.member.field with both flags and rebuilds the source', () => {
 		const source = classWith('abstract override readonly');
-		const read = runtime.read(engine.parse(source)) as unknown as { statements: { body: { $path: string; $flags: string[] }[] }[] };
-		const field = read.statements[0]!.body[0]!;
-		expect(field.$path).toBe('declaration.field');
+		const read = runtime.read(engine.parse(source)) as unknown as { statements: { members: { $path: string; $flags: string[] }[] }[] };
+		const field = read.statements[0]!.members[0]!;
+		expect(field.$path).toBe('declaration.member.field');
 		expect(field.$flags).toEqual(['abstract', 'override', 'readonly']);
 		expect(squash(render(runtime.build(read as never)))).toBe(squash(source));
 	});
 
 	it('writes abstract before override', () => {
-		const built = runtime.build({ $path: 'declaration.field', name: 'x', $flags: ['override', 'abstract'] } as never);
+		const built = runtime.build({ $path: 'declaration.member.field', name: 'x', $flags: ['override', 'abstract'] } as never);
 		expect(render(built)).toMatch(/abstract override x/);
 	});
 

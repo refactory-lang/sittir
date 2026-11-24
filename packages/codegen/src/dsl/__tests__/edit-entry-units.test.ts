@@ -51,6 +51,26 @@ describe('a split display is refused, and the sited copy shows one display (item
 		expect(raw.layerDiagnostics ?? []).toEqual([]);
 		expect(count(raw.rules.pair, '"value":"g"')).toBe(2);
 	}, 60_000);
+
+	it.each([
+		['the named reference first', "{ '0/(_h as hh)/1': ($, m) => m, '2/(_h)/1': ($, m) => m }"],
+		['the bare reference first', "{ '2/(_h)/1': ($, m) => m, '0/(_h as hh)/1': ($, m) => m }"]
+	])('a hidden copy shown under a new name at one reference stays bare at another, %s', async (_order, edits) => {
+		const raw = await evaluateTempGrammar({ extras: '', rules: HIDDEN }, '', { bindings: `edits: { pair: ${edits} }` });
+		expect(raw.layerDiagnostics ?? []).toEqual([]);
+		const members = (raw.rules.pair as { members: unknown[] }).members;
+		expect(members[0]).toMatchObject({ type: 'ALIAS', value: 'hh', content: { type: 'SYMBOL', name: '_h_pair' } });
+		expect(members[2]).toMatchObject({ type: 'SYMBOL', name: '_h_pair' });
+	}, 60_000);
+
+	it('a hidden copy given two new names is edit-site-conflict naming both', async () => {
+		const raw = await evaluateTempGrammar({ extras: '', rules: HIDDEN }, '', {
+			bindings: "edits: { pair: { '0/(_h as hh)/1': ($, m) => m, '2/(_h as kk)/1': ($, m) => m } }"
+		});
+		expect(raw.layerDiagnostics).toEqual([
+			expect.objectContaining({ code: 'edit-site-conflict', details: expect.objectContaining({ kind: 'pair', copy: '_h_pair', displays: ['kk', 'hh'] }) })
+		]);
+	}, 60_000);
 });
 
 describe('an entry edits each copy once (items 5, 6, 7)', () => {

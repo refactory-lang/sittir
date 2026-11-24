@@ -20,15 +20,7 @@ export namespace Element {
 				| V.Literal.Number.Integer.Hex<G>
 				| V.Literal.Number.Integer.Octal<G>
 			>;
-			readonly value?: Slot<
-				G,
-				K,
-				'value',
-				| V.Expression.Any<G>
-				| V.Identifier.Any<G>
-				| V.Literal.Any<G>
-				| V.Statement.Any<G>
-			>;
+			readonly value?: Slot<G, K, 'value', V.Expression.Any<G>>;
 		}
 	}
 }

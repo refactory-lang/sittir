@@ -40,13 +40,13 @@ Where the bindings and the authored vocabulary disagree, one line each: a claime
 
 A grammar's `grammar.bindings.ts` text, with the grammar bindings and the derivation report it was printed from.
 
-### `packages/tools/src/inventory/index.ts::vocabularyMembers`
+### `packages/tools/src/inventory/index.ts::vocabularySlots`
 
-Each vocabulary path's members as the grammar-bindings derivation reads them: every member its interface declares or inherits (`Vocabulary.members`), by name.
+Each vocabulary path's members as the grammar-bindings derivation reads them: every member its interface declares or inherits (`Vocabulary.slots`), by name.
 
 ### `packages/tools/src/inventory/index.ts::bindingsModule`
 
-The one writer of a grammar's `grammar.bindings.ts`: its binding facts read from `bindings.scm` by the pinned reader (`@sittir/codegen/bindings::readBindings`), the grammar bindings derived from them against layer 1 (`evaluateGrammar` with `unbound`) and placed in layer 1's own rules (`evaluatePackageLayer` with `unbound`), each vocabulary path's members (`vocabularyMembers`) and each claimed kind's member routes over layer 1's model (`compileNodeMap` with `unbound`, `buildNodeModel`, `resolveRoutes`; `deriveGrammarBindings`), printed with the hash of the sources it was derived from (`printBindingsModule`, `grammarBindingsHash`). A blocking derivation record (`lead-refused`) stops it through the diagnostics gate (`assertGatePasses`) before anything is printed, and the record names the `bindings.scm` path relative to the repository. A test holds every committed module equal to what this writes.
+The one writer of a grammar's `grammar.bindings.ts`: its binding facts read from `bindings.scm` by the pinned reader (`@sittir/codegen/bindings::readBindings`), the grammar bindings derived from them against layer 1 (`evaluateGrammar` with `unbound`) and placed in layer 1's own rules (`evaluatePackageLayer` with `unbound`), each vocabulary path's members (`vocabularySlots`) and each claimed kind's member routes over layer 1's model (`compileNodeMap` with `unbound`, `buildNodeModel`, `resolveRoutes`; `deriveGrammarBindings`), printed with the hash of the sources it was derived from (`printBindingsModule`, `grammarBindingsHash`). A blocking derivation record (`lead-refused`) stops it through the diagnostics gate (`assertGatePasses`) before anything is printed, and the record names the `bindings.scm` path relative to the repository. A test holds every committed module equal to what this writes.
 
 ### `packages/tools/src/inventory/index.ts::grammarBindingsSummary`
 
@@ -110,3 +110,11 @@ The options of the bindings inventory.
 ### `packages/tools/src/inventory/index.ts::CompileReport`
 
 The report a bindings compile produces.
+
+### `packages/tools/src/inventory/index.ts::KindSetRow`
+
+One kind-set in one grammar: the grammar's rule for it; `uncovered`, the reads the rule admits that lie neither beneath the namespace nor under an alias the language holds; and `unadmitted`, the aliases the language holds that the rule does not admit, which its map narrows.
+
+### `packages/tools/src/inventory/index.ts::kindSetRows`
+
+Compares a grammar's rule for each kind-set with the aliases its language holds. The rule is the kind-set's hidden bound name or its plain name, whichever the grammar has as a supertype. A member with no read of its own reads as what its container holds. `bindings-inventory --check` prints the rows and does not fail on them.

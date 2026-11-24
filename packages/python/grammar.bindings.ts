@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "1553b71a075f51b4a6e3352fd2e134420d4e49f7cb1c8b46b4bd2e1b2092782a";
+export const hash = "fc16a1d2c67752838d7005f44510cbe26862de63c8701e8d8acccf195aad90aa";
 
 export const renames = {
 	module: "file",
@@ -56,11 +56,11 @@ export const renames = {
 	set_comprehension: "set_comprehension_expression",
 	dictionary_comprehension: "map_comprehension_expression",
 	generator_expression: "generator_comprehension_expression",
-	list: "list_collection_expression",
-	tuple: "tuple_collection_expression",
-	expression_list: "bare_tuple_collection_expression",
-	set: "set_collection_expression",
-	dictionary: "map_collection_expression",
+	list: "list_expression",
+	tuple: "tuple_expression",
+	expression_list: "bare_tuple_expression",
+	set: "set_expression",
+	dictionary: "map_expression",
 	ellipsis: "ellipsis_literal",
 	format_specifier: "format_interpolation_expression",
 	type_conversion: "conversion_interpolation_expression",
@@ -109,7 +109,7 @@ export default grammar(
 			assignment_type: { "0": field("name") },
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
 			attribute: { "2": field("property") },
-			case_clause: [{ "4": field("body") }, { "1/0/1": alias("bare_tuple_pattern") }],
+			case_clause: { "1/0/1": alias("bare_tuple_pattern") },
 			case_pattern_list: { "0/0": field("elements"), "1/0/0": field("elements"), "2/0": field("elements") },
 			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block_statement as block_class_declaration)/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block_statement as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
 			class_pattern: [{ "0": field("type"), "2": field("fields") }, { "0/0": alias("qualified_identifier") }],
@@ -120,7 +120,6 @@ export default grammar(
 			expression: { "-5": alias("lambda_expression") },
 			expression_list: { "0": field("elements"), "1/1/0/0/1": field("elements") },
 			expression_statement_tuple: { "0": field("elements"), "1/0/1": field("elements") },
-			finally_clause: { "2": field("body") },
 			import_from_statement: { "1/0/1": alias("qualified_identifier") },
 			keyword_pattern: { "2": field("pattern") },
 			list: { "1/0": field("elements") },

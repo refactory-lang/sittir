@@ -1,15 +1,18 @@
 import type { PortableCondition, QueryPlan } from '@sittir/types';
-import { portablePathHasFacts } from '@sittir/common/engine';
+import { portableRowHasFacts } from '@sittir/common/engine';
 import { WILDCARD } from '../../../bindings/facts.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_SURFACE_FILE, moduleSpecifier } from '../../../grammars.ts';
 import type { GrammarRoutes, ReadEntry } from '../../../bindings/routes.ts';
+import type { VocabularyAlias } from '../../../bindings/vocabulary.ts';
 import type { SlotFlag } from './flags.ts';
 import { tableReadEntries, type PortableFactRecord } from './read-tests.ts';
 import { descendants, namespaceTree, type NamespaceNode } from './namespaces.ts';
 
 export interface PortableSurfaceConfig {
 	readonly nodeType: string;
+	readonly namespaces: ReadonlySet<string>;
+	readonly aliases: readonly VocabularyAlias[];
 	readonly routes: GrammarRoutes;
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly factOf: (entry: ReadEntry) => PortableFactRecord | undefined;
@@ -23,8 +26,9 @@ export interface PortableSurfaceConfig {
 }
 
 
-export function emitPortableSurface({ nodeType, routes, readTest, factOf, kindIdOf, fixedText, literals, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
-	const root = namespaceTree(routes.readEntries);
+export function emitPortableSurface({ nodeType, namespaces, aliases, routes, readTest, factOf, kindIdOf, fixedText, literals, flags, flagTypes, slotFlags, slotFlagTypes }: PortableSurfaceConfig): string {
+	const root = namespaceTree(routes.readEntries, aliases);
+	const aliasPaths = new Set(aliases.map((alias) => alias.path));
 	const nodes = descendants(root);
 	const byPath = new Map([root, ...nodes].map((n) => [n.path, n]));
 	const braces = (parts: readonly string[]): string => (parts.length === 0 ? '{}' : `{ ${parts.join('; ')} }`);
@@ -36,7 +40,7 @@ export function emitPortableSurface({ nodeType, routes, readTest, factOf, kindId
 		return last < 0 ? undefined : read.slice(0, last + 1);
 	};
 	const exact = (n: NamespaceNode): boolean =>
-		n.kinds.every((kind) => reached(kind)?.every((entry) => portablePathHasFacts(n.path, entry.vocab)) ?? false);
+		n.kinds.every((kind) => reached(kind)?.every((entry) => portableRowHasFacts(n.path, n.targets, entry.vocab)) ?? false);
 	const entries = [...routes.readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
 	const entryRecord = (entry: ReadEntry): string => {
 		const within = entry.claim.within.map((kind) => (kind === WILDCARD ? 'null' : kindIdOf(kind)));
@@ -77,7 +81,7 @@ export function emitPortableSurface({ nodeType, routes, readTest, factOf, kindId
 		'}',
 		'',
 		'export interface PortableKindsAt {',
-		...nodes.map((n) => `\t${q(n.path)}: ${braces([`readonly $path: ${q(n.path)}`, ...members(n.path, 'PortableKindsAt')])};`),
+		...nodes.map((n) => `\t${q(n.path)}: ${braces([namespaces.has(n.path) || aliasPaths.has(n.path) ? `readonly $namespace: ${q(n.path)}` : `readonly $path: ${q(n.path)}`, ...members(n.path, 'PortableKindsAt')])};`),
 		'}',
 		'',
 		'export interface PortableIsAt {',
@@ -90,7 +94,7 @@ export function emitPortableSurface({ nodeType, routes, readTest, factOf, kindId
 		'',
 		'const table: PortableTable = {',
 		'\tpaths: {',
-		...nodes.map((n) => `\t\t${q(n.path)}: { ids: [${idsOf(n.kinds).join(', ')}], exact: ${exact(n)} },`),
+		...nodes.map((n) => `\t\t${q(n.path)}: { ids: [${idsOf(n.kinds).join(', ')}], exact: ${exact(n)}${n.targets.length === 0 ? '' : `, targets: [${n.targets.map(q).join(', ')}]`} },`),
 		'\t},',
 		'\tentries: {',
 		...[...recordsById].map(([id, records]) => `\t\t[${id}]: [${records.join(', ')}],`),

@@ -18,19 +18,10 @@ export type OverrideIsTheMember = Expect<
 	Equal<V.Expression.Call<Fixture>['function'], V.Expression.Member<Fixture> | undefined>
 >;
 
-export type UnoverriddenMemberIsItsDefault = Expect<
+export type UnoverriddenSlotIsItsDefault = Expect<
 	Equal<
 		V.Expression.Member<Fixture>['object'],
-		| NamedFlags<
-				Fixture,
-				| V.Declaration.Module<Fixture>
-				| V.Expression.Any<Fixture>
-				| V.Identifier.Any<Fixture>
-				| V.Literal.Any<Fixture>
-				| V.Pattern.Rest<Fixture>
-				| V.Statement.Any<Fixture>
-		  >
-		| V.Unmapped
+		NamedFlags<Fixture, V.Expression.Any<Fixture>> | V.Unmapped
 	>
 >;
 
@@ -45,7 +36,7 @@ interface Wider extends V.GrammarMap {
 // @ts-expect-error an override admitting a kind outside its default does not fit
 export type WiderFits = V.Assert<V.Fits<Wider>>;
 
-export type WiderNamesTheMember = Expect<Equal<V.Fits<Wider>, { readonly fitsNoDefault: 'expression.call.function' }>>;
+export type WiderNamesTheSlot = Expect<Equal<V.Fits<Wider>, { readonly fitsNoDefault: 'expression.call.function' }>>;
 
 interface Undeclared extends V.GrammarMap {
 	readonly features: V.PythonFeatures;
@@ -55,7 +46,7 @@ interface Undeclared extends V.GrammarMap {
 	readonly inputs: {};
 }
 
-// @ts-expect-error an override keyed by a member the path does not declare does not fit
+// @ts-expect-error an override keyed by a slot the path does not declare does not fit
 export type UndeclaredFits = V.Assert<V.Fits<Undeclared>>;
 
 interface Unpathed extends V.GrammarMap {
@@ -93,7 +84,7 @@ interface Inherited extends V.GrammarMap {
 
 export type InheritedFits = V.Assert<V.Fits<Inherited>>;
 
-export type InheritedMemberIsKeyedByItsPath = Expect<
+export type InheritedSlotIsKeyedByItsPath = Expect<
 	Equal<V.Expression.Binary.Arithmetic.Add<Inherited>['left'], V.Literal.Number.Integer<Inherited> | undefined>
 >;
 

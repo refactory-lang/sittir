@@ -15,8 +15,9 @@ import {
 import type { NodeMap } from '../compiler/types.ts';
 import { lexedContentSlot, ownTextLeaf, resolveSingleFieldFactorySlot, slotLiteralValues, type LooseRefusal } from './shared.ts';
 import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
-import { includesNonEmpty, patternDfa } from '../compiler/model/pattern-automaton.ts';
+import { includesNonEmpty, patternDfa, patternsMeet } from '../compiler/model/pattern-automaton.ts';
 import { integerSpelling } from '@sittir/common/portable/utils';
+import type { PortableDecimalParts } from '@sittir/types';
 import { asLexed, withoutCaptures } from '../util/pattern-pieces.ts';
 
 export type InteriorEntry =
@@ -40,12 +41,45 @@ export function interiorEnumArms(values: readonly string[]): string {
 export function interiorSlotGuards(
 	kind: string,
 	node: AssembledNode
-): readonly { readonly slot: string; readonly regex: RegExp; readonly literal: string; readonly constName: string }[] {
+): readonly { readonly slot: string; readonly regex: RegExp; readonly literal: string; readonly constName: string; readonly values?: readonly string[] }[] {
 	return (interiorOf(node)?.entries ?? []).flatMap((entry) => {
-		const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
+		const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values), values: entry.values } : undefined;
 		const regex = guarded === undefined ? undefined : anchoredLeafRegex(kind, guarded.pattern);
-		return guarded === undefined || regex === undefined ? [] : [{ slot: guarded.slot, regex, literal: regexLiteral(regex), constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}` }];
+		return guarded === undefined || regex === undefined ? [] : [{ slot: guarded.slot, regex, literal: regexLiteral(regex), constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}`, ...('values' in guarded ? { values: guarded.values } : {}) }];
 	});
+}
+
+export interface InteriorTextForm {
+	readonly fixed: string;
+	readonly pattern: string;
+}
+
+export function interiorTextForm(node: AssembledNode, slot: string): InteriorTextForm | undefined {
+	const entries = interiorOf(node)?.entries;
+	if (entries === undefined) return undefined;
+	let pattern: string | undefined;
+	for (const entry of entries) {
+		if ('lit' in entry) continue;
+		if ('flag' in entry || ('enum' in entry ? entry.enum : entry.slot) !== slot || pattern !== undefined) return undefined;
+		pattern = 'enum' in entry ? interiorEnumArms(entry.values) : entry.pattern;
+	}
+	return pattern === undefined ? undefined : { fixed: entries.map((entry) => ('lit' in entry ? entry.lit : '\0')).join(''), pattern };
+}
+
+export function textFormsCollide(earlier: InteriorTextForm, later: InteriorTextForm): boolean {
+	if (earlier.fixed === later.fixed) return false;
+	const [a, b] = [patternDfa(earlier.pattern), patternDfa(later.pattern)];
+	return a === undefined || b === undefined || patternsMeet(a, b);
+}
+
+export interface RoutedTextForm {
+	readonly name: string;
+	readonly form: InteriorTextForm;
+}
+
+export function collidesWithEarlier(forms: readonly (RoutedTextForm | undefined)[], at: number): boolean {
+	const own = forms[at];
+	return own !== undefined && forms.slice(0, at).some((earlier) => earlier?.name === own.name && textFormsCollide(earlier.form, own.form));
 }
 
 export function interiorEntryPattern(entry: InteriorEntry): string {
@@ -362,6 +396,48 @@ export function numberSpelling(node: AssembledNode, content: AssembledNontermina
 	const spelled = numberShapeOfPattern(content.name, joined);
 	if (spelled === undefined || !spellsItsBase(spelled)) return undefined;
 	return prefix === undefined ? { slots: [content], shape, pattern } : { slots: [prefix, content], shape: spelled, pattern: joined };
+}
+
+export const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'exponentSign'] as const satisfies readonly (keyof PortableDecimalParts)[];
+
+function prefixedDigits(node: AssembledNode): readonly AssembledNonterminal[] {
+	const whole = wholeTextShape(node.kind, node);
+	if (whole === undefined || whole.base === 'float' || whole.prefix === '') return [];
+	const first = interiorOf(node)?.entries[0];
+	if (first === undefined || !('enum' in first) || !first.values.includes(whole.prefix)) return [];
+	const prefix = node.slots.find((slot) => slot.name === first.enum);
+	const digits = node.slots.filter((slot) => numericSlotShape(slot)?.base === whole.base);
+	return prefix === undefined || digits.length !== 1 ? [] : [prefix, digits[0]!];
+}
+
+export function numberSlotsOf(node: AssembledNode, config: boolean): readonly AssembledNonterminal[] {
+	if (kindNumberShape(node.kind, node) === undefined) return [];
+	const spelled = (): readonly AssembledNonterminal[] => {
+		const content = lexedContentSlot(node);
+		return (content === undefined ? undefined : numberSpelling(node, content)?.slots) ?? [];
+	};
+	if (!config) return spelled();
+	const alone = node.slots.filter((slot) => {
+		const shape = numericSlotShape(slot);
+		return shape !== undefined && spellsItsBase(shape);
+	});
+	if (alone.length === 0) {
+		const single = spelled();
+		return single.length > 0 ? single : prefixedDigits(node);
+	}
+	if (alone.length === 1) return alone;
+	const partless = alone.filter((slot) => !DECIMAL_PARTS.some((part) => part === slot.propertyName)).map((slot) => slot.propertyName);
+	if (partless.length > 0) throw emitShapeFailure({ code: 'portable-vocabulary-mismatch', message: `${node.kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling` });
+	return DECIMAL_PARTS.flatMap((part) => node.slots.find((slot) => slot.propertyName === part) ?? []);
+}
+
+export function numberSlotsSpellValue(node: AssembledNode, config: boolean): boolean {
+	const slots = numberSlotsOf(node, config);
+	const whole = wholeTextShape(node.kind, node);
+	if (slots.length === 0) return whole?.base !== 'float' || leafGuard(node.kind, node)!.test('0.5');
+	if (slots.length !== 1) return true;
+	const own = numericSlotShape(slots[0]!);
+	return whole === undefined || own === undefined || whole.base === own.base;
 }
 
 export function slotPattern(slot: AssembledNonterminal): string | undefined {

@@ -9726,7 +9726,7 @@ export function buildClosureParameters(
 		[
 			[
 				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
-				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
+				317, 325, 326, 321, 322, 420, 421, 419, 386, 387, 300, 259, 425
 			],
 			(v: unknown) => buildClosureParameter(v as never)
 		]
@@ -16872,22 +16872,22 @@ function buildPointerTypeMut$with$type(this: Received<Held>, ...args: unknown[])
 	return buildPointerTypeMut$with(receiverOf(this, '$with.type'), 'type', args);
 }
 
-export function buildRangeExpressionBinary<
-	StartSlot extends T.RangeExpressionBinary.Config['start'],
-	EndSlot extends T.RangeExpressionBinary.Config['end']
+export function buildRangeExpressionBounded<
+	StartSlot extends T.RangeExpressionBounded.Config['start'],
+	EndSlot extends T.RangeExpressionBounded.Config['end']
 >(
-	config: RefusingConfig<T.RangeExpressionBinary.Config, { start: StartSlot; end: EndSlot }>
-): T.RangeExpressionBinary.Bound;
-export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config): T.RangeExpressionBinary.Bound {
-	currentHandle()?.admit(TSKindId.RangeExpressionBinary, [config]);
-	const _start = kindIdStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start);
-	const _operator = kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator);
-	const _end = kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end);
+	config: RefusingConfig<T.RangeExpressionBounded.Config, { start: StartSlot; end: EndSlot }>
+): T.RangeExpressionBounded.Bound;
+export function buildRangeExpressionBounded(config: T.RangeExpressionBounded.Config): T.RangeExpressionBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangeExpressionBounded, [config]);
+	const _start = kindIdStorage<NonNullable<T.RangeExpressionBounded['_start']>>(config.start);
+	const _operator = kindIdStorage<NonNullable<T.RangeExpressionBounded['_operator']>>(config.operator);
+	const _end = kindIdStorage<NonNullable<T.RangeExpressionBounded['_end']>>(config.end);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_expression_binary', { start: _start, operator: _operator, end: _end });
+		admitChildren(handle, 'range_expression_bounded', { start: _start, operator: _operator, end: _end });
 	const node = {
-		$type: TSKindId.RangeExpressionBinary as const,
+		$type: TSKindId.RangeExpressionBounded as const,
 		_start,
 		_operator,
 		_end,
@@ -16907,53 +16907,53 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		start: buildRangeExpressionBinary$with$start,
-		operator: buildRangeExpressionBinary$with$operator,
-		end: buildRangeExpressionBinary$with$end,
+		start: buildRangeExpressionBounded$with$start,
+		operator: buildRangeExpressionBounded$with$operator,
+		end: buildRangeExpressionBounded$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionBinary.Bound;
+	return node as unknown as T.RangeExpressionBounded.Bound;
 }
 
-function buildRangeExpressionBinary$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildRangeExpressionBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.RangeExpressionBinary.Config;
+	const config = node[INPUT] as T.RangeExpressionBounded.Config;
 	switch (setter) {
 		case 'start':
-			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['start']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary({ ...config, start: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBounded.Config>['start']>) =>
+				rebuilt(node, handle, () => buildRangeExpressionBounded({ ...config, start: value }))
 			);
 		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary({ ...config, operator: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBounded.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangeExpressionBounded({ ...config, operator: value }))
 			);
 		case 'end':
-			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['end']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary({ ...config, end: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBounded.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangeExpressionBounded({ ...config, end: value }))
 			);
 	}
-	throw new Error(`range_expression_binary has no $with.${setter}`);
+	throw new Error(`range_expression_bounded has no $with.${setter}`);
 }
-function buildRangeExpressionBinary$with$start(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangeExpressionBinary$with(receiverOf(this, '$with.start'), 'start', args);
+function buildRangeExpressionBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangeExpressionBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
-function buildRangeExpressionBinary$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangeExpressionBinary$with(receiverOf(this, '$with.operator'), 'operator', args);
+function buildRangeExpressionBounded$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangeExpressionBounded$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function buildRangeExpressionBinary$with$end(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangeExpressionBinary$with(receiverOf(this, '$with.end'), 'end', args);
+function buildRangeExpressionBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangeExpressionBounded$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export function buildRangeExpressionPostfix<V extends Admit<T.Expression>>(
+export function buildRangeExpressionLowerBounded<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
-): T.RangeExpressionPostfix.Bound;
-export function buildRangeExpressionPostfix(value: Admit<T.Expression>): T.RangeExpressionPostfix.Bound {
-	const _start = kindIdStorage<NonNullable<T.RangeExpressionPostfix['_start']>>(value);
+): T.RangeExpressionLowerBounded.Bound;
+export function buildRangeExpressionLowerBounded(value: Admit<T.Expression>): T.RangeExpressionLowerBounded.Bound {
+	const _start = kindIdStorage<NonNullable<T.RangeExpressionLowerBounded['_start']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_expression_postfix', { start: _start });
+	if (handle !== undefined) admitChildren(handle, 'range_expression_lower_bounded', { start: _start });
 	const node = {
-		$type: TSKindId.RangeExpressionPostfix as const,
+		$type: TSKindId.RangeExpressionLowerBounded as const,
 		_start,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
@@ -16967,34 +16967,34 @@ export function buildRangeExpressionPostfix(value: Admit<T.Expression>): T.Range
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { start: buildRangeExpressionPostfix$with$start, [RECEIVER]: node };
+	node.$with = { start: buildRangeExpressionLowerBounded$with$start, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionPostfix.Bound;
+	return node as unknown as T.RangeExpressionLowerBounded.Bound;
 }
 
-function buildRangeExpressionPostfix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildRangeExpressionLowerBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'start':
 			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildRangeExpressionPostfix(value))
+				rebuilt(node, handle, () => buildRangeExpressionLowerBounded(value))
 			);
 	}
-	throw new Error(`range_expression_postfix has no $with.${setter}`);
+	throw new Error(`range_expression_lower_bounded has no $with.${setter}`);
 }
-function buildRangeExpressionPostfix$with$start(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangeExpressionPostfix$with(receiverOf(this, '$with.start'), 'start', args);
+function buildRangeExpressionLowerBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangeExpressionLowerBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
 
-export function buildRangeExpressionPrefix<V extends Admit<T.Expression>>(
+export function buildRangeExpressionUpperBounded<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
-): T.RangeExpressionPrefix.Bound;
-export function buildRangeExpressionPrefix(value: Admit<T.Expression>): T.RangeExpressionPrefix.Bound {
-	const _end = kindIdStorage<NonNullable<T.RangeExpressionPrefix['_end']>>(value);
+): T.RangeExpressionUpperBounded.Bound;
+export function buildRangeExpressionUpperBounded(value: Admit<T.Expression>): T.RangeExpressionUpperBounded.Bound {
+	const _end = kindIdStorage<NonNullable<T.RangeExpressionUpperBounded['_end']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_expression_prefix', { end: _end });
+	if (handle !== undefined) admitChildren(handle, 'range_expression_upper_bounded', { end: _end });
 	const node = {
-		$type: TSKindId.RangeExpressionPrefix as const,
+		$type: TSKindId.RangeExpressionUpperBounded as const,
 		_end,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
@@ -17008,29 +17008,29 @@ export function buildRangeExpressionPrefix(value: Admit<T.Expression>): T.RangeE
 		[HANDLE]: handle,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { end: buildRangeExpressionPrefix$with$end, [RECEIVER]: node };
+	node.$with = { end: buildRangeExpressionUpperBounded$with$end, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionPrefix.Bound;
+	return node as unknown as T.RangeExpressionUpperBounded.Bound;
 }
 
-function buildRangeExpressionPrefix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildRangeExpressionUpperBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
 	switch (setter) {
 		case 'end':
 			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildRangeExpressionPrefix(value))
+				rebuilt(node, handle, () => buildRangeExpressionUpperBounded(value))
 			);
 	}
-	throw new Error(`range_expression_prefix has no $with.${setter}`);
+	throw new Error(`range_expression_upper_bounded has no $with.${setter}`);
 }
-function buildRangeExpressionPrefix$with$end(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangeExpressionPrefix$with(receiverOf(this, '$with.end'), 'end', args);
+function buildRangeExpressionUpperBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangeExpressionUpperBounded$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export function buildRangeExpressionBare(): T.RangeExpressionBare.Bound {
+export function buildRangeExpressionUnbounded(): T.RangeExpressionUnbounded.Bound {
 	const handle = currentHandle();
 	const node = {
-		$type: TSKindId.RangeExpressionBare as const,
+		$type: TSKindId.RangeExpressionUnbounded as const,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -17044,7 +17044,7 @@ export function buildRangeExpressionBare(): T.RangeExpressionBare.Bound {
 	};
 	node.$with = { [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangeExpressionBare.Bound;
+	return node as unknown as T.RangeExpressionUnbounded.Bound;
 }
 
 export function buildExpressionStatementWithSemi<V extends Admit<T.Expression>>(
@@ -18643,28 +18643,30 @@ function buildMacroDefinitionBrace$with$macroRules(this: Received<Held>, ...args
 	return buildMacroDefinitionBrace$with(receiverOf(this, '$with.macroRules'), 'macroRules', args);
 }
 
-export function buildRangePatternPrefix<RightSlot extends T.RangePatternPrefix.Config['right']>(
-	config: RefusingConfig<T.RangePatternPrefix.Config, { right: RightSlot }>
-): T.RangePatternPrefix.Bound;
-export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
-	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-		'RangePatternPrefix.right',
+export function buildRangePatternUpperBounded<EndSlot extends T.RangePatternUpperBounded.Config['end']>(
+	config: RefusingConfig<T.RangePatternUpperBounded.Config, { end: EndSlot }>
+): T.RangePatternUpperBounded.Bound;
+export function buildRangePatternUpperBounded(
+	config: T.RangePatternUpperBounded.Config
+): T.RangePatternUpperBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangePatternUpperBounded, [config]);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternUpperBounded['_operator']>>(config.operator);
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternUpperBounded['_end']>>(config.end),
+		'RangePatternUpperBounded.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_upper_bounded', { operator: _operator, end: _end });
 	const node = {
-		$type: TSKindId.RangePatternPrefix as const,
+		$type: TSKindId.RangePatternUpperBounded as const,
 		_operator,
-		_right,
+		_end,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		operator: () => _operator,
-		right: () => hydrateStoredSlot(node, '_right'),
+		end: () => hydrateStoredSlot(node, '_end'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18676,61 +18678,70 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		operator: buildRangePatternPrefix$with$operator,
-		right: buildRangePatternPrefix$with$right,
+		operator: buildRangePatternUpperBounded$with$operator,
+		end: buildRangePatternUpperBounded$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternPrefix.Bound;
+	return node as unknown as T.RangePatternUpperBounded.Bound;
 }
 
-function buildRangePatternPrefix$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildRangePatternUpperBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.RangePatternPrefix.Config;
+	const config = node[INPUT] as T.RangePatternUpperBounded.Config;
 	switch (setter) {
 		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, operator: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternUpperBounded.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternUpperBounded({ ...config, operator: value }))
 			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix({ ...config, right: value }))
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternUpperBounded.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternUpperBounded({ ...config, end: value }))
 			);
 	}
-	throw new Error(`range_pattern_prefix has no $with.${setter}`);
+	throw new Error(`range_pattern_upper_bounded has no $with.${setter}`);
 }
-function buildRangePatternPrefix$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternPrefix$with(receiverOf(this, '$with.operator'), 'operator', args);
+function buildRangePatternUpperBounded$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternUpperBounded$with(receiverOf(this, '$with.operator'), 'operator', args);
 }
-function buildRangePatternPrefix$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternPrefix$with(receiverOf(this, '$with.right'), 'right', args);
+function buildRangePatternUpperBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternUpperBounded$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export function buildRangePatternWithLeftWithRight<RightSlot extends T.RangePatternWithLeftWithRight.Config['right']>(
-	config: RefusingConfig<T.RangePatternWithLeftWithRight.Config, { right: RightSlot }>
-): T.RangePatternWithLeftWithRight.Bound;
-export function buildRangePatternWithLeftWithRight(
-	config: T.RangePatternWithLeftWithRight.Config
-): T.RangePatternWithLeftWithRight.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
-	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-		'RangePatternWithLeftWithRight.right',
+export function buildRangePatternBounded<
+	StartSlot extends T.RangePatternBounded.Config['start'],
+	EndSlot extends T.RangePatternBounded.Config['end']
+>(
+	config: RefusingConfig<T.RangePatternBounded.Config, { start: StartSlot; end: EndSlot }>
+): T.RangePatternBounded.Bound;
+export function buildRangePatternBounded(config: T.RangePatternBounded.Config): T.RangePatternBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangePatternBounded, [config]);
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternBounded['_start']>>(config.start),
+		'RangePatternBounded.start',
+		TSKindId.Identifier,
+		['self', 'super', 'crate']
+	);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternBounded['_operator']>>(config.operator);
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternBounded['_end']>>(config.end),
+		'RangePatternBounded.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
+		admitChildren(handle, 'range_pattern_bounded', { start: _start, operator: _operator, end: _end });
 	const node = {
-		$type: TSKindId.RangePatternWithLeftWithRight as const,
+		$type: TSKindId.RangePatternBounded as const,
+		_start,
 		_operator,
-		_right,
+		_end,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
+		start: () => hydrateStoredSlot(node, '_start'),
 		operator: () => _operator,
-		right: () => hydrateStoredSlot(node, '_right'),
+		end: () => hydrateStoredSlot(node, '_end'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18742,63 +18753,80 @@ export function buildRangePatternWithLeftWithRight(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		operator: buildRangePatternWithLeftWithRight$with$operator,
-		right: buildRangePatternWithLeftWithRight$with$right,
+		start: buildRangePatternBounded$with$start,
+		operator: buildRangePatternBounded$with$operator,
+		end: buildRangePatternBounded$with$end,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternWithLeftWithRight.Bound;
+	return node as unknown as T.RangePatternBounded.Bound;
 }
 
-function buildRangePatternWithLeftWithRight$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildRangePatternBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.RangePatternWithLeftWithRight.Config;
+	const config = node[INPUT] as T.RangePatternBounded.Config;
 	switch (setter) {
-		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, operator: value }))
+		case 'start':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternBounded.Config>['start']>) =>
+				rebuilt(node, handle, () => buildRangePatternBounded({ ...config, start: value }))
 			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight({ ...config, right: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternBounded.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternBounded({ ...config, operator: value }))
+			);
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternBounded.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternBounded({ ...config, end: value }))
 			);
 	}
-	throw new Error(`range_pattern_with_left_with_right has no $with.${setter}`);
+	throw new Error(`range_pattern_bounded has no $with.${setter}`);
 }
-function buildRangePatternWithLeftWithRight$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternWithLeftWithRight$with(receiverOf(this, '$with.operator'), 'operator', args);
+function buildRangePatternBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
-function buildRangePatternWithLeftWithRight$with$right(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternWithLeftWithRight$with(receiverOf(this, '$with.right'), 'right', args);
+function buildRangePatternBounded$with$operator(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternBounded$with(receiverOf(this, '$with.operator'), 'operator', args);
+}
+function buildRangePatternBounded$with$end(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternBounded$with(receiverOf(this, '$with.end'), 'end', args);
 }
 
-export const buildRangePatternWithLeftBare: TSKindId.RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
-
-export function buildRangePatternWithLeft<
-	LeftSlot extends T.RangePatternWithLeft.Config['left'],
-	ContentSlot extends T.RangePatternWithLeft.Config['content']
->(
-	config: RefusingConfig<T.RangePatternWithLeft.Config, { left: LeftSlot; content: ContentSlot }>
-): T.RangePatternWithLeft.Bound;
-export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [config]);
-	const _left = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-		'RangePatternWithLeft.left',
+export function buildRangePatternLowerBounded<
+	V extends Admit<
+		| T.LiteralPattern
+		| TSKindId.SelfModule
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.Identifier
+		| T.ScopedIdentifier
+	>
+>(value: V & RefuseUndeclared<V>): T.RangePatternLowerBounded.Bound;
+export function buildRangePatternLowerBounded(
+	value: Admit<
+		| T.LiteralPattern
+		| TSKindId.SelfModule
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.Identifier
+		| T.ScopedIdentifier
+	>
+): T.RangePatternLowerBounded.Bound {
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternLowerBounded['_start']>>(value),
+		'RangePatternLowerBounded.start',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
-	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left, content: _content });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_lower_bounded', { start: _start });
 	const node = {
-		$type: TSKindId.RangePatternWithLeft as const,
-		_left,
-		_content,
+		$type: TSKindId.RangePatternLowerBounded as const,
+		_start,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		left: () => hydrateStoredSlot(node, '_left'),
-		content: () => hydrateStoredSlot(node, '_content'),
+		start: () => hydrateStoredSlot(node, '_start'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18806,38 +18834,38 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		left: buildRangePatternWithLeft$with$left,
-		content: buildRangePatternWithLeft$with$content,
-		[RECEIVER]: node
-	};
+	node.$with = { start: buildRangePatternLowerBounded$with$start, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RangePatternWithLeft.Bound;
+	return node as unknown as T.RangePatternLowerBounded.Bound;
 }
 
-function buildRangePatternWithLeft$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+function buildRangePatternLowerBounded$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.RangePatternWithLeft.Config;
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['left']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft({ ...config, left: value }))
-			);
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft({ ...config, content: value }))
+		case 'start':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						NonNullable<
+							| T.LiteralPattern
+							| TSKindId.SelfModule
+							| T.Metavariable
+							| TSKindId.Super
+							| TSKindId.Crate
+							| T.Identifier
+							| T.ScopedIdentifier
+						>
+					>
+				) => rebuilt(node, handle, () => buildRangePatternLowerBounded(value))
 			);
 	}
-	throw new Error(`range_pattern_with_left has no $with.${setter}`);
+	throw new Error(`range_pattern_lower_bounded has no $with.${setter}`);
 }
-function buildRangePatternWithLeft$with$left(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternWithLeft$with(receiverOf(this, '$with.left'), 'left', args);
-}
-function buildRangePatternWithLeft$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildRangePatternWithLeft$with(receiverOf(this, '$with.content'), 'content', args);
+function buildRangePatternLowerBounded$with$start(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildRangePatternLowerBounded$with(receiverOf(this, '$with.start'), 'start', args);
 }
 
 export function buildStructItemBrace<
@@ -22043,10 +22071,10 @@ export type FluentKindMap = {
 	or_pattern_prefix: T.OrPatternPrefix.Bound;
 	pointer_type_const: T.PointerTypeConst.Bound;
 	pointer_type_mut: T.PointerTypeMut.Bound;
-	range_expression_binary: T.RangeExpressionBinary.Bound;
-	range_expression_postfix: T.RangeExpressionPostfix.Bound;
-	range_expression_prefix: T.RangeExpressionPrefix.Bound;
-	range_expression_bare: T.RangeExpressionBare.Bound;
+	range_expression_bounded: T.RangeExpressionBounded.Bound;
+	range_expression_lower_bounded: T.RangeExpressionLowerBounded.Bound;
+	range_expression_upper_bounded: T.RangeExpressionUpperBounded.Bound;
+	range_expression_unbounded: T.RangeExpressionUnbounded.Bound;
 	expression_statement_with_semi: T.ExpressionStatementWithSemi.Bound;
 	foreign_mod_item_semi: T.ForeignModItemSemi.Bound;
 	foreign_mod_item_body: T.ForeignModItemBody.Bound;
@@ -22073,10 +22101,9 @@ export type FluentKindMap = {
 	macro_definition_paren: T.MacroDefinitionParen.Bound;
 	macro_definition_bracket: T.MacroDefinitionBracket.Bound;
 	macro_definition_brace: T.MacroDefinitionBrace.Bound;
-	range_pattern_prefix: T.RangePatternPrefix.Bound;
-	range_pattern_with_left_with_right: T.RangePatternWithLeftWithRight.Bound;
-	range_pattern_with_left_bare: T.RangePatternWithLeftBare;
-	range_pattern_with_left: T.RangePatternWithLeft.Bound;
+	range_pattern_upper_bounded: T.RangePatternUpperBounded.Bound;
+	range_pattern_bounded: T.RangePatternBounded.Bound;
+	range_pattern_lower_bounded: T.RangePatternLowerBounded.Bound;
 	struct_item_brace: T.StructItemBrace.Bound;
 	struct_item_tuple: T.StructItemTuple.Bound;
 	struct_item_unit: T.StructItemUnit.Bound;
@@ -22323,10 +22350,10 @@ export const _factoryMap = {
 	or_pattern_prefix: buildOrPatternPrefix,
 	pointer_type_const: buildPointerTypeConst,
 	pointer_type_mut: buildPointerTypeMut,
-	range_expression_binary: buildRangeExpressionBinary,
-	range_expression_postfix: buildRangeExpressionPostfix,
-	range_expression_prefix: buildRangeExpressionPrefix,
-	range_expression_bare: buildRangeExpressionBare,
+	range_expression_bounded: buildRangeExpressionBounded,
+	range_expression_lower_bounded: buildRangeExpressionLowerBounded,
+	range_expression_upper_bounded: buildRangeExpressionUpperBounded,
+	range_expression_unbounded: buildRangeExpressionUnbounded,
 	expression_statement_with_semi: buildExpressionStatementWithSemi,
 	foreign_mod_item_semi: buildForeignModItemSemi,
 	foreign_mod_item_body: buildForeignModItemBody,
@@ -22353,10 +22380,9 @@ export const _factoryMap = {
 	macro_definition_paren: buildMacroDefinitionParen,
 	macro_definition_bracket: buildMacroDefinitionBracket,
 	macro_definition_brace: buildMacroDefinitionBrace,
-	range_pattern_prefix: buildRangePatternPrefix,
-	range_pattern_with_left_with_right: buildRangePatternWithLeftWithRight,
-	range_pattern_with_left_bare: buildRangePatternWithLeftBare,
-	range_pattern_with_left: buildRangePatternWithLeft,
+	range_pattern_upper_bounded: buildRangePatternUpperBounded,
+	range_pattern_bounded: buildRangePatternBounded,
+	range_pattern_lower_bounded: buildRangePatternLowerBounded,
 	struct_item_brace: buildStructItemBrace,
 	struct_item_tuple: buildStructItemTuple,
 	struct_item_unit: buildStructItemUnit,

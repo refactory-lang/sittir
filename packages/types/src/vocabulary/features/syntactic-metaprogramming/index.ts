@@ -3,6 +3,8 @@ export type * from './declaration.ts';
 export type * from './element.ts';
 export type * from './expression.ts';
 export type * from './identifier.ts';
+export type * from './pattern.ts';
+export type * from './type.ts';
 
 /** Syntactic metaprogramming: macros that rewrite the syntax they are given. */
 export interface SyntacticMetaprogramming {

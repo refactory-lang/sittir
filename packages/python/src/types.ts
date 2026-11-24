@@ -8316,11 +8316,7 @@ export namespace Interpolation {
 
 export namespace FormatSpecifier {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceKindId;
-			readonly before?: WhitespaceKindId;
-			readonly colon?: { readonly after?: WhitespaceKindId };
-		};
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 	}
 }
 

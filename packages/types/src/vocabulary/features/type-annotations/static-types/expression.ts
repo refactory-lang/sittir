@@ -4,15 +4,7 @@ import type * as V from '../../../index.ts';
 export namespace Expression {
 	export interface Cast<G extends GrammarMap, K extends Under<'expression.cast'> = 'expression.cast'> extends SubKindOf<V.Expression<G, K>> {
 		readonly $path: K;
-		readonly expression?: Slot<
-			G,
-			K,
-			'expression',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>;
+		readonly expression?: Slot<G, K, 'expression', V.Expression.Any<G>>;
 		// t only
 	}
 }

@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { transform } from '../transform/transform.ts';
+import { transform, withDirectVariants } from '../transform/transform.ts';
 import { variant } from '../primitives/variant.ts';
 import { withWireContext } from '../wire/wire.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
@@ -62,6 +62,46 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		expect(x.type).toBe('SEQ');
 		expect(x.members.map((m) => m.value ?? m.name)).toEqual(['(', 'X', ')']);
 		expect((result as { type: string }).type).toBe('CHOICE');
+	});
+
+	describe('a variant inside a choice arm', () => {
+		const armed = (g: any): unknown =>
+			g.choice(
+				g.seq({ type: 'SYMBOL', name: 'S' }, g.choice(g.seq({ type: 'STRING', value: '..=' }, { type: 'SYMBOL', name: 'E' }), { type: 'STRING', value: '..' })),
+				g.seq({ type: 'STRING', value: '..' }, { type: 'SYMBOL', name: 'E' })
+			);
+		const texts = (rule: any): unknown[] => (rule.members ?? [rule]).flatMap((m: any) => (m.type === 'SEQ' || m.type === 'CHOICE' ? texts(m) : [m.value ?? m.name]));
+
+		it("takes the arm's sequence when the arm has no variant of its own", () => {
+			const { ctx, result } = withWireContext('range', () =>
+				transform(armed(globalThis) as never, { '0/1/0': variant('bounded'), '0/1/1': variant('lower'), '1': variant('upper') })
+			);
+			expect((result as any).members.map((m: any) => m.name)).toEqual(['range_bounded', 'range_lower', 'range_upper']);
+			expect(texts(ctx.deposits.get('range_bounded'))).toEqual(['S', '..=', 'E']);
+			expect((ctx.deposits.get('range_bounded') as any).members.map((m: any) => m.type)).toEqual(['SYMBOL', 'STRING', 'SYMBOL']);
+			expect(texts(ctx.deposits.get('range_lower'))).toEqual(['S', '..']);
+			expect(texts(ctx.deposits.get('range_upper'))).toEqual(['..', 'E']);
+		});
+
+		it('keeps the nesting when a later patch set names the arm', () => {
+			const { ctx, result } = withWireContext('range', () =>
+				transform(armed(globalThis) as never, { '0/1/0': variant('inner'), '0/1/1': variant('bare') }, { '0': variant('outer'), '1': variant('upper') })
+			);
+			expect((result as any).members.map((m: any) => m.name)).toEqual(['range_outer', 'range_upper']);
+			expect(texts(ctx.deposits.get('range_outer'))).toEqual(['S', 'range_inner', 'range_bare']);
+		});
+
+		it('keeps the nesting when an inline label names the arm', () => {
+			const { ctx, result } = withWireContext('range', () => {
+				const g = globalThis as any;
+				const outer = g.seq({ type: 'SYMBOL', name: 'S' }, g.choice(g.seq({ type: 'STRING', value: '..=' }, { type: 'SYMBOL', name: 'E' }), { type: 'STRING', value: '..' }));
+				const upper = g.seq({ type: 'STRING', value: '..' }, { type: 'SYMBOL', name: 'E' });
+				return withDirectVariants(g.choice(variant('outer', outer), variant('upper', upper)), { '0/1/0': variant('inner'), '0/1/1': variant('bare') });
+			});
+			expect((result as any).members.map((m: any) => m.name)).toEqual(['range_outer', 'range_upper']);
+			expect(texts(ctx.deposits.get('range_outer'))).toEqual(['S', 'range_inner', 'range_bare']);
+			expect(texts(ctx.deposits.get('range_upper'))).toEqual(['..', 'E']);
+		});
 	});
 
 	it('carries an unnamed arm that enrich already lifted: the lift keeps its name and takes the scaffolding', () => {
