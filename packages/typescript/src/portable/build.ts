@@ -664,16 +664,16 @@ const attribute_call$287_arguments$item = (value: attribute_call$287_arguments$i
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('attribute.call.arguments', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('attribute.call.arguments', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('attribute.call.arguments', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('attribute.call.arguments', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -1886,16 +1886,16 @@ const clause_case_default$231_statements = (value: clause_case_default$231_state
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.case.default.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.case.default.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.case.default.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('clause.case.default.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -2799,16 +2799,16 @@ const clause_case_switch$230_statements = (value: clause_case_switch$230_stateme
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.case.switch.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.case.switch.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.case.switch.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('clause.case.switch.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -3568,16 +3568,16 @@ const clause_case_switch$230_value = (value: clause_case_switch$230_value$Item) 
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.case.switch.value', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.case.switch.value', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.case.switch.value', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('clause.case.switch.value', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -4641,16 +4641,16 @@ const clause_else$212_statements$item = (value: clause_else$212_statements$item$
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -5782,16 +5782,16 @@ const clause_finally$233_statements$item = (value: clause_finally$233_statements
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.finally.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.finally.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.finally.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('clause.finally.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -7970,16 +7970,16 @@ const declaration_member_constructor$469_statements$item = (
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -8940,16 +8940,16 @@ const declaration_member_constructor_private$469_statements$item = (
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.constructor.private.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.constructor.private.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.constructor.private.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.constructor.private.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -9910,16 +9910,16 @@ const declaration_member_constructor_protected$469_statements$item = (
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.constructor.protected.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.constructor.protected.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.constructor.protected.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.constructor.protected.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -10880,16 +10880,16 @@ const declaration_member_constructor_public$469_statements$item = (
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.constructor.public.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.constructor.public.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.constructor.public.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.constructor.public.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -11651,16 +11651,16 @@ const declaration_member_enum_member$324_name = (value: declaration_member_enum_
 			return unbuilt('declaration.member.enum_member.name', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -12288,16 +12288,16 @@ const declaration_member_enum_member$324_value = (value: declaration_member_enum
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -12933,16 +12933,16 @@ const declaration_member_enum_member$388_name = (value: declaration_member_enum_
 			return unbuilt('declaration.member.enum_member.name', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.enum_member.name', value);
+			return b.computedPropertyName(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -15068,16 +15068,16 @@ const declaration_member_static_block$290_statements$item = (
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.static_block.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.static_block.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.static_block.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.member.static_block.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -16024,16 +16024,16 @@ const declaration_module$316_statements$item = (value: declaration_module$316_st
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.module.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.module.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.module.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.module.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -16982,16 +16982,16 @@ const declaration_module_external$315_statements$item = (
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.module.external.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.module.external.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.module.external.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.module.external.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -18107,16 +18107,16 @@ const declaration_parameter$328_default = (value: declaration_parameter$328_defa
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -18237,7 +18237,7 @@ const declaration_parameter$328_name = (value: declaration_parameter$328_name$It
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -19152,16 +19152,16 @@ const declaration_parameter$329_default = (value: declaration_parameter$329_defa
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -19287,7 +19287,7 @@ const declaration_parameter$329_name = (value: declaration_parameter$329_name$It
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -20202,16 +20202,16 @@ const declaration_parameter_private$328_default = (value: declaration_parameter_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -20332,7 +20332,7 @@ const declaration_parameter_private$328_name = (value: declaration_parameter_pri
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.private.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -21247,16 +21247,16 @@ const declaration_parameter_private$329_default = (value: declaration_parameter_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.private.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -21382,7 +21382,7 @@ const declaration_parameter_private$329_name = (value: declaration_parameter_pri
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.private.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -22297,16 +22297,16 @@ const declaration_parameter_protected$328_default = (value: declaration_paramete
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -22427,7 +22427,7 @@ const declaration_parameter_protected$328_name = (value: declaration_parameter_p
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.protected.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -23342,16 +23342,16 @@ const declaration_parameter_protected$329_default = (value: declaration_paramete
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.protected.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -23477,7 +23477,7 @@ const declaration_parameter_protected$329_name = (value: declaration_parameter_p
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.protected.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -24392,16 +24392,16 @@ const declaration_parameter_public$328_default = (value: declaration_parameter_p
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -24522,7 +24522,7 @@ const declaration_parameter_public$328_name = (value: declaration_parameter_publ
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.public.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -25437,16 +25437,16 @@ const declaration_parameter_public$329_default = (value: declaration_parameter_p
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.public.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -25572,7 +25572,7 @@ const declaration_parameter_public$329_name = (value: declaration_parameter_publ
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.public.name', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -26487,16 +26487,16 @@ const declaration_parameter_receiver$473_default = (value: declaration_parameter
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.receiver.default', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.receiver.default', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.receiver.default', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.parameter.receiver.default', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -28112,16 +28112,16 @@ const declaration_variable$440_value = (value: declaration_variable$440_value$It
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.variable.value', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.variable.value', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -29457,16 +29457,16 @@ const declaration_variable_pattern$440_value = (value: declaration_variable_patt
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.pattern.value', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.pattern.value', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.variable.pattern.value', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('declaration.variable.pattern.value', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -30238,16 +30238,16 @@ const element_spread$267_expression = (value: element_spread$267_expression$Item
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.spread.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.spread.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('element.spread.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('element.spread.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -31196,7 +31196,7 @@ const expression_assignment$262_left = (value: expression_assignment$262_left$It
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.left', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -31775,16 +31775,16 @@ const expression_assignment$262_right = (value: expression_assignment$262_right$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -32472,16 +32472,16 @@ const expression_assignment_compound_add$264_right = (value: expression_assignme
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -33169,16 +33169,16 @@ const expression_assignment_compound_and$264_right = (value: expression_assignme
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.and.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.and.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.and.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.and.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -33870,16 +33870,16 @@ const expression_assignment_compound_bitwise_and$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -34571,16 +34571,16 @@ const expression_assignment_compound_bitwise_or$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -35272,16 +35272,16 @@ const expression_assignment_compound_bitwise_xor$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -35973,16 +35973,16 @@ const expression_assignment_compound_coalesce$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.coalesce.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.coalesce.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.coalesce.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.coalesce.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -36672,16 +36672,16 @@ const expression_assignment_compound_divide$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -37373,16 +37373,16 @@ const expression_assignment_compound_exponent$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -38072,16 +38072,16 @@ const expression_assignment_compound_modulo$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -38773,16 +38773,16 @@ const expression_assignment_compound_multiply$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -39470,16 +39470,16 @@ const expression_assignment_compound_or$264_right = (value: expression_assignmen
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.or.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.or.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.or.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.or.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -40171,16 +40171,16 @@ const expression_assignment_compound_shift_left$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -40872,16 +40872,16 @@ const expression_assignment_compound_shift_right$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -41573,16 +41573,16 @@ const expression_assignment_compound_shift_right_unsigned$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.shift_right_unsigned.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -42274,16 +42274,16 @@ const expression_assignment_compound_subtract$264_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -42911,16 +42911,16 @@ const expression_await$258_expression = (value: expression_await$258_expression$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.await.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.await.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.await.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.await.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -43548,16 +43548,16 @@ const expression_binary_arithmetic_add$406_left = (value: expression_binary_arit
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -44185,16 +44185,16 @@ const expression_binary_arithmetic_add$406_right = (value: expression_binary_ari
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -44822,16 +44822,16 @@ const expression_binary_arithmetic_divide$406_left = (value: expression_binary_a
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -45459,16 +45459,16 @@ const expression_binary_arithmetic_divide$406_right = (value: expression_binary_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -46096,16 +46096,16 @@ const expression_binary_arithmetic_exponent$406_left = (value: expression_binary
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -46735,16 +46735,16 @@ const expression_binary_arithmetic_exponent$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -47372,16 +47372,16 @@ const expression_binary_arithmetic_modulo$406_left = (value: expression_binary_a
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -48009,16 +48009,16 @@ const expression_binary_arithmetic_modulo$406_right = (value: expression_binary_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -48646,16 +48646,16 @@ const expression_binary_arithmetic_multiply$406_left = (value: expression_binary
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -49285,16 +49285,16 @@ const expression_binary_arithmetic_multiply$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -49922,16 +49922,16 @@ const expression_binary_arithmetic_subtract$406_left = (value: expression_binary
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -50561,16 +50561,16 @@ const expression_binary_arithmetic_subtract$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -51198,16 +51198,16 @@ const expression_binary_bitwise_and$406_left = (value: expression_binary_bitwise
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -51835,16 +51835,16 @@ const expression_binary_bitwise_and$406_right = (value: expression_binary_bitwis
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -52472,16 +52472,16 @@ const expression_binary_bitwise_or$406_left = (value: expression_binary_bitwise_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -53109,16 +53109,16 @@ const expression_binary_bitwise_or$406_right = (value: expression_binary_bitwise
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -53746,16 +53746,16 @@ const expression_binary_bitwise_xor$406_left = (value: expression_binary_bitwise
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -54383,16 +54383,16 @@ const expression_binary_bitwise_xor$406_right = (value: expression_binary_bitwis
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -55020,16 +55020,16 @@ const expression_binary_coalesce$406_left = (value: expression_binary_coalesce$4
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.coalesce.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.coalesce.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.coalesce.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.coalesce.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -55657,16 +55657,16 @@ const expression_binary_coalesce$406_right = (value: expression_binary_coalesce$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.coalesce.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.coalesce.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.coalesce.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.coalesce.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -56294,16 +56294,16 @@ const expression_binary_comparison_equal$406_left = (value: expression_binary_co
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -56931,16 +56931,16 @@ const expression_binary_comparison_equal$406_right = (value: expression_binary_c
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -57568,16 +57568,16 @@ const expression_binary_comparison_greater$406_left = (value: expression_binary_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -58205,16 +58205,16 @@ const expression_binary_comparison_greater$406_right = (value: expression_binary
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -58844,16 +58844,16 @@ const expression_binary_comparison_greater_equal$406_left = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -59483,16 +59483,16 @@ const expression_binary_comparison_greater_equal$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -60120,16 +60120,16 @@ const expression_binary_comparison_less$406_left = (value: expression_binary_com
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -60757,16 +60757,16 @@ const expression_binary_comparison_less$406_right = (value: expression_binary_co
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -61396,16 +61396,16 @@ const expression_binary_comparison_less_equal$406_left = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -62035,16 +62035,16 @@ const expression_binary_comparison_less_equal$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -62674,16 +62674,16 @@ const expression_binary_comparison_loose_equal$406_left = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.loose_equal.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.loose_equal.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.loose_equal.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.loose_equal.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -63313,16 +63313,16 @@ const expression_binary_comparison_loose_equal$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.loose_equal.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.loose_equal.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.loose_equal.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.loose_equal.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -63952,16 +63952,16 @@ const expression_binary_comparison_loose_not_equal$406_left = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.loose_not_equal.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.loose_not_equal.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.loose_not_equal.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.loose_not_equal.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -64591,16 +64591,16 @@ const expression_binary_comparison_loose_not_equal$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.loose_not_equal.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.loose_not_equal.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.loose_not_equal.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.loose_not_equal.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -65230,16 +65230,16 @@ const expression_binary_comparison_not_equal$406_left = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -65869,16 +65869,16 @@ const expression_binary_comparison_not_equal$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -66506,16 +66506,16 @@ const expression_binary_logical_and$406_left = (value: expression_binary_logical
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -67143,16 +67143,16 @@ const expression_binary_logical_and$406_right = (value: expression_binary_logica
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -67780,16 +67780,16 @@ const expression_binary_logical_or$406_left = (value: expression_binary_logical_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -68417,16 +68417,16 @@ const expression_binary_logical_or$406_right = (value: expression_binary_logical
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -69054,16 +69054,16 @@ const expression_binary_membership_in$405_left = (value: expression_binary_membe
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.membership.in.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.membership.in.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.membership.in.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.membership.in.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -69691,16 +69691,16 @@ const expression_binary_membership_in$405_right = (value: expression_binary_memb
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.membership.in.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.membership.in.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.membership.in.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.membership.in.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -70330,16 +70330,16 @@ const expression_binary_membership_instanceof$406_left = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.membership.instanceof.left', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.membership.instanceof.left', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.membership.instanceof.left', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.membership.instanceof.left', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -70969,16 +70969,16 @@ const expression_binary_membership_instanceof$406_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.membership.instanceof.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.membership.instanceof.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.membership.instanceof.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.membership.instanceof.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -71606,16 +71606,16 @@ const expression_binary_shift_left$406_count = (value: expression_binary_shift_l
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -72243,16 +72243,16 @@ const expression_binary_shift_left$406_operand = (value: expression_binary_shift
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -72880,16 +72880,16 @@ const expression_binary_shift_right$406_count = (value: expression_binary_shift_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -73517,16 +73517,16 @@ const expression_binary_shift_right$406_operand = (value: expression_binary_shif
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -74156,16 +74156,16 @@ const expression_binary_shift_right_unsigned$406_count = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right_unsigned.count', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right_unsigned.count', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.right_unsigned.count', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.shift.right_unsigned.count', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -74795,16 +74795,16 @@ const expression_binary_shift_right_unsigned$406_operand = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right_unsigned.operand', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right_unsigned.operand', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.right_unsigned.operand', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.binary.shift.right_unsigned.operand', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -75438,16 +75438,16 @@ const expression_call$423_arguments = (value: expression_call$423_arguments$Item
 			return b.arguments(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.arguments(literal_number_float$141(value));
@@ -76082,16 +76082,16 @@ const expression_call$423_arguments$item = (value: expression_call$423_arguments
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.arguments', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.arguments', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.arguments', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.arguments', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -76723,16 +76723,16 @@ const expression_call$423_function = (value: expression_call$423_function$Item) 
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.function', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.function', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.function', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.function', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -77652,16 +77652,16 @@ const expression_call$425_arguments = (value: expression_call$425_arguments$Item
 			return b.arguments(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.arguments', value);
+			return b.arguments(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.arguments(literal_number_float$141(value));
@@ -78296,16 +78296,16 @@ const expression_call$425_arguments$item = (value: expression_call$425_arguments
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.arguments', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.arguments', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.arguments', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.arguments', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -78931,16 +78931,16 @@ const expression_call$425_function = (value: expression_call$425_function$Item) 
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.function', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.function', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.function', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.function', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -79861,16 +79861,16 @@ const expression_call_construct$257_arguments$item = (value: expression_call_con
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.construct.arguments', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.construct.arguments', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.construct.arguments', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.construct.arguments', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -80134,16 +80134,16 @@ const expression_call_construct$257_function = (value: expression_call_construct
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.construct.function', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.construct.function', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.construct.function', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.construct.function', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -80695,16 +80695,16 @@ const expression_call_construct_bare$257_function = (value: expression_call_cons
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.construct.bare.function', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.construct.bare.function', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.construct.bare.function', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.construct.bare.function', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -81282,16 +81282,16 @@ const expression_call_template$424_function = (value: expression_call_template$4
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.template.function', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.template.function', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.template.function', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.call.template.function', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -81919,16 +81919,16 @@ const expression_cast_assertion$306_expression = (value: expression_cast_asserti
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.cast.assertion.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.cast.assertion.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.cast.assertion.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.cast.assertion.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -82847,16 +82847,16 @@ const expression_cast_assertion_angle_bracket$305_expression = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.cast.assertion.angle_bracket.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.cast.assertion.angle_bracket.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.cast.assertion.angle_bracket.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.cast.assertion.angle_bracket.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -84060,16 +84060,16 @@ const expression_cast_non_null$300_expression = (value: expression_cast_non_null
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.cast.non_null.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.cast.non_null.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.cast.non_null.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.cast.non_null.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -84697,16 +84697,16 @@ const expression_cast_satisfies$307_expression = (value: expression_cast_satisfi
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.cast.satisfies.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.cast.satisfies.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.cast.satisfies.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.cast.satisfies.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -85627,16 +85627,16 @@ const expression_collection_list$242_elements = (value: expression_collection_li
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -86378,16 +86378,16 @@ const expression_conditional$268_alternative = (value: expression_conditional$26
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -87015,16 +87015,16 @@ const expression_conditional$268_condition = (value: expression_conditional$268_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -87652,16 +87652,16 @@ const expression_conditional$268_consequence = (value: expression_conditional$26
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -88296,16 +88296,16 @@ const expression_instantiation$308_function = (value: expression_instantiation$3
 			return unbuilt('expression.instantiation.function', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.instantiation.function', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.instantiation.function', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.instantiation.function', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.instantiation.function', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -90106,16 +90106,16 @@ const expression_interpolation$275_expression = (value: expression_interpolation
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -90749,16 +90749,16 @@ const expression_parenthesized$418_expression = (value: expression_parenthesized
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -92567,16 +92567,16 @@ const expression_sequence$272_expressions = (value: expression_sequence$272_expr
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.sequence.expressions', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.sequence.expressions', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.sequence.expressions', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.sequence.expressions', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -93210,16 +93210,16 @@ const expression_subscript$260_index = (value: expression_subscript$260_index$It
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.subscript.index', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.subscript.index', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.subscript.index', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.subscript.index', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -93847,16 +93847,16 @@ const expression_subscript$260_object = (value: expression_subscript$260_object$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.subscript.object', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.subscript.object', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.subscript.object', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.subscript.object', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -94484,16 +94484,16 @@ const expression_unary_bitwise_not$270_argument = (value: expression_unary_bitwi
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -95121,16 +95121,16 @@ const expression_unary_delete$270_argument = (value: expression_unary_delete$270
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.delete.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.delete.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.delete.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.unary.delete.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -95758,16 +95758,16 @@ const expression_unary_negation$270_argument = (value: expression_unary_negation
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -96395,16 +96395,16 @@ const expression_unary_not$270_argument = (value: expression_unary_not$270_argum
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -97032,16 +97032,16 @@ const expression_unary_plus$270_argument = (value: expression_unary_plus$270_arg
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -97669,16 +97669,16 @@ const expression_unary_typeof$270_argument = (value: expression_unary_typeof$270
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.typeof.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.typeof.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.typeof.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.unary.typeof.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -98306,16 +98306,16 @@ const expression_unary_void$270_argument = (value: expression_unary_void$270_arg
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.void.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.void.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.void.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.unary.void.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -98943,16 +98943,16 @@ const expression_update_decrement$428_argument = (value: expression_update_decre
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -99580,16 +99580,16 @@ const expression_update_decrement$429_argument = (value: expression_update_decre
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.update.decrement.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -100217,16 +100217,16 @@ const expression_update_increment$428_argument = (value: expression_update_incre
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -100854,16 +100854,16 @@ const expression_update_increment$429_argument = (value: expression_update_incre
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.update.increment.argument', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -101491,16 +101491,16 @@ const expression_yield$237_expression = (value: expression_yield$237_expression$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.yield.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.yield.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.yield.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('expression.yield.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -102213,7 +102213,7 @@ const pattern_assignment$240_left = (value: pattern_assignment$240_left$Item) =>
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('pattern.assignment.left', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'list':
 		case 'pattern.list':
 			return b.lhsExpression(pattern_list$243(value));
@@ -102795,16 +102795,16 @@ const pattern_assignment$240_right = (value: pattern_assignment$240_right$Item) 
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.assignment.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.assignment.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.assignment.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('pattern.assignment.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -102927,7 +102927,7 @@ const pattern_list$243_elements = (value: pattern_list$243_elements$Item) => {
 			return b.lhsExpression(identifier$1(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('pattern.list.elements', value);
+			return b.lhsExpression(literal_null_undefined$110(value));
 		case 'assignment':
 		case 'pattern.assignment':
 			return pattern_assignment$240(value);
@@ -103601,16 +103601,16 @@ const pattern_object_assignment$241_right = (value: pattern_object_assignment$24
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.object.assignment.right', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.object.assignment.right', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.object.assignment.right', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('pattern.object.assignment.right', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -103724,7 +103724,7 @@ const pattern_rest$292_pattern = (value: pattern_rest$292_pattern$Item) => {
 			return identifier$1(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('pattern.rest.pattern', value);
+			return literal_null_undefined$110(value);
 		case 'list':
 		case 'pattern.list':
 			return pattern_list$243(value);
@@ -104477,16 +104477,16 @@ const statement_block$211_statements = (value: statement_block$211_statements$It
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -105288,16 +105288,16 @@ const statement_export$421_value = (value: statement_export$421_value$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.export.value', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.export.value', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.export.value', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.export.value', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -106280,16 +106280,16 @@ const statement_if$213_statements$item = (value: statement_if$213_statements$ite
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -107258,16 +107258,16 @@ const statement_labeled$228_body = (value: statement_labeled$228_body$Item) => {
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.labeled.body', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.labeled.body', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.labeled.body', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.labeled.body', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -108055,16 +108055,16 @@ const statement_loop_counted$215_condition = (value: statement_loop_counted$215_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.counted.condition', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.counted.condition', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.counted.condition', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.loop.counted.condition', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -108698,16 +108698,16 @@ const statement_loop_counted$215_increment = (value: statement_loop_counted$215_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.counted.increment', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.counted.increment', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.counted.increment', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.loop.counted.increment', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -109365,16 +109365,16 @@ const statement_loop_counted$215_initializer = (value: statement_loop_counted$21
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.counted.initializer', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.counted.initializer', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.counted.initializer', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.loop.counted.initializer', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -110176,16 +110176,16 @@ const statement_loop_counted$215_statements$item = (value: statement_loop_counte
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.counted.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.counted.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.counted.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.loop.counted.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -111134,16 +111134,16 @@ const statement_loop_do_while$219_statements$item = (value: statement_loop_do_wh
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.do_while.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.do_while.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.do_while.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.loop.do_while.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -112087,16 +112087,16 @@ const statement_loop_for_each$216_statements$item = (value: statement_loop_for_e
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -113045,16 +113045,16 @@ const statement_loop_while$218_statements$item = (value: statement_loop_while$21
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -113814,16 +113814,16 @@ const statement_return$225_expression = (value: statement_return$225_expression$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.return.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.return.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.return.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.return.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -114601,16 +114601,16 @@ const statement_scope$221_body = (value: statement_scope$221_body$Item) => {
 			return b.expressionStatement(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.scope.body', value);
+			return b.expressionStatement(literal_boolean_false$282(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.scope.body', value);
+			return b.expressionStatement(literal_boolean_true$281(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.scope.body', value);
+			return b.expressionStatement(literal_null$283(value));
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.scope.body', value);
+			return b.expressionStatement(literal_null_undefined$110(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.expressionStatement(literal_number_float$141(value));
@@ -115439,16 +115439,16 @@ const statement_throw$226_expression = (value: statement_throw$226_expression$It
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.throw.expression', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.throw.expression', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.throw.expression', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('statement.throw.expression', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -118399,16 +118399,16 @@ const type_literal$362_value = (value: type_literal$362_value$Item) => {
 	switch (value.$path) {
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('type.literal.value', value);
+			return literal_boolean_false$282(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('type.literal.value', value);
+			return literal_boolean_true$281(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('type.literal.value', value);
+			return literal_null$283(value);
 		case 'undefined':
 		case 'literal.null.undefined':
-			return unbuilt('type.literal.value', value);
+			return literal_null_undefined$110(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$141(value);
@@ -123732,6 +123732,26 @@ const identifier_qualified$354 = (
 		operator: 63
 	});
 };
+const literal_boolean_false$282 = (input: PathInput<TypeScriptMap, 'literal.boolean.false', 'false'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean.false', unroutedSlot);
+	return 282;
+};
+const literal_boolean_true$281 = (input: PathInput<TypeScriptMap, 'literal.boolean.true', 'true'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean.true', unroutedSlot);
+	return 281;
+};
+const literal_null$283 = (input: PathInput<TypeScriptMap, 'literal.null', 'null'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.null', unroutedSlot);
+	return 283;
+};
+const literal_null_undefined$110 = (input: PathInput<TypeScriptMap, 'literal.null.undefined', 'undefined'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.null.undefined', unroutedSlot);
+	return 110;
+};
 const literal_number$141 = (
 	input: PathInput<TypeScriptMap, 'literal.number'>
 ): ReturnType<typeof b.numberFloatPoint> => {
@@ -124846,6 +124866,18 @@ const expression_update_increment = (input: PathInput<TypeScriptMap, 'expression
 const expression_yield = (input: PathInput<TypeScriptMap, 'expression.yield'>) => {
 	return expression_yield$237(input);
 };
+const literal_boolean_false = (input: PathInput<TypeScriptMap, 'literal.boolean.false'>) => {
+	return literal_boolean_false$282(input);
+};
+const literal_boolean_true = (input: PathInput<TypeScriptMap, 'literal.boolean.true'>) => {
+	return literal_boolean_true$281(input);
+};
+const literal_null = (input: PathInput<TypeScriptMap, 'literal.null'>) => {
+	return literal_null$283(input);
+};
+const literal_null_undefined = (input: PathInput<TypeScriptMap, 'literal.null.undefined'>) => {
+	return literal_null_undefined$110(input);
+};
 const literal_number = (input: PathInput<TypeScriptMap, 'literal.number'>) => {
 	if (typeof input.$value === 'bigint') return literal_number$151(input);
 	if (typeof input.$value === 'number') {
@@ -125172,6 +125204,8 @@ export const portableBuild = {
 		yield: expression_yield
 	},
 	literal: {
+		boolean: { false: literal_boolean_false, true: literal_boolean_true },
+		null: Object.assign(literal_null, { undefined: literal_null_undefined }),
 		number: Object.assign(literal_number, {
 			float: Object.assign(literal_number_float, {
 				leading_point: literal_number_float_leading_point,

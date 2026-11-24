@@ -450,6 +450,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 		return eitherArity(route) ? paren(ternary(call(id(uses('listed')), given), all(given), single)) : single;
 	};
 	const pickOf = (path: string, arm: PortableBuildArm, value: Primary): Operand | undefined => and(arm.when.map((test) => testOf(test, path, arm, value)).filter((part): part is Operand => part !== undefined));
+	const lastPickOf = (path: string, arm: PortableBuildArm, value: Primary): Operand | undefined => (arm.when.some((test) => 'boolean' in test) ? pickOf(path, arm, value) : undefined);
 
 	const tableSeats = Object.values(table.paths).flatMap((row) => row.arms.flatMap((arm) => builtSlotsOf(arm).flatMap((slot) => slot.seats)));
 	const owning = new Map<number, Map<string, PortableSlotRoute>>();
@@ -705,7 +706,9 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 			const placed = built(fit);
 			if (placed === undefined) return [...statements, refused()];
 			const condition =
-				i === fitting.length - 1 ? undefined : (pickOf(path, fit.arm, value) ?? fail(`${fitting.length} arms of ${path} fit ${slot.name}'s seats, and nothing picks arm ${fit.arm.kind} among them`));
+				i === fitting.length - 1
+					? lastPickOf(path, fit.arm, value)
+					: (pickOf(path, fit.arm, value) ?? fail(`${fitting.length} arms of ${path} fit ${slot.name}'s seats, and nothing picks arm ${fit.arm.kind} among them`));
 			if (condition === undefined) return [...statements, placed];
 			statements.push(when(condition, placed));
 		}
@@ -1088,13 +1091,16 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 	};
 
 	const armBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
+		if (arm.literal !== undefined) {
+			if (arm.slots.length > 0 || arm.presets.length > 0 || Object.keys(arm.flags).length > 0 || arm.content !== undefined) return fail(`literal arm ${arm.kind} takes slots`);
+			return [ret(num(arm.kind))];
+		}
 		if (arm.builder === undefined) return fail(`arm ${arm.kind} builds through its holder`);
 		const ownText = ownTextClaims[path]?.[arm.kind];
 		if (ownText !== undefined && (arm.content === undefined || ownText.fixed === undefined || ownText.pattern === undefined)) return fail(`${path} tests the text of ${ownText.kind} in a form the generated build cannot check`);
 		if (arm.mounted !== undefined && (arm.mounted.call !== 'child' || arm.mounted.outer !== undefined)) return fail(`arm ${arm.kind} mounts into its holder`);
 		if (arm.template !== undefined) return fail(`a template-spelled slot (${arm.template.slot})`);
 		if (arm.sole !== undefined) return fail(`a sole-item delimiter on ${arm.sole.slot}`);
-		if (arm.literal !== undefined) return fail(`arm ${arm.kind} is a literal token`);
 		if (arm.scalar !== undefined) return numberBody(path, arm, input);
 		if (arm.content !== undefined) {
 			const [seat, ...others] = arm.content.seats;
@@ -1321,12 +1327,13 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 							break;
 						}
 						const placed = placement(path, arm, [[], ...factChainOf(arm)], value, (given) => call(id(name), given), 'the root');
-						const condition = i === arms.length - 1 ? undefined : pickOf(path, arm, value);
+						const condition = i === arms.length - 1 ? lastPickOf(path, arm, value) : pickOf(path, arm, value);
 						if (condition === undefined) {
 							statements.push(...placed);
 							break;
 						}
 						statements.push(when(condition, placed.length === 1 ? placed[0]! : block(...placed)));
+						if (i === arms.length - 1) statements.push(raise(str(`portable build: no form of ${path} builds this structure`)));
 					}
 				});
 			} catch (error) {

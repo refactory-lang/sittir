@@ -1365,10 +1365,10 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -2030,10 +2030,10 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -2511,10 +2511,10 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.let.pattern', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.let.pattern', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -3130,10 +3130,10 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.let.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.let.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -3755,10 +3755,10 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -4374,10 +4374,10 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -5631,10 +5631,10 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.constant.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.constant.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -6496,10 +6496,10 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -8249,10 +8249,10 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -9087,10 +9087,10 @@ const declaration_type_parameter_value$220_default = (value: declaration_type_pa
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -10281,10 +10281,10 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -10550,10 +10550,10 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.name', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.name', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -11357,10 +11357,10 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -11982,10 +11982,10 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.attributed.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.attributed.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -12626,10 +12626,10 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -13153,10 +13153,10 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -13629,10 +13629,10 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -14105,10 +14105,10 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -14581,10 +14581,10 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -15057,10 +15057,10 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -15533,10 +15533,10 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -15998,10 +15998,10 @@ const element_macro_token_tree_delimited$411_tokens = (value: element_macro_toke
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -16463,10 +16463,10 @@ const element_macro_token_tree_delimited$412_tokens = (value: element_macro_toke
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -16928,10 +16928,10 @@ const element_macro_token_tree_delimited$413_tokens = (value: element_macro_toke
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -17395,10 +17395,10 @@ const element_macro_token_tree_delimited_brace$413_tokens = (
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -17862,10 +17862,10 @@ const element_macro_token_tree_delimited_bracket$412_tokens = (
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -18329,10 +18329,10 @@ const element_macro_token_tree_delimited_paren$411_tokens = (
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -18805,10 +18805,10 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -19287,10 +19287,10 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -19769,10 +19769,10 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -20251,10 +20251,10 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -20735,10 +20735,10 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -21219,10 +21219,10 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -21703,10 +21703,10 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 		}
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_boolean_true$116(value));
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return b.nonSpecialToken(literal_character$145(value));
@@ -22272,10 +22272,10 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.struct.base.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.struct.base.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -23009,10 +23009,10 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.struct.field.value', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.struct.field.value', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -23848,10 +23848,10 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -24461,10 +24461,10 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -25074,10 +25074,10 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -25687,10 +25687,10 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -26302,10 +26302,10 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -26917,10 +26917,10 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -27532,10 +27532,10 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -28147,10 +28147,10 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -28762,10 +28762,10 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -29377,10 +29377,10 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -29990,10 +29990,10 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -30605,10 +30605,10 @@ const expression_assignment_compound_divide$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -31218,10 +31218,10 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -31833,10 +31833,10 @@ const expression_assignment_compound_modulo$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -32448,10 +32448,10 @@ const expression_assignment_compound_multiply$272_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -33063,10 +33063,10 @@ const expression_assignment_compound_multiply$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -33678,10 +33678,10 @@ const expression_assignment_compound_shift_left$272_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -34293,10 +34293,10 @@ const expression_assignment_compound_shift_left$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -34908,10 +34908,10 @@ const expression_assignment_compound_shift_right$272_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -35523,10 +35523,10 @@ const expression_assignment_compound_shift_right$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -36138,10 +36138,10 @@ const expression_assignment_compound_subtract$272_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -36753,10 +36753,10 @@ const expression_assignment_compound_subtract$272_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -37366,10 +37366,10 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.await.expression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.await.expression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -37979,10 +37979,10 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -38592,10 +38592,10 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -39205,10 +39205,10 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -39818,10 +39818,10 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -40431,10 +40431,10 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -41044,10 +41044,10 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -41657,10 +41657,10 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -42272,10 +42272,10 @@ const expression_binary_arithmetic_multiply$270_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -42885,10 +42885,10 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -43500,10 +43500,10 @@ const expression_binary_arithmetic_subtract$270_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -44113,10 +44113,10 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -44726,10 +44726,10 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -45339,10 +45339,10 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -45952,10 +45952,10 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -46565,10 +46565,10 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -47178,10 +47178,10 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -47791,10 +47791,10 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -48404,10 +48404,10 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -49017,10 +49017,10 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -49630,10 +49630,10 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -50245,10 +50245,10 @@ const expression_binary_comparison_greater_equal$270_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -50860,10 +50860,10 @@ const expression_binary_comparison_greater_equal$270_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -51473,10 +51473,10 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -52086,10 +52086,10 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -52701,10 +52701,10 @@ const expression_binary_comparison_less_equal$270_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -53316,10 +53316,10 @@ const expression_binary_comparison_less_equal$270_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -53931,10 +53931,10 @@ const expression_binary_comparison_not_equal$270_left = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -54546,10 +54546,10 @@ const expression_binary_comparison_not_equal$270_right = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -55159,10 +55159,10 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -55772,10 +55772,10 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -56385,10 +56385,10 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -56998,10 +56998,10 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -57611,10 +57611,10 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -58224,10 +58224,10 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -58837,10 +58837,10 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -59450,10 +59450,10 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -60127,10 +60127,10 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -60934,10 +60934,10 @@ const expression_collection_list$435_elements$item = (value: expression_collecti
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -61547,10 +61547,10 @@ const expression_collection_list_repeat$434_element = (value: expression_collect
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -62160,10 +62160,10 @@ const expression_collection_list_repeat$434_length = (value: expression_collecti
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -62843,10 +62843,10 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -64309,10 +64309,10 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -64958,10 +64958,10 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -65571,10 +65571,10 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.body', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.body', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -66794,10 +66794,10 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -67443,10 +67443,10 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -68056,10 +68056,10 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.member.object', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.member.object', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -68720,10 +68720,10 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -69333,10 +69333,10 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -69946,10 +69946,10 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -70559,10 +70559,10 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -71172,10 +71172,10 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -71785,10 +71785,10 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -72398,10 +72398,10 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -73011,10 +73011,10 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -73624,10 +73624,10 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -74237,10 +74237,10 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -74850,10 +74850,10 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -75463,10 +75463,10 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -76076,10 +76076,10 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -76689,10 +76689,10 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -77302,10 +77302,10 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -77915,10 +77915,10 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.reference.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -78528,10 +78528,10 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.subscript.index', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.subscript.index', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -79141,10 +79141,10 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.subscript.object', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.subscript.object', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -79754,10 +79754,10 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -80367,10 +80367,10 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -80980,10 +80980,10 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -81593,10 +81593,10 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.yield.expression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.yield.expression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -82594,10 +82594,10 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -82900,10 +82900,10 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.list.elements', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.list.elements', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -83161,10 +83161,10 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -83422,10 +83422,10 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.or.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.or.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -83683,10 +83683,10 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.or.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.or.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -83944,10 +83944,10 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.or.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.or.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -84167,10 +84167,10 @@ const pattern_range$421_start = (value: pattern_range$421_start$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -84345,10 +84345,10 @@ const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.exclusive.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.exclusive.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -84523,10 +84523,10 @@ const pattern_range_exclusive$420_end = (value: pattern_range_exclusive$420_end$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.exclusive.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.exclusive.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -84701,10 +84701,10 @@ const pattern_range_exclusive$420_start = (value: pattern_range_exclusive$420_st
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.exclusive.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.exclusive.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -84879,10 +84879,10 @@ const pattern_range_exclusive$421_start = (value: pattern_range_exclusive$421_st
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.exclusive.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.exclusive.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -85057,10 +85057,10 @@ const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.inclusive.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.inclusive.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -85235,10 +85235,10 @@ const pattern_range_inclusive$420_end = (value: pattern_range_inclusive$420_end$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.inclusive.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.inclusive.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -85413,10 +85413,10 @@ const pattern_range_inclusive$420_start = (value: pattern_range_inclusive$420_st
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.inclusive.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.inclusive.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -85591,10 +85591,10 @@ const pattern_range_inclusive_legacy$420_end = (value: pattern_range_inclusive_l
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.inclusive.legacy.end', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.inclusive.legacy.end', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -85769,10 +85769,10 @@ const pattern_range_inclusive_legacy$420_start = (value: pattern_range_inclusive
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.inclusive.legacy.start', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.inclusive.legacy.start', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -85985,10 +85985,10 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -86246,10 +86246,10 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -86618,10 +86618,10 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -86879,10 +86879,10 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -87206,10 +87206,10 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -88385,10 +88385,10 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -89034,10 +89034,10 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -90195,10 +90195,10 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -90844,10 +90844,10 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -92005,10 +92005,10 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -92654,10 +92654,10 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -93815,10 +93815,10 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -94466,10 +94466,10 @@ const statement_block_generator$311_trailingExpression = (
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -95627,10 +95627,10 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -96276,10 +96276,10 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -97437,10 +97437,10 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -98086,10 +98086,10 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -98699,10 +98699,10 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.break.expression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.break.expression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -99360,10 +99360,10 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.if.condition', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.if.condition', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -100521,10 +100521,10 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -101170,10 +101170,10 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -102465,10 +102465,10 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -103114,10 +103114,10 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -103383,10 +103383,10 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -104002,10 +104002,10 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -105163,10 +105163,10 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -105812,10 +105812,10 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -106437,10 +106437,10 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -107612,10 +107612,10 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_false$117(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_boolean_true$116(value));
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -108261,10 +108261,10 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -108874,10 +108874,10 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.return.expression', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.return.expression', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -109675,10 +109675,10 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			return identifier_qualified$263(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('type.array.length', value);
+			return literal_boolean_false$117(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('type.array.length', value);
+			return literal_boolean_true$116(value);
 		case 'character':
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
@@ -113203,6 +113203,26 @@ const identifier_qualified$265 = (
 		name: identifier_qualified$265_name(input.name)
 	});
 };
+const literal_boolean$116 = (input: PathInput<RustMap, 'literal.boolean'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean', unroutedSlot);
+	return 116;
+};
+const literal_boolean$117 = (input: PathInput<RustMap, 'literal.boolean'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean', unroutedSlot);
+	return 117;
+};
+const literal_boolean_false$117 = (input: PathInput<RustMap, 'literal.boolean.false', 'false'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean.false', unroutedSlot);
+	return 117;
+};
+const literal_boolean_true$116 = (input: PathInput<RustMap, 'literal.boolean.true', 'true'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean.true', unroutedSlot);
+	return 116;
+};
 const literal_character$145 = (
 	input: PathInput<RustMap, 'literal.character', 'character'>
 ): ReturnType<typeof b.charLiteralPlain> => {
@@ -114954,6 +114974,17 @@ const identifier_metavariable = (input: PathInput<RustMap, 'identifier.metavaria
 	if (input.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
 	return identifier_metavariable$127(input);
 };
+const literal_boolean = (input: PathInput<RustMap, 'literal.boolean'>) => {
+	if (input.$value === true) return literal_boolean$116(input);
+	if (input.$value === false) return literal_boolean$117(input);
+	throw new Error('portable build: no form of literal.boolean builds this structure');
+};
+const literal_boolean_false = (input: PathInput<RustMap, 'literal.boolean.false'>) => {
+	return literal_boolean_false$117(input);
+};
+const literal_boolean_true = (input: PathInput<RustMap, 'literal.boolean.true'>) => {
+	return literal_boolean_true$116(input);
+};
 const literal_number_float = (input: PathInput<RustMap, 'literal.number.float'>) => {
 	return literal_number_float$162(input);
 };
@@ -115247,6 +115278,7 @@ export const portableBuild = {
 	},
 	identifier: { label: identifier_label, lifetime: identifier_lifetime, metavariable: identifier_metavariable },
 	literal: {
+		boolean: Object.assign(literal_boolean, { false: literal_boolean_false, true: literal_boolean_true }),
 		number: {
 			float: literal_number_float,
 			integer: Object.assign(literal_number_integer, {

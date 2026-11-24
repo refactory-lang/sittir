@@ -1692,30 +1692,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean: arm 116 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.false: arm 117 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.true: arm 116 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "rust",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.character: arm 146's builder takes its text"
   },
   {

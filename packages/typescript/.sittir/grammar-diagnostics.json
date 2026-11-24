@@ -5070,38 +5070,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.false: arm 282 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.true: arm 281 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null: arm 283 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null.undefined: arm 110 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "modifier.visibility: arm 34 builds through its holder"
   },
   {

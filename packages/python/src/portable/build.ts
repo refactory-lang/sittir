@@ -565,16 +565,16 @@ const argument_named$237_value = (value: argument_named$237_value$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('argument.named.value', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('argument.named.value', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('argument.named.value', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('argument.named.value', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -1105,16 +1105,16 @@ const clause_case_match$161_guard = (value: clause_case_match$161_guard$Item) =>
 			return b.ifClause(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.case.match.guard', value);
+			return b.ifClause(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.case.match.guard', value);
+			return b.ifClause(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.case.match.guard', value);
+			return b.ifClause(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.case.match.guard', value);
+			return b.ifClause(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.ifClause(literal_number_float$101(value));
@@ -1402,13 +1402,13 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 			return b.casePattern(b.simplePattern(identifier_qualified$187(value)));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.case.match.pattern', value);
+			return b.casePattern(b.simplePattern(literal_boolean_false$70(value)));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.case.match.pattern', value);
+			return b.casePattern(b.simplePattern(literal_boolean_true$69(value)));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.case.match.pattern', value);
+			return b.casePattern(b.simplePattern(literal_null$71(value)));
 		case 'float':
 		case 'literal.number.float':
 			return b.casePattern(b.simplePattern(literal_number_float$101(value)));
@@ -2281,16 +2281,16 @@ const clause_case_match$161_statements$item = (value: clause_case_match$161_stat
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.case.match.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.case.match.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.case.match.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.case.match.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -2962,16 +2962,16 @@ const clause_comprehension_for$249_rights = (value: clause_comprehension_for$249
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.comprehension.for.rights', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.comprehension.for.rights', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.comprehension.for.rights', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.comprehension.for.rights', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -3502,16 +3502,16 @@ const clause_comprehension_if$250_condition = (value: clause_comprehension_if$25
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.comprehension.if.condition', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.comprehension.if.condition', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.comprehension.if.condition', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.comprehension.if.condition', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -4349,16 +4349,16 @@ const clause_else$158_statements$item = (value: clause_else$158_statements$item$
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.else.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.else.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.else.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.else.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -4960,16 +4960,16 @@ const clause_else_if$157_condition = (value: clause_else_if$157_condition$Item) 
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.else_if.condition', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.else_if.condition', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.else_if.condition', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.else_if.condition', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -5807,16 +5807,16 @@ const clause_else_if$157_statements$item = (value: clause_else_if$157_statements
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.else_if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.else_if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.else_if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.else_if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -6725,16 +6725,16 @@ const clause_finally$166_statements$item = (value: clause_finally$166_statements
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('clause.finally.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('clause.finally.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('clause.finally.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('clause.finally.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -7440,16 +7440,16 @@ const declaration_function$170_decorators = (value: declaration_function$170_dec
 			return b.decorator(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.function.decorators', value);
+			return b.decorator(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.function.decorators', value);
+			return b.decorator(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.function.decorators', value);
+			return b.decorator(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.function.decorators', value);
+			return b.decorator(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.decorator(literal_number_float$101(value));
@@ -8389,16 +8389,16 @@ const declaration_function$170_returnType = (value: declaration_function$170_ret
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.function.returnType', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.function.returnType', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.function.returnType', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.function.returnType', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -9249,16 +9249,16 @@ const declaration_function$170_statements$item = (value: declaration_function$17
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.function.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.function.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.function.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.function.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -9926,16 +9926,16 @@ const declaration_member_constructor$316_decorators = (value: declaration_member
 			return b.decorator(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.constructor.decorators', value);
+			return b.decorator(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.constructor.decorators', value);
+			return b.decorator(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.member.constructor.decorators', value);
+			return b.decorator(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.constructor.decorators', value);
+			return b.decorator(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.decorator(literal_number_float$101(value));
@@ -10556,16 +10556,16 @@ const declaration_member_constructor$316_returnType = (value: declaration_member
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.constructor.returnType', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.constructor.returnType', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.member.constructor.returnType', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.constructor.returnType', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -11418,16 +11418,16 @@ const declaration_member_constructor$316_statements$item = (
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.constructor.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -12825,16 +12825,16 @@ const declaration_member_property_getter$361_statements$item = (
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.property.getter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.property.getter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.member.property.getter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.property.getter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -13455,16 +13455,16 @@ const declaration_member_property_getter$361_type = (value: declaration_member_p
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.property.getter.type', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.property.getter.type', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.member.property.getter.type', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.property.getter.type', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -14552,16 +14552,16 @@ const declaration_member_property_setter$361_returnType = (
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.property.setter.returnType', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.property.setter.returnType', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.member.property.setter.returnType', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.property.setter.returnType', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -15414,16 +15414,16 @@ const declaration_member_property_setter$361_statements$item = (
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.member.property.setter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.member.property.setter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.member.property.setter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.member.property.setter.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -16060,16 +16060,16 @@ const declaration_parameter_defaulted$204_default = (value: declaration_paramete
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.defaulted.default', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.defaulted.default', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.parameter.defaulted.default', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.defaulted.default', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -16686,16 +16686,16 @@ const declaration_parameter_typed$230_type = (value: declaration_parameter_typed
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.typed.type', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.typed.type', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.parameter.typed.type', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.typed.type', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -17241,16 +17241,16 @@ const declaration_parameter_typed_default$205_default = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.typed_default.default', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.typed_default.default', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.parameter.typed_default.default', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.typed_default.default', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -17824,16 +17824,16 @@ const declaration_parameter_typed_default$205_type = (value: declaration_paramet
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.parameter.typed_default.type', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.parameter.typed_default.type', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.parameter.typed_default.type', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.parameter.typed_default.type', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -18399,16 +18399,16 @@ const declaration_type_class$179_bases$item = (value: declaration_type_class$179
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.type.class.bases', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.type.class.bases', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.type.class.bases', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.type.class.bases', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -18939,16 +18939,16 @@ const declaration_type_class$179_decorators = (value: declaration_type_class$179
 			return b.decorator(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.type.class.decorators', value);
+			return b.decorator(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.type.class.decorators', value);
+			return b.decorator(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.type.class.decorators', value);
+			return b.decorator(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.type.class.decorators', value);
+			return b.decorator(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.decorator(literal_number_float$101(value));
@@ -20105,16 +20105,16 @@ const declaration_type_class$179_members$item = (value: declaration_type_class$1
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.type.class.members', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.type.class.members', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.type.class.members', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.type.class.members', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -20932,16 +20932,16 @@ const declaration_type_type_alias$178_value = (value: declaration_type_type_alia
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.type.type_alias.value', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.type.type_alias.value', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.type.type_alias.value', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.type.type_alias.value', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -21581,16 +21581,16 @@ const declaration_variable$302_value = (value: declaration_variable$302_value$It
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.variable.value', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.variable.value', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -22202,16 +22202,16 @@ const declaration_variable$303_type = (value: declaration_variable$303_type$Item
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -22834,16 +22834,16 @@ const declaration_variable$304_type = (value: declaration_variable$304_type$Item
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.variable.type', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -23419,16 +23419,16 @@ const declaration_variable$304_value = (value: declaration_variable$304_value$It
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('declaration.variable.value', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('declaration.variable.value', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('declaration.variable.value', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -23961,16 +23961,16 @@ const element_pair$242_key = (value: element_pair$242_key$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.pair.key', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.pair.key', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('element.pair.key', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('element.pair.key', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -24501,16 +24501,16 @@ const element_pair$242_value = (value: element_pair$242_value$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.pair.value', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.pair.value', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('element.pair.value', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('element.pair.value', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -25041,16 +25041,16 @@ const element_spread$173_expression = (value: element_spread$173_expression$Item
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.spread.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.spread.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('element.spread.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('element.spread.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -25581,16 +25581,16 @@ const element_spread_map$174_expression = (value: element_spread_map$174_express
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('element.spread.map.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('element.spread.map.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('element.spread.map.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('element.spread.map.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -26172,16 +26172,16 @@ const expression_assignment$148_right = (value: expression_assignment$148_right$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -26792,16 +26792,16 @@ const expression_assignment_compound_add$222_right = (value: expression_assignme
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -27418,16 +27418,16 @@ const expression_assignment_compound_bitwise_and$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -28044,16 +28044,16 @@ const expression_assignment_compound_bitwise_or$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -28670,16 +28670,16 @@ const expression_assignment_compound_bitwise_xor$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -29294,16 +29294,16 @@ const expression_assignment_compound_divide$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -29920,16 +29920,16 @@ const expression_assignment_compound_exponent$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.exponent.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -30546,16 +30546,16 @@ const expression_assignment_compound_floor_divide$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.floor_divide.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -31172,16 +31172,16 @@ const expression_assignment_compound_matrix_multiply$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.matrix_multiply.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -31796,16 +31796,16 @@ const expression_assignment_compound_modulo$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -32422,16 +32422,16 @@ const expression_assignment_compound_multiply$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -33048,16 +33048,16 @@ const expression_assignment_compound_shift_left$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -33674,16 +33674,16 @@ const expression_assignment_compound_shift_right$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -34300,16 +34300,16 @@ const expression_assignment_compound_subtract$222_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -34732,16 +34732,16 @@ const expression_await$262_expression = (value: expression_await$262_expression$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.await.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.await.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.await.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.await.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -35162,16 +35162,16 @@ const expression_binary_arithmetic_add$214_left = (value: expression_binary_arit
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -35592,16 +35592,16 @@ const expression_binary_arithmetic_add$214_right = (value: expression_binary_ari
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -36022,16 +36022,16 @@ const expression_binary_arithmetic_divide$214_left = (value: expression_binary_a
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -36452,16 +36452,16 @@ const expression_binary_arithmetic_divide$214_right = (value: expression_binary_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -36882,16 +36882,16 @@ const expression_binary_arithmetic_exponent$214_left = (value: expression_binary
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.exponent.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -37314,16 +37314,16 @@ const expression_binary_arithmetic_exponent$214_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.exponent.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -37746,16 +37746,16 @@ const expression_binary_arithmetic_floor_divide$214_left = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.floor_divide.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -38178,16 +38178,16 @@ const expression_binary_arithmetic_floor_divide$214_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.floor_divide.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -38608,16 +38608,16 @@ const expression_binary_arithmetic_modulo$214_left = (value: expression_binary_a
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -39038,16 +39038,16 @@ const expression_binary_arithmetic_modulo$214_right = (value: expression_binary_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -39468,16 +39468,16 @@ const expression_binary_arithmetic_multiply$214_left = (value: expression_binary
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -39900,16 +39900,16 @@ const expression_binary_arithmetic_multiply$214_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -40330,16 +40330,16 @@ const expression_binary_arithmetic_subtract$214_left = (value: expression_binary
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -40762,16 +40762,16 @@ const expression_binary_arithmetic_subtract$214_right = (
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -41192,16 +41192,16 @@ const expression_binary_bitwise_and$214_left = (value: expression_binary_bitwise
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -41622,16 +41622,16 @@ const expression_binary_bitwise_and$214_right = (value: expression_binary_bitwis
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -42052,16 +42052,16 @@ const expression_binary_bitwise_or$214_left = (value: expression_binary_bitwise_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -42482,16 +42482,16 @@ const expression_binary_bitwise_or$214_right = (value: expression_binary_bitwise
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -42912,16 +42912,16 @@ const expression_binary_bitwise_xor$214_left = (value: expression_binary_bitwise
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -43342,16 +43342,16 @@ const expression_binary_bitwise_xor$214_right = (value: expression_binary_bitwis
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -43855,16 +43855,16 @@ const expression_binary_comparison_chain$218_left = (value: expression_binary_co
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.comparison.chain.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.comparison.chain.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.comparison.chain.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.comparison.chain.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -44395,16 +44395,16 @@ const expression_binary_logical_and$213_left = (value: expression_binary_logical
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -44935,16 +44935,16 @@ const expression_binary_logical_and$213_right = (value: expression_binary_logica
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -45475,16 +45475,16 @@ const expression_binary_logical_or$213_left = (value: expression_binary_logical_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -46015,16 +46015,16 @@ const expression_binary_logical_or$213_right = (value: expression_binary_logical
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -46445,16 +46445,16 @@ const expression_binary_matrix_multiply$214_left = (value: expression_binary_mat
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.matrix_multiply.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -46875,16 +46875,16 @@ const expression_binary_matrix_multiply$214_right = (value: expression_binary_ma
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.matrix_multiply.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -47305,16 +47305,16 @@ const expression_binary_shift_left$214_count = (value: expression_binary_shift_l
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -47735,16 +47735,16 @@ const expression_binary_shift_left$214_operand = (value: expression_binary_shift
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -48165,16 +48165,16 @@ const expression_binary_shift_right$214_count = (value: expression_binary_shift_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -48595,16 +48595,16 @@ const expression_binary_shift_right$214_operand = (value: expression_binary_shif
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -49165,16 +49165,16 @@ const expression_call$229_arguments = (value: expression_call$229_arguments$Item
 			return b.argumentList(b.argumentListElements(identifier$1(value)));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.arguments', value);
+			return b.argumentList(b.argumentListElements(literal_boolean_false$70(value)));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.arguments', value);
+			return b.argumentList(b.argumentListElements(literal_boolean_true$69(value)));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.call.arguments', value);
+			return b.argumentList(b.argumentListElements(literal_ellipsis$63(value)));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.arguments', value);
+			return b.argumentList(b.argumentListElements(literal_null$71(value)));
 		case 'float':
 		case 'literal.number.float':
 			return b.argumentList(b.argumentListElements(literal_number_float$101(value)));
@@ -49727,16 +49727,16 @@ const expression_call$229_arguments$item = (value: expression_call$229_arguments
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.arguments', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.arguments', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.call.arguments', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.arguments', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -50157,16 +50157,16 @@ const expression_call$229_function = (value: expression_call$229_function$Item) 
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.call.function', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.call.function', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.call.function', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.call.function', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -50719,16 +50719,16 @@ const expression_collection_list$238_elements$item = (value: expression_collecti
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -51308,16 +51308,16 @@ const expression_collection_set$239_elements$item = (value: expression_collectio
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.set.elements', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.set.elements', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.collection.set.elements', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.collection.set.elements', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -51870,16 +51870,16 @@ const expression_collection_tuple$240_elements$item = (value: expression_collect
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -52416,16 +52416,16 @@ const expression_collection_tuple_bare$186_elements = (value: expression_collect
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.collection.tuple.bare.elements', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.collection.tuple.bare.elements', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.collection.tuple.bare.elements', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.collection.tuple.bare.elements', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -52956,16 +52956,16 @@ const expression_comprehension_generator$246_body = (value: expression_comprehen
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.comprehension.generator.body', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.comprehension.generator.body', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.comprehension.generator.body', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.comprehension.generator.body', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -53525,16 +53525,16 @@ const expression_comprehension_list$243_body = (value: expression_comprehension_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.comprehension.list.body', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.comprehension.list.body', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.comprehension.list.body', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.comprehension.list.body', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -54133,16 +54133,16 @@ const expression_comprehension_set$245_body = (value: expression_comprehension_s
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.comprehension.set.body', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.comprehension.set.body', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.comprehension.set.body', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.comprehension.set.body', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -54700,16 +54700,16 @@ const expression_conditional$251_alternative = (value: expression_conditional$25
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.conditional.alternative', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -55240,16 +55240,16 @@ const expression_conditional$251_condition = (value: expression_conditional$251_
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.conditional.condition', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -55780,16 +55780,16 @@ const expression_conditional$251_consequence = (value: expression_conditional$25
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.conditional.consequence', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -56340,16 +56340,16 @@ const expression_interpolation$360_expression = (value: expression_interpolation
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.interpolation.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -56939,16 +56939,16 @@ const expression_lambda$219_body = (value: expression_lambda$219_body$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.body', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.body', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.lambda.body', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.lambda.body', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -58156,16 +58156,16 @@ const expression_lambda$220_body = (value: expression_lambda$220_body$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.lambda.body', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.lambda.body', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.lambda.body', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.lambda.body', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -58848,16 +58848,16 @@ const expression_parenthesized$247_expression = (value: expression_parenthesized
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -59401,16 +59401,16 @@ const expression_subscript$227_index = (value: expression_subscript$227_index$It
 			return b.subscripts(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.subscript.index', value);
+			return b.subscripts(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.subscript.index', value);
+			return b.subscripts(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.subscript.index', value);
+			return b.subscripts(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.subscript.index', value);
+			return b.subscripts(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.subscripts(literal_number_float$101(value));
@@ -59831,16 +59831,16 @@ const expression_subscript$227_object = (value: expression_subscript$227_object$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.subscript.object', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.subscript.object', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.subscript.object', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.subscript.object', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -60261,16 +60261,16 @@ const expression_unary_bitwise_not$215_argument = (value: expression_unary_bitwi
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.bitwise_not.argument', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -60691,16 +60691,16 @@ const expression_unary_negation$215_argument = (value: expression_unary_negation
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -61231,16 +61231,16 @@ const expression_unary_not$212_argument = (value: expression_unary_not$212_argum
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -61661,16 +61661,16 @@ const expression_unary_plus$215_argument = (value: expression_unary_plus$215_arg
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.unary.plus.argument', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -62207,16 +62207,16 @@ const expression_yield$225_expression = (value: expression_yield$225_expression$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('expression.yield.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('expression.yield.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('expression.yield.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('expression.yield.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -63054,16 +63054,16 @@ const file$133_statements = (value: file$133_statements$Item) => {
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('file.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('file.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('file.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('file.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -64291,16 +64291,16 @@ const identifier_qualified$236_qualifier = (value: identifier_qualified$236_qual
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('identifier.qualified.qualifier', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -64961,13 +64961,13 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 			return b.casePattern(b.simplePattern(identifier_qualified$187(value)));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.as.pattern', value);
+			return b.casePattern(b.simplePattern(literal_boolean_false$70(value)));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.as.pattern', value);
+			return b.casePattern(b.simplePattern(literal_boolean_true$69(value)));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.as.pattern', value);
+			return b.casePattern(b.simplePattern(literal_null$71(value)));
 		case 'float':
 		case 'literal.number.float':
 			return b.casePattern(b.simplePattern(literal_number_float$101(value)));
@@ -66019,13 +66019,13 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 			return b.casePattern(b.simplePattern(identifier_qualified$187(value)));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.list.elements', value);
+			return b.casePattern(b.simplePattern(literal_boolean_false$70(value)));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.list.elements', value);
+			return b.casePattern(b.simplePattern(literal_boolean_true$69(value)));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.list.elements', value);
+			return b.casePattern(b.simplePattern(literal_null$71(value)));
 		case 'float':
 		case 'literal.number.float':
 			return b.casePattern(b.simplePattern(literal_number_float$101(value)));
@@ -66358,13 +66358,13 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 			return identifier_qualified$187(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.or.left', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.or.left', value);
+			return literal_boolean_true$69(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.or.left', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -66663,13 +66663,13 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 			return identifier_qualified$187(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.or.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.or.right', value);
+			return literal_boolean_true$69(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.or.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -67137,13 +67137,13 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 			return b.casePattern(b.simplePattern(identifier_qualified$187(value)));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.struct.fields', value);
+			return b.casePattern(b.simplePattern(literal_boolean_false$70(value)));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.struct.fields', value);
+			return b.casePattern(b.simplePattern(literal_boolean_true$69(value)));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.struct.fields', value);
+			return b.casePattern(b.simplePattern(literal_null$71(value)));
 		case 'float':
 		case 'literal.number.float':
 			return b.casePattern(b.simplePattern(literal_number_float$101(value)));
@@ -67486,13 +67486,13 @@ const pattern_struct_field$194_pattern = (value: pattern_struct_field$194_patter
 			return identifier_qualified$187(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_boolean_true$69(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -68138,13 +68138,13 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 			return b.casePattern(b.simplePattern(identifier_qualified$187(value)));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.tuple.elements', value);
+			return b.casePattern(b.simplePattern(literal_boolean_false$70(value)));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.tuple.elements', value);
+			return b.casePattern(b.simplePattern(literal_boolean_true$69(value)));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.tuple.elements', value);
+			return b.casePattern(b.simplePattern(literal_null$71(value)));
 		case 'float':
 		case 'literal.number.float':
 			return b.casePattern(b.simplePattern(literal_number_float$101(value)));
@@ -68796,13 +68796,13 @@ const pattern_tuple_bare$280_elements = (value: pattern_tuple_bare$280_elements$
 			return b.casePattern(b.simplePattern(identifier_qualified$187(value)));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('pattern.tuple.bare.elements', value);
+			return b.casePattern(b.simplePattern(literal_boolean_false$70(value)));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('pattern.tuple.bare.elements', value);
+			return b.casePattern(b.simplePattern(literal_boolean_true$69(value)));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('pattern.tuple.bare.elements', value);
+			return b.casePattern(b.simplePattern(literal_null$71(value)));
 		case 'float':
 		case 'literal.number.float':
 			return b.casePattern(b.simplePattern(literal_number_float$101(value)));
@@ -69365,16 +69365,16 @@ const statement_assert$146_expressions = (value: statement_assert$146_expression
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.assert.expressions', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.assert.expressions', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.assert.expressions', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.assert.expressions', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -69911,16 +69911,16 @@ const statement_delete$151_expressions = (value: statement_delete$151_expression
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.delete.expressions', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.delete.expressions', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.delete.expressions', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.delete.expressions', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -70577,16 +70577,16 @@ const statement_exec$177_inClauses = (value: statement_exec$177_inClauses$Item) 
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.exec.inClauses', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.exec.inClauses', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.exec.inClauses', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.exec.inClauses', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -71168,16 +71168,16 @@ const statement_if$156_condition = (value: statement_if$156_condition$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.if.condition', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.if.condition', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.if.condition', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.if.condition', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -72015,16 +72015,16 @@ const statement_if$156_statements$item = (value: statement_if$156_statements$ite
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.if.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -72760,16 +72760,16 @@ const statement_loop_for_each$162_right = (value: statement_loop_for_each$162_ri
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -73607,16 +73607,16 @@ const statement_loop_for_each$162_statements$item = (value: statement_loop_for_e
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -74232,16 +74232,16 @@ const statement_loop_while$163_condition = (value: statement_loop_while$163_cond
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -75079,16 +75079,16 @@ const statement_loop_while$163_statements$item = (value: statement_loop_while$16
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -75711,16 +75711,16 @@ const statement_match$159_subject = (value: statement_match$159_subject$Item) =>
 			return b.subjects(identifier$1(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.match.subject', value);
+			return b.subjects(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.match.subject', value);
+			return b.subjects(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.match.subject', value);
+			return b.subjects(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.match.subject', value);
+			return b.subjects(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.subjects(literal_number_float$101(value));
@@ -76582,16 +76582,16 @@ const statement_resource$167_statements$item = (value: statement_resource$167_st
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.resource.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.resource.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.resource.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.resource.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -77215,16 +77215,16 @@ const statement_return$150_expression = (value: statement_return$150_expression$
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.return.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.return.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.return.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.return.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -77755,16 +77755,16 @@ const statement_throw$152_cause = (value: statement_throw$152_cause$Item) => {
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.throw.cause', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.throw.cause', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.throw.cause', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.throw.cause', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -78301,16 +78301,16 @@ const statement_throw$152_expression = (value: statement_throw$152_expression$It
 			return identifier$1(value);
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.throw.expression', value);
+			return literal_boolean_false$70(value);
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.throw.expression', value);
+			return literal_boolean_true$69(value);
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.throw.expression', value);
+			return literal_ellipsis$63(value);
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.throw.expression', value);
+			return literal_null$71(value);
 		case 'float':
 		case 'literal.number.float':
 			return literal_number_float$101(value);
@@ -79184,16 +79184,16 @@ const statement_try$164_statements$item = (value: statement_try$164_statements$i
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(identifier$1(value))));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('statement.try.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_false$70(value))));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('statement.try.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_boolean_true$69(value))));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('statement.try.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_ellipsis$63(value))));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('statement.try.statements', value);
+			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_null$71(value))));
 		case 'float':
 		case 'literal.number.float':
 			return b.simpleStatements(b.simpleStatementsElements(b.expressionStatement(literal_number_float$101(value))));
@@ -79814,16 +79814,16 @@ const type_constrained$235_baseType = (value: type_constrained$235_baseType$Item
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('type.constrained.baseType', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('type.constrained.baseType', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('type.constrained.baseType', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('type.constrained.baseType', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -80386,16 +80386,16 @@ const type_constrained$235_constraint = (value: type_constrained$235_constraint$
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('type.constrained.constraint', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('type.constrained.constraint', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('type.constrained.constraint', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('type.constrained.constraint', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -80982,16 +80982,16 @@ const type_generic$233_typeArguments$item = (value: type_generic$233_typeArgumen
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('type.generic.typeArguments', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('type.generic.typeArguments', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('type.generic.typeArguments', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('type.generic.typeArguments', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -81590,16 +81590,16 @@ const type_union$234_left = (value: type_union$234_left$Item) => {
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('type.union.left', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('type.union.left', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('type.union.left', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('type.union.left', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -82162,16 +82162,16 @@ const type_union$234_right = (value: type_union$234_right$Item) => {
 			return b.type(identifier_qualified$236(value));
 		case 'false':
 		case 'literal.boolean.false':
-			return unbuilt('type.union.right', value);
+			return b.type(literal_boolean_false$70(value));
 		case 'true':
 		case 'literal.boolean.true':
-			return unbuilt('type.union.right', value);
+			return b.type(literal_boolean_true$69(value));
 		case 'ellipsis':
 		case 'literal.ellipsis':
-			return unbuilt('type.union.right', value);
+			return b.type(literal_ellipsis$63(value));
 		case 'null':
 		case 'literal.null':
-			return unbuilt('type.union.right', value);
+			return b.type(literal_null$71(value));
 		case 'float':
 		case 'literal.number.float':
 			return b.type(literal_number_float$101(value));
@@ -83690,6 +83690,26 @@ const identifier_qualified$236 = (
 		name: identifier_qualified$236_name(input.name)
 	});
 };
+const literal_boolean_false$70 = (input: PathInput<PythonMap, 'literal.boolean.false', 'false'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean.false', unroutedSlot);
+	return 70;
+};
+const literal_boolean_true$69 = (input: PathInput<PythonMap, 'literal.boolean.true', 'true'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.boolean.true', unroutedSlot);
+	return 69;
+};
+const literal_ellipsis$63 = (input: PathInput<PythonMap, 'literal.ellipsis', 'ellipsis'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.ellipsis', unroutedSlot);
+	return 63;
+};
+const literal_null$71 = (input: PathInput<PythonMap, 'literal.null', 'null'>) => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.null', unroutedSlot);
+	return 71;
+};
 const literal_number_float$101 = (
 	input: PathInput<PythonMap, 'literal.number.float', 'float'>
 ): ReturnType<typeof b.floatPoint> => {
@@ -84726,6 +84746,18 @@ const file = (input: PathInput<PythonMap, 'file'>) => {
 const identifier = (input: PathInput<PythonMap, 'identifier'>) => {
 	return identifier$1(input);
 };
+const literal_boolean_false = (input: PathInput<PythonMap, 'literal.boolean.false'>) => {
+	return literal_boolean_false$70(input);
+};
+const literal_boolean_true = (input: PathInput<PythonMap, 'literal.boolean.true'>) => {
+	return literal_boolean_true$69(input);
+};
+const literal_ellipsis = (input: PathInput<PythonMap, 'literal.ellipsis'>) => {
+	return literal_ellipsis$63(input);
+};
+const literal_null = (input: PathInput<PythonMap, 'literal.null'>) => {
+	return literal_null$71(input);
+};
 const literal_number_float = (input: PathInput<PythonMap, 'literal.number.float'>) => {
 	return literal_number_float$101(input);
 };
@@ -84993,6 +85025,9 @@ export const portableBuild = {
 	file: file,
 	identifier: identifier,
 	literal: {
+		boolean: { false: literal_boolean_false, true: literal_boolean_true },
+		ellipsis: literal_ellipsis,
+		null: literal_null,
 		number: {
 			float: Object.assign(literal_number_float, {
 				leading_point: literal_number_float_leading_point,

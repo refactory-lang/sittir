@@ -899,38 +899,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.false: arm 70 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.true: arm 69 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.ellipsis: arm 63 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null: arm 71 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.number.integer.imaginary: arm 99's builder takes its text"
   },
   {
