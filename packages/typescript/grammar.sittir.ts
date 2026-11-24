@@ -10,7 +10,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import type { AuthoringRule, ChoiceRule, GrammarRule, SymbolRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
+import type { AuthoringRule, ChoiceRule, GrammarRule, SeqRule, SymbolRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
 import {
 	field,
 	alias,
@@ -36,6 +36,8 @@ const USING_FORMS = { plain: { 'kind:': 'using' }, await: { 'kind:': 'await usin
 const AUTO_ACCESSOR_RULING = 'An auto-accessor takes no declare, readonly or ?: its arm admits an accessibility modifier, static, abstract and override, then accessor.';
 
 const PUBLIC_FIELD_DEFINITION_ACCEPTED = [
+	{ text: 'abstract class A extends B { abstract override x: number; }\n', form: ['abstract', 'override', { symbol: 'identifier' }, { symbol: 'type_annotation' }], kind: 'public_field_definition' },
+	{ text: 'abstract class A extends B { abstract override readonly x: number; }\n', form: ['abstract', 'override', 'readonly', { symbol: 'identifier' }, { symbol: 'type_annotation' }], kind: 'public_field_definition' },
 	{ text: 'export abstract class A { abstract accessor x: number; }\n', form: ['abstract', 'accessor', { symbol: 'identifier' }, { symbol: 'type_annotation' }], kind: 'public_field_definition' },
 	{ text: 'export class A { static accessor y: number; }\n', form: ['static', 'accessor', { symbol: 'identifier' }, { symbol: 'type_annotation' }], kind: 'public_field_definition' }
 ] as const;
@@ -742,7 +744,16 @@ export default grammar(enrich(base), wire({
 						edit(
 							original,
 							{ '1/0/0/1/0': field('accessibility_modifier'), '1/0/1/0': field('accessibility_modifier'), '2/0/1/0': field('override'), '4/0': field('optionality') },
-							{ 2: (_$: unknown, member: ChoiceRule) => choice(...(member.members.slice(0, 3) as [GrammarRule, ...GrammarRule[]])) }
+							{
+								2: (_$: unknown, member: ChoiceRule) => {
+									const [staticArm, abstractArm, readonlyFirst] = member.members as [SeqRule, SeqRule, GrammarRule, ...GrammarRule[]];
+									const bare = (rule: GrammarRule): GrammarRule => ('content' in rule ? (rule.content as GrammarRule) : (rule as ChoiceRule).members[0]!);
+									return choice(
+										seq(optional(choice(bare(staticArm.members[0]), bare(abstractArm.members[0]))), staticArm.members[1], staticArm.members[2]),
+										readonlyFirst
+									);
+								}
+							}
 						)
 					),
 					// static and abstract are independent flags, as in the plain arm;

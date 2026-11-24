@@ -20984,7 +20984,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.add': {
 			readonly left:

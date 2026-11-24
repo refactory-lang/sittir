@@ -20762,14 +20762,14 @@ export function wrapPublicFieldDefinitionPlain(
 		static() {
 			return this._static;
 		},
+		abstract() {
+			return this._abstract;
+		},
 		override() {
 			return this._override;
 		},
 		readonly() {
 			return this._readonly;
-		},
-		abstract() {
-			return this._abstract;
 		},
 		name() {
 			return hydrateSlot<
@@ -20813,9 +20813,9 @@ export function wrapPublicFieldDefinitionPlain(
 		declare: wrapPublicFieldDefinitionPlain$with$declare,
 		accessibilityModifier: wrapPublicFieldDefinitionPlain$with$accessibilityModifier,
 		static: wrapPublicFieldDefinitionPlain$with$static,
+		abstract: wrapPublicFieldDefinitionPlain$with$abstract,
 		override: wrapPublicFieldDefinitionPlain$with$override,
 		readonly: wrapPublicFieldDefinitionPlain$with$readonly,
-		abstract: wrapPublicFieldDefinitionPlain$with$abstract,
 		name: wrapPublicFieldDefinitionPlain$with$name,
 		optionality: wrapPublicFieldDefinitionPlain$with$optionality,
 		type: wrapPublicFieldDefinitionPlain$with$type,
@@ -20892,6 +20892,15 @@ function wrapPublicFieldDefinitionPlain$with(node: Held, setter: string, args: r
 					)
 				)
 			);
+		case 'abstract':
+			return applySetter(args, (v: NonNullable<T.PublicFieldDefinitionPlain['_abstract']>) =>
+				rebuilt(node, handle, () =>
+					wrapPublicFieldDefinitionPlain(
+						{ ...$edited(data), _abstract: admitSlot(handle, 'public_field_definition_plain', 'abstract', v) },
+						tree
+					)
+				)
+			);
 		case 'override':
 			return applySetter(args, (v: NonNullable<T.PublicFieldDefinitionPlain['_override']>) =>
 				rebuilt(node, handle, () =>
@@ -20906,15 +20915,6 @@ function wrapPublicFieldDefinitionPlain$with(node: Held, setter: string, args: r
 				rebuilt(node, handle, () =>
 					wrapPublicFieldDefinitionPlain(
 						{ ...$edited(data), _readonly: admitSlot(handle, 'public_field_definition_plain', 'readonly', v) },
-						tree
-					)
-				)
-			);
-		case 'abstract':
-			return applySetter(args, (v: NonNullable<T.PublicFieldDefinitionPlain['_abstract']>) =>
-				rebuilt(node, handle, () =>
-					wrapPublicFieldDefinitionPlain(
-						{ ...$edited(data), _abstract: admitSlot(handle, 'public_field_definition_plain', 'abstract', v) },
 						tree
 					)
 				)
@@ -20989,14 +20989,14 @@ function wrapPublicFieldDefinitionPlain$with$accessibilityModifier(this: Receive
 function wrapPublicFieldDefinitionPlain$with$static(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapPublicFieldDefinitionPlain$with(receiverOf(this, '$with.static'), 'static', args);
 }
+function wrapPublicFieldDefinitionPlain$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapPublicFieldDefinitionPlain$with(receiverOf(this, '$with.abstract'), 'abstract', args);
+}
 function wrapPublicFieldDefinitionPlain$with$override(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapPublicFieldDefinitionPlain$with(receiverOf(this, '$with.override'), 'override', args);
 }
 function wrapPublicFieldDefinitionPlain$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapPublicFieldDefinitionPlain$with(receiverOf(this, '$with.readonly'), 'readonly', args);
-}
-function wrapPublicFieldDefinitionPlain$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapPublicFieldDefinitionPlain$with(receiverOf(this, '$with.abstract'), 'abstract', args);
 }
 function wrapPublicFieldDefinitionPlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapPublicFieldDefinitionPlain$with(receiverOf(this, '$with.name'), 'name', args);
@@ -31870,13 +31870,13 @@ function viewPublicFieldDefinitionPlain$accessibilityModifier(this: RecordHandle
 function viewPublicFieldDefinitionPlain$static(this: RecordHandle) {
 	return recordFlag(this, 2, 1);
 }
-function viewPublicFieldDefinitionPlain$override(this: RecordHandle) {
+function viewPublicFieldDefinitionPlain$abstract(this: RecordHandle) {
 	return recordFlag(this, 2, 2);
 }
-function viewPublicFieldDefinitionPlain$readonly(this: RecordHandle) {
+function viewPublicFieldDefinitionPlain$override(this: RecordHandle) {
 	return recordFlag(this, 2, 3);
 }
-function viewPublicFieldDefinitionPlain$abstract(this: RecordHandle) {
+function viewPublicFieldDefinitionPlain$readonly(this: RecordHandle) {
 	return recordFlag(this, 2, 4);
 }
 function viewPublicFieldDefinitionPlain$name(this: RecordHandle) {
@@ -31924,9 +31924,9 @@ function viewPublicFieldDefinitionPlain(data: RecordPosition, tree: TreeHandle):
 		declare: viewPublicFieldDefinitionPlain$declare,
 		accessibilityModifier: viewPublicFieldDefinitionPlain$accessibilityModifier,
 		static: viewPublicFieldDefinitionPlain$static,
+		abstract: viewPublicFieldDefinitionPlain$abstract,
 		override: viewPublicFieldDefinitionPlain$override,
 		readonly: viewPublicFieldDefinitionPlain$readonly,
-		abstract: viewPublicFieldDefinitionPlain$abstract,
 		name: viewPublicFieldDefinitionPlain$name,
 		optionality: viewPublicFieldDefinitionPlain$optionality,
 		type: viewPublicFieldDefinitionPlain$type,
@@ -31946,9 +31946,9 @@ function viewPublicFieldDefinitionPlain(data: RecordPosition, tree: TreeHandle):
 		declare: $with$declare,
 		accessibilityModifier: $with$accessibilityModifier,
 		static: $with$static,
+		abstract: $with$abstract,
 		override: $with$override,
 		readonly: $with$readonly,
-		abstract: $with$abstract,
 		name: $with$name,
 		optionality: $with$optionality,
 		type: $with$type,

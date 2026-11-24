@@ -3828,7 +3828,13 @@ The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
  *  An unseparated repeat is glued when the rule or anything beneath its
  *  content is tokenized or immediate, or names a lexical kind
  *  (`isLexicalSymbol`: string and template fragments, python string
- *  content). */
+ *  content). With `plainTokens` false, a `token(...)` that is not immediate
+ *  does not count: extras can't split such a token, but they can sit
+ *  between two of them. `collectGaps` writes no gap choice for a repeat
+ *  this answers true for with `plainTokens` true, and stamps it in
+ *  `noExtrasLists` only when the rule is itself tokenized, the grammar's
+ *  extras admit no space (regex's class atoms), or it also answers true
+ *  with `plainTokens` false. */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isLexicalSymbol`
@@ -3852,7 +3858,7 @@ never a rule's shape.
 
 Every leaf of the rule is tokenized, immediate or a lexical kind; a choice or
 supertype is lexical when all its members are. A bare literal or pattern is
-not: keywords in a repeat stay separable.
+not: keywords in a repeat stay separable. With `plainTokens` false, a tokenized leaf that is not immediate does not count either.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::armOf`
 
@@ -5275,8 +5281,10 @@ Each flat leaf's ir key mapped to its kind, by `isFlatLeafOrKeyword`.
 One variant route of a flattened parent: its name, the child kind, whether it
 is `arm.default`, whether it is `leaf` (the child has
 no factory of its own; `emitPolymorphsOverlay` spells the route as the
-child's kind-id expression instead of a factory reference), and — when the
-child is itself a flattened parent — that parent's route key.
+child's kind-id expression instead of a factory reference), whether it is
+`unbuildable` (the child's text holds a NUL byte, so the builders skip the
+route and the guards keep it), and — when the child is itself a flattened
+parent — that parent's route key.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isHoistedCompound`
 
@@ -5898,7 +5906,11 @@ The node that holds the alias envelope's storage.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation`
 
-A node that is punctuation: a single anonymous literal token.
+A node that is punctuation: a single anonymous literal token. A token whose
+text holds a NUL byte (python's line continuation that ends the source) is
+`unbuildable`: it has no factory, so no builder, coercion or route writes it,
+while a parse still reads it, `is` still guards it and a render writes its
+source bytes.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::KindEdgeClasses`
 
@@ -6482,7 +6494,7 @@ Stamps a `ChoicePartition` for each choice that no slot of its kind claims and w
 
 ### `packages/codegen/src/compiler/model/choice-partition.ts::partitionOfChoice`
 
-The partition of one choice, or `undefined` when no two arms hold one slot. Arms made only of slots whose orders parse are `flat`. Otherwise arms with the same shape form one group, which holds the slots and kinds of each and requires only the parts all of them require. A part is a slot, or a choice of slots of which a node holds one, that every node of the arm holds. The kinds at a slot are its symbols' concrete kinds, and a slot that also takes text is never tested by kind.
+The partition of one choice, or `undefined` when no two arms hold one slot. A later arm that holds at least one slot, every slot a single fixed-text leaf (a flag), writes no fixed text an earlier arm does not also write, and admits no set of slots that earlier arm refuses is the source's other order of that arm: it takes no part in the partition, so a build renders the earliest such arm, and a choice that drops one is always partitioned so the dropped arm never renders. Arms made only of slots whose orders parse are `flat`. Otherwise arms with the same shape form one group, which holds the slots and kinds of each and requires only the parts all of them require. A part is a slot, or a choice of slots of which a node holds one, that every node of the arm holds. The kinds at a slot are its symbols' concrete kinds, and a slot that also takes text is never tested by kind.
 
 ### `packages/codegen/src/compiler/model/choice-partition.ts::partitionTree`
 

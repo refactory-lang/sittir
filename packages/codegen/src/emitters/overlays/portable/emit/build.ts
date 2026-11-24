@@ -10,7 +10,7 @@ import type {
 	PortableSpelledFact
 } from '../../../../../../types/src/portable-build.ts';
 import type { PinnedBuilders } from './engine.ts';
-import type { PortableEmitDiagnostic, PortableEmitInput, PortableEmitOutput, PortableEmitSlot } from '../emit-input.ts';
+import type { PortableEmitDiagnostic, PortableEmitInput, PortableEmitOutput, PortableEmitSlot, PortableOwnTextClaim } from '../emit-input.ts';
 
 type B = PinnedBuilders;
 type Built<F> = F extends (...args: never[]) => infer R ? R : never;
@@ -562,6 +562,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const textPaths = new Set(input.textPaths);
 	const textInputs = new Set(input.textInputs);
 	const textValues = new Set(input.textValues);
+	const ownTextClaims = input.ownTextClaims ?? {};
 	const textKinds = new Set(input.textKinds);
 	const textTyped = (path: string): boolean => textPaths.has(path) || textInputs.has(path) || textKinds.has(path);
 	const failed = new Map<string, string>();
@@ -1036,6 +1037,8 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 
 	const armBody = (path: string, arm: PortableBuildArm, input: () => Built<B['identifier']>): Statement[] => {
 		if (arm.builder === undefined) return fail(`arm ${arm.kind} builds through its holder`);
+		const ownText = ownTextClaims[path]?.[arm.kind];
+		if (ownText !== undefined && (arm.content === undefined || ownText.fixed === undefined || ownText.pattern === undefined)) return fail(`${path} tests the text of ${ownText.kind} in a form the generated build cannot check`);
 		if (arm.mounted !== undefined && (arm.mounted.call !== 'child' || arm.mounted.outer !== undefined)) return fail(`arm ${arm.kind} mounts into its holder`);
 		if (arm.template !== undefined) return fail(`a template-spelled slot (${arm.template.slot})`);
 		if (arm.sole !== undefined) return fail(`a sole-item delimiter on ${arm.sole.slot}`);
@@ -1051,7 +1054,13 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 			const text = id('text');
 			const placed = seat.leaf === undefined ? text : call(builderRef(seat.leaf), text);
 			const entry: readonly [string, Expression] = [step.key, step.optional === true ? ternary(binary(text, '===', str('')), id('undefined'), placed) : placed];
-			return [constant('text', givenText(path, input())), ret(formBuilt(path, arm, arm.builder, arm.slots, input, [entry]))];
+			const readsOwnText = (claim: PortableOwnTextClaim): Statement => {
+				const [before = '', after = ''] = claim.fixed!.split('\0');
+				const whole = binary(binary(str(before), '+', text), '+', str(after));
+				const pattern = paren(t.newExpression({ function: 'RegExp', arguments: t.arguments(str(claim.pattern!), str('u')) }));
+				return when(not(call(dot(pattern, 'test'), whole)), raise(str(`portable build: the ${claim.kind} built for ${path} does not read as ${path}`)));
+			};
+			return [constant('text', givenText(path, input())), ...(ownText === undefined ? [] : [readsOwnText(ownText)]), ret(formBuilt(path, arm, arm.builder, arm.slots, input, [entry]))];
 		}
 		const shape = shapeOf(arm.builder);
 		if (shape === 'text' && textValues.has(path) && arm.slots.length === 0 && arm.presets.length === 0 && Object.keys(arm.flags).length === 0) return [ret(call(builderRef(arm.builder), givenText(path, input())))];

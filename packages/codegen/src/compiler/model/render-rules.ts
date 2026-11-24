@@ -1,4 +1,5 @@
 import { ruleListParts } from '../../dsl/rule-patterns.ts';
+import { admitsWhitespaceMember, SPACE_MEMBER } from '../../dsl/whitespace.ts';
 import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import type { NodeMap } from '../types.ts';
 import { findAnonEntryForLiteralText, findEntryForLiteralText, modelKindOfEntry, type KindEntryLike } from '../../dsl/symbol-table.ts';
@@ -150,29 +151,31 @@ function isRepeated(rule: RenderRule): boolean {
 	return m === 'array' || m === 'nonEmptyArray';
 }
 
-function admitsNoExtras(rule: RenderRule, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>): boolean {
+function admitsNoExtras(rule: RenderRule, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>, plainTokens: boolean): boolean {
 	const r = bag(rule);
-	if (r.tokenized === true || r.immediate === true) return true;
+	if (r.immediate === true) return true;
+	if (r.tokenized === true) return plainTokens;
 	if (r.separator !== undefined) return bag(r.separator.value).immediate === true;
-	if (r.type === SYMBOL && r.name !== undefined) return isLexicalSymbol(r.name, rules, externals, new Set());
-	if (r.members !== undefined) return r.members.some((m) => admitsNoExtras(m, rules, externals));
-	if (r.content !== undefined) return admitsNoExtras(r.content, rules, externals);
+	if (r.type === SYMBOL && r.name !== undefined) return isLexicalSymbol(r.name, rules, externals, new Set(), plainTokens);
+	if (r.members !== undefined) return r.members.some((m) => admitsNoExtras(m, rules, externals, plainTokens));
+	if (r.content !== undefined) return admitsNoExtras(r.content, rules, externals, plainTokens);
 	return false;
 }
 
-function isLexicalSymbol(name: string, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>, seen: ReadonlySet<string>): boolean {
+function isLexicalSymbol(name: string, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>, seen: ReadonlySet<string>, plainTokens: boolean): boolean {
 	if (externals.has(name)) return true;
 	const target = rules[name];
-	return target !== undefined && !seen.has(name) && isLexicalRule(target, rules, externals, new Set([...seen, name]));
+	return target !== undefined && !seen.has(name) && isLexicalRule(target, rules, externals, new Set([...seen, name]), plainTokens);
 }
 
-function isLexicalRule(rule: RenderRule, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>, seen: ReadonlySet<string>): boolean {
+function isLexicalRule(rule: RenderRule, rules: Readonly<Record<string, RenderRule>>, externals: ReadonlySet<string>, seen: ReadonlySet<string>, plainTokens: boolean): boolean {
 	const r = bag(rule);
-	if (r.tokenized === true || r.immediate === true) return true;
-	if (r.type === SYMBOL && r.name !== undefined) return isLexicalSymbol(r.name, rules, externals, seen);
+	if (r.immediate === true) return true;
+	if (r.tokenized === true) return plainTokens;
+	if (r.type === SYMBOL && r.name !== undefined) return isLexicalSymbol(r.name, rules, externals, seen, plainTokens);
 	const parts = r.members ?? r.subtypes;
-	if (parts !== undefined) return parts.length > 0 && parts.every((m) => isLexicalRule(m, rules, externals, seen));
-	if (r.content !== undefined) return isLexicalRule(r.content, rules, externals, seen);
+	if (parts !== undefined) return parts.length > 0 && parts.every((m) => isLexicalRule(m, rules, externals, seen, plainTokens));
+	if (r.content !== undefined) return isLexicalRule(r.content, rules, externals, seen, plainTokens);
 	return false;
 }
 
@@ -214,14 +217,15 @@ function collectGaps(
 	const externals = new Set(ruleListParts(config.nodeMap.externals ?? []).names);
 	const gaps = new Map<RuleId, Gap>();
 	const noExtrasLists = new Set<RuleId>();
+	const spaceIsExtra = admitsWhitespaceMember(config.nodeMap.nodelessExtrasRun, SPACE_MEMBER, ' ');
 	for (const [kind, rule] of Object.entries(rules)) {
 		walker.fold(rule, undefined, (_, r) => {
 			const id = bag(r).id;
 			if (id === undefined || !isRepeated(r) || gaps.has(id)) return undefined;
 			const slot = config.nodeMap.slotByRuleId.get(kind)?.get(id);
 			if (slot === undefined) return undefined;
-			if (admitsNoExtras(r, rules, externals)) {
-				for (const listed of [id, ...slot.sourceRuleIds]) noExtrasLists.add(listed);
+			if (admitsNoExtras(r, rules, externals, true)) {
+				if (bag(r).tokenized === true || !spaceIsExtra || admitsNoExtras(r, rules, externals, false)) for (const listed of [id, ...slot.sourceRuleIds]) noExtrasLists.add(listed);
 				return undefined;
 			}
 			const gap = gapOf(kind, r, config);

@@ -165,7 +165,6 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 		pattern: F._leafRe_buildLineContinuationNewline,
 		factory: F.buildLineContinuationNewline
 	},
-	line_continuation_nul: { values: ['\\\u0000'], factory: () => F.buildLineContinuationNul },
 	string_fragment: { pattern: F._leafRe_buildStringFragment, factory: F.buildStringFragment },
 	escape_interpolation: { pattern: F._leafRe_buildEscapeInterpolation, factory: F.buildEscapeInterpolation },
 	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
@@ -209,7 +208,6 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'integer_decimal_imaginary',
 	'integer_decimal_plain',
 	'line_continuation_newline',
-	'line_continuation_nul',
 	'string_fragment',
 	'escape_interpolation',
 	'_indent',
@@ -269,8 +267,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'float_leading_point',
 	'float_scientific',
 	'identifier',
-	'line_continuation_newline',
-	'line_continuation_nul'
+	'line_continuation_newline'
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
@@ -7627,10 +7624,6 @@ export const coerceToLineContinuationNewline: ConfigSeat<
 	return F.buildLineContinuationNewline(input as Parameters<typeof F.buildLineContinuationNewline>[0]);
 };
 
-export function coerceToLineContinuationNul(_input?: T.LineContinuationNul.Loose): typeof F.buildLineContinuationNul {
-	return F.buildLineContinuationNul;
-}
-
 export function resolveSimplePatternNegative_value(
 	value: T.SimplePatternNegative.LooseConfig['value']
 ): Admit<T.SimplePatternNegative['_value']> {
@@ -8779,7 +8772,6 @@ export interface _FromMap {
 	readonly escape_sequence_simple: typeof coerceToEscapeSequenceSimple;
 	readonly escape_sequence_named: typeof coerceToEscapeSequenceNamed;
 	readonly line_continuation_newline: typeof coerceToLineContinuationNewline;
-	readonly line_continuation_nul: typeof coerceToLineContinuationNul;
 	readonly simple_pattern_negative: typeof coerceToSimplePatternNegative;
 	readonly except_clause_exception_list: typeof coerceToExceptClauseExceptionList;
 	readonly except_clause_exception: typeof coerceToExceptClauseException;
@@ -8989,7 +8981,6 @@ export const _fromMap: _FromMap = {
 	escape_sequence_simple: coerceToEscapeSequenceSimple,
 	escape_sequence_named: coerceToEscapeSequenceNamed,
 	line_continuation_newline: coerceToLineContinuationNewline,
-	line_continuation_nul: coerceToLineContinuationNul,
 	simple_pattern_negative: coerceToSimplePatternNegative,
 	except_clause_exception_list: coerceToExceptClauseExceptionList,
 	except_clause_exception: coerceToExceptClauseException,

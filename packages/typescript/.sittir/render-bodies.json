@@ -7857,6 +7857,20 @@
 			"kind": "if",
 			"arms": [
 				{
+					"test": "abstract",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "abstract"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
 					"test": "override",
 					"body": [
 						{
@@ -7876,20 +7890,6 @@
 						{
 							"kind": "slot",
 							"name": "readonly"
-						}
-					]
-				}
-			]
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "abstract",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "abstract"
 						}
 					]
 				}

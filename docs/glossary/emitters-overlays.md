@@ -230,6 +230,10 @@ The number of segments in a path; the root is depth 0.
 
 The test that a slot holds a keyword: a presence leaf when the slot is a boolean slot holding only that keyword (`presenceKeywordOf`), a text comparison when it holds the keyword among others. A read entry's pin and a flag's keyword both lower through it; a keyword a boolean slot cannot hold is refused.
 
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::ownTextClaimsOf`
+
+The read claims that test a node's own text, by path and kind id. A kind's claim carries `fixed` and `pattern` when its one read entry for the path has one condition, a `match` on the node itself, and the kind spells one text slot between fixed text. The generated build then tests the whole text before it builds, as the interpreter's read-back does, so `comment.block.doc` refuses `hello`, which would write `/*hello*/`. A claim without them is one the generated build can't check, and the emitter refuses that arm.
+
 ### `packages/codegen/src/emitters/overlays/portable/flags.ts::flagPlansOf`
 
 One kind's flags, each as the plan that tests it on a node of the kind. A member flag lowers its route: each step before the last becomes a `child` step over that step's slot by its number, keeping its anchor, and the last slot gives the leaf, presence for a flag slot, `keywordTestOf` for a keyword, and an `is` over the slot for a captured kind. A flag the kind's own form spells (`SlotRoute.spelled`) always holds, `{ op: 'and', of: [] }`; any other route with no path is refused. A claim flag lowers its read test when the test is node-local (no placement, no context condition); otherwise it depends on the node's context and is `null`, which a query refuses by name. A claim flag whose test still compares the node's own text, one no fixed text decided, is refused: a where plan reads no node's own text. A flag declared by several routes lists each distinct plan once and `or`s them. A flag both declared on the node and by a contextual claim is refused, as is a route that reaches no slot.
@@ -402,6 +406,26 @@ The emitted module's text and its diagnostics.
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitSlot`
 
 One slot of one path as its generated slot function types the value: the paths it takes, the token texts it takes, the unclaimed kinds it holds, whether it takes bare text, the scalar types a bare number in it may have (the scalar inputs of its number paths), and whether it is optional.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableOwnTextClaim`
+
+A read claim that tests a node's own text, as `ownTextClaimsOf` finds it.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableOwnTextClaim::kind`
+
+The claimed kind's name, as a refusal names it.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableOwnTextClaim::fixed`
+
+The kind's fixed text in order, with a NUL at its text slot (`interiorTextForm`). Absent when the generated build can't check the claim.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableOwnTextClaim::pattern`
+
+The claim's pattern over the node's whole text. Absent when the generated build can't check the claim.
+
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitInput::ownTextClaims`
+
+The read claims that test a node's own text, by path and kind id (`ownTextClaimsOf`).
 
 ### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::emitPortableBuildInProcess`
 

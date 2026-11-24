@@ -225,6 +225,40 @@ describe('a choice whose arms share a slot takes exactly one arm', () => {
 		expect((halted as EmitHaltedError).blocking as readonly GrammarDiagnostic[]).toMatchObject([{ code: 'shared-slot-choice', ownerKind: 'host' }]);
 	});
 
+	describe('a later arm of flags only, admitting no set of them an earlier arm refuses, is the source’s other order', () => {
+		const opt = (rule: unknown) => choice(rule, blank);
+		const flag = (name: string) => field(name, sym(`_kw_${name}`));
+		const flags = {
+			_kw_static: str('static'),
+			_kw_abstract: str('abstract'),
+			_kw_override: str('override'),
+			_kw_readonly: str('readonly'),
+			x: pattern('[a-z]+')
+		};
+
+		it("builds typescript's field through the earlier arm, writing abstract before readonly", () => {
+			const { nodeMap, emit } = compile({
+				host: seq(
+					choice(seq(opt(choice(flag('static'), flag('abstract'))), opt(flag('override')), opt(flag('readonly'))), seq(opt(flag('readonly')), opt(flag('abstract')))),
+					field('name', sym('x'))
+				),
+				...flags
+			});
+			expect(nodeMap.assembleWarnings).not.toContainEqual(expect.objectContaining({ code: 'shared-slot-choice' }));
+			const body = emit().bodies.get('host')!;
+			expect(rendered(body, new Set(['abstract', 'readonly', 'name']))).toEqual(['abstract', 'readonly', 'name']);
+			expect(rendered(body, new Set(['static', 'override', 'readonly', 'name']))).toEqual(['static', 'override', 'readonly', 'name']);
+		});
+
+		it('still refuses a later flag arm that admits a set the earlier arm refuses', () => {
+			const { nodeMap } = compile({
+				host: seq(choice(seq(opt(choice(flag('static'), flag('abstract'))), opt(flag('readonly'))), seq(opt(flag('static')), opt(flag('abstract')))), field('name', sym('x'))),
+				...flags
+			});
+			expect(nodeMap.assembleWarnings).toContainEqual(expect.objectContaining({ code: 'shared-slot-choice', ownerKind: 'host' }));
+		});
+	});
+
 	it('assemble stamps the partition emit reads: a tree of slot tests over arm groups', () => {
 		const { nodeMap } = compile({
 			host: choice(

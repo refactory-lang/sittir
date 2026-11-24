@@ -146,7 +146,11 @@ export type ReplacingFn = ($: Parameters<SittirRuleFn>[0], member: RuntimeRule) 
 type PatchSet = Record<number | string, PatchValue>;
 
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
-	const variantKeys = patchSets.flatMap((patches) => partitionPatchesByVariant(patches).variantEntries.map(([key]) => key));
+	return transformBeside([], original, patchSets);
+}
+
+function transformBeside(inlineLabels: readonly string[], original: RuntimeRule, patchSets: readonly PatchSet[]): RuntimeRule {
+	const variantKeys = [...inlineLabels, ...patchSets.flatMap((patches) => partitionPatchesByVariant(patches).variantEntries.map(([key]) => key))];
 	let rule = original;
 	for (const patches of patchSets) rule = applyPatchSet(rule, patches, variantKeys);
 	return rule;
@@ -163,7 +167,7 @@ export function replace(previous: RuntimeRule, path: string, rule: RuntimeRule |
 export function withDirectVariants(rule: unknown, ...sets: readonly PatchSet[]): unknown {
 	const entries: [string, VariantPlaceholder][] = [];
 	const stripped = stripDirectVariants(rule, [], entries);
-	const edited = sets.length === 0 ? stripped : wireApplyingEntries(() => transform(stripped as RuntimeRule, ...sets));
+	const edited = sets.length === 0 ? stripped : wireApplyingEntries(() => transformBeside(entries.map(([key]) => key), stripped as RuntimeRule, sets));
 	return entries.length === 0 ? edited : transform(edited as RuntimeRule, Object.fromEntries(entries));
 }
 

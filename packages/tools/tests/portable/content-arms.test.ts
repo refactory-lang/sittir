@@ -26,13 +26,15 @@ const WRITTEN: readonly (readonly [grammar: keyof typeof generated, path: string
 	['python', 'comment.line', ' x', '# x'],
 	['typescript', 'literal.string.escape', 'n', '\\n'],
 	['typescript', 'comment.line', ' x', '// x'],
-	['typescript', 'comment.block', 'x', '/*x*/']
+	['typescript', 'comment.block', 'x', '/*x*/'],
+	['typescript', 'comment.block.doc', '* hello', '/** hello*/']
 ];
 
 const REFUSED: readonly (readonly [grammar: keyof typeof generated, path: string, value: string])[] = [
 	['rust', 'literal.string.escape', 'x4'],
 	['rust', 'literal.string.escape', 'u{}'],
-	['python', 'literal.string.escape', 'x4']
+	['python', 'literal.string.escape', 'x4'],
+	['typescript', 'comment.block.doc', 'hello']
 ];
 
 describe.each(['object', 'arena'] as const)('a path that builds its text through a content slot, on %s storage', (nodeStorage) => {

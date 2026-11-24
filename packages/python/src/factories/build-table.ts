@@ -220,7 +220,6 @@ export interface Routes<Table extends AnyTable> {
 	};
 	readonly lineContinuation: typeof F.buildLineContinuationNewline & {
 		readonly newline: typeof F.buildLineContinuationNewline;
-		readonly nul: typeof F.buildLineContinuationNul;
 	};
 	readonly typeParam: {
 		readonly typeVar: Table['buildTypeParamTypeVar'];
@@ -3819,10 +3818,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const lineContinuation: Routes<Table>['lineContinuation'] = Object.freeze(
-		Object.assign(delegate(F.buildLineContinuationNewline), {
-			newline: F.buildLineContinuationNewline,
-			nul: F.buildLineContinuationNul
-		} as const)
+		Object.assign(delegate(F.buildLineContinuationNewline), { newline: F.buildLineContinuationNewline } as const)
 	);
 	const typeParam: Routes<Table>['typeParam'] = Object.freeze({
 		typeVar: $at('buildTypeParamTypeVar'),

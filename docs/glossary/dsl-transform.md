@@ -1801,6 +1801,10 @@ Gives the inner variants of each unnamed arm that arm's sequence. It runs the wh
 
 A copy of a rule with every `variantOf` annotation naming `owner` removed. A lift folded into its arms' variants no longer exists, so nothing inside those variants may still name it.
 
+### `packages/codegen/src/dsl/transform/transform.ts::transformBeside`
+
+`transform`, told which paths inline `variant()` labels already name. `withDirectVariants` strips those labels and applies them after the edit sets, so without their paths a hoist would take a labelled arm for one with no variant of its own (`entriesInUnnamedArms`).
+
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 
 Rebuilds a precedence wrapper with its original precedence value and kind, then

@@ -3,7 +3,7 @@ import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Multiplicity, RenderRule, RuleId } from '../../types/rule.ts';
 import type { EmitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
-import { concreteKindsOf, type AssembledNode, type AssembledNonterminal } from './node-map.ts';
+import { concreteKindsOf, isFixedTextLeaf, isMultiple, type AssembledNode, type AssembledNonterminal } from './node-map.ts';
 import { isSeamChoice } from './render-rules.ts';
 
 export interface ArmTest {
@@ -33,6 +33,7 @@ interface ArmGroup {
 }
 
 const EMPTY_ARM = '{"q":[]}';
+const SLOT_SET_LIMIT = 4096;
 const walker = new RuleWalker<RenderRule>();
 
 export function slotNameInBody(slot: AssembledNonterminal): string {
@@ -163,13 +164,13 @@ function partitionOfChoice(kind: string, choice: Extract<RenderRule, { type: 'CH
 		for (const slot of textual) kinds.delete(slot);
 		return new Map([...kinds].map(([slot, names]) => [slot, [...new Set(names.flatMap((name) => concreteKindsOf(name, { nodes: input.nodes as Map<string, AssembledNode> })))]] as const));
 	};
-	const slotsInOrder = (rule: RenderRule): string[] => {
+	const slotsIn = (rule: RenderRule): AssembledNonterminal[] => {
 		if (isSeamChoice(rule)) return [];
 		const slot = rule.type === SEQ ? undefined : slotOf(rule);
-		if (slot !== undefined) return [slotNameInBody(slot)];
-		if (rule.type === SEQ || rule.type === CHOICE) return [...new Set(rule.members.flatMap((member) => slotsInOrder(member as RenderRule)))];
-		return [];
+		if (slot !== undefined) return [slot];
+		return rule.type === SEQ || rule.type === CHOICE ? rule.members.flatMap((member) => slotsIn(member as RenderRule)) : [];
 	};
+	const slotsInOrder = (rule: RenderRule): string[] => [...new Set(slotsIn(rule).map(slotNameInBody))];
 	const shapeOf = (rule: RenderRule): unknown => {
 		if (isSeamChoice(rule)) return undefined;
 		const slot = rule.type === SEQ ? undefined : slotOf(rule);
@@ -184,12 +185,51 @@ function partitionOfChoice(kind: string, choice: Extract<RenderRule, { type: 'CH
 		return { r: rule.type, n: (rule as { name?: string }).name, m };
 	};
 	const slotOnly = (rule: RenderRule): boolean => isSeamChoice(rule) || (rule.type !== SEQ && slotOf(rule) !== undefined) || (rule.type === SEQ && rule.members.every((member) => slotOnly(member as RenderRule)));
-	const arms = choice.members
+	const slotSetsOf = (rule: RenderRule): ReadonlySet<string> | undefined => {
+		const multiplicity = multiplicityOf(rule);
+		const orAbsent = (sets: ReadonlySet<string> | undefined): ReadonlySet<string> | undefined =>
+			sets === undefined || (multiplicity !== 'optional' && multiplicity !== 'array') ? sets : new Set([...sets, '']);
+		if (isSeamChoice(rule)) return new Set(['']);
+		const slot = rule.type === SEQ ? undefined : slotOf(rule);
+		if (slot !== undefined) return orAbsent(new Set([slotNameInBody(slot)]));
+		if (rule.type === CHOICE) {
+			const arms = rule.members.map((member) => slotSetsOf(member as RenderRule));
+			return arms.some((sets) => sets === undefined) ? undefined : orAbsent(new Set(arms.flatMap((sets) => [...sets!])));
+		}
+		if (rule.type !== SEQ) return orAbsent(new Set(['']));
+		let product: ReadonlySet<string> | undefined = new Set(['']);
+		for (const member of rule.members) {
+			const sets = slotSetsOf(member as RenderRule);
+			if (sets === undefined || product.size * sets.size > SLOT_SET_LIMIT) return undefined;
+			product = new Set([...product].flatMap((held) => [...sets].map((more) => [...new Set([...held.split(','), ...more.split(',')].filter((name) => name !== ''))].sort().join(','))));
+		}
+		return orAbsent(product);
+	};
+	const holdsOnlyFlags = (rule: RenderRule): boolean => {
+		const kinds = kindsAtSlots(rule);
+		const slots = slotsIn(rule);
+		return slots.length > 0 && slots.every((slot) => {
+			const held = kinds.get(slotNameInBody(slot));
+			const node = held?.length === 1 ? input.nodes.get(held[0]!) : undefined;
+			return !isMultiple(slot) && node !== undefined && isFixedTextLeaf(node);
+		});
+	};
+	const isOtherOrder = (later: RenderRule, earlier: RenderRule): boolean => {
+		if (!holdsOnlyFlags(later)) return false;
+		const written = new Set(fixedTextsOf(earlier));
+		if (!fixedTextsOf(later).every((text) => written.has(text))) return false;
+		const admitted = slotSetsOf(earlier);
+		const sets = slotSetsOf(later);
+		return admitted !== undefined && sets !== undefined && [...sets].every((set) => admitted.has(set));
+	};
+	const listed = choice.members
 		.map((member, index) => ({ index, rule: member as RenderRule, shape: JSON.stringify(shapeOf(member as RenderRule)), order: slotsInOrder(member as RenderRule) }))
 		.filter((arm) => arm.shape !== EMPTY_ARM);
+	const arms = listed.filter((arm, i) => !listed.slice(0, i).some((earlier) => isOtherOrder(arm.rule, earlier.rule)));
 	const shared = arms.some((arm, i) => arm.order.some((slot) => arms.some((other, j) => j !== i && other.order.includes(slot))));
-	if (!shared) return undefined;
-	if (arms.every((arm) => slotOnly(arm.rule))) {
+	const ordered = arms.length < listed.length;
+	if (!shared && !ordered) return undefined;
+	if (!ordered && arms.every((arm) => slotOnly(arm.rule))) {
 		const orders = arms.map((arm) => arm.order);
 		if (flatOrderParses(orders, flatSlotOrder(orders))) return { form: 'flat' };
 	}

@@ -111,6 +111,7 @@ async function censusOf(grammar: string): Promise<Census> {
 		readonly name: string;
 		readonly child: string;
 		readonly seated: boolean;
+		readonly unbuildable?: boolean;
 		readonly forms?: readonly FormRoute[];
 	}
 	const hopsOfKind = (kind: string): Hop[] => {
@@ -119,7 +120,8 @@ async function censusOf(grammar: string): Promise<Census> {
 			return parent.variants.filter((v: any) => !isBlankVariantName(v.name)).map((v: any) => ({
 				name: v.name,
 				child: v.nestedParentKey !== undefined ? (flatByKey.get(v.nestedParentKey) as any).node.kind : v.child.kind,
-				seated: false
+				seated: false,
+				unbuildable: v.unbuildable === true
 			}));
 		}
 		return (forms.get(kind) ?? []).map((r) => ({
@@ -138,17 +140,19 @@ async function censusOf(grammar: string): Promise<Census> {
 		if (bp !== undefined) starts.set(bp.join('.'), kind);
 	}
 	const closure = new Set<string>();
+	const unbuilt = new Set<string>();
 	const visit = (hops: Hop[], path: string[]) => {
 		if (path.length > 8) return;
 		for (const hop of hops) {
 			const next = [...path, hop.name];
 			closure.add(next.join('.'));
+			if (hop.unbuildable === true) unbuilt.add(next.join('.'));
 			visit(hop.seated ? hopsOfForms(hop.forms ?? []) : hopsOfKind(hop.child), next);
 		}
 	};
 	for (const [key, kind] of starts) visit(hopsOfKind(kind), key.split('.'));
 
-	const irMissing = [...closure].filter((p) => get(ir, p.split('.')) === undefined).sort();
+	const irMissing = [...closure].filter((p) => !unbuilt.has(p) && get(ir, p.split('.')) === undefined).sort();
 	const isMissing = [...closure].filter((p) => typeof get(is, p.split('.')) !== 'function').sort();
 	const isExtra = [...nestedPathsOf(is)].filter((p) => !closure.has(p)).sort();
 

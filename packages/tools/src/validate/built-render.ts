@@ -17,7 +17,8 @@ export interface BuiltRenderFailure {
  * `astMatchPass` those whose reparsed AST also matched the source's, of
  * which `separatorTolerated` matched only by taking another of a list's
  * separators (`AstTolerance`), and `spellingNormalized` matched only where a
- * delimiter token spells the same input and content facets differently.
+ * delimiter token spells the same input and content facets differently, and
+ * `flagReordered` matched only where a kind's flags came in another order.
  */
 export interface BuiltRenderResult {
 	total: number;
@@ -26,6 +27,7 @@ export interface BuiltRenderResult {
 	astMatchPass: number;
 	separatorTolerated: number;
 	spellingNormalized: number;
+	flagReordered: number;
 	errors: BuiltRenderFailure[];
 	astMismatches: BuiltRenderFailure[];
 	excluded: ValidatorSkip[];
@@ -39,6 +41,7 @@ export const emptyBuiltRenderRun = (): BuiltRenderRun => ({
 	astMatchPass: 0,
 	separatorTolerated: 0,
 	spellingNormalized: 0,
+	flagReordered: 0,
 	errors: [],
 	astMismatches: [],
 	excluded: []
@@ -61,6 +64,7 @@ export function combineBuiltRender(runs: Readonly<Record<string, BuiltRenderResu
 		combined.astMatchPass += run.astMatchPass;
 		combined.separatorTolerated += run.separatorTolerated;
 		combined.spellingNormalized += run.spellingNormalized;
+		combined.flagReordered += run.flagReordered;
 		combined.errors.push(...run.errors.map(label));
 		combined.astMismatches.push(...run.astMismatches.map(label));
 		combined.excluded.push(...run.excluded.map(label));
