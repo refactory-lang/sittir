@@ -731,14 +731,15 @@ macro_rules! napi_engine {
             $crate::napi_engine::save_rendered(&path, &text, create)
         }
 
-        /// The options a render takes: `options` over `engine`'s.
-        fn render_options(
-            engine: &$crate::engine::Engine<$grammar>,
+        /// The options a render takes: `options` over `engine`'s, or
+        /// `engine`'s own, borrowed, when the call passes none.
+        fn render_options<'e>(
+            engine: &'e $crate::engine::Engine<$grammar>,
             options: Option<$options>,
-        ) -> ::napi::Result<$crate::options::ResolvedOptions> {
+        ) -> ::napi::Result<::std::borrow::Cow<'e, $crate::options::ResolvedOptions>> {
             match options {
-                Some(opts) => opts.resolve(engine.options()).map_err(::napi::Error::from_reason),
-                None => Ok(engine.options().clone()),
+                Some(opts) => opts.resolve(engine.options()).map(::std::borrow::Cow::Owned).map_err(::napi::Error::from_reason),
+                None => Ok(::std::borrow::Cow::Borrowed(engine.options())),
             }
         }
 

@@ -209,6 +209,16 @@ fn a_side_record_reads_its_fields_from_one_lookup_of_its_chunk() {
     assert!(counted.1.get() <= 2, "{} chunk lookups: one for the fields and one for the run's entries", counted.1.get());
 }
 
+#[test]
+fn a_calls_records_read_the_engines_options_through_a_borrow() {
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::node::AnyNode>("fn f() {}\n").expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let side = SideRecord::read(&*built, Address(built.words(root, 2).expect("a header")[1])).expect("a side record");
+    let records = sittir_core::engine::Records::of_source(&engine, &built, Address(side.source.expect("a source"))).expect("the source's records");
+    assert!(std::ptr::eq(sittir_core::engine::Backing::options(&records), engine.options()), "the call's records hold their own copy of the engine's options");
+}
+
 type RustNode = sittir_rust::render::AnyNode;
 type RustStore = sittir_core::trivia_store::TriviaStore<<sittir_rust::RustGrammar as EngineGrammar>::Trivia>;
 

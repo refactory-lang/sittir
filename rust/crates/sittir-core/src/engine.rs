@@ -1115,7 +1115,7 @@ pub struct Records<'a, G: EngineGrammar> {
     text: &'a str,
     breaks_lf: bool,
     caches: ReadCaches,
-    options: ResolvedOptions,
+    options: &'a ResolvedOptions,
     store: TriviaStore<G::Trivia>,
     work: crate::layout::LayoutWorkCounter,
     /// Renders a unit of a kind on its own.
@@ -1181,7 +1181,7 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
     }
 
     fn options(&self) -> &ResolvedOptions {
-        &self.options
+        self.options
     }
 
     fn store(&self) -> &TriviaStore<G::Trivia> {
@@ -1368,7 +1368,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
     /// What reading the record or its source's entry refuses,
     /// `ArenaError::Malformed` for a record that names no source and for a
     /// record an `ERROR` holds.
-    pub fn over(engine: &Engine<G>, built: &'a crate::arena::BuiltChunks, record: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
+    pub fn over(engine: &'a Engine<G>, built: &'a crate::arena::BuiltChunks, record: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
         let records = Self::of_source(engine, built, crate::arena::RunNodes::source_of(built, record)?)?;
         crate::arena::RunNodes::holding(built, records.text, record, &records.table, records.shape)?;
         Ok(records)
@@ -1380,7 +1380,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
     /// # Errors
     ///
     /// What reading the source's entry refuses.
-    pub fn of_source(engine: &Engine<G>, built: &'a crate::arena::BuiltChunks, source: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
+    pub fn of_source(engine: &'a Engine<G>, built: &'a crate::arena::BuiltChunks, source: crate::arena::Address) -> Result<Self, crate::arena::ArenaError> {
         let crate::arena::source::Source { text, breaks_lf } = crate::arena::source::Source::read(built, source)?;
         Ok(Self {
             grammar: engine.grammar,
@@ -1393,7 +1393,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
             text,
             breaks_lf,
             caches: ReadCaches::default(),
-            options: engine.options.clone(),
+            options: &engine.options,
             store: engine.written.clone(),
             work: crate::layout::LayoutWorkCounter::default(),
             render_unit: Self::rendered_unit,
@@ -1410,7 +1410,7 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
             }
         }
         let root = crate::arena::CellAt { cell: crate::arena::Cell::Unit { kind, row: None }, node: None, site: None };
-        G::render_record(self.grammar, root, None, self.built, &self.store, &crate::prepare::RenderContext::new(&self.options, &NoSources)).ok()
+        G::render_record(self.grammar, root, None, self.built, &self.store, &crate::prepare::RenderContext::new(self.options, &NoSources)).ok()
     }
 
     /// The index the call gives the node `address` names.
