@@ -25,6 +25,41 @@ export function tableReadEntries<Id>(readEntries: ReadonlyMap<string, readonly R
 	return byId;
 }
 
+export interface PortableReadRow<Id> {
+	readonly path: string;
+	readonly within: readonly (Id | null)[];
+	readonly test: readonly PortableCondition[];
+}
+
+export type PortableFactRow<Id> = Omit<PortableFact, 'container'> & { readonly container: Id };
+
+export interface PortableReadRows<Id> {
+	readonly entries: ReadonlyMap<Id, readonly PortableReadRow<Id>[]>;
+	readonly facts: ReadonlyMap<Id, readonly PortableFactRow<Id>[]>;
+}
+
+export function portableReadRowsOf<Id>(
+	readEntries: ReadonlyMap<string, readonly ReadEntry[]>,
+	readTest: (entry: ReadEntry) => readonly PortableCondition[],
+	factOf: (entry: ReadEntry) => PortableFactRecord | undefined,
+	idOf: (kind: string) => Id
+): PortableReadRows<Id> {
+	const distinct = <T>(rows: readonly T[]): T[] => [...new Map(rows.map((row) => [JSON.stringify(row), row])).values()];
+	const entries = new Map<Id, readonly PortableReadRow<Id>[]>();
+	for (const [id, read] of tableReadEntries(readEntries, factOf, idOf))
+		entries.set(id, distinct(read.map((entry): PortableReadRow<Id> => ({ path: entry.vocab, within: entry.claim.within.map((kind) => (kind === WILDCARD ? null : idOf(kind))), test: readTest(entry) }))));
+	const facts = new Map<Id, PortableFactRow<Id>[]>();
+	for (const [kind, read] of [...readEntries].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) {
+		const id = idOf(kind);
+		for (const fact of [...read].sort((a, b) => a.index - b.index).flatMap((entry) => factOf(entry) ?? [])) {
+			const { container, ...rest } = fact;
+			const held = facts.get(id) ?? facts.set(id, []).get(id)!;
+			held.push({ container: idOf(container), ...rest });
+		}
+	}
+	return { entries, facts: new Map([...facts].map(([id, held]) => [id, distinct(held)])) };
+}
+
 export const slotSubjectOf =
 	(nodeMap: NodeMap): SlotSubjectOf =>
 	(kind, name) => {

@@ -234,6 +234,22 @@ The test that a slot holds a keyword: a presence leaf when the slot is a boolean
 
 The read claims that test a node's own text, by path and kind id. A kind's claim carries `fixed` and `pattern` when its one read entry for the path has one condition, a `match` on the node itself, and the kind spells one text slot between fixed text. The generated build then tests the whole text before it builds, as the interpreter's read-back does, so `comment.block.doc` refuses `hello`, which would write `/*hello*/`. A claim without them is one the generated build can't check, and the emitter refuses that arm.
 
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::portableReadRowsOf`
+
+A grammar's read rows as data, with each kind id written by `idOf`: per kind id, its read entries that place no fact (`tableReadEntries`), each as its path, the kinds it must sit within (`null` for any) and its test, without repeats; and per kind id, the facts its entries place, in entry order, each with its container's id, without repeats. The surface writes the rows with `TSKindId` members, and the projection emitter reads them with numeric kind ids, so both read one derivation.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::PortableReadRows`
+
+What `portableReadRowsOf` returns: each kind id's read entries and its placed facts.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::PortableReadRow`
+
+One read entry as a row: the path it reads as, the kinds of the nodes it must sit within (`null` for any kind), and its test.
+
+### `packages/codegen/src/emitters/overlays/portable/read-tests.ts::PortableFactRow`
+
+A fact as a row: a `PortableFact` whose container is written as a kind id of the caller's choosing.
+
 ### `packages/codegen/src/emitters/overlays/portable/flags.ts::flagPlansOf`
 
 One kind's flags, each as the plan that tests it on a node of the kind. A member flag lowers its route: each step before the last becomes a `child` step over that step's slot by its number, keeping its anchor, and the last slot gives the leaf, presence for a flag slot, `keywordTestOf` for a keyword, and an `is` over the slot for a captured kind. A flag the kind's own form spells (`SlotRoute.spelled`) always holds, `{ op: 'and', of: [] }`; any other route with no path is refused. A claim flag lowers its read test when the test is node-local (no placement, no context condition); otherwise it depends on the node's context and is `null`, which a query refuses by name. A claim flag whose test still compares the node's own text, one no fixed text decided, is refused: a where plan reads no node's own text. A flag declared by several routes lists each distinct plan once and `or`s them. A flag both declared on the node and by a contextual claim is refused, as is a route that reaches no slot.
