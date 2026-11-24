@@ -6,7 +6,7 @@ export const PINNED_TYPES_TSCONFIG = join('packages', 'codegen', 'tsconfig.pinne
 
 const EMITTER_PACKAGE = join('packages', 'codegen');
 
-const EMITTER_INPUTS = [join('packages', 'types', 'src', 'portable-build.ts')];
+const EMITTER_INPUTS = [join('packages', 'types', 'src', 'portable-build.ts'), join('packages', 'types', 'src', 'portable-read.ts')];
 
 const MODULE_REFERENCE = /^\s*(?:import\b|export\b[^\n;]*\bfrom\b|\/\/\/\s*<reference\b)/m;
 

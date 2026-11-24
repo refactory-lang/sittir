@@ -2,13 +2,7 @@ import type { IsBooleanKeyword } from './keyword-presence.ts';
 import type { FlagsHintOf, NarrowTo, SlotFlagsHintOf, SlotHint, SlotHintsOf } from './node-surface.ts';
 import type { PortableKind, PortableNamespace } from './portable.ts';
 
-/**
- * A slot by its number in each kind that has it, keyed by stamped kind id: the slot's position among the kind's node
- * slots, the numbering the native read routes children by. A node of a kind the map lacks holds nothing there.
- */
-export interface SlotSubject {
-	readonly slots: Readonly<Record<number, number>>;
-}
+export type { QueryFlags, QueryPlan, QuerySlotEntry, QuerySlots, QuerySubject, SelfText, SlotSubject, StepAnchor } from './portable-read.ts';
 
 /** A language's kind membership: which node types count as a given kind. */
 export interface KindMembership {
@@ -18,61 +12,9 @@ export interface KindMembership {
 	membersOf(kind: number): readonly number[];
 }
 
-/**
- * One slot of a kind: the accessor a node reads it through, its number (`SlotSubject`), the keyword
- * when the slot holds that keyword's presence (`undefined` otherwise), the key the node stores it under, the keyword's kind id
- * when its storage stamps one, `true` when the slot is an optional preference whose blank arm its accessor reads as `null`,
- * and, for a slot whose grammar spells a member more than one way, each other spelling mapped to the member its accessor reads.
- */
-export type QuerySlotEntry = readonly [
-	accessor: string,
-	slot: number,
-	keyword: string | undefined,
-	storageKey: string,
-	keywordKind?: number,
-	blank?: true,
-	spellings?: Readonly<Record<string, string>>
-];
-
-/** Each kind's slots, by kind id. */
-export type QuerySlots = Readonly<Record<number, readonly QuerySlotEntry[]>>;
-
 export type NativeSlotReader = (this: object) => unknown;
 
 export type NativeSlots = Readonly<Record<number, Readonly<Record<string, NativeSlotReader>>>>;
-
-/** The node itself as a condition's subject, in place of a slot: its own text, or its own kind for an `is` leaf. */
-export interface SelfText {
-	readonly self: true;
-}
-
-/** What a comparison reads: a slot by its numbers, or the node's own text. */
-export type QuerySubject = SlotSubject | SelfText;
-
-/** Which of the nodes a step's slot holds it reaches: the first, the last, or the one node when the slot holds exactly one. */
-export type StepAnchor = 'first' | 'last' | 'only';
-
-/**
- * A compiled condition, each comparison reading the subject `S`. A `where` condition reads slots only (the default) and is
- * evaluated by the native walk; a portable read test may also read the node's own text (`QueryPlan<QuerySubject>`), which only
- * `holds` evaluates. An `is` leaf tests the kinds of the values its slot holds, or the stamped kind of the node itself, a
- * `count` leaf holds when its slot holds at least `min` values, a `delimiter` leaf holds when the node is a list whose
- * delimiter flags hold one of `delimiter`'s (`Delimiter`), and a `child` step evaluates its condition on the nodes its slot
- * holds, narrowed by its anchor.
- */
-export type QueryPlan<S extends QuerySubject = SlotSubject> =
-	| ({ readonly op: 'eq'; readonly text: string } & S)
-	| ({ readonly op: 'match'; readonly pattern: string } & S)
-	| ({ readonly op: 'present' } & SlotSubject)
-	| ({ readonly op: 'count'; readonly min: number } & SlotSubject)
-	| { readonly op: 'delimiter'; readonly delimiter: number }
-	| ({ readonly op: 'child'; readonly anchor?: StepAnchor; readonly of: QueryPlan<S> } & SlotSubject)
-	| ({ readonly op: 'is'; readonly types: readonly number[] } & (S | SelfText))
-	| { readonly op: 'not'; readonly of: QueryPlan<S> }
-	| { readonly op: 'and' | 'or'; readonly of: readonly QueryPlan<S>[] };
-
-/** Each kind's flags, by stamped kind id: the plan that tests the flag on a node of the kind, or `null` for a flag that depends on the node's context. */
-export type QueryFlags = Readonly<Record<number, Readonly<Record<string, QueryPlan | null>>>>;
 
 /**
  * How a slot test reads one flag: the types of the kinds the slot can hold that always carry it, and the stamped ids of the

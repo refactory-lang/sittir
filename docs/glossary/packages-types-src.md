@@ -350,7 +350,7 @@ The marker a vocabulary interface declares a yes/no fact with: `readonly static?
 
 The brand on a keyword-presence slot's boolean storage, carrying the keyword's text. It lives in its own module so the query types read it (`IsBooleanKeyword`) without importing the package index.
 
-### `packages/types/src/query.ts::QueryPlan`
+### `packages/types/src/portable-read.ts::QueryPlan`
 
 The plan language one condition compiles to, which the native walk and `holds` both evaluate. Leaves read the values a slot holds, the slot named by its number in each kind (`SlotSubject`): `eq` and `match` their text, `present` that one exists, and `is` their kind ids: the id the read stores for a value it stores as a unit (an enum kind's member, however its node spells it), and the stamped kind id of any other. An `is` leaf may instead test the node itself (`SelfText`), by its stamped kind: under a `child` step that guards a kind's own plan to the nodes of that kind. The ids are expanded by membership when the plan is compiled, as `ofType` expands them, so the evaluators compare ids and never names. `child` moves the condition to a node the slot holds, narrowed by an anchor, so a flag spelled inside a wrapper (rust `function_item (function_modifiers "async")`) is still one plan. `not`, `and` and `or` combine. A constant is `and` or `or` over no plans, never an op of its own: a plan that always holds (a flag the kind's own form spells) is `{ op: 'and', of: [] }`, and one that never holds is `{ op: 'or', of: [] }`.
 
@@ -466,7 +466,7 @@ The flags a slot's `is` takes: the slot's entry in its node type's `SlotFlagsHin
 
 The flags a recorder's `is` takes for a view's element type: each member's `FlagsHintOf`, intersected over a union (`SharedFlags`, by contravariant inference), so only the flags every member declares; `never` for no element type, or a member with no flags. A flag that depends on the node's context is never declared, so it is a type error as well as a refusal.
 
-### `packages/types/src/query.ts::QueryFlags`
+### `packages/types/src/portable-read.ts::QueryFlags`
 
 Each kind's vocabulary flags by stamped kind id, each the plan that tests the flag on a node of the kind, or `null` when the flag depends on the node's context (its placement, or a test on its parent), which a node-local plan cannot express. Generated from the bindings (`flagPlansOf`); a grammar without bindings has none.
 
@@ -474,11 +474,11 @@ Each kind's vocabulary flags by stamped kind id, each the plan that tests the fl
 
 Each kind's slot flags by stamped kind id and slot accessor (`slotFlagsOf`): for each flag a kind the slot can hold declares, a `SlotFlagTest`, the types of the kinds that always carry it, which a slot's `is` tests by membership, and the ids of the kinds that carry it by their own slots, whose plans it runs on the node the slot holds; or a `SlotFlagRefusal` naming the kind that declares it through its context, which no plan of the slot's owner can read. A slot that holds a kind-id leaf, an enum member whose fixed text spells the flag, is how the flag is reached at all: the leaf is no node a view returns.
 
-### `packages/types/src/query.ts::StepAnchor`
+### `packages/types/src/portable-read.ts::StepAnchor`
 
 The one anchor vocabulary shared by a portable read test's `via` step and a plan's `child` step: `first`, `last`, or `only`, which reaches the node only when the slot holds exactly one.
 
-### `packages/types/src/query.ts::SlotSubject`
+### `packages/types/src/portable-read.ts::SlotSubject`
 
 A slot by its number in each kind that has it, keyed by stamped kind id. The number is the slot's position among the kind's native node slots, the numbering the native read routes children by, so a plan names a slot exactly as the read does: the evaluator asks the node's kind how it finds its slots (`ReadNode::router`: its children one at a time, a group of its token's text, or the node itself for an envelope) and keeps what lands in that number. Numbers are per kind, so a plan over several kinds, or a step that lands on several, carries one per kind, expanded when it is compiled as `is` membership is. A node of a kind the map lacks holds nothing there.
 
@@ -486,11 +486,11 @@ A slot by its number in each kind that has it, keyed by stamped kind id. The num
 
 The recorder member of one slot of a node type: a `PresenceRef` when the slot's hint takes a `BooleanKeyword`, else a `SlotRef`. Over a union it is the union of each member's, so a slot that is boolean in one kind and text in another has an `eq` taking `string & boolean`, which no argument satisfies: the union rule the recorder applies to slots, applied to their members.
 
-### `packages/types/src/query.ts::QueryPlan::delimiter`
+### `packages/types/src/portable-read.ts::QueryPlan::delimiter`
 
 The delimiter a query plan reads through, when it has one.
 
-### `packages/types/src/query.ts::QueryPlan::min`
+### `packages/types/src/portable-read.ts::QueryPlan::min`
 
 The minimum count a query plan requires.
 
@@ -1018,7 +1018,7 @@ Writes `text` to `path` through the native writer: a new file when `create`, whi
 
 A root that saves itself. `$save(path)` returns the pending write of the root through its engine: nothing is written until the result is awaited or disposed, and then it is written once.
 
-### `packages/types/src/portable.ts::PortableRows::flags`
+### `packages/types/src/portable-read.ts::PortableRows::flags`
 
 The flag query for a portable row.
 

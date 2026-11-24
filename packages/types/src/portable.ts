@@ -1,80 +1,11 @@
-import type { QueryFlags, QueryPlan, QuerySlots, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
-
 export type * from './portable-build.ts';
+export type { PortableCondition, PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, PortableTable } from './portable-read.ts';
 
 /** A portable kind: one vocabulary path, the same object for every language. */
 export type PortableKind<Path extends string = string> = { readonly $path: Path };
 
 /** A portable namespace: a prefix of vocabulary paths that is no path itself, the same object for every language; it names the kinds beneath it, with no `$path` of its own. */
 export type PortableNamespace<Path extends string = string> = { readonly $namespace: Path };
-
-/** One step of a condition: a slot by its numbers, narrowed to its first or last node when `anchor` is set, or reaching its node only when it holds exactly one (`only`). */
-export interface PortableStep extends SlotSubject {
-	readonly anchor?: StepAnchor;
-}
-
-/** One condition of a read entry's test: `plan` holds over the nodes the `via` steps reach, together, from the tested node (`up` 0) or its `up`-th enclosing context node. */
-export interface PortableCondition {
-	readonly up: number;
-	readonly via: readonly PortableStep[];
-	readonly plan: QueryPlan<QuerySubject>;
-}
-
-/** A way a kind reads as a vocabulary path: its placement, nearest enclosing kind first (`null` admits any kind), and the conditions that must all hold. */
-export interface PortableReadEntry {
-	readonly path: string;
-	readonly within: readonly (number | null)[];
-	readonly test: readonly PortableCondition[];
-}
-
-/**
- * A vocabulary path's kind ids, and whether they decide it: every way those kinds read lands at or under the path or one of its `targets`, one of
- * them unconditionally. `targets` lists what the aliases the language holds at or beneath the path reach, where there are any.
- */
-export interface PortablePath {
-	readonly ids: readonly number[];
-	readonly exact: boolean;
-	readonly targets?: readonly string[];
-}
-
-/**
- * A bound grammar's portable classification: each path's kind ids, each kind's read entries in the order they are tried, the text of each
- * fixed-literal kind id, and the fixed-literal kinds whose meaning is a value, which read as their path and not as their text.
- */
-export interface PortableTable {
-	readonly paths: Readonly<Record<string, PortablePath>>;
-	readonly entries: Readonly<Record<number, readonly PortableReadEntry[]>>;
-	readonly facts?: Readonly<Record<number, readonly PortableFact[]>>;
-	readonly fixedText: Readonly<Record<number, string>>;
-	readonly literals: readonly number[];
-}
-
-/**
- * A fact a node's container spells beside it, with one item of its `items` slot (a decorator beside the definition it decorates). It holds
- * on the first item `test` holds on where, when `same` is set, the item's text at `same.item` equals the node's text at `same.node`, and,
- * when `own` is set, `own` holds on the node itself (python's getter takes a lone `self`). A holding fact reads the node as `path`, or
- * sets `flag`; the read leaves its item out of the container's `slot` and records where it sat under `name` in `$at`, with the text of
- * the item's `spelled` slot as its spelling.
- */
-export interface PortableFact {
-	readonly name: string;
-	readonly path?: string;
-	readonly flag?: string;
-	readonly container: number;
-	readonly slot: string;
-	readonly items: SlotSubject;
-	readonly test: QueryPlan<QuerySubject>;
-	readonly own?: QueryPlan<QuerySubject>;
-	readonly spelled?: SlotSubject;
-	readonly same?: { readonly item: readonly PortableStep[]; readonly node: readonly PortableStep[] };
-}
-
-/** What a bound grammar's engine reads portable classifications from: its {@link PortableTable}, the slots its conditions name, and each kind's flag plans. */
-export interface PortableRows {
-	readonly table: PortableTable;
-	readonly querySlots: QuerySlots;
-	readonly flags: QueryFlags;
-}
 
 /**
  * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there, or to their texts.
