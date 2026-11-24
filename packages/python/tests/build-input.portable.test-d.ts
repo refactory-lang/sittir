@@ -2,6 +2,7 @@ import type * as V from '../../types/src/vocabulary/index.ts';
 import type * as T from '../src/types.ts';
 import type * as TS from '../../typescript/src/types.ts';
 import type { PythonMap } from '../src/portable/map.ts';
+import { TSKindId as PyKindId } from '../src/kinds.ts';
 
 type Expect<X extends true> = X;
 type Getter = V.BuildInput<PythonMap, 'declaration.member.property.getter'>;
@@ -107,3 +108,9 @@ export const orReturned: Returned = { $path: 'expression.binary.bitwise.or', lef
 export const familyReturned: Returned = { $path: 'expression.binary', left: 'a', right: 'b' };
 
 export const addTail: Returned = { $path: 'add', left: 'a', right: 'b' };
+
+type ImportedNames = V.Read<PythonMap, 'statement.import.from'>['argument'];
+
+// @ts-expect-error a fixed word reads as its text, never as a bare kind id
+export const wildcardKindId: ImportedNames = PyKindId.WildcardImport;
+export const wildcardText: ImportedNames = '*';

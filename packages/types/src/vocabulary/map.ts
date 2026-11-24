@@ -56,7 +56,7 @@ type Override<G extends GrammarMap, P extends string, M extends string, D> = [P]
 		: D
 	: D;
 
-type NodeOf<I, Bound, Parsed> = I extends keyof Bound ? Bound[I] | (I extends keyof Parsed ? Parsed[I] : never) : I;
+type NodeOf<I, Bound, Parsed> = I extends keyof Bound ? Bound[I] | (I extends keyof Parsed ? Parsed[I] : never) : never;
 
 export type NodesOf<Ids, Bound, Parsed> = { readonly [P in keyof Ids]: NodeOf<Ids[P], Bound, Parsed> };
 

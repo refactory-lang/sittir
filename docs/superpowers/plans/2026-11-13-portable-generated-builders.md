@@ -221,6 +221,8 @@ Built: decision 4 (335ff4d3a), decision 5 (5e24a3738), decision 7's optional `$p
 
 The spec's "A kind id has no meaning on the portable surface", as approved: a literal union for paths, no nominal brand, and the kind-id gap closed. No code before Task 4 is in a PR.
 
+**Status:** done on `feat/portable-no-kind-id` (6bf2ad1ad), stacked on Task 4's branch. The generated slot functions that place a bare number as a kind id, counted at Task 4's head as `if (seated(value, …)) return value` inside a number branch: python 94, rust 111, typescript 134, and 0 in each after. Measured with the old `NodeOf` fallback, no build slot that admits no number admitted a fixed word's kind id in any grammar; the fallback reached reads only (python `statement.import.from`'s `argument`, rust `type.generic`'s `name`, typescript `argument`'s `value`), so those read pins are the type tests that fail without the change, and the build pins hold before and after. Rust `type.unit` is a text path, read and built as `'()'`. Validation +0 −0, native baseline 26818, conformance 4, 3 and 5.
+
 **Files:**
 - Modify: `packages/types/src/vocabulary/map.ts` (`NodeOf`), `packages/types/src/portable-build.ts` (`PortableStructure`'s JSDoc)
 - Modify: `packages/common/src/portable/build.ts`, `packages/codegen/src/emitters/overlays/portable/emit/build.ts`
@@ -232,16 +234,16 @@ What the census checked, so the task needs no new probe:
 - No table data reaches the kind-id branch of the interpreter's `element()`: a spelled fact's items are structures, and no item slot holds a number (python's 8 facts and 12 spellings; rust and typescript have none). Presets write their kind ids into the builder config directly.
 - Before this task, the generated slot functions that place a bare number as a kind id: python 52, rust 63, typescript 34.
 
-- [ ] **Step 1: The failing tests.**
+- [x] **Step 1: The failing tests.**
   - Types: a fixed word's bare kind id is refused where a slot holds its path and admits no number (a slot that admits `number` admits every numeric enum member, so a number slot is pinned at run time instead); its structure is admitted (`{ $path: 'literal.null' }`); a text path admits its text (rust `type.primitive.integral.size` as `'usize'`).
   - Run time: a bare number in a slot with no number taker is refused, by the interpreter and the generated slot function alike, with the same refusal.
   - Emit: a slot with no takers writes the refusal for a number, never `seated(value, …)`.
-- [ ] **Step 2: Implement.**
+- [x] **Step 2: Implement.**
   - `NodeOf`'s fallback is `never`.
   - The interpreter's `element()` refuses a number instead of placing it as a kind id.
   - The emitter's no-taker number branch calls `unnumbered`, and `placedByKind` keeps only nodes.
   - `PortableStructure`'s JSDoc drops "a kind id".
-- [ ] **Step 3: Regenerate,** run the three-way verification, and commit.
+- [x] **Step 3: Regenerate,** run the three-way verification, and commit.
 
 ### Task 5: The projection emitter
 
@@ -275,6 +277,7 @@ What the census checked, so the task needs no new probe:
 ### Task 7: Gates and ratchets
 
 - [ ] **Step 1: Retire the conformance mirror** (`tool portable-conformance` and its ceilings). The generated modules' type-check replaces it.
+  - The mirror is today the only check of `packages/<lang>/tests/*.portable.test-d.ts`, which each package's `tsconfig.json` excludes. Those files move into a type-check lane the workspace type-check runs, and that lane fails if any of them is excluded from it, so retiring the mirror leaves no type test unchecked.
 - [ ] **Step 2: Add the emit-diagnostic ratchet,** per grammar, at Task 4's counts. An MVP path with any diagnostic fails generation once the user names the sets.
 - [ ] **Step 3: Run every gate:** the ratchets, validate history against base, the suite, the workspace type-check, and the times against the baseline.
 - [ ] **Step 4: Open the PR** with `Owner: sittir-design` on the first line, the API rows (every public export added, changed or removed, before → after), the counts and the times. Brainstorm reviews, and the merge needs the user's word.

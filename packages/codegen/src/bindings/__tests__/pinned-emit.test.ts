@@ -183,6 +183,8 @@ describe('the pinned child emits a portable build module', () => {
 		expect(text).toContain('const isNode = (value: unknown): value is TypeScriptNode => isAnyNode(value);');
 		expect(text).toContain('if (isNode(value)) {');
 		expect(text).toContain('if (seated(value, [7, 9])) return value;');
+		expect(text.split('seated(value, [7, 9])')).toHaveLength(2);
+		expect(text).toContain("return unnumbered('expression.collection.list.elements', Number.isSafeInteger(value) ? 'integer' : 'float');");
 		expect(text).toContain("return unseated('expression.collection.list.elements', value);");
 		expect(text.includes('if (value === null) return null;')).toBe(holed);
 	}, 60_000);
