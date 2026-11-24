@@ -455,13 +455,65 @@ A structure whose path builds from a scalar (`builds`) takes its arm by its `$va
 
 A slot whose route is `nonEmpty` builds its items through `nonEmpty`, which refuses an empty list as `<path>.<slot> requires at least one element`. An arm whose builder takes options calls it with the slot values alone, so each option takes its preference default, except where the arm itself fills an option key (python's comprehension `for` sets `trailingComma` from its flag), which goes to the options argument, as the interpreter splits a frame by its builder's option keys. A flag that sets a delimiter on the arm's own list builder passes `{ delimiter }` before the elements when set (python's bare tuple `a, b,`); a flag that sets one on a list inside a slot is still refused. A list through a container that may be left out is left out when its first item is `undefined`, except on an `emptyContainer` route, where only an absent slot leaves the container out and `[]` builds it empty. A list slot that also seats a text outside its list container (python's wildcard import `*`) is left out, since its items are all built inside the container. Slots whose routes share their first step build that step's container once, holding each of them, as the interpreter's frames do: rust's `unsafe { a; b }` builds one `block` with its `statements` and `trailingExpression`. Inside it, a route with one step left is a list when its own seat holds many. An arm that fills a step directly and also builds through it fills one slot twice and is left out.
 
-### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::PinnedGap`
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::PinnedGap`
 
 A construct the pinned builders can't express: a pinned builder refused what the emitter gave it. It is an `Unfit`, so the path it sits in is not generated, and the root reports it as `portable-emit-pinned-gap` instead of an unfit slot. There is no string or parsed-snippet fallback; the fix lands in `@sittir/typescript` and a later commit bumps the pin.
 
-### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::pinnedGapsOf`
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::pinnedGapsOf`
 
 The pinned builders as the emitter calls them: every builder, at any depth, rethrows its own refusal as a `PinnedGap` naming the construct (`b.arrowFunction.callSignature`) and the pinned sha. An `Unfit` passes through unchanged.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::syntaxOf`
+
+The syntax helpers every portable emitter writes its module with, over the pinned builders it is given (`pinnedGapsOf` of the pinned engine's `build`): identifiers, member and call expressions, single-quoted strings with their escapes, decimal numbers, object literals of pairs and spreads, binary, logical, unary, ternary and parenthesized expressions, return, if, block, `const` and `throw` statements, generic and union types, and arrow functions with or without parameter types. `and` and `or` of no operands are `undefined`, so a caller decides what an empty conjunction writes. The build emitter and the projection emitter both take them from here, so a construct is written one way.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Unfit`
+
+An emitter's refusal of one function: the path or kind it sits in is not generated, and the root reports it. `pinnedGapsOf` passes it through a pinned builder unchanged, so only a builder's own refusal becomes a `PinnedGap`.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::B`
+
+The pinned engine's builders (`PinnedBuilders`), the only way a portable emitter writes a node.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Built`
+
+The node a pinned builder returns.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::SlotOf`
+
+What a pinned builder's config accepts at one key, without `undefined`: the type an emitter hands that slot.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Expression`
+
+Any expression the pinned builders accept, read off a pair's value.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Primary`
+
+An expression that can stand before a member access or a call, read off a member expression's object.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Argument`
+
+A call argument: an expression or a spread.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Operand`
+
+An operand of a binary expression, read off its left side.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Operator`
+
+A binary expression's operator.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Statement`
+
+The statements a portable emitter writes: return, `const`, if, switch, throw, block, type alias and expression statements.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::TypeNode`
+
+The types a portable emitter writes: a type name, or a generic, literal, union, lookup, query, object or readonly type.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/syntax.ts::Named`
+
+An arrow function's parameter for `lambda`: a bare name, or a name with its type.
 
 ### `packages/codegen/src/emitters/overlays/portable/covered.ts::FamilyCoverage`
 

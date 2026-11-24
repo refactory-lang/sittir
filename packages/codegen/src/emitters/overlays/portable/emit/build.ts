@@ -10,52 +10,9 @@ import type {
 	PortableSeat,
 	PortableSpelledFact
 } from '../../../../../../types/src/portable-build.ts';
-import type { PinnedBuilders } from './engine.ts';
 import type { PortableEmitDiagnostic, PortableEmitInput, PortableEmitOutput, PortableEmitSlot, PortableOwnTextClaim } from '../emit-input.ts';
 
-type B = PinnedBuilders;
-type Built<F> = F extends (...args: never[]) => infer R ? R : never;
-type ConfigOf<F> = F extends (config: infer C, ...rest: never[]) => unknown ? Extract<C, object> : never;
-type SlotOf<F, K extends string> = ConfigOf<F> extends infer C ? (C extends { readonly [P in K]?: infer V } ? Exclude<V, undefined> : never) : never;
-type Expression = SlotOf<B['pair'], 'value'>;
-type Primary = SlotOf<B['memberExpression'], 'object'>;
-type Argument = Expression | Built<B['spreadElement']>;
-type Operand = SlotOf<B['binaryExpression'], 'left'>;
-type Operator = SlotOf<B['binaryExpression'], 'operator'>;
-type Statement =
-	| Built<B['returnStatement']>
-	| Built<B['lexicalDeclaration']>
-	| Built<B['ifStatement']>
-	| Built<B['switchStatement']>
-	| Built<B['throwStatement']>
-	| Built<B['statementBlock']>
-	| Built<B['typeAliasDeclaration']>;
-type TypeNode = string | Built<B['genericType']> | Built<B['literalType']> | Built<B['unionType']> | Built<B['lookupType']> | Built<B['typeQuery']> | Built<B['objectType']> | Built<B['readonlyType']>;
-
-class Unfit extends Error {}
-
-export class PinnedGap extends Unfit {}
-
-export const pinnedGapsOf = <T extends object>(builders: T, pin: string): T => {
-	const wrap = (value: object, name: string): object =>
-		new Proxy(value, {
-			get: (target, key, receiver) => {
-				const held: unknown = Reflect.get(target, key, receiver);
-				const fixed = Object.getOwnPropertyDescriptor(target, key);
-				if (typeof key !== 'string' || typeof held !== 'function' || (fixed !== undefined && !fixed.configurable && !fixed.writable)) return held;
-				return wrap(held, `${name}.${key}`);
-			},
-			apply: (target, self, args) => {
-				try {
-					return Reflect.apply(target as (...args: unknown[]) => unknown, self, args);
-				} catch (error) {
-					if (error instanceof Unfit) throw error;
-					throw new PinnedGap(`the pinned builders (${pin}) can't express ${name}: ${error instanceof Error ? error.message : String(error)}`);
-				}
-			}
-		});
-	return wrap(builders, 'b') as T;
-};
+import { PinnedGap, Unfit, pinnedGapsOf, syntaxOf, type Argument, type B, type Built, type Expression, type Operand, type Primary, type SlotOf, type Statement, type TypeNode } from './syntax.ts';
 
 const identifierOf = (path: string): string => path.replace(/\./g, '_');
 
@@ -84,34 +41,13 @@ interface Trie {
 
 export function emitPortableModule(builders: B, input: PortableEmitInput<PortableBuildTable>, pin: string): { readonly program: Built<B['program']>; readonly diagnostics: readonly PortableEmitDiagnostic[] } {
 	const t = pinnedGapsOf(builders, pin);
+	const { id, dot, call, str, num, obj, binary, and, or, not, paren, typeIs, ternary, ret, block, when, constant, raise, typeRef, union, lambda, arrow } = syntaxOf(t);
 	const { table } = input;
 	const found: (readonly [diagnostic: PortableEmitDiagnostic, scope: string | undefined])[] = [];
 	const fail = (message: string): never => {
 		throw new Unfit(message);
 	};
-	const id = (name: string) => t.identifier(name);
-	const dot = (object: Primary, property: string) => t.memberExpression({ object, operator: '.', property });
-	const call = (callee: Primary, ...args: Argument[]) => t.callExpressionCall({ function: callee, arguments: t.arguments(...args) });
 	const builderRef = (builder: string) => builder.split('.').reduce<Built<B['identifier']> | Built<B['memberExpression']>>((object, property) => dot(object, property), id('b'));
-	const ESCAPES: Readonly<Record<string, string>> = { '\\': '\\', "'": "'", '\n': 'n', '\r': 'r', '\t': 't' };
-	const str = (text: string) => {
-		const parts: (string | Built<B['escapeSequence']>)[] = [];
-		for (const part of text.split(/([\\'\n\r\t])/)) if (part !== '') parts.push(Object.hasOwn(ESCAPES, part) ? t.escapeSequence(ESCAPES[part]!) : part);
-		return t.stringSingle(...parts);
-	};
-	const num = (value: number) => t.number.decimal(String(value));
-	const key = (name: string) => (/^[A-Za-z_$][\w$]*$/.test(name) ? name : str(name));
-	const obj = (entries: readonly (readonly [string, Expression])[]) => t.object(...entries.map(([name, value]) => t.pair({ key: key(name), value })));
-	const binary = (left: Operand, operator: Operator, right: Operand) => t.binaryExpression({ left, operator, right });
-	const and = (parts: readonly Operand[]): Operand | undefined => (parts.length === 0 ? undefined : parts.reduce((left, right) => binary(left, '&&', right)));
-	const paren = (value: Expression) => t.parenthesizedExpression.sequence(value);
-	const typeIs = (value: Operand, name: string) => binary(t.unaryExpression({ operator: 'typeof', argument: value }), '===', str(name));
-	const ternary = (condition: Operand, consequence: Expression, alternative: Expression) => t.ternaryExpression({ condition, consequence, alternative });
-	const ret = (value?: Expression) => t.returnStatement(value);
-	const block = (...statements: Statement[]) => t.statementBlock(...statements);
-	const when = (condition: Expression, consequence: Statement) => t.ifStatement({ condition: paren(condition), consequence });
-	const constant = (name: string, value: Expression) => t.lexicalDeclaration({ kind: 'const', declarators: [t.variableDeclaratorPlain({ name, value })] });
-	const typeRef = (name: string, first: TypeNode, ...rest: TypeNode[]) => t.genericType({ name, typeArguments: t.typeArguments(first, ...rest) });
 	const pathType = (path: string) => typeRef(uses('BuildInput'), input.map, t.literalType(str(path)));
 	const pathInputType = (path: string, tails: readonly string[] = []) =>
 		tails.length === 0
@@ -126,23 +62,10 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 		segments.length === 1 ? segments[0]! : t.typeQueryMemberExpression({ object: queried(segments.slice(0, -1)), operator: '.', property: segments.at(-1)! });
 	const builtType = (builder: string) => typeRef('ReturnType', t.typeQuery({ expression: queried(['b', ...builder.split('.')]) }));
 	const nodesType = (path: string) => t.lookupType({ type: t.lookupType({ type: input.map, indexType: t.literalType(str('nodes')) }), indexType: t.literalType(str(path)) });
-	const union = (types: readonly TypeNode[]): TypeNode => types.reduce((left, right) => t.unionType({ left, right }));
-	const arrow = (name: string, type: TypeNode, body: Built<B['statementBlock']>, returns?: TypeNode, more: readonly (readonly [string, TypeNode])[] = []) =>
-		t.arrowFunction.callSignature({
-			parameters: t.formalParameters(
-				t.formalParametersElements(
-					t.requiredParameter({ name, type: t.typeAnnotation(type) }),
-					...more.map(([parameter, annotated]) => t.requiredParameter({ name: parameter, type: t.typeAnnotation(annotated) }))
-				)
-			),
-			...(returns === undefined ? {} : { returnType: t.typeAnnotation(returns) }),
-			body
-		});
 	const listOf = (value: Operand) => paren(binary(value, '??', t.array()));
 	const flagged = (value: Primary, flag: string) => call(dot(listOf(dot(value, '$flags')), 'includes'), str(flag));
 	const shaped = (property: string, type: TypeNode, optional = false) =>
 		t.objectType({ opening: '{', members: [t.propertySignature({ readonly: true, name: property, ...(optional ? { optional } : {}), type: t.typeAnnotation(type) })], closing: '}' });
-	const raise = (message: Expression) => t.throwStatement(t.newExpression({ function: 'Error', arguments: t.arguments(message) }));
 	const kindOf = (value: Primary) => ternary(typeIs(value, 'number'), value, dot(value, '$type'));
 	const kinded = union(['number', shaped('$type', 'number')]);
 	let refs = new Set<string>();
@@ -223,10 +146,6 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 	const objectTypeOf = (members: readonly (readonly [name: string, type: TypeNode, optional?: true])[]) =>
 		t.objectType({ opening: '{', members: members.map(([name, type, optional]) => t.propertySignature({ readonly: true, name, ...(optional === undefined ? {} : { optional }), type: t.typeAnnotation(type) })), closing: '}' });
 	const unsetHelper = constant('unset', arrow('owner', 'string', block(raise(binary(binary(binary(id('owner'), '+', str(': $at names ')), '+', id('fact')), '+', str(', which it does not set')))), 'never', [['fact', 'string']]));
-	type Named = string | readonly [string, TypeNode];
-	const parameterOf = (name: Named) => (typeof name === 'string' ? t.requiredParameter({ name }) : t.requiredParameter({ name: name[0], type: t.typeAnnotation(name[1]) }));
-	const lambda = (body: Expression, first: Named, ...rest: readonly Named[]) =>
-		t.arrowFunction.callSignature({ parameters: t.formalParameters(t.formalParametersElements(parameterOf(first), ...rest.map(parameterOf))), body });
 	const withoutFlagsHelper = constant(
 		'withoutFlags',
 		t.arrowFunction.callSignature({
@@ -545,8 +464,6 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 			return [[route.steps[0]!.key, route.nonEmpty === true ? nonEmptyOf(owner, route, spelled) : spelled] as const];
 		});
 	const fillsWithout = (seat: PortableSeat, skip: number): boolean => !(seat.within ?? []).slice(skip).some((container) => (container.slots ?? []).some((route) => route.nonEmpty === true));
-	const or = (parts: readonly Operand[]): Operand | undefined => (parts.length === 0 ? undefined : parts.reduce((left, right) => binary(left, '||', right)));
-	const not = (operand: Operand): Operand => t.unaryExpression({ operator: '!', argument: operand });
 	const flagsOf = (facts: readonly PortableSpelledFact[]): readonly string[] => facts.flatMap((fact) => (fact.flag === undefined ? [] : [fact.flag]));
 	const unstatedOf = (path: string, arm: PortableBuildArm, name: string, value: Primary): Operand | false | undefined => {
 		const facts = factsIn(arm, name);
