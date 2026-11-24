@@ -11,27 +11,57 @@ import { collectKindEntries } from '../kind-discriminant.ts';
 import { stampStaticSpacing } from '../templates.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 
-const upstream = {
-	extras: '/\\s/',
+const tokens = [
+	"semi: () => ';'",
+	"comma: () => ','",
+	"bang: () => '!'",
+	'identifier: () => /[a-z]+/'
+];
+
+const twoLevel = {
 	rules: [
 		"source: ($) => repeat($.outer)",
 		"outer: ($) => seq(field('inner', $.inner), optional(field('outer_end', $.semi)))",
 		"inner: ($) => seq(field('base', $.base), optional(field('inner_comma', $.comma)))",
 		"base: ($) => seq(field('name', $.identifier), optional(field('base_bang', $.bang)))",
-		'identifier: () => /[a-z]+/',
-		"semi: () => ';'",
-		"comma: () => ','",
-		"bang: () => '!'"
-	].join(', ')
+		...tokens
+	],
+	options: "options: { outer: { 'outer_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
 };
 
-const config = "options: { outer: { 'outer_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }";
+const threeLevel = {
+	rules: [
+		"source: ($) => repeat($.outer)",
+		"outer: ($) => seq(field('middle', $.middle), optional(field('outer_end', $.semi)))",
+		"middle: ($) => seq(field('inner', $.inner), optional(field('middle_end', $.pipe)))",
+		"inner: ($) => seq(field('base', $.base), optional(field('inner_comma', $.comma)))",
+		"base: ($) => seq(field('name', $.identifier), optional(field('base_bang', $.bang)))",
+		"pipe: () => '|'",
+		...tokens
+	],
+	options:
+		"options: { outer: { 'outer_end:': preference('blank') }, middle: { 'middle_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
+};
 
-function emittedFunction(emitted: string, name: string): string {
-	const start = emitted.indexOf(`export function ${name}(`);
+async function emitted(grammar: { rules: readonly string[]; options: string }): Promise<{ factories: string; loose: string }> {
+	const raw = await evaluateTempGrammar({ extras: '/\\s/', rules: grammar.rules.join(', ') }, grammar.options);
+	const { nodeMap, generatedIdTables } = assemblePredicted(raw, withFixtureLexicalRanks(rawIdTablesOf(raw)));
+	nodeMap.scc = computeNodeSCC(nodeMap);
+	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
+	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.renderAs, nodeMap) };
+	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, 'demo', spaced, kindEntries, NO_JOINS)).seamed;
+	collectSitePreferences({ nodeMap, kindEntries, renderRules, options: raw.options });
+	return {
+		factories: emitFactories({ grammar: 'demo', nodeMap, generatedIdTables }),
+		loose: emitFrom({ grammar: 'demo', nodeMap, generatedIdTables })
+	};
+}
+
+function emittedFunction(text: string, name: string): string {
+	const start = text.indexOf(`export function ${name}(`);
 	if (start < 0) throw new Error(`no ${name} in the emitted output`);
-	const end = emitted.indexOf('\n}\n', start) + 2;
-	return stripTypeScriptTypes(emitted.slice(start, end)).replace(/^export /m, '');
+	const end = text.indexOf('\n}\n', start) + 2;
+	return stripTypeScriptTypes(text.slice(start, end)).replace(/^export /m, '');
 }
 
 type Recorded = { readonly builder: string; readonly args: readonly unknown[] };
@@ -41,15 +71,7 @@ describe('a two-level forwarder with options on both levels', () => {
 	let loose: string;
 
 	beforeAll(async () => {
-		const raw = await evaluateTempGrammar(upstream, config);
-		const { nodeMap, generatedIdTables } = assemblePredicted(raw, withFixtureLexicalRanks(rawIdTablesOf(raw)));
-		nodeMap.scc = computeNodeSCC(nodeMap);
-		const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
-		const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.renderAs, nodeMap) };
-		const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, 'demo', spaced, kindEntries, NO_JOINS)).seamed;
-		collectSitePreferences({ nodeMap, kindEntries, renderRules, options: raw.options });
-		factories = emitFactories({ grammar: 'demo', nodeMap, generatedIdTables });
-		loose = emitFrom({ grammar: 'demo', nodeMap, generatedIdTables });
+		({ factories, loose } = await emitted(twoLevel));
 	});
 
 	// The emitted strict wrapper, executed with stub builders that record their arguments.
@@ -129,6 +151,13 @@ describe('a two-level forwarder with options on both levels', () => {
 			expect(recorded[1]!.args[1]).toEqual(outerOpts);
 		});
 
+		it('keeps both options when the config is omitted', () => {
+			const recorded: Recorded[] = [];
+			strictOuter(recorded)(undefined, innerOpts, outerOpts);
+			expect(recorded[0]!.args).toEqual([undefined, innerOpts]);
+			expect(recorded[1]!.args[1]).toEqual(outerOpts);
+		});
+
 		it('gives only the outer options to the outer builder for a built inner', () => {
 			const recorded: Recorded[] = [];
 			const builtInner = { $type: 'Inner' };
@@ -172,5 +201,26 @@ describe('a two-level forwarder with options on both levels', () => {
 		it('refuses options given with a built outer', () => {
 			expect(() => looseOuter([])({ $type: 'Outer' }, innerOpts)).toThrow('carries its own options');
 		});
+	});
+});
+
+describe('a three-level forwarder, its overloads', () => {
+	let factories: string;
+
+	beforeAll(async () => {
+		({ factories } = await emitted(threeLevel));
+	});
+
+	it('names each option parameter once per overload', () => {
+		const declarations = factories
+			.split('\n')
+			.filter((line) => line.startsWith('export function buildOuter<') || line.startsWith('export function buildOuter('))
+			.filter((line) => line.endsWith(';'));
+		expect(declarations.length).toBeGreaterThan(0);
+		for (const line of declarations) {
+			const params = line.slice(line.indexOf('(') + 1, line.indexOf('):')).split(/, (?![^<{[]*[>}\]])/);
+			const names = params.map((param) => param.trim().split(/[?:\s]/)[0]!).filter((name) => /options$|Options$/.test(name));
+			expect(new Set(names).size, line).toBe(names.length);
+		}
 	});
 });

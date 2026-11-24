@@ -1877,14 +1877,16 @@ function forwardedConstruction(
 					: undefined) ?? (constructorSurface(target, nodeMap, kindEntries, { immediate: true })?.declarations ?? []));
 	const extendsShorter = (entry: RefusingParams): boolean =>
 		innerOverloads.some((other) => other.params.startsWith(`${entry.params}, `) && takesOptions(other.params.slice(entry.params.length + 2)));
+	const targetOptionsName =
+		twoLevelTargetNode === undefined ? 'options' : `${twoLevelTargetNode.typeName.charAt(0).toLowerCase()}${twoLevelTargetNode.typeName.slice(1)}Options`;
 	const innerForms = innerOverloads
 		.filter((entry) => !extendsShorter(entry))
 		.map((entry) =>
 			/\.\.\./.test(entry.params)
 				? entry
 				: takesOptions(entry.params)
-					? { typeParams: entry.typeParams, params: entry.params.replace(/options\?: /, 'innerOptions?: ') }
-					: withTrailingParam(entry, `innerOptions?: T.${twoLevelTargetNode!.typeName}.Options`)
+					? { typeParams: entry.typeParams, params: entry.params.replace(/\boptions\?: /, `${targetOptionsName}?: `) }
+					: withTrailingParam(entry, `${targetOptionsName}?: T.${twoLevelTargetNode!.typeName}.Options`)
 		);
 	const twoLevelDeclarations =
 		twoLevelTargetNode === undefined || trailingOptions === undefined
@@ -2478,17 +2480,27 @@ function fieldCarryingFactoryText(
 			`${exportKw}function ${fn}(...args: unknown[]) {`
 		]);
 		if (!forwardsTargetArguments(node, nodeMap)) {
-			if (!directParamOptional && targetTakesNoArgs) {
+			if (forwarded.targetArity !== undefined) {
+				wrapper.push(
+					`  if (args[0] === undefined) {`,
+					`    return _${fn}(${targetBuilt(`...args.slice(0, ${forwarded.targetArity})`)} as Parameters<typeof _${fn}>[0], args[${forwarded.targetArity}] as never);`,
+					`  }`
+				);
+			} else if (!directParamOptional && targetTakesNoArgs) {
 				wrapper.push(
 					`  if (args.length === 0 || args[0] === undefined) {`,
 					`    return _${fn}(${targetEmpty} as Parameters<typeof _${fn}>[0], args[0] as never);`,
 					`  }`
 				);
 			}
+			if (forwarded.targetArity === undefined) {
+				wrapper.push(
+					`  if (args[0] === undefined) {`,
+					`    return _${fn}(args[0] as unknown as Parameters<typeof _${fn}>[0], args[1] as never);`,
+					`  }`
+				);
+			}
 			wrapper.push(
-				`  if (args[0] === undefined) {`,
-				`    return _${fn}(args[0] as unknown as Parameters<typeof _${fn}>[0], args[1] as never);`,
-				`  }`,
 				`  const prebuilt =`,
 				`    typeof args[0] === 'object' && args[0] !== null &&`,
 				`    ${prebuiltCheck};`,
