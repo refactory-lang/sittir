@@ -10220,7 +10220,7 @@ function wrapParenthesizedPatternWithDesignation$with(node: Held, setter: string
 									handle,
 									'parenthesized_pattern_with_designation',
 									'variableDesignation',
-									admitSplicedEnvelope(
+									admitSplicedEnvelope<NonNullable<T.ParenthesizedPatternWithDesignation['_variable_designation']>>(
 										v,
 										[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 										'ParenthesizedPatternWithDesignation.variableDesignation'
@@ -10622,7 +10622,7 @@ function wrapVarPattern$with(node: Held, setter: string, args: readonly unknown[
 								handle,
 								'var_pattern',
 								'variableDesignation',
-								admitSplicedEnvelope(
+								admitSplicedEnvelope<NonNullable<T.VarPattern['_variable_designation']>>(
 									v,
 									[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 									'VarPattern.variableDesignation'
@@ -10930,7 +10930,7 @@ function wrapRecursivePattern$with(node: Held, setter: string, args: readonly un
 											handle,
 											'recursive_pattern',
 											'variableDesignation',
-											admitSplicedEnvelope(
+											admitSplicedEnvelope<NonNullable<T.RecursivePattern['_variable_designation']>>(
 												v,
 												[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 												'RecursivePattern.variableDesignation'
@@ -10948,7 +10948,7 @@ function wrapRecursivePattern$with(node: Held, setter: string, args: readonly un
 											handle,
 											'recursive_pattern',
 											'variableDesignation',
-											admitSplicedEnvelope(
+											admitSplicedEnvelope<NonNullable<T.RecursivePattern['_variable_designation']>>(
 												v,
 												[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 												'RecursivePattern.variableDesignation'
@@ -11572,7 +11572,7 @@ function wrapDeclarationPattern$with(node: Held, setter: string, args: readonly 
 									handle,
 									'declaration_pattern',
 									'variableDesignation',
-									admitSplicedEnvelope(
+									admitSplicedEnvelope<NonNullable<T.DeclarationPattern['_variable_designation']>>(
 										v,
 										[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 										'DeclarationPattern.variableDesignation'
@@ -11700,7 +11700,7 @@ function wrapParenthesizedVariableDesignation$with(node: Held, setter: string, a
 									handle,
 									'parenthesized_variable_designation',
 									'variableDesignations',
-									admitSplicedEnvelope(
+									admitSplicedEnvelope<NonNullable<T.ParenthesizedVariableDesignation['_variable_designation']>>(
 										restItems('variableDesignations', v),
 										[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 										'ParenthesizedVariableDesignation.variableDesignations'

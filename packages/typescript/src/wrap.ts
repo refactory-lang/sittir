@@ -6226,7 +6226,7 @@ function wrapRestPattern$with(node: Held, setter: string, args: readonly unknown
 								handle,
 								'rest_pattern',
 								'lhsExpression',
-								admitSplicedEnvelope(
+								admitSplicedEnvelope<NonNullable<T.RestPattern['_lhs_expression']>>(
 									v,
 									[TSKindId.LhsExpression, 'content', 'lhs_expression'],
 									'RestPattern.lhsExpression'

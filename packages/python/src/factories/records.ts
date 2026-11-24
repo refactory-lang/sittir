@@ -4972,12 +4972,12 @@ export function buildUnionPattern(
 	config: WidenSlots<T.UnionPattern.Config, { left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }>
 ): T.UnionPattern.Bound {
 	currentHandle()?.admit(TSKindId.UnionPattern, [config]);
-	const _left = admitSplicedEnvelope(
+	const _left = admitSplicedEnvelope<NonNullable<T.UnionPattern['_left']>>(
 		kindIdStorage<NonNullable<T.UnionPattern['_left']>>(config.left),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'UnionPattern.left'
 	);
-	const _right = admitSplicedEnvelope(
+	const _right = admitSplicedEnvelope<NonNullable<T.UnionPattern['_right']>>(
 		kindIdStorage<NonNullable<T.UnionPattern['_right']>>(config.right),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'UnionPattern.right'
@@ -5000,12 +5000,12 @@ function buildUnionPattern$patch(
 	config: WidenSlots<T.UnionPattern.Config, { left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }>
 ): T.UnionPattern.Bound {
 	currentHandle()?.admit(TSKindId.UnionPattern, [config]);
-	const _left = admitSplicedEnvelope(
+	const _left = admitSplicedEnvelope<NonNullable<T.UnionPattern['_left']>>(
 		kindIdStorage<NonNullable<T.UnionPattern['_left']>>(config.left),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'UnionPattern.left'
 	);
-	const _right = admitSplicedEnvelope(
+	const _right = admitSplicedEnvelope<NonNullable<T.UnionPattern['_right']>>(
 		kindIdStorage<NonNullable<T.UnionPattern['_right']>>(config.right),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'UnionPattern.right'
@@ -5037,7 +5037,7 @@ function buildUnionPattern$set(
 	switch (slot) {
 		case 'left': {
 			const config = input;
-			const _left = admitSplicedEnvelope(
+			const _left = admitSplicedEnvelope<NonNullable<T.UnionPattern['_left']>>(
 				kindIdStorage<NonNullable<T.UnionPattern['_left']>>(config.left),
 				[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 				'UnionPattern.left'
@@ -5053,7 +5053,7 @@ function buildUnionPattern$set(
 		}
 		case 'right': {
 			const config = input;
-			const _right = admitSplicedEnvelope(
+			const _right = admitSplicedEnvelope<NonNullable<T.UnionPattern['_right']>>(
 				kindIdStorage<NonNullable<T.UnionPattern['_right']>>(config.right),
 				[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 				'UnionPattern.right'
@@ -5190,7 +5190,7 @@ export function buildKeyValuePattern(
 	config: WidenSlots<T.KeyValuePattern.Config, { key: Admit<T.SimplePattern> }>
 ): T.KeyValuePattern.Bound {
 	currentHandle()?.admit(TSKindId.KeyValuePattern, [config]);
-	const _key = admitSplicedEnvelope(
+	const _key = admitSplicedEnvelope<NonNullable<T.KeyValuePattern['_key']>>(
 		kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'KeyValuePattern.key'
@@ -5214,7 +5214,7 @@ function buildKeyValuePattern$patch(
 	config: WidenSlots<T.KeyValuePattern.Config, { key: Admit<T.SimplePattern> }>
 ): T.KeyValuePattern.Bound {
 	currentHandle()?.admit(TSKindId.KeyValuePattern, [config]);
-	const _key = admitSplicedEnvelope(
+	const _key = admitSplicedEnvelope<NonNullable<T.KeyValuePattern['_key']>>(
 		kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'KeyValuePattern.key'
@@ -5247,7 +5247,7 @@ function buildKeyValuePattern$set(
 	switch (slot) {
 		case 'key': {
 			const config = input;
-			const _key = admitSplicedEnvelope(
+			const _key = admitSplicedEnvelope<NonNullable<T.KeyValuePattern['_key']>>(
 				kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key),
 				[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 				'KeyValuePattern.key'
@@ -5319,7 +5319,7 @@ export function buildKeywordPattern(
 ): T.KeywordPattern.Bound {
 	currentHandle()?.admit(TSKindId.KeywordPattern, [config]);
 	const _name = config.name;
-	const _pattern = admitSplicedEnvelope(
+	const _pattern = admitSplicedEnvelope<NonNullable<T.KeywordPattern['_pattern']>>(
 		kindIdStorage<NonNullable<T.KeywordPattern['_pattern']>>(config.pattern),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'KeywordPattern.pattern'
@@ -5343,7 +5343,7 @@ function buildKeywordPattern$patch(
 ): T.KeywordPattern.Bound {
 	currentHandle()?.admit(TSKindId.KeywordPattern, [config]);
 	const _name = config.name;
-	const _pattern = admitSplicedEnvelope(
+	const _pattern = admitSplicedEnvelope<NonNullable<T.KeywordPattern['_pattern']>>(
 		kindIdStorage<NonNullable<T.KeywordPattern['_pattern']>>(config.pattern),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 		'KeywordPattern.pattern'
@@ -5387,7 +5387,7 @@ function buildKeywordPattern$set(
 		}
 		case 'pattern': {
 			const config = input;
-			const _pattern = admitSplicedEnvelope(
+			const _pattern = admitSplicedEnvelope<NonNullable<T.KeywordPattern['_pattern']>>(
 				kindIdStorage<NonNullable<T.KeywordPattern['_pattern']>>(config.pattern),
 				[TSKindId.SimplePattern, 'content', 'simple_pattern'],
 				'KeywordPattern.pattern'
@@ -17165,7 +17165,7 @@ export function buildSuiteInline(...args: unknown[]) {
 }
 function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>): T.SuiteInline.Bound {
 	const _statements = hydrateStored(
-		admitSplicedEnvelope(
+		admitSplicedEnvelope<NonNullable<T.SuiteInline['_statements']>>(
 			value,
 			[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
 			'SuiteInline.statements'
@@ -17190,7 +17190,7 @@ function _buildSuiteInline$patch(
 	value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>
 ): T.SuiteInline.Bound {
 	const _statements = hydrateStored(
-		admitSplicedEnvelope(
+		admitSplicedEnvelope<NonNullable<T.SuiteInline['_statements']>>(
 			value,
 			[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
 			'SuiteInline.statements'

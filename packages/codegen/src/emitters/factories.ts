@@ -825,7 +825,11 @@ function admittedSlotInput(
 	const holed = isMultiple(f) && hasOptionalElements(f) ? `admitHoles(${expr}, '${typeName}.${f.propertyName}')` : expr;
 	const unspliced = splicedEnvelopeAdmission(f, holed, nodeMap, kindEntries, typeName);
 	const admitted = keywordTextRejection(f, unspliced, nodeMap, kindEntries, typeName);
-	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
+	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, storedSlotType(f, typeName));
+}
+
+export function storedSlotType(f: AssembledNonterminal, typeName: string): string {
+	return `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`;
 }
 
 export function splicedEnvelopeAdmission(
@@ -839,7 +843,7 @@ export function splicedEnvelopeAdmission(
 	if (envelope === undefined) return expr;
 	const entry = findKindEntry(kindEntries, envelope.kind);
 	const spec = `[${kindDiscriminantExpr(envelope.kind, nodeMap, kindEntries)}, ${JSON.stringify(envelope.slots[0]!.propertyName)}, ${JSON.stringify(entry?.parseName ?? envelope.kind)}]`;
-	return `admitSplicedEnvelope(${expr}, ${spec}, '${typeName}.${f.propertyName}')`;
+	return `admitSplicedEnvelope<${storedSlotType(f, typeName)}>(${expr}, ${spec}, '${typeName}.${f.propertyName}')`;
 }
 
 export function splicedEnvelopeKindExprs(
@@ -982,12 +986,11 @@ function storedSlotValueExpr(
 	typeName: string,
 	textInput = false
 ): string {
-	const stored = `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`;
 	return storageCallExpr(
 		valueExpr,
 		slotStorageCoercion(f, nodeMap, kindEntries, textInput),
 		isListStorage(f, nodeMap),
-		stored,
+		storedSlotType(f, typeName),
 		hasOptionalElements(f)
 	);
 }

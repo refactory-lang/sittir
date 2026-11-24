@@ -32,7 +32,7 @@ import {
 } from './shared.ts';
 import { formDefinedProperties } from './refine-emit.ts';
 import { chainReadsAsList, wrapperChainFor } from '../compiler/model/wrapper-chain.ts';
-import { armCrossingClears, builtTypeSurfaceOf, chainItemsAt, anyShapes, clearedSlotEntries, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
+import { armCrossingClears, builtTypeSurfaceOf, chainItemsAt, anyShapes, clearedSlotEntries, coOptionalBranchOfNode, hasShapes, chainItemsHop, delimitedCheck, delimitedSpecName, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, storedSlotType, type GroupSeatHint, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, errorKindEntry, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf, recordVerbatimPlaceOf } from './record-construction.ts';
@@ -635,7 +635,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 		const crossed = node instanceof AssembledList ? [] : armCrossingClears(node, node.slots, f);
 		const clearedKeys = clearedSlotEntries(crossed, 'storage').map((entry) => `${entry}, `).join('');
 		if (isMultiple(f) && restSlots.has(method)) {
-			const storageList = `NonNullable<T.${node.typeName}['${f.storageKey}']>`;
+			const storageList = storedSlotType(f, node.typeName);
 			if (finalSeatOf(f) !== undefined && admitted !== '')
 				throw emitShapeFailure({ code: 'final-seat-with-envelope', message: `wrap: ${node.kind}.${f.name} has a final seat and admits the envelope ${envelopeType}; a rest setter cannot type both` });
 			const restType = finalSeatOf(f) === undefined ? slotListTypeOf(f, () => `${storageList}[number]${admitted}`, 'mutable') : storageList;
@@ -645,7 +645,7 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 				body: `${wrapFn}({ ...$edited(data), ${clearedKeys}${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, `restItems(${JSON.stringify(method)}, v)`, nodeMap, kindEntries, node.typeName))} }, tree)`
 			};
 		}
-		const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>${admitted}${hasBlankArm(f) ? ' | null' : ''}`;
+		const setterValueType = `${storedSlotType(f, node.typeName)}${admitted}${hasBlankArm(f) ? ' | null' : ''}`;
 		const joinsBranch = branch?.needed.includes(method) === true;
 		const branchDefaults = joinsBranch
 			? node.slots

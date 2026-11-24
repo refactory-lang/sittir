@@ -8793,7 +8793,9 @@ export function buildParenthesizedPatternWithDesignation(
 ): T.ParenthesizedPatternWithDesignation.Bound {
 	currentHandle()?.admit(TSKindId.ParenthesizedPatternWithDesignation, [config]);
 	const _pattern = kindIdStorage<NonNullable<T.ParenthesizedPatternWithDesignation['_pattern']>>(config.pattern);
-	const _variable_designation = admitSplicedEnvelope(
+	const _variable_designation = admitSplicedEnvelope<
+		NonNullable<T.ParenthesizedPatternWithDesignation['_variable_designation']>
+	>(
 		kindIdStorage<NonNullable<T.ParenthesizedPatternWithDesignation['_variable_designation']>>(
 			config.variableDesignation
 		),
@@ -9210,7 +9212,7 @@ export function buildVarPattern<
 export function buildVarPattern(
 	value: Admit<(TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier) | Admit<T.VariableDesignation>>
 ): T.VarPattern.Bound {
-	const _variable_designation = admitSplicedEnvelope(
+	const _variable_designation = admitSplicedEnvelope<NonNullable<T.VarPattern['_variable_designation']>>(
 		kindIdStorage<NonNullable<T.VarPattern['_variable_designation']>>(value),
 		[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 		'VarPattern.variableDesignation'
@@ -9416,7 +9418,7 @@ export function buildRecursivePattern(
 	const _type = config.type;
 	const _positional_pattern_clause = config.positionalPatternClause;
 	const _property_pattern_clause = config.propertyPatternClause;
-	const _variable_designation = admitSplicedEnvelope(
+	const _variable_designation = admitSplicedEnvelope<NonNullable<T.RecursivePattern['_variable_designation']>>(
 		kindIdStorage<NonNullable<T.RecursivePattern['_variable_designation']>>(config.variableDesignation),
 		[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 		'RecursivePattern.variableDesignation'
@@ -10037,7 +10039,7 @@ export function buildDeclarationPattern(
 ): T.DeclarationPattern.Bound {
 	currentHandle()?.admit(TSKindId.DeclarationPattern, [config]);
 	const _type = kindIdStorage<NonNullable<T.DeclarationPattern['_type']>>(config.type);
-	const _variable_designation = admitSplicedEnvelope(
+	const _variable_designation = admitSplicedEnvelope<NonNullable<T.DeclarationPattern['_variable_designation']>>(
 		kindIdStorage<NonNullable<T.DeclarationPattern['_variable_designation']>>(config.variableDesignation),
 		[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 		'DeclarationPattern.variableDesignation'
@@ -10151,7 +10153,9 @@ export function buildParenthesizedVariableDesignation(
 	>
 ): T.ParenthesizedVariableDesignation.Bound {
 	currentHandle()?.admit(TSKindId.ParenthesizedVariableDesignation, children);
-	const _variable_designation = admitSplicedEnvelope(
+	const _variable_designation = admitSplicedEnvelope<
+		NonNullable<T.ParenthesizedVariableDesignation['_variable_designation']>
+	>(
 		children,
 		[TSKindId.VariableDesignation, 'content', 'variable_designation'],
 		'ParenthesizedVariableDesignation.variableDesignations'

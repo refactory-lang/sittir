@@ -13389,7 +13389,7 @@ Wraps a slot's stored value in `admitAliasContent` with one row per alias the sl
 
 ### `packages/codegen/src/emitters/factories.ts::admittedSlotInput`
 
-A slot input's admissions in order: the bare-text rejection, the keyword-text rejection, then alias content. Shared by config slots, the positional value, and spread children.
+A slot input's admissions in order: a list slot with optional elements refuses an `undefined` hole (`admitHoles`), a spliced envelope is taken as its content (`splicedEnvelopeAdmission`), keyword text is refused (`keywordTextRejection`), then alias content is built into its alias (`aliasContentAdmission`). The typed admissions take the slot's stored type (`storedSlotType`). Shared by config slots, the positional value, and spread children.
 
 ### `packages/codegen/src/emitters/factories.ts::constructionFieldElementType`
 
@@ -14857,7 +14857,7 @@ Builds the boundary table from the inputs, recording each dropped arm.
 
 ### `packages/codegen/src/emitters/factories.ts::splicedEnvelopeAdmission`
 
-The admission expression for a spliced envelope slot: the kinds it accepts.
+The admission expression for a spliced envelope slot: `admitSplicedEnvelope<stored type>(value, [envelope kind id, content key, envelope name], '<Kind>.<property>')`, which takes a value that is the envelope as the envelope's content. `admitSplicedEnvelope` returns its type argument, and the argument is the slot's stored type (`storedSlotType`), so the admitted value keeps the type its storage expression gave it, and a list slot's value reaches `storeList` as a list. A slot with no envelope returns the value expression as given. The factories (`admittedSlotInput`) and the wrap's setters (`inlineSetters`) both print it.
 
 ### `packages/codegen/src/emitters/factories.ts::splicedEnvelopeKindExprs`
 
@@ -15526,6 +15526,10 @@ For each slot of a kind that is a required choice of arms, the names of the slot
 ### `packages/codegen/src/emitters/factories.ts::clearedSlotEntries`
 
 The object entries that clear slots an arm-crossing setter leaves behind (`armCrossingClears`), one derivation for both surfaces. A built setter writes the `config` surface, where a cleared slot is `undefined` by its property name, because the other arm's config row types that key as `never`. A parsed setter writes the `storage` surface, where a list slot is always an array, so a cleared list takes `[]` and any other slot `undefined`, by its storage key.
+
+### `packages/codegen/src/emitters/factories.ts::storedSlotType`
+
+The type a slot's stored value has: `NonNullable<T.<Kind>['<storage key>']>`, the kind's storage entry for the slot. Every typed storage call and admission of a slot reads it: `storedSlotValueExpr`'s storage call, `admitSplicedEnvelope` and `admitAliasContent` in `admittedSlotInput`, and the wrap's rest and single setter types (`inlineSetters`).
 
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 

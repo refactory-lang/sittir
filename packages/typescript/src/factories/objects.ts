@@ -6821,7 +6821,7 @@ export function buildRestPattern(
 ): T.RestPattern.Bound {
 	const _lhs_expression = rejectReservedText(
 		rejectKeywordText(
-			admitSplicedEnvelope(
+			admitSplicedEnvelope<NonNullable<T.RestPattern['_lhs_expression']>>(
 				kindIdStorage<NonNullable<T.RestPattern['_lhs_expression']>>(value),
 				[TSKindId.LhsExpression, 'content', 'lhs_expression'],
 				'RestPattern.lhsExpression'

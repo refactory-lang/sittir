@@ -4228,7 +4228,11 @@ function wrapUnionPattern$with(node: Held, setter: string, args: readonly unknow
 								handle,
 								'union_pattern',
 								'left',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.left')
+								admitSplicedEnvelope<NonNullable<T.UnionPattern['_left']>>(
+									v,
+									[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+									'UnionPattern.left'
+								)
 							)
 						},
 						tree
@@ -4245,7 +4249,11 @@ function wrapUnionPattern$with(node: Held, setter: string, args: readonly unknow
 								handle,
 								'union_pattern',
 								'right',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.right')
+								admitSplicedEnvelope<NonNullable<T.UnionPattern['_right']>>(
+									v,
+									[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+									'UnionPattern.right'
+								)
 							)
 						},
 						tree
@@ -4456,7 +4464,11 @@ function wrapKeyValuePattern$with(node: Held, setter: string, args: readonly unk
 								handle,
 								'key_value_pattern',
 								'key',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeyValuePattern.key')
+								admitSplicedEnvelope<NonNullable<T.KeyValuePattern['_key']>>(
+									v,
+									[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+									'KeyValuePattern.key'
+								)
 							)
 						},
 						tree
@@ -4571,7 +4583,11 @@ function wrapKeywordPattern$with(node: Held, setter: string, args: readonly unkn
 								handle,
 								'keyword_pattern',
 								'pattern',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeywordPattern.pattern')
+								admitSplicedEnvelope<NonNullable<T.KeywordPattern['_pattern']>>(
+									v,
+									[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+									'KeywordPattern.pattern'
+								)
 							)
 						},
 						tree
@@ -13779,7 +13795,7 @@ function wrapSuiteInline$with(node: Held, setter: string, args: readonly unknown
 												handle,
 												'suite_inline',
 												'statements',
-												admitSplicedEnvelope(
+												admitSplicedEnvelope<NonNullable<T.SuiteInline['_statements']>>(
 													v,
 													[TSKindId.SimpleStatements, 'statements', 'simple_statements'],
 													'SuiteInline.statements'
