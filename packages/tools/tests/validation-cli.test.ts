@@ -49,6 +49,7 @@ vi.mock('../src/run.ts', () => ({
 			pass: 6,
 			astMatchPass: 6,
 			separatorTolerated: 0,
+			flagReordered: 0,
 			errors: [],
 			astMismatches: [],
 			excluded: []

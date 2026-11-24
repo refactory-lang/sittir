@@ -261,6 +261,7 @@ export interface AstTolerance {
 	readonly delimiters?: Readonly<Record<string, DelimiterSpelling>>;
 	readonly flags?: Readonly<Record<string, FlagTokens>>;
 	readonly normalized?: string[];
+	readonly reordered?: string[];
 	readonly ownSideExtras?: readonly Extra[];
 }
 
@@ -298,7 +299,7 @@ function flagReordered(a: TSNode, aChildren: readonly TSNode[], bChildren: reado
 	}
 	const out = [...bChildren];
 	slots.forEach((i, j) => (out[i] = ordered[j]!));
-	tolerance?.tolerated.push(`${path || a.type}: flags ${slots.map((i) => flagKey(bChildren[i]!).replace(/^\w+ /, '')).join(' ')} reordered to ${wanted.map((key) => key.replace(/^\w+ /, '')).join(' ')}`);
+	tolerance?.reordered?.push(`${path || a.type}: flags ${slots.map((i) => flagKey(bChildren[i]!).replace(/^\w+ /, '')).join(' ')} reordered to ${wanted.map((key) => key.replace(/^\w+ /, '')).join(' ')}`);
 	return out;
 }
 

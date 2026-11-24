@@ -1154,6 +1154,10 @@ A storage run's render result while the run goes on: the counts and failures of 
 
 The `BuiltRenderResult` of a run: its counts and failures, with `total` and `casesByKind` read from its cases.
 
+### `packages/tools/src/validate/built-render.ts::BuiltRenderResult::flagReordered`
+
+The count of built renders that matched only where a kind's flags came in another order.
+
 ### `packages/tools/src/validate/built-render.ts::BuiltRenderResult::spellingNormalized`
 
 The count of built renders that matched only after spelling normalization.
@@ -1697,7 +1701,11 @@ The delimiter spellings the comparison reads, loaded per grammar.
 
 ### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::flags`
 
-The flag tokens the comparison reads, loaded per grammar. Where two nodes of one kind hold the same flags in another order and agree on everything else, the comparison passes and records the reorder in `tolerated`; a changed set of flags, or a reorder of any other child, still mismatches.
+The flag tokens the comparison reads, loaded per grammar. Where two nodes of one kind hold the same flags in another order and agree on everything else, the comparison passes and records the reorder in `reordered`; a changed set of flags, or a reorder of any other child, still mismatches.
+
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::reordered`
+
+The flag reorders the comparison accepted, one note each.
 
 ### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::normalized`
 

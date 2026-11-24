@@ -675,7 +675,7 @@ export async function validateFactoryStorage(
 					render.errors.push(renderFailure('built node carries source identity'));
 				} else {
 					try {
-						const tolerance: AstTolerance = { listSeparators, tolerated: [], delimiters, flags, normalized: [] };
+						const tolerance: AstTolerance = { listSeparators, tolerated: [], delimiters, flags, normalized: [], reordered: [] };
 						const outcome = renderReparse(
 							builtTree,
 							kind,
@@ -696,6 +696,7 @@ export async function validateFactoryStorage(
 								render.astMatchPass++;
 								if (tolerance.tolerated.length > 0) render.separatorTolerated++;
 								if (tolerance.normalized!.length > 0) render.spellingNormalized++;
+								if (tolerance.reordered!.length > 0) render.flagReordered++;
 							} else render.astMismatches.push(renderFailure(outcome.astDiff, outcome.rendered));
 						}
 					} catch (e) {

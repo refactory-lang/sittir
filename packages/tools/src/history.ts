@@ -50,6 +50,8 @@ export interface ValidationRun {
 	builtRenderParseSeparatorTolerated?: number;
 	/** Built nodes whose AST matched only where a delimiter token spells the same input and content facets differently; absent on rows recorded before the row existed. */
 	builtRenderParseSpellingNormalized?: number;
+	/** Built nodes whose AST matched only where a kind's flags came in another order; absent on rows recorded before the row existed. */
+	builtRenderParseFlagReordered?: number;
 	/** Trivia-only losses, kept out of the totals; absent on rows recorded before the trivia row existed. */
 	fromTrivia?: number;
 	readRenderParseTrivia?: number;

@@ -8,7 +8,7 @@ const flags = await loadFlagTokens('typescript');
 const compare = (a: string, b: string): { diff: string | null; tolerance: AstTolerance } => {
 	using left = parser.parse(a);
 	using right = parser.parse(b);
-	const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], flags };
+	const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], flags, reordered: [] };
 	return { diff: astStructuralDiff(left.root, right.root, '', undefined, tolerance), tolerance };
 };
 
@@ -21,13 +21,14 @@ describe('astStructuralDiff accepts the same flags of a kind in another order', 
 	])('%s against %s passes and records the reorder', (a, b) => {
 		const { diff, tolerance } = compare(field(a), field(b));
 		expect(diff).toBeNull();
-		expect(tolerance.tolerated.some((note) => note.includes('reordered'))).toBe(true);
+		expect(tolerance.reordered!.some((note) => note.includes('reordered'))).toBe(true);
+		expect(tolerance.tolerated).toEqual([]);
 	});
 
 	it('does not record anything when the order is already the same', () => {
 		const { diff, tolerance } = compare(field('abstract readonly'), field('abstract readonly'));
 		expect(diff).toBeNull();
-		expect(tolerance.tolerated).toEqual([]);
+		expect(tolerance.reordered).toEqual([]);
 	});
 
 	it('still mismatches a changed set of flags', () => {

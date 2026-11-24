@@ -130,7 +130,7 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}    read-render-parse-shallowSpellingNormalized=${readRenderParseShallow.spellingNormalized.length}    read-render-parse-shallowFoldedMismatches=${readRenderParseShallow.foldedMismatches.length}`,
 		`  factory-storagePass=${factoryStorage.pass}    factory-storageTotal=${factoryStorage.total}    factory-storageAstMatchPass=${factoryStorage.astMatchPass}`,
 		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
-		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}    built-render-parseSpellingNormalized=${builtRenderParse.spellingNormalized}`,
+		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}    built-render-parseSpellingNormalized=${builtRenderParse.spellingNormalized}    built-render-parseFlagReordered=${builtRenderParse.flagReordered}`,
 		`  layout-runsTotal=${layoutRuns.total}    layout-runsUnreached=${layoutRuns.unreached.length}    layout-runsRefused=${layoutRuns.refused.length}`,
 		`  layout-storedDeviations=${layoutRuns.stored.deviations}    layout-storedSlots=${layoutRuns.stored.slots}    layout-storedSeparators=${layoutRuns.stored.separators}`,
 		...(portableRoundTrip === undefined
@@ -245,6 +245,7 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		builtRenderParseAstMatchPass: builtRenderParse.astMatchPass,
 		builtRenderParseSeparatorTolerated: builtRenderParse.separatorTolerated,
 		builtRenderParseSpellingNormalized: builtRenderParse.spellingNormalized,
+		builtRenderParseFlagReordered: builtRenderParse.flagReordered,
 		fromTrivia: from.trivia.length,
 		readRenderParseTrivia: readRenderParse.trivia.length,
 		readRenderParseFoldedMismatches: readRenderParse.foldedMismatches.length,
