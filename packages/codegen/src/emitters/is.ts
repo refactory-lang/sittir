@@ -31,6 +31,10 @@ function leafShapeOf(node: AssembledNode): 'text' | 'unit' | 'enum' | undefined 
 	return isFixedTextLeaf(node) ? 'unit' : undefined;
 }
 
+function guardMethodKey(name: string): string {
+	return name === 'constructor' ? "'constructor'" : name;
+}
+
 export function emitIs(config: EmitIsConfig): string {
 	const { nodeMap, generatedIdTables } = config;
 
@@ -189,12 +193,12 @@ export function emitIs(config: EmitIsConfig): string {
 		return `<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: ${kinds.join(' | ')} }`;
 	};
 	const seatedMemberType = (host: string, route: FormRoute, seat: FormRoute = route): string => {
-		if (route.forms === undefined) return `${route.name}${seatedPredicate(host, seat)}`;
+		if (route.forms === undefined) return `${guardMethodKey(route.name)}${seatedPredicate(host, seat)}`;
 		return `readonly ${route.name}: { ${seatedPredicate(host, seat)}; ${route.forms.map((inner) => seatedMemberType(host, inner, seat)).join('; ')} }`;
 	};
 	const formMemberType = (host: string, route: FormRoute): string => {
 		if (route.seat !== undefined) return seatedMemberType(host, route);
-		return formsOf(route.child.kind) !== undefined ? `readonly ${route.name}: ${formGuardType(route.child.kind)}` : `${route.name}${ownPredicate(route.child.kind)}`;
+		return formsOf(route.child.kind) !== undefined ? `readonly ${route.name}: ${formGuardType(route.child.kind)}` : `${guardMethodKey(route.name)}${ownPredicate(route.child.kind)}`;
 	};
 	const formGuardType = (kind: string): string => `{ ${ownPredicate(kind)}; ${formsOf(kind)!.map((route) => formMemberType(kind, route)).join('; ')} }`;
 
@@ -203,7 +207,7 @@ export function emitIs(config: EmitIsConfig): string {
 			const nested = guardKeyOfSupertype(route.nestedParentKey);
 			return { type: `${route.name}: IsGuards['${nested}']`, value: `_supertype_${nested}_guard` };
 		}
-		const type = formsOf(route.child.kind) !== undefined ? `readonly ${route.name}: ${formGuardType(route.child.kind)}` : `${route.name}${ownPredicate(route.child.kind)}`;
+		const type = formsOf(route.child.kind) !== undefined ? `readonly ${route.name}: ${formGuardType(route.child.kind)}` : `${guardMethodKey(route.name)}${ownPredicate(route.child.kind)}`;
 		return { type, value: kindGuard(route.child.kind) };
 	};
 
