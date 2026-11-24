@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { astStructuralDiff, type AstTolerance } from '../read-render-parse.ts';
+import { astStructuralDiff, ownRenderTolerance, type AstTolerance } from '../read-render-parse.ts';
 import { loadFlagTokens, loadLanguageForGrammar, treeParser } from '../common.ts';
 
 const parser = treeParser(await loadLanguageForGrammar('typescript'));
@@ -39,6 +39,14 @@ describe('astStructuralDiff accepts the same flags of a kind in another order', 
 	it('still mismatches a reorder of children that are not flags', () => {
 		expect(compare('f(a, b);\n', 'f(b, a);\n').diff).not.toBeNull();
 		expect(compare('class A { x: number; y: string; }\n', 'class A { y: string; x: number; }\n').diff).not.toBeNull();
+	});
+
+	it('fails the own-render comparison when untouched code swaps its flags', () => {
+		using left = parser.parse(field('readonly abstract'));
+		using right = parser.parse(field('abstract readonly'));
+		const own = ownRenderTolerance({}, []);
+		expect(own.flags).toBeUndefined();
+		expect(astStructuralDiff(left.root, right.root, '', undefined, own)).not.toBeNull();
 	});
 
 	it('mismatches without the model flags', () => {

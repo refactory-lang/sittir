@@ -1695,6 +1695,22 @@ A fixture the render check reads.
 
 The context in which a render is reparsed.
 
+### `packages/tools/src/validate/read-render-parse.ts::ownRenderTolerance`
+
+The tolerance the comparison of a node's own render carries: delimiter spellings and the own-side extras, and no flags. A tree's own render keeps its source's modifier order, so a swap in untouched code fails.
+
+### `packages/tools/src/validate/read-render-parse.ts::FlagReorderedCandidate`
+
+A read-render-parse candidate whose AST matched only where a kind's flags came in another order, with the reorders accepted.
+
+### `packages/tools/src/validate/read-render-parse.ts::ReadRenderParseResult::flagReordered`
+
+The candidates that matched only after a flag reorder.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::flagReordered`
+
+The count of portable round trips that matched only where a kind's flags came in another order.
+
 ### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::delimiters`
 
 The delimiter spellings the comparison reads, loaded per grammar.

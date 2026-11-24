@@ -265,6 +265,10 @@ export interface AstTolerance {
 	readonly ownSideExtras?: readonly Extra[];
 }
 
+export function ownRenderTolerance(delimiters: Readonly<Record<string, DelimiterSpelling>>, ownSideExtras: readonly Extra[]): AstTolerance {
+	return { listSeparators: {}, tolerated: [], delimiters, normalized: [], ownSideExtras };
+}
+
 export function astStructuralDiff(
 	a: TSNode,
 	b: TSNode,
@@ -430,6 +434,15 @@ export interface ReadRenderParseResult {
 	excluded: ValidatorSkip[];
 	trivia: ValidatorSkip[];
 	spellingNormalized: SpellingNormalizedCandidate[];
+	flagReordered: FlagReorderedCandidate[];
+}
+
+export interface FlagReorderedCandidate {
+	readonly entry: string;
+	readonly kind: string;
+	readonly input: string;
+	readonly rendered: string;
+	readonly reorders: readonly string[];
 }
 
 export interface SpellingNormalizedCandidate {
@@ -1014,7 +1027,7 @@ export async function validateReadRenderParse(
 
 	const readNode = await readNodeOf(grammar).catch((e: unknown) => new Error(`[validate-read-render-parse] ${(e as Error).message}`));
 	if (readNode instanceof Error)
-		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], foldedMismatches: [], skips: [], excluded: [], trivia: [], spellingNormalized: [] };
+		return { grammar, ...FAILED_RUN, astMatchPass: 0, errors: [{ name: '(wrap-module-load)', message: readNode.message }], astMismatches: [], foldedMismatches: [], skips: [], excluded: [], trivia: [], spellingNormalized: [], flagReordered: [] };
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const canonicalKindNameFromId = await loadStorageKindNameFromId(grammar);
 	const { recursive } = options;
@@ -1031,6 +1044,7 @@ export async function validateReadRenderParse(
 	const excluded: ValidatorSkip[] = [];
 	const trivia: ValidatorSkip[] = [];
 	const spellingNormalized: SpellingNormalizedCandidate[] = [];
+	const flagReordered: FlagReorderedCandidate[] = [];
 	const delimiters = await loadDelimiterSpellings(grammar);
 	const flags = await loadFlagTokens(grammar);
 	// A read refused while an entry is walked or a candidate materialized
@@ -1209,7 +1223,7 @@ export async function validateReadRenderParse(
 							shouldStop = options.stopOnFirstFailure === true;
 						};
 						const ownSideExtras = ownSideExtrasOf(cand.node, (span) => spans.slice(span));
-						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, flags, normalized: [], ...(data === undefined ? { ownSideExtras } : {}) };
+						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, flags, normalized: [], reordered: [], ...(data === undefined ? { ownSideExtras } : {}) };
 						const outcome = reparse(data ?? (() => nativeEngine.diagnostics.renderTemplates(cand.node as AnyUntypedNode)), tolerance);
 						if (outcome.status === 'excluded') {
 							excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });
@@ -1219,7 +1233,7 @@ export async function validateReadRenderParse(
 							failed(outcome.message, outcome.rendered);
 							continue;
 						}
-						const ownTolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, flags, normalized: [], ownSideExtras };
+						const ownTolerance = ownRenderTolerance(delimiters, ownSideExtras);
 						const own = reparse(ownRender(cand.node), ownTolerance);
 						if (own.status !== 'round-trip') {
 							failed(`own render: ${own.status === 'failed' ? own.message : own.reason}`, own.rendered);
@@ -1264,6 +1278,8 @@ export async function validateReadRenderParse(
 							] as const)
 								if (stepTolerance.normalized!.length > 0)
 									spellingNormalized.push({ entry: entry.name, kind: renderedKind, input: inputSource, rendered: stepRendered, spellings: stepTolerance.normalized! });
+							if (tolerance.reordered!.length > 0)
+								flagReordered.push({ entry: entry.name, kind: renderedKind, input: inputSource, rendered, reorders: tolerance.reordered! });
 							if (options.onFixture && data !== undefined) {
 								// Success path (both re-parse OK + AST match OK) —
 								// emit a render fixture (UntypedNode → rendered) and a
@@ -1410,7 +1426,8 @@ export async function validateReadRenderParse(
 		skips,
 		excluded,
 		trivia,
-		spellingNormalized
+		spellingNormalized,
+		flagReordered
 	};
 }
 
