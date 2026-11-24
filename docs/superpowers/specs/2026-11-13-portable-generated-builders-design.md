@@ -373,7 +373,8 @@ Table 3. One path is a prefix of another. A tail is a suffix, so a prefix never 
 | | `identifier.qualified` | `qualified` |
 | | `identifier.metavariable` | `metavariable` |
 | rust `statement.return.expression` | `expression.call` | `call` |
-| | `expression.call.member` | `call.member` (`member` is also `expression.member`'s tail) |
+| | `expression.call.member` | `call.member` (`member` also ends `expression.member`) |
+| | `expression.member` | `expression.member` (`member` also ends `expression.call.member`, so no shorter suffix is its own) |
 
 Table 4. The same path in different slots: `expression.binary.arithmetic.add`'s tail.
 
