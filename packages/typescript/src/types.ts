@@ -26445,8 +26445,12 @@ export namespace FormalParametersSetAccessorSignature {
 	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersSetAccessorSignature>;
 	export type BuildArgs =
 		| [value: Admit<T.FormalParametersElementsSetAccessorSignature>]
-		| [config: T.SetterParameter.Config];
-	export type LooseArgs = [value: T.FormalParametersSetAccessorSignature.Loose];
+		| [value: Admit<T.SetterParameter>, options?: T.FormalParametersElementsSetAccessorSignature.Options]
+		| [config: T.SetterParameter.Config, options?: T.FormalParametersElementsSetAccessorSignature.Options];
+	export type LooseArgs = [
+		value: T.FormalParametersSetAccessorSignature.Loose,
+		options?: T.FormalParametersElementsSetAccessorSignature.Options
+	];
 	export type Kind = TSKindId.FormalParametersSetAccessorSignature;
 }
 export namespace FormalParametersElementsSetAccessorSignature {

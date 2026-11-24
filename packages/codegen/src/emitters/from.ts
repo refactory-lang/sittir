@@ -66,6 +66,7 @@ import {
 	classifyKindsForResolver,
 	resolvesLooseInput,
 	looseElementType,
+	forwardedOptionsTarget,
 	leadingOptionsOf,
 	placedAlias,
 	keywordAliasContent,
@@ -380,8 +381,14 @@ function emitBranchFrom(
 	const factory = `F.${node.rawFactoryName!}`;
 	const slots = node.configSlots;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
-	const optionsParam = spellingType === undefined ? '' : `, options?: T.${node.typeName}.Options`;
-	const optionsArg = spellingType === undefined ? '' : ', options';
+	const forwardedTarget = spellingType === undefined ? forwardedOptionsTarget(node, nodeMap) : undefined;
+	const optionsParam =
+		spellingType !== undefined
+			? `, options?: T.${node.typeName}.Options`
+			: forwardedTarget === undefined
+				? ''
+				: `, ...options: [options?: T.${forwardedTarget.typeName}.Options]`;
+	const optionsArg = spellingType !== undefined ? ', options' : forwardedTarget === undefined ? '' : '';
 	// Loose optionality mirrors the strict surface's own derivation
 	// (`argumentOptional`, node-map.ts): a required field only blocks the
 	// no-argument call when it has no default-empty construction of its own
@@ -575,16 +582,10 @@ function emitBranchFrom(
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) body.push(`  const _value = ${inputExpr};`);
-			const resolved = resolveFieldCall(
-				numeric ? '_value' : inputExpr,
-				soleField,
-				isMultiple(soleField),
-				nodeMap,
-				intern,
-				true,
-				undefined,
-				kindEntries
-			);
+			const resolved =
+				forwardedTarget === undefined
+					? resolveFieldCall(numeric ? '_value' : inputExpr, soleField, isMultiple(soleField), nodeMap, intern, true, undefined, kindEntries)
+					: `coerceTo${forwardedTarget.typeName}((${numeric ? '_value' : inputExpr}) as T.${forwardedTarget.typeName}.Loose, ...options)`;
 			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
 			const directDefault = hoistedSlotDefault(soleField, nodeMap, kindEntries);
 			const guardedCall = directDefault ? `${call} ?? ${directDefault}` : call;

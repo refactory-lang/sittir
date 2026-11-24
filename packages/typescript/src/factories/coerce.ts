@@ -10187,21 +10187,30 @@ export function resolveFormalParametersSetAccessorSignature_elements(
 	);
 }
 
-export const coerceToFormalParametersSetAccessorSignature: ConfigSeat<
-	T.FormalParametersSetAccessorSignature.Loose,
-	ReturnType<typeof F.buildFormalParametersSetAccessorSignature>
-> = (
-	input: T.FormalParametersSetAccessorSignature.Loose
-): ReturnType<typeof F.buildFormalParametersSetAccessorSignature> => {
+export function coerceToFormalParametersSetAccessorSignature<
+	const I extends T.FormalParametersSetAccessorSignature.Loose
+>(
+	input: I & RefuseUndeclared<I, T.FormalParametersSetAccessorSignature.Loose>,
+	...options: [options?: T.FormalParametersElementsSetAccessorSignature.Options]
+): ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
+export function coerceToFormalParametersSetAccessorSignature(
+	input: T.FormalParametersSetAccessorSignature.Loose,
+	...options: [options?: T.FormalParametersElementsSetAccessorSignature.Options]
+): ReturnType<typeof F.buildFormalParametersSetAccessorSignature> {
 	if (isNodeOfKind(input, TSKindId.FormalParametersSetAccessorSignature))
 		return input as unknown as ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
 	return F.buildFormalParametersSetAccessorSignature(
-		_resolveOneBranch<T.FormalParametersElementsSetAccessorSignature>(
-			configFieldOr(input, 'elements', () => input, TSKindId.FormalParametersSetAccessorSignature),
-			'_formal_parameters_elements_set_accessor_signature'
+		coerceToFormalParametersElementsSetAccessorSignature(
+			configFieldOr(
+				input,
+				'elements',
+				() => input,
+				TSKindId.FormalParametersSetAccessorSignature
+			) as T.FormalParametersElementsSetAccessorSignature.Loose,
+			...options
 		)
 	);
-};
+}
 
 export function resolveFormalParametersElementsSetAccessorSignature_item(
 	value: T.FormalParametersElementsSetAccessorSignature.LooseConfig['item']

@@ -19855,12 +19855,20 @@ export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParameter
 export function buildFormalParametersSetAccessorSignature<
 	V extends Admit<T.FormalParametersElementsSetAccessorSignature>
 >(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildFormalParametersSetAccessorSignature>;
+export function buildFormalParametersSetAccessorSignature<V extends Admit<T.SetterParameter>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
+): ReturnType<typeof _buildFormalParametersSetAccessorSignature>;
 export function buildFormalParametersSetAccessorSignature<
 	DecoratorsSlot extends T.SetterParameter.Config['decorators'],
 	PatternSlot extends T.SetterParameter.Config['pattern'],
 	TypeSlot extends T.SetterParameter.Config['type']
 >(
-	config: RefusingConfig<T.SetterParameter.Config, { decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }>
+	config: RefusingConfig<
+		T.SetterParameter.Config,
+		{ decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }
+	>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): ReturnType<typeof _buildFormalParametersSetAccessorSignature>;
 export function buildFormalParametersSetAccessorSignature(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {

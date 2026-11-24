@@ -77,6 +77,7 @@ import {
 	isSlotBearingCompound,
 	classifyFactoryEmission,
 	forwardedTargetKind,
+	forwardedOptionsTarget,
 	forwardsTargetArguments,
 	ownTextLeaf,
 	type OwnTextLeaf,
@@ -1610,10 +1611,17 @@ function resolveFactorySurface(
 	const surface = resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	if (surface.nullary === true) return surface;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
-	if (spellingType === undefined) return surface;
+	if (spellingType === undefined) {
+		const forwarded = forwardedOptionsTarget(node, nodeMap);
+		return forwarded === undefined ? surface : withTrailingOptions(surface, `T.${forwarded.typeName}.Options`);
+	}
 	const leadingOptions = leadingOptionsOf(node, nodeMap);
 	if (leadingOptions !== undefined) return { ...surface, spellingType, leadingOptions };
-	const trailing = `options?: T.${node.typeName}.Options`;
+	return { ...withTrailingOptions(surface, `T.${node.typeName}.Options`), spellingType };
+}
+
+function withTrailingOptions(surface: FactorySurface, optionsType: string): FactorySurface {
+	const trailing = `options?: ${optionsType}`;
 	return {
 		...surface,
 		params: `${surface.params}, ${trailing}`,
@@ -1622,8 +1630,7 @@ function resolveFactorySurface(
 		rowParams: `${surface.rowParams}, ${trailing}`,
 		rowLooseParams: `${surface.rowLooseParams}, ${trailing}`,
 		arity: surface.arity === undefined ? undefined : surface.arity + 1,
-		args: `${surface.args}, options`,
-		spellingType
+		args: `${surface.args}, options`
 	};
 }
 
@@ -1812,10 +1819,29 @@ function forwardedConstruction(
 	if (target === null) return null;
 	const targetNode = nodeMap.nodes.get(target)!;
 	const withheld = registeredSlots(node).length > 0 && restForwardTarget(node, nodeMap, kindEntries) !== null;
-	const targetSurface = constructorSurface(target, nodeMap, kindEntries);
+	const forwardedOptions = forwardedOptionsTarget(node, nodeMap);
+	const trailingOptions = forwardedOptions === undefined ? undefined : `options?: T.${forwardedOptions.typeName}.Options`;
+	const targetSurface = constructorSurface(target, nodeMap, kindEntries, { immediate: true });
+	const chainedSurface = constructorSurface(target, nodeMap, kindEntries);
 	const targetParams = targetSurface?.params;
-	const targetOverloads = withheld ? [] : (targetSurface?.paramsOverloads ?? (targetParams === undefined ? undefined : [targetParams]));
-	const targetDeclarations = withheld ? [] : targetSurface?.declarations;
+	const surfaceOverloads = (surfaceOf: typeof targetSurface, trailing?: string): readonly string[] | undefined =>
+		(surfaceOf?.paramsOverloads ?? (surfaceOf?.params === undefined ? [] : [surfaceOf.params])).map((params) =>
+			trailing === undefined ? params : `${params}, ${trailing}`
+		);
+	const targetOverloads = withheld
+		? []
+		: targetSurface === undefined
+			? undefined
+			: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingOptions) ?? [])])];
+	const chainedDeclarations = (chainedSurface?.declarations ?? []).map((entry) =>
+		trailingOptions === undefined ? entry : withTrailingParam(entry, trailingOptions)
+	);
+	const targetDeclarations = withheld
+		? []
+		: targetSurface === undefined
+			? undefined
+			: [...new Map([...targetSurface.declarations, ...chainedDeclarations].map((entry) => [JSON.stringify(entry), entry])).values()];
+	const ownSurface = forwardedOptionsTarget(node, nodeMap) === undefined ? surface : resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	const ordered = <E>(all: readonly E[], paramsOf: (entry: E) => string): E[] => [
 		...all.filter((entry) => paramsOf(entry) === ''),
 		...all.filter((entry) => paramsOf(entry) !== '')
@@ -1824,10 +1850,10 @@ function forwardedConstruction(
 		target,
 		targetParams,
 		overloads: ordered(
-			[publicParams(surface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
+			[publicParams(ownSurface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
 			(declared) => declared.params
 		),
-		rows: ordered([surface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params).map(
+		rows: ordered([ownSurface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params).map(
 			(params) => `[${params}]`
 		)
 	};
@@ -1874,7 +1900,8 @@ function chainParamOptional(kind: string, nodeMap: NodeMap, kindEntries: readonl
 export function constructorSurface(
 	kind: string,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[]
+	kindEntries: readonly KindEnumEntry[],
+	options?: { readonly immediate?: boolean }
 ):
 	| {
 			params: string;
@@ -1885,7 +1912,7 @@ export function constructorSurface(
 			argOptional?: boolean;
 	  }
 	| undefined {
-	const target = nodeMap.nodes.get(constructorTargetKind(kind, nodeMap, kindEntries));
+	const target = nodeMap.nodes.get(options?.immediate ? kind : constructorTargetKind(kind, nodeMap, kindEntries));
 	if (target === undefined) return undefined;
 	const plain = (params: string): readonly RefusingParams[] => [plainParams(params)];
 	switch (target.modelType) {
@@ -2126,9 +2153,10 @@ function fieldCarryingFactoryText(
 	const builtName = `T.${node.typeName}.Bound`;
 	const configType = surface.configType ?? `T.${node.typeName}.Config`;
 	const leadingOptions = surface.leadingOptions;
+	const recordParams = forwardedOptionsTarget(node, nodeMap) === undefined ? surface.params : resolveConfigFactorySurface(node, nodeMap, kindEntries).params;
 	const signature =
 		leadingOptions === undefined
-			? `${exportKw}function ${fn}(${surface.params}): ${builtName} {`
+			? `${exportKw}function ${fn}(${recordParams}): ${builtName} {`
 			: `${exportKw}function ${fn}(...args: unknown[]): ${builtName} {`;
 	let valueSourceFor: (f: AssembledNonterminal) => string;
 	const registered = registeredSlots(node);

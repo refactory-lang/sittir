@@ -14645,6 +14645,10 @@ The context a factory dispatch runs in.
 
 Whether a node's factory forwards its arguments to its target.
 
+### `packages/codegen/src/emitters/shared.ts::forwardedOptionsTarget`
+
+The target a forwarding builder takes its options from: the immediate target of a kind whose factory forwards its arguments, when the target has registered slots and is neither a list nor a spread kind. The strict surface and the loose coercer both read it, so the options a forwarder admits are the target's options, passed on as received.
+
 ### `packages/codegen/src/emitters/shared.ts::FromDispatchContext`
 
 The context a from-dispatch runs in.
