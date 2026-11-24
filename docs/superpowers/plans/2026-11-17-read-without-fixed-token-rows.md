@@ -426,7 +426,7 @@ The arena spec's "A render keeps no table of the nodes it visits" (the maintaine
 
 - [ ] **Step 1: Write the failing tests.**
   - `a_render_keeps_no_row_per_node`: at a fixed depth, a plain render's peak heap above its output does not grow with the number of nodes it visits. A template render's growth is the prepare pass's overlay alone, which stays parked (arena plan, "Costed and parked"), and a ceiling that only falls pins it.
-  - `a_wide_list_renders_in_linear_run_decodes`: rendering a parsed list of `n` items decodes each run entry at most once.
+  - `a_wide_list_renders_in_linear_run_decodes`: a plain render of a parsed list of `n` items decodes a number of entries that does not grow with `n`, and a template render at most 3.5 decodes per run entry at every size, each a direct read. That ceiling only falls.
   - `a_rebuilt_list_renders_in_linear_run_decodes`: a rebuilt list of `n` parsed leaves decodes run entries linear in `n` when its items are reversed, interleaved from two lists, alternated with rebuilt calls, and when every item holds a comment.
 - [ ] **Step 2: Run them.** Run `PARITY -- a_render_keeps a_wide_list a_rebuilt_list`. Expected: FAIL while the render builds its table and scans its runs.
 - [ ] **Step 3: Implement.** The walk follows a record's cells and reads a parsed node by its record's address. `Records` holds no row per node for a render, and release builds neither a tree nor a table.
