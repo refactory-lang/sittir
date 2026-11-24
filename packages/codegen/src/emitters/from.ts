@@ -532,9 +532,14 @@ function emitBranchFrom(
 			const interiorSole = interiorSlotGuards(node.kind, node).some((guard) => guard.slot === soleField.name);
 			const isNodeTest = interiorSole ? 'isNodeValue(input)' : `isNodeOfKind(input, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
 			if (!holdsOwnKind(node, nodeMap)) {
-				body.push(
-					`  if (${inputOptional ? 'input !== undefined && ' : ''}${isNodeTest}) return input as unknown as ${spelledType ?? returnType};`
-				);
+				const builtTest = `${inputOptional ? 'input !== undefined && ' : ''}${isNodeTest}`;
+				if (optionsParam !== '' && spellingType === undefined) {
+					const givenOptions = optionsParam.startsWith(', ...options') ? 'options[0]' : 'options';
+					body.push(
+						`  if (${builtTest} && ${givenOptions} !== undefined) throw new TypeError('${typeName}: a built node carries its own options; pass them when the node is built');`
+					);
+				}
+				body.push(`  if (${builtTest}) return input as unknown as ${spelledType ?? returnType};`);
 			}
 		} else {
 			const bareKind =

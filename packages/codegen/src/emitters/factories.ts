@@ -1831,18 +1831,24 @@ function forwardedConstruction(
 	const targetSurface = constructorSurface(target, nodeMap, kindEntries, { immediate: true });
 	const chainedSurface = constructorSurface(target, nodeMap, kindEntries);
 	const targetParams = targetSurface?.params;
-	const surfaceOverloads = (surfaceOf: typeof targetSurface, trailing?: string): readonly string[] | undefined =>
-		(surfaceOf?.paramsOverloads ?? (surfaceOf?.params === undefined ? [] : [surfaceOf.params])).map((params) =>
-			trailing === undefined || takesOptions(params) ? params : appendParam(params, trailing)
-		);
+	const trailingFor = (params: string): string | undefined =>
+		trailingOptions === undefined || takesOptions(params) || (forwardedOptions !== undefined && params.startsWith('value: '))
+			? undefined
+			: trailingOptions;
+	const surfaceOverloads = (surfaceOf: typeof targetSurface, trailing?: (params: string) => string | undefined): readonly string[] | undefined =>
+		(surfaceOf?.paramsOverloads ?? (surfaceOf?.params === undefined ? [] : [surfaceOf.params])).map((params) => {
+			const extra = trailing?.(params);
+			return extra === undefined ? params : appendParam(params, extra);
+		});
 	const targetOverloads = withheld
 		? []
 		: targetSurface === undefined
 			? undefined
-			: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingOptions) ?? [])])];
-	const chainedDeclarations = (chainedSurface?.declarations ?? []).map((entry) =>
-		trailingOptions === undefined || takesOptions(entry.params) ? entry : withTrailingParam(entry, trailingOptions)
-	);
+			: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingFor) ?? [])])];
+	const chainedDeclarations = (chainedSurface?.declarations ?? []).map((entry) => {
+		const extra = trailingFor(entry.params);
+		return extra === undefined ? entry : withTrailingParam(entry, extra);
+	});
 	const targetDeclarations = withheld
 		? []
 		: targetSurface === undefined
@@ -2411,7 +2417,7 @@ function fieldCarryingFactoryText(
 		const prebuiltTest = [forwardTarget, ...(splicedEnvelope === undefined ? [] : [splicedEnvelope.kind])]
 			.map((kind) => `(args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(kind, nodeMap, kindEntries)})`)
 			.join(' || ');
-		const prebuiltCheck = splicedEnvelope === undefined ? prebuiltTest : `(${prebuiltTest})`;
+		const prebuiltCheck = `(${prebuiltTest})`;
 		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
 			...forwarded.overloads.map((declared) => declaredOverload(`${exportKw}function ${fn}`, declared, `ReturnType<typeof _${fn}>`)),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
@@ -2444,10 +2450,16 @@ function fieldCarryingFactoryText(
 				`  if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {`,
 				`    return _${fn}(args[0] as Parameters<typeof _${fn}>[0]);`,
 				`  }`,
-				`  const prebuilt =`,
-				`    args.length === 1 && typeof args[0] === 'object' && args[0] !== null &&`,
+				`  const built =`,
+				`    typeof args[0] === 'object' && args[0] !== null &&`,
 				`    ${prebuiltCheck};`,
-				`  return prebuilt`,
+				`  const builtSelf =`,
+				`    typeof args[0] === 'object' && args[0] !== null &&`,
+				`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)});`,
+				`  if ((built || builtSelf) && args[1] !== undefined && (typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)) {`,
+				`    throw new TypeError('${node.typeName}: a built node carries its own options; pass them when the node is built');`,
+				`  }`,
+				`  return built && args[1] === undefined`,
 				`    ? _${fn}(args[0] as Parameters<typeof _${fn}>[0])`,
 				`    : _${fn}(${targetBuilt('...args')} as Parameters<typeof _${fn}>[0]);`,
 				'}'

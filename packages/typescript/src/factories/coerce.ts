@@ -10197,6 +10197,10 @@ export function coerceToFormalParametersSetAccessorSignature(
 	input: T.FormalParametersSetAccessorSignature.Loose,
 	...options: [options?: T.FormalParametersElementsSetAccessorSignature.Options]
 ): ReturnType<typeof F.buildFormalParametersSetAccessorSignature> {
+	if (isNodeOfKind(input, TSKindId.FormalParametersSetAccessorSignature) && options[0] !== undefined)
+		throw new TypeError(
+			'FormalParametersSetAccessorSignature: a built node carries its own options; pass them when the node is built'
+		);
 	if (isNodeOfKind(input, TSKindId.FormalParametersSetAccessorSignature))
 		return input as unknown as ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
 	return F.buildFormalParametersSetAccessorSignature(

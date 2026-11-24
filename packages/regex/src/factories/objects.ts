@@ -658,12 +658,24 @@ export function buildAnonymousCapturingGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildAnonymousCapturingGroup(args[0] as Parameters<typeof _buildAnonymousCapturingGroup>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Pattern as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.AnonymousCapturingGroup as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError(
+			'AnonymousCapturingGroup: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildAnonymousCapturingGroup(args[0] as Parameters<typeof _buildAnonymousCapturingGroup>[0])
 		: _buildAnonymousCapturingGroup(
 				(buildPattern as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildAnonymousCapturingGroup>[0]
@@ -818,12 +830,22 @@ export function buildNonCapturingGroup(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNonCapturingGroup(args[0] as Parameters<typeof _buildNonCapturingGroup>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Pattern as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.NonCapturingGroup as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('NonCapturingGroup: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildNonCapturingGroup(args[0] as Parameters<typeof _buildNonCapturingGroup>[0])
 		: _buildNonCapturingGroup(
 				(buildPattern as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildNonCapturingGroup>[0]

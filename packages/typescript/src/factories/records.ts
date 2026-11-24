@@ -362,12 +362,22 @@ export function buildExportClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildExportClause(args[0] as Parameters<typeof _buildExportClause>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ExportSpecifiers as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ExportClause as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('ExportClause: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildExportClause(args[0] as Parameters<typeof _buildExportClause>[0])
 		: _buildExportClause(
 				(buildExportSpecifiers as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildExportClause>[0]
@@ -910,12 +920,22 @@ export function buildNamedImports(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildNamedImports(args[0] as Parameters<typeof _buildNamedImports>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ImportSpecifiers as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.NamedImports as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('NamedImports: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildNamedImports(args[0] as Parameters<typeof _buildNamedImports>[0])
 		: _buildNamedImports(
 				(buildImportSpecifiers as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildNamedImports>[0]
@@ -4088,12 +4108,22 @@ export function buildFinallyClause(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildFinallyClause(args[0] as Parameters<typeof _buildFinallyClause>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.FinallyClause as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('FinallyClause: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildFinallyClause(args[0] as Parameters<typeof _buildFinallyClause>[0])
 		: _buildFinallyClause(
 				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildFinallyClause>[0]
@@ -13109,12 +13139,22 @@ export function buildEnumBody(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildEnumBody(args[0] as Parameters<typeof _buildEnumBody>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.EnumBodyElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.EnumBody as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('EnumBody: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildEnumBody(args[0] as Parameters<typeof _buildEnumBody>[0])
 		: _buildEnumBody(
 				(buildEnumBodyElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildEnumBody>[0]
@@ -14842,12 +14882,22 @@ export function buildAssertsAnnotation(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildAssertsAnnotation(args[0] as Parameters<typeof _buildAssertsAnnotation>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Asserts as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.AssertsAnnotation as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('AssertsAnnotation: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildAssertsAnnotation(args[0] as Parameters<typeof _buildAssertsAnnotation>[0])
 		: _buildAssertsAnnotation(
 				(buildAsserts as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildAssertsAnnotation>[0]
@@ -16330,12 +16380,24 @@ export function buildTypePredicateAnnotation(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypePredicateAnnotation(args[0] as Parameters<typeof _buildTypePredicateAnnotation>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypePredicate as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypePredicateAnnotation as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError(
+			'TypePredicateAnnotation: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildTypePredicateAnnotation(args[0] as Parameters<typeof _buildTypePredicateAnnotation>[0])
 		: _buildTypePredicateAnnotation(
 				(buildTypePredicate as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -16755,12 +16817,24 @@ export function buildTypeQueryCallExpression(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeQueryCallExpression(args[0] as Parameters<typeof _buildTypeQueryCallExpression>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Arguments as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeQueryCallExpression as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError(
+			'TypeQueryCallExpression: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildTypeQueryCallExpression(args[0] as Parameters<typeof _buildTypeQueryCallExpression>[0])
 		: _buildTypeQueryCallExpression(
 				(buildArguments as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeQueryCallExpression>[0]
@@ -17701,12 +17775,22 @@ export function buildTypeArguments(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeArguments(args[0] as Parameters<typeof _buildTypeArguments>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.Types as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeArguments as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('TypeArguments: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildTypeArguments(args[0] as Parameters<typeof _buildTypeArguments>[0])
 		: _buildTypeArguments(
 				(buildTypes as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTypeArguments>[0]
@@ -18520,12 +18604,22 @@ export function buildTypeParameters(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTypeParameters(args[0] as Parameters<typeof _buildTypeParameters>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParametersElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParameters as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('TypeParameters: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildTypeParameters(args[0] as Parameters<typeof _buildTypeParameters>[0])
 		: _buildTypeParameters(
 				(buildTypeParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -19301,12 +19395,22 @@ export function buildTupleType(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildTupleType(args[0] as Parameters<typeof _buildTupleType>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleTypeMembers as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleType as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError('TupleType: a built node carries its own options; pass them when the node is built');
+	}
+	return built && args[1] === undefined
 		? _buildTupleType(args[0] as Parameters<typeof _buildTupleType>[0])
 		: _buildTupleType(
 				(buildTupleTypeMembers as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildTupleType>[0]
@@ -21281,12 +21385,24 @@ export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
 		return _buildAmbientDeclarationGlobal(args[0] as Parameters<typeof _buildAmbientDeclarationGlobal>[0]);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.AmbientDeclarationGlobal as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError(
+			'AmbientDeclarationGlobal: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildAmbientDeclarationGlobal(args[0] as Parameters<typeof _buildAmbientDeclarationGlobal>[0])
 		: _buildAmbientDeclarationGlobal(
 				(buildStatementBlock as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -25131,12 +25247,24 @@ export function buildParenthesizedExpressionSequence(...args: unknown[]) {
 			args[0] as Parameters<typeof _buildParenthesizedExpressionSequence>[0]
 		);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.SequenceExpression as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParenthesizedExpressionSequence as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError(
+			'ParenthesizedExpressionSequence: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildParenthesizedExpressionSequence(args[0] as Parameters<typeof _buildParenthesizedExpressionSequence>[0])
 		: _buildParenthesizedExpressionSequence(
 				(buildSequenceExpression as (...a: unknown[]) => unknown)(...args) as Parameters<
@@ -29193,12 +29321,24 @@ export function buildFormalParametersSetAccessorSignature(...args: unknown[]) {
 			args[0] as Parameters<typeof _buildFormalParametersSetAccessorSignature>[0]
 		);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElementsSetAccessorSignature as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersSetAccessorSignature as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError(
+			'FormalParametersSetAccessorSignature: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildFormalParametersSetAccessorSignature(
 				args[0] as Parameters<typeof _buildFormalParametersSetAccessorSignature>[0]
 			)
@@ -34159,12 +34299,24 @@ export function buildFormalParametersElementsReceiverGroup(...args: unknown[]) {
 			args[0] as Parameters<typeof _buildFormalParametersElementsReceiverGroup>[0]
 		);
 	}
-	const prebuilt =
-		args.length === 1 &&
+	const built =
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElements as const);
-	return prebuilt
+	const builtSelf =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElementsReceiverGroup as const);
+	if (
+		(built || builtSelf) &&
+		args[1] !== undefined &&
+		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+	) {
+		throw new TypeError(
+			'FormalParametersElementsReceiverGroup: a built node carries its own options; pass them when the node is built'
+		);
+	}
+	return built && args[1] === undefined
 		? _buildFormalParametersElementsReceiverGroup(
 				args[0] as Parameters<typeof _buildFormalParametersElementsReceiverGroup>[0]
 			)

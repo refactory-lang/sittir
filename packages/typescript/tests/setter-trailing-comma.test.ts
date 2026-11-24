@@ -149,10 +149,16 @@ describe('the setter parameter elements sub-builder (strict)', () => {
 		expect(ts.build.formalParametersSetAccessorSignature.elements({ pattern: ts.kinds.This }, { trailingComma: ts.kinds.Comma }).$render()).toBe('(this,)');
 	});
 
+	it('refuses options after a prebuilt elements value (default)', async () => {
+		await using ts = await createEngine(typescript);
+		const built = ts.build.formalParametersSetAccessorSignature.elements({ pattern: ts.kinds.This });
+		expect(() => ts.build.formalParametersSetAccessorSignature(built, { trailingComma: ts.kinds.Comma })).toThrow('carries its own options');
+	});
+
 	it('refuses options after a prebuilt elements value', async () => {
 		await using ts = await createEngine(typescript, { api: 'strict' });
 		const built = ts.build.formalParametersSetAccessorSignature.elements({ pattern: ts.kinds.This });
 		// @ts-expect-error a built elements value takes no options; they go in when it is built
-		expect(() => ts.build.formalParametersSetAccessorSignature(built, { trailingComma: ts.kinds.Comma }).$render()).toThrow();
+		expect(() => ts.build.formalParametersSetAccessorSignature(built, { trailingComma: ts.kinds.Comma })).toThrow('carries its own options');
 	});
 });
