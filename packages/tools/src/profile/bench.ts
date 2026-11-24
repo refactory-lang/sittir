@@ -245,7 +245,7 @@ function formatTable(results: BenchResult[]): string {
 }
 
 export async function run(_opts: BenchOptions): Promise<number> {
-	measureBuilt('bench');
+	measureBuilt('bench', stableGrammars());
 	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
 	process.stderr.write(`bench-render: N=${N} iterations per grammar and workload\n`);
 	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);

@@ -136,7 +136,6 @@ function integer(name: string, value: number, minimum: number): number {
 }
 
 export async function run(options: StorageBenchOptions): Promise<number> {
-	measureBuilt('bench-storage');
 	const rounds = integer('rounds', options.rounds ?? 5, 1);
 	const warmup = integer('warmup', options.warmup ?? 2, 0);
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
@@ -157,6 +156,8 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 		if (!grammar) throw new Error(`unknown grammar: ${name}`);
 		if (!grammars.includes(grammar)) grammars.push(grammar);
 	}
+	const memory = options.baseline !== undefined;
+	measureBuilt('bench-storage', memory ? stableGrammars() : grammars);
 	const trees: Readonly<Record<Revision, string>> = { branch: REPO_ROOT, baseline: options.baseline === undefined ? REPO_ROOT : realpathSync.native(options.baseline) };
 	const revisions: readonly Revision[] = options.baseline === undefined ? ['branch'] : ['branch', 'baseline'];
 	const nativeSamples: (NativeHydrationRun & { round: number; idle: string | null })[] = [];
@@ -180,7 +181,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 					);
 					continue;
 				}
-				for (const slot of roundWorkers(round, revisions, options.baseline !== undefined)) {
+				for (const slot of roundWorkers(round, revisions, memory)) {
 					const tree = trees[slot.revision];
 					if ('storage' in slot) {
 						validationSamples[slot.revision].push(

@@ -581,3 +581,11 @@ Tallies a cargo test log. Each binary's totals come from its `test result:` line
 ### `packages/tools/src/scripts/cargo-test-tally.ts::run`
 
 Tallies the cargo test log and prints the per-binary and total passed, failed and ignored counts, labelled with the storage, as text or JSON. Returns 0 when the log was tallied. Returns 1, printing the reason to stderr, when the log cannot be read, has no result line, or its totals do not match its per-test lines.
+
+### `packages/tools/src/built.ts::staleBuilds`
+
+The build projects a non-dry `tsrs --build` would rebuild, starting from the given `tsconfig.build.json` projects and following their references transitively, as `tsrs --build --dry --verbose` reports them. A project neither given nor referenced is not asked about, so its build may be out of date without appearing.
+
+### `packages/tools/src/built.ts::measureBuilt`
+
+Refuses a measurement that would time code other than what its sources say. The tool must run from built output, and every build the run loads must be current: the project holding the entry script (`process.argv[1]`, the CLI or a tools script) and the build project of each grammar the run loads, with their references (`staleBuilds`). A grammar the run does not load is not checked, so one package that fails to build stops only the measurements that load it. Callers pass the grammars they load: every stable grammar for `bench`, `collect-baseline`, and `bench-storage` with a baseline (its memory workers load them all); the measured grammars for `bench-storage` otherwise; the one grammar for `trivia-timing`. On success it sets `NODE_ENV` to `production` unless already set.

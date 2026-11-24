@@ -463,7 +463,7 @@ const isCli = (() => {
 })();
 
 export async function run(_argv: string[]): Promise<number> {
-	if (process.env['SITTIR_METRICS'] === '1') measureBuilt('collect-baseline');
+	if (process.env['SITTIR_METRICS'] === '1') measureBuilt('collect-baseline', stableGrammars());
 	const baseline = await collectBaseline();
 	await new Promise<void>((resolve, reject) => {
 		process.stdout.write(serialiseBaseline(baseline), (error) => (error ? reject(error) : resolve()));
