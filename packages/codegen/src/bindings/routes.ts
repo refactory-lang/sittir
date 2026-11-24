@@ -868,7 +868,8 @@ export function guaranteedBy(
 		if (pinned.has(pathKey(path))) return slots.length === 0;
 		return slots.length > 0 && slots.every((slot) => {
 			const held = heldSteps(model, kinds[0]!, { field: slot.name, kind: null, after: null, anchor: null });
-			return held !== undefined && (told([...path, ...heldPath(held, null)]) || told([...path, ...heldPath(held, 'only')]));
+			if (held === undefined || held.slice(0, -1).some((step) => step.slot.multiple)) return false;
+			return told([...path, ...heldPath(held, 'only')]) || (!held.at(-1)!.slot.multiple && told([...path, ...heldPath(held, null)]));
 		});
 	};
 	return {

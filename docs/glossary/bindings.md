@@ -2198,7 +2198,7 @@ The concrete kinds a `@dropped` capture takes out of one grammar slot while the 
 
 ### `packages/codegen/src/bindings/routes.ts::Guaranteed::told`
 
-Whether the entry's own tests fix the whole node at a path, so the slot that reaches it routes no member for that entry: python's getter tests a lone `self` in its parameters, so it has no `parameters`, while a method on the same kind keeps them.
+Whether the entry's own tests fix the whole node at a path, so the slot that reaches it routes no member for that entry: python's getter tests a lone `self` in its parameters, so it has no `parameters`, while a method on the same kind keeps them. A slot that holds one node is told by a test of that node; a list is told only by a test anchored at both ends of it, since an unanchored test fixes one item and leaves the others to read.
 
 ### `packages/codegen/src/bindings/vocabulary.ts::DeclaredAlias`
 

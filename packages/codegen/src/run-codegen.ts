@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { join, dirname, resolve } from 'node:path';
+import { join, dirname, relative, resolve } from 'node:path';
 import { format as oxfmtFormat } from 'oxfmt';
 import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 
@@ -86,13 +86,11 @@ export async function writePortableTyped(sittirDir: string, typed: PortableTyped
 
 export const PORTABLE_BUILD_TSCONFIG = 'tsconfig.portable-build.json';
 
-const portableBuildTsconfigText = `${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [`../src/${PORTABLE_BUILD_FILE}`] }, null, '\t')}\n`;
-
-export async function portableBuildTypeDiagnostics(grammar: string, sittirDir: string): Promise<GrammarDiagnostic[]> {
+export async function portableBuildTypeDiagnostics(grammar: string, sittirDir: string, buildModule: string): Promise<GrammarDiagnostic[]> {
 	const dir = resolve(sittirDir);
 	const tsconfig = join(dir, PORTABLE_BUILD_TSCONFIG);
-	const module = join(dirname(dir), 'src', PORTABLE_BUILD_FILE);
-	await writeFile(tsconfig, portableBuildTsconfigText);
+	const module = resolve(buildModule);
+	await writeFile(tsconfig, `${JSON.stringify({ extends: relative(dir, join(REPO_ROOT, 'tsconfig.json')), compilerOptions: { noEmit: true, types: ['node'] }, include: [relative(dir, module)] }, null, '\t')}\n`);
 	return tsrsDiagnostics(tsconfig, REPO_ROOT)
 		.filter((d) => d.file === undefined || resolve(REPO_ROOT, d.file) === module)
 		.map((d): GrammarDiagnostic => ({ scope: 'grammar', grammar, code: 'portable-emit-type', severity: 'warning', canProceed: true, message: `${d.file === undefined ? '' : `${PORTABLE_BUILD_FILE}:${d.line}: `}${d.code} ${d.message}` }));
@@ -385,7 +383,7 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	else await writeFile(join(outDir, PORTABLE_BUILD_FILE), result.portableBuild);
 	await writePortableTyped(sittirDir, result.portableTyped);
 	if (result.portableBuild === undefined) rmSync(join(sittirDir, PORTABLE_BUILD_TSCONFIG), { force: true });
-	const emitDiagnostics = [...result.emitDiagnostics, ...(result.portableBuild === undefined ? [] : await portableBuildTypeDiagnostics(grammar, sittirDir))];
+	const emitDiagnostics = [...result.emitDiagnostics, ...(result.portableBuild === undefined ? [] : await portableBuildTypeDiagnostics(grammar, sittirDir, join(outDir, PORTABLE_BUILD_FILE)))];
 	if (emitDiagnostics.length > 0) {
 		writeDiagnostics(emitDiagnostics, formatGrammarDiagnostics);
 		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...emitDiagnostics], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));

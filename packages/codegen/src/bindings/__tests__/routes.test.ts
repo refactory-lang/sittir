@@ -589,6 +589,19 @@ describe('guaranteedBy', () => {
 		expect(base.slots.map((slot) => slot.name)).toContain('parameters');
 	});
 
+	it('keeps the route of a list an entry pins only one item of, since an unanchored pin tells the item and not the whole list', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('method', node('method', [slot('name', ['identifier']), slot('parameters', ['mixed_list'])]));
+		model.set('mixed_list', node('mixed_list', [slot('items', ['identifier', 'expr'], { multiple: true })]));
+		const input = {
+			...(await grammar('(method) @declaration.function\n((method parameters: (mixed_list (identifier) @_self)) @declaration.function.plain (#eq? @_self "self"))')),
+			model
+		};
+		const pinned = (resolveRoutes(input).readEntries.get('method') ?? []).find((entry) => entry.vocab === 'declaration.function.plain')!;
+		expect(guaranteedBy(input.model, pinned).told([{ owner: 'method', slot: 'parameters' }])).toBe(false);
+		expect(pinned.slots.map((slot) => slot.name)).toContain('parameters');
+	});
+
 	it("keys a negated slot of an alias envelope by its path through the envelope's content, on the refinement and on the entry it refines", async () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('call_storage', node('call_storage', [slot('callee', ['identifier']), slot('args', ['identifier'], { required: false })]));
