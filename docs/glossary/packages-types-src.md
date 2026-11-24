@@ -998,6 +998,14 @@ A branch-typed node of the given shape as a setter returns it: the surface witho
 
 The `$has` of a node with an optional branch, declared once for both shapes. Naming a slot the branch requires narrows the node to its present shape when true and to its absent shape when false, and any one required slot decides it; naming any other slot of the branch answers a boolean and narrows nothing, since an optional slot says nothing about the branch.
 
+### `packages/types/src/node-surface.ts::RefusingInput`
+
+A seat's parameter, and the one place its refusals are composed: the value intersected with `RefuseUndeclared` against the declared input, and with `RowRefusals` when the input is a row. `RefuseUndeclared` reads the value without `undefined`, so a value left out refuses nothing and an optional config is judged as the config it holds. `Seat`, `ConfigSeat` and `OptionalConfigSeat` take it, and a coercer's declaration (`declaredOverload`) prints the same signatures over it, so a coercer's type is its seat alias's type.
+
+### `packages/types/src/node-surface.ts::RowRefusals`
+
+The refusals a row adds to `RefusingInput`: `RefuseLoneEmptyList` and `RefuseNumericFirst` when the value and the declared input are both argument lists, and `unknown` otherwise. A config seat's declared input is one argument, a config or a kind's loose input; it reads as a row only when every form it admits is a list.
+
 ### `packages/types/src/engine-api.ts::StructureRow::single`
 
 The single-slot entries of a structure row, as storage key and label pairs.

@@ -14,10 +14,7 @@ import type {
 	NumericInput,
 	PlainBuilders,
 	RefuseUndeclared,
-	Seat,
-	ConfigSeat,
-	OptionalConfigSeat,
-	EmptyForm
+	RefusingInput
 } from '@sittir/types';
 import {
 	coerceKindEnumStorage,
@@ -29,7 +26,6 @@ import {
 	isNodeValue,
 	listStorage,
 	numberRefusal,
-	withEmptyForm,
 	withOptions
 } from '@sittir/common/utils';
 
@@ -1384,10 +1380,12 @@ export function resolveSourceFile_topLevelDeclaration(
 	);
 }
 
-export const coerceToSourceFile: EmptyForm<
-	T.EmptySourceFile,
-	OptionalConfigSeat<T.SourceFile.Loose, ReturnType<typeof F.buildSourceFile>>
-> = withEmptyForm((input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile> => {
+export function coerceToSourceFile(): T.EmptySourceFile;
+export function coerceToSourceFile<const I extends T.SourceFile.Loose | undefined>(
+	input: RefusingInput<I, T.SourceFile.Loose>
+): ReturnType<typeof F.buildSourceFile>;
+export function coerceToSourceFile(input?: undefined): ReturnType<typeof F.buildSourceFile>;
+export function coerceToSourceFile(input?: T.SourceFile.Loose): ReturnType<typeof F.buildSourceFile> {
 	if (!_isLooseConfig<T.SourceFile.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildSourceFile>;
 	currentHandle()?.admit(TSKindId.SourceFile, [input]);
@@ -1395,14 +1393,15 @@ export const coerceToSourceFile: EmptyForm<
 		elements: resolveSourceFile_elements(input?.elements),
 		topLevelDeclaration: resolveSourceFile_topLevelDeclaration(input?.topLevelDeclaration)
 	});
-});
+}
 
-export const coerceToSourceFileText: ConfigSeat<T.SourceFileText.Loose, ReturnType<typeof F.buildSourceFileText>> = (
-	input: T.SourceFileText.Loose
-): ReturnType<typeof F.buildSourceFileText> => {
+export function coerceToSourceFileText<const I extends T.SourceFileText.Loose>(
+	input: RefusingInput<I, T.SourceFileText.Loose>
+): ReturnType<typeof F.buildSourceFileText>;
+export function coerceToSourceFileText(input: T.SourceFileText.Loose): ReturnType<typeof F.buildSourceFileText> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildSourceFileText>;
 	return F.buildSourceFileText(input as Parameters<typeof F.buildSourceFileText>[0]);
-};
+}
 
 export function resolvePackageClause_packageIdentifier(
 	value: T.PackageClause.LooseConfig['packageIdentifier']
@@ -1410,9 +1409,10 @@ export function resolvePackageClause_packageIdentifier(
 	return _resolveOneBranch<T.PackageIdentifier>(value, 'package_identifier');
 }
 
-export const coerceToPackageClause: ConfigSeat<T.PackageClause.Loose, ReturnType<typeof F.buildPackageClause>> = (
-	input: T.PackageClause.Loose
-): ReturnType<typeof F.buildPackageClause> => {
+export function coerceToPackageClause<const I extends T.PackageClause.Loose>(
+	input: RefusingInput<I, T.PackageClause.Loose>
+): ReturnType<typeof F.buildPackageClause>;
+export function coerceToPackageClause(input: T.PackageClause.Loose): ReturnType<typeof F.buildPackageClause> {
 	if (isNodeOfKind(input, TSKindId.PackageClause)) return input as unknown as ReturnType<typeof F.buildPackageClause>;
 	return F.buildPackageClause(
 		_resolveOneBranch<T.PackageIdentifier>(
@@ -1420,7 +1420,7 @@ export const coerceToPackageClause: ConfigSeat<T.PackageClause.Loose, ReturnType
 			'package_identifier'
 		)
 	);
-};
+}
 
 export function resolveImportDeclaration_content(
 	value: T.ImportDeclaration.LooseConfig['content']
@@ -1428,10 +1428,12 @@ export function resolveImportDeclaration_content(
 	return _resolveOne<T.ImportSpec | T.ImportSpecList>(value, _K0, _K3);
 }
 
-export const coerceToImportDeclaration: ConfigSeat<
-	T.ImportDeclaration.Loose,
-	ReturnType<typeof F.buildImportDeclaration>
-> = (input: T.ImportDeclaration.Loose): ReturnType<typeof F.buildImportDeclaration> => {
+export function coerceToImportDeclaration<const I extends T.ImportDeclaration.Loose>(
+	input: RefusingInput<I, T.ImportDeclaration.Loose>
+): ReturnType<typeof F.buildImportDeclaration>;
+export function coerceToImportDeclaration(
+	input: T.ImportDeclaration.Loose
+): ReturnType<typeof F.buildImportDeclaration> {
 	if (isNodeOfKind(input, TSKindId.ImportDeclaration))
 		return input as unknown as ReturnType<typeof F.buildImportDeclaration>;
 	return F.buildImportDeclaration(
@@ -1441,7 +1443,7 @@ export const coerceToImportDeclaration: ConfigSeat<
 			_K3
 		)
 	);
-};
+}
 
 export function resolveImportSpec_name(value: T.ImportSpec.LooseConfig['name']): Admit<T.ImportSpec['_name']> {
 	return _keywordOr(value, [['_', TSKindId.BlankIdentifier] as const], () =>
@@ -1458,16 +1460,17 @@ export function resolveImportSpec_path(value: T.ImportSpec.LooseConfig['path']):
 	return _resolveOne<T.RawStringLiteral | T.InterpretedStringLiteral>(value, _K0, _K6);
 }
 
-export const coerceToImportSpec: ConfigSeat<T.ImportSpec.Loose, ReturnType<typeof F.buildImportSpec>> = (
-	input: T.ImportSpec.Loose
-): ReturnType<typeof F.buildImportSpec> => {
+export function coerceToImportSpec<const I extends T.ImportSpec.Loose>(
+	input: RefusingInput<I, T.ImportSpec.Loose>
+): ReturnType<typeof F.buildImportSpec>;
+export function coerceToImportSpec(input: T.ImportSpec.Loose): ReturnType<typeof F.buildImportSpec> {
 	if (!_isLooseConfig<T.ImportSpec.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildImportSpec>;
 	currentHandle()?.admit(TSKindId.ImportSpec, [input]);
 	return F.buildImportSpec({
 		name: resolveImportSpec_name(input.name),
 		path: resolveImportSpec_path(input.path)
 	});
-};
+}
 
 export function coerceToDot(_input?: T.Dot.Loose): typeof F.buildDot {
 	return F.buildDot;
@@ -1483,10 +1486,12 @@ export function resolveImportSpecList_importSpecListGroup(
 	return _resolveOneBranch<T.ImportSpecListGroup>(value, 'import_spec_list_group', undefined, true);
 }
 
-export const coerceToImportSpecList: EmptyForm<
-	T.EmptyImportSpecList,
-	OptionalConfigSeat<T.ImportSpecList.Loose, ReturnType<typeof F.buildImportSpecList>>
-> = withEmptyForm((input?: T.ImportSpecList.Loose): ReturnType<typeof F.buildImportSpecList> => {
+export function coerceToImportSpecList(): T.EmptyImportSpecList;
+export function coerceToImportSpecList<const I extends T.ImportSpecList.Loose | undefined>(
+	input: RefusingInput<I, T.ImportSpecList.Loose>
+): ReturnType<typeof F.buildImportSpecList>;
+export function coerceToImportSpecList(input?: undefined): ReturnType<typeof F.buildImportSpecList>;
+export function coerceToImportSpecList(input?: T.ImportSpecList.Loose): ReturnType<typeof F.buildImportSpecList> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ImportSpecList))
 		return input as unknown as ReturnType<typeof F.buildImportSpecList>;
 	return F.buildImportSpecList(
@@ -1497,7 +1502,7 @@ export const coerceToImportSpecList: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveConstDeclaration_content(
 	value: T.ConstDeclaration.LooseConfig['content']
@@ -1505,10 +1510,10 @@ export function resolveConstDeclaration_content(
 	return _resolveOne<T.ConstSpec | T.ConstDeclarationArm>(value, _K0, _K7);
 }
 
-export const coerceToConstDeclaration: ConfigSeat<
-	T.ConstDeclaration.Loose,
-	ReturnType<typeof F.buildConstDeclaration>
-> = (input: T.ConstDeclaration.Loose): ReturnType<typeof F.buildConstDeclaration> => {
+export function coerceToConstDeclaration<const I extends T.ConstDeclaration.Loose>(
+	input: RefusingInput<I, T.ConstDeclaration.Loose>
+): ReturnType<typeof F.buildConstDeclaration>;
+export function coerceToConstDeclaration(input: T.ConstDeclaration.Loose): ReturnType<typeof F.buildConstDeclaration> {
 	if (isNodeOfKind(input, TSKindId.ConstDeclaration))
 		return input as unknown as ReturnType<typeof F.buildConstDeclaration>;
 	return F.buildConstDeclaration(
@@ -1518,7 +1523,7 @@ export const coerceToConstDeclaration: ConfigSeat<
 			_K7
 		)
 	);
-};
+}
 
 export function resolveConstSpec_names(value: T.ConstSpec.LooseConfig['names']): Admit<T.ConstSpec['_name']> {
 	return _resolveManyLeaf<T.Identifier>(value, 'identifier') as Admit<T.ConstSpec['_name']>;
@@ -1530,16 +1535,17 @@ export function resolveConstSpec_constSpecGroup(
 	return _resolveOneBranch<T.ConstSpecGroup>(value, 'const_spec_group', undefined, true);
 }
 
-export const coerceToConstSpec: ConfigSeat<T.ConstSpec.Loose, ReturnType<typeof F.buildConstSpec>> = (
-	input: T.ConstSpec.Loose
-): ReturnType<typeof F.buildConstSpec> => {
+export function coerceToConstSpec<const I extends T.ConstSpec.Loose>(
+	input: RefusingInput<I, T.ConstSpec.Loose>
+): ReturnType<typeof F.buildConstSpec>;
+export function coerceToConstSpec(input: T.ConstSpec.Loose): ReturnType<typeof F.buildConstSpec> {
 	if (!_isLooseConfig<T.ConstSpec.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildConstSpec>;
 	currentHandle()?.admit(TSKindId.ConstSpec, [input]);
 	return F.buildConstSpec({
 		names: resolveConstSpec_names(input.names),
 		constSpecGroup: resolveConstSpec_constSpecGroup(input.constSpecGroup)
 	});
-};
+}
 
 export function resolveVarDeclaration_content(
 	value: T.VarDeclaration.LooseConfig['content']
@@ -1547,9 +1553,10 @@ export function resolveVarDeclaration_content(
 	return _resolveOne<T.VarSpec | T.VarSpecList>(value, _K0, _K8);
 }
 
-export const coerceToVarDeclaration: ConfigSeat<T.VarDeclaration.Loose, ReturnType<typeof F.buildVarDeclaration>> = (
-	input: T.VarDeclaration.Loose
-): ReturnType<typeof F.buildVarDeclaration> => {
+export function coerceToVarDeclaration<const I extends T.VarDeclaration.Loose>(
+	input: RefusingInput<I, T.VarDeclaration.Loose>
+): ReturnType<typeof F.buildVarDeclaration>;
+export function coerceToVarDeclaration(input: T.VarDeclaration.Loose): ReturnType<typeof F.buildVarDeclaration> {
 	if (isNodeOfKind(input, TSKindId.VarDeclaration)) return input as unknown as ReturnType<typeof F.buildVarDeclaration>;
 	return F.buildVarDeclaration(
 		_resolveOne<T.VarSpec | T.VarSpecList>(
@@ -1558,7 +1565,7 @@ export const coerceToVarDeclaration: ConfigSeat<T.VarDeclaration.Loose, ReturnTy
 			_K8
 		)
 	);
-};
+}
 
 export function resolveVarSpec_names(value: T.VarSpec.LooseConfig['names']): Admit<T.VarSpec['_name']> {
 	return _resolveManyLeaf<T.Identifier>(value, 'identifier') as Admit<T.VarSpec['_name']>;
@@ -1568,21 +1575,23 @@ export function resolveVarSpec_content(value: T.VarSpec.LooseConfig['content']):
 	return _resolveOne<T.VarSpecArm | T.ExpressionList>(value, _K0, _K9);
 }
 
-export const coerceToVarSpec: ConfigSeat<T.VarSpec.Loose, ReturnType<typeof F.buildVarSpec>> = (
-	input: T.VarSpec.Loose
-): ReturnType<typeof F.buildVarSpec> => {
+export function coerceToVarSpec<const I extends T.VarSpec.Loose>(
+	input: RefusingInput<I, T.VarSpec.Loose>
+): ReturnType<typeof F.buildVarSpec>;
+export function coerceToVarSpec(input: T.VarSpec.Loose): ReturnType<typeof F.buildVarSpec> {
 	if (!_isLooseConfig<T.VarSpec.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildVarSpec>;
 	currentHandle()?.admit(TSKindId.VarSpec, [input]);
 	return F.buildVarSpec({
 		names: resolveVarSpec_names(input.names),
 		content: resolveVarSpec_content(input.content)
 	});
-};
+}
 
-export const coerceToVarSpecList: EmptyForm<
-	T.EmptyVarSpecList,
-	Seat<T.VarSpecList.LooseArgs, ReturnType<typeof F.buildVarSpecList>>
-> = withEmptyForm((...input: T.VarSpecList.LooseArgs): ReturnType<typeof F.buildVarSpecList> => {
+export function coerceToVarSpecList(): T.EmptyVarSpecList;
+export function coerceToVarSpecList<const A extends T.VarSpecList.LooseArgs>(
+	...args: RefusingInput<A, T.VarSpecList.LooseArgs>
+): ReturnType<typeof F.buildVarSpecList>;
+export function coerceToVarSpecList(...input: T.VarSpecList.LooseArgs): ReturnType<typeof F.buildVarSpecList> {
 	currentHandle()?.admit(TSKindId.VarSpecList, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -1602,7 +1611,7 @@ export const coerceToVarSpecList: EmptyForm<
 			'var_spec'
 		]) as unknown as Admit<T.VarSpec>[])
 	);
-});
+}
 
 export function resolveFunctionDeclaration_name(
 	value: T.FunctionDeclaration.LooseConfig['name']
@@ -1650,10 +1659,12 @@ export function resolveFunctionDeclaration_body(
 	return _resolveOneBranch<T.Block>(value, 'block', undefined, true);
 }
 
-export const coerceToFunctionDeclaration: ConfigSeat<
-	T.FunctionDeclaration.Loose,
-	ReturnType<typeof F.buildFunctionDeclaration>
-> = (input: T.FunctionDeclaration.Loose): ReturnType<typeof F.buildFunctionDeclaration> => {
+export function coerceToFunctionDeclaration<const I extends T.FunctionDeclaration.Loose>(
+	input: RefusingInput<I, T.FunctionDeclaration.Loose>
+): ReturnType<typeof F.buildFunctionDeclaration>;
+export function coerceToFunctionDeclaration(
+	input: T.FunctionDeclaration.Loose
+): ReturnType<typeof F.buildFunctionDeclaration> {
 	if (!_isLooseConfig<T.FunctionDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionDeclaration>;
 	currentHandle()?.admit(TSKindId.FunctionDeclaration, [input]);
@@ -1664,7 +1675,7 @@ export const coerceToFunctionDeclaration: ConfigSeat<
 		returnType: resolveFunctionDeclaration_returnType(input.returnType),
 		body: resolveFunctionDeclaration_body(input.body)
 	});
-};
+}
 
 export function resolveMethodDeclaration_receiver(
 	value: T.MethodDeclaration.LooseConfig['receiver']
@@ -1707,10 +1718,12 @@ export function resolveMethodDeclaration_body(
 	return _resolveOneBranch<T.Block>(value, 'block', undefined, true);
 }
 
-export const coerceToMethodDeclaration: ConfigSeat<
-	T.MethodDeclaration.Loose,
-	ReturnType<typeof F.buildMethodDeclaration>
-> = (input: T.MethodDeclaration.Loose): ReturnType<typeof F.buildMethodDeclaration> => {
+export function coerceToMethodDeclaration<const I extends T.MethodDeclaration.Loose>(
+	input: RefusingInput<I, T.MethodDeclaration.Loose>
+): ReturnType<typeof F.buildMethodDeclaration>;
+export function coerceToMethodDeclaration(
+	input: T.MethodDeclaration.Loose
+): ReturnType<typeof F.buildMethodDeclaration> {
 	if (!_isLooseConfig<T.MethodDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildMethodDeclaration>;
 	currentHandle()?.admit(TSKindId.MethodDeclaration, [input]);
@@ -1721,7 +1734,7 @@ export const coerceToMethodDeclaration: ConfigSeat<
 		returnType: resolveMethodDeclaration_returnType(input.returnType),
 		body: resolveMethodDeclaration_body(input.body)
 	});
-};
+}
 
 export function resolveTypeParameterList_typeParameterDeclarations(
 	value: T.TypeParameterList.LooseConfig['typeParameterDeclarations']
@@ -1734,13 +1747,13 @@ export function resolveTypeParameterList_typeParameterDeclarations(
 			)) as unknown as T.TypeParameterList.Config['typeParameterDeclarations'];
 }
 
-export const coerceToTypeParameterList: Seat<
-	T.TypeParameterDeclarations.LooseArgs,
-	ReturnType<typeof F.buildTypeParameterList>
-> &
-	ConfigSeat<T.TypeParameterList.Loose, ReturnType<typeof F.buildTypeParameterList>> = (
-	...args: unknown[]
-): ReturnType<typeof F.buildTypeParameterList> => {
+export function coerceToTypeParameterList<const A extends T.TypeParameterDeclarations.LooseArgs>(
+	...args: RefusingInput<A, T.TypeParameterDeclarations.LooseArgs>
+): ReturnType<typeof F.buildTypeParameterList>;
+export function coerceToTypeParameterList<const I extends T.TypeParameterList.Loose>(
+	input: RefusingInput<I, T.TypeParameterList.Loose>
+): ReturnType<typeof F.buildTypeParameterList>;
+export function coerceToTypeParameterList(...args: unknown[]): ReturnType<typeof F.buildTypeParameterList> {
 	if (args.length > 1)
 		return F.buildTypeParameterList(
 			coerceToTypeParameterDeclarations(...(args as Parameters<typeof coerceToTypeParameterDeclarations>))
@@ -1754,7 +1767,7 @@ export const coerceToTypeParameterList: Seat<
 			'type_parameter_declarations'
 		)
 	);
-};
+}
 
 export function resolveTypeParameterDeclaration_names(
 	value: T.TypeParameterDeclaration.LooseConfig['names']
@@ -1768,10 +1781,12 @@ export function resolveTypeParameterDeclaration_bounds(
 	return _resolveOneBranch<T.TypeConstraint>(value, 'type_constraint');
 }
 
-export const coerceToTypeParameterDeclaration: ConfigSeat<
-	T.TypeParameterDeclaration.Loose,
-	ReturnType<typeof F.buildTypeParameterDeclaration>
-> = (input: T.TypeParameterDeclaration.Loose): ReturnType<typeof F.buildTypeParameterDeclaration> => {
+export function coerceToTypeParameterDeclaration<const I extends T.TypeParameterDeclaration.Loose>(
+	input: RefusingInput<I, T.TypeParameterDeclaration.Loose>
+): ReturnType<typeof F.buildTypeParameterDeclaration>;
+export function coerceToTypeParameterDeclaration(
+	input: T.TypeParameterDeclaration.Loose
+): ReturnType<typeof F.buildTypeParameterDeclaration> {
 	if (!_isLooseConfig<T.TypeParameterDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeParameterDeclaration>;
 	currentHandle()?.admit(TSKindId.TypeParameterDeclaration, [input]);
@@ -1779,7 +1794,7 @@ export const coerceToTypeParameterDeclaration: ConfigSeat<
 		names: resolveTypeParameterDeclaration_names(input.names),
 		bounds: resolveTypeParameterDeclaration_bounds(input.bounds)
 	});
-};
+}
 
 export function resolveParameterList_elements(
 	value: T.ParameterList.LooseConfig['elements']
@@ -1794,11 +1809,15 @@ export function resolveParameterList_elements(
 			)) as unknown as T.ParameterList.Config['elements'];
 }
 
-export const coerceToParameterList: EmptyForm<
-	T.EmptyParameterList,
-	Seat<T.ParameterListElements.LooseArgs, ReturnType<typeof F.buildParameterList>> &
-		OptionalConfigSeat<T.ParameterList.Loose, ReturnType<typeof F.buildParameterList>>
-> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildParameterList> => {
+export function coerceToParameterList(): T.EmptyParameterList;
+export function coerceToParameterList<const A extends T.ParameterListElements.LooseArgs>(
+	...args: RefusingInput<A, T.ParameterListElements.LooseArgs>
+): ReturnType<typeof F.buildParameterList>;
+export function coerceToParameterList<const I extends T.ParameterList.Loose | undefined>(
+	input: RefusingInput<I, T.ParameterList.Loose>
+): ReturnType<typeof F.buildParameterList>;
+export function coerceToParameterList(input?: undefined): ReturnType<typeof F.buildParameterList>;
+export function coerceToParameterList(...args: unknown[]): ReturnType<typeof F.buildParameterList> {
 	if (args.length > 1)
 		return F.buildParameterList(
 			coerceToParameterListElements(...(args as Parameters<typeof coerceToParameterListElements>))
@@ -1814,7 +1833,7 @@ export const coerceToParameterList: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveParameterDeclaration_names(
 	value: T.ParameterDeclaration.LooseConfig['names']
@@ -1828,10 +1847,12 @@ export function resolveParameterDeclaration_type(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToParameterDeclaration: ConfigSeat<
-	T.ParameterDeclaration.Loose,
-	ReturnType<typeof F.buildParameterDeclaration>
-> = (input: T.ParameterDeclaration.Loose): ReturnType<typeof F.buildParameterDeclaration> => {
+export function coerceToParameterDeclaration<const I extends T.ParameterDeclaration.Loose>(
+	input: RefusingInput<I, T.ParameterDeclaration.Loose>
+): ReturnType<typeof F.buildParameterDeclaration>;
+export function coerceToParameterDeclaration(
+	input: T.ParameterDeclaration.Loose
+): ReturnType<typeof F.buildParameterDeclaration> {
 	if (!_isLooseConfig<T.ParameterDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildParameterDeclaration>;
 	currentHandle()?.admit(TSKindId.ParameterDeclaration, [input]);
@@ -1839,7 +1860,7 @@ export const coerceToParameterDeclaration: ConfigSeat<
 		names: resolveParameterDeclaration_names(input.names),
 		type: resolveParameterDeclaration_type(input.type)
 	});
-};
+}
 
 export function resolveVariadicParameterDeclaration_name(
 	value: T.VariadicParameterDeclaration.LooseConfig['name']
@@ -1853,10 +1874,12 @@ export function resolveVariadicParameterDeclaration_type(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToVariadicParameterDeclaration: ConfigSeat<
-	T.VariadicParameterDeclaration.Loose,
-	ReturnType<typeof F.buildVariadicParameterDeclaration>
-> = (input: T.VariadicParameterDeclaration.Loose): ReturnType<typeof F.buildVariadicParameterDeclaration> => {
+export function coerceToVariadicParameterDeclaration<const I extends T.VariadicParameterDeclaration.Loose>(
+	input: RefusingInput<I, T.VariadicParameterDeclaration.Loose>
+): ReturnType<typeof F.buildVariadicParameterDeclaration>;
+export function coerceToVariadicParameterDeclaration(
+	input: T.VariadicParameterDeclaration.Loose
+): ReturnType<typeof F.buildVariadicParameterDeclaration> {
 	if (!_isLooseConfig<T.VariadicParameterDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildVariadicParameterDeclaration>;
 	currentHandle()?.admit(TSKindId.VariadicParameterDeclaration, [input]);
@@ -1864,7 +1887,7 @@ export const coerceToVariadicParameterDeclaration: ConfigSeat<
 		name: resolveVariadicParameterDeclaration_name(input.name),
 		type: resolveVariadicParameterDeclaration_type(input.type)
 	});
-};
+}
 
 export function resolveTypeAlias_name(value: T.TypeAlias.LooseConfig['name']): Admit<T.TypeAlias['_name']> {
 	return _resolveOneBranch<T.TypeIdentifier>(value, 'type_identifier');
@@ -1889,9 +1912,10 @@ export function resolveTypeAlias_type(value: T.TypeAlias.LooseConfig['type']): A
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToTypeAlias: ConfigSeat<T.TypeAlias.Loose, ReturnType<typeof F.buildTypeAlias>> = (
-	input: T.TypeAlias.Loose
-): ReturnType<typeof F.buildTypeAlias> => {
+export function coerceToTypeAlias<const I extends T.TypeAlias.Loose>(
+	input: RefusingInput<I, T.TypeAlias.Loose>
+): ReturnType<typeof F.buildTypeAlias>;
+export function coerceToTypeAlias(input: T.TypeAlias.Loose): ReturnType<typeof F.buildTypeAlias> {
 	if (!_isLooseConfig<T.TypeAlias.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTypeAlias>;
 	currentHandle()?.admit(TSKindId.TypeAlias, [input]);
 	return F.buildTypeAlias({
@@ -1899,7 +1923,7 @@ export const coerceToTypeAlias: ConfigSeat<T.TypeAlias.Loose, ReturnType<typeof 
 		typeParameters: resolveTypeAlias_typeParameters(input.typeParameters),
 		type: resolveTypeAlias_type(input.type)
 	});
-};
+}
 
 export function resolveTypeDeclaration_content(
 	value: T.TypeDeclaration.LooseConfig['content']
@@ -1907,9 +1931,10 @@ export function resolveTypeDeclaration_content(
 	return _resolveOne<T.TypeSpec | T.TypeAlias | T.TypeDeclarationArm>(value, _K0, _K12);
 }
 
-export const coerceToTypeDeclaration: ConfigSeat<T.TypeDeclaration.Loose, ReturnType<typeof F.buildTypeDeclaration>> = (
-	input: T.TypeDeclaration.Loose
-): ReturnType<typeof F.buildTypeDeclaration> => {
+export function coerceToTypeDeclaration<const I extends T.TypeDeclaration.Loose>(
+	input: RefusingInput<I, T.TypeDeclaration.Loose>
+): ReturnType<typeof F.buildTypeDeclaration>;
+export function coerceToTypeDeclaration(input: T.TypeDeclaration.Loose): ReturnType<typeof F.buildTypeDeclaration> {
 	if (isNodeOfKind(input, TSKindId.TypeDeclaration))
 		return input as unknown as ReturnType<typeof F.buildTypeDeclaration>;
 	return F.buildTypeDeclaration(
@@ -1919,7 +1944,7 @@ export const coerceToTypeDeclaration: ConfigSeat<T.TypeDeclaration.Loose, Return
 			_K12
 		)
 	);
-};
+}
 
 export function resolveTypeSpec_name(value: T.TypeSpec.LooseConfig['name']): Admit<T.TypeSpec['_name']> {
 	return _resolveOneBranch<T.TypeIdentifier>(value, 'type_identifier');
@@ -1944,9 +1969,10 @@ export function resolveTypeSpec_type(value: T.TypeSpec.LooseConfig['type']): Adm
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToTypeSpec: ConfigSeat<T.TypeSpec.Loose, ReturnType<typeof F.buildTypeSpec>> = (
-	input: T.TypeSpec.Loose
-): ReturnType<typeof F.buildTypeSpec> => {
+export function coerceToTypeSpec<const I extends T.TypeSpec.Loose>(
+	input: RefusingInput<I, T.TypeSpec.Loose>
+): ReturnType<typeof F.buildTypeSpec>;
+export function coerceToTypeSpec(input: T.TypeSpec.Loose): ReturnType<typeof F.buildTypeSpec> {
 	if (!_isLooseConfig<T.TypeSpec.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTypeSpec>;
 	currentHandle()?.admit(TSKindId.TypeSpec, [input]);
 	return F.buildTypeSpec({
@@ -1954,11 +1980,12 @@ export const coerceToTypeSpec: ConfigSeat<T.TypeSpec.Loose, ReturnType<typeof F.
 		typeParameters: resolveTypeSpec_typeParameters(input.typeParameters),
 		type: resolveTypeSpec_type(input.type)
 	});
-};
+}
 
-export const coerceToExpressionList: Seat<T.ExpressionList.LooseArgs, ReturnType<typeof F.buildExpressionList>> = (
-	...input: T.ExpressionList.LooseArgs
-): ReturnType<typeof F.buildExpressionList> => {
+export function coerceToExpressionList<const A extends T.ExpressionList.LooseArgs>(
+	...args: RefusingInput<A, T.ExpressionList.LooseArgs>
+): ReturnType<typeof F.buildExpressionList>;
+export function coerceToExpressionList(...input: T.ExpressionList.LooseArgs): ReturnType<typeof F.buildExpressionList> {
 	currentHandle()?.admit(TSKindId.ExpressionList, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExpressionList))
 		return input[0] as unknown as ReturnType<typeof F.buildExpressionList>;
@@ -1976,7 +2003,7 @@ export const coerceToExpressionList: Seat<T.ExpressionList.LooseArgs, ReturnType
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildExpressionList>)
 	);
-};
+}
 
 export function resolveParenthesizedType_type(
 	value: T.ParenthesizedType.LooseConfig['type']
@@ -1984,10 +2011,12 @@ export function resolveParenthesizedType_type(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToParenthesizedType: ConfigSeat<
-	T.ParenthesizedType.Loose,
-	ReturnType<typeof F.buildParenthesizedType>
-> = (input: T.ParenthesizedType.Loose): ReturnType<typeof F.buildParenthesizedType> => {
+export function coerceToParenthesizedType<const I extends T.ParenthesizedType.Loose>(
+	input: RefusingInput<I, T.ParenthesizedType.Loose>
+): ReturnType<typeof F.buildParenthesizedType>;
+export function coerceToParenthesizedType(
+	input: T.ParenthesizedType.Loose
+): ReturnType<typeof F.buildParenthesizedType> {
 	return F.buildParenthesizedType(
 		_resolveOne<T.Type>(
 			configFieldOr(input, 'type', () => input, TSKindId.ParenthesizedType),
@@ -1995,7 +2024,7 @@ export const coerceToParenthesizedType: ConfigSeat<
 			_K11
 		)
 	);
-};
+}
 
 export function resolveGenericType_type(value: T.GenericType.LooseConfig['type']): Admit<T.GenericType['_type']> {
 	return _resolveOne<T.TypeIdentifier | T.QualifiedType | T.NegatedType>(value, _K0, _K15);
@@ -2009,9 +2038,10 @@ export function resolveGenericType_typeArguments(
 		: _resolveOneBranch<T.TypeArguments>(value, 'type_arguments')) as unknown as T.GenericType.Config['typeArguments'];
 }
 
-export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typeof F.buildGenericType>> = (
-	input: T.GenericType.Loose
-): ReturnType<typeof F.buildGenericType> => {
+export function coerceToGenericType<const I extends T.GenericType.Loose>(
+	input: RefusingInput<I, T.GenericType.Loose>
+): ReturnType<typeof F.buildGenericType>;
+export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<typeof F.buildGenericType> {
 	if (!_isLooseConfig<T.GenericType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildGenericType>;
 	currentHandle()?.admit(TSKindId.GenericType, [input]);
@@ -2019,7 +2049,7 @@ export const coerceToGenericType: ConfigSeat<T.GenericType.Loose, ReturnType<typ
 		type: resolveGenericType_type(input.type),
 		typeArguments: resolveGenericType_typeArguments(input.typeArguments)
 	});
-};
+}
 
 export function resolveTypeArguments_typeElems(
 	value: T.TypeArguments.LooseConfig['typeElems']
@@ -2029,10 +2059,13 @@ export function resolveTypeArguments_typeElems(
 		: _resolveOneBranch<T.TypeElems>(value, 'type_elems')) as unknown as T.TypeArguments.Config['typeElems'];
 }
 
-export const coerceToTypeArguments: Seat<T.TypeElems.LooseArgs, ReturnType<typeof F.buildTypeArguments>> &
-	ConfigSeat<T.TypeArguments.Loose, ReturnType<typeof F.buildTypeArguments>> = (
-	...args: unknown[]
-): ReturnType<typeof F.buildTypeArguments> => {
+export function coerceToTypeArguments<const A extends T.TypeElems.LooseArgs>(
+	...args: RefusingInput<A, T.TypeElems.LooseArgs>
+): ReturnType<typeof F.buildTypeArguments>;
+export function coerceToTypeArguments<const I extends T.TypeArguments.Loose>(
+	input: RefusingInput<I, T.TypeArguments.Loose>
+): ReturnType<typeof F.buildTypeArguments>;
+export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.buildTypeArguments> {
 	if (args.length > 1)
 		return F.buildTypeArguments(coerceToTypeElems(...(args as Parameters<typeof coerceToTypeElems>)));
 	const input = args[0] as T.TypeArguments.Loose;
@@ -2043,15 +2076,16 @@ export const coerceToTypeArguments: Seat<T.TypeElems.LooseArgs, ReturnType<typeo
 			'type_elems'
 		)
 	);
-};
+}
 
 export function resolvePointerType_type(value: T.PointerType.LooseConfig['type']): Admit<T.PointerType['_type']> {
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToPointerType: ConfigSeat<T.PointerType.Loose, ReturnType<typeof F.buildPointerType>> = (
-	input: T.PointerType.Loose
-): ReturnType<typeof F.buildPointerType> => {
+export function coerceToPointerType<const I extends T.PointerType.Loose>(
+	input: RefusingInput<I, T.PointerType.Loose>
+): ReturnType<typeof F.buildPointerType>;
+export function coerceToPointerType(input: T.PointerType.Loose): ReturnType<typeof F.buildPointerType> {
 	return F.buildPointerType(
 		_resolveOne<T.Type>(
 			configFieldOr(input, 'type', () => input, TSKindId.PointerType),
@@ -2059,7 +2093,7 @@ export const coerceToPointerType: ConfigSeat<T.PointerType.Loose, ReturnType<typ
 			_K11
 		)
 	);
-};
+}
 
 export function resolveArrayType_length(value: T.ArrayType.LooseConfig['length']): Admit<T.ArrayType['_length']> {
 	return coerceMixedEnumStorage(
@@ -2072,16 +2106,17 @@ export function resolveArrayType_element(value: T.ArrayType.LooseConfig['element
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToArrayType: ConfigSeat<T.ArrayType.Loose, ReturnType<typeof F.buildArrayType>> = (
-	input: T.ArrayType.Loose
-): ReturnType<typeof F.buildArrayType> => {
+export function coerceToArrayType<const I extends T.ArrayType.Loose>(
+	input: RefusingInput<I, T.ArrayType.Loose>
+): ReturnType<typeof F.buildArrayType>;
+export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F.buildArrayType> {
 	if (!_isLooseConfig<T.ArrayType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildArrayType>;
 	currentHandle()?.admit(TSKindId.ArrayType, [input]);
 	return F.buildArrayType({
 		length: resolveArrayType_length(input.length),
 		element: resolveArrayType_element(input.element)
 	});
-};
+}
 
 export function resolveImplicitLengthArrayType_element(
 	value: T.ImplicitLengthArrayType.LooseConfig['element']
@@ -2089,10 +2124,12 @@ export function resolveImplicitLengthArrayType_element(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToImplicitLengthArrayType: ConfigSeat<
-	T.ImplicitLengthArrayType.Loose,
-	ReturnType<typeof F.buildImplicitLengthArrayType>
-> = (input: T.ImplicitLengthArrayType.Loose): ReturnType<typeof F.buildImplicitLengthArrayType> => {
+export function coerceToImplicitLengthArrayType<const I extends T.ImplicitLengthArrayType.Loose>(
+	input: RefusingInput<I, T.ImplicitLengthArrayType.Loose>
+): ReturnType<typeof F.buildImplicitLengthArrayType>;
+export function coerceToImplicitLengthArrayType(
+	input: T.ImplicitLengthArrayType.Loose
+): ReturnType<typeof F.buildImplicitLengthArrayType> {
 	if (isNodeOfKind(input, TSKindId.ImplicitLengthArrayType))
 		return input as unknown as ReturnType<typeof F.buildImplicitLengthArrayType>;
 	return F.buildImplicitLengthArrayType(
@@ -2102,15 +2139,16 @@ export const coerceToImplicitLengthArrayType: ConfigSeat<
 			_K11
 		)
 	);
-};
+}
 
 export function resolveSliceType_element(value: T.SliceType.LooseConfig['element']): Admit<T.SliceType['_element']> {
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToSliceType: ConfigSeat<T.SliceType.Loose, ReturnType<typeof F.buildSliceType>> = (
-	input: T.SliceType.Loose
-): ReturnType<typeof F.buildSliceType> => {
+export function coerceToSliceType<const I extends T.SliceType.Loose>(
+	input: RefusingInput<I, T.SliceType.Loose>
+): ReturnType<typeof F.buildSliceType>;
+export function coerceToSliceType(input: T.SliceType.Loose): ReturnType<typeof F.buildSliceType> {
 	return F.buildSliceType(
 		_resolveOne<T.Type>(
 			configFieldOr(input, 'element', () => input, TSKindId.SliceType),
@@ -2118,7 +2156,7 @@ export const coerceToSliceType: ConfigSeat<T.SliceType.Loose, ReturnType<typeof 
 			_K11
 		)
 	);
-};
+}
 
 export function resolveStructType_fieldDeclarationList(
 	value: T.StructType.LooseConfig['fieldDeclarationList'] | undefined
@@ -2129,9 +2167,11 @@ export function resolveStructType_fieldDeclarationList(
 	) as unknown as T.StructType.Config['fieldDeclarationList'];
 }
 
-export const coerceToStructType: OptionalConfigSeat<T.StructType.Loose, ReturnType<typeof F.buildStructType>> = (
-	input?: T.StructType.Loose
-): ReturnType<typeof F.buildStructType> => {
+export function coerceToStructType<const I extends T.StructType.Loose | undefined>(
+	input: RefusingInput<I, T.StructType.Loose>
+): ReturnType<typeof F.buildStructType>;
+export function coerceToStructType(input?: undefined): ReturnType<typeof F.buildStructType>;
+export function coerceToStructType(input?: T.StructType.Loose): ReturnType<typeof F.buildStructType> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.StructType))
 		return input as unknown as ReturnType<typeof F.buildStructType>;
 	return F.buildStructType(
@@ -2140,15 +2180,16 @@ export const coerceToStructType: OptionalConfigSeat<T.StructType.Loose, ReturnTy
 			'field_declaration_list'
 		)
 	);
-};
+}
 
 export function resolveNegatedType_type(value: T.NegatedType.LooseConfig['type']): Admit<T.NegatedType['_type']> {
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToNegatedType: ConfigSeat<T.NegatedType.Loose, ReturnType<typeof F.buildNegatedType>> = (
-	input: T.NegatedType.Loose
-): ReturnType<typeof F.buildNegatedType> => {
+export function coerceToNegatedType<const I extends T.NegatedType.Loose>(
+	input: RefusingInput<I, T.NegatedType.Loose>
+): ReturnType<typeof F.buildNegatedType>;
+export function coerceToNegatedType(input: T.NegatedType.Loose): ReturnType<typeof F.buildNegatedType> {
 	return F.buildNegatedType(
 		_resolveOne<T.Type>(
 			configFieldOr(input, 'type', () => input, TSKindId.NegatedType),
@@ -2156,7 +2197,7 @@ export const coerceToNegatedType: ConfigSeat<T.NegatedType.Loose, ReturnType<typ
 			_K11
 		)
 	);
-};
+}
 
 export function resolveFieldDeclarationList_fieldDeclarationListGroup(
 	value: T.FieldDeclarationList.LooseConfig['fieldDeclarationListGroup']
@@ -2164,10 +2205,14 @@ export function resolveFieldDeclarationList_fieldDeclarationListGroup(
 	return _resolveOneBranch<T.FieldDeclarationListGroup>(value, 'field_declaration_list_group', undefined, true);
 }
 
-export const coerceToFieldDeclarationList: EmptyForm<
-	T.EmptyFieldDeclarationList,
-	OptionalConfigSeat<T.FieldDeclarationList.Loose, ReturnType<typeof F.buildFieldDeclarationList>>
-> = withEmptyForm((input?: T.FieldDeclarationList.Loose): ReturnType<typeof F.buildFieldDeclarationList> => {
+export function coerceToFieldDeclarationList(): T.EmptyFieldDeclarationList;
+export function coerceToFieldDeclarationList<const I extends T.FieldDeclarationList.Loose | undefined>(
+	input: RefusingInput<I, T.FieldDeclarationList.Loose>
+): ReturnType<typeof F.buildFieldDeclarationList>;
+export function coerceToFieldDeclarationList(input?: undefined): ReturnType<typeof F.buildFieldDeclarationList>;
+export function coerceToFieldDeclarationList(
+	input?: T.FieldDeclarationList.Loose
+): ReturnType<typeof F.buildFieldDeclarationList> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.FieldDeclarationList))
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationList>;
 	return F.buildFieldDeclarationList(
@@ -2178,7 +2223,7 @@ export const coerceToFieldDeclarationList: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveFieldDeclaration_names(
 	value: T.FieldDeclaration.LooseConfig['names']
@@ -2209,10 +2254,11 @@ export function resolveFieldDeclaration_tag(
 	return _resolveOne<T.RawStringLiteral | T.InterpretedStringLiteral>(value, _K0, _K6);
 }
 
-export const coerceToFieldDeclaration: OptionalConfigSeat<
-	T.FieldDeclaration.Loose,
-	ReturnType<typeof F.buildFieldDeclaration>
-> = (input?: T.FieldDeclaration.Loose): ReturnType<typeof F.buildFieldDeclaration> => {
+export function coerceToFieldDeclaration<const I extends T.FieldDeclaration.Loose | undefined>(
+	input: RefusingInput<I, T.FieldDeclaration.Loose>
+): ReturnType<typeof F.buildFieldDeclaration>;
+export function coerceToFieldDeclaration(input?: undefined): ReturnType<typeof F.buildFieldDeclaration>;
+export function coerceToFieldDeclaration(input?: T.FieldDeclaration.Loose): ReturnType<typeof F.buildFieldDeclaration> {
 	if (!_isLooseConfig<T.FieldDeclaration.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldDeclaration>;
 	currentHandle()?.admit(TSKindId.FieldDeclaration, [input]);
@@ -2222,7 +2268,7 @@ export const coerceToFieldDeclaration: OptionalConfigSeat<
 		fieldDeclarationArm: resolveFieldDeclaration_fieldDeclarationArm(input?.fieldDeclarationArm),
 		tag: resolveFieldDeclaration_tag(input?.tag)
 	});
-};
+}
 
 export function resolveInterfaceType_interfaceTypeGroup(
 	value: T.InterfaceType.LooseConfig['interfaceTypeGroup']
@@ -2230,10 +2276,12 @@ export function resolveInterfaceType_interfaceTypeGroup(
 	return _resolveOneBranch<T.InterfaceTypeGroup>(value, 'interface_type_group', undefined, true);
 }
 
-export const coerceToInterfaceType: EmptyForm<
-	T.EmptyInterfaceType,
-	OptionalConfigSeat<T.InterfaceType.Loose, ReturnType<typeof F.buildInterfaceType>>
-> = withEmptyForm((input?: T.InterfaceType.Loose): ReturnType<typeof F.buildInterfaceType> => {
+export function coerceToInterfaceType(): T.EmptyInterfaceType;
+export function coerceToInterfaceType<const I extends T.InterfaceType.Loose | undefined>(
+	input: RefusingInput<I, T.InterfaceType.Loose>
+): ReturnType<typeof F.buildInterfaceType>;
+export function coerceToInterfaceType(input?: undefined): ReturnType<typeof F.buildInterfaceType>;
+export function coerceToInterfaceType(input?: T.InterfaceType.Loose): ReturnType<typeof F.buildInterfaceType> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.InterfaceType))
 		return input as unknown as ReturnType<typeof F.buildInterfaceType>;
 	return F.buildInterfaceType(
@@ -2244,7 +2292,7 @@ export const coerceToInterfaceType: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveMethodElem_name(value: T.MethodElem.LooseConfig['name']): Admit<T.MethodElem['_name']> {
 	return _resolveOneBranch<T.FieldIdentifier>(value, 'field_identifier');
@@ -2266,9 +2314,10 @@ export function resolveMethodElem_returnType(
 	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K10);
 }
 
-export const coerceToMethodElem: ConfigSeat<T.MethodElem.Loose, ReturnType<typeof F.buildMethodElem>> = (
-	input: T.MethodElem.Loose
-): ReturnType<typeof F.buildMethodElem> => {
+export function coerceToMethodElem<const I extends T.MethodElem.Loose>(
+	input: RefusingInput<I, T.MethodElem.Loose>
+): ReturnType<typeof F.buildMethodElem>;
+export function coerceToMethodElem(input: T.MethodElem.Loose): ReturnType<typeof F.buildMethodElem> {
 	if (!_isLooseConfig<T.MethodElem.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildMethodElem>;
 	currentHandle()?.admit(TSKindId.MethodElem, [input]);
 	return F.buildMethodElem({
@@ -2276,11 +2325,12 @@ export const coerceToMethodElem: ConfigSeat<T.MethodElem.Loose, ReturnType<typeo
 		parameters: resolveMethodElem_parameters(input.parameters),
 		returnType: resolveMethodElem_returnType(input.returnType)
 	});
-};
+}
 
-export const coerceToTypeElem: Seat<T.TypeElem.LooseArgs, ReturnType<typeof F.buildTypeElem>> = (
-	...input: T.TypeElem.LooseArgs
-): ReturnType<typeof F.buildTypeElem> => {
+export function coerceToTypeElem<const A extends T.TypeElem.LooseArgs>(
+	...args: RefusingInput<A, T.TypeElem.LooseArgs>
+): ReturnType<typeof F.buildTypeElem>;
+export function coerceToTypeElem(...input: T.TypeElem.LooseArgs): ReturnType<typeof F.buildTypeElem> {
 	currentHandle()?.admit(TSKindId.TypeElem, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeElem))
 		return input[0] as unknown as ReturnType<typeof F.buildTypeElem>;
@@ -2293,7 +2343,7 @@ export const coerceToTypeElem: Seat<T.TypeElem.LooseArgs, ReturnType<typeof F.bu
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildTypeElem(...(_resolveMany<T.Type>(_elems, _K0, _K11) as unknown as Parameters<typeof F.buildTypeElem>));
-};
+}
 
 export function resolveMapType_key(value: T.MapType.LooseConfig['key']): Admit<T.MapType['_key']> {
 	return _resolveOne<T.Type>(value, _K0, _K11);
@@ -2303,16 +2353,17 @@ export function resolveMapType_value(value: T.MapType.LooseConfig['value']): Adm
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToMapType: ConfigSeat<T.MapType.Loose, ReturnType<typeof F.buildMapType>> = (
-	input: T.MapType.Loose
-): ReturnType<typeof F.buildMapType> => {
+export function coerceToMapType<const I extends T.MapType.Loose>(
+	input: RefusingInput<I, T.MapType.Loose>
+): ReturnType<typeof F.buildMapType>;
+export function coerceToMapType(input: T.MapType.Loose): ReturnType<typeof F.buildMapType> {
 	if (!_isLooseConfig<T.MapType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildMapType>;
 	currentHandle()?.admit(TSKindId.MapType, [input]);
 	return F.buildMapType({
 		key: resolveMapType_key(input.key),
 		value: resolveMapType_value(input.value)
 	});
-};
+}
 
 export function resolveFunctionType_parameters(
 	value: T.FunctionType.LooseConfig['parameters'] | undefined
@@ -2330,9 +2381,11 @@ export function resolveFunctionType_result(
 	return _resolveOne<T.ParameterList | T.SimpleType>(value, _K0, _K10);
 }
 
-export const coerceToFunctionType: OptionalConfigSeat<T.FunctionType.Loose, ReturnType<typeof F.buildFunctionType>> = (
-	input?: T.FunctionType.Loose
-): ReturnType<typeof F.buildFunctionType> => {
+export function coerceToFunctionType<const I extends T.FunctionType.Loose | undefined>(
+	input: RefusingInput<I, T.FunctionType.Loose>
+): ReturnType<typeof F.buildFunctionType>;
+export function coerceToFunctionType(input?: undefined): ReturnType<typeof F.buildFunctionType>;
+export function coerceToFunctionType(input?: T.FunctionType.Loose): ReturnType<typeof F.buildFunctionType> {
 	if (!_isLooseConfig<T.FunctionType.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildFunctionType>;
 	currentHandle()?.admit(TSKindId.FunctionType, [input]);
@@ -2340,7 +2393,7 @@ export const coerceToFunctionType: OptionalConfigSeat<T.FunctionType.Loose, Retu
 		parameters: resolveFunctionType_parameters(input?.parameters),
 		result: resolveFunctionType_result(input?.result)
 	});
-};
+}
 
 export function resolveBlock_statementList(
 	value: T.Block.LooseConfig['statementList']
@@ -2353,10 +2406,12 @@ export function resolveBlock_statementList(
 	) as unknown as T.Block.Config['statementList'];
 }
 
-export const coerceToBlock: EmptyForm<
-	T.EmptyBlock,
-	OptionalConfigSeat<T.Block.Loose, ReturnType<typeof F.buildBlock>>
-> = withEmptyForm((input?: T.Block.Loose): ReturnType<typeof F.buildBlock> => {
+export function coerceToBlock(): T.EmptyBlock;
+export function coerceToBlock<const I extends T.Block.Loose | undefined>(
+	input: RefusingInput<I, T.Block.Loose>
+): ReturnType<typeof F.buildBlock>;
+export function coerceToBlock(input?: undefined): ReturnType<typeof F.buildBlock>;
+export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildBlock> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.Block))
 		return input as unknown as ReturnType<typeof F.buildBlock>;
 	return F.buildBlock(
@@ -2367,7 +2422,7 @@ export const coerceToBlock: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveStatementList_content(
 	value: T.StatementList.LooseConfig['content']
@@ -2375,9 +2430,10 @@ export function resolveStatementList_content(
 	return _resolveOne<T.StatementListArm | T.EmptyLabeledStatement>(value, _K0, _K16);
 }
 
-export const coerceToStatementList: ConfigSeat<T.StatementList.Loose, ReturnType<typeof F.buildStatementList>> = (
-	input: T.StatementList.Loose
-): ReturnType<typeof F.buildStatementList> => {
+export function coerceToStatementList<const I extends T.StatementList.Loose>(
+	input: RefusingInput<I, T.StatementList.Loose>
+): ReturnType<typeof F.buildStatementList>;
+export function coerceToStatementList(input: T.StatementList.Loose): ReturnType<typeof F.buildStatementList> {
 	if (isNodeOfKind(input, TSKindId.StatementList)) return input as unknown as ReturnType<typeof F.buildStatementList>;
 	return F.buildStatementList(
 		_resolveOne<T.StatementListArm | T.EmptyLabeledStatement>(
@@ -2386,7 +2442,7 @@ export const coerceToStatementList: ConfigSeat<T.StatementList.Loose, ReturnType
 			_K16
 		)
 	);
-};
+}
 
 export function coerceToEmptyStatement(_input?: T.EmptyStatement.Loose): typeof F.buildEmptyStatement {
 	return F.buildEmptyStatement;
@@ -2401,10 +2457,12 @@ export function resolveExpressionStatement_expression(
 	);
 }
 
-export const coerceToExpressionStatement: ConfigSeat<
-	T.ExpressionStatement.Loose,
-	ReturnType<typeof F.buildExpressionStatement>
-> = (input: T.ExpressionStatement.Loose): ReturnType<typeof F.buildExpressionStatement> => {
+export function coerceToExpressionStatement<const I extends T.ExpressionStatement.Loose>(
+	input: RefusingInput<I, T.ExpressionStatement.Loose>
+): ReturnType<typeof F.buildExpressionStatement>;
+export function coerceToExpressionStatement(
+	input: T.ExpressionStatement.Loose
+): ReturnType<typeof F.buildExpressionStatement> {
 	if (isNodeOfKind(input, TSKindId.ExpressionStatement))
 		return input as unknown as ReturnType<typeof F.buildExpressionStatement>;
 	return F.buildExpressionStatement(
@@ -2422,7 +2480,7 @@ export const coerceToExpressionStatement: ConfigSeat<
 			[]
 		)
 	);
-};
+}
 
 export function resolveSendStatement_channel(
 	value: T.SendStatement.LooseConfig['channel']
@@ -2442,9 +2500,10 @@ export function resolveSendStatement_value(
 	);
 }
 
-export const coerceToSendStatement: ConfigSeat<T.SendStatement.Loose, ReturnType<typeof F.buildSendStatement>> = (
-	input: T.SendStatement.Loose
-): ReturnType<typeof F.buildSendStatement> => {
+export function coerceToSendStatement<const I extends T.SendStatement.Loose>(
+	input: RefusingInput<I, T.SendStatement.Loose>
+): ReturnType<typeof F.buildSendStatement>;
+export function coerceToSendStatement(input: T.SendStatement.Loose): ReturnType<typeof F.buildSendStatement> {
 	if (!_isLooseConfig<T.SendStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildSendStatement>;
 	currentHandle()?.admit(TSKindId.SendStatement, [input]);
@@ -2452,7 +2511,7 @@ export const coerceToSendStatement: ConfigSeat<T.SendStatement.Loose, ReturnType
 		channel: resolveSendStatement_channel(input.channel),
 		value: resolveSendStatement_value(input.value)
 	});
-};
+}
 
 export function resolveReceiveStatement_receiveStatementGroup(
 	value: T.ReceiveStatement.LooseConfig['receiveStatementGroup']
@@ -2469,10 +2528,10 @@ export function resolveReceiveStatement_right(
 	);
 }
 
-export const coerceToReceiveStatement: ConfigSeat<
-	T.ReceiveStatement.Loose,
-	ReturnType<typeof F.buildReceiveStatement>
-> = (input: T.ReceiveStatement.Loose): ReturnType<typeof F.buildReceiveStatement> => {
+export function coerceToReceiveStatement<const I extends T.ReceiveStatement.Loose>(
+	input: RefusingInput<I, T.ReceiveStatement.Loose>
+): ReturnType<typeof F.buildReceiveStatement>;
+export function coerceToReceiveStatement(input: T.ReceiveStatement.Loose): ReturnType<typeof F.buildReceiveStatement> {
 	if (!_isLooseConfig<T.ReceiveStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReceiveStatement>;
 	currentHandle()?.admit(TSKindId.ReceiveStatement, [input]);
@@ -2480,7 +2539,7 @@ export const coerceToReceiveStatement: ConfigSeat<
 		receiveStatementGroup: resolveReceiveStatement_receiveStatementGroup(input.receiveStatementGroup),
 		right: resolveReceiveStatement_right(input.right)
 	});
-};
+}
 
 export function resolveIncStatement_expression(
 	value: T.IncStatement.LooseConfig['expression']
@@ -2491,9 +2550,10 @@ export function resolveIncStatement_expression(
 	);
 }
 
-export const coerceToIncStatement: ConfigSeat<T.IncStatement.Loose, ReturnType<typeof F.buildIncStatement>> = (
-	input: T.IncStatement.Loose
-): ReturnType<typeof F.buildIncStatement> => {
+export function coerceToIncStatement<const I extends T.IncStatement.Loose>(
+	input: RefusingInput<I, T.IncStatement.Loose>
+): ReturnType<typeof F.buildIncStatement>;
+export function coerceToIncStatement(input: T.IncStatement.Loose): ReturnType<typeof F.buildIncStatement> {
 	if (isNodeOfKind(input, TSKindId.IncStatement)) return input as unknown as ReturnType<typeof F.buildIncStatement>;
 	return F.buildIncStatement(
 		coerceMixedEnumStorage(
@@ -2510,7 +2570,7 @@ export const coerceToIncStatement: ConfigSeat<T.IncStatement.Loose, ReturnType<t
 			[]
 		)
 	);
-};
+}
 
 export function resolveDecStatement_expression(
 	value: T.DecStatement.LooseConfig['expression']
@@ -2521,9 +2581,10 @@ export function resolveDecStatement_expression(
 	);
 }
 
-export const coerceToDecStatement: ConfigSeat<T.DecStatement.Loose, ReturnType<typeof F.buildDecStatement>> = (
-	input: T.DecStatement.Loose
-): ReturnType<typeof F.buildDecStatement> => {
+export function coerceToDecStatement<const I extends T.DecStatement.Loose>(
+	input: RefusingInput<I, T.DecStatement.Loose>
+): ReturnType<typeof F.buildDecStatement>;
+export function coerceToDecStatement(input: T.DecStatement.Loose): ReturnType<typeof F.buildDecStatement> {
 	if (isNodeOfKind(input, TSKindId.DecStatement)) return input as unknown as ReturnType<typeof F.buildDecStatement>;
 	return F.buildDecStatement(
 		coerceMixedEnumStorage(
@@ -2540,7 +2601,7 @@ export const coerceToDecStatement: ConfigSeat<T.DecStatement.Loose, ReturnType<t
 			[]
 		)
 	);
-};
+}
 
 export function resolveAssignmentStatement_left(
 	value: T.AssignmentStatement.LooseConfig['left']
@@ -2584,10 +2645,12 @@ export function resolveAssignmentStatement_right(
 	) as unknown as T.AssignmentStatement.Config['right'];
 }
 
-export const coerceToAssignmentStatement: ConfigSeat<
-	T.AssignmentStatement.Loose,
-	ReturnType<typeof F.buildAssignmentStatement>
-> = (input: T.AssignmentStatement.Loose): ReturnType<typeof F.buildAssignmentStatement> => {
+export function coerceToAssignmentStatement<const I extends T.AssignmentStatement.Loose>(
+	input: RefusingInput<I, T.AssignmentStatement.Loose>
+): ReturnType<typeof F.buildAssignmentStatement>;
+export function coerceToAssignmentStatement(
+	input: T.AssignmentStatement.Loose
+): ReturnType<typeof F.buildAssignmentStatement> {
 	if (!_isLooseConfig<T.AssignmentStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildAssignmentStatement>;
 	currentHandle()?.admit(TSKindId.AssignmentStatement, [input]);
@@ -2596,7 +2659,7 @@ export const coerceToAssignmentStatement: ConfigSeat<
 		operator: resolveAssignmentStatement_operator(input.operator),
 		right: resolveAssignmentStatement_right(input.right)
 	});
-};
+}
 
 export function resolveShortVarDeclaration_left(
 	value: T.ShortVarDeclaration.LooseConfig['left']
@@ -2616,10 +2679,12 @@ export function resolveShortVarDeclaration_right(
 	) as unknown as T.ShortVarDeclaration.Config['right'];
 }
 
-export const coerceToShortVarDeclaration: ConfigSeat<
-	T.ShortVarDeclaration.Loose,
-	ReturnType<typeof F.buildShortVarDeclaration>
-> = (input: T.ShortVarDeclaration.Loose): ReturnType<typeof F.buildShortVarDeclaration> => {
+export function coerceToShortVarDeclaration<const I extends T.ShortVarDeclaration.Loose>(
+	input: RefusingInput<I, T.ShortVarDeclaration.Loose>
+): ReturnType<typeof F.buildShortVarDeclaration>;
+export function coerceToShortVarDeclaration(
+	input: T.ShortVarDeclaration.Loose
+): ReturnType<typeof F.buildShortVarDeclaration> {
 	if (!_isLooseConfig<T.ShortVarDeclaration.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildShortVarDeclaration>;
 	currentHandle()?.admit(TSKindId.ShortVarDeclaration, [input]);
@@ -2627,7 +2692,7 @@ export const coerceToShortVarDeclaration: ConfigSeat<
 		left: resolveShortVarDeclaration_left(input.left),
 		right: resolveShortVarDeclaration_right(input.right)
 	});
-};
+}
 
 export function resolveLabeledStatement_label(
 	value: T.LabeledStatement.LooseConfig['label']
@@ -2644,10 +2709,10 @@ export function resolveLabeledStatement_statement(
 	);
 }
 
-export const coerceToLabeledStatement: ConfigSeat<
-	T.LabeledStatement.Loose,
-	ReturnType<typeof F.buildLabeledStatement>
-> = (input: T.LabeledStatement.Loose): ReturnType<typeof F.buildLabeledStatement> => {
+export function coerceToLabeledStatement<const I extends T.LabeledStatement.Loose>(
+	input: RefusingInput<I, T.LabeledStatement.Loose>
+): ReturnType<typeof F.buildLabeledStatement>;
+export function coerceToLabeledStatement(input: T.LabeledStatement.Loose): ReturnType<typeof F.buildLabeledStatement> {
 	if (!_isLooseConfig<T.LabeledStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildLabeledStatement>;
 	currentHandle()?.admit(TSKindId.LabeledStatement, [input]);
@@ -2655,7 +2720,7 @@ export const coerceToLabeledStatement: ConfigSeat<
 		label: resolveLabeledStatement_label(input.label),
 		statement: resolveLabeledStatement_statement(input.statement)
 	});
-};
+}
 
 export function resolveEmptyLabeledStatement_label(
 	value: T.EmptyLabeledStatement.LooseConfig['label']
@@ -2663,10 +2728,12 @@ export function resolveEmptyLabeledStatement_label(
 	return _resolveOneBranch<T.LabelName>(value, 'label_name');
 }
 
-export const coerceToEmptyLabeledStatement: ConfigSeat<
-	T.EmptyLabeledStatement.Loose,
-	ReturnType<typeof F.buildEmptyLabeledStatement>
-> = (input: T.EmptyLabeledStatement.Loose): ReturnType<typeof F.buildEmptyLabeledStatement> => {
+export function coerceToEmptyLabeledStatement<const I extends T.EmptyLabeledStatement.Loose>(
+	input: RefusingInput<I, T.EmptyLabeledStatement.Loose>
+): ReturnType<typeof F.buildEmptyLabeledStatement>;
+export function coerceToEmptyLabeledStatement(
+	input: T.EmptyLabeledStatement.Loose
+): ReturnType<typeof F.buildEmptyLabeledStatement> {
 	if (isNodeOfKind(input, TSKindId.EmptyLabeledStatement))
 		return input as unknown as ReturnType<typeof F.buildEmptyLabeledStatement>;
 	return F.buildEmptyLabeledStatement(
@@ -2680,7 +2747,7 @@ export const coerceToEmptyLabeledStatement: ConfigSeat<
 			'label_name'
 		)
 	);
-};
+}
 
 export function coerceToFallthroughStatement(
 	_input?: T.FallthroughStatement.Loose
@@ -2694,10 +2761,11 @@ export function resolveBreakStatement_label(
 	return _resolveOneBranch<T.LabelName>(value, 'label_name', undefined, true);
 }
 
-export const coerceToBreakStatement: OptionalConfigSeat<
-	T.BreakStatement.Loose,
-	ReturnType<typeof F.buildBreakStatement>
-> = (input?: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> => {
+export function coerceToBreakStatement<const I extends T.BreakStatement.Loose | undefined>(
+	input: RefusingInput<I, T.BreakStatement.Loose>
+): ReturnType<typeof F.buildBreakStatement>;
+export function coerceToBreakStatement(input?: undefined): ReturnType<typeof F.buildBreakStatement>;
+export function coerceToBreakStatement(input?: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.BreakStatement))
 		return input as unknown as ReturnType<typeof F.buildBreakStatement>;
 	return F.buildBreakStatement(
@@ -2708,7 +2776,7 @@ export const coerceToBreakStatement: OptionalConfigSeat<
 			true
 		)
 	);
-};
+}
 
 export function resolveContinueStatement_label(
 	value: T.ContinueStatement.LooseConfig['label']
@@ -2716,10 +2784,13 @@ export function resolveContinueStatement_label(
 	return _resolveOneBranch<T.LabelName>(value, 'label_name', undefined, true);
 }
 
-export const coerceToContinueStatement: OptionalConfigSeat<
-	T.ContinueStatement.Loose,
-	ReturnType<typeof F.buildContinueStatement>
-> = (input?: T.ContinueStatement.Loose): ReturnType<typeof F.buildContinueStatement> => {
+export function coerceToContinueStatement<const I extends T.ContinueStatement.Loose | undefined>(
+	input: RefusingInput<I, T.ContinueStatement.Loose>
+): ReturnType<typeof F.buildContinueStatement>;
+export function coerceToContinueStatement(input?: undefined): ReturnType<typeof F.buildContinueStatement>;
+export function coerceToContinueStatement(
+	input?: T.ContinueStatement.Loose
+): ReturnType<typeof F.buildContinueStatement> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ContinueStatement))
 		return input as unknown as ReturnType<typeof F.buildContinueStatement>;
 	return F.buildContinueStatement(
@@ -2730,7 +2801,7 @@ export const coerceToContinueStatement: OptionalConfigSeat<
 			true
 		)
 	);
-};
+}
 
 export function resolveGotoStatement_labelName(
 	value: T.GotoStatement.LooseConfig['labelName']
@@ -2738,9 +2809,10 @@ export function resolveGotoStatement_labelName(
 	return _resolveOneBranch<T.LabelName>(value, 'label_name');
 }
 
-export const coerceToGotoStatement: ConfigSeat<T.GotoStatement.Loose, ReturnType<typeof F.buildGotoStatement>> = (
-	input: T.GotoStatement.Loose
-): ReturnType<typeof F.buildGotoStatement> => {
+export function coerceToGotoStatement<const I extends T.GotoStatement.Loose>(
+	input: RefusingInput<I, T.GotoStatement.Loose>
+): ReturnType<typeof F.buildGotoStatement>;
+export function coerceToGotoStatement(input: T.GotoStatement.Loose): ReturnType<typeof F.buildGotoStatement> {
 	if (isNodeOfKind(input, TSKindId.GotoStatement)) return input as unknown as ReturnType<typeof F.buildGotoStatement>;
 	return F.buildGotoStatement(
 		_resolveOneBranch<T.LabelName>(
@@ -2748,7 +2820,7 @@ export const coerceToGotoStatement: ConfigSeat<T.GotoStatement.Loose, ReturnType
 			'label_name'
 		)
 	);
-};
+}
 
 export function resolveReturnStatement_expressionList(
 	value: T.ReturnStatement.LooseConfig['expressionList']
@@ -2761,10 +2833,14 @@ export function resolveReturnStatement_expressionList(
 	) as unknown as T.ReturnStatement.Config['expressionList'];
 }
 
-export const coerceToReturnStatement: Seat<T.ExpressionList.LooseArgs, ReturnType<typeof F.buildReturnStatement>> &
-	OptionalConfigSeat<T.ReturnStatement.Loose, ReturnType<typeof F.buildReturnStatement>> = (
-	...args: unknown[]
-): ReturnType<typeof F.buildReturnStatement> => {
+export function coerceToReturnStatement<const A extends T.ExpressionList.LooseArgs>(
+	...args: RefusingInput<A, T.ExpressionList.LooseArgs>
+): ReturnType<typeof F.buildReturnStatement>;
+export function coerceToReturnStatement<const I extends T.ReturnStatement.Loose | undefined>(
+	input: RefusingInput<I, T.ReturnStatement.Loose>
+): ReturnType<typeof F.buildReturnStatement>;
+export function coerceToReturnStatement(input?: undefined): ReturnType<typeof F.buildReturnStatement>;
+export function coerceToReturnStatement(...args: unknown[]): ReturnType<typeof F.buildReturnStatement> {
 	if (args.length > 1)
 		return F.buildReturnStatement(coerceToExpressionList(...(args as Parameters<typeof coerceToExpressionList>)));
 	const input = args[0] as T.ReturnStatement.Loose | undefined;
@@ -2778,7 +2854,7 @@ export const coerceToReturnStatement: Seat<T.ExpressionList.LooseArgs, ReturnTyp
 			true
 		)
 	);
-};
+}
 
 export function resolveGoStatement_expression(
 	value: T.GoStatement.LooseConfig['expression']
@@ -2789,9 +2865,10 @@ export function resolveGoStatement_expression(
 	);
 }
 
-export const coerceToGoStatement: ConfigSeat<T.GoStatement.Loose, ReturnType<typeof F.buildGoStatement>> = (
-	input: T.GoStatement.Loose
-): ReturnType<typeof F.buildGoStatement> => {
+export function coerceToGoStatement<const I extends T.GoStatement.Loose>(
+	input: RefusingInput<I, T.GoStatement.Loose>
+): ReturnType<typeof F.buildGoStatement>;
+export function coerceToGoStatement(input: T.GoStatement.Loose): ReturnType<typeof F.buildGoStatement> {
 	if (isNodeOfKind(input, TSKindId.GoStatement)) return input as unknown as ReturnType<typeof F.buildGoStatement>;
 	return F.buildGoStatement(
 		coerceMixedEnumStorage(
@@ -2808,7 +2885,7 @@ export const coerceToGoStatement: ConfigSeat<T.GoStatement.Loose, ReturnType<typ
 			[]
 		)
 	);
-};
+}
 
 export function resolveDeferStatement_expression(
 	value: T.DeferStatement.LooseConfig['expression']
@@ -2819,9 +2896,10 @@ export function resolveDeferStatement_expression(
 	);
 }
 
-export const coerceToDeferStatement: ConfigSeat<T.DeferStatement.Loose, ReturnType<typeof F.buildDeferStatement>> = (
-	input: T.DeferStatement.Loose
-): ReturnType<typeof F.buildDeferStatement> => {
+export function coerceToDeferStatement<const I extends T.DeferStatement.Loose>(
+	input: RefusingInput<I, T.DeferStatement.Loose>
+): ReturnType<typeof F.buildDeferStatement>;
+export function coerceToDeferStatement(input: T.DeferStatement.Loose): ReturnType<typeof F.buildDeferStatement> {
 	if (isNodeOfKind(input, TSKindId.DeferStatement)) return input as unknown as ReturnType<typeof F.buildDeferStatement>;
 	return F.buildDeferStatement(
 		coerceMixedEnumStorage(
@@ -2838,7 +2916,7 @@ export const coerceToDeferStatement: ConfigSeat<T.DeferStatement.Loose, ReturnTy
 			[]
 		)
 	);
-};
+}
 
 export function resolveIfStatement_initializer(
 	value: T.IfStatement.LooseConfig['initializer']
@@ -2867,9 +2945,10 @@ export function resolveIfStatement_alternative(
 	return _resolveOne<T.Block | T.IfStatement>(value, _K0, _K19);
 }
 
-export const coerceToIfStatement: ConfigSeat<T.IfStatement.Loose, ReturnType<typeof F.buildIfStatement>> = (
-	input: T.IfStatement.Loose
-): ReturnType<typeof F.buildIfStatement> => {
+export function coerceToIfStatement<const I extends T.IfStatement.Loose>(
+	input: RefusingInput<I, T.IfStatement.Loose>
+): ReturnType<typeof F.buildIfStatement>;
+export function coerceToIfStatement(input: T.IfStatement.Loose): ReturnType<typeof F.buildIfStatement> {
 	if (!_isLooseConfig<T.IfStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildIfStatement>;
 	currentHandle()?.admit(TSKindId.IfStatement, [input]);
@@ -2879,7 +2958,7 @@ export const coerceToIfStatement: ConfigSeat<T.IfStatement.Loose, ReturnType<typ
 		consequence: resolveIfStatement_consequence(input.consequence),
 		alternative: resolveIfStatement_alternative(input.alternative)
 	});
-};
+}
 
 export function resolveForStatement_content(
 	value: T.ForStatement.LooseConfig['content']
@@ -2896,9 +2975,11 @@ export function resolveForStatement_body(
 	return _resolveOneBranch<T.Block>(value, 'block') as unknown as T.ForStatement.Config['body'];
 }
 
-export const coerceToForStatement: OptionalConfigSeat<T.ForStatement.Loose, ReturnType<typeof F.buildForStatement>> = (
-	input?: T.ForStatement.Loose
-): ReturnType<typeof F.buildForStatement> => {
+export function coerceToForStatement<const I extends T.ForStatement.Loose | undefined>(
+	input: RefusingInput<I, T.ForStatement.Loose>
+): ReturnType<typeof F.buildForStatement>;
+export function coerceToForStatement(input?: undefined): ReturnType<typeof F.buildForStatement>;
+export function coerceToForStatement(input?: T.ForStatement.Loose): ReturnType<typeof F.buildForStatement> {
 	if (!_isLooseConfig<T.ForStatement.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForStatement>;
 	currentHandle()?.admit(TSKindId.ForStatement, [input]);
@@ -2906,7 +2987,7 @@ export const coerceToForStatement: OptionalConfigSeat<T.ForStatement.Loose, Retu
 		content: resolveForStatement_content(input?.content),
 		body: resolveForStatement_body(input?.body)
 	});
-};
+}
 
 export function resolveForClause_initializer(
 	value: T.ForClause.LooseConfig['initializer']
@@ -2927,10 +3008,12 @@ export function resolveForClause_update(value: T.ForClause.LooseConfig['update']
 	return _resolveOne<T.SimpleStatement>(value, _K0, _super_simple_statement);
 }
 
-export const coerceToForClause: EmptyForm<
-	T.EmptyForClause,
-	OptionalConfigSeat<T.ForClause.Loose, ReturnType<typeof F.buildForClause>>
-> = withEmptyForm((input?: T.ForClause.Loose): ReturnType<typeof F.buildForClause> => {
+export function coerceToForClause(): T.EmptyForClause;
+export function coerceToForClause<const I extends T.ForClause.Loose | undefined>(
+	input: RefusingInput<I, T.ForClause.Loose>
+): ReturnType<typeof F.buildForClause>;
+export function coerceToForClause(input?: undefined): ReturnType<typeof F.buildForClause>;
+export function coerceToForClause(input?: T.ForClause.Loose): ReturnType<typeof F.buildForClause> {
 	if (!_isLooseConfig<T.ForClause.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildForClause>;
 	currentHandle()?.admit(TSKindId.ForClause, [input]);
@@ -2939,7 +3022,7 @@ export const coerceToForClause: EmptyForm<
 		condition: resolveForClause_condition(input?.condition),
 		update: resolveForClause_update(input?.update)
 	});
-});
+}
 
 export function resolveRangeClause_receiveStatementGroup(
 	value: T.RangeClause.LooseConfig['receiveStatementGroup']
@@ -2954,9 +3037,10 @@ export function resolveRangeClause_right(value: T.RangeClause.LooseConfig['right
 	);
 }
 
-export const coerceToRangeClause: ConfigSeat<T.RangeClause.Loose, ReturnType<typeof F.buildRangeClause>> = (
-	input: T.RangeClause.Loose
-): ReturnType<typeof F.buildRangeClause> => {
+export function coerceToRangeClause<const I extends T.RangeClause.Loose>(
+	input: RefusingInput<I, T.RangeClause.Loose>
+): ReturnType<typeof F.buildRangeClause>;
+export function coerceToRangeClause(input: T.RangeClause.Loose): ReturnType<typeof F.buildRangeClause> {
 	if (!_isLooseConfig<T.RangeClause.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildRangeClause>;
 	currentHandle()?.admit(TSKindId.RangeClause, [input]);
@@ -2964,7 +3048,7 @@ export const coerceToRangeClause: ConfigSeat<T.RangeClause.Loose, ReturnType<typ
 		receiveStatementGroup: resolveRangeClause_receiveStatementGroup(input.receiveStatementGroup),
 		right: resolveRangeClause_right(input.right)
 	});
-};
+}
 
 export function resolveExpressionSwitchStatement_initializer(
 	value: T.ExpressionSwitchStatement.LooseConfig['initializer']
@@ -2987,10 +3071,16 @@ export function resolveExpressionSwitchStatement_elements(
 	return _resolveMany<T.ExpressionCase | T.DefaultCase>(value, _K0, _K21);
 }
 
-export const coerceToExpressionSwitchStatement: EmptyForm<
-	T.EmptyExpressionSwitchStatement,
-	OptionalConfigSeat<T.ExpressionSwitchStatement.Loose, ReturnType<typeof F.buildExpressionSwitchStatement>>
-> = withEmptyForm((input?: T.ExpressionSwitchStatement.Loose): ReturnType<typeof F.buildExpressionSwitchStatement> => {
+export function coerceToExpressionSwitchStatement(): T.EmptyExpressionSwitchStatement;
+export function coerceToExpressionSwitchStatement<const I extends T.ExpressionSwitchStatement.Loose | undefined>(
+	input: RefusingInput<I, T.ExpressionSwitchStatement.Loose>
+): ReturnType<typeof F.buildExpressionSwitchStatement>;
+export function coerceToExpressionSwitchStatement(
+	input?: undefined
+): ReturnType<typeof F.buildExpressionSwitchStatement>;
+export function coerceToExpressionSwitchStatement(
+	input?: T.ExpressionSwitchStatement.Loose
+): ReturnType<typeof F.buildExpressionSwitchStatement> {
 	if (!_isLooseConfig<T.ExpressionSwitchStatement.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildExpressionSwitchStatement>;
 	currentHandle()?.admit(TSKindId.ExpressionSwitchStatement, [input]);
@@ -2999,7 +3089,7 @@ export const coerceToExpressionSwitchStatement: EmptyForm<
 		value: resolveExpressionSwitchStatement_value(input?.value),
 		elements: resolveExpressionSwitchStatement_elements(input?.elements)
 	});
-});
+}
 
 export function resolveExpressionCase_value(
 	value: T.ExpressionCase.LooseConfig['value']
@@ -3018,9 +3108,10 @@ export function resolveExpressionCase_statementList(
 	) as unknown as T.ExpressionCase.Config['statementList'];
 }
 
-export const coerceToExpressionCase: ConfigSeat<T.ExpressionCase.Loose, ReturnType<typeof F.buildExpressionCase>> = (
-	input: T.ExpressionCase.Loose
-): ReturnType<typeof F.buildExpressionCase> => {
+export function coerceToExpressionCase<const I extends T.ExpressionCase.Loose>(
+	input: RefusingInput<I, T.ExpressionCase.Loose>
+): ReturnType<typeof F.buildExpressionCase>;
+export function coerceToExpressionCase(input: T.ExpressionCase.Loose): ReturnType<typeof F.buildExpressionCase> {
 	if (!_isLooseConfig<T.ExpressionCase.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildExpressionCase>;
 	currentHandle()?.admit(TSKindId.ExpressionCase, [input]);
@@ -3028,7 +3119,7 @@ export const coerceToExpressionCase: ConfigSeat<T.ExpressionCase.Loose, ReturnTy
 		value: resolveExpressionCase_value(input.value),
 		statementList: resolveExpressionCase_statementList(input.statementList)
 	});
-};
+}
 
 export function resolveDefaultCase_statementList(
 	value: T.DefaultCase.LooseConfig['statementList']
@@ -3041,9 +3132,11 @@ export function resolveDefaultCase_statementList(
 	) as unknown as T.DefaultCase.Config['statementList'];
 }
 
-export const coerceToDefaultCase: OptionalConfigSeat<T.DefaultCase.Loose, ReturnType<typeof F.buildDefaultCase>> = (
-	input?: T.DefaultCase.Loose
-): ReturnType<typeof F.buildDefaultCase> => {
+export function coerceToDefaultCase<const I extends T.DefaultCase.Loose | undefined>(
+	input: RefusingInput<I, T.DefaultCase.Loose>
+): ReturnType<typeof F.buildDefaultCase>;
+export function coerceToDefaultCase(input?: undefined): ReturnType<typeof F.buildDefaultCase>;
+export function coerceToDefaultCase(input?: T.DefaultCase.Loose): ReturnType<typeof F.buildDefaultCase> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.DefaultCase))
 		return input as unknown as ReturnType<typeof F.buildDefaultCase>;
 	return F.buildDefaultCase(
@@ -3054,7 +3147,7 @@ export const coerceToDefaultCase: OptionalConfigSeat<T.DefaultCase.Loose, Return
 			true
 		)
 	);
-};
+}
 
 export function resolveTypeSwitchStatement_initializer(
 	value: T.TypeSwitchStatement.LooseConfig['initializer']
@@ -3088,10 +3181,12 @@ export function resolveTypeSwitchStatement_elements(
 	return _resolveMany<T.TypeCase | T.DefaultCase>(value, _K0, _K22);
 }
 
-export const coerceToTypeSwitchStatement: ConfigSeat<
-	T.TypeSwitchStatement.Loose,
-	ReturnType<typeof F.buildTypeSwitchStatement>
-> = (input: T.TypeSwitchStatement.Loose): ReturnType<typeof F.buildTypeSwitchStatement> => {
+export function coerceToTypeSwitchStatement<const I extends T.TypeSwitchStatement.Loose>(
+	input: RefusingInput<I, T.TypeSwitchStatement.Loose>
+): ReturnType<typeof F.buildTypeSwitchStatement>;
+export function coerceToTypeSwitchStatement(
+	input: T.TypeSwitchStatement.Loose
+): ReturnType<typeof F.buildTypeSwitchStatement> {
 	if (!_isLooseConfig<T.TypeSwitchStatement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeSwitchStatement>;
 	currentHandle()?.admit(TSKindId.TypeSwitchStatement, [input]);
@@ -3101,7 +3196,7 @@ export const coerceToTypeSwitchStatement: ConfigSeat<
 		value: resolveTypeSwitchStatement_value(input.value),
 		elements: resolveTypeSwitchStatement_elements(input.elements)
 	});
-};
+}
 
 export function resolveTypeCase_types(value: T.TypeCase.LooseConfig['types']): Admit<T.TypeCase['_type']> {
 	return _resolveMany<T.Type>(value, _K0, _K11) as Admit<T.TypeCase['_type']>;
@@ -3118,21 +3213,25 @@ export function resolveTypeCase_statementList(
 	) as unknown as T.TypeCase.Config['statementList'];
 }
 
-export const coerceToTypeCase: ConfigSeat<T.TypeCase.Loose, ReturnType<typeof F.buildTypeCase>> = (
-	input: T.TypeCase.Loose
-): ReturnType<typeof F.buildTypeCase> => {
+export function coerceToTypeCase<const I extends T.TypeCase.Loose>(
+	input: RefusingInput<I, T.TypeCase.Loose>
+): ReturnType<typeof F.buildTypeCase>;
+export function coerceToTypeCase(input: T.TypeCase.Loose): ReturnType<typeof F.buildTypeCase> {
 	if (!_isLooseConfig<T.TypeCase.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildTypeCase>;
 	currentHandle()?.admit(TSKindId.TypeCase, [input]);
 	return F.buildTypeCase({
 		types: resolveTypeCase_types(input.types),
 		statementList: resolveTypeCase_statementList(input.statementList)
 	});
-};
+}
 
-export const coerceToSelectStatement: EmptyForm<
-	T.EmptySelectStatement,
-	Seat<T.SelectStatement.LooseArgs, ReturnType<typeof F.buildSelectStatement>>
-> = withEmptyForm((...input: T.SelectStatement.LooseArgs): ReturnType<typeof F.buildSelectStatement> => {
+export function coerceToSelectStatement(): T.EmptySelectStatement;
+export function coerceToSelectStatement<const A extends T.SelectStatement.LooseArgs>(
+	...args: RefusingInput<A, T.SelectStatement.LooseArgs>
+): ReturnType<typeof F.buildSelectStatement>;
+export function coerceToSelectStatement(
+	...input: T.SelectStatement.LooseArgs
+): ReturnType<typeof F.buildSelectStatement> {
 	currentHandle()?.admit(TSKindId.SelectStatement, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SelectStatement))
 		return input[0] as unknown as ReturnType<typeof F.buildSelectStatement>;
@@ -3149,7 +3248,7 @@ export const coerceToSelectStatement: EmptyForm<
 			typeof F.buildSelectStatement
 		>)
 	);
-});
+}
 
 export function resolveCommunicationCase_communication(
 	value: T.CommunicationCase.LooseConfig['communication']
@@ -3168,10 +3267,12 @@ export function resolveCommunicationCase_statementList(
 	) as unknown as T.CommunicationCase.Config['statementList'];
 }
 
-export const coerceToCommunicationCase: ConfigSeat<
-	T.CommunicationCase.Loose,
-	ReturnType<typeof F.buildCommunicationCase>
-> = (input: T.CommunicationCase.Loose): ReturnType<typeof F.buildCommunicationCase> => {
+export function coerceToCommunicationCase<const I extends T.CommunicationCase.Loose>(
+	input: RefusingInput<I, T.CommunicationCase.Loose>
+): ReturnType<typeof F.buildCommunicationCase>;
+export function coerceToCommunicationCase(
+	input: T.CommunicationCase.Loose
+): ReturnType<typeof F.buildCommunicationCase> {
 	if (!_isLooseConfig<T.CommunicationCase.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCommunicationCase>;
 	currentHandle()?.admit(TSKindId.CommunicationCase, [input]);
@@ -3179,7 +3280,7 @@ export const coerceToCommunicationCase: ConfigSeat<
 		communication: resolveCommunicationCase_communication(input.communication),
 		statementList: resolveCommunicationCase_statementList(input.statementList)
 	});
-};
+}
 
 export function resolveParenthesizedExpression_expression(
 	value: T.ParenthesizedExpression.LooseConfig['expression']
@@ -3190,10 +3291,12 @@ export function resolveParenthesizedExpression_expression(
 	);
 }
 
-export const coerceToParenthesizedExpression: ConfigSeat<
-	T.ParenthesizedExpression.Loose,
-	ReturnType<typeof F.buildParenthesizedExpression>
-> = (input: T.ParenthesizedExpression.Loose): ReturnType<typeof F.buildParenthesizedExpression> => {
+export function coerceToParenthesizedExpression<const I extends T.ParenthesizedExpression.Loose>(
+	input: RefusingInput<I, T.ParenthesizedExpression.Loose>
+): ReturnType<typeof F.buildParenthesizedExpression>;
+export function coerceToParenthesizedExpression(
+	input: T.ParenthesizedExpression.Loose
+): ReturnType<typeof F.buildParenthesizedExpression> {
 	return F.buildParenthesizedExpression(
 		coerceMixedEnumStorage(
 			_resolveKindEnum(
@@ -3209,7 +3312,7 @@ export const coerceToParenthesizedExpression: ConfigSeat<
 			[]
 		)
 	);
-};
+}
 
 export function resolveCallExpression_content(
 	value: T.CallExpression.LooseConfig['content']
@@ -3217,9 +3320,10 @@ export function resolveCallExpression_content(
 	return _resolveOne<T.CallExpressionArm1 | T.CallExpressionArm2>(value, _K0, _K25);
 }
 
-export const coerceToCallExpression: ConfigSeat<T.CallExpression.Loose, ReturnType<typeof F.buildCallExpression>> = (
-	input: T.CallExpression.Loose
-): ReturnType<typeof F.buildCallExpression> => {
+export function coerceToCallExpression<const I extends T.CallExpression.Loose>(
+	input: RefusingInput<I, T.CallExpression.Loose>
+): ReturnType<typeof F.buildCallExpression>;
+export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnType<typeof F.buildCallExpression> {
 	if (isNodeOfKind(input, TSKindId.CallExpression)) return input as unknown as ReturnType<typeof F.buildCallExpression>;
 	return F.buildCallExpression(
 		_resolveOne<T.CallExpressionArm1 | T.CallExpressionArm2>(
@@ -3228,7 +3332,7 @@ export const coerceToCallExpression: ConfigSeat<T.CallExpression.Loose, ReturnTy
 			_K25
 		)
 	);
-};
+}
 
 export function resolveVariadicArgument_expression(
 	value: T.VariadicArgument.LooseConfig['expression']
@@ -3239,10 +3343,10 @@ export function resolveVariadicArgument_expression(
 	);
 }
 
-export const coerceToVariadicArgument: ConfigSeat<
-	T.VariadicArgument.Loose,
-	ReturnType<typeof F.buildVariadicArgument>
-> = (input: T.VariadicArgument.Loose): ReturnType<typeof F.buildVariadicArgument> => {
+export function coerceToVariadicArgument<const I extends T.VariadicArgument.Loose>(
+	input: RefusingInput<I, T.VariadicArgument.Loose>
+): ReturnType<typeof F.buildVariadicArgument>;
+export function coerceToVariadicArgument(input: T.VariadicArgument.Loose): ReturnType<typeof F.buildVariadicArgument> {
 	if (isNodeOfKind(input, TSKindId.VariadicArgument))
 		return input as unknown as ReturnType<typeof F.buildVariadicArgument>;
 	return F.buildVariadicArgument(
@@ -3260,7 +3364,7 @@ export const coerceToVariadicArgument: ConfigSeat<
 			[]
 		)
 	);
-};
+}
 
 export function resolveSpecialArgumentList_specialArgumentListGroup(
 	value: T.SpecialArgumentList.LooseConfig['specialArgumentListGroup']
@@ -3268,10 +3372,14 @@ export function resolveSpecialArgumentList_specialArgumentListGroup(
 	return _resolveOneBranch<T.SpecialArgumentListGroup>(value, 'special_argument_list_group', undefined, true);
 }
 
-export const coerceToSpecialArgumentList: EmptyForm<
-	T.EmptySpecialArgumentList,
-	OptionalConfigSeat<T.SpecialArgumentList.Loose, ReturnType<typeof F.buildSpecialArgumentList>>
-> = withEmptyForm((input?: T.SpecialArgumentList.Loose): ReturnType<typeof F.buildSpecialArgumentList> => {
+export function coerceToSpecialArgumentList(): T.EmptySpecialArgumentList;
+export function coerceToSpecialArgumentList<const I extends T.SpecialArgumentList.Loose | undefined>(
+	input: RefusingInput<I, T.SpecialArgumentList.Loose>
+): ReturnType<typeof F.buildSpecialArgumentList>;
+export function coerceToSpecialArgumentList(input?: undefined): ReturnType<typeof F.buildSpecialArgumentList>;
+export function coerceToSpecialArgumentList(
+	input?: T.SpecialArgumentList.Loose
+): ReturnType<typeof F.buildSpecialArgumentList> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.SpecialArgumentList))
 		return input as unknown as ReturnType<typeof F.buildSpecialArgumentList>;
 	return F.buildSpecialArgumentList(
@@ -3282,7 +3390,7 @@ export const coerceToSpecialArgumentList: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveArgumentList_elements(
 	value: T.ArgumentList.LooseConfig['elements']
@@ -3297,11 +3405,15 @@ export function resolveArgumentList_elements(
 			)) as unknown as T.ArgumentList.Config['elements'];
 }
 
-export const coerceToArgumentList: EmptyForm<
-	T.EmptyArgumentList,
-	Seat<T.ArgumentListElements.LooseArgs, ReturnType<typeof F.buildArgumentList>> &
-		OptionalConfigSeat<T.ArgumentList.Loose, ReturnType<typeof F.buildArgumentList>>
-> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildArgumentList> => {
+export function coerceToArgumentList(): T.EmptyArgumentList;
+export function coerceToArgumentList<const A extends T.ArgumentListElements.LooseArgs>(
+	...args: RefusingInput<A, T.ArgumentListElements.LooseArgs>
+): ReturnType<typeof F.buildArgumentList>;
+export function coerceToArgumentList<const I extends T.ArgumentList.Loose | undefined>(
+	input: RefusingInput<I, T.ArgumentList.Loose>
+): ReturnType<typeof F.buildArgumentList>;
+export function coerceToArgumentList(input?: undefined): ReturnType<typeof F.buildArgumentList>;
+export function coerceToArgumentList(...args: unknown[]): ReturnType<typeof F.buildArgumentList> {
 	if (args.length > 1)
 		return F.buildArgumentList(
 			coerceToArgumentListElements(...(args as Parameters<typeof coerceToArgumentListElements>))
@@ -3317,7 +3429,7 @@ export const coerceToArgumentList: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveSelectorExpression_operand(
 	value: T.SelectorExpression.LooseConfig['operand']
@@ -3334,10 +3446,12 @@ export function resolveSelectorExpression_field(
 	return _resolveOneBranch<T.FieldIdentifier>(value, 'field_identifier');
 }
 
-export const coerceToSelectorExpression: ConfigSeat<
-	T.SelectorExpression.Loose,
-	ReturnType<typeof F.buildSelectorExpression>
-> = (input: T.SelectorExpression.Loose): ReturnType<typeof F.buildSelectorExpression> => {
+export function coerceToSelectorExpression<const I extends T.SelectorExpression.Loose>(
+	input: RefusingInput<I, T.SelectorExpression.Loose>
+): ReturnType<typeof F.buildSelectorExpression>;
+export function coerceToSelectorExpression(
+	input: T.SelectorExpression.Loose
+): ReturnType<typeof F.buildSelectorExpression> {
 	if (!_isLooseConfig<T.SelectorExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildSelectorExpression>;
 	currentHandle()?.admit(TSKindId.SelectorExpression, [input]);
@@ -3345,7 +3459,7 @@ export const coerceToSelectorExpression: ConfigSeat<
 		operand: resolveSelectorExpression_operand(input.operand),
 		field: resolveSelectorExpression_field(input.field)
 	});
-};
+}
 
 export function resolveIndexExpression_operand(
 	value: T.IndexExpression.LooseConfig['operand']
@@ -3365,9 +3479,10 @@ export function resolveIndexExpression_index(
 	);
 }
 
-export const coerceToIndexExpression: ConfigSeat<T.IndexExpression.Loose, ReturnType<typeof F.buildIndexExpression>> = (
-	input: T.IndexExpression.Loose
-): ReturnType<typeof F.buildIndexExpression> => {
+export function coerceToIndexExpression<const I extends T.IndexExpression.Loose>(
+	input: RefusingInput<I, T.IndexExpression.Loose>
+): ReturnType<typeof F.buildIndexExpression>;
+export function coerceToIndexExpression(input: T.IndexExpression.Loose): ReturnType<typeof F.buildIndexExpression> {
 	if (!_isLooseConfig<T.IndexExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildIndexExpression>;
 	currentHandle()?.admit(TSKindId.IndexExpression, [input]);
@@ -3375,7 +3490,7 @@ export const coerceToIndexExpression: ConfigSeat<T.IndexExpression.Loose, Return
 		operand: resolveIndexExpression_operand(input.operand),
 		index: resolveIndexExpression_index(input.index)
 	});
-};
+}
 
 export function resolveSliceExpression_operand(
 	value: T.SliceExpression.LooseConfig['operand']
@@ -3413,9 +3528,10 @@ export function resolveSliceExpression_capacity(
 	);
 }
 
-export const coerceToSliceExpression: ConfigSeat<T.SliceExpression.Loose, ReturnType<typeof F.buildSliceExpression>> = (
-	input: T.SliceExpression.Loose
-): ReturnType<typeof F.buildSliceExpression> => {
+export function coerceToSliceExpression<const I extends T.SliceExpression.Loose>(
+	input: RefusingInput<I, T.SliceExpression.Loose>
+): ReturnType<typeof F.buildSliceExpression>;
+export function coerceToSliceExpression(input: T.SliceExpression.Loose): ReturnType<typeof F.buildSliceExpression> {
 	if (!_isLooseConfig<T.SliceExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildSliceExpression>;
 	currentHandle()?.admit(TSKindId.SliceExpression, [input]);
@@ -3425,7 +3541,7 @@ export const coerceToSliceExpression: ConfigSeat<T.SliceExpression.Loose, Return
 		end: resolveSliceExpression_end(input.end),
 		capacity: resolveSliceExpression_capacity(input.capacity)
 	});
-};
+}
 
 export function resolveTypeAssertionExpression_operand(
 	value: T.TypeAssertionExpression.LooseConfig['operand']
@@ -3442,10 +3558,12 @@ export function resolveTypeAssertionExpression_type(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToTypeAssertionExpression: ConfigSeat<
-	T.TypeAssertionExpression.Loose,
-	ReturnType<typeof F.buildTypeAssertionExpression>
-> = (input: T.TypeAssertionExpression.Loose): ReturnType<typeof F.buildTypeAssertionExpression> => {
+export function coerceToTypeAssertionExpression<const I extends T.TypeAssertionExpression.Loose>(
+	input: RefusingInput<I, T.TypeAssertionExpression.Loose>
+): ReturnType<typeof F.buildTypeAssertionExpression>;
+export function coerceToTypeAssertionExpression(
+	input: T.TypeAssertionExpression.Loose
+): ReturnType<typeof F.buildTypeAssertionExpression> {
 	if (!_isLooseConfig<T.TypeAssertionExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeAssertionExpression>;
 	currentHandle()?.admit(TSKindId.TypeAssertionExpression, [input]);
@@ -3453,7 +3571,7 @@ export const coerceToTypeAssertionExpression: ConfigSeat<
 		operand: resolveTypeAssertionExpression_operand(input.operand),
 		type: resolveTypeAssertionExpression_type(input.type)
 	});
-};
+}
 
 export function resolveTypeConversionExpression_type(
 	value: T.TypeConversionExpression.LooseConfig['type']
@@ -3504,10 +3622,12 @@ export function resolveTypeInstantiationExpression_types(
 		: _resolveOneBranch<T.Types>(value, 'types')) as unknown as T.TypeInstantiationExpression.Config['types'];
 }
 
-export const coerceToTypeInstantiationExpression: ConfigSeat<
-	T.TypeInstantiationExpression.Loose,
-	ReturnType<typeof F.buildTypeInstantiationExpression>
-> = (input: T.TypeInstantiationExpression.Loose): ReturnType<typeof F.buildTypeInstantiationExpression> => {
+export function coerceToTypeInstantiationExpression<const I extends T.TypeInstantiationExpression.Loose>(
+	input: RefusingInput<I, T.TypeInstantiationExpression.Loose>
+): ReturnType<typeof F.buildTypeInstantiationExpression>;
+export function coerceToTypeInstantiationExpression(
+	input: T.TypeInstantiationExpression.Loose
+): ReturnType<typeof F.buildTypeInstantiationExpression> {
 	if (!_isLooseConfig<T.TypeInstantiationExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeInstantiationExpression>;
 	currentHandle()?.admit(TSKindId.TypeInstantiationExpression, [input]);
@@ -3515,7 +3635,7 @@ export const coerceToTypeInstantiationExpression: ConfigSeat<
 		type: resolveTypeInstantiationExpression_type(input.type),
 		types: resolveTypeInstantiationExpression_types(input.types)
 	});
-};
+}
 
 export function resolveCompositeLiteral_type(
 	value: T.CompositeLiteral.LooseConfig['type']
@@ -3542,10 +3662,10 @@ export function resolveCompositeLiteral_body(
 		: _resolveOneBranch<T.LiteralValue>(value, 'literal_value')) as unknown as T.CompositeLiteral.Config['body'];
 }
 
-export const coerceToCompositeLiteral: ConfigSeat<
-	T.CompositeLiteral.Loose,
-	ReturnType<typeof F.buildCompositeLiteral>
-> = (input: T.CompositeLiteral.Loose): ReturnType<typeof F.buildCompositeLiteral> => {
+export function coerceToCompositeLiteral<const I extends T.CompositeLiteral.Loose>(
+	input: RefusingInput<I, T.CompositeLiteral.Loose>
+): ReturnType<typeof F.buildCompositeLiteral>;
+export function coerceToCompositeLiteral(input: T.CompositeLiteral.Loose): ReturnType<typeof F.buildCompositeLiteral> {
 	if (!_isLooseConfig<T.CompositeLiteral.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCompositeLiteral>;
 	currentHandle()?.admit(TSKindId.CompositeLiteral, [input]);
@@ -3553,7 +3673,7 @@ export const coerceToCompositeLiteral: ConfigSeat<
 		type: resolveCompositeLiteral_type(input.type),
 		body: resolveCompositeLiteral_body(input.body)
 	});
-};
+}
 
 export function resolveLiteralValue_elements(
 	value: T.LiteralValue.LooseConfig['elements']
@@ -3568,11 +3688,15 @@ export function resolveLiteralValue_elements(
 			)) as unknown as T.LiteralValue.Config['elements'];
 }
 
-export const coerceToLiteralValue: EmptyForm<
-	T.EmptyLiteralValue,
-	Seat<T.LiteralValueElements.LooseArgs, ReturnType<typeof F.buildLiteralValue>> &
-		OptionalConfigSeat<T.LiteralValue.Loose, ReturnType<typeof F.buildLiteralValue>>
-> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildLiteralValue> => {
+export function coerceToLiteralValue(): T.EmptyLiteralValue;
+export function coerceToLiteralValue<const A extends T.LiteralValueElements.LooseArgs>(
+	...args: RefusingInput<A, T.LiteralValueElements.LooseArgs>
+): ReturnType<typeof F.buildLiteralValue>;
+export function coerceToLiteralValue<const I extends T.LiteralValue.Loose | undefined>(
+	input: RefusingInput<I, T.LiteralValue.Loose>
+): ReturnType<typeof F.buildLiteralValue>;
+export function coerceToLiteralValue(input?: undefined): ReturnType<typeof F.buildLiteralValue>;
+export function coerceToLiteralValue(...args: unknown[]): ReturnType<typeof F.buildLiteralValue> {
 	if (args.length > 1)
 		return F.buildLiteralValue(
 			coerceToLiteralValueElements(...(args as Parameters<typeof coerceToLiteralValueElements>))
@@ -3588,7 +3712,7 @@ export const coerceToLiteralValue: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveLiteralElement_content(
 	value: T.LiteralElement.LooseConfig['content']
@@ -3599,9 +3723,10 @@ export function resolveLiteralElement_content(
 	);
 }
 
-export const coerceToLiteralElement: ConfigSeat<T.LiteralElement.Loose, ReturnType<typeof F.buildLiteralElement>> = (
-	input: T.LiteralElement.Loose
-): ReturnType<typeof F.buildLiteralElement> => {
+export function coerceToLiteralElement<const I extends T.LiteralElement.Loose>(
+	input: RefusingInput<I, T.LiteralElement.Loose>
+): ReturnType<typeof F.buildLiteralElement>;
+export function coerceToLiteralElement(input: T.LiteralElement.Loose): ReturnType<typeof F.buildLiteralElement> {
 	if (isNodeOfKind(input, TSKindId.LiteralElement)) return input as unknown as ReturnType<typeof F.buildLiteralElement>;
 	return F.buildLiteralElement(
 		coerceMixedEnumStorage(
@@ -3619,7 +3744,7 @@ export const coerceToLiteralElement: ConfigSeat<T.LiteralElement.Loose, ReturnTy
 			[]
 		)
 	);
-};
+}
 
 export function resolveKeyedElement_key(value: T.KeyedElement.LooseConfig['key']): T.KeyedElement.Config['key'] {
 	return (Array.isArray(value) && value.length > 0
@@ -3633,9 +3758,10 @@ export function resolveKeyedElement_value(value: T.KeyedElement.LooseConfig['val
 		: _resolveOneBranch<T.LiteralElement>(value, 'literal_element')) as unknown as T.KeyedElement.Config['value'];
 }
 
-export const coerceToKeyedElement: ConfigSeat<T.KeyedElement.Loose, ReturnType<typeof F.buildKeyedElement>> = (
-	input: T.KeyedElement.Loose
-): ReturnType<typeof F.buildKeyedElement> => {
+export function coerceToKeyedElement<const I extends T.KeyedElement.Loose>(
+	input: RefusingInput<I, T.KeyedElement.Loose>
+): ReturnType<typeof F.buildKeyedElement>;
+export function coerceToKeyedElement(input: T.KeyedElement.Loose): ReturnType<typeof F.buildKeyedElement> {
 	if (!_isLooseConfig<T.KeyedElement.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildKeyedElement>;
 	currentHandle()?.admit(TSKindId.KeyedElement, [input]);
@@ -3643,7 +3769,7 @@ export const coerceToKeyedElement: ConfigSeat<T.KeyedElement.Loose, ReturnType<t
 		key: resolveKeyedElement_key(input.key),
 		value: resolveKeyedElement_value(input.value)
 	});
-};
+}
 
 export function resolveFuncLiteral_parameters(
 	value: T.FuncLiteral.LooseConfig['parameters'] | undefined
@@ -3667,9 +3793,11 @@ export function resolveFuncLiteral_body(
 	return _resolveOneBranch<T.Block>(value, 'block') as unknown as T.FuncLiteral.Config['body'];
 }
 
-export const coerceToFuncLiteral: OptionalConfigSeat<T.FuncLiteral.Loose, ReturnType<typeof F.buildFuncLiteral>> = (
-	input?: T.FuncLiteral.Loose
-): ReturnType<typeof F.buildFuncLiteral> => {
+export function coerceToFuncLiteral<const I extends T.FuncLiteral.Loose | undefined>(
+	input: RefusingInput<I, T.FuncLiteral.Loose>
+): ReturnType<typeof F.buildFuncLiteral>;
+export function coerceToFuncLiteral(input?: undefined): ReturnType<typeof F.buildFuncLiteral>;
+export function coerceToFuncLiteral(input?: T.FuncLiteral.Loose): ReturnType<typeof F.buildFuncLiteral> {
 	if (!_isLooseConfig<T.FuncLiteral.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildFuncLiteral>;
 	currentHandle()?.admit(TSKindId.FuncLiteral, [input]);
@@ -3678,7 +3806,7 @@ export const coerceToFuncLiteral: OptionalConfigSeat<T.FuncLiteral.Loose, Return
 		returnType: resolveFuncLiteral_returnType(input?.returnType),
 		body: resolveFuncLiteral_body(input?.body)
 	});
-};
+}
 
 export function resolveUnaryExpression_operator(
 	value: T.UnaryExpression.LooseConfig['operator']
@@ -3706,9 +3834,10 @@ export function resolveUnaryExpression_operand(
 	);
 }
 
-export const coerceToUnaryExpression: ConfigSeat<T.UnaryExpression.Loose, ReturnType<typeof F.buildUnaryExpression>> = (
-	input: T.UnaryExpression.Loose
-): ReturnType<typeof F.buildUnaryExpression> => {
+export function coerceToUnaryExpression<const I extends T.UnaryExpression.Loose>(
+	input: RefusingInput<I, T.UnaryExpression.Loose>
+): ReturnType<typeof F.buildUnaryExpression>;
+export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnType<typeof F.buildUnaryExpression> {
 	if (!_isLooseConfig<T.UnaryExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildUnaryExpression>;
 	currentHandle()?.admit(TSKindId.UnaryExpression, [input]);
@@ -3716,7 +3845,7 @@ export const coerceToUnaryExpression: ConfigSeat<T.UnaryExpression.Loose, Return
 		operator: resolveUnaryExpression_operator(input.operator),
 		operand: resolveUnaryExpression_operand(input.operand)
 	});
-};
+}
 
 export function resolveBinaryExpression_left(
 	value: T.BinaryExpression.LooseConfig['left']
@@ -3787,10 +3916,10 @@ export function resolveBinaryExpression_right(
 	);
 }
 
-export const coerceToBinaryExpression: ConfigSeat<
-	T.BinaryExpression.Loose,
-	ReturnType<typeof F.buildBinaryExpression>
-> = (input: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> => {
+export function coerceToBinaryExpression<const I extends T.BinaryExpression.Loose>(
+	input: RefusingInput<I, T.BinaryExpression.Loose>
+): ReturnType<typeof F.buildBinaryExpression>;
+export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): ReturnType<typeof F.buildBinaryExpression> {
 	if (!_isLooseConfig<T.BinaryExpression.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildBinaryExpression>;
 	currentHandle()?.admit(TSKindId.BinaryExpression, [input]);
@@ -3799,7 +3928,7 @@ export const coerceToBinaryExpression: ConfigSeat<
 		operator: resolveBinaryExpression_operator(input.operator),
 		right: resolveBinaryExpression_right(input.right)
 	});
-};
+}
 
 export function resolveQualifiedType_package(
 	value: T.QualifiedType.LooseConfig['package']
@@ -3811,9 +3940,10 @@ export function resolveQualifiedType_name(value: T.QualifiedType.LooseConfig['na
 	return _resolveOneBranch<T.TypeIdentifier>(value, 'type_identifier');
 }
 
-export const coerceToQualifiedType: ConfigSeat<T.QualifiedType.Loose, ReturnType<typeof F.buildQualifiedType>> = (
-	input: T.QualifiedType.Loose
-): ReturnType<typeof F.buildQualifiedType> => {
+export function coerceToQualifiedType<const I extends T.QualifiedType.Loose>(
+	input: RefusingInput<I, T.QualifiedType.Loose>
+): ReturnType<typeof F.buildQualifiedType>;
+export function coerceToQualifiedType(input: T.QualifiedType.Loose): ReturnType<typeof F.buildQualifiedType> {
 	if (!_isLooseConfig<T.QualifiedType.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildQualifiedType>;
 	currentHandle()?.admit(TSKindId.QualifiedType, [input]);
@@ -3821,14 +3951,15 @@ export const coerceToQualifiedType: ConfigSeat<T.QualifiedType.Loose, ReturnType
 		package: resolveQualifiedType_package(input.package),
 		name: resolveQualifiedType_name(input.name)
 	});
-};
+}
 
-export const coerceToIdentifier: ConfigSeat<T.Identifier.Loose, ReturnType<typeof F.buildIdentifier>> = (
-	input: T.Identifier.Loose
-): ReturnType<typeof F.buildIdentifier> => {
+export function coerceToIdentifier<const I extends T.Identifier.Loose>(
+	input: RefusingInput<I, T.Identifier.Loose>
+): ReturnType<typeof F.buildIdentifier>;
+export function coerceToIdentifier(input: T.Identifier.Loose): ReturnType<typeof F.buildIdentifier> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIdentifier>;
 	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
-};
+}
 
 export function resolveRawStringLiteral_rawStringLiteralContent(
 	value: T.RawStringLiteral.LooseConfig['rawStringLiteralContent']
@@ -3836,10 +3967,10 @@ export function resolveRawStringLiteral_rawStringLiteralContent(
 	return _resolveOneLeaf<T.RawStringLiteralContent>(value, 'raw_string_literal_content');
 }
 
-export const coerceToRawStringLiteral: ConfigSeat<
-	T.RawStringLiteral.Loose,
-	ReturnType<typeof F.buildRawStringLiteral>
-> = (input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> => {
+export function coerceToRawStringLiteral<const I extends T.RawStringLiteral.Loose>(
+	input: RefusingInput<I, T.RawStringLiteral.Loose>
+): ReturnType<typeof F.buildRawStringLiteral>;
+export function coerceToRawStringLiteral(input: T.RawStringLiteral.Loose): ReturnType<typeof F.buildRawStringLiteral> {
 	if (isNodeOfKind(input, TSKindId.RawStringLiteral))
 		return input as unknown as ReturnType<typeof F.buildRawStringLiteral>;
 	return F.buildRawStringLiteral(
@@ -3853,12 +3984,14 @@ export const coerceToRawStringLiteral: ConfigSeat<
 			'raw_string_literal_content'
 		)
 	);
-};
+}
 
-export const coerceToInterpretedStringLiteral: Seat<
-	T.InterpretedStringLiteral.LooseArgs,
-	ReturnType<typeof F.buildInterpretedStringLiteral>
-> = (...input: T.InterpretedStringLiteral.LooseArgs): ReturnType<typeof F.buildInterpretedStringLiteral> => {
+export function coerceToInterpretedStringLiteral<const A extends T.InterpretedStringLiteral.LooseArgs>(
+	...args: RefusingInput<A, T.InterpretedStringLiteral.LooseArgs>
+): ReturnType<typeof F.buildInterpretedStringLiteral>;
+export function coerceToInterpretedStringLiteral(
+	...input: T.InterpretedStringLiteral.LooseArgs
+): ReturnType<typeof F.buildInterpretedStringLiteral> {
 	currentHandle()?.admit(TSKindId.InterpretedStringLiteral, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.InterpretedStringLiteral))
 		return input[0] as unknown as ReturnType<typeof F.buildInterpretedStringLiteral>;
@@ -3877,7 +4010,7 @@ export const coerceToInterpretedStringLiteral: Seat<
 			_super_escape_sequence
 		) as unknown as Parameters<typeof F.buildInterpretedStringLiteral>)
 	);
-};
+}
 
 export function coerceToNil(_input?: T.Nil.Loose): typeof F.buildNil {
 	return F.buildNil;
@@ -3895,21 +4028,25 @@ export function coerceToIota(_input?: T.Iota.Loose): typeof F.buildIota {
 	return F.buildIota;
 }
 
-export const coerceToRawStringLiteralContent: ConfigSeat<
-	T.RawStringLiteralContent.Loose,
-	ReturnType<typeof F.buildRawStringLiteralContent>
-> = (input: T.RawStringLiteralContent.Loose): ReturnType<typeof F.buildRawStringLiteralContent> => {
+export function coerceToRawStringLiteralContent<const I extends T.RawStringLiteralContent.Loose>(
+	input: RefusingInput<I, T.RawStringLiteralContent.Loose>
+): ReturnType<typeof F.buildRawStringLiteralContent>;
+export function coerceToRawStringLiteralContent(
+	input: T.RawStringLiteralContent.Loose
+): ReturnType<typeof F.buildRawStringLiteralContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildRawStringLiteralContent>;
 	return F.buildRawStringLiteralContent(input as Parameters<typeof F.buildRawStringLiteralContent>[0]);
-};
+}
 
-export const coerceToInterpretedStringLiteralContent: ConfigSeat<
-	T.InterpretedStringLiteralContent.Loose,
-	ReturnType<typeof F.buildInterpretedStringLiteralContent>
-> = (input: T.InterpretedStringLiteralContent.Loose): ReturnType<typeof F.buildInterpretedStringLiteralContent> => {
+export function coerceToInterpretedStringLiteralContent<const I extends T.InterpretedStringLiteralContent.Loose>(
+	input: RefusingInput<I, T.InterpretedStringLiteralContent.Loose>
+): ReturnType<typeof F.buildInterpretedStringLiteralContent>;
+export function coerceToInterpretedStringLiteralContent(
+	input: T.InterpretedStringLiteralContent.Loose
+): ReturnType<typeof F.buildInterpretedStringLiteralContent> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildInterpretedStringLiteralContent>;
 	return F.buildInterpretedStringLiteralContent(input as Parameters<typeof F.buildInterpretedStringLiteralContent>[0]);
-};
+}
 
 export function resolveEscapeSequenceArm1_content(
 	value: T.EscapeSequenceArm1.LooseConfig['content']
@@ -3917,10 +4054,12 @@ export function resolveEscapeSequenceArm1_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToEscapeSequenceArm1: ConfigSeat<
-	T.EscapeSequenceArm1.Loose,
-	ReturnType<typeof F.buildEscapeSequenceArm1>
-> = (input: T.EscapeSequenceArm1.Loose): ReturnType<typeof F.buildEscapeSequenceArm1> => {
+export function coerceToEscapeSequenceArm1<const I extends T.EscapeSequenceArm1.Loose>(
+	input: RefusingInput<I, T.EscapeSequenceArm1.Loose>
+): ReturnType<typeof F.buildEscapeSequenceArm1>;
+export function coerceToEscapeSequenceArm1(
+	input: T.EscapeSequenceArm1.Loose
+): ReturnType<typeof F.buildEscapeSequenceArm1> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm1>;
 	return F.buildEscapeSequenceArm1(
 		_resolveOne<string>(
@@ -3937,7 +4076,7 @@ export const coerceToEscapeSequenceArm1: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveEscapeSequenceArm2_content(
 	value: T.EscapeSequenceArm2.LooseConfig['content']
@@ -3972,10 +4111,12 @@ export function resolveEscapeSequenceArm3_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToEscapeSequenceArm3: ConfigSeat<
-	T.EscapeSequenceArm3.Loose,
-	ReturnType<typeof F.buildEscapeSequenceArm3>
-> = (input: T.EscapeSequenceArm3.Loose): ReturnType<typeof F.buildEscapeSequenceArm3> => {
+export function coerceToEscapeSequenceArm3<const I extends T.EscapeSequenceArm3.Loose>(
+	input: RefusingInput<I, T.EscapeSequenceArm3.Loose>
+): ReturnType<typeof F.buildEscapeSequenceArm3>;
+export function coerceToEscapeSequenceArm3(
+	input: T.EscapeSequenceArm3.Loose
+): ReturnType<typeof F.buildEscapeSequenceArm3> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm3>;
 	return F.buildEscapeSequenceArm3(
 		_resolveOne<string>(
@@ -3992,7 +4133,7 @@ export const coerceToEscapeSequenceArm3: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveEscapeSequenceArm4_content(
 	value: T.EscapeSequenceArm4.LooseConfig['content']
@@ -4000,10 +4141,12 @@ export function resolveEscapeSequenceArm4_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToEscapeSequenceArm4: ConfigSeat<
-	T.EscapeSequenceArm4.Loose,
-	ReturnType<typeof F.buildEscapeSequenceArm4>
-> = (input: T.EscapeSequenceArm4.Loose): ReturnType<typeof F.buildEscapeSequenceArm4> => {
+export function coerceToEscapeSequenceArm4<const I extends T.EscapeSequenceArm4.Loose>(
+	input: RefusingInput<I, T.EscapeSequenceArm4.Loose>
+): ReturnType<typeof F.buildEscapeSequenceArm4>;
+export function coerceToEscapeSequenceArm4(
+	input: T.EscapeSequenceArm4.Loose
+): ReturnType<typeof F.buildEscapeSequenceArm4> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm4>;
 	return F.buildEscapeSequenceArm4(
 		_resolveOne<string>(
@@ -4020,7 +4163,7 @@ export const coerceToEscapeSequenceArm4: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveEscapeSequenceArm5_content(
 	value: T.EscapeSequenceArm5.LooseConfig['content']
@@ -4028,10 +4171,12 @@ export function resolveEscapeSequenceArm5_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToEscapeSequenceArm5: ConfigSeat<
-	T.EscapeSequenceArm5.Loose,
-	ReturnType<typeof F.buildEscapeSequenceArm5>
-> = (input: T.EscapeSequenceArm5.Loose): ReturnType<typeof F.buildEscapeSequenceArm5> => {
+export function coerceToEscapeSequenceArm5<const I extends T.EscapeSequenceArm5.Loose>(
+	input: RefusingInput<I, T.EscapeSequenceArm5.Loose>
+): ReturnType<typeof F.buildEscapeSequenceArm5>;
+export function coerceToEscapeSequenceArm5(
+	input: T.EscapeSequenceArm5.Loose
+): ReturnType<typeof F.buildEscapeSequenceArm5> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequenceArm5>;
 	return F.buildEscapeSequenceArm5(
 		_resolveOne<string>(
@@ -4048,43 +4193,47 @@ export const coerceToEscapeSequenceArm5: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
-export const coerceToIntLiteralArm1: ConfigSeat<T.IntLiteralArm1.Loose, ReturnType<typeof F.buildIntLiteralArm1>> = (
-	input: T.IntLiteralArm1.Loose
-): ReturnType<typeof F.buildIntLiteralArm1> => {
+export function coerceToIntLiteralArm1<const I extends T.IntLiteralArm1.Loose>(
+	input: RefusingInput<I, T.IntLiteralArm1.Loose>
+): ReturnType<typeof F.buildIntLiteralArm1>;
+export function coerceToIntLiteralArm1(input: T.IntLiteralArm1.Loose): ReturnType<typeof F.buildIntLiteralArm1> {
 	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntLiteralArm1>;
 	return F.buildIntLiteralArm1(input as Parameters<typeof F.buildIntLiteralArm1>[0]);
-};
+}
 
 export function coerceToIntLiteralArm2(_input?: T.IntLiteralArm2.Loose): typeof F.buildIntLiteralArm2 {
 	return F.buildIntLiteralArm2;
 }
 
-export const coerceToIntLiteralArm3: ConfigSeat<T.IntLiteralArm3.Loose, ReturnType<typeof F.buildIntLiteralArm3>> = (
-	input: T.IntLiteralArm3.Loose
-): ReturnType<typeof F.buildIntLiteralArm3> => {
+export function coerceToIntLiteralArm3<const I extends T.IntLiteralArm3.Loose>(
+	input: RefusingInput<I, T.IntLiteralArm3.Loose>
+): ReturnType<typeof F.buildIntLiteralArm3>;
+export function coerceToIntLiteralArm3(input: T.IntLiteralArm3.Loose): ReturnType<typeof F.buildIntLiteralArm3> {
 	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntLiteralArm3>;
 	return F.buildIntLiteralArm3(input as Parameters<typeof F.buildIntLiteralArm3>[0]);
-};
+}
 
-export const coerceToIntLiteralArm4: ConfigSeat<T.IntLiteralArm4.Loose, ReturnType<typeof F.buildIntLiteralArm4>> = (
-	input: T.IntLiteralArm4.Loose
-): ReturnType<typeof F.buildIntLiteralArm4> => {
+export function coerceToIntLiteralArm4<const I extends T.IntLiteralArm4.Loose>(
+	input: RefusingInput<I, T.IntLiteralArm4.Loose>
+): ReturnType<typeof F.buildIntLiteralArm4>;
+export function coerceToIntLiteralArm4(input: T.IntLiteralArm4.Loose): ReturnType<typeof F.buildIntLiteralArm4> {
 	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntLiteralArm4>;
 	return F.buildIntLiteralArm4(input as Parameters<typeof F.buildIntLiteralArm4>[0]);
-};
+}
 
-export const coerceToIntLiteralArm5: ConfigSeat<T.IntLiteralArm5.Loose, ReturnType<typeof F.buildIntLiteralArm5>> = (
-	input: T.IntLiteralArm5.Loose
-): ReturnType<typeof F.buildIntLiteralArm5> => {
+export function coerceToIntLiteralArm5<const I extends T.IntLiteralArm5.Loose>(
+	input: RefusingInput<I, T.IntLiteralArm5.Loose>
+): ReturnType<typeof F.buildIntLiteralArm5>;
+export function coerceToIntLiteralArm5(input: T.IntLiteralArm5.Loose): ReturnType<typeof F.buildIntLiteralArm5> {
 	if (typeof input !== 'string' && !(typeof input === 'number' || typeof input === 'bigint'))
 		return input as unknown as ReturnType<typeof F.buildIntLiteralArm5>;
 	return F.buildIntLiteralArm5(input as Parameters<typeof F.buildIntLiteralArm5>[0]);
-};
+}
 
 export function resolveFloatLiteralArm1_content(
 	value: T.FloatLiteralArm1.LooseConfig['content']
@@ -4118,14 +4267,14 @@ export function coerceToFloatLiteralArm1(input: T.FloatLiteralArm1.Loose): Retur
 	});
 }
 
-export const coerceToFloatLiteralArm2: ConfigSeat<
-	T.FloatLiteralArm2.Loose,
-	ReturnType<typeof F.buildFloatLiteralArm2>
-> = (input: T.FloatLiteralArm2.Loose): ReturnType<typeof F.buildFloatLiteralArm2> => {
+export function coerceToFloatLiteralArm2<const I extends T.FloatLiteralArm2.Loose>(
+	input: RefusingInput<I, T.FloatLiteralArm2.Loose>
+): ReturnType<typeof F.buildFloatLiteralArm2>;
+export function coerceToFloatLiteralArm2(input: T.FloatLiteralArm2.Loose): ReturnType<typeof F.buildFloatLiteralArm2> {
 	if (typeof input !== 'string' && !(typeof input === 'number'))
 		return input as unknown as ReturnType<typeof F.buildFloatLiteralArm2>;
 	return F.buildFloatLiteralArm2(input as Parameters<typeof F.buildFloatLiteralArm2>[0]);
-};
+}
 
 export function resolveFloatLiteralArm3_content(
 	value: T.FloatLiteralArm3.LooseConfig['content']
@@ -4164,10 +4313,12 @@ export function resolveFloatLiteralArm4Arm1_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToFloatLiteralArm4Arm1: ConfigSeat<
-	T.FloatLiteralArm4Arm1.Loose,
-	ReturnType<typeof F.buildFloatLiteralArm4Arm1>
-> = (input: T.FloatLiteralArm4Arm1.Loose): ReturnType<typeof F.buildFloatLiteralArm4Arm1> => {
+export function coerceToFloatLiteralArm4Arm1<const I extends T.FloatLiteralArm4Arm1.Loose>(
+	input: RefusingInput<I, T.FloatLiteralArm4Arm1.Loose>
+): ReturnType<typeof F.buildFloatLiteralArm4Arm1>;
+export function coerceToFloatLiteralArm4Arm1(
+	input: T.FloatLiteralArm4Arm1.Loose
+): ReturnType<typeof F.buildFloatLiteralArm4Arm1> {
 	if (!_isLooseConfig<T.FloatLiteralArm4Arm1.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatLiteralArm4Arm1>;
 	currentHandle()?.admit(TSKindId.FloatLiteralArm4Arm1, [input]);
@@ -4176,7 +4327,7 @@ export const coerceToFloatLiteralArm4Arm1: ConfigSeat<
 		prefix: resolveFloatLiteralArm4Arm1_prefix(_cfg.prefix),
 		content: resolveFloatLiteralArm4Arm1_content(_cfg.content)
 	});
-};
+}
 
 export function resolveFloatLiteralArm4Arm2_prefix(
 	value: T.FloatLiteralArm4Arm2.LooseConfig['prefix']
@@ -4190,10 +4341,12 @@ export function resolveFloatLiteralArm4Arm2_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToFloatLiteralArm4Arm2: ConfigSeat<
-	T.FloatLiteralArm4Arm2.Loose,
-	ReturnType<typeof F.buildFloatLiteralArm4Arm2>
-> = (input: T.FloatLiteralArm4Arm2.Loose): ReturnType<typeof F.buildFloatLiteralArm4Arm2> => {
+export function coerceToFloatLiteralArm4Arm2<const I extends T.FloatLiteralArm4Arm2.Loose>(
+	input: RefusingInput<I, T.FloatLiteralArm4Arm2.Loose>
+): ReturnType<typeof F.buildFloatLiteralArm4Arm2>;
+export function coerceToFloatLiteralArm4Arm2(
+	input: T.FloatLiteralArm4Arm2.Loose
+): ReturnType<typeof F.buildFloatLiteralArm4Arm2> {
 	if (!_isLooseConfig<T.FloatLiteralArm4Arm2.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatLiteralArm4Arm2>;
 	currentHandle()?.admit(TSKindId.FloatLiteralArm4Arm2, [input]);
@@ -4202,7 +4355,7 @@ export const coerceToFloatLiteralArm4Arm2: ConfigSeat<
 		prefix: resolveFloatLiteralArm4Arm2_prefix(_cfg.prefix),
 		content: resolveFloatLiteralArm4Arm2_content(_cfg.content)
 	});
-};
+}
 
 export function resolveFloatLiteralArm4Arm3_prefix(
 	value: T.FloatLiteralArm4Arm3.LooseConfig['prefix']
@@ -4216,10 +4369,12 @@ export function resolveFloatLiteralArm4Arm3_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToFloatLiteralArm4Arm3: ConfigSeat<
-	T.FloatLiteralArm4Arm3.Loose,
-	ReturnType<typeof F.buildFloatLiteralArm4Arm3>
-> = (input: T.FloatLiteralArm4Arm3.Loose): ReturnType<typeof F.buildFloatLiteralArm4Arm3> => {
+export function coerceToFloatLiteralArm4Arm3<const I extends T.FloatLiteralArm4Arm3.Loose>(
+	input: RefusingInput<I, T.FloatLiteralArm4Arm3.Loose>
+): ReturnType<typeof F.buildFloatLiteralArm4Arm3>;
+export function coerceToFloatLiteralArm4Arm3(
+	input: T.FloatLiteralArm4Arm3.Loose
+): ReturnType<typeof F.buildFloatLiteralArm4Arm3> {
 	if (!_isLooseConfig<T.FloatLiteralArm4Arm3.LooseConfig | string>(input))
 		return input as unknown as ReturnType<typeof F.buildFloatLiteralArm4Arm3>;
 	currentHandle()?.admit(TSKindId.FloatLiteralArm4Arm3, [input]);
@@ -4228,7 +4383,7 @@ export const coerceToFloatLiteralArm4Arm3: ConfigSeat<
 		prefix: resolveFloatLiteralArm4Arm3_prefix(_cfg.prefix),
 		content: resolveFloatLiteralArm4Arm3_content(_cfg.content)
 	});
-};
+}
 
 export function resolveImaginaryLiteralArm1_content(
 	value: T.ImaginaryLiteralArm1.LooseConfig['content']
@@ -4446,10 +4601,12 @@ export function resolveImaginaryLiteralArm10Arm1_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToImaginaryLiteralArm10Arm1: ConfigSeat<
-	T.ImaginaryLiteralArm10Arm1.Loose,
-	ReturnType<typeof F.buildImaginaryLiteralArm10Arm1>
-> = (input: T.ImaginaryLiteralArm10Arm1.Loose): ReturnType<typeof F.buildImaginaryLiteralArm10Arm1> => {
+export function coerceToImaginaryLiteralArm10Arm1<const I extends T.ImaginaryLiteralArm10Arm1.Loose>(
+	input: RefusingInput<I, T.ImaginaryLiteralArm10Arm1.Loose>
+): ReturnType<typeof F.buildImaginaryLiteralArm10Arm1>;
+export function coerceToImaginaryLiteralArm10Arm1(
+	input: T.ImaginaryLiteralArm10Arm1.Loose
+): ReturnType<typeof F.buildImaginaryLiteralArm10Arm1> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm1>;
 	return F.buildImaginaryLiteralArm10Arm1(
 		_resolveOne<string>(
@@ -4466,7 +4623,7 @@ export const coerceToImaginaryLiteralArm10Arm1: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveImaginaryLiteralArm10Arm2_content(
 	value: T.ImaginaryLiteralArm10Arm2.LooseConfig['content']
@@ -4474,10 +4631,12 @@ export function resolveImaginaryLiteralArm10Arm2_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToImaginaryLiteralArm10Arm2: ConfigSeat<
-	T.ImaginaryLiteralArm10Arm2.Loose,
-	ReturnType<typeof F.buildImaginaryLiteralArm10Arm2>
-> = (input: T.ImaginaryLiteralArm10Arm2.Loose): ReturnType<typeof F.buildImaginaryLiteralArm10Arm2> => {
+export function coerceToImaginaryLiteralArm10Arm2<const I extends T.ImaginaryLiteralArm10Arm2.Loose>(
+	input: RefusingInput<I, T.ImaginaryLiteralArm10Arm2.Loose>
+): ReturnType<typeof F.buildImaginaryLiteralArm10Arm2>;
+export function coerceToImaginaryLiteralArm10Arm2(
+	input: T.ImaginaryLiteralArm10Arm2.Loose
+): ReturnType<typeof F.buildImaginaryLiteralArm10Arm2> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm2>;
 	return F.buildImaginaryLiteralArm10Arm2(
 		_resolveOne<string>(
@@ -4494,7 +4653,7 @@ export const coerceToImaginaryLiteralArm10Arm2: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveImaginaryLiteralArm10Arm3_content(
 	value: T.ImaginaryLiteralArm10Arm3.LooseConfig['content']
@@ -4502,10 +4661,12 @@ export function resolveImaginaryLiteralArm10Arm3_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToImaginaryLiteralArm10Arm3: ConfigSeat<
-	T.ImaginaryLiteralArm10Arm3.Loose,
-	ReturnType<typeof F.buildImaginaryLiteralArm10Arm3>
-> = (input: T.ImaginaryLiteralArm10Arm3.Loose): ReturnType<typeof F.buildImaginaryLiteralArm10Arm3> => {
+export function coerceToImaginaryLiteralArm10Arm3<const I extends T.ImaginaryLiteralArm10Arm3.Loose>(
+	input: RefusingInput<I, T.ImaginaryLiteralArm10Arm3.Loose>
+): ReturnType<typeof F.buildImaginaryLiteralArm10Arm3>;
+export function coerceToImaginaryLiteralArm10Arm3(
+	input: T.ImaginaryLiteralArm10Arm3.Loose
+): ReturnType<typeof F.buildImaginaryLiteralArm10Arm3> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildImaginaryLiteralArm10Arm3>;
 	return F.buildImaginaryLiteralArm10Arm3(
 		_resolveOne<string>(
@@ -4522,7 +4683,7 @@ export const coerceToImaginaryLiteralArm10Arm3: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveRuneLiteralArm1_content(
 	value: T.RuneLiteralArm1.LooseConfig['content']
@@ -4530,9 +4691,10 @@ export function resolveRuneLiteralArm1_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToRuneLiteralArm1: ConfigSeat<T.RuneLiteralArm1.Loose, ReturnType<typeof F.buildRuneLiteralArm1>> = (
-	input: T.RuneLiteralArm1.Loose
-): ReturnType<typeof F.buildRuneLiteralArm1> => {
+export function coerceToRuneLiteralArm1<const I extends T.RuneLiteralArm1.Loose>(
+	input: RefusingInput<I, T.RuneLiteralArm1.Loose>
+): ReturnType<typeof F.buildRuneLiteralArm1>;
+export function coerceToRuneLiteralArm1(input: T.RuneLiteralArm1.Loose): ReturnType<typeof F.buildRuneLiteralArm1> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm1>;
 	return F.buildRuneLiteralArm1(
 		_resolveOne<string>(
@@ -4547,7 +4709,7 @@ export const coerceToRuneLiteralArm1: ConfigSeat<T.RuneLiteralArm1.Loose, Return
 			_K0
 		)
 	);
-};
+}
 
 export function resolveRuneLiteralArm2Arm1_content(
 	value: T.RuneLiteralArm2Arm1.LooseConfig['content']
@@ -4555,10 +4717,12 @@ export function resolveRuneLiteralArm2Arm1_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToRuneLiteralArm2Arm1: ConfigSeat<
-	T.RuneLiteralArm2Arm1.Loose,
-	ReturnType<typeof F.buildRuneLiteralArm2Arm1>
-> = (input: T.RuneLiteralArm2Arm1.Loose): ReturnType<typeof F.buildRuneLiteralArm2Arm1> => {
+export function coerceToRuneLiteralArm2Arm1<const I extends T.RuneLiteralArm2Arm1.Loose>(
+	input: RefusingInput<I, T.RuneLiteralArm2Arm1.Loose>
+): ReturnType<typeof F.buildRuneLiteralArm2Arm1>;
+export function coerceToRuneLiteralArm2Arm1(
+	input: T.RuneLiteralArm2Arm1.Loose
+): ReturnType<typeof F.buildRuneLiteralArm2Arm1> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm1>;
 	return F.buildRuneLiteralArm2Arm1(
 		_resolveOne<string>(
@@ -4575,7 +4739,7 @@ export const coerceToRuneLiteralArm2Arm1: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveRuneLiteralArm2Arm2_content(
 	value: T.RuneLiteralArm2Arm2.LooseConfig['content']
@@ -4583,10 +4747,12 @@ export function resolveRuneLiteralArm2Arm2_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToRuneLiteralArm2Arm2: ConfigSeat<
-	T.RuneLiteralArm2Arm2.Loose,
-	ReturnType<typeof F.buildRuneLiteralArm2Arm2>
-> = (input: T.RuneLiteralArm2Arm2.Loose): ReturnType<typeof F.buildRuneLiteralArm2Arm2> => {
+export function coerceToRuneLiteralArm2Arm2<const I extends T.RuneLiteralArm2Arm2.Loose>(
+	input: RefusingInput<I, T.RuneLiteralArm2Arm2.Loose>
+): ReturnType<typeof F.buildRuneLiteralArm2Arm2>;
+export function coerceToRuneLiteralArm2Arm2(
+	input: T.RuneLiteralArm2Arm2.Loose
+): ReturnType<typeof F.buildRuneLiteralArm2Arm2> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm2>;
 	return F.buildRuneLiteralArm2Arm2(
 		_resolveOne<string>(
@@ -4603,7 +4769,7 @@ export const coerceToRuneLiteralArm2Arm2: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveRuneLiteralArm2Arm3_content(
 	value: T.RuneLiteralArm2Arm3.LooseConfig['content']
@@ -4611,10 +4777,12 @@ export function resolveRuneLiteralArm2Arm3_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToRuneLiteralArm2Arm3: ConfigSeat<
-	T.RuneLiteralArm2Arm3.Loose,
-	ReturnType<typeof F.buildRuneLiteralArm2Arm3>
-> = (input: T.RuneLiteralArm2Arm3.Loose): ReturnType<typeof F.buildRuneLiteralArm2Arm3> => {
+export function coerceToRuneLiteralArm2Arm3<const I extends T.RuneLiteralArm2Arm3.Loose>(
+	input: RefusingInput<I, T.RuneLiteralArm2Arm3.Loose>
+): ReturnType<typeof F.buildRuneLiteralArm2Arm3>;
+export function coerceToRuneLiteralArm2Arm3(
+	input: T.RuneLiteralArm2Arm3.Loose
+): ReturnType<typeof F.buildRuneLiteralArm2Arm3> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm3>;
 	return F.buildRuneLiteralArm2Arm3(
 		_resolveOne<string>(
@@ -4631,7 +4799,7 @@ export const coerceToRuneLiteralArm2Arm3: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveRuneLiteralArm2Arm4_content(
 	value: T.RuneLiteralArm2Arm4.LooseConfig['content']
@@ -4639,10 +4807,12 @@ export function resolveRuneLiteralArm2Arm4_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToRuneLiteralArm2Arm4: ConfigSeat<
-	T.RuneLiteralArm2Arm4.Loose,
-	ReturnType<typeof F.buildRuneLiteralArm2Arm4>
-> = (input: T.RuneLiteralArm2Arm4.Loose): ReturnType<typeof F.buildRuneLiteralArm2Arm4> => {
+export function coerceToRuneLiteralArm2Arm4<const I extends T.RuneLiteralArm2Arm4.Loose>(
+	input: RefusingInput<I, T.RuneLiteralArm2Arm4.Loose>
+): ReturnType<typeof F.buildRuneLiteralArm2Arm4>;
+export function coerceToRuneLiteralArm2Arm4(
+	input: T.RuneLiteralArm2Arm4.Loose
+): ReturnType<typeof F.buildRuneLiteralArm2Arm4> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm4>;
 	return F.buildRuneLiteralArm2Arm4(
 		_resolveOne<string>(
@@ -4659,7 +4829,7 @@ export const coerceToRuneLiteralArm2Arm4: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveRuneLiteralArm2Arm5_content(
 	value: T.RuneLiteralArm2Arm5.LooseConfig['content']
@@ -4667,10 +4837,12 @@ export function resolveRuneLiteralArm2Arm5_content(
 	return _resolveOne<'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' | '\\' | "'" | '"'>(value, _K0, _K0);
 }
 
-export const coerceToRuneLiteralArm2Arm5: ConfigSeat<
-	T.RuneLiteralArm2Arm5.Loose,
-	ReturnType<typeof F.buildRuneLiteralArm2Arm5>
-> = (input: T.RuneLiteralArm2Arm5.Loose): ReturnType<typeof F.buildRuneLiteralArm2Arm5> => {
+export function coerceToRuneLiteralArm2Arm5<const I extends T.RuneLiteralArm2Arm5.Loose>(
+	input: RefusingInput<I, T.RuneLiteralArm2Arm5.Loose>
+): ReturnType<typeof F.buildRuneLiteralArm2Arm5>;
+export function coerceToRuneLiteralArm2Arm5(
+	input: T.RuneLiteralArm2Arm5.Loose
+): ReturnType<typeof F.buildRuneLiteralArm2Arm5> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildRuneLiteralArm2Arm5>;
 	return F.buildRuneLiteralArm2Arm5(
 		_resolveOne<'a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' | '\\' | "'" | '"'>(
@@ -4687,7 +4859,7 @@ export const coerceToRuneLiteralArm2Arm5: ConfigSeat<
 			_K0
 		)
 	);
-};
+}
 
 export function resolveCommentArm1_content(
 	value: T.CommentArm1.LooseConfig['content']
@@ -4695,9 +4867,10 @@ export function resolveCommentArm1_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToCommentArm1: ConfigSeat<T.CommentArm1.Loose, ReturnType<typeof F.buildCommentArm1>> = (
-	input: T.CommentArm1.Loose
-): ReturnType<typeof F.buildCommentArm1> => {
+export function coerceToCommentArm1<const I extends T.CommentArm1.Loose>(
+	input: RefusingInput<I, T.CommentArm1.Loose>
+): ReturnType<typeof F.buildCommentArm1>;
+export function coerceToCommentArm1(input: T.CommentArm1.Loose): ReturnType<typeof F.buildCommentArm1> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildCommentArm1>;
 	return F.buildCommentArm1(
 		_resolveOne<string>(
@@ -4712,7 +4885,7 @@ export const coerceToCommentArm1: ConfigSeat<T.CommentArm1.Loose, ReturnType<typ
 			_K0
 		)
 	);
-};
+}
 
 export function resolveCommentArm2_content(
 	value: T.CommentArm2.LooseConfig['content']
@@ -4720,9 +4893,10 @@ export function resolveCommentArm2_content(
 	return _resolveOne<string>(value, _K0, _K0);
 }
 
-export const coerceToCommentArm2: ConfigSeat<T.CommentArm2.Loose, ReturnType<typeof F.buildCommentArm2>> = (
-	input: T.CommentArm2.Loose
-): ReturnType<typeof F.buildCommentArm2> => {
+export function coerceToCommentArm2<const I extends T.CommentArm2.Loose>(
+	input: RefusingInput<I, T.CommentArm2.Loose>
+): ReturnType<typeof F.buildCommentArm2>;
+export function coerceToCommentArm2(input: T.CommentArm2.Loose): ReturnType<typeof F.buildCommentArm2> {
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildCommentArm2>;
 	return F.buildCommentArm2(
 		_resolveOne<string>(
@@ -4737,7 +4911,7 @@ export const coerceToCommentArm2: ConfigSeat<T.CommentArm2.Loose, ReturnType<typ
 			_K0
 		)
 	);
-};
+}
 
 export function resolveSourceFileArm1_statement(
 	value: T.SourceFileArm1.LooseConfig['statement']
@@ -4759,9 +4933,10 @@ export function resolveSourceFileArm1_sourceFileText(
 	);
 }
 
-export const coerceToSourceFileArm1: ConfigSeat<T.SourceFileArm1.Loose, ReturnType<typeof F.buildSourceFileArm1>> = (
-	input: T.SourceFileArm1.Loose
-): ReturnType<typeof F.buildSourceFileArm1> => {
+export function coerceToSourceFileArm1<const I extends T.SourceFileArm1.Loose>(
+	input: RefusingInput<I, T.SourceFileArm1.Loose>
+): ReturnType<typeof F.buildSourceFileArm1>;
+export function coerceToSourceFileArm1(input: T.SourceFileArm1.Loose): ReturnType<typeof F.buildSourceFileArm1> {
 	if (!_isLooseConfig<T.SourceFileArm1.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildSourceFileArm1>;
 	currentHandle()?.admit(TSKindId.SourceFileArm1, [input]);
@@ -4769,7 +4944,7 @@ export const coerceToSourceFileArm1: ConfigSeat<T.SourceFileArm1.Loose, ReturnTy
 		statement: resolveSourceFileArm1_statement(input.statement),
 		sourceFileText: resolveSourceFileArm1_sourceFileText(input.sourceFileText)
 	});
-};
+}
 
 export function resolveSourceFileArm2_topLevelDeclaration(
 	value: T.SourceFileArm2.LooseConfig['topLevelDeclaration']
@@ -4792,9 +4967,10 @@ export function resolveSourceFileArm2_sourceFileText(
 	);
 }
 
-export const coerceToSourceFileArm2: ConfigSeat<T.SourceFileArm2.Loose, ReturnType<typeof F.buildSourceFileArm2>> = (
-	input: T.SourceFileArm2.Loose
-): ReturnType<typeof F.buildSourceFileArm2> => {
+export function coerceToSourceFileArm2<const I extends T.SourceFileArm2.Loose>(
+	input: RefusingInput<I, T.SourceFileArm2.Loose>
+): ReturnType<typeof F.buildSourceFileArm2>;
+export function coerceToSourceFileArm2(input: T.SourceFileArm2.Loose): ReturnType<typeof F.buildSourceFileArm2> {
 	if (!_isLooseConfig<T.SourceFileArm2.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildSourceFileArm2>;
 	currentHandle()?.admit(TSKindId.SourceFileArm2, [input]);
@@ -4802,11 +4978,12 @@ export const coerceToSourceFileArm2: ConfigSeat<T.SourceFileArm2.Loose, ReturnTy
 		topLevelDeclaration: resolveSourceFileArm2_topLevelDeclaration(input.topLevelDeclaration),
 		sourceFileText: resolveSourceFileArm2_sourceFileText(input.sourceFileText)
 	});
-};
+}
 
-export const coerceToImportSpecs: Seat<T.ImportSpecs.LooseArgs, ReturnType<typeof F.buildImportSpecs>> = (
-	...input: T.ImportSpecs.LooseArgs
-): ReturnType<typeof F.buildImportSpecs> => {
+export function coerceToImportSpecs<const A extends T.ImportSpecs.LooseArgs>(
+	...args: RefusingInput<A, T.ImportSpecs.LooseArgs>
+): ReturnType<typeof F.buildImportSpecs>;
+export function coerceToImportSpecs(...input: T.ImportSpecs.LooseArgs): ReturnType<typeof F.buildImportSpecs> {
 	currentHandle()?.admit(TSKindId.ImportSpecs, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -4830,12 +5007,14 @@ export const coerceToImportSpecs: Seat<T.ImportSpecs.LooseArgs, ReturnType<typeo
 			['import_spec', 'raw_string_literal', 'interpreted_string_literal']
 		) as unknown as NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>)
 	);
-};
+}
 
-export const coerceToTypeParameterDeclarations: Seat<
-	T.TypeParameterDeclarations.LooseArgs,
-	ReturnType<typeof F.buildTypeParameterDeclarations>
-> = (...input: T.TypeParameterDeclarations.LooseArgs): ReturnType<typeof F.buildTypeParameterDeclarations> => {
+export function coerceToTypeParameterDeclarations<const A extends T.TypeParameterDeclarations.LooseArgs>(
+	...args: RefusingInput<A, T.TypeParameterDeclarations.LooseArgs>
+): ReturnType<typeof F.buildTypeParameterDeclarations>;
+export function coerceToTypeParameterDeclarations(
+	...input: T.TypeParameterDeclarations.LooseArgs
+): ReturnType<typeof F.buildTypeParameterDeclarations> {
 	currentHandle()?.admit(TSKindId.TypeParameterDeclarations, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -4858,12 +5037,14 @@ export const coerceToTypeParameterDeclarations: Seat<
 			['type_parameter_declaration']
 		) as unknown as NonEmptyArray<Admit<T.TypeParameterDeclaration>>)
 	);
-};
+}
 
-export const coerceToParameterListElements: Seat<
-	T.ParameterListElements.LooseArgs,
-	ReturnType<typeof F.buildParameterListElements>
-> = (...input: T.ParameterListElements.LooseArgs): ReturnType<typeof F.buildParameterListElements> => {
+export function coerceToParameterListElements<const A extends T.ParameterListElements.LooseArgs>(
+	...args: RefusingInput<A, T.ParameterListElements.LooseArgs>
+): ReturnType<typeof F.buildParameterListElements>;
+export function coerceToParameterListElements(
+	...input: T.ParameterListElements.LooseArgs
+): ReturnType<typeof F.buildParameterListElements> {
 	currentHandle()?.admit(TSKindId.ParameterListElements, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -4884,12 +5065,14 @@ export const coerceToParameterListElements: Seat<
 			['parameter_declaration', 'variadic_parameter_declaration']
 		) as unknown as NonEmptyArray<Admit<T.ParameterDeclaration | T.VariadicParameterDeclaration>>)
 	);
-};
+}
 
-export const coerceToTypeDeclarationElements: Seat<
-	T.TypeDeclarationElements.LooseArgs,
-	ReturnType<typeof F.buildTypeDeclarationElements>
-> = (...input: T.TypeDeclarationElements.LooseArgs): ReturnType<typeof F.buildTypeDeclarationElements> => {
+export function coerceToTypeDeclarationElements<const A extends T.TypeDeclarationElements.LooseArgs>(
+	...args: RefusingInput<A, T.TypeDeclarationElements.LooseArgs>
+): ReturnType<typeof F.buildTypeDeclarationElements>;
+export function coerceToTypeDeclarationElements(
+	...input: T.TypeDeclarationElements.LooseArgs
+): ReturnType<typeof F.buildTypeDeclarationElements> {
 	currentHandle()?.admit(TSKindId.TypeDeclarationElements, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -4910,11 +5093,12 @@ export const coerceToTypeDeclarationElements: Seat<
 			'type_alias'
 		]) as unknown as NonEmptyArray<Admit<T.TypeSpec | T.TypeAlias>>)
 	);
-};
+}
 
-export const coerceToTypeElems: Seat<T.TypeElems.LooseArgs, ReturnType<typeof F.buildTypeElems>> = (
-	...input: T.TypeElems.LooseArgs
-): ReturnType<typeof F.buildTypeElems> => {
+export function coerceToTypeElems<const A extends T.TypeElems.LooseArgs>(
+	...args: RefusingInput<A, T.TypeElems.LooseArgs>
+): ReturnType<typeof F.buildTypeElems>;
+export function coerceToTypeElems(...input: T.TypeElems.LooseArgs): ReturnType<typeof F.buildTypeElems> {
 	currentHandle()?.admit(TSKindId.TypeElems, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -4932,12 +5116,14 @@ export const coerceToTypeElems: Seat<T.TypeElems.LooseArgs, ReturnType<typeof F.
 			'type_elem'
 		]) as unknown as NonEmptyArray<Admit<T.TypeElem>>)
 	);
-};
+}
 
-export const coerceToFieldDeclarations: Seat<
-	T.FieldDeclarations.LooseArgs,
-	ReturnType<typeof F.buildFieldDeclarations>
-> = (...input: T.FieldDeclarations.LooseArgs): ReturnType<typeof F.buildFieldDeclarations> => {
+export function coerceToFieldDeclarations<const A extends T.FieldDeclarations.LooseArgs>(
+	...args: RefusingInput<A, T.FieldDeclarations.LooseArgs>
+): ReturnType<typeof F.buildFieldDeclarations>;
+export function coerceToFieldDeclarations(
+	...input: T.FieldDeclarations.LooseArgs
+): ReturnType<typeof F.buildFieldDeclarations> {
 	currentHandle()?.admit(TSKindId.FieldDeclarations, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -4957,11 +5143,12 @@ export const coerceToFieldDeclarations: Seat<
 			'field_declaration'
 		]) as unknown as NonEmptyArray<Admit<T.FieldDeclaration>>)
 	);
-};
+}
 
-export const coerceToInterfaceElems: Seat<T.InterfaceElems.LooseArgs, ReturnType<typeof F.buildInterfaceElems>> = (
-	...input: T.InterfaceElems.LooseArgs
-): ReturnType<typeof F.buildInterfaceElems> => {
+export function coerceToInterfaceElems<const A extends T.InterfaceElems.LooseArgs>(
+	...args: RefusingInput<A, T.InterfaceElems.LooseArgs>
+): ReturnType<typeof F.buildInterfaceElems>;
+export function coerceToInterfaceElems(...input: T.InterfaceElems.LooseArgs): ReturnType<typeof F.buildInterfaceElems> {
 	currentHandle()?.admit(TSKindId.InterfaceElems, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -4982,11 +5169,12 @@ export const coerceToInterfaceElems: Seat<T.InterfaceElems.LooseArgs, ReturnType
 			'type_elem'
 		]) as unknown as NonEmptyArray<Admit<T.MethodElem | T.TypeElem>>)
 	);
-};
+}
 
-export const coerceToStatements: Seat<T.Statements.LooseArgs, ReturnType<typeof F.buildStatements>> = (
-	...input: T.Statements.LooseArgs
-): ReturnType<typeof F.buildStatements> => {
+export function coerceToStatements<const A extends T.Statements.LooseArgs>(
+	...args: RefusingInput<A, T.Statements.LooseArgs>
+): ReturnType<typeof F.buildStatements>;
+export function coerceToStatements(...input: T.Statements.LooseArgs): ReturnType<typeof F.buildStatements> {
 	currentHandle()?.admit(TSKindId.Statements, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -5038,7 +5226,7 @@ export const coerceToStatements: Seat<T.Statements.LooseArgs, ReturnType<typeof 
 			]
 		) as unknown as NonEmptyArray<Admit<T.Statement>>)
 	);
-};
+}
 
 export function resolveCallExpressionArm1_function(
 	value: T.CallExpressionArm1.LooseConfig['function']
@@ -5055,10 +5243,12 @@ export function resolveCallExpressionArm1_arguments(
 	) as unknown as T.CallExpressionArm1.Config['arguments'];
 }
 
-export const coerceToCallExpressionArm1: ConfigSeat<
-	T.CallExpressionArm1.Loose,
-	ReturnType<typeof F.buildCallExpressionArm1>
-> = (input: T.CallExpressionArm1.Loose): ReturnType<typeof F.buildCallExpressionArm1> => {
+export function coerceToCallExpressionArm1<const I extends T.CallExpressionArm1.Loose>(
+	input: RefusingInput<I, T.CallExpressionArm1.Loose>
+): ReturnType<typeof F.buildCallExpressionArm1>;
+export function coerceToCallExpressionArm1(
+	input: T.CallExpressionArm1.Loose
+): ReturnType<typeof F.buildCallExpressionArm1> {
 	if (!_isLooseConfig<T.CallExpressionArm1.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCallExpressionArm1>;
 	currentHandle()?.admit(TSKindId.CallExpressionArm1, [input]);
@@ -5066,7 +5256,7 @@ export const coerceToCallExpressionArm1: ConfigSeat<
 		function: resolveCallExpressionArm1_function(input.function),
 		arguments: resolveCallExpressionArm1_arguments(input.arguments)
 	});
-};
+}
 
 export function resolveCallExpressionArm2_function(
 	value: T.CallExpressionArm2.LooseConfig['function']
@@ -5100,10 +5290,12 @@ export function resolveCallExpressionArm2_arguments(
 		: _resolveOneBranch<T.ArgumentList>(value, 'argument_list')) as unknown as T.CallExpressionArm2.Config['arguments'];
 }
 
-export const coerceToCallExpressionArm2: ConfigSeat<
-	T.CallExpressionArm2.Loose,
-	ReturnType<typeof F.buildCallExpressionArm2>
-> = (input: T.CallExpressionArm2.Loose): ReturnType<typeof F.buildCallExpressionArm2> => {
+export function coerceToCallExpressionArm2<const I extends T.CallExpressionArm2.Loose>(
+	input: RefusingInput<I, T.CallExpressionArm2.Loose>
+): ReturnType<typeof F.buildCallExpressionArm2>;
+export function coerceToCallExpressionArm2(
+	input: T.CallExpressionArm2.Loose
+): ReturnType<typeof F.buildCallExpressionArm2> {
 	if (!_isLooseConfig<T.CallExpressionArm2.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildCallExpressionArm2>;
 	currentHandle()?.admit(TSKindId.CallExpressionArm2, [input]);
@@ -5112,12 +5304,14 @@ export const coerceToCallExpressionArm2: ConfigSeat<
 		typeArguments: resolveCallExpressionArm2_typeArguments(input.typeArguments),
 		arguments: resolveCallExpressionArm2_arguments(input.arguments)
 	});
-};
+}
 
-export const coerceToArgumentListElements: Seat<
-	T.ArgumentListElements.LooseArgs,
-	ReturnType<typeof F.buildArgumentListElements>
-> = (...input: T.ArgumentListElements.LooseArgs): ReturnType<typeof F.buildArgumentListElements> => {
+export function coerceToArgumentListElements<const A extends T.ArgumentListElements.LooseArgs>(
+	...args: RefusingInput<A, T.ArgumentListElements.LooseArgs>
+): ReturnType<typeof F.buildArgumentListElements>;
+export function coerceToArgumentListElements(
+	...input: T.ArgumentListElements.LooseArgs
+): ReturnType<typeof F.buildArgumentListElements> {
 	currentHandle()?.admit(TSKindId.ArgumentListElements, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -5192,11 +5386,12 @@ export const coerceToArgumentListElements: Seat<
 			]
 		) as unknown as NonEmptyArray<Admit<T.Expression | T.VariadicArgument>>)
 	);
-};
+}
 
-export const coerceToTypes: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTypes>> = (
-	...input: T.Types.LooseArgs
-): ReturnType<typeof F.buildTypes> => {
+export function coerceToTypes<const A extends T.Types.LooseArgs>(
+	...args: RefusingInput<A, T.Types.LooseArgs>
+): ReturnType<typeof F.buildTypes>;
+export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
 	currentHandle()?.admit(TSKindId.Types, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -5228,12 +5423,14 @@ export const coerceToTypes: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTyp
 			'parenthesized_type'
 		]) as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
 	);
-};
+}
 
-export const coerceToLiteralValueElements: Seat<
-	T.LiteralValueElements.LooseArgs,
-	ReturnType<typeof F.buildLiteralValueElements>
-> = (...input: T.LiteralValueElements.LooseArgs): ReturnType<typeof F.buildLiteralValueElements> => {
+export function coerceToLiteralValueElements<const A extends T.LiteralValueElements.LooseArgs>(
+	...args: RefusingInput<A, T.LiteralValueElements.LooseArgs>
+): ReturnType<typeof F.buildLiteralValueElements>;
+export function coerceToLiteralValueElements(
+	...input: T.LiteralValueElements.LooseArgs
+): ReturnType<typeof F.buildLiteralValueElements> {
 	currentHandle()?.admit(TSKindId.LiteralValueElements, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -5252,15 +5449,17 @@ export const coerceToLiteralValueElements: Seat<
 			'keyed_element'
 		]) as unknown as NonEmptyArray<Admit<T.LiteralElement | T.KeyedElement>>)
 	);
-};
+}
 
-export const coerceToImportSpecListArm: ConfigSeat<
-	T.ImportSpecListArm.Loose,
-	ReturnType<typeof F.buildImportSpecListArm>
-> = (input: T.ImportSpecListArm.Loose): ReturnType<typeof F.buildImportSpecListArm> => {
+export function coerceToImportSpecListArm<const I extends T.ImportSpecListArm.Loose>(
+	input: RefusingInput<I, T.ImportSpecListArm.Loose>
+): ReturnType<typeof F.buildImportSpecListArm>;
+export function coerceToImportSpecListArm(
+	input: T.ImportSpecListArm.Loose
+): ReturnType<typeof F.buildImportSpecListArm> {
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildImportSpecListArm>;
 	return F.buildImportSpecListArm(input as Parameters<typeof F.buildImportSpecListArm>[0]);
-};
+}
 
 export function resolveImportSpecListGroup_importSpecs(
 	value: T.ImportSpecListGroup.LooseConfig['importSpecs']
@@ -5279,10 +5478,12 @@ export function resolveImportSpecListGroup_importSpecListArm(
 	return _resolveOneLeaf<T.ImportSpecListArm>(value, 'import_spec_list_arm');
 }
 
-export const coerceToImportSpecListGroup: ConfigSeat<
-	T.ImportSpecListGroup.Loose,
-	ReturnType<typeof F.buildImportSpecListGroup>
-> = (input: T.ImportSpecListGroup.Loose): ReturnType<typeof F.buildImportSpecListGroup> => {
+export function coerceToImportSpecListGroup<const I extends T.ImportSpecListGroup.Loose>(
+	input: RefusingInput<I, T.ImportSpecListGroup.Loose>
+): ReturnType<typeof F.buildImportSpecListGroup>;
+export function coerceToImportSpecListGroup(
+	input: T.ImportSpecListGroup.Loose
+): ReturnType<typeof F.buildImportSpecListGroup> {
 	if (!_isLooseConfig<T.ImportSpecListGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildImportSpecListGroup>;
 	currentHandle()?.admit(TSKindId.ImportSpecListGroup, [input]);
@@ -5290,12 +5491,15 @@ export const coerceToImportSpecListGroup: ConfigSeat<
 		importSpecs: resolveImportSpecListGroup_importSpecs(input.importSpecs),
 		importSpecListArm: resolveImportSpecListGroup_importSpecListArm(input.importSpecListArm)
 	});
-};
+}
 
-export const coerceToConstDeclarationArm: EmptyForm<
-	T.EmptyConstDeclarationArm,
-	Seat<T.ConstDeclarationArm.LooseArgs, ReturnType<typeof F.buildConstDeclarationArm>>
-> = withEmptyForm((...input: T.ConstDeclarationArm.LooseArgs): ReturnType<typeof F.buildConstDeclarationArm> => {
+export function coerceToConstDeclarationArm(): T.EmptyConstDeclarationArm;
+export function coerceToConstDeclarationArm<const A extends T.ConstDeclarationArm.LooseArgs>(
+	...args: RefusingInput<A, T.ConstDeclarationArm.LooseArgs>
+): ReturnType<typeof F.buildConstDeclarationArm>;
+export function coerceToConstDeclarationArm(
+	...input: T.ConstDeclarationArm.LooseArgs
+): ReturnType<typeof F.buildConstDeclarationArm> {
 	currentHandle()?.admit(TSKindId.ConstDeclarationArm, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -5315,7 +5519,7 @@ export const coerceToConstDeclarationArm: EmptyForm<
 			'const_spec'
 		]) as unknown as Admit<T.ConstSpec>[])
 	);
-});
+}
 
 export function resolveConstSpecGroup_type(
 	value: T.ConstSpecGroup.LooseConfig['type']
@@ -5329,9 +5533,10 @@ export function resolveConstSpecGroup_value(
 	return _resolveOneBranch<T.ExpressionList>(value, 'expression_list') as unknown as T.ConstSpecGroup.Config['value'];
 }
 
-export const coerceToConstSpecGroup: ConfigSeat<T.ConstSpecGroup.Loose, ReturnType<typeof F.buildConstSpecGroup>> = (
-	input: T.ConstSpecGroup.Loose
-): ReturnType<typeof F.buildConstSpecGroup> => {
+export function coerceToConstSpecGroup<const I extends T.ConstSpecGroup.Loose>(
+	input: RefusingInput<I, T.ConstSpecGroup.Loose>
+): ReturnType<typeof F.buildConstSpecGroup>;
+export function coerceToConstSpecGroup(input: T.ConstSpecGroup.Loose): ReturnType<typeof F.buildConstSpecGroup> {
 	if (!_isLooseConfig<T.ConstSpecGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildConstSpecGroup>;
 	currentHandle()?.admit(TSKindId.ConstSpecGroup, [input]);
@@ -5339,7 +5544,7 @@ export const coerceToConstSpecGroup: ConfigSeat<T.ConstSpecGroup.Loose, ReturnTy
 		type: resolveConstSpecGroup_type(input.type),
 		value: resolveConstSpecGroup_value(input.value)
 	});
-};
+}
 
 export function resolveVarSpecArm_type(value: T.VarSpecArm.LooseConfig['type']): Admit<T.VarSpecArm['_type']> {
 	return _resolveOne<T.Type>(value, _K0, _K11);
@@ -5354,16 +5559,17 @@ export function resolveVarSpecArm_value(value: T.VarSpecArm.LooseConfig['value']
 	) as unknown as T.VarSpecArm.Config['value'];
 }
 
-export const coerceToVarSpecArm: ConfigSeat<T.VarSpecArm.Loose, ReturnType<typeof F.buildVarSpecArm>> = (
-	input: T.VarSpecArm.Loose
-): ReturnType<typeof F.buildVarSpecArm> => {
+export function coerceToVarSpecArm<const I extends T.VarSpecArm.Loose>(
+	input: RefusingInput<I, T.VarSpecArm.Loose>
+): ReturnType<typeof F.buildVarSpecArm>;
+export function coerceToVarSpecArm(input: T.VarSpecArm.Loose): ReturnType<typeof F.buildVarSpecArm> {
 	if (!_isLooseConfig<T.VarSpecArm.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildVarSpecArm>;
 	currentHandle()?.admit(TSKindId.VarSpecArm, [input]);
 	return F.buildVarSpecArm({
 		type: resolveVarSpecArm_type(input.type),
 		value: resolveVarSpecArm_value(input.value)
 	});
-};
+}
 
 export function resolveTypeDeclarationGroup_elements(
 	value: T.TypeDeclarationGroup.LooseConfig['elements']
@@ -5382,10 +5588,12 @@ export function resolveTypeDeclarationGroup_importSpecListArm(
 	return _resolveOneLeaf<T.ImportSpecListArm>(value, 'import_spec_list_arm');
 }
 
-export const coerceToTypeDeclarationGroup: ConfigSeat<
-	T.TypeDeclarationGroup.Loose,
-	ReturnType<typeof F.buildTypeDeclarationGroup>
-> = (input: T.TypeDeclarationGroup.Loose): ReturnType<typeof F.buildTypeDeclarationGroup> => {
+export function coerceToTypeDeclarationGroup<const I extends T.TypeDeclarationGroup.Loose>(
+	input: RefusingInput<I, T.TypeDeclarationGroup.Loose>
+): ReturnType<typeof F.buildTypeDeclarationGroup>;
+export function coerceToTypeDeclarationGroup(
+	input: T.TypeDeclarationGroup.Loose
+): ReturnType<typeof F.buildTypeDeclarationGroup> {
 	if (!_isLooseConfig<T.TypeDeclarationGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildTypeDeclarationGroup>;
 	currentHandle()?.admit(TSKindId.TypeDeclarationGroup, [input]);
@@ -5393,7 +5601,7 @@ export const coerceToTypeDeclarationGroup: ConfigSeat<
 		elements: resolveTypeDeclarationGroup_elements(input.elements),
 		importSpecListArm: resolveTypeDeclarationGroup_importSpecListArm(input.importSpecListArm)
 	});
-};
+}
 
 export function resolveTypeDeclarationArm_typeDeclarationGroup(
 	value: T.TypeDeclarationArm.LooseConfig['typeDeclarationGroup']
@@ -5401,10 +5609,14 @@ export function resolveTypeDeclarationArm_typeDeclarationGroup(
 	return _resolveOneBranch<T.TypeDeclarationGroup>(value, 'type_declaration_group', undefined, true);
 }
 
-export const coerceToTypeDeclarationArm: EmptyForm<
-	T.EmptyTypeDeclarationArm,
-	OptionalConfigSeat<T.TypeDeclarationArm.Loose, ReturnType<typeof F.buildTypeDeclarationArm>>
-> = withEmptyForm((input?: T.TypeDeclarationArm.Loose): ReturnType<typeof F.buildTypeDeclarationArm> => {
+export function coerceToTypeDeclarationArm(): T.EmptyTypeDeclarationArm;
+export function coerceToTypeDeclarationArm<const I extends T.TypeDeclarationArm.Loose | undefined>(
+	input: RefusingInput<I, T.TypeDeclarationArm.Loose>
+): ReturnType<typeof F.buildTypeDeclarationArm>;
+export function coerceToTypeDeclarationArm(input?: undefined): ReturnType<typeof F.buildTypeDeclarationArm>;
+export function coerceToTypeDeclarationArm(
+	input?: T.TypeDeclarationArm.Loose
+): ReturnType<typeof F.buildTypeDeclarationArm> {
 	if (input !== undefined && isNodeOfKind(input, TSKindId.TypeDeclarationArm))
 		return input as unknown as ReturnType<typeof F.buildTypeDeclarationArm>;
 	return F.buildTypeDeclarationArm(
@@ -5415,7 +5627,7 @@ export const coerceToTypeDeclarationArm: EmptyForm<
 			true
 		)
 	);
-});
+}
 
 export function resolveFieldDeclarationListGroup_fieldDeclarations(
 	value: T.FieldDeclarationListGroup.LooseConfig['fieldDeclarations']
@@ -5434,10 +5646,12 @@ export function resolveFieldDeclarationListGroup_importSpecListArm(
 	return _resolveOneLeaf<T.ImportSpecListArm>(value, 'import_spec_list_arm');
 }
 
-export const coerceToFieldDeclarationListGroup: ConfigSeat<
-	T.FieldDeclarationListGroup.Loose,
-	ReturnType<typeof F.buildFieldDeclarationListGroup>
-> = (input: T.FieldDeclarationListGroup.Loose): ReturnType<typeof F.buildFieldDeclarationListGroup> => {
+export function coerceToFieldDeclarationListGroup<const I extends T.FieldDeclarationListGroup.Loose>(
+	input: RefusingInput<I, T.FieldDeclarationListGroup.Loose>
+): ReturnType<typeof F.buildFieldDeclarationListGroup>;
+export function coerceToFieldDeclarationListGroup(
+	input: T.FieldDeclarationListGroup.Loose
+): ReturnType<typeof F.buildFieldDeclarationListGroup> {
 	if (!_isLooseConfig<T.FieldDeclarationListGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationListGroup>;
 	currentHandle()?.admit(TSKindId.FieldDeclarationListGroup, [input]);
@@ -5445,7 +5659,7 @@ export const coerceToFieldDeclarationListGroup: ConfigSeat<
 		fieldDeclarations: resolveFieldDeclarationListGroup_fieldDeclarations(input.fieldDeclarations),
 		importSpecListArm: resolveFieldDeclarationListGroup_importSpecListArm(input.importSpecListArm)
 	});
-};
+}
 
 export function resolveFieldDeclarationArm_type(
 	value: T.FieldDeclarationArm.LooseConfig['type']
@@ -5457,10 +5671,12 @@ export function resolveFieldDeclarationArm_type(
 	);
 }
 
-export const coerceToFieldDeclarationArm: ConfigSeat<
-	T.FieldDeclarationArm.Loose,
-	ReturnType<typeof F.buildFieldDeclarationArm>
-> = (input: T.FieldDeclarationArm.Loose): ReturnType<typeof F.buildFieldDeclarationArm> => {
+export function coerceToFieldDeclarationArm<const I extends T.FieldDeclarationArm.Loose>(
+	input: RefusingInput<I, T.FieldDeclarationArm.Loose>
+): ReturnType<typeof F.buildFieldDeclarationArm>;
+export function coerceToFieldDeclarationArm(
+	input: T.FieldDeclarationArm.Loose
+): ReturnType<typeof F.buildFieldDeclarationArm> {
 	if (isNodeOfKind(input, TSKindId.FieldDeclarationArm))
 		return input as unknown as ReturnType<typeof F.buildFieldDeclarationArm>;
 	return F.buildFieldDeclarationArm(
@@ -5470,7 +5686,7 @@ export const coerceToFieldDeclarationArm: ConfigSeat<
 			_K34
 		)
 	);
-};
+}
 
 export function resolveInterfaceTypeGroup_interfaceElems(
 	value: T.InterfaceTypeGroup.LooseConfig['interfaceElems']
@@ -5489,10 +5705,12 @@ export function resolveInterfaceTypeGroup_importSpecListArm(
 	return _resolveOneLeaf<T.ImportSpecListArm>(value, 'import_spec_list_arm');
 }
 
-export const coerceToInterfaceTypeGroup: ConfigSeat<
-	T.InterfaceTypeGroup.Loose,
-	ReturnType<typeof F.buildInterfaceTypeGroup>
-> = (input: T.InterfaceTypeGroup.Loose): ReturnType<typeof F.buildInterfaceTypeGroup> => {
+export function coerceToInterfaceTypeGroup<const I extends T.InterfaceTypeGroup.Loose>(
+	input: RefusingInput<I, T.InterfaceTypeGroup.Loose>
+): ReturnType<typeof F.buildInterfaceTypeGroup>;
+export function coerceToInterfaceTypeGroup(
+	input: T.InterfaceTypeGroup.Loose
+): ReturnType<typeof F.buildInterfaceTypeGroup> {
 	if (!_isLooseConfig<T.InterfaceTypeGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildInterfaceTypeGroup>;
 	currentHandle()?.admit(TSKindId.InterfaceTypeGroup, [input]);
@@ -5500,7 +5718,7 @@ export const coerceToInterfaceTypeGroup: ConfigSeat<
 		interfaceElems: resolveInterfaceTypeGroup_interfaceElems(input.interfaceElems),
 		importSpecListArm: resolveInterfaceTypeGroup_importSpecListArm(input.importSpecListArm)
 	});
-};
+}
 
 export function resolveStatementListGroup_sourceFileText(
 	value: T.StatementListGroup.LooseConfig['sourceFileText']
@@ -5524,10 +5742,12 @@ export function resolveStatementListGroup_emptyLabeledStatement(
 	) as unknown as T.StatementListGroup.Config['emptyLabeledStatement'];
 }
 
-export const coerceToStatementListGroup: ConfigSeat<
-	T.StatementListGroup.Loose,
-	ReturnType<typeof F.buildStatementListGroup>
-> = (input: T.StatementListGroup.Loose): ReturnType<typeof F.buildStatementListGroup> => {
+export function coerceToStatementListGroup<const I extends T.StatementListGroup.Loose>(
+	input: RefusingInput<I, T.StatementListGroup.Loose>
+): ReturnType<typeof F.buildStatementListGroup>;
+export function coerceToStatementListGroup(
+	input: T.StatementListGroup.Loose
+): ReturnType<typeof F.buildStatementListGroup> {
 	if (!_isLooseConfig<T.StatementListGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStatementListGroup>;
 	currentHandle()?.admit(TSKindId.StatementListGroup, [input]);
@@ -5535,7 +5755,7 @@ export const coerceToStatementListGroup: ConfigSeat<
 		sourceFileText: resolveStatementListGroup_sourceFileText(input.sourceFileText),
 		emptyLabeledStatement: resolveStatementListGroup_emptyLabeledStatement(input.emptyLabeledStatement)
 	});
-};
+}
 
 export function resolveStatementListArm_statements(
 	value: T.StatementListArm.LooseConfig['statements']
@@ -5551,10 +5771,10 @@ export function resolveStatementListArm_statementListGroup(
 	return _resolveOneBranch<T.StatementListGroup>(value, 'statement_list_group', undefined, true);
 }
 
-export const coerceToStatementListArm: ConfigSeat<
-	T.StatementListArm.Loose,
-	ReturnType<typeof F.buildStatementListArm>
-> = (input: T.StatementListArm.Loose): ReturnType<typeof F.buildStatementListArm> => {
+export function coerceToStatementListArm<const I extends T.StatementListArm.Loose>(
+	input: RefusingInput<I, T.StatementListArm.Loose>
+): ReturnType<typeof F.buildStatementListArm>;
+export function coerceToStatementListArm(input: T.StatementListArm.Loose): ReturnType<typeof F.buildStatementListArm> {
 	if (!_isLooseConfig<T.StatementListArm.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildStatementListArm>;
 	currentHandle()?.admit(TSKindId.StatementListArm, [input]);
@@ -5562,7 +5782,7 @@ export const coerceToStatementListArm: ConfigSeat<
 		statements: resolveStatementListArm_statements(input.statements),
 		statementListGroup: resolveStatementListArm_statementListGroup(input.statementListGroup)
 	});
-};
+}
 
 export function resolveReceiveStatementGroup_left(
 	value: T.ReceiveStatementGroup.LooseConfig['left']
@@ -5582,10 +5802,12 @@ export function resolveReceiveStatementGroup_operator(
 	);
 }
 
-export const coerceToReceiveStatementGroup: ConfigSeat<
-	T.ReceiveStatementGroup.Loose,
-	ReturnType<typeof F.buildReceiveStatementGroup>
-> = (input: T.ReceiveStatementGroup.Loose): ReturnType<typeof F.buildReceiveStatementGroup> => {
+export function coerceToReceiveStatementGroup<const I extends T.ReceiveStatementGroup.Loose>(
+	input: RefusingInput<I, T.ReceiveStatementGroup.Loose>
+): ReturnType<typeof F.buildReceiveStatementGroup>;
+export function coerceToReceiveStatementGroup(
+	input: T.ReceiveStatementGroup.Loose
+): ReturnType<typeof F.buildReceiveStatementGroup> {
 	if (!_isLooseConfig<T.ReceiveStatementGroup.LooseConfig>(input))
 		return input as unknown as ReturnType<typeof F.buildReceiveStatementGroup>;
 	currentHandle()?.admit(TSKindId.ReceiveStatementGroup, [input]);
@@ -5593,7 +5815,7 @@ export const coerceToReceiveStatementGroup: ConfigSeat<
 		left: resolveReceiveStatementGroup_left(input.left),
 		operator: resolveReceiveStatementGroup_operator(input.operator)
 	});
-};
+}
 
 export function resolveSpecialArgumentListGroup_type(
 	value: T.SpecialArgumentListGroup.LooseConfig['type']
@@ -5636,10 +5858,12 @@ export function resolveChannelTypeBidirectional_value(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToChannelTypeBidirectional: ConfigSeat<
-	T.ChannelTypeBidirectional.Loose,
-	ReturnType<typeof F.buildChannelTypeBidirectional>
-> = (input: T.ChannelTypeBidirectional.Loose): ReturnType<typeof F.buildChannelTypeBidirectional> => {
+export function coerceToChannelTypeBidirectional<const I extends T.ChannelTypeBidirectional.Loose>(
+	input: RefusingInput<I, T.ChannelTypeBidirectional.Loose>
+): ReturnType<typeof F.buildChannelTypeBidirectional>;
+export function coerceToChannelTypeBidirectional(
+	input: T.ChannelTypeBidirectional.Loose
+): ReturnType<typeof F.buildChannelTypeBidirectional> {
 	return F.buildChannelTypeBidirectional(
 		_resolveOne<T.Type>(
 			configFieldOr(input, 'value', () => input, TSKindId.ChannelTypeBidirectional),
@@ -5647,7 +5871,7 @@ export const coerceToChannelTypeBidirectional: ConfigSeat<
 			_K11
 		)
 	);
-};
+}
 
 export function resolveChannelTypeSendOnly_value(
 	value: T.ChannelTypeSendOnly.LooseConfig['value']
@@ -5655,10 +5879,12 @@ export function resolveChannelTypeSendOnly_value(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToChannelTypeSendOnly: ConfigSeat<
-	T.ChannelTypeSendOnly.Loose,
-	ReturnType<typeof F.buildChannelTypeSendOnly>
-> = (input: T.ChannelTypeSendOnly.Loose): ReturnType<typeof F.buildChannelTypeSendOnly> => {
+export function coerceToChannelTypeSendOnly<const I extends T.ChannelTypeSendOnly.Loose>(
+	input: RefusingInput<I, T.ChannelTypeSendOnly.Loose>
+): ReturnType<typeof F.buildChannelTypeSendOnly>;
+export function coerceToChannelTypeSendOnly(
+	input: T.ChannelTypeSendOnly.Loose
+): ReturnType<typeof F.buildChannelTypeSendOnly> {
 	return F.buildChannelTypeSendOnly(
 		_resolveOne<T.Type>(
 			configFieldOr(input, 'value', () => input, TSKindId.ChannelTypeSendOnly),
@@ -5666,7 +5892,7 @@ export const coerceToChannelTypeSendOnly: ConfigSeat<
 			_K11
 		)
 	);
-};
+}
 
 export function resolveChannelTypeReceiveOnly_value(
 	value: T.ChannelTypeReceiveOnly.LooseConfig['value']
@@ -5674,10 +5900,12 @@ export function resolveChannelTypeReceiveOnly_value(
 	return _resolveOne<T.Type>(value, _K0, _K11);
 }
 
-export const coerceToChannelTypeReceiveOnly: ConfigSeat<
-	T.ChannelTypeReceiveOnly.Loose,
-	ReturnType<typeof F.buildChannelTypeReceiveOnly>
-> = (input: T.ChannelTypeReceiveOnly.Loose): ReturnType<typeof F.buildChannelTypeReceiveOnly> => {
+export function coerceToChannelTypeReceiveOnly<const I extends T.ChannelTypeReceiveOnly.Loose>(
+	input: RefusingInput<I, T.ChannelTypeReceiveOnly.Loose>
+): ReturnType<typeof F.buildChannelTypeReceiveOnly>;
+export function coerceToChannelTypeReceiveOnly(
+	input: T.ChannelTypeReceiveOnly.Loose
+): ReturnType<typeof F.buildChannelTypeReceiveOnly> {
 	return F.buildChannelTypeReceiveOnly(
 		_resolveOne<T.Type>(
 			configFieldOr(input, 'value', () => input, TSKindId.ChannelTypeReceiveOnly),
@@ -5685,7 +5913,7 @@ export const coerceToChannelTypeReceiveOnly: ConfigSeat<
 			_K11
 		)
 	);
-};
+}
 
 export function resolvePointerTypeFieldDeclarationArm_type(
 	value: T.PointerTypeFieldDeclarationArm.LooseConfig['type']
@@ -5693,10 +5921,12 @@ export function resolvePointerTypeFieldDeclarationArm_type(
 	return _resolveOne<T.TypeIdentifier | T.QualifiedType | T.GenericType>(value, _K0, _K35);
 }
 
-export const coerceToPointerTypeFieldDeclarationArm: ConfigSeat<
-	T.PointerTypeFieldDeclarationArm.Loose,
-	ReturnType<typeof F.buildPointerTypeFieldDeclarationArm>
-> = (input: T.PointerTypeFieldDeclarationArm.Loose): ReturnType<typeof F.buildPointerTypeFieldDeclarationArm> => {
+export function coerceToPointerTypeFieldDeclarationArm<const I extends T.PointerTypeFieldDeclarationArm.Loose>(
+	input: RefusingInput<I, T.PointerTypeFieldDeclarationArm.Loose>
+): ReturnType<typeof F.buildPointerTypeFieldDeclarationArm>;
+export function coerceToPointerTypeFieldDeclarationArm(
+	input: T.PointerTypeFieldDeclarationArm.Loose
+): ReturnType<typeof F.buildPointerTypeFieldDeclarationArm> {
 	if (isNodeOfKind(input, TSKindId.PointerTypeFieldDeclarationArm))
 		return input as unknown as ReturnType<typeof F.buildPointerTypeFieldDeclarationArm>;
 	return F.buildPointerTypeFieldDeclarationArm(
@@ -5706,7 +5936,7 @@ export const coerceToPointerTypeFieldDeclarationArm: ConfigSeat<
 			_K35
 		)
 	);
-};
+}
 
 export function coerceToTight(_input?: T.Tight.Loose): typeof F.buildTight {
 	return F.buildTight;
@@ -5746,10 +5976,12 @@ export function resolvePackageIdentifier_content(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export const coerceToPackageIdentifier: ConfigSeat<
-	T.PackageIdentifier.Loose,
-	ReturnType<typeof F.buildPackageIdentifier>
-> = (input: T.PackageIdentifier.Loose): ReturnType<typeof F.buildPackageIdentifier> => {
+export function coerceToPackageIdentifier<const I extends T.PackageIdentifier.Loose>(
+	input: RefusingInput<I, T.PackageIdentifier.Loose>
+): ReturnType<typeof F.buildPackageIdentifier>;
+export function coerceToPackageIdentifier(
+	input: T.PackageIdentifier.Loose
+): ReturnType<typeof F.buildPackageIdentifier> {
 	if (isNodeOfKind(input, TSKindId.PackageIdentifier))
 		return input as unknown as ReturnType<typeof F.buildPackageIdentifier>;
 	return F.buildPackageIdentifier(
@@ -5758,7 +5990,7 @@ export const coerceToPackageIdentifier: ConfigSeat<
 			'identifier'
 		)
 	);
-};
+}
 
 export function resolveFieldIdentifier_content(
 	value: T.FieldIdentifier.LooseConfig['content']
@@ -5766,9 +5998,10 @@ export function resolveFieldIdentifier_content(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export const coerceToFieldIdentifier: ConfigSeat<T.FieldIdentifier.Loose, ReturnType<typeof F.buildFieldIdentifier>> = (
-	input: T.FieldIdentifier.Loose
-): ReturnType<typeof F.buildFieldIdentifier> => {
+export function coerceToFieldIdentifier<const I extends T.FieldIdentifier.Loose>(
+	input: RefusingInput<I, T.FieldIdentifier.Loose>
+): ReturnType<typeof F.buildFieldIdentifier>;
+export function coerceToFieldIdentifier(input: T.FieldIdentifier.Loose): ReturnType<typeof F.buildFieldIdentifier> {
 	if (isNodeOfKind(input, TSKindId.FieldIdentifier))
 		return input as unknown as ReturnType<typeof F.buildFieldIdentifier>;
 	return F.buildFieldIdentifier(
@@ -5777,11 +6010,12 @@ export const coerceToFieldIdentifier: ConfigSeat<T.FieldIdentifier.Loose, Return
 			'identifier'
 		)
 	);
-};
+}
 
-export const coerceToTypeConstraint: Seat<T.TypeConstraint.LooseArgs, ReturnType<typeof F.buildTypeConstraint>> = (
-	...input: T.TypeConstraint.LooseArgs
-): ReturnType<typeof F.buildTypeConstraint> => {
+export function coerceToTypeConstraint<const A extends T.TypeConstraint.LooseArgs>(
+	...args: RefusingInput<A, T.TypeConstraint.LooseArgs>
+): ReturnType<typeof F.buildTypeConstraint>;
+export function coerceToTypeConstraint(...input: T.TypeConstraint.LooseArgs): ReturnType<typeof F.buildTypeConstraint> {
 	currentHandle()?.admit(TSKindId.TypeConstraint, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeConstraint))
 		return input[0] as unknown as ReturnType<typeof F.buildTypeConstraint>;
@@ -5796,7 +6030,7 @@ export const coerceToTypeConstraint: Seat<T.TypeConstraint.LooseArgs, ReturnType
 	return F.buildTypeConstraint(
 		...(_resolveMany<T.Type>(_elems, _K0, _K11) as unknown as Parameters<typeof F.buildTypeConstraint>)
 	);
-};
+}
 
 export function resolveTypeIdentifier_content(
 	value: T.TypeIdentifier.LooseConfig['content']
@@ -5804,9 +6038,10 @@ export function resolveTypeIdentifier_content(
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export const coerceToTypeIdentifier: ConfigSeat<T.TypeIdentifier.Loose, ReturnType<typeof F.buildTypeIdentifier>> = (
-	input: T.TypeIdentifier.Loose
-): ReturnType<typeof F.buildTypeIdentifier> => {
+export function coerceToTypeIdentifier<const I extends T.TypeIdentifier.Loose>(
+	input: RefusingInput<I, T.TypeIdentifier.Loose>
+): ReturnType<typeof F.buildTypeIdentifier>;
+export function coerceToTypeIdentifier(input: T.TypeIdentifier.Loose): ReturnType<typeof F.buildTypeIdentifier> {
 	if (isNodeOfKind(input, TSKindId.TypeIdentifier)) return input as unknown as ReturnType<typeof F.buildTypeIdentifier>;
 	return F.buildTypeIdentifier(
 		_resolveOneLeaf<T.Identifier>(
@@ -5814,15 +6049,16 @@ export const coerceToTypeIdentifier: ConfigSeat<T.TypeIdentifier.Loose, ReturnTy
 			'identifier'
 		)
 	);
-};
+}
 
 export function resolveLabelName_content(value: T.LabelName.LooseConfig['content']): Admit<T.LabelName['_content']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
 }
 
-export const coerceToLabelName: ConfigSeat<T.LabelName.Loose, ReturnType<typeof F.buildLabelName>> = (
-	input: T.LabelName.Loose
-): ReturnType<typeof F.buildLabelName> => {
+export function coerceToLabelName<const I extends T.LabelName.Loose>(
+	input: RefusingInput<I, T.LabelName.Loose>
+): ReturnType<typeof F.buildLabelName>;
+export function coerceToLabelName(input: T.LabelName.Loose): ReturnType<typeof F.buildLabelName> {
 	if (isNodeOfKind(input, TSKindId.LabelName)) return input as unknown as ReturnType<typeof F.buildLabelName>;
 	return F.buildLabelName(
 		_resolveOneLeaf<T.Identifier>(
@@ -5830,7 +6066,7 @@ export const coerceToLabelName: ConfigSeat<T.LabelName.Loose, ReturnType<typeof 
 			'identifier'
 		)
 	);
-};
+}
 
 export interface _FromMap {
 	readonly source_file: typeof coerceToSourceFile;

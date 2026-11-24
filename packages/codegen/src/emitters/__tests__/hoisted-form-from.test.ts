@@ -74,7 +74,7 @@ describe('from() for a hoisted form', () => {
 		const src = emitFrom({ generatedIdTables, grammar: 'synth', nodeMap });
 
 		expect(fromFn).toBeDefined();
-		expect(src).toContain(`export const ${fromFn}: ConfigSeat<`);
+		expect(src).toMatch(new RegExp(`export function ${fromFn}<const I extends [^>]+>\\(input: RefusingInput<I, `));
 		expect(src).toContain(`"_impl_positive": ${fromFn}`);
 	});
 

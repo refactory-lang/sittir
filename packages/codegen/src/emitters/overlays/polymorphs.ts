@@ -435,7 +435,11 @@ function seatedDeclarationOf(
 			nodeMap,
 			node.kind,
 			name,
-			functionTypeOf(refusingParam('args', argsType, { rest: true, loose: looseRefusal(nodeMap), numeric: numericSeatRefusal(node, nodeMap, surface), ...(branch === undefined ? {} : { branch: branch.needed.map((name) => JSON.stringify(name)).join(' | ') }) }), returnType),
+			functionTypeOf(
+				refusingParam('args', argsType, { rest: true, loose: looseRefusal(nodeMap), numeric: numericSeatRefusal(node, nodeMap, surface) }),
+				returnType,
+				branch === undefined ? undefined : branch.needed.map((name) => JSON.stringify(name)).join(' | ')
+			),
 			expr
 		);
 }

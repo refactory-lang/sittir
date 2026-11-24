@@ -33,8 +33,7 @@ import {
 	declaredOverload,
 	refuseUndeclared,
 	refusingParam,
-	seatDeclaration,
-	functionTypeOf,
+	seatFunction,
 	isRequired,
 	isMultiple,
 	slotKindNames,
@@ -162,7 +161,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, numberRefusal, withEmptyForm, withOptions } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, numberRefusal, withOptions } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
@@ -179,7 +178,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
-const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'Seat', 'ConfigSeat', 'OptionalConfigSeat', 'EmptyForm', 'WidenSlots', 'SiblingLeadRefusal', 'CoercedSpelling', 'WithSpelling'] as const;
+const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'RefusingInput', 'WidenSlots', 'SiblingLeadRefusal', 'CoercedSpelling', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -481,7 +480,7 @@ function emitBranchFrom(
 	let declare = (body: readonly string[]): string[] =>
 		config === undefined
 			? [...withEmptyOverload(nodeMap, node.kind, head, [...publicOverloads, signature]), ...body, '}']
-			: [seatDeclaration(nodeMap, node.kind, fn, functionTypeOf(config, returnType), { params: `input${opt}: ${inputType}`, returnType, body })];
+			: [seatFunction(nodeMap, node.kind, fn, [config], { params: `input${opt}: ${inputType}`, returnType, body })];
 	if (spreadTarget !== null) {
 		if (spelledType !== undefined || refusal !== undefined) {
 			throw emitShapeFailure({
@@ -509,7 +508,7 @@ function emitBranchFrom(
 						'}'
 					]
 				: (body) => [
-						seatDeclaration(nodeMap, node.kind, fn, `${functionTypeOf(row, returnType)} & ${functionTypeOf(config, returnType)}`, {
+						seatFunction(nodeMap, node.kind, fn, [row, config], {
 							params: '...args: unknown[]',
 							returnType,
 							body: [...prelude, ...body]
@@ -677,8 +676,7 @@ function emitRestParamFromResolver(
 	const inputType = `${tName}.LooseArgs`;
 	const freshVar = unwrapConfigKey === undefined ? source : '_elems';
 	const refusing = refusingParam('input', inputType, { rest: true, loose: looseRefusal(nodeMap) });
-	const seat = (body: readonly string[]): string =>
-		seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusing, returnType), { params: `...input: ${inputType}`, returnType, body });
+	const seat = (body: readonly string[]): string => seatFunction(nodeMap, kind, fn, [refusing], { params: `...input: ${inputType}`, returnType, body });
 	if (!hasNumericDiscriminant || holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)) {
 		return seat([...admit, ...split, ...unwrap, `  return ${buildCallExpr(freshVar)};`]);
 	}
@@ -758,7 +756,7 @@ function emitSingularChildrenFrom(
 }
 
 function optionalConfigCoercer(nodeMap: NodeMap, kind: string, fn: string, input: string, returnType: string, body: readonly string[]): string {
-	return seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusingParam('input', input, { optional: true, loose: looseRefusal(nodeMap) }), returnType), {
+	return seatFunction(nodeMap, kind, fn, [refusingParam('input', input, { optional: true, loose: looseRefusal(nodeMap) })], {
 		params: `input?: ${input}`,
 		returnType,
 		body
@@ -889,7 +887,7 @@ function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined, 
 	const factory = `F.${node.rawFactoryName!}`;
 	const returnType = factoryReturnTypeExpr(factory);
 	const input = `T.${node.typeName}.Loose`;
-	return seatDeclaration(nodeMap, node.kind, node.fromFunctionName!, functionTypeOf(refusingParam('input', input, { loose: looseRefusal(nodeMap) }), returnType), {
+	return seatFunction(nodeMap, node.kind, node.fromFunctionName!, [refusingParam('input', input, { loose: looseRefusal(nodeMap) })], {
 		params: `input: ${input}`,
 		returnType,
 		body: [
@@ -2010,6 +2008,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			}
 			return [l];
 		});
-		return pruneUnusedImports(pruned, ['Delimiter', 'describeValue', 'listStorage', 'numberRefusal', 'withEmptyForm', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', 'describeValue', 'listStorage', 'numberRefusal', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

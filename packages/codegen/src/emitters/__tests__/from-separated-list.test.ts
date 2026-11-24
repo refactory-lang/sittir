@@ -45,8 +45,10 @@ function looseRow(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
 	return surface.looseArgs;
 }
 
-const TAKES_ITS_ROW =
-	'export const coerceToMemberList: Seat<T.MemberList.LooseArgs, ReturnType<typeof F.buildMemberList>> = (...input: T.MemberList.LooseArgs)';
+const TAKES_ITS_ROW = [
+	'export function coerceToMemberList<const A extends T.MemberList.LooseArgs>(...args: RefusingInput<A, T.MemberList.LooseArgs>): ReturnType<typeof F.buildMemberList>;',
+	'export function coerceToMemberList(...input: T.MemberList.LooseArgs)'
+].join('\n');
 
 describe('from emitter — separatedList', () => {
 	it('coerceToMemberList returns a sole node of its own kind, with its options set through $with, and otherwise spreads the resolved elements after the options', () => {
@@ -58,7 +60,7 @@ describe('from emitter — separatedList', () => {
 		};
 		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap);
 
-		expect(emitted).toContain('export const coerceToMemberList: Seat<');
+		expect(emitted).toContain('export function coerceToMemberList<const A extends T.MemberList.LooseArgs>(');
 		expect(emitted).toContain(
 			'if (_rest.length === 1 && isNodeOfKind(_rest[0], TSKindId.MemberList)) return withOptions(_rest[0], options) as unknown as ReturnType<typeof F.buildMemberList>;'
 		);

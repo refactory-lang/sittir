@@ -1429,7 +1429,7 @@ export type SeatGeneric = 'Seat' | 'ConfigSeat' | 'OptionalConfigSeat';
 export interface RefusingParams {
 	readonly typeParams: string;
 	readonly params: string;
-	readonly seat?: { readonly generic: SeatGeneric; readonly declared: string; readonly signed: boolean; readonly numeric?: string; readonly branch?: string };
+	readonly seat?: { readonly generic: SeatGeneric; readonly declared: string; readonly signed: boolean; readonly numeric?: string };
 }
 
 export function plainParams(params: string): RefusingParams {
@@ -1439,7 +1439,7 @@ export function plainParams(params: string): RefusingParams {
 export function refusingParam(
 	label: string,
 	type: string,
-	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: LooseRefusal; readonly numeric?: string; readonly branch?: string } = {}
+	shape: { readonly optional?: boolean; readonly rest?: boolean; readonly loose?: LooseRefusal; readonly numeric?: string } = {}
 ): RefusingParams {
 	const typeParam = shape.rest ? 'A' : 'V';
 	const refusal = refuseUndeclared(typeParam, shape.loose === undefined ? undefined : type, shape.loose);
@@ -1451,7 +1451,7 @@ export function refusingParam(
 			: shape.optional
 				? `...${label}: [${label}?: ${typeParam}] & ${refusal}`
 				: `${label}: ${typeParam} & ${refusal}`,
-		...(shape.loose === undefined ? {} : { seat: { generic, declared: type, signed: shape.loose.signed, ...(shape.numeric === undefined ? {} : { numeric: shape.numeric }), ...(shape.branch === undefined ? {} : { branch: shape.branch }) } })
+		...(shape.loose === undefined ? {} : { seat: { generic, declared: type, signed: shape.loose.signed, ...(shape.numeric === undefined ? {} : { numeric: shape.numeric }) } })
 	};
 }
 
@@ -1478,22 +1478,29 @@ export function optionalRefusing(refusing: RefusingParams): RefusingParams {
 		: { typeParams: refusing.typeParams, params };
 }
 
-export function declaredOverload(head: string, refusing: RefusingParams, returnType: string): string {
-	return `${head}${refusing.typeParams}(${refusing.params}): ${returnType};`;
+type ParamSeat = NonNullable<RefusingParams['seat']>;
+
+function seatRefusalArgs(seat: ParamSeat, padded: boolean): string {
+	if (seat.numeric !== undefined) return `, ${seat.signed}, ${seat.numeric}`;
+	if (padded) return `, ${seat.signed}, undefined, {}`;
+	return seat.signed ? ', true' : '';
 }
 
-export function functionTypeOf(refusing: RefusingParams, returnType: string): string {
+function seatOverloads(head: string, seat: ParamSeat, returnType: string): string[] {
+	const input = (typeParam: string): string => `RefusingInput<${typeParam}, ${seat.declared}${seatRefusalArgs(seat, false)}>`;
+	if (seat.generic === 'Seat') return [`${head}<const A extends ${seat.declared}>(...args: ${input('A')}): ${returnType};`];
+	if (seat.generic === 'ConfigSeat') return [`${head}<const I extends ${seat.declared}>(input: ${input('I')}): ${returnType};`];
+	return [`${head}<const I extends ${seat.declared} | undefined>(input: ${input('I')}): ${returnType};`, `${head}(input?: undefined): ${returnType};`];
+}
+
+export function declaredOverload(head: string, refusing: RefusingParams, returnType: string): string {
+	return refusing.seat === undefined ? `${head}${refusing.typeParams}(${refusing.params}): ${returnType};` : seatOverloads(head, refusing.seat, returnType).join('\n');
+}
+
+export function functionTypeOf(refusing: RefusingParams, returnType: string, branch?: string): string {
 	return refusing.seat === undefined
 		? `${refusing.typeParams}(${refusing.params}) => ${returnType}`
-		: `${refusing.seat.generic}<${refusing.seat.declared}, ${returnType}${
-					refusing.seat.numeric === undefined
-						? refusing.seat.branch === undefined
-							? refusing.seat.signed
-								? ', true'
-								: ''
-							: `, ${refusing.seat.signed}, undefined, {}`
-						: `, ${refusing.seat.signed}, ${refusing.seat.numeric}`
-				}${refusing.seat.branch === undefined ? '' : `, ${refusing.seat.branch}`}>`;
+		: `${refusing.seat.generic}<${refusing.seat.declared}, ${returnType}${seatRefusalArgs(refusing.seat, branch !== undefined)}${branch === undefined ? '' : `, ${branch}`}>`;
 }
 
 export function withEmptyOverload(
@@ -1508,15 +1515,26 @@ export function withEmptyOverload(
 	return [`${head}(): T.${empty.typeName};`, ...(general === undefined ? [] : [general]), ...lines];
 }
 
-export interface ArrowBody {
+export interface Implementation {
 	readonly params: string;
 	readonly returnType: string;
 	readonly body: readonly string[];
 }
 
-export function seatDeclaration(nodeMap: NodeMap, kind: string, name: string, type: string, value: string | ArrowBody): string {
+export function seatFunction(nodeMap: NodeMap, kind: string, name: string, seats: readonly RefusingParams[], implementation: Implementation): string {
+	const head = `export function ${name}`;
+	return [
+		...withEmptyOverload(nodeMap, kind, head, [
+			...seats.map((seat) => declaredOverload(head, seat, implementation.returnType)),
+			`${head}(${implementation.params}): ${implementation.returnType} {`
+		]),
+		...implementation.body,
+		'}'
+	].join('\n');
+}
+
+export function seatDeclaration(nodeMap: NodeMap, kind: string, name: string, type: string, expr: string): string {
 	const empty = emptyForms(nodeMap).get(kind);
-	const expr = typeof value === 'string' ? value : [`(${value.params}): ${value.returnType} => {`, ...value.body, '}'].join('\n');
 	return empty === undefined
 		? `export const ${name}: ${type} = ${expr};`
 		: `export const ${name}: EmptyForm<T.${empty.typeName}, ${type}> = withEmptyForm(${expr});`;

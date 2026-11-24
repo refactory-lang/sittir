@@ -1344,7 +1344,7 @@ Fails generation when a kind's builder may omit a required slot that has no empt
 
 ### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
 
-Emits a branch's `from()` resolver. A kind whose children take the container calling convention (`fromEmitsChildrenCoercer`) gets `emitChildrenFrom`. Otherwise the function emits one exported resolver per config slot (`fieldResolverName`), typed `T.<X>.LooseConfig[key]` (with `| undefined` when the input is optional and the field required), and then the coercer. Its signature is generic over the input and refuses undeclared keys (`I & RefuseUndeclared`). A spelled delimiter gives the `<const I, const O>` form, and sibling leads add their refusal. A kind with no spelled delimiter, no sibling refusal, no numeric refusal and no options parameter is a `seatDeclaration` const typed by `refusingParam`; any other kind is an overload set, with `withEmptyOverload` in front. A kind with a list spread target adds an `(...args)` prelude that hands several arguments to the target's coercer. The body is either a direct factory call on the sole slot (when `fromBareInput` answers `value`), where a node of the kind passes through unchanged unless the kind holds its own kind, and a spelled delimiter is parsed by `spelledForm` or `spelledInterior`, or an object literal with each config slot resolved through its field resolver.
+Emits a branch's `from()` resolver. A kind whose children take the container calling convention (`fromEmitsChildrenCoercer`) gets `emitChildrenFrom`. Otherwise the function emits one exported resolver per config slot (`fieldResolverName`), typed `T.<X>.LooseConfig[key]` (with `| undefined` when the input is optional and the field required), and then the coercer. Its signature is generic over the input and refuses undeclared keys (`I & RefuseUndeclared`). A spelled delimiter gives the `<const I, const O>` form, and sibling leads add their refusal. A kind with no spelled delimiter, no sibling refusal, no numeric refusal and no options parameter is declared by its seat (`seatFunction` over `refusingParam`); any other kind is its own overload set. Either way `withEmptyOverload` puts the empty form in front. A kind with a list spread target adds an `(...args)` prelude that hands several arguments to the target's coercer. The body is either a direct factory call on the sole slot (when `fromBareInput` answers `value`), where a node of the kind passes through unchanged unless the kind holds its own kind, and a spelled delimiter is parsed by `spelledForm` or `spelledInterior`, or an object literal with each config slot resolved through its field resolver.
 
 /**
  * Emit a branch from() resolver — dispatches to the container calling
@@ -1389,7 +1389,7 @@ A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's
 
 #### input refusal
 
-A coercer whose public signature is a row call is a `const` typed `Seat<…>`, or `ConfigSeat` / `OptionalConfigSeat` when its only signature is a config. The four other shapes (spelled delimiter, numeric refusal, sibling lead and options-taking) still declare it as one overload over its implementation, generic over the whole input and refusing an untyped node or an undeclared key anywhere in it (`RefuseUndeclared`, with the input type as its declared input), beside the sibling-lead and numeric refusals. An optional input is the rest tuple `refusingParam` writes, with the spelling options inside it. The spread form refuses the same way over its `LooseArgs`.
+A coercer whose public signature is a row call is declared by `Seat`'s signature, or by `ConfigSeat`'s / `OptionalConfigSeat`'s when its only signature is a config, each over `RefusingInput` (`seatFunction`), so its type is the alias's own. The four other shapes (spelled delimiter, numeric refusal, sibling lead and options-taking) still declare it as one overload over its implementation, generic over the whole input and refusing an untyped node or an undeclared key anywhere in it (`RefuseUndeclared`, with the input type as its declared input), beside the sibling-lead and numeric refusals. An optional input is the rest tuple `refusingParam` writes, with the spelling options inside it. The spread form refuses the same way over its `LooseArgs`.
 
 
 #### interior passthrough
@@ -1438,7 +1438,7 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 
 ### `packages/codegen/src/emitters/from.ts::emitRestParamFromResolver`
 
-Emits a rest-parameter `from()` resolver for a container kind: `fn(...input: T.<X>.LooseArgs)`, typed by `refusingParam` and emitted as a `seatDeclaration` const. The body runs the kind's admit statement and, when the kind has leading options (`leadingOptions`), splits them off the rest input (`leadingOptionsSplit`). With `unwrapConfigKey`, a single non-node object carrying that key unwraps to its elements. A kind with a numeric discriminant that does not hold its own kind also checks for a single node of the kind and returns that node as it is, never rebuilt from its storage, so it keeps its identity and everything it holds; with leading options it comes back through `withOptions`. Every other input calls `buildCallExpr` on the fresh input. The two callers, `emitRepeatedChildrenFrom` and `emitSeparatedListFrom`, supply `buildCallExpr`.
+Emits a rest-parameter `from()` resolver for a container kind: `fn(...input: T.<X>.LooseArgs)`, declared by its row seat (`seatFunction` over `refusingParam`). The body runs the kind's admit statement and, when the kind has leading options (`leadingOptions`), splits them off the rest input (`leadingOptionsSplit`). With `unwrapConfigKey`, a single non-node object carrying that key unwraps to its elements. A kind with a numeric discriminant that does not hold its own kind also checks for a single node of the kind and returns that node as it is, never rebuilt from its storage, so it keeps its identity and everything it holds; with leading options it comes back through `withOptions`. Every other input calls `buildCallExpr` on the fresh input. The two callers, `emitRepeatedChildrenFrom` and `emitSeparatedListFrom`, supply `buildCallExpr`.
 
 /**
  * Shared body for a rest-param (`...input`) from() resolver: a sole node of
@@ -10771,7 +10771,7 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 
 ### `packages/codegen/src/emitters/from.ts::emitStringLikeFrom`
 
-Emits the `from()` coercer of a text-constructible leaf: `fn(input: T.<X>.Loose)`, the node or its text, the same surface every other kind's coercer takes. It is typed by `refusingParam` (with `loose`) and emitted as a `seatDeclaration` const, whose first argument is the node map. The body returns an input unchanged unless it is a string or, for a leaf with a numeric shape, a number the shape's test accepts. Those go to the leaf's raw factory, cast to the factory's first parameter.
+Emits the `from()` coercer of a text-constructible leaf: `fn(input: T.<X>.Loose)`, the node or its text, the same surface every other kind's coercer takes. It is declared by its config seat (`seatFunction` over `refusingParam` with `loose`). The body returns an input unchanged unless it is a string or, for a leaf with a numeric shape, a number the shape's test accepts. Those go to the leaf's raw factory, cast to the factory's first parameter.
 
 ### `packages/codegen/src/emitters/from.ts::emitKeywordFrom`
 
@@ -13653,6 +13653,10 @@ The coerce module's import of the strict builders, under a name of its own so th
 
 Whether any of a slot's resolved kinds has a number shape (`kindNumberShape`), which makes the slot a number taker. In such a slot a bare number is a number, so `storedFieldCall` does not admit a fixed token's bare kind id there.
 
+### `packages/codegen/src/emitters/from.ts::optionalConfigCoercer`
+
+Prints the coercer of a kind whose single value may be left out: declared by an `OptionalConfigSeat` over `input` (`seatFunction`), with a plain `input?: <input>` implementation running `body`. `emitSingularChildrenFrom` uses it for both its forms.
+
 ### `packages/codegen/src/emitters/factories.ts::listOptionDefaults`
 
 The options a separated list's factory takes, each with the expression a list owner's getter falls back to when the list does not hold it: `undefined` for the delimiter, which a list built without one leaves unset (its default is the options table's, applied at render), and the separator's declared arm (`undefined` when there is none). It reads the same option flags as the options type, so a list owner's getters report what the list holds.
@@ -13853,7 +13857,7 @@ The optional form of a refusing parameter list, for a chain whose final construc
 
 ### `packages/codegen/src/emitters/shared.ts::declaredOverload`
 
-One overload declaration of a refusing signature, over a function's plain implementation. The implementation's own signature stays plain, so its body never reads a refused type.
+One overload declaration of a refusing signature, over a function's plain implementation. A parameter list that is a seat declares the seat's own signatures (`seatOverloads`), which is what makes a coercer's type its seat alias's. The implementation's own signature stays plain, so its body never reads a refused type.
 
 ### `packages/codegen/src/emitters/shared.ts::plainParams`
 
@@ -13861,7 +13865,7 @@ A parameter list with no type parameters, for a signature none of whose paramete
 
 ### `packages/codegen/src/emitters/shared.ts::functionTypeOf`
 
-A refusing signature as a function type, printed from the shape `refusingParam` recorded, for a declared type rather than a declaration (`declaredOverload`): a polymorph form builder's type is declared on the bundle it is seated in.
+A refusing signature as a function type, printed from the shape `refusingParam` recorded, for a declared type rather than a declaration (`declaredOverload`): a polymorph form builder's type is declared on the bundle it is seated in. A seat prints as its alias. A seated entry whose kind has an optional branch passes the names the branch requires as `branch`, the alias's `Needed`, which follows the numeric arguments (`seatRefusalArgs`). The branch belongs to the result, not the parameter, so it is not part of `ParamSeat`.
 
 ### `packages/codegen/src/emitters/node-projection.ts::SCALAR_STORAGE`
 
@@ -15141,27 +15145,27 @@ The generic a seat is spelled with: `Seat`, `ConfigSeat` or `OptionalConfigSeat`
 
 ### `packages/codegen/src/emitters/shared.ts::RefusingParams::seat`
 
-The seat spelling of a refusing parameter list, when it has one: its generic and its declared type.
+The seat a refusing parameter list is, when it is one (`ParamSeat`): what both its alias (`functionTypeOf`) and its declaration (`declaredOverload`) print from.
 
-### `packages/codegen/src/emitters/shared.ts::ArrowBody`
+### `packages/codegen/src/emitters/shared.ts::Implementation`
 
-An arrow function's parts: its parameters, return type and body.
+A function's plain implementation: its parameters, return type and body, written after its overload declarations (`seatFunction`).
 
-### `packages/codegen/src/emitters/shared.ts::ArrowBody::params`
+### `packages/codegen/src/emitters/shared.ts::Implementation::params`
 
 The parameter list text.
 
-### `packages/codegen/src/emitters/shared.ts::ArrowBody::returnType`
+### `packages/codegen/src/emitters/shared.ts::Implementation::returnType`
 
 The return type text.
 
-### `packages/codegen/src/emitters/shared.ts::ArrowBody::body`
+### `packages/codegen/src/emitters/shared.ts::Implementation::body`
 
 The body text.
 
 ### `packages/codegen/src/emitters/shared.ts::seatDeclaration`
 
-Prints a seat's const declaration. It is the one place a seat const is written.
+Prints a seat's const declaration: a seated polymorph entry, a combinator's result typed by its seat alias and wrapped in `withEmptyForm` when the kind has an empty form. It is the one place a seat const is written. A coercer is declared by its seat's signatures instead (`seatFunction`).
 
 ### `packages/codegen/src/emitters/interior.ts::NumberShape::complete`
 
@@ -15378,6 +15382,22 @@ What a list view writes between and around a list slot's items: `separator`, the
 ### `packages/codegen/src/emitters/shared.ts::listDelimitersOf`
 
 The separator and delimiters (`ListDelimiters`) of the list view a slot renders through: the one source the render module's `ListView` (`buildTypedTemplateBody`), its boundary facts (`boundarySlotOf`'s `list`) and the template placement check (`positionedDroppedLiterals`) read. It reads the slot for every kind (`AssembledNonterminal.leadingDelimiter`, `trailingDelimiter` and `separator`): a list kind's own delimiters and separator are getters over its elements slot (`canonicalSeparatedListField`), so the slot is the one source for a list kind and a compound alike. So a `repeat(seq(',', x))` after another slot, which simplifies to a list member whose separator leads its items, writes its `,` before the first item, as Go's `make([]int, 1)` needs. With no slot, or a slot without a separator, the separator is `''`: a list slot never takes another slot's separator. A compound kind has no `delimiter` field to record per node whether an optional delimiter is present, so an optional leading or trailing delimiter on a compound kind's slot is refused (`optional-delimiter-on-compound-slot`). The caller passes the slot whose storage the view reads, so a name that aliases a slot's storage takes that slot's delimiters.
+
+### `packages/codegen/src/emitters/shared.ts::ParamSeat`
+
+The seat a refusing parameter list is, as `refusingParam` records it on `RefusingParams`: which alias (`SeatGeneric`), the declared input, whether a negative number can build one of the grammar's numeric literals, and the numeric refusal's arguments when the seat names any. `functionTypeOf` and `declaredOverload` both print from it, so a seat's alias and its declaration cannot drift apart.
+
+### `packages/codegen/src/emitters/shared.ts::seatRefusalArgs`
+
+The arguments a seat's alias and its `RefusingInput` share after the declared input (and, for the alias, the result): `Signed`, then `Bare` and `W` when the seat names a numeric refusal. `padded` writes `Bare` and `W` as `undefined, {}` when the seat names none, for an alias whose `Needed` follows them.
+
+### `packages/codegen/src/emitters/shared.ts::seatOverloads`
+
+A seat's signatures as overload declarations, the same signatures in the same order as the seat's alias: `Seat` is one row call `<const A extends Args>(...args: RefusingInput<A, Args, …>)`, `ConfigSeat` one config call `<const I extends Loose>(input: RefusingInput<I, Loose, …>)`, and `OptionalConfigSeat` that call over `Loose | undefined` followed by `(input?: undefined)`. A coercer declared this way has its alias's type, which each grammar's `coercer-is-its-seat` type test pins by identity. No coercer seat names the branch `Needed` a `Seat` may take, so every declaration returns the coercer's result as it is.
+
+### `packages/codegen/src/emitters/shared.ts::seatFunction`
+
+Prints a coercer declared by its seats: the zero-argument overload when the kind has an empty form (`withEmptyOverload`), each seat's signatures (`declaredOverload`), then the plain implementation and its body. It is the one place a seated coercer is written. A coercer is a function declaration and never a const typed by its seat: TypeScript checks a function against its overloads by a looser rule that never evaluates the refusal over the loose input, where a const assigns a plain implementation to the generic seat. That assignment costs type-check time and memory in every grammar, and for a loose input such as C#'s `global_statement` it fails as a union too complex to represent.
 
 ### `packages/codegen/src/typecheck.ts::TypeCheckDiagnostic`
 

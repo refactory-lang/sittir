@@ -293,6 +293,35 @@ export type RefuseUndeclared<V, Declared = never, Signed extends boolean = false
 	: { readonly refused: Refusals<V, Declared, Signed> };
 
 /**
+ * A seat's parameter: the value as inferred, refusing what {@link RefuseUndeclared} refuses against the seat's declared
+ * input. A value left out refuses nothing. When the value and the declared input are both argument lists, the input is
+ * a row, and the row's refusals apply too: a single argument that is an empty array where the row takes items but never
+ * none, and the numeric literals `RefuseNumeric` refuses in the first argument when the seat names its config's numeric
+ * slots (`W`) or whether a bare value is an integer (`Bare`). {@link Seat}, {@link ConfigSeat} and
+ * {@link OptionalConfigSeat} take it, and a coercer declares each of their signatures with it.
+ *
+ * @typeParam V - the value as inferred: the config or node a config seat takes, or a row call's argument list.
+ * @typeParam Declared - the seat's declared input: the kind's loose input, or its row.
+ * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
+ * @typeParam Bare - whether a bare number the row's first argument holds is an integer, or `undefined` when it takes none.
+ * @typeParam W - the numeric slots of a config the row's first argument holds, each mapped to whether it is an integer.
+ */
+export type RefusingInput<
+	V,
+	Declared,
+	Signed extends boolean = false,
+	Bare extends boolean | undefined = undefined,
+	W extends Readonly<Record<string, boolean>> = {}
+> = V & RefuseUndeclared<Exclude<V, undefined>, Declared, Signed> & RowRefusals<V, Declared, Bare, W>;
+
+type RowRefusals<V, Declared, Bare extends boolean | undefined, W extends Readonly<Record<string, boolean>>> = [V, Declared] extends [
+	infer A extends readonly unknown[],
+	infer Args extends readonly unknown[]
+]
+	? RefuseLoneEmptyList<A, Args> & RefuseNumericFirst<A, Bare, W>
+	: unknown;
+
+/**
  * A builder's row call: it takes its kind's row, an argument list that may hold a seated group's config in place of
  * the group, and refuses what {@link RefuseUndeclared} refuses against the row. A single argument that is an empty
  * array is the item list of a list builder, as the coercer reads it, so a row that takes items but never none refuses
@@ -311,7 +340,7 @@ export type Seat<
 	Bare extends boolean | undefined = undefined,
 	W extends Readonly<Record<string, boolean>> = {},
 	Needed extends string = never
-> = <const A extends Args>(...args: A & RefuseUndeclared<A, Args, Signed> & RefuseLoneEmptyList<A, Args> & RefuseNumericFirst<A, Bare, W>) => BuiltShape<A, R, Needed>;
+> = <const A extends Args>(...args: RefusingInput<A, Args, Signed, Bare, W>) => BuiltShape<A, R, Needed>;
 
 type PresentOf<R, Needed extends string> = R extends unknown
 	? Needed extends keyof R
@@ -374,7 +403,7 @@ type RefuseLoneEmptyList<A extends readonly unknown[], Args extends readonly unk
  * @typeParam R - the node the builder returns.
  * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
-export type ConfigSeat<Loose, R, Signed extends boolean = false> = <const I extends Loose>(input: I & RefuseUndeclared<I, Loose, Signed>) => R;
+export type ConfigSeat<Loose, R, Signed extends boolean = false> = <const I extends Loose>(input: RefusingInput<I, Loose, Signed>) => R;
 
 /**
  * A {@link ConfigSeat} whose value may be left out.
@@ -384,7 +413,7 @@ export type ConfigSeat<Loose, R, Signed extends boolean = false> = <const I exte
  * @typeParam Signed - whether a negative number can build one of the grammar's numeric literals.
  */
 export type OptionalConfigSeat<Loose, R, Signed extends boolean = false> = {
-	<const I extends Loose | undefined>(input: I & RefuseUndeclared<Exclude<I, undefined>, Loose, Signed>): R;
+	<const I extends Loose | undefined>(input: RefusingInput<I, Loose, Signed>): R;
 	(input?: undefined): R;
 };
 
