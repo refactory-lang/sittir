@@ -191,6 +191,11 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
     if side_at != Address::NONE {
         side_words(arena, side_at, &side, header_only, extra, kind == KindId::ERROR, tally);
     }
+    let word_of: Vec<usize> = std::iter::once(0).chain(side.run.iter().scan(0, |word, run_entry| {
+        *word += run_entry.words() as usize;
+        Some(*word)
+    })).collect();
+    let entry_at_word: HashMap<usize, usize> = word_of.iter().enumerate().map(|(entry, &word)| (word, entry)).collect();
     let mut named: HashMap<usize, KindId> = HashMap::new();
     let record_entry: HashMap<Address, usize> = side.run.iter().enumerate().filter_map(|(entry, run_entry)| match *run_entry { RunEntry::Record { at, .. } => Some((at, entry)), RunEntry::Row { .. } => None }).collect();
     let mut lists: Vec<Vec<usize>> = Vec::new();
@@ -213,7 +218,7 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
                     let mut items = Vec::new();
                     for item in list.items(arena, item_width).expect("list items") {
                         match count_cell(item, cell, bits, grammar, tally, pending, "item ", &mut named) {
-                            Some(Item::Row(entry)) => items.push(entry),
+                            Some(Item::Row(word)) => items.extend(entry_at_word.get(&word).copied()),
                             Some(Item::Record(child)) => items.extend(record_entry.get(&child).copied()),
                             None => {}
                         }
@@ -226,6 +231,7 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
             }
         }
     }
+    let named: HashMap<usize, KindId> = named.into_iter().filter_map(|(word, kind)| entry_at_word.get(&word).map(|&entry| (entry, kind))).collect();
     let holder = kind_name(grammar, kind);
     let trivia_holder = extra || kind == KindId::ERROR;
     let mut open: Vec<(usize, String, &'static str)> = Vec::new();
@@ -306,7 +312,7 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
                         Some((_, _, "trivia")) => "trivia",
                         _ => role,
                     };
-                    open.push((entry + inner as usize, kind_name(grammar, facts.kind), parent_role));
+                    open.push((entry_at_word[&(word_of[entry + 1] + inner as usize)] - 1, kind_name(grammar, facts.kind), parent_role));
                 }
             }
         }

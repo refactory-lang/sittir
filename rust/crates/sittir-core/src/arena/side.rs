@@ -151,8 +151,8 @@ pub enum RunEntry {
     /// for a content read from its envelope's own node: it is no child of
     /// the node, and navigation passes over it.
     Record { at: Address, shared: bool },
-    /// A node with no record: its facts and its bytes, and how many of
-    /// the entries after it lie inside it.
+    /// A node with no record: its facts and its bytes, and how many words
+    /// of the run after it hold the entries inside it.
     Row { facts: NodeFacts, span: Span, inner: u32 },
 }
 
@@ -162,6 +162,15 @@ pub const RUN_RECORD_WORDS: u32 = 2;
 pub const RUN_ROW_WORDS: u32 = 4;
 
 impl RunEntry {
+    /// The words the entry takes in its run.
+    #[must_use]
+    pub fn words(self) -> u32 {
+        match self {
+            RunEntry::Record { .. } => RUN_RECORD_WORDS,
+            RunEntry::Row { facts, .. } => RUN_ROW_WORDS + u32::from(facts.alias.is_some()),
+        }
+    }
+
     fn put(self, put: &mut dyn FnMut(u32)) -> Result<(), ArenaError> {
         match self {
             RunEntry::Record { at, shared } => {
@@ -815,6 +824,14 @@ impl<'a> RunEntries<'a> {
     /// These entries from the entry starting at word `word` of the run.
     pub(super) fn at_word(self, word: u32) -> Option<RunEntries<'a>> {
         Some(RunEntries { words: self.words.get(word.checked_sub(self.word)? as usize..)?, word })
+    }
+
+    /// Passes over the next `words` words; false for a run that ends first.
+    pub(super) fn pass_words(&mut self, words: u32) -> bool {
+        let Some(rest) = self.words.get(words as usize..) else { return false };
+        self.words = rest;
+        self.word += words;
+        true
     }
 }
 

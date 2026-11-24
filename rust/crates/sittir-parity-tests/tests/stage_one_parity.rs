@@ -66,7 +66,7 @@ fn a_read_writes_no_fixed_token_row() {
         let named: Vec<u32> = cells_of::<Grammar, AnyNode>(arena, at).iter().filter_map(|cell| if let Cell::ParsedLeaf { row, .. } = cell { Some(row.0) } else { None }).collect();
         (side_of(arena, at).run.len(), named)
     });
-    assert_eq!(arguments, (2, vec![2, 3]));
+    assert_eq!(arguments, (2, vec![2, 6]));
 }
 
 #[test]
@@ -386,10 +386,18 @@ fn holder_of<G: RecordGrammar, N: RecordCells>(arena: &dyn ArenaRead, site: Node
             let side = side_of(arena, at);
             (side.node.expect("a parsed record's facts").kind, side.at.map(|row| row.span))
         }
-        NodeSite::Row { holder, entry } => match side_of(arena, holder).run[entry as usize] {
-            RunEntry::Row { facts, span, .. } => (facts.kind, Some(span)),
-            RunEntry::Record { at, .. } => holder_of::<G, N>(arena, NodeSite::Record(at)),
-        },
+        NodeSite::Row { holder, word } => {
+            let mut at = 0;
+            let entry = side_of(arena, holder).run.into_iter().find(|entry| {
+                let here = at;
+                at += entry.words();
+                here == word
+            });
+            match entry.expect("an entry at the row's word") {
+                RunEntry::Row { facts, span, .. } => (facts.kind, Some(span)),
+                RunEntry::Record { at, .. } => holder_of::<G, N>(arena, NodeSite::Record(at)),
+            }
+        }
         NodeSite::Unit(site) => {
             let kind = header_of(arena.words(site.holder, 1).expect("a header")[0], sittir_core::record::PARSED_KIND_BITS).0;
             let shape = N::shape(kind).expect("a record shape");

@@ -496,7 +496,7 @@ fn sites_and_rows_agree<G: sittir_core::arena::RecordGrammar + Copy, N: HydrateN
             let sites = row_sites(&*built, holder, G::shape, G::KIND_BITS).unwrap_or_else(|refusal| panic!("{name} {source:?}: the sites of the record at {}: {refusal}", holder.0));
             for (row, site) in sites {
                 assert_eq!(site_row(&*built, holder, G::shape, G::KIND_BITS, site), Ok(row), "{name} {source:?}: {site:?} of the record at {}", holder.0);
-                let named = if row == 1 { NodeSite::Record(holder) } else { NodeSite::Row { holder, entry: row - 2 } };
+                let named = if row == 1 { NodeSite::Record(holder) } else { NodeSite::Row { holder, word: row - 2 } };
                 assert!(tree.index_at(named).is_some(), "{name} {source:?}: row {row} of the record at {} is a node of its run", holder.0);
                 kept += 1;
             }

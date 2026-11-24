@@ -469,3 +469,37 @@ fn a_built_empty_node_s_inner_side_is_kept_as_the_leading_side_of_its_inside_sit
     assert_eq!(over.render_at(at, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), native);
     assert!(native.contains("// inside"), "{native:?}");
 }
+
+#[test]
+fn a_row_named_on_its_own_is_refused_its_parent_by_name() {
+    use sittir_core::arena::side::{RunEntry, SideRecord};
+    use sittir_core::arena::{Address, ArenaError, ArenaRead, RunNodes, RunTable};
+    use sittir_core::engine::{Engine, EngineGrammar};
+    use sittir_core::nodes::Nodes;
+    let source = "fn f(a: u8) {}\n";
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::AnyNode>(source).expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let (mut pending, mut found) = (vec![root], None);
+    while let Some(at) = pending.pop() {
+        let side = SideRecord::read(&*built, Address(built.words(at, 2).expect("a header")[1])).expect("a side record");
+        let mut word = 0;
+        for entry in side.run {
+            match entry {
+                RunEntry::Row { .. } => {
+                    found.get_or_insert((at, word));
+                }
+                RunEntry::Record { at, .. } => pending.push(at),
+            }
+            word += entry.words();
+        }
+    }
+    let (holder, word) = found.expect("a row");
+    let table = RunTable::default();
+    let mut nodes = RunNodes::holding(&*built, source, root, &table, <sittir_rust::RustGrammar as EngineGrammar>::read_shape()).expect("navigation");
+    let row = nodes.row_index(holder, word + 2).expect("the row");
+    assert_eq!(nodes.parent(row), None);
+    let refused = nodes.refused().expect("a refusal");
+    assert_eq!(refused, ArenaError::RowParentUnknown { holder, word });
+    assert!(refused.to_string().contains(&format!("row at word {word} of the run of record {}", holder.0)), "{refused}");
+}

@@ -304,8 +304,8 @@ impl OpenRun {
         self.beside[entry].kept
     }
 
-    /// Counts the written entries before each entry, once the entries it
-    /// counts are met.
+    /// Counts the words of the written entries before each entry, once the
+    /// entries it counts are met.
     fn number(&mut self) {
         if self.numbered {
             return;
@@ -316,23 +316,25 @@ impl OpenRun {
         let mut written = 0;
         for entry in 0..self.entries.len() {
             numbers.push(written);
-            written += u32::from(self.writes(entry));
+            if self.writes(entry) {
+                written += self.entries[entry].words();
+            }
         }
         numbers.push(written);
         self.numbers = numbers;
         self.numbered = true;
     }
 
-    /// The number `entry` is written under: the written entries before it,
-    /// counted by `OpenRun::number`, which every caller runs first.
-    fn written_number(&self, entry: usize) -> u32 {
+    /// The word of the written run `entry` starts at, counted by
+    /// `OpenRun::number`, which every caller runs first.
+    fn written_word(&self, entry: usize) -> u32 {
         assert!(self.numbered, "a run's entries are numbered before one is named");
         self.numbers[entry]
     }
 
     /// The run as the read writes it, compacted in place: the
-    /// entries it keeps, each row's `inner` counting the ones it keeps inside
-    /// it. The walk over this run has ended.
+    /// entries it keeps, each row's `inner` counting the words of the ones it
+    /// keeps inside it. The walk over this run has ended.
     fn written_run(&mut self) -> Vec<RunEntry> {
         self.number();
         let mut kept = 0;
@@ -341,7 +343,7 @@ impl OpenRun {
                 continue;
             }
             self.entries[kept] = match self.entries[at] {
-                RunEntry::Row { facts, span, inner } => RunEntry::Row { facts, span, inner: self.written_number(at + 1 + inner as usize) - self.written_number(at + 1) },
+                RunEntry::Row { facts, span, inner } => RunEntry::Row { facts, span, inner: self.written_word(at + 1 + inner as usize) - self.written_word(at + 1) },
                 record @ RunEntry::Record { .. } => record,
             };
             kept += 1;
@@ -390,16 +392,17 @@ impl OpenRun {
         self.beside[entry].holder && (self.writes(entry) || self.dropped_unit(entry))
     }
 
-    /// `site`, as the written run names it: a row of this run by its written
-    /// number, a unit by its site, and none for a fixed token.
+    /// `site`, whose row of this run an open run names by its entry, as the
+    /// written run names it: a row by the word it starts at, a unit by its
+    /// site, and none for a fixed token.
     fn written_site(&self, site: super::NodeSite) -> Option<super::NodeSite> {
-        let super::NodeSite::Row { holder, entry } = site else { return Some(site) };
+        let super::NodeSite::Row { holder, word: entry } = site else { return Some(site) };
         if holder != self.at {
             return Some(site);
         }
         let at = entry as usize;
         if self.writes(at) {
-            return Some(super::NodeSite::Row { holder, entry: self.written_number(at) });
+            return Some(super::NodeSite::Row { holder, word: self.written_word(at) });
         }
         self.units.iter().find(|&&(unit, ..)| unit == at).map(|&(_, word, item)| super::NodeSite::Unit(crate::trivia_store::Site { holder, word, item }))
     }
@@ -463,6 +466,7 @@ impl OpenRun {
             (Some(index), Some((last, entry))) if last == index && entry + 1 == self.entries.len() => {
                 self.rows.pop_if(|&mut (open, _)| open == entry);
                 self.entries[entry] = RunEntry::Record { at, shared: false };
+                self.numbered = false;
                 self.passes.extend(edges.map(|edges| (entry, edges)));
                 self.depth += depth - own;
             }
@@ -477,14 +481,15 @@ impl OpenRun {
     /// Whether the node kept at `site` is a row of this record its node keeps
     /// as a fixed token or a flag.
     fn keeps_as_fixed_token_or_flag(&self, site: super::NodeSite) -> bool {
-        matches!(site, super::NodeSite::Row { holder, entry } if holder == self.at && self.beside[entry as usize].fixed_token_or_flag)
+        matches!(site, super::NodeSite::Row { holder, word: entry } if holder == self.at && self.beside[entry as usize].fixed_token_or_flag)
     }
 
-    /// Where the entry at `entry` is kept: its record, else its row here.
+    /// Where the entry at `entry` is kept: its record, else its row here,
+    /// named by its entry until `written_site` names it by its word.
     fn site(&self, entry: usize) -> super::NodeSite {
         match self.entries[entry] {
             RunEntry::Record { at, .. } => super::NodeSite::Record(at),
-            RunEntry::Row { .. } => super::NodeSite::Row { holder: self.at, entry: crate::types::narrow(entry) },
+            RunEntry::Row { .. } => super::NodeSite::Row { holder: self.at, word: crate::types::narrow(entry) },
         }
     }
 
@@ -730,8 +735,8 @@ impl<'a> Hydration<'a> {
     }
 
     /// `value` as the record `draft` holds it: a leaf or a unit named by the
-    /// record's run, 1 for the record's own node, else two past the number
-    /// the node's entry is written under, since a cell packs no row 0. A
+    /// record's run, 1 for the record's own node, else two past the word
+    /// the node's entry is written at, since a cell packs no row 0. A
     /// read holds a unit by its kind alone, as a built record
     /// does, unless its row is kept for what lies under it.
     ///
@@ -744,7 +749,7 @@ impl<'a> Hydration<'a> {
         let open = self.open.iter_mut().rfind(|open| open.at == draft.at).ok_or(outside.clone())?;
         let entry = if open.index == Some(row) { None } else { Some(open.entry_of(row).ok_or(outside)?) };
         open.number();
-        let named = NodeIndex(entry.map_or(1, |entry| open.written_number(entry) + 2));
+        let named = NodeIndex(entry.map_or(1, |entry| open.written_word(entry) + 2));
         Ok(match value {
             Hydrated::Leaf { kind, span, .. } => Hydrated::Leaf { kind, row: named, span },
             Hydrated::Unit { kind, .. } if entry.is_none_or(|entry| !open.writes(entry)) => Hydrated::Unit { kind, row: None },

@@ -104,9 +104,9 @@ pub type RowSites = std::collections::HashMap<Address, Vec<(u32, CellSite)>, cra
 ///
 /// What reading a holder's cells refuses (`row_sites`).
 pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: super::NodeSite, known: &mut RowSites) -> Result<Option<crate::types::NodeId>, ArenaError> {
-    let (holder, entry) = match site {
+    let (holder, row) = match site {
         super::NodeSite::Record(at) => return Ok(Some(crate::types::NodeId::record(at.0))),
-        super::NodeSite::Row { holder, entry } => (holder, entry),
+        super::NodeSite::Row { holder, word } => (holder, word + 2),
         super::NodeSite::Unit(site) => return Ok(Some(crate::types::NodeId::leaf(site.holder.0, site.word, site.item.0))),
         super::NodeSite::Flag { .. } => return Ok(None),
     };
@@ -118,7 +118,7 @@ pub fn site_name(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>
             unread.insert(sites)
         }
     };
-    Ok(sites.binary_search_by_key(&(entry + 2), |&(row, _)| row).ok().map(|at| {
+    Ok(sites.binary_search_by_key(&row, |&(row, _)| row).ok().map(|at| {
         let CellSite { word, item } = sites[at].1;
         crate::types::NodeId::leaf(holder.0, word, item)
     }))
@@ -183,13 +183,13 @@ pub fn row_sites(arena: &dyn ArenaRead, holder: Address, shape: fn(KindId) -> Op
 ///
 /// What reading the holder's cells refuses.
 pub(crate) fn site_name_in_place(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>, bits: u32, site: super::NodeSite) -> Result<Option<crate::types::NodeId>, ArenaError> {
-    let (holder, entry) = match site {
+    let (holder, named) = match site {
         super::NodeSite::Record(at) => return Ok(Some(crate::types::NodeId::record(at.0))),
-        super::NodeSite::Row { holder, entry } => (holder, entry),
+        super::NodeSite::Row { holder, word } => (holder, word + 2),
         super::NodeSite::Unit(site) => return Ok(Some(crate::types::NodeId::leaf(site.holder.0, site.word, site.item.0))),
         super::NodeSite::Flag { .. } => return Ok(None),
     };
-    let found = visit_row_sites(arena, holder, shape, bits, |row, site| if row == entry + 2 { std::ops::ControlFlow::Break(site) } else { std::ops::ControlFlow::Continue(()) })?;
+    let found = visit_row_sites(arena, holder, shape, bits, |row, site| if row == named { std::ops::ControlFlow::Break(site) } else { std::ops::ControlFlow::Continue(()) })?;
     Ok(match found {
         std::ops::ControlFlow::Break(CellSite { word, item }) => Some(crate::types::NodeId::leaf(holder.0, word, item)),
         std::ops::ControlFlow::Continue(()) => None,
@@ -212,6 +212,6 @@ pub fn node_site(arena: &dyn ArenaRead, shape: fn(KindId) -> Option<RecordShape>
     }
     Ok(match leaf_row(&cell).ok_or(malformed("cell site", word))? {
         1 => super::NodeSite::Record(holder),
-        row => super::NodeSite::Row { holder, entry: row.checked_sub(2).ok_or(malformed("cell row", row))? },
+        row => super::NodeSite::Row { holder, word: row.checked_sub(2).ok_or(malformed("cell row", row))? },
     })
 }

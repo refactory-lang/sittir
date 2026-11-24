@@ -143,7 +143,8 @@ pub enum Cell {
     /// A parsed leaf, which has no record: its byte span in its source and
     /// its row, which names its node. In a tree's arena the row is its
     /// descendant index; in records that outlive their tree it is 1 for its
-    /// holder's own node, else two past its entry in its holder's run.
+    /// holder's own node, else two past the word its entry starts at in its
+    /// holder's run.
     ParsedLeaf { kind: KindId, span: Span, row: NodeIndex },
     /// A captured interior string of a parsed node: its byte span.
     ParsedText { span: Span },
@@ -169,7 +170,8 @@ pub enum Cell {
     /// A node a read left with no record of its own, which a built record
     /// holds through the link record at `at`: the cell row `row` of the
     /// read's record at `holder` (1 for the content that shares the record's
-    /// own row, an entry of its run plus 2 otherwise), its byte span, whose
+    /// own row, the word its entry starts at in its run plus 2 otherwise),
+    /// its byte span, whose
     /// text is its source's, and the edges whose neighbour this holder
     /// changed. Its sides are its row's.
     ReadLeaf { kind: KindId, at: Address, name: crate::types::NodeId, span: Span, changed: ChangedEdges },

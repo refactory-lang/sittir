@@ -224,6 +224,10 @@ pub enum ArenaError {
     /// A list slot holding a leaf at `item`, past the leaf items a list slot
     /// names (`NodeId::SITE_ITEMS`).
     LeafItemPastNames { item: u32 },
+    /// The parent of the row starting at word `word` of the run of the record
+    /// at `holder`, asked of a row named on its own: a row's parent is known
+    /// only from the node a walk reached it through.
+    RowParentUnknown { holder: Address, word: u32 },
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -253,6 +257,7 @@ impl fmt::Display for ArenaError {
                 crate::types::NodeId::SITE_ITEMS,
                 crate::types::NodeId::ITEM_BITS
             ),
+            ArenaError::RowParentUnknown { holder, word } => write!(f, "the row at word {word} of the run of record {} was named on its own, so no walk reached it through its parent", holder.0),
         }
     }
 }
