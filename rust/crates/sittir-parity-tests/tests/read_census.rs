@@ -52,23 +52,12 @@ struct Tally {
     records_extra: u64,
     record_gap_words: u64,
     side_records: Count,
-    side_mask: Count,
-    side_at: Count,
+    side_encoded_words: u64,
+    side_fields: BTreeMap<String, Count>,
     side_at_zero_width: u64,
     side_at_header_only: u64,
     side_at_extra: u64,
     side_at_error: u64,
-    side_edges: Count,
-    side_span: Count,
-    side_sides: Count,
-    side_parent: Count,
-    side_node: Count,
-    side_source: Count,
-    side_depth: Count,
-    side_slots: Count,
-    side_other: Count,
-    side_run_len: Count,
-    token_runs: Count,
     run_records: Count,
     rows: BTreeMap<String, Count>,
     cells: BTreeMap<String, Count>,
@@ -189,7 +178,11 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
         tally.records_extra += 1;
     }
     if side_at != Address::NONE {
-        side_words(arena, side_at, &side, header_only, extra, kind == KindId::ERROR, tally);
+        let written = encoded(&side);
+        let len = u32::try_from(written.len()).expect("a side record within a chunk");
+        assert_eq!(arena.words(side_at, len).expect("the side record's words"), written.as_slice(), "the side record at {side_at:?} reads back as its encoder writes it");
+        tally.side_encoded_words += u64::from(len);
+        side_words(&side, header_only, extra, kind == KindId::ERROR, tally);
     }
     let word_of: Vec<usize> = std::iter::once(0).chain(side.run.iter().scan(0, |word, run_entry| {
         *word += run_entry.words() as usize;
@@ -254,7 +247,7 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
         }
         match *run_entry {
             RunEntry::Record { at, .. } => {
-                tally.run_records.add(2);
+                tally.run_records.add(u64::from(run_entry.words()));
                 pending.push(at);
                 if named.contains_key(&entry) {
                     tally.cell_rows_not_a_row += 1;
@@ -305,7 +298,7 @@ fn walk_record<G: EngineGrammar>(arena: &dyn ArenaRead, at: Address, bits: u32, 
                     kind_name(grammar, facts.display()),
                     if facts.named { "named" } else { "anonymous" }
                 );
-                tally.rows.entry(key).or_default().add(4 + u64::from(facts.alias.is_some()));
+                tally.rows.entry(key).or_default().add(u64::from(run_entry.words()));
                 if inner > 0 {
                     let parent_role = match open.last() {
                         Some((_, _, "slot")) => "slot",
@@ -366,13 +359,54 @@ fn count_cell<G: EngineGrammar>(words: &[u32], shape: sittir_core::arena::CellSh
     item
 }
 
-fn side_words(arena: &dyn ArenaRead, side_at: Address, side: &SideRecord, header_only: bool, extra: bool, error: bool, tally: &mut Tally) {
-    let mask = arena.word(side_at).expect("a side mask");
+fn encoded(side: &SideRecord) -> Vec<u32> {
+    let mut written = Vec::new();
+    side.write(&mut |words| {
+        written = words.to_vec();
+        Ok(Address::NONE)
+    })
+    .expect("a side record encodes");
+    written
+}
+
+type Clear = fn(&mut SideRecord);
+
+const SIDE_FIELDS: [(&str, Clear); 15] = [
+    ("at", |side| side.at = None),
+    ("edges", |side| side.edges = None),
+    ("span", |side| side.span = None),
+    ("sides", |side| side.sides = None),
+    ("delimiter", |side| side.delimiter = None),
+    ("separator_kind", |side| side.separator_kind = None),
+    ("flanks", |side| side.flanks = sittir_core::layout_kinds::Flanks::default()),
+    ("slots", |side| side.slots.clear()),
+    ("parent", |side| side.parent = None),
+    ("node", |side| side.node = None),
+    ("source", |side| side.source = None),
+    ("depth", |side| side.depth = 0),
+    ("run", |side| side.run.clear()),
+    ("spans", |side| side.spans.clear()),
+    ("starts", |side| side.starts = None),
+];
+
+fn words_after_flags(side: &SideRecord) -> u64 {
+    encoded(side).len().saturating_sub(1) as u64
+}
+
+fn side_words(side: &SideRecord, header_only: bool, extra: bool, error: bool, tally: &mut Tally) {
     let mut total = 1u64;
-    tally.side_mask.add(1);
+    tally.side_fields.entry("flags".to_string()).or_default().add(1);
+    let whole = words_after_flags(side);
+    for (name, clear) in SIDE_FIELDS {
+        let mut without = side.clone();
+        clear(&mut without);
+        let words = whole - words_after_flags(&without);
+        if words > 0 {
+            tally.side_fields.entry(name.to_string()).or_default().add(words);
+            total += words;
+        }
+    }
     if let Some(row) = side.at {
-        tally.side_at.add(3);
-        total += 3;
         if row.span.start == row.span.end {
             tally.side_at_zero_width += 1;
         }
@@ -385,51 +419,6 @@ fn side_words(arena: &dyn ArenaRead, side_at: Address, side: &SideRecord, header
         if error {
             tally.side_at_error += 1;
         }
-    }
-    if side.edges.is_some() {
-        tally.side_edges.add(2);
-        total += 2;
-    }
-    if side.span.is_some() {
-        tally.side_span.add(4);
-        total += 4;
-    }
-    if side.sides.is_some() {
-        tally.side_sides.add(5);
-        total += 5;
-    }
-    let other = [1u32 << 6, 1 << 8, 1 << 9, 1 << 10].iter().filter(|&&bit| mask & bit != 0).count() as u64;
-    if other > 0 {
-        tally.side_other.add(other);
-        total += other;
-    }
-    if mask & (1 << 7) != 0 {
-        let words = 1 + 8 * side.slots.len() as u64;
-        tally.side_slots.add(words);
-        total += words;
-    }
-    if side.parent.is_some() {
-        tally.side_parent.add(1);
-        total += 1;
-    }
-    if let Some(node) = side.node {
-        let words = 1 + u64::from(node.alias.is_some());
-        tally.side_node.add(words);
-        total += words;
-    }
-    if side.source.is_some() {
-        tally.side_source.add(1);
-        total += 1;
-    }
-    if mask & (1 << 14) != 0 {
-        tally.side_depth.add(1);
-        total += 1;
-    }
-    if mask & (1 << 15) != 0 {
-        let at = u32::try_from(total).expect("a side record within a chunk");
-        let len = arena.words(side_at, at + 1).expect("a run length")[at as usize];
-        tally.side_run_len.add(1);
-        total += 1 + u64::from(len);
     }
     tally.side_records.add(total);
 }
@@ -624,6 +613,17 @@ fn stage_one<G: RecordGrammar + Copy>(grammar: G, tree: &Records<'_, G>, root: N
             tally.cases.push(format!("query\t{label}\t{} > {}\t{}..{}\t{role}\t{form}", name(holder.grammar), name(kid.grammar), kid.start, kid.end));
         }
     }
+}
+
+#[test]
+fn the_side_words_a_census_attributes_are_the_words_their_encoder_writes() {
+    let source = "// lead\nfn f<T>(a: u8, b: T,) -> Vec<u8> {\n    let x = [1, 2,];\n    x.len(); /* t */\n}\n\nstruct S { a: u8, }\n";
+    let tally = census::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "rust", "guard", &[("guard".to_string(), source.to_string())]);
+    assert!(tally.side_records.n > 0, "the source's records keep side records");
+    assert_eq!(tally.side_records.words, tally.side_encoded_words, "words attributed to side record fields, flags word included, against the words their encoder writes");
+    let run = &tally.side_fields["run"];
+    let entries = tally.rows.values().map(|count| count.words).sum::<u64>() + tally.run_records.words;
+    assert_eq!(run.words, run.n + entries, "a run's words are its length word and the words of its entries, by role");
 }
 
 #[test]
