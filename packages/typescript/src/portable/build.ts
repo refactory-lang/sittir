@@ -3898,6 +3898,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -3921,19 +3934,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},
@@ -4242,6 +4242,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -4265,19 +4278,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},
@@ -4586,6 +4586,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -4609,19 +4622,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},
@@ -4930,6 +4930,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -4953,19 +4966,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},

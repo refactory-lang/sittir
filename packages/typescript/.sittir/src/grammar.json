@@ -18587,15 +18587,31 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "FIELD",
-                      "name": "static",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "_kw_static"
-                      },
-                      "metadata": {
-                        "fieldSource": "enriched"
-                      }
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "FIELD",
+                          "name": "static",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_kw_static"
+                          },
+                          "metadata": {
+                            "fieldSource": "enriched"
+                          }
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "abstract",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_kw_abstract"
+                          },
+                          "metadata": {
+                            "fieldSource": "enriched"
+                          }
+                        }
+                      ]
                     },
                     {
                       "type": "BLANK"
@@ -18642,53 +18658,7 @@
                 }
               ],
               "annotations": {
-                "variantOf": "public_field_definition"
-              }
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "abstract",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "_kw_abstract"
-                      },
-                      "metadata": {
-                        "fieldSource": "enriched"
-                      }
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "FIELD",
-                      "name": "readonly",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "_kw_readonly"
-                      },
-                      "metadata": {
-                        "fieldSource": "enriched"
-                      }
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                }
-              ],
-              "annotations": {
-                "variantOf": "public_field_definition"
+                "variantOf": "public_field_definition_plain"
               }
             },
             {
