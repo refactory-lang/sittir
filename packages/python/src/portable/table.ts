@@ -1078,7 +1078,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					readableFlags: ['group']
 				}
 			],
 			flags: ['group']
@@ -1184,7 +1185,8 @@ export const build: PortableBuildTable = {
 							required: ['left', 'rights']
 						}
 					],
-					options: ['trailingComma']
+					options: ['trailingComma'],
+					readableFlags: ['async', 'trailingComma']
 				}
 			],
 			flags: ['trailingComma', 'async']
@@ -3259,7 +3261,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['async']
 				}
 			],
 			flags: ['async']
@@ -3661,7 +3664,8 @@ export const build: PortableBuildTable = {
 							absent: ['doc', 'name'],
 							required: ['parameters']
 						}
-					]
+					],
+					readableFlags: ['async']
 				},
 				{
 					kind: 361,
@@ -4154,7 +4158,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['async']
 				}
 			],
 			flags: ['async']
@@ -4692,7 +4697,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['async', 'privateName', 'static', 'override']
 				}
 			],
 			flags: ['default', 'static', 'async', 'privateName', 'override']
@@ -5227,7 +5233,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['async', 'static', 'override']
 				}
 			],
 			flags: ['default', 'static', 'async', 'privateName', 'override']
@@ -5734,7 +5741,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'override']
 				}
 			],
 			flags: ['override']
@@ -6266,7 +6274,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['async', 'override']
 				}
 			],
 			flags: ['override']
@@ -12742,7 +12751,8 @@ export const build: PortableBuildTable = {
 							required: ['elements']
 						}
 					],
-					holders: [[159, 'subject']]
+					holders: [[159, 'subject']],
+					readableFlags: ['trailingComma']
 				},
 				{
 					kind: 305,
@@ -12814,7 +12824,8 @@ export const build: PortableBuildTable = {
 							required: ['elements']
 						}
 					],
-					holders: [[147, 'content']]
+					holders: [[147, 'content']],
+					readableFlags: ['trailingComma']
 				},
 				{
 					kind: 186,
@@ -12876,7 +12887,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['elements']
 						}
-					]
+					],
+					readableFlags: ['trailingComma']
 				},
 				{
 					kind: 272,
@@ -12943,7 +12955,8 @@ export const build: PortableBuildTable = {
 							required: ['elements']
 						}
 					],
-					holders: [[227, 'index']]
+					holders: [[227, 'index']],
+					readableFlags: ['trailingComma']
 				}
 			],
 			flags: ['trailingComma']
@@ -13928,7 +13941,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['object', 'property']
 						}
-					]
+					],
+					readableFlags: ['privateName']
 				}
 			],
 			flags: ['privateName']
@@ -17126,7 +17140,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['imaginary', 'real']
 						}
-					]
+					],
+					readableFlags: ['sign']
 				}
 			],
 			flags: ['sign']
@@ -17212,7 +17227,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['imaginary', 'real']
 						}
-					]
+					],
+					readableFlags: ['sign']
 				}
 			],
 			flags: ['sign']
@@ -18169,7 +18185,8 @@ export const build: PortableBuildTable = {
 						[304, 'name'],
 						[304, 'value'],
 						[360, 'expression']
-					]
+					],
+					readableFlags: ['trailingComma']
 				},
 				{
 					kind: 280,
@@ -18251,7 +18268,8 @@ export const build: PortableBuildTable = {
 							required: ['elements']
 						}
 					],
-					holders: [[161, 'pattern']]
+					holders: [[161, 'pattern']],
+					readableFlags: ['trailingComma']
 				}
 			],
 			flags: ['trailingComma']
@@ -19873,7 +19891,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['left', 'right']
 						}
-					]
+					],
+					readableFlags: ['async']
 				}
 			],
 			flags: ['async']
@@ -20403,7 +20422,8 @@ export const build: PortableBuildTable = {
 							absent: ['destination'],
 							required: ['arguments']
 						}
-					]
+					],
+					readableFlags: ['trailingComma']
 				},
 				{
 					kind: 287,
@@ -20513,7 +20533,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['destination']
 						}
-					]
+					],
+					readableFlags: ['trailingComma']
 				}
 			],
 			flags: ['trailingComma']
@@ -20811,7 +20832,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['withClause']
 						}
-					]
+					],
+					readableFlags: ['async']
 				}
 			],
 			flags: ['async']

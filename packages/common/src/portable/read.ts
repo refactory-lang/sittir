@@ -5,7 +5,7 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { containerSlots, isNumberSlots, leafSeatOf, readableFlags, setsOn, textBuilt, tokenText } from './facts.ts';
+import { containerSlots, isNumberSlots, leafSeatOf, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
@@ -362,7 +362,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			if (arms.every((arm) => (readRoutesOf(arm).length === 0 && arm.seated !== undefined) || textBuilt(table, arm))) return textAt(textOf(node));
 		}
 		const readArms = scalar === undefined ? arms : [scalar.arm];
-		const readable = new Set(readArms.flatMap(readableFlags));
+		const readable = new Set(readArms.flatMap((arm) => arm.readableFlags ?? []));
 		const spelled = placed.flatMap(({ fact }) => fact.flag ?? []);
 		const unreadable = [...new Set([...flagsOf(kind).filter((flag) => flagHolds(node, flag)), ...spelled])].filter((flag) => !readable.has(flag));
 		if (unreadable.length > 0) return kept(node, { reason: 'flags', flags: unreadable }, carried);

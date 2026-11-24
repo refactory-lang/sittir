@@ -70,8 +70,6 @@ export const builtFlags = (arm: PortableBuildArm): readonly string[] => [
 	...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])
 ];
 
-export const readableFlags = (arm: PortableBuildArm): readonly string[] => builtFlags(arm).filter((flag) => arm.flags[flag]?.carriesNode !== true);
-
 export const setsOn = (container: PortableContainer, kind: number): readonly string[] =>
 	container.sets === undefined || (container.sets.elements !== undefined && !container.sets.elements.includes(kind)) ? [] : container.sets.flags;
 

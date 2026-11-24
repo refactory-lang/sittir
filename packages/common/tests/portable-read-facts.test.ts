@@ -25,7 +25,7 @@ const readerOf = (built: PortableBuildTable) =>
 
 const withoutFact = (path: string, flag: string): PortableBuildTable => {
 	const at = table.paths[path]!;
-	return { ...table, paths: { ...table.paths, [path]: { ...at, arms: at.arms.map((arm) => ({ ...arm, facts: (arm.facts ?? []).filter((fact) => fact.flag !== flag) })) } } };
+	return { ...table, paths: { ...table.paths, [path]: { ...at, arms: at.arms.map((arm) => ({ ...arm, facts: (arm.facts ?? []).filter((fact) => fact.flag !== flag), readableFlags: (arm.readableFlags ?? []).filter((held) => held !== flag) })) } } };
 };
 
 const carriesOf = (built: PortableBuildTable, source: string): readonly PortableCarry[] => {

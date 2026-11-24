@@ -3646,7 +3646,8 @@ export const build: PortableBuildTable = {
 							absent: ['members'],
 							required: ['type']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				},
 				{
 					kind: 377,
@@ -3905,7 +3906,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'type']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -4220,7 +4222,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'type']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -4923,7 +4926,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -5660,7 +5664,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -6382,7 +6387,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -7119,7 +7125,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -7856,7 +7863,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -8656,7 +8664,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'scope']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -9219,7 +9228,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -9816,7 +9826,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -10398,7 +10409,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -10995,7 +11007,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -11592,7 +11605,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -12252,7 +12266,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'scope']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['async', 'const', 'default', 'unsafe']
@@ -17728,7 +17743,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
@@ -18465,7 +18481,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
@@ -19187,7 +19204,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
@@ -19924,7 +19942,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
@@ -20661,7 +20680,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
@@ -21461,7 +21481,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'scope']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['default', 'static', 'async', 'const', 'unsafe']
@@ -22024,7 +22045,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
@@ -22621,7 +22643,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
@@ -23203,7 +23226,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
@@ -23800,7 +23824,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
@@ -24397,7 +24422,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
@@ -25057,7 +25083,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'scope']
 						}
-					]
+					],
+					readableFlags: ['async', 'const', 'unsafe', 'default']
 				}
 			],
 			flags: ['static', 'async', 'default', 'const', 'unsafe']
@@ -25265,7 +25292,8 @@ export const build: PortableBuildTable = {
 							absent: ['statements'],
 							required: ['extern']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				},
 				{
 					kind: 396,
@@ -25390,7 +25418,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['extern', 'statements']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -26638,7 +26667,8 @@ export const build: PortableBuildTable = {
 							required: ['type']
 						}
 					],
-					holders: [[439, 'content']]
+					holders: [[439, 'content']],
+					readableFlags: ['mutable']
 				},
 				{
 					kind: 475,
@@ -26804,7 +26834,8 @@ export const build: PortableBuildTable = {
 					holders: [
 						[302, 'parameters'],
 						[428, 'content']
-					]
+					],
+					readableFlags: ['mutable']
 				}
 			],
 			flags: ['mutable']
@@ -26885,7 +26916,8 @@ export const build: PortableBuildTable = {
 							absent: ['lifetime'],
 							required: ['type']
 						}
-					]
+					],
+					readableFlags: ['mutable']
 				},
 				{
 					kind: 231,
@@ -26945,7 +26977,8 @@ export const build: PortableBuildTable = {
 							absent: ['type'],
 							required: []
 						}
-					]
+					],
+					readableFlags: ['reference', 'mutable']
 				}
 			],
 			flags: ['reference', 'mutable']
@@ -27012,7 +27045,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					readableFlags: ['mutable']
 				}
 			],
 			flags: ['mutable']
@@ -28832,7 +28866,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -29148,7 +29183,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -29449,7 +29485,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -29765,7 +29802,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -30081,7 +30119,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -30460,7 +30499,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name', 'scope']
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				}
 			],
 			flags: ['unsafe']
@@ -38143,7 +38183,8 @@ export const build: PortableBuildTable = {
 							absent: ['alternative'],
 							required: ['name', 'type']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference', 'static']
 				},
 				{
 					kind: 223,
@@ -38314,7 +38355,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'static']
 				}
 			],
 			flags: ['byReference', 'mutable', 'static']
@@ -38503,7 +38545,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'type']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference']
 				}
 			],
 			flags: ['byReference', 'mutable', 'static']
@@ -38677,7 +38720,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'type']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference']
 				}
 			],
 			flags: ['byReference', 'mutable', 'static']
@@ -38866,7 +38910,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'type']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference']
 				}
 			],
 			flags: ['byReference', 'mutable', 'static']
@@ -39055,7 +39100,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'type']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference']
 				}
 			],
 			flags: ['byReference', 'mutable', 'static']
@@ -39307,7 +39353,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'scope', 'type']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference']
 				}
 			],
 			flags: ['byReference', 'mutable', 'static']
@@ -47776,7 +47823,8 @@ export const build: PortableBuildTable = {
 							absent: ['returnType'],
 							required: ['parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'async', 'move']
 				},
 				{
 					kind: 369,
@@ -48059,7 +48107,8 @@ export const build: PortableBuildTable = {
 							absent: ['body'],
 							required: ['parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'async', 'move']
 				}
 			],
 			flags: ['async', 'static', 'move']
@@ -48854,7 +48903,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['exclusive']
 				},
 				{
 					kind: 372,
@@ -48917,7 +48967,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['exclusive', 'raw', 'writable']
 				},
 				{
 					kind: 371,
@@ -48980,7 +49031,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['exclusive', 'raw', 'writable']
 				},
 				{
 					kind: 374,
@@ -49039,7 +49091,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['exclusive', 'raw']
 				}
 			],
 			flags: ['exclusive', 'raw', 'writable']
@@ -52683,7 +52736,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['pattern']
 						}
-					]
+					],
+					readableFlags: ['exclusive']
 				}
 			],
 			flags: ['exclusive']
@@ -52827,7 +52881,8 @@ export const build: PortableBuildTable = {
 							absent: ['pattern'],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference']
 				},
 				{
 					kind: 415,
@@ -52928,7 +52983,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'pattern']
 						}
-					]
+					],
+					readableFlags: ['mutable', 'byReference']
 				}
 			],
 			flags: ['byReference', 'mutable']
@@ -53440,7 +53496,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					readableFlags: ['move']
 				}
 			],
 			flags: ['move']
@@ -53766,7 +53823,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					readableFlags: ['move']
 				}
 			],
 			flags: ['move']
@@ -56997,7 +57055,8 @@ export const build: PortableBuildTable = {
 							absent: ['trait'],
 							required: []
 						}
-					]
+					],
+					readableFlags: ['unsafe']
 				},
 				{
 					kind: 242,
@@ -57439,7 +57498,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['type']
 						}
-					]
+					],
+					readableFlags: ['writable']
 				},
 				{
 					kind: 388,
@@ -57503,7 +57563,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['type']
 						}
-					]
+					],
+					readableFlags: ['writable']
 				}
 			],
 			flags: ['writable']
@@ -58144,7 +58205,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['type']
 						}
-					]
+					],
+					readableFlags: ['exclusive']
 				}
 			],
 			flags: ['exclusive']

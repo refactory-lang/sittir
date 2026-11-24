@@ -1465,7 +1465,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -1562,7 +1563,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -2163,7 +2165,8 @@ export const build: PortableBuildTable = {
 							absent: ['alias'],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['typeOnly']
 				},
 				{
 					kind: 417,
@@ -2240,7 +2243,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['alias', 'name']
 						}
-					]
+					],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -2307,7 +2311,8 @@ export const build: PortableBuildTable = {
 							absent: ['alias'],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['typeOnly']
 				},
 				{
 					kind: 417,
@@ -2394,7 +2399,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['alias', 'name']
 						}
-					]
+					],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -3058,7 +3064,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['async', 'generator']
 				},
 				{
 					kind: 249,
@@ -3416,7 +3423,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['async', 'generator']
 				}
 			],
 			flags: ['async', 'generator']
@@ -3678,7 +3686,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['async']
 				}
 			],
 			flags: ['async', 'generator']
@@ -4820,6 +4829,17 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
+					],
+					readableFlags: [
+						'declare',
+						'static',
+						'abstract',
+						'override',
+						'readonly',
+						'optional',
+						'definite',
+						'privateName',
+						'computed'
 					]
 				}
 			],
@@ -5194,6 +5214,17 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
+					],
+					readableFlags: [
+						'declare',
+						'static',
+						'abstract',
+						'override',
+						'readonly',
+						'optional',
+						'definite',
+						'privateName',
+						'computed'
 					]
 				}
 			],
@@ -5568,6 +5599,17 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
+					],
+					readableFlags: [
+						'declare',
+						'static',
+						'abstract',
+						'override',
+						'readonly',
+						'optional',
+						'definite',
+						'privateName',
+						'computed'
 					]
 				}
 			],
@@ -5942,6 +5984,17 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
+					],
+					readableFlags: [
+						'declare',
+						'static',
+						'abstract',
+						'override',
+						'readonly',
+						'optional',
+						'definite',
+						'privateName',
+						'computed'
 					]
 				}
 			],
@@ -6168,7 +6221,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'optional', 'privateName', 'computed']
 				}
 			],
 			flags: [
@@ -6404,7 +6458,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'optional', 'privateName', 'computed']
 				}
 			],
 			flags: [
@@ -6640,7 +6695,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'optional', 'privateName', 'computed']
 				}
 			],
 			flags: [
@@ -6876,7 +6932,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'optional', 'privateName', 'computed']
 				}
 			],
 			flags: [
@@ -7389,7 +7446,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
@@ -7902,7 +7960,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
@@ -8415,7 +8474,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
@@ -8928,7 +8988,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['default', 'static', 'async', 'computed', 'generator', 'privateName', 'override', 'readonly', 'optional']
@@ -9323,7 +9384,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
@@ -9676,7 +9738,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
@@ -10039,7 +10102,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
@@ -10402,7 +10466,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
@@ -10765,7 +10830,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['override', 'optional', 'static', 'async', 'readonly', 'default', 'computed', 'generator', 'privateName']
@@ -11170,7 +11236,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
@@ -11575,7 +11642,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
@@ -11980,7 +12048,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'readonly', 'async', 'optional', 'generator', 'privateName', 'computed']
 				}
 			],
 			flags: ['static', 'async', 'override', 'readonly', 'optional', 'default', 'computed', 'generator', 'privateName']
@@ -12245,7 +12314,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -12551,7 +12621,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -12867,7 +12938,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -13183,7 +13255,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -13499,7 +13572,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -13774,7 +13848,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -14049,7 +14124,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -14324,7 +14400,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -14590,7 +14667,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -14866,7 +14944,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -15142,7 +15221,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -15418,7 +15498,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -15694,7 +15775,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -15887,7 +15969,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -16090,7 +16173,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -16293,7 +16377,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -16496,7 +16581,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -16649,7 +16735,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -16812,7 +16899,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -16975,7 +17063,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -17138,7 +17227,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -17345,7 +17435,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -17562,7 +17653,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -17779,7 +17871,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -17996,7 +18089,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -18163,7 +18257,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -18340,7 +18435,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -18517,7 +18613,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -18694,7 +18791,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name', 'parameters']
 						}
-					]
+					],
+					readableFlags: ['static', 'override', 'privateName', 'computed']
 				}
 			],
 			flags: ['computed', 'privateName', 'override', 'static', 'definite']
@@ -19054,7 +19152,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					readableFlags: ['abstract']
 				}
 			],
 			flags: ['abstract']
@@ -19325,7 +19424,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['indexType', 'name', 'type']
 						}
-					]
+					],
+					readableFlags: ['readonly']
 				}
 			],
 			flags: ['readonly']
@@ -19549,7 +19649,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['mappedTypeClause', 'type']
 						}
-					]
+					],
+					readableFlags: ['readonly']
 				}
 			],
 			flags: ['readonly']
@@ -20251,7 +20352,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 473,
@@ -20428,7 +20530,8 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[475, 'receiver']]
+					holders: [[475, 'receiver']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 328,
@@ -20638,7 +20741,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 455,
@@ -20809,7 +20913,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[454, 'item']]
+					holders: [[454, 'item']],
+					readableFlags: ['override', 'readonly', 'optional']
 				}
 			],
 			flags: ['override', 'readonly', 'optional']
@@ -21038,7 +21143,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 473,
@@ -21225,7 +21331,8 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[475, 'receiver']]
+					holders: [[475, 'receiver']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 328,
@@ -21445,7 +21552,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 455,
@@ -21626,7 +21734,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[454, 'item']]
+					holders: [[454, 'item']],
+					readableFlags: ['override', 'readonly', 'optional']
 				}
 			],
 			flags: ['override', 'readonly', 'optional']
@@ -21855,7 +21964,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 473,
@@ -22042,7 +22152,8 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[475, 'receiver']]
+					holders: [[475, 'receiver']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 328,
@@ -22262,7 +22373,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 455,
@@ -22443,7 +22555,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[454, 'item']]
+					holders: [[454, 'item']],
+					readableFlags: ['override', 'readonly', 'optional']
 				}
 			],
 			flags: ['override', 'readonly', 'optional']
@@ -22672,7 +22785,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 473,
@@ -22859,7 +22973,8 @@ export const build: PortableBuildTable = {
 							required: []
 						}
 					],
-					holders: [[475, 'receiver']]
+					holders: [[475, 'receiver']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 328,
@@ -23079,7 +23194,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[387, 'items']]
+					holders: [[387, 'items']],
+					readableFlags: ['override', 'readonly', 'optional']
 				},
 				{
 					kind: 455,
@@ -23260,7 +23376,8 @@ export const build: PortableBuildTable = {
 							required: ['name']
 						}
 					],
-					holders: [[454, 'item']]
+					holders: [[454, 'item']],
+					readableFlags: ['override', 'readonly', 'optional']
 				}
 			],
 			flags: ['override', 'readonly', 'optional']
@@ -23433,7 +23550,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					readableFlags: ['override', 'readonly']
 				}
 			],
 			flags: ['override', 'readonly', 'optional']
@@ -23812,7 +23930,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name']
 						}
-					]
+					],
+					readableFlags: ['abstract']
 				},
 				{
 					kind: 246,
@@ -24186,7 +24305,8 @@ export const build: PortableBuildTable = {
 							required: ['members', 'name']
 						}
 					],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['abstract']
 				}
 			],
 			flags: ['abstract']
@@ -24277,7 +24397,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['members', 'name']
 						}
-					]
+					],
+					readableFlags: ['const']
 				}
 			],
 			flags: ['const']
@@ -24671,7 +24792,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['const']
 				}
 			],
 			flags: ['const']
@@ -24769,7 +24891,8 @@ export const build: PortableBuildTable = {
 							absent: ['value'],
 							required: ['name', 'type']
 						}
-					]
+					],
+					readableFlags: ['definite']
 				},
 				{
 					kind: 440,
@@ -24904,7 +25027,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['name']
 						}
-					]
+					],
+					readableFlags: ['definite']
 				}
 			],
 			flags: ['definite']
@@ -25420,7 +25544,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['key', 'value']
 						}
-					]
+					],
+					readableFlags: ['computed']
 				}
 			],
 			flags: ['computed']
@@ -30181,7 +30306,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['arguments', 'function']
 						}
-					]
+					],
+					readableFlags: ['optionalChain']
 				},
 				{
 					kind: 423,
@@ -30351,7 +30477,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['arguments', 'function']
 						}
-					]
+					],
+					readableFlags: ['optionalChain']
 				}
 			],
 			flags: ['optionalChain']
@@ -32238,7 +32365,8 @@ export const build: PortableBuildTable = {
 							flag: 'generator',
 							set: true
 						}
-					]
+					],
+					readableFlags: ['async', 'generator']
 				},
 				{
 					kind: 248,
@@ -32593,7 +32721,8 @@ export const build: PortableBuildTable = {
 							flag: 'generator',
 							set: false
 						}
-					]
+					],
+					readableFlags: ['async', 'generator']
 				}
 			],
 			flags: ['async', 'generator']
@@ -33229,7 +33358,8 @@ export const build: PortableBuildTable = {
 							]
 						}
 					},
-					when: []
+					when: [],
+					readableFlags: ['async']
 				}
 			],
 			flags: ['async']
@@ -33352,7 +33482,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['object', 'property']
 						}
-					]
+					],
+					readableFlags: ['optionalChain', 'privateName']
 				}
 			],
 			flags: ['privateName', 'optionalChain']
@@ -33714,7 +33845,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['index', 'object']
 						}
-					]
+					],
+					readableFlags: ['optionalChain']
 				}
 			],
 			flags: ['optionalChain']
@@ -34280,7 +34412,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['prefix']
 				},
 				{
 					kind: 428,
@@ -34348,7 +34481,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['prefix']
 				}
 			],
 			flags: ['prefix']
@@ -34422,7 +34556,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['prefix']
 				},
 				{
 					kind: 428,
@@ -34490,7 +34625,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['argument']
 						}
-					]
+					],
+					readableFlags: ['prefix']
 				}
 			],
 			flags: ['prefix']
@@ -37166,7 +37302,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['key', 'value']
 						}
-					]
+					],
+					readableFlags: ['computed']
 				}
 			],
 			flags: ['computed']
@@ -37727,7 +37864,8 @@ export const build: PortableBuildTable = {
 							required: ['exportClause']
 						}
 					],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -37803,7 +37941,8 @@ export const build: PortableBuildTable = {
 							required: ['source']
 						}
 					],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -38336,7 +38475,8 @@ export const build: PortableBuildTable = {
 						}
 					},
 					when: [],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -38534,7 +38674,8 @@ export const build: PortableBuildTable = {
 						}
 					},
 					when: [],
-					options: ['terminator']
+					options: ['terminator'],
+					readableFlags: ['typeOnly']
 				}
 			],
 			flags: ['typeOnly']
@@ -39498,7 +39639,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['header', 'statements']
 						}
-					]
+					],
+					readableFlags: ['async']
 				}
 			],
 			flags: ['async']
@@ -40848,7 +40990,8 @@ export const build: PortableBuildTable = {
 							absent: [],
 							required: ['type']
 						}
-					]
+					],
+					readableFlags: ['abstract']
 				}
 			],
 			flags: ['abstract']

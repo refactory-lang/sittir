@@ -23,7 +23,7 @@ import type {
 } from '@sittir/types';
 import { emitShapeFailure } from '../../../compiler/diagnostics/emit-diagnostics.ts';
 import { Delimiter } from '@sittir/common/delimiter';
-import { builtSlots, buildsOnlyItem, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
+import { builtFlags, builtSlots, buildsOnlyItem, holds, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
 import type { ChildTest, GrammarRoutes, SlotRoute, ReadEntry, SlotStep } from '../../../bindings/routes.ts';
 import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, heldSteps, modelNode, mountHoldersOf, portableClaims, reachedBy, shownSlots, VALUE, valueTokensOf, writesText, type Guaranteed, type MountHolder } from '../../../bindings/routes.ts';
 import { slotSubjectOf, tableReadEntries, type PortableFactRecord } from './read-tests.ts';
@@ -1621,16 +1621,18 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const textForms = ordered.map((arm) => textFormOf(arm));
 		paths[path] = {
 			root: root && ordered.some((arm) => !holders.has(arm)),
-			arms: ordered.map(
-				(arm, i): PortableBuildArm => ({
+			arms: ordered.map((arm, i): PortableBuildArm => {
+				const built: PortableBuildArm = {
 					...arm.arm,
 					...(collidesWithEarlier(textForms, i) ? { carriesNode: true as const } : {}),
 					...(arm.scalar === undefined ? {} : { scalar: arm.scalar }),
 					when: tests.get(arm)!,
 					...(holders.has(arm) ? { holders: holders.get(arm)! } : {}),
 					...optionsOf(arm.kind)
-				})
-			),
+				};
+				const readable = [...new Set(builtFlags(built))].filter((flag) => built.flags[flag]?.carriesNode !== true);
+				return readable.length === 0 ? built : { ...built, readableFlags: readable };
+			}),
 			...(scalarArms.size === 0 ? {} : { builds: Object.fromEntries([...scalarArms].map(([arm, scalar]) => [scalar, arm.arm.kind])) }),
 			...(flagsOf(path).length === 0 ? {} : { flags: flagsOf(path) })
 		};

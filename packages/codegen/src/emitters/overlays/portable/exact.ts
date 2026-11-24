@@ -1,4 +1,4 @@
-import { nullaryBuilt, readableEntries, readableFlags, textBuilt, type PortableCarry } from '@sittir/common/engine';
+import { nullaryBuilt, readableEntries, textBuilt, type PortableCarry } from '@sittir/common/engine';
 import type { PortableBuildArm } from '@sittir/types';
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { derive, levelSlots, type Derivation, type Scalar } from '../../../bindings/derive.ts';
@@ -201,7 +201,7 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		const builtWhole = structural.length > 0 && structural.every((arm) => nullaryBuilt(table, arm));
 		const readsText = !builtWhole && (node.slots.length === 0 || (structural.length > 0 && structural.every((arm) => (arm.slots.length === 0 && arm.seated !== undefined) || textBuilt(table, arm))));
 		if (readsText && !structural.every((arm) => textBuilt(table, arm))) out.push('text');
-		const readable = new Set(structural.flatMap(readableFlags));
+		const readable = new Set(structural.flatMap((arm) => arm.readableFlags ?? []));
 		if ((flags.get(kind) ?? []).some((flag) => !readable.has(flag))) out.push('flags');
 		const touched = reached(kind);
 		if (structural.length > 0 && node.slots.some((slot) => !touched.has(slot.name) && concreteKinds(model, slot.kinds).some((k) => !token(k)))) out.push('unread');

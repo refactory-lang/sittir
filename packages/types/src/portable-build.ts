@@ -253,6 +253,7 @@ export interface PortableBuildArm {
 	readonly owners?: readonly (readonly number[])[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
+	readonly readableFlags?: readonly string[];
 	readonly template?: PortableTemplate;
 	readonly facts?: readonly PortableSpelledFact[];
 	readonly sole?: { readonly slot: string; readonly delimiter: number };
