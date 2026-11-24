@@ -35,7 +35,7 @@ on:
         type: string
         default: python regex typescript
       phase:
-        description: phase-profile and alloc-count. The corpus phase run; built, the render of built Rust function items; or worker, the paired construction worker's whole timed loop (built and worker: grammars rust). phase-profile samples parse, render, built or worker natively under perf, or edit as JavaScript frames under the inspector's Profiler; alloc-count counts any phase's allocations natively.
+        description: phase-profile and alloc-count. The corpus phase run; built, the render of built Rust function items; or worker, the paired construction worker's whole timed loop (both with grammars rust). phase-profile samples parse, render, built or worker natively under perf, or edit as JavaScript frames under the inspector's Profiler; alloc-count counts any phase's allocations natively.
         type: choice
         default: render
         options: [parse, render, edit, built, worker]
