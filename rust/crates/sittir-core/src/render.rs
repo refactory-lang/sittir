@@ -10,6 +10,22 @@ use std::fmt;
 use crate::spacing::{SpacingWriter, WordMatcher};
 use crate::types::KindId;
 
+#[unsafe(no_mangle)]
+#[inline(never)]
+pub extern "C" fn sittir_layout_probe(seed: u64, rounds: u32) -> u64 {
+    let mut state = seed ^ 0x9e37_79b9_7f4a_7c15;
+    for round in 0..rounds {
+        state ^= state << 13;
+        state ^= state >> 7;
+        state ^= state << 17;
+        state = state.wrapping_mul(0x2545_f491_4f6c_dd1d).rotate_left(round % 63 + 1);
+        if state & 0xff == 0x5a {
+            state = state.wrapping_add(u64::from(round)).reverse_bits();
+        }
+    }
+    state
+}
+
 #[derive(Debug)]
 pub enum RenderError {
     Fmt(fmt::Error),
