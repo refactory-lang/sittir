@@ -5,14 +5,18 @@
 ## Why
 
 - C#'s implicit array (`new[,,] { 1 }`) and its unbound generic type (`typeof(D<,>)`) each hold `repeat(',')` inside a larger rule. The comma's count is data: the array's rank, the type's arity.
-- The generator collapses a repeat of one fixed token to a boolean slot, which records only whether the keyword occurs, so `new[,]` and `new[,,]` read and build the same.
-- A census of eight grammars' parser grammars (typescript, rust, python, regex, scm, C#, Java, Go; C's was not generated in the trees read, so it is not checked) finds no other site. Python's `import_prefix` (`from ... import x`) is a whole rule that is only `repeat1('.')`, so it is already a leaf whose text varies, and it stays one.
+- The generator loses that count in two ways. It collapses a repeat of one fixed token inside a rule to a boolean slot, which records only whether the keyword occurs, so `new[,]` and `new[,,]` read and build the same. And it folds a rule made only of fixed text, repeat included, into a pattern leaf, so `D<,>` has no slot at all.
+- A census of eight grammars' parser grammars (typescript, rust, python, regex, scm, C#, Java, Go; C's was not generated in the trees read, so it is not checked) finds one other site: python's `import_prefix` (`from ... import x`), a whole rule that is only `repeat1('.')`.
 
 ## The rule
 
-- **A count slot.** Where a rule holds a `repeat` or `repeat1` of one fixed token as part of a larger rule, that repeat is one slot whose value is a count: how many times its keyword occurs. It is the boolean slot's case with more than one occurrence: a boolean slot records whether its keyword occurs, and a count slot records how many times.
-- A rule whose whole body is such a repeat is unchanged: it stays a leaf whose text varies.
-- The layer names the slot, as it names any slot (C#: `commas`).
+- **A repeat of one fixed token is always a slot** (the maintainer, 2026-11-24: "we should definitely set Nonterminal = true/Multiplicity=xxx for Repeat(String(','))"). The model holds it as a nonterminal whose one value is the terminal, with multiplicity `array` for `repeat` and `nonEmptyArray` for `repeat1`. It is never folded into a pattern leaf, and never collapsed to a boolean.
+- **Its storage is `count`.** A new `FieldStorageKind`, beside `boolean` and `bitflag`, derived from that slot: one terminal value whose multiplicity is `array` or `nonEmptyArray`. Today `keywordPresenceKind` returns `boolean` for exactly that case. The value is how many times the keyword occurs, and its least value comes from the multiplicity (0 for `array`, 1 for `nonEmptyArray`), not from a second check. It is the boolean slot's case with more than one occurrence: a boolean slot records whether its keyword occurs, and a count slot records how many times.
+- **What the model holds today** (C#'s node model):
+  - `implicit_array_creation_expression` already has the slot, `comma`, with `multiple: true` and one terminal of multiplicity `array`, but `"storage":"boolean"`;
+  - `type_argument_list_unbound` (`<` `repeat(',')` `>`) is a pattern leaf with no slots, because every token of it is fixed text. It becomes a node whose slot is the count, with `<` and `>` as fixed text.
+- The slot takes its name the way any slot does (C#: `commas`).
+- **Open with the maintainer:** python's `import_prefix` is a rule whose whole body is `repeat1('.')`, today a leaf whose text varies (`'..'`). The rule above would make it a count too (`{ dots: 2 }`), which changes a stable grammar's public surface.
 
 ## Read, build and render
 
@@ -34,11 +38,10 @@
 
 ## Verification
 
-- typescript, rust, python, regex and scm generate byte-identical: none of them holds such a repeat.
+- typescript, rust, regex and scm generate byte-identical: none of them holds such a repeat. So does python, unless `import_prefix` is ruled in.
 - C#: `new[,] {1}`, `new[,,] {1}`, `new[] {1}` and `typeof(D<,>)` parse with no errors, read their counts, render untouched as their source, and rebuild to the same text in both storages. A negative count, and a count of 0 in a `repeat1` slot, are refused at build.
 - `new[1] {1}` stays refused by the parse (CS0178).
 
 ## Left to the builder
 
 - How the count is laid out in a cell, and how the native render writes the repeated keyword.
-- The name of the model's storage for the slot, beside `"storage":"boolean"`, chosen from the words the model already uses.
