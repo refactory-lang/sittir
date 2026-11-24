@@ -1,7 +1,7 @@
 import { compileAnchoredPattern } from '../../types/runtime-shapes.ts';
 import { pieces } from '../../util/pattern-pieces.ts';
 
-const LITERAL_IN_CLASS = '+.*?(){}|$/';
+const LITERAL_IN_CLASS = '+.*?(){}|$/"';
 
 export function stripUselessEscapes(pattern: string): string {
 	let out = '';

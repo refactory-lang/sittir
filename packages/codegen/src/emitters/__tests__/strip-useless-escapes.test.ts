@@ -25,6 +25,13 @@ describe('stripUselessEscapes', () => {
 		for (const text of ['^', '$', 'a']) expect(accepts(stripped, text)).toBe(accepts(original, text));
 	});
 
+	it('drops an escaped double quote in a class, so the class keeps its other strips', () => {
+		const original = String.raw`[\"\?]`;
+		const stripped = stripUselessEscapes(original);
+		expect(stripped).toBe('["?]');
+		for (const text of ['"', '?', 'a']) expect(new RegExp(`^${stripped}$`, 'u').test(text)).toBe(new RegExp(`^${original}$`).test(text));
+	});
+
 	it('leaves an escaped bracket outside a class alone', () => {
 		expect(stripUselessEscapes('\\[a\\]')).toBe('\\[a\\]');
 	});
