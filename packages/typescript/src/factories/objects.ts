@@ -2232,6 +2232,14 @@ export function buildBreakStatement(...args: unknown[]) {
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementIdentifier as const);
+	if (
+		args.slice(1).some((arg) => arg !== undefined) &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.BreakStatement as const)
+	) {
+		throw new TypeError('BreakStatement: a built node carries its own options; pass them when the node is built');
+	}
 	return prebuilt
 		? _buildBreakStatement(args[0] as Parameters<typeof _buildBreakStatement>[0], args[1] as never)
 		: _buildBreakStatement(
@@ -2327,6 +2335,14 @@ export function buildContinueStatement(...args: unknown[]) {
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementIdentifier as const);
+	if (
+		args.slice(1).some((arg) => arg !== undefined) &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ContinueStatement as const)
+	) {
+		throw new TypeError('ContinueStatement: a built node carries its own options; pass them when the node is built');
+	}
 	return prebuilt
 		? _buildContinueStatement(args[0] as Parameters<typeof _buildContinueStatement>[0], args[1] as never)
 		: _buildContinueStatement(
@@ -6763,6 +6779,14 @@ export function buildClassStaticBlock(...args: unknown[]) {
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.StatementBlock as const);
+	if (
+		args.slice(1).some((arg) => arg !== undefined) &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ClassStaticBlock as const)
+	) {
+		throw new TypeError('ClassStaticBlock: a built node carries its own options; pass them when the node is built');
+	}
 	return prebuilt
 		? _buildClassStaticBlock(args[0] as Parameters<typeof _buildClassStaticBlock>[0], args[1] as never)
 		: _buildClassStaticBlock(
@@ -20125,6 +20149,16 @@ export function buildFormalParametersElementsSetAccessorSignature(...args: unkno
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.SetterParameter as const);
+	if (
+		args.slice(1).some((arg) => arg !== undefined) &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElementsSetAccessorSignature as const)
+	) {
+		throw new TypeError(
+			'FormalParametersElementsSetAccessorSignature: a built node carries its own options; pass them when the node is built'
+		);
+	}
 	return prebuilt
 		? _buildFormalParametersElementsSetAccessorSignature(
 				args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0],

@@ -1808,6 +1808,29 @@ interface ForwardedConstruction {
 	readonly targetParams: string | undefined;
 	readonly overloads: readonly RefusingParams[];
 	readonly rows: readonly string[];
+	readonly targetArity: number | undefined;
+	readonly hasOwnOptions: boolean;
+}
+
+export function twoLevelTarget(node: FieldCarryingNode, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): AssembledNode | undefined {
+	if (forwardedOptionsTarget(node, nodeMap) !== undefined || spellingTypeOf(node, nodeMap, kindEntries) === undefined) return undefined;
+	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
+	if (target === null) return undefined;
+	const targetNode = nodeMap.nodes.get(target)!;
+	const shape = classifyFactoryShape(targetNode, nodeMap);
+	return registeredSlots(targetNode).length === 0 || shape === 'spread' ? undefined : targetNode;
+}
+
+function positionalCount(params: string): number {
+	if (params.trim() === '') return 0;
+	let depth = 0;
+	let count = 1;
+	for (const ch of params) {
+		if ('<([{'.includes(ch)) depth++;
+		else if ('>)]}'.includes(ch)) depth--;
+		else if (ch === ',' && depth === 0) count++;
+	}
+	return count;
 }
 
 function forwardedConstruction(
@@ -1840,11 +1863,40 @@ function forwardedConstruction(
 			const extra = trailing?.(params);
 			return extra === undefined ? params : appendParam(params, extra);
 		});
+	const twoLevelTargetNode = twoLevelTarget(node, nodeMap, kindEntries);
+	const innerOverloads: readonly RefusingParams[] =
+		twoLevelTargetNode === undefined
+			? []
+			: ((isAuthoredCompound(twoLevelTargetNode)
+					? forwardedConstruction(
+							twoLevelTargetNode,
+							resolveFactorySurface(twoLevelTargetNode, nodeMap, kindEntries),
+							nodeMap,
+							kindEntries
+						)?.overloads
+					: undefined) ?? (constructorSurface(target, nodeMap, kindEntries, { immediate: true })?.declarations ?? []));
+	const extendsShorter = (entry: RefusingParams): boolean =>
+		innerOverloads.some((other) => other.params.startsWith(`${entry.params}, `) && takesOptions(other.params.slice(entry.params.length + 2)));
+	const innerForms = innerOverloads
+		.filter((entry) => !extendsShorter(entry))
+		.map((entry) =>
+			/\.\.\./.test(entry.params)
+				? entry
+				: takesOptions(entry.params)
+					? { typeParams: entry.typeParams, params: entry.params.replace(/options\?: /, 'innerOptions?: ') }
+					: withTrailingParam(entry, `innerOptions?: T.${twoLevelTargetNode!.typeName}.Options`)
+		);
+	const twoLevelDeclarations =
+		twoLevelTargetNode === undefined || trailingOptions === undefined
+			? undefined
+			: innerForms.map((entry) => (/\.\.\./.test(entry.params) ? entry : withTrailingParam(entry, trailingOptions)));
 	const targetOverloads = withheld
 		? []
 		: targetSurface === undefined
 			? undefined
-			: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingFor) ?? [])])];
+			: twoLevelDeclarations !== undefined
+				? twoLevelDeclarations.map((entry) => entry.params)
+				: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingFor) ?? [])])];
 	const chainedDeclarations = (chainedSurface?.declarations ?? []).map((entry) => {
 		const extra = trailingFor(entry.params);
 		return extra === undefined ? entry : withTrailingParam(entry, extra);
@@ -1853,7 +1905,7 @@ function forwardedConstruction(
 		? []
 		: targetSurface === undefined
 			? undefined
-			: [...new Map([...targetSurface.declarations, ...chainedDeclarations].map((entry) => [JSON.stringify(entry), entry])).values()];
+			: (twoLevelDeclarations ?? [...new Map([...targetSurface.declarations, ...chainedDeclarations].map((entry) => [JSON.stringify(entry), entry])).values()]);
 	const ownSurface = forwardedOptionsTarget(node, nodeMap) === undefined ? surface : resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	const ordered = <E>(all: readonly E[], paramsOf: (entry: E) => string): E[] => [
 		...all.filter((entry) => paramsOf(entry) === ''),
@@ -1862,6 +1914,9 @@ function forwardedConstruction(
 	return {
 		target,
 		targetParams,
+		targetArity:
+			twoLevelDeclarations === undefined ? undefined : Math.max(...innerForms.map((entry) => positionalCount(entry.params))),
+		hasOwnOptions: spellingTypeOf(node, nodeMap, kindEntries) !== undefined,
 		overloads: ordered(
 			[publicParams(ownSurface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
 			(declared) => declared.params
@@ -2437,9 +2492,16 @@ function fieldCarryingFactoryText(
 				`  const prebuilt =`,
 				`    typeof args[0] === 'object' && args[0] !== null &&`,
 				`    ${prebuiltCheck};`,
+				...(forwarded.hasOwnOptions
+					? [
+							`  if (args.slice(1).some((arg) => arg !== undefined) && typeof args[0] === 'object' && args[0] !== null && (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)})) {`,
+							`    throw new TypeError('${node.typeName}: a built node carries its own options; pass them when the node is built');`,
+							`  }`
+						]
+					: []),
 				`  return prebuilt`,
 				`    ? _${fn}(args[0] as Parameters<typeof _${fn}>[0], args[1] as never)`,
-				`    : _${fn}(${targetBuilt('args[0]')} as Parameters<typeof _${fn}>[0], args[1] as never);`,
+				`    : _${fn}(${targetBuilt(forwarded.targetArity === undefined ? 'args[0]' : `...args.slice(0, ${forwarded.targetArity})`)} as Parameters<typeof _${fn}>[0], args[${forwarded.targetArity ?? 1}] as never);`,
 				'}'
 			);
 		} else {

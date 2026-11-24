@@ -15669,6 +15669,10 @@ Whether a slot's setter takes no `undefined`: every arm that holds the slot requ
 
 For each slot of a kind that is a required choice of arms, the names of the slots its setter clears (`armCrossingClears`), omitting a slot that clears none. The node's `$clears` hint is printed from it, so the type a setter returns reads each cleared slot as `undefined` instead of the refinement an earlier setter in the chain gave it. Empty for a kind without arms and for a list.
 
+### `packages/codegen/src/emitters/factories.ts::twoLevelTarget`
+
+The target a forwarder takes when the forwarder has options of its own and the target has options too: its immediate target, when the target has registered options and is not a spread (list) shape. Such a forwarder's declared forms append its own options after the target's, the target's options slot in between, and its wrapper routes the target the leading arguments and its own options at the position after them. A spread target has no position after its rest, so forwarders of one keep the single-level forms. Forwarders with no target options, and forward-all wrappers, return undefined.
+
 ### `packages/codegen/src/emitters/node-members.ts::HoistSet`
 
 What a hoisted slot's `$with` setter takes from the emitter: the storage key, the wrapper slot it sets through, whether the holder slot is optional, the list spec, the wrap expression, the kind the value may already be, and the placed setter bodies for a whole wrapper and for a list.

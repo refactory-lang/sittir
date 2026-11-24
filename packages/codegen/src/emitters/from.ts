@@ -81,6 +81,7 @@ import {
 	keywordArmTextMapExpr,
 	separatedListSurface,
 	spellingTypeOf,
+	twoLevelTarget,
 	listOptionKeys,
 	listSpreadTarget,
 	leadingOptionsSplit,
@@ -382,13 +383,16 @@ function emitBranchFrom(
 	const slots = node.configSlots;
 	const spellingType = spellingTypeOf(node, nodeMap, kindEntries);
 	const forwardedTarget = spellingType === undefined ? forwardedOptionsTarget(node, nodeMap) : undefined;
+	const twoLevelOf = twoLevelTarget(node, nodeMap, kindEntries);
 	const optionsParam =
-		spellingType !== undefined
-			? `, options?: T.${node.typeName}.Options`
-			: forwardedTarget === undefined
-				? ''
-				: `, ...options: [options?: T.${forwardedTarget.typeName}.Options]`;
-	const optionsArg = spellingType !== undefined ? ', options' : forwardedTarget === undefined ? '' : '';
+		twoLevelOf !== undefined
+			? `, ...options: [inner?: T.${twoLevelOf.typeName}.Options, outer?: T.${node.typeName}.Options]`
+			: spellingType !== undefined
+				? `, options?: T.${node.typeName}.Options`
+				: forwardedTarget === undefined
+					? ''
+					: `, ...options: [options?: T.${forwardedTarget.typeName}.Options]`;
+	const optionsArg = twoLevelOf !== undefined ? ', options[1]' : spellingType !== undefined ? ', options' : '';
 	// Loose optionality mirrors the strict surface's own derivation
 	// (`argumentOptional`, node-map.ts): a required field only blocks the
 	// no-argument call when it has no default-empty construction of its own
@@ -534,9 +538,14 @@ function emitBranchFrom(
 			if (!holdsOwnKind(node, nodeMap)) {
 				const builtTest = `${inputOptional ? 'input !== undefined && ' : ''}${isNodeTest}`;
 				if (optionsParam !== '' && !(spellingType !== undefined && interiorSole)) {
-					const givenOptions = optionsParam.startsWith(', ...options') ? 'options[0]' : 'options';
+					const givenOptions =
+						twoLevelOf !== undefined
+							? 'options.some((given) => given !== undefined)'
+							: optionsParam.startsWith(', ...options')
+								? 'options[0] !== undefined'
+								: 'options !== undefined';
 					body.push(
-						`  if (${builtTest} && ${givenOptions} !== undefined) throw new TypeError('${typeName}: a built node carries its own options; pass them when the node is built');`
+						`  if (${builtTest} && ${givenOptions}) throw new TypeError('${typeName}: a built node carries its own options; pass them when the node is built');`
 					);
 				}
 				body.push(`  if (${builtTest}) return input as unknown as ${spelledType ?? returnType};`);
@@ -594,8 +603,10 @@ function emitBranchFrom(
 			const numeric = soleShape !== undefined;
 			if (numeric) body.push(`  const _value = ${inputExpr};`);
 			const resolved =
-				forwardedTarget === undefined
-					? resolveFieldCall(numeric ? '_value' : inputExpr, soleField, isMultiple(soleField), nodeMap, intern, true, undefined, kindEntries)
+				twoLevelOf !== undefined
+					? `coerceTo${twoLevelOf.typeName}((${numeric ? '_value' : inputExpr}) as T.${twoLevelOf.typeName}.Loose, options[0])`
+					: forwardedTarget === undefined
+						? resolveFieldCall(numeric ? '_value' : inputExpr, soleField, isMultiple(soleField), nodeMap, intern, true, undefined, kindEntries)
 					: `coerceTo${forwardedTarget.typeName}((${numeric ? '_value' : inputExpr}) as T.${forwardedTarget.typeName}.Loose, ...options)`;
 			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
 			const directDefault = hoistedSlotDefault(soleField, nodeMap, kindEntries);
