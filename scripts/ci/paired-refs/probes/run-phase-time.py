@@ -10,16 +10,12 @@
 # STORAGE (default arena).
 import json, os, statistics, subprocess, sys
 from pathlib import Path
+from phase_trees import namedTrees
 
 here = Path(__file__).resolve().parent
 out = Path(sys.argv[1]).resolve()
 grammars = sys.argv[2].split(',')
-trees = {}
-for arg in sys.argv[3:]:
-    name, spec = arg.split('=', 1)
-    tree = Path(spec.split('@', 1)[0]).resolve()
-    if tree not in trees.values():
-        trees[name] = tree
+trees = namedTrees(sys.argv[3:])
 names = list(trees)
 out.mkdir(parents=True, exist_ok=True)
 PHASE = os.environ.get('PHASE') or 'render'

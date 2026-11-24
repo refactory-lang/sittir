@@ -70,17 +70,13 @@
 import atexit, gzip, json, math, os, platform, re, shutil, subprocess, sys, tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
+from phase_trees import namedTrees, unstrippedCopy
 
 here = Path(__file__).resolve().parent
 checkout = here.parents[3]
 out = Path(sys.argv[1]).resolve()
 grammars = sys.argv[2].split(',')
-trees = {}
-for arg in sys.argv[3:]:
-    name, spec = arg.split('=', 1)
-    tree = Path(spec.partition('@')[0]).resolve()
-    if tree not in trees.values() or os.environ.get('REUSE') == '1':
-        trees[name] = tree
+trees = namedTrees(sys.argv[3:], everyName=os.environ.get('REUSE') == '1')
 names = list(trees)
 out.mkdir(parents=True, exist_ok=True)
 PHASE = os.environ.get('PHASE') or 'render'
@@ -107,7 +103,6 @@ assert PER_ENGINE > 0, f'PER_ENGINE {PER_ENGINE} is not a count of batches'
 ENGINES = 'one engine for the whole run' if PER_ENGINE >= WARMUP + BATCHES else f'a fresh engine every {PER_ENGINE}'
 PERIOD_NS = 100_000
 JS_INTERVAL_US = 50
-FRESHNESS = 'packages/codegen/src/scripts/native-binary-freshness.ts'
 OUTSIDE = 'outside the addon'
 CALLBACK = re.compile(r'_c_callback$')
 FRAME = re.compile(r'^\s*[0-9a-f]+ (.+) \(([^()]*)\)$')
@@ -179,14 +174,6 @@ def addonCopy(tree, grammar):
         return unstrippedCopy(tree, grammar)
     except subprocess.CalledProcessError:
         return None
-
-
-def unstrippedCopy(tree, grammar):
-    script = ('const [root, grammar] = process.argv.slice(1); '
-              f'const stamps = await import(`${{root}}/{FRESHNESS}`); '
-              'console.log(stamps.unstrippedReleaseBinary(root, grammar, stamps.hostBinaryName(grammar)));')
-    found = subprocess.run(['node', '--input-type=module', '-e', script, str(tree), grammar], check=True, stdout=subprocess.PIPE, text=True)
-    return Path(found.stdout.strip()).resolve()
 
 
 def buildCounter():
