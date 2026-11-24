@@ -10786,7 +10786,7 @@ export function wrapRecursivePattern(data: T.RecursivePattern, tree: TreeHandle)
 		...data,
 		$type: TSKindId.RecursivePattern as const,
 		type() {
-			return hydrateSlot<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName | undefined>(
+			return hydrateSlot<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName | T.Type | undefined>(
 				this,
 				'_type',
 				tree
@@ -10804,12 +10804,6 @@ export function wrapRecursivePattern(data: T.RecursivePattern, tree: TreeHandle)
 				'_variable_designation',
 				tree
 			);
-		},
-		recursivePatternArm2() {
-			return hydrateSlot<T.RecursivePatternArm2 | undefined>(this, '_recursive_pattern_arm2', tree);
-		},
-		recursivePatternArm4() {
-			return hydrateSlot<T.RecursivePatternArm4 | undefined>(this, '_recursive_pattern_arm4', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -10831,8 +10825,6 @@ export function wrapRecursivePattern(data: T.RecursivePattern, tree: TreeHandle)
 		positionalPatternClause: wrapRecursivePattern$with$positionalPatternClause,
 		propertyPatternClause: wrapRecursivePattern$with$propertyPatternClause,
 		variableDesignation: wrapRecursivePattern$with$variableDesignation,
-		recursivePatternArm2: wrapRecursivePattern$with$recursivePatternArm2,
-		recursivePatternArm4: wrapRecursivePattern$with$recursivePatternArm4,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -10846,39 +10838,19 @@ function wrapRecursivePattern$with(node: Held, setter: string, args: readonly un
 		case 'type':
 			return applySetter(args, (v: NonNullable<T.RecursivePattern['_type']>) =>
 				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapRecursivePattern({ ...$edited(data), _type: admitSlot(handle, 'recursive_pattern', 'type', v) }, tree)
-						: wrapRecursivePattern(
-								{
-									...$edited(data),
-									_recursive_pattern_arm2: undefined,
-									_recursive_pattern_arm4: undefined,
-									_type: admitSlot(handle, 'recursive_pattern', 'type', v)
-								},
-								tree
-							)
+					wrapRecursivePattern({ ...$edited(data), _type: admitSlot(handle, 'recursive_pattern', 'type', v) }, tree)
 				)
 			);
 		case 'positionalPatternClause':
 			return applySetter(args, (v: NonNullable<T.RecursivePattern['_positional_pattern_clause']>) =>
 				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapRecursivePattern(
-								{
-									...$edited(data),
-									_positional_pattern_clause: admitSlot(handle, 'recursive_pattern', 'positionalPatternClause', v)
-								},
-								tree
-							)
-						: wrapRecursivePattern(
-								{
-									...$edited(data),
-									_recursive_pattern_arm2: undefined,
-									_recursive_pattern_arm4: undefined,
-									_positional_pattern_clause: admitSlot(handle, 'recursive_pattern', 'positionalPatternClause', v)
-								},
-								tree
-							)
+					wrapRecursivePattern(
+						{
+							...$edited(data),
+							_positional_pattern_clause: admitSlot(handle, 'recursive_pattern', 'positionalPatternClause', v)
+						},
+						tree
+					)
 				)
 			);
 		case 'propertyPatternClause':
@@ -10888,23 +10860,13 @@ function wrapRecursivePattern$with(node: Held, setter: string, args: readonly un
 						args,
 						{ kind: TSKindId.PropertyPatternClause as const, optional: true, make: RAW.buildPropertyPatternClause },
 						(v: NonNullable<T.RecursivePattern['_property_pattern_clause']>) =>
-							v === undefined
-								? wrapRecursivePattern(
-										{
-											...$edited(data),
-											_property_pattern_clause: admitSlot(handle, 'recursive_pattern', 'propertyPatternClause', v)
-										},
-										tree
-									)
-								: wrapRecursivePattern(
-										{
-											...$edited(data),
-											_recursive_pattern_arm2: undefined,
-											_recursive_pattern_arm4: undefined,
-											_property_pattern_clause: admitSlot(handle, 'recursive_pattern', 'propertyPatternClause', v)
-										},
-										tree
-									)
+							wrapRecursivePattern(
+								{
+									...$edited(data),
+									_property_pattern_clause: admitSlot(handle, 'recursive_pattern', 'propertyPatternClause', v)
+								},
+								tree
+							)
 					)
 				)
 			);
@@ -10913,92 +10875,23 @@ function wrapRecursivePattern$with(node: Held, setter: string, args: readonly un
 				args,
 				(v: NonNullable<T.RecursivePattern['_variable_designation']> | Admit<T.VariableDesignation>) =>
 					rebuilt(node, handle, () =>
-						v === undefined
-							? wrapRecursivePattern(
-									{
-										...$edited(data),
-										_variable_designation: admitSlot(
-											handle,
-											'recursive_pattern',
-											'variableDesignation',
-											admitSplicedEnvelope<NonNullable<T.RecursivePattern['_variable_designation']>>(
-												v,
-												[TSKindId.VariableDesignation, 'content', 'variable_designation'],
-												'RecursivePattern.variableDesignation'
-											)
-										)
-									},
-									tree
+						wrapRecursivePattern(
+							{
+								...$edited(data),
+								_variable_designation: admitSlot(
+									handle,
+									'recursive_pattern',
+									'variableDesignation',
+									admitSplicedEnvelope<NonNullable<T.RecursivePattern['_variable_designation']>>(
+										v,
+										[TSKindId.VariableDesignation, 'content', 'variable_designation'],
+										'RecursivePattern.variableDesignation'
+									)
 								)
-							: wrapRecursivePattern(
-									{
-										...$edited(data),
-										_recursive_pattern_arm2: undefined,
-										_recursive_pattern_arm4: undefined,
-										_variable_designation: admitSlot(
-											handle,
-											'recursive_pattern',
-											'variableDesignation',
-											admitSplicedEnvelope<NonNullable<T.RecursivePattern['_variable_designation']>>(
-												v,
-												[TSKindId.VariableDesignation, 'content', 'variable_designation'],
-												'RecursivePattern.variableDesignation'
-											)
-										)
-									},
-									tree
-								)
+							},
+							tree
+						)
 					)
-			);
-		case 'recursivePatternArm2':
-			return applySetter(args, (v: NonNullable<T.RecursivePattern['_recursive_pattern_arm2']>) =>
-				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapRecursivePattern(
-								{
-									...$edited(data),
-									_recursive_pattern_arm2: admitSlot(handle, 'recursive_pattern', 'recursivePatternArm2', v)
-								},
-								tree
-							)
-						: wrapRecursivePattern(
-								{
-									...$edited(data),
-									_type: undefined,
-									_positional_pattern_clause: undefined,
-									_property_pattern_clause: undefined,
-									_variable_designation: undefined,
-									_recursive_pattern_arm4: undefined,
-									_recursive_pattern_arm2: admitSlot(handle, 'recursive_pattern', 'recursivePatternArm2', v)
-								},
-								tree
-							)
-				)
-			);
-		case 'recursivePatternArm4':
-			return applySetter(args, (v: NonNullable<T.RecursivePattern['_recursive_pattern_arm4']>) =>
-				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapRecursivePattern(
-								{
-									...$edited(data),
-									_recursive_pattern_arm4: admitSlot(handle, 'recursive_pattern', 'recursivePatternArm4', v)
-								},
-								tree
-							)
-						: wrapRecursivePattern(
-								{
-									...$edited(data),
-									_type: undefined,
-									_positional_pattern_clause: undefined,
-									_property_pattern_clause: undefined,
-									_variable_designation: undefined,
-									_recursive_pattern_arm2: undefined,
-									_recursive_pattern_arm4: admitSlot(handle, 'recursive_pattern', 'recursivePatternArm4', v)
-								},
-								tree
-							)
-				)
 			);
 	}
 	throw new Error(`recursive_pattern has no $with.${setter}`);
@@ -11014,12 +10907,6 @@ function wrapRecursivePattern$with$propertyPatternClause(this: Received<Held>, .
 }
 function wrapRecursivePattern$with$variableDesignation(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapRecursivePattern$with(receiverOf(this, '$with.variableDesignation'), 'variableDesignation', args);
-}
-function wrapRecursivePattern$with$recursivePatternArm2(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePattern$with(receiverOf(this, '$with.recursivePatternArm2'), 'recursivePatternArm2', args);
-}
-function wrapRecursivePattern$with$recursivePatternArm4(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePattern$with(receiverOf(this, '$with.recursivePatternArm4'), 'recursivePatternArm4', args);
 }
 
 export function wrapPositionalPatternClause(
@@ -21061,500 +20948,6 @@ function wrapListPatternElements$with$delimiter(this: Received<Held>, ...args: u
 	return wrapListPatternElements$with(receiverOf(this, '$with.delimiter'), 'delimiter', args);
 }
 
-export function wrapRecursivePatternArm1(
-	data: T.RecursivePatternArm1,
-	tree: TreeHandle
-): T.RecursivePatternArm1.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.RecursivePatternArm1 as const,
-		positionalPatternClause() {
-			return hoistRead(
-				hydrateSlot<T.PositionalPatternClause>(this, '_positional_pattern_clause', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Subpattern>(this, '_subpattern', tree);
-					}
-				],
-				true
-			);
-		},
-		propertyPatternClause() {
-			return hydrateSlot<T.PropertyPatternClause | undefined>(this, '_property_pattern_clause', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		positionalPatternClause: wrapRecursivePatternArm1$with$positionalPatternClause,
-		propertyPatternClause: wrapRecursivePatternArm1$with$propertyPatternClause,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm1.Parsed;
-}
-function wrapRecursivePatternArm1$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RecursivePatternArm1;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'positionalPatternClause':
-			return hoistedWith(
-				node,
-				'positionalPatternClause',
-				'_positional_pattern_clause',
-				'subpatterns',
-				false,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (v: NonNullable<T.RecursivePatternArm1['_positional_pattern_clause']>) =>
-						rebuilt(node, handle, () =>
-							wrapRecursivePatternArm1(
-								{
-									...$edited(data),
-									_positional_pattern_clause: admitSlot(handle, 'recursive_pattern_arm1', 'positionalPatternClause', v)
-								},
-								tree
-							)
-						)
-					),
-				undefined,
-				(args: readonly never[]) => [
-					((v: readonly never[]) =>
-						v.length === 0
-							? RAW.buildPositionalPatternClause()
-							: (RAW.buildPositionalPatternClause as unknown as (...items: never[]) => never)(...(v as never[])))(args)
-				],
-				TSKindId.PositionalPatternClause
-			);
-		case 'propertyPatternClause':
-			return applySetter(args, (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.PropertyPatternClause as const, optional: true, make: RAW.buildPropertyPatternClause },
-						(v: NonNullable<T.RecursivePatternArm1['_property_pattern_clause']>) =>
-							wrapRecursivePatternArm1(
-								{
-									...$edited(data),
-									_property_pattern_clause: admitSlot(handle, 'recursive_pattern_arm1', 'propertyPatternClause', v)
-								},
-								tree
-							)
-					)
-				)
-			);
-	}
-	throw new Error(`recursive_pattern_arm1 has no $with.${setter}`);
-}
-function wrapRecursivePatternArm1$with$positionalPatternClause(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm1$with(
-		receiverOf(this, '$with.positionalPatternClause'),
-		'positionalPatternClause',
-		args
-	);
-}
-function wrapRecursivePatternArm1$with$propertyPatternClause(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm1$with(receiverOf(this, '$with.propertyPatternClause'), 'propertyPatternClause', args);
-}
-
-function wrapRecursivePatternArm1$positionalPatternClause$native(this: object) {
-	const tree = (this as Held)[READ_TREE]!;
-	return hydrateSlot<T.PositionalPatternClause>(this, '_positional_pattern_clause', tree);
-}
-
-export function wrapRecursivePatternArm2(
-	data: T.RecursivePatternArm2,
-	tree: TreeHandle
-): T.RecursivePatternArm2.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.RecursivePatternArm2 as const,
-		type() {
-			return hydrateSlot<T.Type>(this, '_type', tree);
-		},
-		content() {
-			return hydrateSlot<T.RecursivePatternArm1 | T.PropertyPatternClause>(this, '_content', tree);
-		},
-		variableDesignation() {
-			return hoistRead(
-				hydrateSlot<T.VariableDesignation | undefined>(this, '_variable_designation', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier>(
-							this,
-							'_content',
-							tree
-						);
-					}
-				],
-				false
-			);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		type: wrapRecursivePatternArm2$with$type,
-		content: wrapRecursivePatternArm2$with$content,
-		variableDesignation: wrapRecursivePatternArm2$with$variableDesignation,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm2.Parsed;
-}
-function wrapRecursivePatternArm2$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RecursivePatternArm2;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'type':
-			return applySetter(args, (v: NonNullable<T.RecursivePatternArm2['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapRecursivePatternArm2(
-						{ ...$edited(data), _type: admitSlot(handle, 'recursive_pattern_arm2', 'type', v) },
-						tree
-					)
-				)
-			);
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.RecursivePatternArm2['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapRecursivePatternArm2(
-						{ ...$edited(data), _content: admitSlot(handle, 'recursive_pattern_arm2', 'content', v) },
-						tree
-					)
-				)
-			);
-		case 'variableDesignation':
-			return hoistedWith(
-				node,
-				'variableDesignation',
-				'_variable_designation',
-				'content',
-				true,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (v: NonNullable<T.RecursivePatternArm2['_variable_designation']>) =>
-						rebuilt(node, handle, () =>
-							wrapRecursivePatternArm2(
-								{
-									...$edited(data),
-									_variable_designation: admitSlot(handle, 'recursive_pattern_arm2', 'variableDesignation', v)
-								},
-								tree
-							)
-						)
-					),
-				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVariableDesignation(v), TSKindId.VariableDesignation)),
-				TSKindId.VariableDesignation
-			);
-	}
-	throw new Error(`recursive_pattern_arm2 has no $with.${setter}`);
-}
-function wrapRecursivePatternArm2$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm2$with(receiverOf(this, '$with.type'), 'type', args);
-}
-function wrapRecursivePatternArm2$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm2$with(receiverOf(this, '$with.content'), 'content', args);
-}
-function wrapRecursivePatternArm2$with$variableDesignation(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm2$with(receiverOf(this, '$with.variableDesignation'), 'variableDesignation', args);
-}
-
-function wrapRecursivePatternArm2$variableDesignation$native(this: object) {
-	const tree = (this as Held)[READ_TREE]!;
-	return hydrateSlot<T.VariableDesignation | undefined>(this, '_variable_designation', tree);
-}
-
-export function wrapRecursivePatternArm3(
-	data: T.RecursivePatternArm3,
-	tree: TreeHandle
-): T.RecursivePatternArm3.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.RecursivePatternArm3 as const,
-		positionalPatternClause() {
-			return hoistRead(
-				hydrateSlot<T.PositionalPatternClause>(this, '_positional_pattern_clause', tree),
-				[
-					function (this: object) {
-						return hydrateSlots<T.Subpattern>(this, '_subpattern', tree);
-					}
-				],
-				true
-			);
-		},
-		propertyPatternClause() {
-			return hoistRead(
-				hydrateSlot<T.PropertyPatternClause>(this, '_property_pattern_clause', tree),
-				[listElementsHop('subpatterns', 'items')],
-				true
-			);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		positionalPatternClause: wrapRecursivePatternArm3$with$positionalPatternClause,
-		propertyPatternClause: wrapRecursivePatternArm3$with$propertyPatternClause,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm3.Parsed;
-}
-function wrapRecursivePatternArm3$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RecursivePatternArm3;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'positionalPatternClause':
-			return hoistedWith(
-				node,
-				'positionalPatternClause',
-				'_positional_pattern_clause',
-				'subpatterns',
-				false,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (v: NonNullable<T.RecursivePatternArm3['_positional_pattern_clause']>) =>
-						rebuilt(node, handle, () =>
-							wrapRecursivePatternArm3(
-								{
-									...$edited(data),
-									_positional_pattern_clause: admitSlot(handle, 'recursive_pattern_arm3', 'positionalPatternClause', v)
-								},
-								tree
-							)
-						)
-					),
-				undefined,
-				(args: readonly never[]) => [
-					((v: readonly never[]) =>
-						v.length === 0
-							? RAW.buildPositionalPatternClause()
-							: (RAW.buildPositionalPatternClause as unknown as (...items: never[]) => never)(...(v as never[])))(args)
-				],
-				TSKindId.PositionalPatternClause
-			);
-		case 'propertyPatternClause':
-			return hoistedWith(
-				node,
-				'propertyPatternClause',
-				'_property_pattern_clause',
-				'subpatterns',
-				false,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (...args: unknown[]) =>
-						rebuilt(node, handle, () =>
-							listSlotWith(
-								args,
-								{
-									kind: TSKindId.PropertyPatternClause as const,
-									optional: false,
-									make: RAW.buildPropertyPatternClause
-								},
-								(v: NonNullable<T.RecursivePatternArm3['_property_pattern_clause']>) =>
-									wrapRecursivePatternArm3(
-										{
-											...$edited(data),
-											_property_pattern_clause: admitSlot(handle, 'recursive_pattern_arm3', 'propertyPatternClause', v)
-										},
-										tree
-									)
-							)
-						)
-					),
-				undefined,
-				(args: readonly never[]) => [
-					((v: readonly never[]) =>
-						v.length === 0
-							? RAW.buildPropertyPatternClause()
-							: RAW.buildPropertyPatternClause(
-									(RAW.buildSubpatterns as unknown as (...items: never[]) => never)(...(v as never[]))
-								))(args)
-				],
-				TSKindId.PropertyPatternClause
-			);
-	}
-	throw new Error(`recursive_pattern_arm3 has no $with.${setter}`);
-}
-function wrapRecursivePatternArm3$with$positionalPatternClause(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm3$with(
-		receiverOf(this, '$with.positionalPatternClause'),
-		'positionalPatternClause',
-		args
-	);
-}
-function wrapRecursivePatternArm3$with$propertyPatternClause(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm3$with(receiverOf(this, '$with.propertyPatternClause'), 'propertyPatternClause', args);
-}
-
-function wrapRecursivePatternArm3$positionalPatternClause$native(this: object) {
-	const tree = (this as Held)[READ_TREE]!;
-	return hydrateSlot<T.PositionalPatternClause>(this, '_positional_pattern_clause', tree);
-}
-
-function wrapRecursivePatternArm3$propertyPatternClause$native(this: object) {
-	const tree = (this as Held)[READ_TREE]!;
-	return hydrateSlot<T.PropertyPatternClause>(this, '_property_pattern_clause', tree);
-}
-
-export function wrapRecursivePatternArm4(
-	data: T.RecursivePatternArm4,
-	tree: TreeHandle
-): T.RecursivePatternArm4.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.RecursivePatternArm4 as const,
-		content() {
-			return hydrateSlot<T.RecursivePatternArm3 | T.PropertyPatternClause>(this, '_content', tree);
-		},
-		variableDesignation() {
-			return hoistRead(
-				hydrateSlot<T.VariableDesignation | undefined>(this, '_variable_designation', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier>(
-							this,
-							'_content',
-							tree
-						);
-					}
-				],
-				false
-			);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		content: wrapRecursivePatternArm4$with$content,
-		variableDesignation: wrapRecursivePatternArm4$with$variableDesignation,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm4.Parsed;
-}
-function wrapRecursivePatternArm4$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.RecursivePatternArm4;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'content':
-			return applySetter(args, (v: NonNullable<T.RecursivePatternArm4['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapRecursivePatternArm4(
-						{ ...$edited(data), _content: admitSlot(handle, 'recursive_pattern_arm4', 'content', v) },
-						tree
-					)
-				)
-			);
-		case 'variableDesignation':
-			return hoistedWith(
-				node,
-				'variableDesignation',
-				'_variable_designation',
-				'content',
-				true,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (v: NonNullable<T.RecursivePatternArm4['_variable_designation']>) =>
-						rebuilt(node, handle, () =>
-							wrapRecursivePatternArm4(
-								{
-									...$edited(data),
-									_variable_designation: admitSlot(handle, 'recursive_pattern_arm4', 'variableDesignation', v)
-								},
-								tree
-							)
-						)
-					),
-				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildVariableDesignation(v), TSKindId.VariableDesignation)),
-				TSKindId.VariableDesignation
-			);
-	}
-	throw new Error(`recursive_pattern_arm4 has no $with.${setter}`);
-}
-function wrapRecursivePatternArm4$with$content(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm4$with(receiverOf(this, '$with.content'), 'content', args);
-}
-function wrapRecursivePatternArm4$with$variableDesignation(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapRecursivePatternArm4$with(receiverOf(this, '$with.variableDesignation'), 'variableDesignation', args);
-}
-
-function wrapRecursivePatternArm4$variableDesignation$native(this: object) {
-	const tree = (this as Held)[READ_TREE]!;
-	return hydrateSlot<T.VariableDesignation | undefined>(this, '_variable_designation', tree);
-}
-
 const wrapSubpatterns$wrapper = {
 	kind: TSKindId.Subpattern,
 	content: 'pattern',
@@ -29523,36 +28916,30 @@ function viewListPattern(data: RecordPosition, tree: TreeHandle): T.ListPattern.
 }
 
 function viewRecursivePattern$type(this: RecordHandle) {
-	return viewSlot<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName | undefined>(
+	return viewSlot<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName | T.Type | undefined>(
 		this,
 		2,
+		4,
 		3,
-		1,
 		0,
 		2
 	);
 }
 function viewRecursivePattern$positionalPatternClause(this: RecordHandle) {
-	return viewSlot<T.PositionalPatternClause | undefined>(this, 5, 3, 8, 3, 3);
+	return viewSlot<T.PositionalPatternClause | undefined>(this, 6, 3, 8, 3, 3);
 }
 function viewRecursivePattern$propertyPatternClause(this: RecordHandle) {
-	return viewSlot<T.PropertyPatternClause | undefined>(this, 8, 5, 8, 5, 4);
+	return viewSlot<T.PropertyPatternClause | undefined>(this, 9, 5, 8, 5, 4);
 }
 function viewRecursivePattern$variableDesignation(this: RecordHandle) {
 	return viewSlot<TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier | undefined>(
 		this,
-		13,
+		14,
 		7,
 		10,
 		6,
 		5
 	);
-}
-function viewRecursivePattern$recursivePatternArm2(this: RecordHandle) {
-	return viewSlot<T.RecursivePatternArm2 | undefined>(this, 20, 25, 8, 25, 6);
-}
-function viewRecursivePattern$recursivePatternArm4(this: RecordHandle) {
-	return viewSlot<T.RecursivePatternArm4 | undefined>(this, 45, 21, 8, 21, 7);
 }
 function viewRecursivePattern(data: RecordPosition, tree: TreeHandle): T.RecursivePattern.Parsed {
 	const node = {
@@ -29566,8 +28953,6 @@ function viewRecursivePattern(data: RecordPosition, tree: TreeHandle): T.Recursi
 		positionalPatternClause: viewRecursivePattern$positionalPatternClause,
 		propertyPatternClause: viewRecursivePattern$propertyPatternClause,
 		variableDesignation: viewRecursivePattern$variableDesignation,
-		recursivePatternArm2: viewRecursivePattern$recursivePatternArm2,
-		recursivePatternArm4: viewRecursivePattern$recursivePatternArm4,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -29583,8 +28968,6 @@ function viewRecursivePattern(data: RecordPosition, tree: TreeHandle): T.Recursi
 		positionalPatternClause: $with$positionalPatternClause,
 		propertyPatternClause: $with$propertyPatternClause,
 		variableDesignation: $with$variableDesignation,
-		recursivePatternArm2: $with$recursivePatternArm2,
-		recursivePatternArm4: $with$recursivePatternArm4,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
@@ -34447,198 +33830,6 @@ function viewListPatternElements(data: RecordPosition, tree: TreeHandle): T.List
 	return node as unknown as T.ListPatternElements.Parsed;
 }
 
-function viewRecursivePatternArm1$positionalPatternClause(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.PositionalPatternClause>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Subpattern>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
-}
-function viewRecursivePatternArm1$propertyPatternClause(this: RecordHandle) {
-	return viewSlot<T.PropertyPatternClause | undefined>(this, 5, 5, 8, 5, 3);
-}
-function viewRecursivePatternArm1$positionalPatternClause$native(this: RecordHandle) {
-	return viewSlot<T.PositionalPatternClause>(this, 2, 3, 8, 3, 2);
-}
-function viewRecursivePatternArm1(data: RecordPosition, tree: TreeHandle): T.RecursivePatternArm1.Parsed {
-	const node = {
-		$type: TSKindId.RecursivePatternArm1 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		positionalPatternClause: viewRecursivePatternArm1$positionalPatternClause,
-		propertyPatternClause: viewRecursivePatternArm1$propertyPatternClause,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = {
-		positionalPatternClause: $with$positionalPatternClause,
-		propertyPatternClause: $with$propertyPatternClause,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm1.Parsed;
-}
-
-function viewRecursivePatternArm2$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 4, 3, 0, 2);
-}
-function viewRecursivePatternArm2$content(this: RecordHandle) {
-	return viewSlot<T.RecursivePatternArm1 | T.PropertyPatternClause>(this, 6, 10, 8, 10, 3);
-}
-function viewRecursivePatternArm2$variableDesignation(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.VariableDesignation | undefined>(this, 16, 9, 8, 9, 4),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier>(this, 2, 7, 10, 6, 2);
-			}
-		],
-		false
-	);
-}
-function viewRecursivePatternArm2$variableDesignation$native(this: RecordHandle) {
-	return viewSlot<T.VariableDesignation | undefined>(this, 16, 9, 8, 9, 4);
-}
-function viewRecursivePatternArm2(data: RecordPosition, tree: TreeHandle): T.RecursivePatternArm2.Parsed {
-	const node = {
-		$type: TSKindId.RecursivePatternArm2 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		type: viewRecursivePatternArm2$type,
-		content: viewRecursivePatternArm2$content,
-		variableDesignation: viewRecursivePatternArm2$variableDesignation,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = {
-		type: $with$type,
-		content: $with$content,
-		variableDesignation: $with$variableDesignation,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm2.Parsed;
-}
-
-function viewRecursivePatternArm3$positionalPatternClause(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.PositionalPatternClause>(this, 2, 3, 8, 3, 2),
-		[
-			function (this: RecordHandle) {
-				return viewSlots<T.Subpattern>(this, 2, 1, 3, 1, 0, 2);
-			}
-		],
-		true
-	);
-}
-function viewRecursivePatternArm3$propertyPatternClause(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.PropertyPatternClause>(this, 5, 5, 8, 5, 3),
-		[listElementsHop('subpatterns', 'items')],
-		true
-	);
-}
-function viewRecursivePatternArm3$positionalPatternClause$native(this: RecordHandle) {
-	return viewSlot<T.PositionalPatternClause>(this, 2, 3, 8, 3, 2);
-}
-function viewRecursivePatternArm3$propertyPatternClause$native(this: RecordHandle) {
-	return viewSlot<T.PropertyPatternClause>(this, 5, 5, 8, 5, 3);
-}
-function viewRecursivePatternArm3(data: RecordPosition, tree: TreeHandle): T.RecursivePatternArm3.Parsed {
-	const node = {
-		$type: TSKindId.RecursivePatternArm3 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		positionalPatternClause: viewRecursivePatternArm3$positionalPatternClause,
-		propertyPatternClause: viewRecursivePatternArm3$propertyPatternClause,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = {
-		positionalPatternClause: $with$positionalPatternClause,
-		propertyPatternClause: $with$propertyPatternClause,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm3.Parsed;
-}
-
-function viewRecursivePatternArm4$content(this: RecordHandle) {
-	return viewSlot<T.RecursivePatternArm3 | T.PropertyPatternClause>(this, 2, 10, 8, 10, 2);
-}
-function viewRecursivePatternArm4$variableDesignation(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.VariableDesignation | undefined>(this, 12, 9, 8, 9, 3),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier>(this, 2, 7, 10, 6, 2);
-			}
-		],
-		false
-	);
-}
-function viewRecursivePatternArm4$variableDesignation$native(this: RecordHandle) {
-	return viewSlot<T.VariableDesignation | undefined>(this, 12, 9, 8, 9, 3);
-}
-function viewRecursivePatternArm4(data: RecordPosition, tree: TreeHandle): T.RecursivePatternArm4.Parsed {
-	const node = {
-		$type: TSKindId.RecursivePatternArm4 as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		content: viewRecursivePatternArm4$content,
-		variableDesignation: viewRecursivePatternArm4$variableDesignation,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { content: $with$content, variableDesignation: $with$variableDesignation, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.RecursivePatternArm4.Parsed;
-}
-
 function viewSubpatterns$items(this: RecordHandle) {
 	return viewSlots<T.Subpattern>(this, 2, 1, 3, 1, 0, 2);
 }
@@ -36517,12 +35708,6 @@ function $with$readonly(this: Received<RecordPosition>, ...args: unknown[]): unk
 function $with$recordBase(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.recordBase'), _wrap, 'recordBase', args);
 }
-function $with$recursivePatternArm2(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.recursivePatternArm2'), _wrap, 'recursivePatternArm2', args);
-}
-function $with$recursivePatternArm4(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.recursivePatternArm4'), _wrap, 'recursivePatternArm4', args);
-}
 function $with$ref(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.ref'), _wrap, 'ref', args);
 }
@@ -36955,10 +36140,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.SwitchSectionArm1]: (d, t) => wrapSwitchSectionArm1(d as unknown as T.SwitchSectionArm1, t),
 	[TSKindId.SwitchSectionArm2]: (d, t) => wrapSwitchSectionArm2(d as unknown as T.SwitchSectionArm2, t),
 	[TSKindId.ListPatternElements]: (d, t) => wrapListPatternElements(d as unknown as T.ListPatternElements, t),
-	[TSKindId.RecursivePatternArm1]: (d, t) => wrapRecursivePatternArm1(d as unknown as T.RecursivePatternArm1, t),
-	[TSKindId.RecursivePatternArm2]: (d, t) => wrapRecursivePatternArm2(d as unknown as T.RecursivePatternArm2, t),
-	[TSKindId.RecursivePatternArm3]: (d, t) => wrapRecursivePatternArm3(d as unknown as T.RecursivePatternArm3, t),
-	[TSKindId.RecursivePatternArm4]: (d, t) => wrapRecursivePatternArm4(d as unknown as T.RecursivePatternArm4, t),
 	[TSKindId.Subpatterns]: (d, t) => wrapSubpatterns(d as unknown as T.Subpatterns, t),
 	[TSKindId.SwitchExpressionArms]: (d, t) => wrapSwitchExpressionArms(d as unknown as T.SwitchExpressionArms, t),
 	[TSKindId.AnonymousObjectMemberDeclarators]: (d, t) =>
@@ -37250,10 +36431,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.SwitchSectionArm1]: viewSwitchSectionArm1,
 	[TSKindId.SwitchSectionArm2]: viewSwitchSectionArm2,
 	[TSKindId.ListPatternElements]: viewListPatternElements,
-	[TSKindId.RecursivePatternArm1]: viewRecursivePatternArm1,
-	[TSKindId.RecursivePatternArm2]: viewRecursivePatternArm2,
-	[TSKindId.RecursivePatternArm3]: viewRecursivePatternArm3,
-	[TSKindId.RecursivePatternArm4]: viewRecursivePatternArm4,
 	[TSKindId.Subpatterns]: viewSubpatterns,
 	[TSKindId.SwitchExpressionArms]: viewSwitchExpressionArms,
 	[TSKindId.AnonymousObjectMemberDeclarators]: viewAnonymousObjectMemberDeclarators,
@@ -37836,39 +37013,6 @@ export const nativeSlots: NativeSlots = Object.freeze({
 			return isRecordPosition(this)
 				? viewSwitchSectionArm1$whenClause$native.call(this as unknown as RecordHandle)
 				: wrapSwitchSectionArm1$whenClause$native.call(this);
-		}
-	}),
-	[TSKindId.RecursivePatternArm1]: Object.freeze({
-		positionalPatternClause(this: object) {
-			return isRecordPosition(this)
-				? viewRecursivePatternArm1$positionalPatternClause$native.call(this as unknown as RecordHandle)
-				: wrapRecursivePatternArm1$positionalPatternClause$native.call(this);
-		}
-	}),
-	[TSKindId.RecursivePatternArm2]: Object.freeze({
-		variableDesignation(this: object) {
-			return isRecordPosition(this)
-				? viewRecursivePatternArm2$variableDesignation$native.call(this as unknown as RecordHandle)
-				: wrapRecursivePatternArm2$variableDesignation$native.call(this);
-		}
-	}),
-	[TSKindId.RecursivePatternArm3]: Object.freeze({
-		positionalPatternClause(this: object) {
-			return isRecordPosition(this)
-				? viewRecursivePatternArm3$positionalPatternClause$native.call(this as unknown as RecordHandle)
-				: wrapRecursivePatternArm3$positionalPatternClause$native.call(this);
-		},
-		propertyPatternClause(this: object) {
-			return isRecordPosition(this)
-				? viewRecursivePatternArm3$propertyPatternClause$native.call(this as unknown as RecordHandle)
-				: wrapRecursivePatternArm3$propertyPatternClause$native.call(this);
-		}
-	}),
-	[TSKindId.RecursivePatternArm4]: Object.freeze({
-		variableDesignation(this: object) {
-			return isRecordPosition(this)
-				? viewRecursivePatternArm4$variableDesignation$native.call(this as unknown as RecordHandle)
-				: wrapRecursivePatternArm4$variableDesignation$native.call(this);
 		}
 	}),
 	[TSKindId.CollectionElements]: Object.freeze({

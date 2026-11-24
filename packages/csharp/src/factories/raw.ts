@@ -260,10 +260,6 @@ export const buildForStatementConditionsInitializer = dispatched(
 export const buildSwitchSectionArm1 = dispatched(() => backend().buildSwitchSectionArm1);
 export const buildSwitchSectionArm2 = dispatched(() => backend().buildSwitchSectionArm2);
 export const buildListPatternElements = dispatched(() => backend().buildListPatternElements);
-export const buildRecursivePatternArm1 = dispatched(() => backend().buildRecursivePatternArm1);
-export const buildRecursivePatternArm2 = dispatched(() => backend().buildRecursivePatternArm2);
-export const buildRecursivePatternArm3 = dispatched(() => backend().buildRecursivePatternArm3);
-export const buildRecursivePatternArm4 = dispatched(() => backend().buildRecursivePatternArm4);
 export const buildSubpatterns = dispatched(() => backend().buildSubpatterns);
 export const buildSwitchExpressionArms = dispatched(() => backend().buildSwitchExpressionArms);
 export const buildAnonymousObjectMemberDeclarators = dispatched(() => backend().buildAnonymousObjectMemberDeclarators);
@@ -568,10 +564,6 @@ export const _factoryMap = {
 	switch_section_arm1: buildSwitchSectionArm1,
 	switch_section_arm2: buildSwitchSectionArm2,
 	list_pattern_elements: buildListPatternElements,
-	recursive_pattern_arm1: buildRecursivePatternArm1,
-	recursive_pattern_arm2: buildRecursivePatternArm2,
-	recursive_pattern_arm3: buildRecursivePatternArm3,
-	recursive_pattern_arm4: buildRecursivePatternArm4,
 	subpatterns: buildSubpatterns,
 	switch_expression_arms: buildSwitchExpressionArms,
 	anonymous_object_member_declarators: buildAnonymousObjectMemberDeclarators,

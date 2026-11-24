@@ -426,64 +426,10 @@ export const declarationPattern$parenthesizedVariableDesignation =
 		);
 	};
 
-export const recursivePatternArm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'positionalPatternClause' || key === 'propertyPatternClause') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
-	};
-export const recursivePatternArm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
-	};
-
-export const recursivePatternArm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
-		const rest: Record<string, unknown> = {};
-		const inner: Record<string, unknown> = {};
-		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'positionalPatternClause' || key === 'propertyPatternClause') inner[key] = value;
-			else rest[key] = value;
-		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
-	};
-export const recursivePatternArm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'content'> & { content: ArgsOf<CF>[0] },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { content: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(seated) } as never, options as never);
-	};
-
 export const recursivePattern$branch =
 	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
 	(...args: readonly unknown[]): R =>
 		_s<R>(parent)(...args);
-export const recursivePattern$positionalPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'positionalPatternClause'> & { positionalPatternClause: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { positionalPatternClause: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)(
-			{ ...rest, positionalPatternClause: _c(child)(...seated) } as never,
-			options as never
-		);
-	};
 export const recursivePattern$discard =
 	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'variableDesignation'>, options?: OptionsArg<PF>): ReturnType<PF> =>
@@ -500,154 +446,6 @@ export const recursivePattern$parenthesizedVariableDesignation =
 			options as never
 		);
 	};
-export const recursivePattern$arm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$arm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$positionalPatternClausediscard =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'variableDesignation'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, variableDesignation: value } as never, options as never);
-export const recursivePattern$positionalPatternClauseparenthesizedVariableDesignation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'variableDesignation'> & { variableDesignation: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { variableDesignation: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)(
-			{ ...rest, variableDesignation: _c(child)(...seated) } as never,
-			options as never
-		);
-	};
-export const recursivePattern$positionalPatternClausearm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$positionalPatternClausearm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$positionalPatternClausearm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$positionalPatternClausearm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$positionalPatternClausearm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$positionalPatternClausearm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$discardarm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$discardarm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$discardarm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$discardarm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$discardarm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$discardarm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$parenthesizedVariableDesignationarm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$parenthesizedVariableDesignationarm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm2: _c(child)(...args) });
-export const recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2$recursivePatternArm1arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2$propertyPatternClausearm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
-export const recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)({ recursivePatternArm4: _c(child)(...args) });
 
 export const varPattern$discard =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
@@ -1322,9 +1120,7 @@ export const switchSectionArm1$recursive =
 				key === 'type' ||
 				key === 'positionalPatternClause' ||
 				key === 'propertyPatternClause' ||
-				key === 'variableDesignation' ||
-				key === 'recursivePatternArm2' ||
-				key === 'recursivePatternArm4'
+				key === 'variableDesignation'
 			)
 				inner[key] = value;
 			else rest[key] = value;
@@ -1704,12 +1500,6 @@ export const switchSectionArm1$declaration$parenthesizedVariableDesignation =
 		const { pattern: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
 	};
-export const switchSectionArm1$recursive$positionalPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
 export const switchSectionArm1$recursive$discard =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
@@ -1717,42 +1507,6 @@ export const switchSectionArm1$recursive$discard =
 		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
 	};
 export const switchSectionArm1$recursive$parenthesizedVariableDesignation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm4$propertyPatternClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { pattern: seated, ...rest } = config;
@@ -1777,180 +1531,6 @@ export const switchSectionArm1$parenthesizedWithDesignation$discard =
 		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
 	};
 export const switchSectionArm1$parenthesizedWithDesignation$parenthesizedVariableDesignation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$discard =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$arm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$discard$arm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$discard$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$discard$arm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$discard$arm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$discard$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$discard$arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$propertyPatternClause$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
 		const { pattern: seated, ...rest } = config;
@@ -2201,39 +1781,11 @@ export const switchSectionArm2$switchSectionArm1$declaration$parenthesizedVariab
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const switchSectionArm2$switchSectionArm1$recursive$discard =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
 export const switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const switchSectionArm2$switchSectionArm1$recursive$arm2 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const switchSectionArm2$switchSectionArm1$recursive$arm4 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3 =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
-export const switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>
 		_p<ReturnType<PF>>(parent)(_c(child)(...args));
@@ -2816,15 +2368,6 @@ export const switchSection$arm2$switchSectionArm1$declaration$parenthesizedVaria
 		const { switchSectionArm2: seated, ...rest } = config;
 		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
 	};
-export const switchSection$arm2$switchSectionArm1$recursive$positionalPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { switchSectionArm2: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
-	};
 export const switchSection$arm2$switchSectionArm1$recursive$discard =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
@@ -2835,60 +2378,6 @@ export const switchSection$arm2$switchSectionArm1$recursive$discard =
 		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
 	};
 export const switchSection$arm2$switchSectionArm1$recursive$parenthesizedVariableDesignation =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { switchSectionArm2: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSection$arm2$switchSectionArm1$recursive$arm2 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { switchSectionArm2: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSection$arm2$switchSectionArm1$recursive$arm4 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { switchSectionArm2: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSection$arm2$switchSectionArm1$recursive$arm2$recursivePatternArm1 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { switchSectionArm2: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSection$arm2$switchSectionArm1$recursive$arm2$propertyPatternClause =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { switchSectionArm2: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSection$arm2$switchSectionArm1$recursive$arm4$recursivePatternArm3 =
-	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(
-		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },
-		options?: OptionsArg<PF>
-	): ReturnType<PF> => {
-		const { switchSectionArm2: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, switchSectionArm2: _c(child)(...seated) } as never, options as never);
-	};
-export const switchSection$arm2$switchSectionArm1$recursive$arm4$propertyPatternClause =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(
 		config: OmitEach<ArgsOf<PF>[0], 'switchSectionArm2'> & { switchSectionArm2: ArgsOf<CF> },

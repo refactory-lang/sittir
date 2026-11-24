@@ -41,11 +41,11 @@ describe("C#'s reader", () => {
 	);
 
 	it(
-		"routes recursive_pattern's positional_pattern_clause by its field in arms 0 to 2 and by its kind in the bare arm 3",
+		"routes recursive_pattern's variable_designation by its field for an identifier and by its kind for a discard or a parenthesized designation",
 		async () => {
 			const { nodeMap } = await csharpEmit();
-			const slot = nodeMap.nodes.get('recursive_pattern')!.slots.find((s) => s.storageName === 'positional_pattern_clause')!;
-			expect(queryRoutesOf(slot, nodeMap)).toEqual({ fields: ['positional_pattern_clause'], kinds: ['positional_pattern_clause'] });
+			const slot = nodeMap.nodes.get('recursive_pattern')!.slots.find((s) => s.storageName === 'variable_designation')!;
+			expect(queryRoutesOf(slot, nodeMap)).toEqual({ fields: ['name'], kinds: ['discard', 'parenthesized_variable_designation'] });
 		},
 		FULL_PIPELINE_TIMEOUT
 	);
@@ -56,7 +56,7 @@ describe("C#'s reader", () => {
 			const { halts, nodeRs } = await csharpEmit();
 			expect(halts).toEqual([]);
 			const struct = nodeRs.slice(nodeRs.indexOf('pub struct RecursivePatternNode {'));
-			expect(struct.slice(0, struct.indexOf('\n}'))).toContain('#[slot(field = field::POSITIONAL_PATTERN_CLAUSE, untagged,');
+			expect(struct.slice(0, struct.indexOf('\n}'))).toContain('#[slot(field = field::NAME, untagged,');
 		},
 		FULL_PIPELINE_TIMEOUT
 	);

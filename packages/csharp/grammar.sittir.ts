@@ -14,7 +14,6 @@ export default grammar(enrich(base), wire({
 	expectDiagnostics: {
 		'token-interior-unstructurable': ['identifier_token'],
 		'unclassifiable-shape': ['interpolated_string_expression', 'lambda_expression', 'parameter', 'recursive_pattern'],
-		'union-slot-mixed-row': ['recursive_pattern'],
 		'union-slot-routed-repeated': ['for_statement_conditions_initializer']
 	},
 	renderAs: (_$) => ({
@@ -66,6 +65,27 @@ export default grammar(enrich(base), wire({
 			{ '2/0': variant('alias') }
 		],
 		_lambda_expression_init: { '.': ($) => seq(field('attribute_lists', repeat($._attribute_list)), staticAsync(), optional(field('type', $.type)), field('parameters', $._lambda_parameters)) },
+		recursive_pattern: {
+			'.': ($) => {
+				const positional = () => field('positional_pattern_clause', $.positional_pattern_clause);
+				const property = () => field('property_pattern_clause', $.property_pattern_clause);
+				const designation = () => $._variable_designation;
+				return choice(
+					seq(field('type', prec.dynamic(1, $._name)), positional(), optional(property()), designation()),
+					seq(field('type', prec.dynamic(-1, $._name)), positional(), optional(property())),
+					seq(field('positional_pattern_clause', prec.dynamic(1, $.positional_pattern_clause)), designation()),
+					positional(),
+					seq(field('type', $.type), positional(), optional(property()), designation()),
+					seq(field('type', $.type), positional(), optional(property())),
+					seq(field('type', $.type), property(), designation()),
+					seq(field('type', $.type), property()),
+					seq(positional(), property(), designation()),
+					seq(positional(), property()),
+					seq(property(), designation()),
+					property()
+				);
+			}
+		},
 		order_by_clause: { '.': ($) => seq('orderby', field('orderings', seq($.ordering, repeat(seq(',', $.ordering))))) },
 		anonymous_method_expression: { '.': ($) => seq(staticAsync(), 'delegate', optional(field('parameters', $.parameter_list)), field('block', $.block)) },
 		parameter: {

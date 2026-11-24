@@ -1,7 +1,7 @@
 {
 	"parser": {
-		"source": "d50a0bcc5d8ba7fe9a22062e4ff3154394cbe396632356f1043654d0c957366b",
-		"wasm": "05ed59dcd20ff90bd56f21c12bfad776e8f478b48aaf3ce6e52121464918092b"
+		"source": "0a107de93981d3b0bb811e5c3b1203e9d250bc2cf8e0cfa0bf4a9a0c653d2cef",
+		"wasm": "dafead1105b47f21ac7df78fd2b6d9b8e7dfb63a754011c813dfbe8b10662330"
 	},
 	"inputs": "9c57488498f3e695e5b9a99469c514d1b7cdc51d7e22109232ed7dbd8ce06f46",
 	"seams": [
@@ -334,23 +334,23 @@
 		"with_initializers"
 	],
 	"blocked": [
-		{"seam":"interpolation_format_clause:members.1","state":2169,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2199,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2208,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2261,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2451,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2456,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2464,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2491,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2547,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2563,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":2570,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":3052,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":3066,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":3077,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":4539,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":4546,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
-		{"seam":"interpolation_format_clause:members.1","state":4550,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2170,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2196,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2207,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2262,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2448,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2453,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2458,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2501,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2541,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2589,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":2607,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":3039,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":3041,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":3056,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":4579,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":4587,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
+		{"seam":"interpolation_format_clause:members.1","state":4598,"previous":":","next":":","reason":"spaced text has a parse error away from the seam"},
 		{"seam":"raw_string_literal:members.1","state":15,"previous":"\"\"\"","next":"\"","reason":"seam tokens not where built"}
 	]
 }

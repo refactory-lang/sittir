@@ -708,32 +708,9 @@ export interface IsGuards {
 	listPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListPattern };
-	readonly recursivePattern: {
-		<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePattern };
-		positionalPatternClause<T extends { readonly $type: number }>(
-			v: T
-		): v is T & { readonly $type: TSKindId.RecursivePattern };
-		readonly arm2: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RecursivePattern };
-			recursivePatternArm1<T extends { readonly $type: number }>(
-				v: T
-			): v is T & { readonly $type: TSKindId.RecursivePattern };
-			propertyPatternClause<T extends { readonly $type: number }>(
-				v: T
-			): v is T & { readonly $type: TSKindId.RecursivePattern };
-		};
-		readonly arm4: {
-			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RecursivePattern };
-			recursivePatternArm3<T extends { readonly $type: number }>(
-				v: T
-			): v is T & { readonly $type: TSKindId.RecursivePattern };
-			propertyPatternClause<T extends { readonly $type: number }>(
-				v: T
-			): v is T & { readonly $type: TSKindId.RecursivePattern };
-		};
-	};
+	recursivePattern<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePattern };
 	positionalPatternClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PositionalPatternClause };
@@ -1131,18 +1108,6 @@ export interface IsGuards {
 	listPatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ListPatternElements };
-	recursivePatternArm1<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePatternArm1 };
-	recursivePatternArm2<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePatternArm2 };
-	recursivePatternArm3<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePatternArm3 };
-	recursivePatternArm4<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePatternArm4 };
 	subpatterns<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Subpatterns };
@@ -1508,32 +1473,9 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DeclarationPattern };
 		discard<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Discard>;
-		readonly recursive: {
-			<T extends { readonly $type: number } | number>(
-				v: T
-			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePattern };
-			positionalPatternClause<T extends { readonly $type: number }>(
-				v: T
-			): v is T & { readonly $type: TSKindId.RecursivePattern };
-			readonly arm2: {
-				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RecursivePattern };
-				recursivePatternArm1<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.RecursivePattern };
-				propertyPatternClause<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.RecursivePattern };
-			};
-			readonly arm4: {
-				<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RecursivePattern };
-				recursivePatternArm3<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.RecursivePattern };
-				propertyPatternClause<T extends { readonly $type: number }>(
-					v: T
-				): v is T & { readonly $type: TSKindId.RecursivePattern };
-			};
-		};
+		recursive<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecursivePattern };
 		var<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.VarPattern };
@@ -1747,36 +1689,36 @@ export interface IsGuards {
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RawStringContent };
 }
 
-const _supertype_typeDeclaration_ids = new Set<number>([266, 268, 555, 556, 274, 276, 278]);
-const _supertype_enumDeclaration_ids = new Set<number>([555, 556]);
-const _supertype_recordBase_ids = new Set<number>([561, 562]);
-const _supertype_declarationListBody_ids = new Set<number>([557, 558]);
-const _supertype_typeParameterConstraint_ids = new Set<number>([550, 551, 552, 553, 554]);
+const _supertype_typeDeclaration_ids = new Set<number>([266, 268, 551, 552, 274, 276, 278]);
+const _supertype_enumDeclaration_ids = new Set<number>([551, 552]);
+const _supertype_recordBase_ids = new Set<number>([557, 558]);
+const _supertype_declarationListBody_ids = new Set<number>([553, 554]);
+const _supertype_typeParameterConstraint_ids = new Set<number>([546, 547, 548, 549, 550]);
 const _supertype_declaration_ids = new Set<number>([
-	266, 268, 555, 556, 276, 294, 298, 299, 300, 278, 295, 297, 303, 274, 263, 290, 291, 305, 255, 488
+	266, 268, 551, 552, 276, 294, 298, 299, 300, 278, 295, 297, 303, 274, 263, 290, 291, 305, 255, 488
 ]);
-const _supertype_typeArgumentList_ids = new Set<number>([559, 560]);
+const _supertype_typeArgumentList_ids = new Set<number>([555, 556]);
 const _supertype_type_ids = new Set<number>([
 	329, 330, 323, 325, 486, 326, 333, 334, 336, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
 	344, 340, 342
 ]);
 const _supertype_statement_ids = new Set<number>([
-	314, 347, 348, 349, 350, 351, 352, 353, 354, 356, 357, 358, 548, 549, 362, 363, 368, 369, 370, 372, 373, 374, 375,
+	314, 347, 348, 349, 350, 351, 352, 353, 354, 356, 357, 358, 544, 545, 362, 363, 368, 369, 370, 372, 373, 374, 375,
 	376, 377, 491
 ]);
-const _supertype_switchStatement_ids = new Set<number>([548, 549]);
+const _supertype_switchStatement_ids = new Set<number>([544, 545]);
 const _supertype_pattern_ids = new Set<number>([381, 396, 113, 388, 385, 393, 380, 384, 392, 395, 394, 387, 386]);
 const _supertype_expression_ids = new Set<number>([
 	69, 404, 437, 422, 423, 162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484, 403, 429, 405, 406, 434,
 	446, 447, 425, 426, 424, 427, 428, 459, 430, 435, 465, 449, 466, 469, 470, 471, 472, 473, 474, 475, 476, 452, 453,
-	454, 456, 457, 458, 463, 408, 494, 615, 64, 444, 477, 486, 326, 436, 407, 448
+	454, 456, 457, 458, 463, 408, 494, 611, 64, 444, 477, 486, 326, 436, 407, 448
 ]);
 const _supertype_nonLvalueExpression_ids = new Set<number>([
 	69, 404, 437, 422, 423, 162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484, 403, 429, 405, 406, 434,
 	446, 447, 425, 426, 424, 427, 428, 459, 430, 435, 465, 449, 466, 469, 470, 471, 472, 473, 474, 475, 476, 452, 453,
 	454, 456, 457, 458, 463, 408, 494
 ]);
-const _supertype_lvalueExpression_ids = new Set<number>([615, 64, 444, 477, 486, 326, 436, 407, 448]);
+const _supertype_lvalueExpression_ids = new Set<number>([611, 64, 444, 477, 486, 326, 436, 407, 448]);
 const _supertype_literal_ids = new Set<number>([162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484]);
 const _supertype_integerLiteral_ids = new Set<number>([199, 200, 201]);
 const _supertype_realLiteral_ids = new Set<number>([202, 203, 204, 205]);
@@ -1945,13 +1887,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CastExpression_guard = _g(TSKindId.CastExpression);
 	const _kind_DeclarationPattern_guard = _g(TSKindId.DeclarationPattern);
 	const _kind_Discard_guard = _mg(TSKindId.Discard);
-	const _kind_PositionalPatternClause_guard = _g(TSKindId.PositionalPatternClause);
 	const _kind_RecursivePattern_guard = _g(TSKindId.RecursivePattern);
-	const _kind_RecursivePatternArm1_guard = _g(TSKindId.RecursivePatternArm1);
-	const _kind_RecursivePatternArm2_guard = _g(TSKindId.RecursivePatternArm2);
-	const _kind_PropertyPatternClause_guard = _g(TSKindId.PropertyPatternClause);
-	const _kind_RecursivePatternArm3_guard = _g(TSKindId.RecursivePatternArm3);
-	const _kind_RecursivePatternArm4_guard = _g(TSKindId.RecursivePatternArm4);
 	const _kind_VarPattern_guard = _g(TSKindId.VarPattern);
 	const _kind_NegatedPattern_guard = _g(TSKindId.NegatedPattern);
 	const _kind_ParenthesizedPatternWithDesignation_guard = _g(TSKindId.ParenthesizedPatternWithDesignation);
@@ -2033,6 +1969,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CatchDeclaration_guard = _g(TSKindId.CatchDeclaration);
 	const _kind_CatchFilterClause_guard = _g(TSKindId.CatchFilterClause);
 	const _kind_FinallyClause_guard = _g(TSKindId.FinallyClause);
+	const _kind_PositionalPatternClause_guard = _g(TSKindId.PositionalPatternClause);
+	const _kind_PropertyPatternClause_guard = _g(TSKindId.PropertyPatternClause);
 	const _kind_SubpatternArm_guard = _g(TSKindId.SubpatternArm);
 	const _kind_Subpattern_guard = _g(TSKindId.Subpattern);
 	const _kind_VariableDesignation_guard = _g(TSKindId.VariableDesignation);
@@ -2194,29 +2132,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		complexInvocationExpression: _at(_kind_ConstantPattern_guard, 'content', _kind_ComplexInvocationExpression_guard),
 		castExpression: _at(_kind_ConstantPattern_guard, 'content', _kind_CastExpression_guard)
 	});
-	const _form_RecursivePattern_guard = _vg(_g(TSKindId.RecursivePattern), {
-		positionalPatternClause: _at(
-			_kind_RecursivePattern_guard,
-			'positionalPatternClause',
-			_kind_PositionalPatternClause_guard
-		),
-		arm2: _at(
-			_kind_RecursivePattern_guard,
-			'recursivePatternArm2',
-			_vg(_g(TSKindId.RecursivePatternArm2), {
-				recursivePatternArm1: _at(_kind_RecursivePatternArm2_guard, 'content', _kind_RecursivePatternArm1_guard),
-				propertyPatternClause: _at(_kind_RecursivePatternArm2_guard, 'content', _kind_PropertyPatternClause_guard)
-			})
-		),
-		arm4: _at(
-			_kind_RecursivePattern_guard,
-			'recursivePatternArm4',
-			_vg(_g(TSKindId.RecursivePatternArm4), {
-				recursivePatternArm3: _at(_kind_RecursivePatternArm4_guard, 'content', _kind_RecursivePatternArm3_guard),
-				propertyPatternClause: _at(_kind_RecursivePatternArm4_guard, 'content', _kind_PropertyPatternClause_guard)
-			})
-		)
-	});
 	const _form_AttributeArgument_guard = _vg(_g(TSKindId.AttributeArgument), {
 		arm: _at(_kind_AttributeArgument_guard, 'attributeArgumentArm', _kind_AttributeArgumentArm_guard)
 	});
@@ -2331,7 +2246,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		constant: _form_ConstantPattern_guard,
 		declaration: _kind_DeclarationPattern_guard,
 		discard: _kind_Discard_guard,
-		recursive: _form_RecursivePattern_guard,
+		recursive: _kind_RecursivePattern_guard,
 		var: _kind_VarPattern_guard,
 		negated: _kind_NegatedPattern_guard,
 		parenthesizedWithDesignation: _kind_ParenthesizedPatternWithDesignation_guard,
@@ -2503,7 +2418,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		varPattern: _kind_VarPattern_guard,
 		typePattern: _kind_TypePattern_guard,
 		listPattern: _kind_ListPattern_guard,
-		recursivePattern: _form_RecursivePattern_guard,
+		recursivePattern: _kind_RecursivePattern_guard,
 		positionalPatternClause: _kind_PositionalPatternClause_guard,
 		propertyPatternClause: _kind_PropertyPatternClause_guard,
 		subpattern: _form_Subpattern_guard,
@@ -2622,10 +2537,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		switchSectionArm1: _kind_SwitchSectionArm1_guard,
 		switchSectionArm2: _kind_SwitchSectionArm2_guard,
 		listPatternElements: _kind_ListPatternElements_guard,
-		recursivePatternArm1: _kind_RecursivePatternArm1_guard,
-		recursivePatternArm2: _kind_RecursivePatternArm2_guard,
-		recursivePatternArm3: _kind_RecursivePatternArm3_guard,
-		recursivePatternArm4: _kind_RecursivePatternArm4_guard,
 		subpatterns: _kind_Subpatterns_guard,
 		switchExpressionArms: _kind_SwitchExpressionArms_guard,
 		anonymousObjectMemberDeclarators: _kind_AnonymousObjectMemberDeclarators_guard,

@@ -1171,9 +1171,7 @@ The classification left after every structural check: an all-text subtree is `'p
 
 ### `packages/codegen/src/compiler/collect-slots.ts::relaxToOptional`
 
-```text
-/** Relax a slot's singular/required values to optional (cross-arm absence). */
-```
+Relaxes a slot that some arm of its choice doesn't hold: the slot is no longer required, each single value becomes optional and each non-empty list a list. Values the relaxing makes equal collapse to one, as a slot one arm requires and another holds optionally would otherwise list its kind twice.
 
 ### `packages/codegen/src/compiler/collect-slots.ts::slotMultiplicity`
 

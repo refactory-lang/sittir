@@ -544,80 +544,6 @@ export interface Routes<Table extends AnyTable> {
 		readonly discard: Routes<Table>['declarationPattern$discard'];
 		readonly parenthesizedVariableDesignation: Routes<Table>['declarationPattern$parenthesizedVariableDesignation'];
 	};
-	readonly recursivePatternArm2$recursivePatternArm1: <
-		const V extends OmitEach<ArgsOf<Table['buildRecursivePatternArm2']>[0], 'content'> &
-			ArgsOf<Table['buildRecursivePatternArm1']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRecursivePatternArm2']>[0], 'content'> &
-					ArgsOf<Table['buildRecursivePatternArm1']>[0]
-			>,
-		options?: OptionsArg<Table['buildRecursivePatternArm2']>
-	) => ReturnType<Table['buildRecursivePatternArm2']>;
-	readonly recursivePatternArm2$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildRecursivePatternArm2']>[0], 'content'> & {
-			content: ArgsOf<Table['buildPropertyPatternClause']>[0];
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRecursivePatternArm2']>[0], 'content'> & {
-					content: ArgsOf<Table['buildPropertyPatternClause']>[0];
-				}
-			>,
-		options?: OptionsArg<Table['buildRecursivePatternArm2']>
-	) => ReturnType<Table['buildRecursivePatternArm2']>;
-	readonly recursivePatternArm2: {
-		readonly recursivePatternArm1: Routes<Table>['recursivePatternArm2$recursivePatternArm1'];
-		readonly propertyPatternClause: Routes<Table>['recursivePatternArm2$propertyPatternClause'];
-	};
-	readonly recursivePatternArm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildRecursivePatternArm4']>[0], 'content'> &
-			ArgsOf<Table['buildRecursivePatternArm3']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRecursivePatternArm4']>[0], 'content'> &
-					ArgsOf<Table['buildRecursivePatternArm3']>[0]
-			>,
-		options?: OptionsArg<Table['buildRecursivePatternArm4']>
-	) => ReturnType<Table['buildRecursivePatternArm4']>;
-	readonly recursivePatternArm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildRecursivePatternArm4']>[0], 'content'> & {
-			content: ArgsOf<Table['buildPropertyPatternClause']>[0];
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildRecursivePatternArm4']>[0], 'content'> & {
-					content: ArgsOf<Table['buildPropertyPatternClause']>[0];
-				}
-			>,
-		options?: OptionsArg<Table['buildRecursivePatternArm4']>
-	) => ReturnType<Table['buildRecursivePatternArm4']>;
-	readonly recursivePatternArm4: {
-		readonly recursivePatternArm3: Routes<Table>['recursivePatternArm4$recursivePatternArm3'];
-		readonly propertyPatternClause: Routes<Table>['recursivePatternArm4$propertyPatternClause'];
-	};
-	readonly recursivePattern$positionalPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'positionalPatternClause'> & {
-			positionalPatternClause: ArgsOf<Table['buildPositionalPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'positionalPatternClause'> & {
-					positionalPatternClause: ArgsOf<Table['buildPositionalPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['recursivePattern$seated']>
-	) => ReturnType<Table['recursivePattern$seated']>;
 	readonly recursivePattern$discard: <
 		const V extends OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'variableDesignation'>
 	>(
@@ -638,259 +564,9 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['recursivePattern$seated']>
 	) => ReturnType<Table['recursivePattern$seated']>;
-	readonly recursivePattern$arm2: Seat<
-		ArgsOf<Table['buildRecursivePatternArm2']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm4: Seat<
-		ArgsOf<Table['buildRecursivePatternArm4']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm2$recursivePatternArm1: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$recursivePatternArm1']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm2$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$propertyPatternClause']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$recursivePatternArm3']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$propertyPatternClause']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$positionalPatternClause$applied: <
-		const V extends OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'positionalPatternClause'> & {
-			positionalPatternClause: ArgsOf<Table['buildPositionalPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'positionalPatternClause'> & {
-					positionalPatternClause: ArgsOf<Table['buildPositionalPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['recursivePattern$seated']>
-	) => ReturnType<Table['recursivePattern$seated']>;
-	readonly recursivePattern$positionalPatternClausediscard: <
-		const V extends OmitEach<
-			ArgsOf<Routes<Table>['recursivePattern$positionalPatternClause$applied']>[0],
-			'variableDesignation'
-		>
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Routes<Table>['recursivePattern$positionalPatternClause$applied']>[0], 'variableDesignation'>
-			>,
-		options?: OptionsArg<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	) => ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>;
-	readonly recursivePattern$positionalPatternClauseparenthesizedVariableDesignation: <
-		const V extends OmitEach<
-			ArgsOf<Routes<Table>['recursivePattern$positionalPatternClause$applied']>[0],
-			'variableDesignation'
-		> & { variableDesignation: ArgsOf<Table['buildParenthesizedVariableDesignation']> }
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<
-					ArgsOf<Routes<Table>['recursivePattern$positionalPatternClause$applied']>[0],
-					'variableDesignation'
-				> & { variableDesignation: ArgsOf<Table['buildParenthesizedVariableDesignation']> }
-			>,
-		options?: OptionsArg<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	) => ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>;
-	readonly recursivePattern$positionalPatternClausearm2: Seat<
-		ArgsOf<Table['buildRecursivePatternArm2']>,
-		ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	>;
-	readonly recursivePattern$positionalPatternClausearm4: Seat<
-		ArgsOf<Table['buildRecursivePatternArm4']>,
-		ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	>;
-	readonly recursivePattern$positionalPatternClausearm2$recursivePatternArm1: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$recursivePatternArm1']>,
-		ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	>;
-	readonly recursivePattern$positionalPatternClausearm2$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	>;
-	readonly recursivePattern$positionalPatternClausearm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$recursivePatternArm3']>,
-		ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	>;
-	readonly recursivePattern$positionalPatternClausearm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$positionalPatternClause$applied']>
-	>;
-	readonly recursivePattern$discard$applied: <
-		const V extends OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'variableDesignation'>
-	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'variableDesignation'>>,
-		options?: OptionsArg<Table['recursivePattern$seated']>
-	) => ReturnType<Table['recursivePattern$seated']>;
-	readonly recursivePattern$discardarm2: Seat<
-		ArgsOf<Table['buildRecursivePatternArm2']>,
-		ReturnType<Routes<Table>['recursivePattern$discard$applied']>
-	>;
-	readonly recursivePattern$discardarm4: Seat<
-		ArgsOf<Table['buildRecursivePatternArm4']>,
-		ReturnType<Routes<Table>['recursivePattern$discard$applied']>
-	>;
-	readonly recursivePattern$discardarm2$recursivePatternArm1: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$recursivePatternArm1']>,
-		ReturnType<Routes<Table>['recursivePattern$discard$applied']>
-	>;
-	readonly recursivePattern$discardarm2$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$discard$applied']>
-	>;
-	readonly recursivePattern$discardarm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$recursivePatternArm3']>,
-		ReturnType<Routes<Table>['recursivePattern$discard$applied']>
-	>;
-	readonly recursivePattern$discardarm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$discard$applied']>
-	>;
-	readonly recursivePattern$parenthesizedVariableDesignation$applied: <
-		const V extends OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'variableDesignation'> & {
-			variableDesignation: ArgsOf<Table['buildParenthesizedVariableDesignation']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['recursivePattern$seated']>[0], 'variableDesignation'> & {
-					variableDesignation: ArgsOf<Table['buildParenthesizedVariableDesignation']>;
-				}
-			>,
-		options?: OptionsArg<Table['recursivePattern$seated']>
-	) => ReturnType<Table['recursivePattern$seated']>;
-	readonly recursivePattern$parenthesizedVariableDesignationarm2: Seat<
-		ArgsOf<Table['buildRecursivePatternArm2']>,
-		ReturnType<Routes<Table>['recursivePattern$parenthesizedVariableDesignation$applied']>
-	>;
-	readonly recursivePattern$parenthesizedVariableDesignationarm4: Seat<
-		ArgsOf<Table['buildRecursivePatternArm4']>,
-		ReturnType<Routes<Table>['recursivePattern$parenthesizedVariableDesignation$applied']>
-	>;
-	readonly recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$recursivePatternArm1']>,
-		ReturnType<Routes<Table>['recursivePattern$parenthesizedVariableDesignation$applied']>
-	>;
-	readonly recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$parenthesizedVariableDesignation$applied']>
-	>;
-	readonly recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$recursivePatternArm3']>,
-		ReturnType<Routes<Table>['recursivePattern$parenthesizedVariableDesignation$applied']>
-	>;
-	readonly recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$parenthesizedVariableDesignation$applied']>
-	>;
-	readonly recursivePattern$arm2$applied: Seat<
-		ArgsOf<Table['buildRecursivePatternArm2']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm2arm4: Seat<
-		ArgsOf<Table['buildRecursivePatternArm4']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$applied']>
-	>;
-	readonly recursivePattern$arm2arm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$recursivePatternArm3']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$applied']>
-	>;
-	readonly recursivePattern$arm2arm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$applied']>
-	>;
-	readonly recursivePattern$arm2$recursivePatternArm1$applied: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$recursivePatternArm1']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm2$recursivePatternArm1arm4: Seat<
-		ArgsOf<Table['buildRecursivePatternArm4']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$recursivePatternArm1$applied']>
-	>;
-	readonly recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$recursivePatternArm3']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$recursivePatternArm1$applied']>
-	>;
-	readonly recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$recursivePatternArm1$applied']>
-	>;
-	readonly recursivePattern$arm2$propertyPatternClause$applied: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm2$propertyPatternClause']>,
-		ReturnType<Table['recursivePattern$seated']>
-	>;
-	readonly recursivePattern$arm2$propertyPatternClausearm4: Seat<
-		ArgsOf<Table['buildRecursivePatternArm4']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$propertyPatternClause$applied']>
-	>;
-	readonly recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$recursivePatternArm3']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$propertyPatternClause$applied']>
-	>;
-	readonly recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['recursivePatternArm4$propertyPatternClause']>,
-		ReturnType<Routes<Table>['recursivePattern$arm2$propertyPatternClause$applied']>
-	>;
 	readonly recursivePattern: Table['recursivePattern$seated'] & {
-		readonly positionalPatternClause: Routes<Table>['recursivePattern$positionalPatternClause'] & {
-			readonly discard: Routes<Table>['recursivePattern$positionalPatternClausediscard'];
-			readonly parenthesizedVariableDesignation: Routes<Table>['recursivePattern$positionalPatternClauseparenthesizedVariableDesignation'];
-			readonly arm2: Routes<Table>['recursivePattern$positionalPatternClausearm2'];
-			readonly arm4: Routes<Table>['recursivePattern$positionalPatternClausearm4'];
-			readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$positionalPatternClausearm2$recursivePatternArm1'];
-			readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm2$propertyPatternClause'];
-			readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$positionalPatternClausearm4$recursivePatternArm3'];
-			readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm4$propertyPatternClause'];
-		};
-		readonly discard: Routes<Table>['recursivePattern$discard'] & {
-			readonly arm2: Routes<Table>['recursivePattern$discardarm2'];
-			readonly arm4: Routes<Table>['recursivePattern$discardarm4'];
-			readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$discardarm2$recursivePatternArm1'];
-			readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$discardarm2$propertyPatternClause'];
-			readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$discardarm4$recursivePatternArm3'];
-			readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$discardarm4$propertyPatternClause'];
-		};
-		readonly parenthesizedVariableDesignation: Routes<Table>['recursivePattern$parenthesizedVariableDesignation'] & {
-			readonly arm2: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2'];
-			readonly arm4: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4'];
-			readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1'];
-			readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause'];
-			readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3'];
-			readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause'];
-		};
-		readonly arm2: Routes<Table>['recursivePattern$arm2'] & {
-			readonly recursivePatternArm1: Routes<Table>['recursivePattern$arm2$recursivePatternArm1'] & {
-				readonly arm4: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause'];
-			};
-			readonly propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClause'] & {
-				readonly arm4: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause'];
-			};
-			readonly arm4: Routes<Table>['recursivePattern$arm2arm4'];
-			readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2arm4$recursivePatternArm3'];
-			readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2arm4$propertyPatternClause'];
-		};
-		readonly arm4: Routes<Table>['recursivePattern$arm4'] & {
-			readonly recursivePatternArm3: Routes<Table>['recursivePattern$arm4$recursivePatternArm3'];
-			readonly propertyPatternClause: Routes<Table>['recursivePattern$arm4$propertyPatternClause'];
-		};
+		readonly discard: Routes<Table>['recursivePattern$discard'];
+		readonly parenthesizedVariableDesignation: Routes<Table>['recursivePattern$parenthesizedVariableDesignation'];
 	};
 	readonly varPattern$discard: (options?: OptionsArg<Table['buildVarPattern']>) => ReturnType<Table['buildVarPattern']>;
 	readonly varPattern$parenthesizedVariableDesignation: Seat<
@@ -2544,252 +2220,30 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildSwitchSectionArm1']>
 	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<
-				Routes<Table>['recursivePattern$positionalPatternClause'] & {
-					readonly discard: Routes<Table>['recursivePattern$positionalPatternClausediscard'];
-					readonly parenthesizedVariableDesignation: Routes<Table>['recursivePattern$positionalPatternClauseparenthesizedVariableDesignation'];
-					readonly arm2: Routes<Table>['recursivePattern$positionalPatternClausearm2'];
-					readonly arm4: Routes<Table>['recursivePattern$positionalPatternClausearm4'];
-					readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$positionalPatternClausearm2$recursivePatternArm1'];
-					readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm2$propertyPatternClause'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$positionalPatternClausearm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm4$propertyPatternClause'];
-				}
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<
-						Routes<Table>['recursivePattern$positionalPatternClause'] & {
-							readonly discard: Routes<Table>['recursivePattern$positionalPatternClausediscard'];
-							readonly parenthesizedVariableDesignation: Routes<Table>['recursivePattern$positionalPatternClauseparenthesizedVariableDesignation'];
-							readonly arm2: Routes<Table>['recursivePattern$positionalPatternClausearm2'];
-							readonly arm4: Routes<Table>['recursivePattern$positionalPatternClausearm4'];
-							readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$positionalPatternClausearm2$recursivePatternArm1'];
-							readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm2$propertyPatternClause'];
-							readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$positionalPatternClausearm4$recursivePatternArm3'];
-							readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm4$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
 	readonly switchSectionArm1$recursive$discard: <
 		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<
-				Routes<Table>['recursivePattern$discard'] & {
-					readonly arm2: Routes<Table>['recursivePattern$discardarm2'];
-					readonly arm4: Routes<Table>['recursivePattern$discardarm4'];
-					readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$discardarm2$recursivePatternArm1'];
-					readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$discardarm2$propertyPatternClause'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$discardarm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$discardarm4$propertyPatternClause'];
-				}
-			>;
+			pattern: ArgsOf<Routes<Table>['recursivePattern$discard']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<
-						Routes<Table>['recursivePattern$discard'] & {
-							readonly arm2: Routes<Table>['recursivePattern$discardarm2'];
-							readonly arm4: Routes<Table>['recursivePattern$discardarm4'];
-							readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$discardarm2$recursivePatternArm1'];
-							readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$discardarm2$propertyPatternClause'];
-							readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$discardarm4$recursivePatternArm3'];
-							readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$discardarm4$propertyPatternClause'];
-						}
-					>;
+					pattern: ArgsOf<Routes<Table>['recursivePattern$discard']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildSwitchSectionArm1']>
 	) => ReturnType<Table['buildSwitchSectionArm1']>;
 	readonly switchSectionArm1$recursive$parenthesizedVariableDesignation: <
 		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<
-				Routes<Table>['recursivePattern$parenthesizedVariableDesignation'] & {
-					readonly arm2: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2'];
-					readonly arm4: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4'];
-					readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1'];
-					readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause'];
-				}
-			>;
+			pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignation']>;
 		}
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
 				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<
-						Routes<Table>['recursivePattern$parenthesizedVariableDesignation'] & {
-							readonly arm2: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2'];
-							readonly arm4: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4'];
-							readonly arm2$recursivePatternArm1: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1'];
-							readonly arm2$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause'];
-							readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3'];
-							readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<
-				Routes<Table>['recursivePattern$arm2'] & {
-					readonly recursivePatternArm1: Routes<Table>['recursivePattern$arm2$recursivePatternArm1'] & {
-						readonly arm4: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4'];
-						readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3'];
-						readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause'];
-					};
-					readonly propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClause'] & {
-						readonly arm4: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4'];
-						readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3'];
-						readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause'];
-					};
-					readonly arm4: Routes<Table>['recursivePattern$arm2arm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2arm4$propertyPatternClause'];
-				}
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<
-						Routes<Table>['recursivePattern$arm2'] & {
-							readonly recursivePatternArm1: Routes<Table>['recursivePattern$arm2$recursivePatternArm1'] & {
-								readonly arm4: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4'];
-								readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3'];
-								readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause'];
-							};
-							readonly propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClause'] & {
-								readonly arm4: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4'];
-								readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3'];
-								readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause'];
-							};
-							readonly arm4: Routes<Table>['recursivePattern$arm2arm4'];
-							readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2arm4$recursivePatternArm3'];
-							readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2arm4$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<
-				Routes<Table>['recursivePattern$arm4'] & {
-					readonly recursivePatternArm3: Routes<Table>['recursivePattern$arm4$recursivePatternArm3'];
-					readonly propertyPatternClause: Routes<Table>['recursivePattern$arm4$propertyPatternClause'];
-				}
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<
-						Routes<Table>['recursivePattern$arm4'] & {
-							readonly recursivePatternArm3: Routes<Table>['recursivePattern$arm4$recursivePatternArm3'];
-							readonly propertyPatternClause: Routes<Table>['recursivePattern$arm4$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$recursivePatternArm1: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<
-				Routes<Table>['recursivePattern$arm2$recursivePatternArm1'] & {
-					readonly arm4: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause'];
-				}
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<
-						Routes<Table>['recursivePattern$arm2$recursivePatternArm1'] & {
-							readonly arm4: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4'];
-							readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3'];
-							readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<
-				Routes<Table>['recursivePattern$arm2$propertyPatternClause'] & {
-					readonly arm4: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause'];
-				}
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<
-						Routes<Table>['recursivePattern$arm2$propertyPatternClause'] & {
-							readonly arm4: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4'];
-							readonly arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3'];
-							readonly arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm4$recursivePatternArm3']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm4$recursivePatternArm3']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm4$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm4$propertyPatternClause']>;
+					pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignation']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildSwitchSectionArm1']>
@@ -2846,412 +2300,6 @@ export interface Routes<Table extends AnyTable> {
 				V,
 				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
 					pattern: ArgsOf<Routes<Table>['parenthesizedPatternWithDesignation$parenthesizedVariableDesignation']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$discard: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausediscard']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausediscard']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClauseparenthesizedVariableDesignation']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClauseparenthesizedVariableDesignation']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$arm2: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm2']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm2']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm4']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm4']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm2$recursivePatternArm1']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm2$recursivePatternArm1']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm2$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm2$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm4$recursivePatternArm3']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm4$recursivePatternArm3']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm4$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$positionalPatternClausearm4$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$discard$arm2: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm2']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm2']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$discard$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm4']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm4']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$discard$arm2$recursivePatternArm1: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm2$recursivePatternArm1']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm2$recursivePatternArm1']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$discard$arm2$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm2$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm2$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$discard$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm4$recursivePatternArm3']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm4$recursivePatternArm3']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$discard$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm4$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$discardarm4$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2arm4']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2arm4']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2arm4$recursivePatternArm3']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2arm4$recursivePatternArm3']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2arm4$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2arm4$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$propertyPatternClause$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3']>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSectionArm1']>
-	) => ReturnType<Table['buildSwitchSectionArm1']>;
-	readonly switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-			pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSectionArm1']>[0], 'pattern'> & {
-					pattern: ArgsOf<Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause']>;
 				}
 			>,
 		options?: OptionsArg<Table['buildSwitchSectionArm1']>
@@ -3316,51 +2364,8 @@ export interface Routes<Table extends AnyTable> {
 		};
 		readonly discard: Routes<Table>['switchSectionArm1$discard'];
 		readonly recursive: Routes<Table>['switchSectionArm1$recursive'] & {
-			readonly positionalPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause'] & {
-				readonly discard: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$discard'];
-				readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation'];
-				readonly arm2: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2'];
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4'];
-				readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1'];
-				readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause'];
-			};
-			readonly discard: Routes<Table>['switchSectionArm1$recursive$discard'] & {
-				readonly arm2: Routes<Table>['switchSectionArm1$recursive$discard$arm2'];
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$discard$arm4'];
-				readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$discard$arm2$recursivePatternArm1'];
-				readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm2$propertyPatternClause'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$discard$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm4$propertyPatternClause'];
-			};
-			readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation'] & {
-				readonly arm2: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2'];
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4'];
-				readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1'];
-				readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause'];
-			};
-			readonly arm2: Routes<Table>['switchSectionArm1$recursive$arm2'] & {
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$arm4'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$propertyPatternClause'];
-				readonly recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1'] & {
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause'];
-				};
-				readonly propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause'] & {
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause'];
-				};
-			};
-			readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm4'] & {
-				readonly recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-				readonly propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm4$propertyPatternClause'];
-			};
+			readonly discard: Routes<Table>['switchSectionArm1$recursive$discard'];
+			readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation'];
 		};
 		readonly var: Routes<Table>['switchSectionArm1$var'] & {
 			readonly discard: Routes<Table>['switchSectionArm1$var$discard'];
@@ -3456,51 +2461,8 @@ export interface Routes<Table extends AnyTable> {
 	readonly switchSectionArm2$switchSectionArm1$recursive: Seat<
 		ArgsOf<
 			Routes<Table>['switchSectionArm1$recursive'] & {
-				readonly positionalPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause'] & {
-					readonly discard: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$discard'];
-					readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation'];
-					readonly arm2: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2'];
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4'];
-					readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1'];
-					readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause'];
-				};
-				readonly discard: Routes<Table>['switchSectionArm1$recursive$discard'] & {
-					readonly arm2: Routes<Table>['switchSectionArm1$recursive$discard$arm2'];
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$discard$arm4'];
-					readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$discard$arm2$recursivePatternArm1'];
-					readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm2$propertyPatternClause'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$discard$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm4$propertyPatternClause'];
-				};
-				readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation'] & {
-					readonly arm2: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2'];
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4'];
-					readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1'];
-					readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause'];
-				};
-				readonly arm2: Routes<Table>['switchSectionArm1$recursive$arm2'] & {
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$arm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$propertyPatternClause'];
-					readonly recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1'] & {
-						readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4'];
-						readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3'];
-						readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause'];
-					};
-					readonly propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause'] & {
-						readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4'];
-						readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3'];
-						readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause'];
-					};
-				};
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm4'] & {
-					readonly recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-					readonly propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm4$propertyPatternClause'];
-				};
+				readonly discard: Routes<Table>['switchSectionArm1$recursive$discard'];
+				readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation'];
 			}
 		>,
 		ReturnType<typeof F.buildSwitchSectionArm2>
@@ -3782,102 +2744,12 @@ export interface Routes<Table extends AnyTable> {
 		ArgsOf<Routes<Table>['switchSectionArm1$declaration$parenthesizedVariableDesignation']>,
 		ReturnType<typeof F.buildSwitchSectionArm2>
 	>;
-	readonly switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause: Seat<
-		ArgsOf<
-			Routes<Table>['switchSectionArm1$recursive$positionalPatternClause'] & {
-				readonly discard: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$discard'];
-				readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation'];
-				readonly arm2: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2'];
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4'];
-				readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1'];
-				readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause'];
-			}
-		>,
-		ReturnType<typeof F.buildSwitchSectionArm2>
-	>;
 	readonly switchSectionArm2$switchSectionArm1$recursive$discard: Seat<
-		ArgsOf<
-			Routes<Table>['switchSectionArm1$recursive$discard'] & {
-				readonly arm2: Routes<Table>['switchSectionArm1$recursive$discard$arm2'];
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$discard$arm4'];
-				readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$discard$arm2$recursivePatternArm1'];
-				readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm2$propertyPatternClause'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$discard$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm4$propertyPatternClause'];
-			}
-		>,
+		ArgsOf<Routes<Table>['switchSectionArm1$recursive$discard']>,
 		ReturnType<typeof F.buildSwitchSectionArm2>
 	>;
 	readonly switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation: Seat<
-		ArgsOf<
-			Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation'] & {
-				readonly arm2: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2'];
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4'];
-				readonly arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1'];
-				readonly arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause'];
-			}
-		>,
-		ReturnType<typeof F.buildSwitchSectionArm2>
-	>;
-	readonly switchSectionArm2$switchSectionArm1$recursive$arm2: Seat<
-		ArgsOf<
-			Routes<Table>['switchSectionArm1$recursive$arm2'] & {
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$arm4'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$propertyPatternClause'];
-				readonly recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1'] & {
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause'];
-				};
-				readonly propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause'] & {
-					readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4'];
-					readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3'];
-					readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause'];
-				};
-			}
-		>,
-		ReturnType<typeof F.buildSwitchSectionArm2>
-	>;
-	readonly switchSectionArm2$switchSectionArm1$recursive$arm4: Seat<
-		ArgsOf<
-			Routes<Table>['switchSectionArm1$recursive$arm4'] & {
-				readonly recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-				readonly propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm4$propertyPatternClause'];
-			}
-		>,
-		ReturnType<typeof F.buildSwitchSectionArm2>
-	>;
-	readonly switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1: Seat<
-		ArgsOf<
-			Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1'] & {
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause'];
-			}
-		>,
-		ReturnType<typeof F.buildSwitchSectionArm2>
-	>;
-	readonly switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause: Seat<
-		ArgsOf<
-			Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause'] & {
-				readonly arm4: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4'];
-				readonly arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3'];
-				readonly arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause'];
-			}
-		>,
-		ReturnType<typeof F.buildSwitchSectionArm2>
-	>;
-	readonly switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3: Seat<
-		ArgsOf<Routes<Table>['switchSectionArm1$recursive$arm4$recursivePatternArm3']>,
-		ReturnType<typeof F.buildSwitchSectionArm2>
-	>;
-	readonly switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause: Seat<
-		ArgsOf<Routes<Table>['switchSectionArm1$recursive$arm4$propertyPatternClause']>,
+		ArgsOf<Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation']>,
 		ReturnType<typeof F.buildSwitchSectionArm2>
 	>;
 	readonly switchSectionArm2$switchSectionArm1$var$discard: Seat<
@@ -3957,17 +2829,8 @@ export interface Routes<Table extends AnyTable> {
 			};
 			readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$discard'];
 			readonly recursive: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive'] & {
-				readonly positionalPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause'];
 				readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$discard'];
 				readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation'];
-				readonly arm2: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] & {
-					readonly recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-					readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-				};
-				readonly arm4: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] & {
-					readonly recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-					readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-				};
 			};
 			readonly var: Routes<Table>['switchSectionArm2$switchSectionArm1$var'] & {
 				readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$var$discard'];
@@ -4069,17 +2932,8 @@ export interface Routes<Table extends AnyTable> {
 					};
 					readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$discard'];
 					readonly recursive: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive'] & {
-						readonly positionalPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause'];
 						readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$discard'];
 						readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation'];
-						readonly arm2: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] & {
-							readonly recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-							readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-						};
-						readonly arm4: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] & {
-							readonly recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-							readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-						};
 					};
 					readonly var: Routes<Table>['switchSectionArm2$switchSectionArm1$var'] & {
 						readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$var$discard'];
@@ -4165,17 +3019,8 @@ export interface Routes<Table extends AnyTable> {
 							};
 							readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$discard'];
 							readonly recursive: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive'] & {
-								readonly positionalPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause'];
 								readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$discard'];
 								readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation'];
-								readonly arm2: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] & {
-									readonly recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-									readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-								};
-								readonly arm4: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] & {
-									readonly recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-									readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-								};
 							};
 							readonly var: Routes<Table>['switchSectionArm2$switchSectionArm1$var'] & {
 								readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$var$discard'];
@@ -4362,17 +3207,8 @@ export interface Routes<Table extends AnyTable> {
 		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
 			switchSectionArm2: ArgsOf<
 				Routes<Table>['switchSectionArm2$switchSectionArm1$recursive'] & {
-					readonly positionalPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause'];
 					readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$discard'];
 					readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation'];
-					readonly arm2: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] & {
-						readonly recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-						readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-					};
-					readonly arm4: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] & {
-						readonly recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-						readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-					};
 				}
 			>;
 		}
@@ -4383,17 +3219,8 @@ export interface Routes<Table extends AnyTable> {
 				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
 					switchSectionArm2: ArgsOf<
 						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive'] & {
-							readonly positionalPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause'];
 							readonly discard: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$discard'];
 							readonly parenthesizedVariableDesignation: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation'];
-							readonly arm2: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] & {
-								readonly recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-								readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-							};
-							readonly arm4: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] & {
-								readonly recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-								readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-							};
 						}
 					>;
 				}
@@ -5358,22 +4185,6 @@ export interface Routes<Table extends AnyTable> {
 			>,
 		options?: OptionsArg<Table['buildSwitchSection']>
 	) => ReturnType<Table['buildSwitchSection']>;
-	readonly switchSection$arm2$switchSectionArm1$recursive$positionalPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-			switchSectionArm2: ArgsOf<Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause']>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-					switchSectionArm2: ArgsOf<
-						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause']
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSection']>
-	) => ReturnType<Table['buildSwitchSection']>;
 	readonly switchSection$arm2$switchSectionArm1$recursive$discard: <
 		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
 			switchSectionArm2: ArgsOf<Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$discard']>;
@@ -5401,126 +4212,6 @@ export interface Routes<Table extends AnyTable> {
 				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
 					switchSectionArm2: ArgsOf<
 						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation']
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSection']>
-	) => ReturnType<Table['buildSwitchSection']>;
-	readonly switchSection$arm2$switchSectionArm1$recursive$arm2: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-			switchSectionArm2: ArgsOf<
-				Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] & {
-					readonly recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-					readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-				}
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-					switchSectionArm2: ArgsOf<
-						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] & {
-							readonly recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-							readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSection']>
-	) => ReturnType<Table['buildSwitchSection']>;
-	readonly switchSection$arm2$switchSectionArm1$recursive$arm4: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-			switchSectionArm2: ArgsOf<
-				Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] & {
-					readonly recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-					readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-				}
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-					switchSectionArm2: ArgsOf<
-						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] & {
-							readonly recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-							readonly propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-						}
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSection']>
-	) => ReturnType<Table['buildSwitchSection']>;
-	readonly switchSection$arm2$switchSectionArm1$recursive$arm2$recursivePatternArm1: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-			switchSectionArm2: ArgsOf<
-				Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1']
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-					switchSectionArm2: ArgsOf<
-						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1']
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSection']>
-	) => ReturnType<Table['buildSwitchSection']>;
-	readonly switchSection$arm2$switchSectionArm1$recursive$arm2$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-			switchSectionArm2: ArgsOf<
-				Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause']
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-					switchSectionArm2: ArgsOf<
-						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause']
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSection']>
-	) => ReturnType<Table['buildSwitchSection']>;
-	readonly switchSection$arm2$switchSectionArm1$recursive$arm4$recursivePatternArm3: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-			switchSectionArm2: ArgsOf<
-				Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3']
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-					switchSectionArm2: ArgsOf<
-						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3']
-					>;
-				}
-			>,
-		options?: OptionsArg<Table['buildSwitchSection']>
-	) => ReturnType<Table['buildSwitchSection']>;
-	readonly switchSection$arm2$switchSectionArm1$recursive$arm4$propertyPatternClause: <
-		const V extends OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-			switchSectionArm2: ArgsOf<
-				Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause']
-			>;
-		}
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildSwitchSection']>[0], 'switchSectionArm2'> & {
-					switchSectionArm2: ArgsOf<
-						Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause']
 					>;
 				}
 			>,
@@ -5656,17 +4347,8 @@ export interface Routes<Table extends AnyTable> {
 				};
 				readonly discard: Routes<Table>['switchSection$arm2$switchSectionArm1$discard'];
 				readonly recursive: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive'] & {
-					readonly positionalPatternClause: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$positionalPatternClause'];
 					readonly discard: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$discard'];
 					readonly parenthesizedVariableDesignation: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$parenthesizedVariableDesignation'];
-					readonly arm2: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm2'] & {
-						readonly recursivePatternArm1: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'];
-						readonly propertyPatternClause: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm2$propertyPatternClause'];
-					};
-					readonly arm4: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm4'] & {
-						readonly recursivePatternArm3: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'];
-						readonly propertyPatternClause: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm4$propertyPatternClause'];
-					};
 				};
 				readonly var: Routes<Table>['switchSection$arm2$switchSectionArm1$var'] & {
 					readonly discard: Routes<Table>['switchSection$arm2$switchSectionArm1$var$discard'];
@@ -6484,24 +5166,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			parenthesizedVariableDesignation: declarationPattern$parenthesizedVariableDesignation
 		} as const)
 	);
-	const recursivePatternArm2$recursivePatternArm1: Routes<Table>['recursivePatternArm2$recursivePatternArm1'] =
-		K.recursivePatternArm2$recursivePatternArm1($at('buildRecursivePatternArm2'), $at('buildRecursivePatternArm1'));
-	const recursivePatternArm2$propertyPatternClause: Routes<Table>['recursivePatternArm2$propertyPatternClause'] =
-		K.recursivePatternArm2$propertyPatternClause($at('buildRecursivePatternArm2'), $at('buildPropertyPatternClause'));
-	const recursivePatternArm2: Routes<Table>['recursivePatternArm2'] = Object.freeze({
-		recursivePatternArm1: recursivePatternArm2$recursivePatternArm1,
-		propertyPatternClause: recursivePatternArm2$propertyPatternClause
-	} as const);
-	const recursivePatternArm4$recursivePatternArm3: Routes<Table>['recursivePatternArm4$recursivePatternArm3'] =
-		K.recursivePatternArm4$recursivePatternArm3($at('buildRecursivePatternArm4'), $at('buildRecursivePatternArm3'));
-	const recursivePatternArm4$propertyPatternClause: Routes<Table>['recursivePatternArm4$propertyPatternClause'] =
-		K.recursivePatternArm4$propertyPatternClause($at('buildRecursivePatternArm4'), $at('buildPropertyPatternClause'));
-	const recursivePatternArm4: Routes<Table>['recursivePatternArm4'] = Object.freeze({
-		recursivePatternArm3: recursivePatternArm4$recursivePatternArm3,
-		propertyPatternClause: recursivePatternArm4$propertyPatternClause
-	} as const);
-	const recursivePattern$positionalPatternClause: Routes<Table>['recursivePattern$positionalPatternClause'] =
-		K.recursivePattern$positionalPatternClause($at('recursivePattern$seated'), $at('buildPositionalPatternClause'));
 	const recursivePattern$discard: Routes<Table>['recursivePattern$discard'] = K.recursivePattern$discard(
 		$at('recursivePattern$seated'),
 		TSKindId.Discard
@@ -6511,260 +5175,10 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('recursivePattern$seated'),
 			$at('buildParenthesizedVariableDesignation')
 		);
-	const recursivePattern$arm2: Routes<Table>['recursivePattern$arm2'] = K.recursivePattern$arm2(
-		$at('recursivePattern$seated'),
-		$at('buildRecursivePatternArm2')
-	);
-	const recursivePattern$arm4: Routes<Table>['recursivePattern$arm4'] = K.recursivePattern$arm4(
-		$at('recursivePattern$seated'),
-		$at('buildRecursivePatternArm4')
-	);
-	const recursivePattern$arm2$recursivePatternArm1: Routes<Table>['recursivePattern$arm2$recursivePatternArm1'] =
-		K.recursivePattern$arm2$recursivePatternArm1(
-			$at('recursivePattern$seated'),
-			recursivePatternArm2.recursivePatternArm1
-		);
-	const recursivePattern$arm2$propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClause'] =
-		K.recursivePattern$arm2$propertyPatternClause(
-			$at('recursivePattern$seated'),
-			recursivePatternArm2.propertyPatternClause
-		);
-	const recursivePattern$arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm4$recursivePatternArm3'] =
-		K.recursivePattern$arm4$recursivePatternArm3(
-			$at('recursivePattern$seated'),
-			recursivePatternArm4.recursivePatternArm3
-		);
-	const recursivePattern$arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm4$propertyPatternClause'] =
-		K.recursivePattern$arm4$propertyPatternClause(
-			$at('recursivePattern$seated'),
-			recursivePatternArm4.propertyPatternClause
-		);
-	const recursivePattern$positionalPatternClause$applied: Routes<Table>['recursivePattern$positionalPatternClause$applied'] =
-		K.recursivePattern$positionalPatternClause($at('recursivePattern$seated'), $at('buildPositionalPatternClause'));
-	const recursivePattern$positionalPatternClausediscard: Routes<Table>['recursivePattern$positionalPatternClausediscard'] =
-		K.recursivePattern$positionalPatternClausediscard(
-			recursivePattern$positionalPatternClause$applied,
-			TSKindId.Discard
-		);
-	const recursivePattern$positionalPatternClauseparenthesizedVariableDesignation: Routes<Table>['recursivePattern$positionalPatternClauseparenthesizedVariableDesignation'] =
-		K.recursivePattern$positionalPatternClauseparenthesizedVariableDesignation(
-			recursivePattern$positionalPatternClause$applied,
-			$at('buildParenthesizedVariableDesignation')
-		);
-	const recursivePattern$positionalPatternClausearm2: Routes<Table>['recursivePattern$positionalPatternClausearm2'] =
-		K.recursivePattern$positionalPatternClausearm2(
-			recursivePattern$positionalPatternClause$applied,
-			$at('buildRecursivePatternArm2')
-		);
-	const recursivePattern$positionalPatternClausearm4: Routes<Table>['recursivePattern$positionalPatternClausearm4'] =
-		K.recursivePattern$positionalPatternClausearm4(
-			recursivePattern$positionalPatternClause$applied,
-			$at('buildRecursivePatternArm4')
-		);
-	const recursivePattern$positionalPatternClausearm2$recursivePatternArm1: Routes<Table>['recursivePattern$positionalPatternClausearm2$recursivePatternArm1'] =
-		K.recursivePattern$positionalPatternClausearm2$recursivePatternArm1(
-			recursivePattern$positionalPatternClause$applied,
-			recursivePatternArm2.recursivePatternArm1
-		);
-	const recursivePattern$positionalPatternClausearm2$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm2$propertyPatternClause'] =
-		K.recursivePattern$positionalPatternClausearm2$propertyPatternClause(
-			recursivePattern$positionalPatternClause$applied,
-			recursivePatternArm2.propertyPatternClause
-		);
-	const recursivePattern$positionalPatternClausearm4$recursivePatternArm3: Routes<Table>['recursivePattern$positionalPatternClausearm4$recursivePatternArm3'] =
-		K.recursivePattern$positionalPatternClausearm4$recursivePatternArm3(
-			recursivePattern$positionalPatternClause$applied,
-			recursivePatternArm4.recursivePatternArm3
-		);
-	const recursivePattern$positionalPatternClausearm4$propertyPatternClause: Routes<Table>['recursivePattern$positionalPatternClausearm4$propertyPatternClause'] =
-		K.recursivePattern$positionalPatternClausearm4$propertyPatternClause(
-			recursivePattern$positionalPatternClause$applied,
-			recursivePatternArm4.propertyPatternClause
-		);
-	const recursivePattern$discard$applied: Routes<Table>['recursivePattern$discard$applied'] =
-		K.recursivePattern$discard($at('recursivePattern$seated'), TSKindId.Discard);
-	const recursivePattern$discardarm2: Routes<Table>['recursivePattern$discardarm2'] = K.recursivePattern$discardarm2(
-		recursivePattern$discard$applied,
-		$at('buildRecursivePatternArm2')
-	);
-	const recursivePattern$discardarm4: Routes<Table>['recursivePattern$discardarm4'] = K.recursivePattern$discardarm4(
-		recursivePattern$discard$applied,
-		$at('buildRecursivePatternArm4')
-	);
-	const recursivePattern$discardarm2$recursivePatternArm1: Routes<Table>['recursivePattern$discardarm2$recursivePatternArm1'] =
-		K.recursivePattern$discardarm2$recursivePatternArm1(
-			recursivePattern$discard$applied,
-			recursivePatternArm2.recursivePatternArm1
-		);
-	const recursivePattern$discardarm2$propertyPatternClause: Routes<Table>['recursivePattern$discardarm2$propertyPatternClause'] =
-		K.recursivePattern$discardarm2$propertyPatternClause(
-			recursivePattern$discard$applied,
-			recursivePatternArm2.propertyPatternClause
-		);
-	const recursivePattern$discardarm4$recursivePatternArm3: Routes<Table>['recursivePattern$discardarm4$recursivePatternArm3'] =
-		K.recursivePattern$discardarm4$recursivePatternArm3(
-			recursivePattern$discard$applied,
-			recursivePatternArm4.recursivePatternArm3
-		);
-	const recursivePattern$discardarm4$propertyPatternClause: Routes<Table>['recursivePattern$discardarm4$propertyPatternClause'] =
-		K.recursivePattern$discardarm4$propertyPatternClause(
-			recursivePattern$discard$applied,
-			recursivePatternArm4.propertyPatternClause
-		);
-	const recursivePattern$parenthesizedVariableDesignation$applied: Routes<Table>['recursivePattern$parenthesizedVariableDesignation$applied'] =
-		K.recursivePattern$parenthesizedVariableDesignation(
-			$at('recursivePattern$seated'),
-			$at('buildParenthesizedVariableDesignation')
-		);
-	const recursivePattern$parenthesizedVariableDesignationarm2: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2'] =
-		K.recursivePattern$parenthesizedVariableDesignationarm2(
-			recursivePattern$parenthesizedVariableDesignation$applied,
-			$at('buildRecursivePatternArm2')
-		);
-	const recursivePattern$parenthesizedVariableDesignationarm4: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4'] =
-		K.recursivePattern$parenthesizedVariableDesignationarm4(
-			recursivePattern$parenthesizedVariableDesignation$applied,
-			$at('buildRecursivePatternArm4')
-		);
-	const recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1'] =
-		K.recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1(
-			recursivePattern$parenthesizedVariableDesignation$applied,
-			recursivePatternArm2.recursivePatternArm1
-		);
-	const recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause'] =
-		K.recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause(
-			recursivePattern$parenthesizedVariableDesignation$applied,
-			recursivePatternArm2.propertyPatternClause
-		);
-	const recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3'] =
-		K.recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3(
-			recursivePattern$parenthesizedVariableDesignation$applied,
-			recursivePatternArm4.recursivePatternArm3
-		);
-	const recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause: Routes<Table>['recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause'] =
-		K.recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause(
-			recursivePattern$parenthesizedVariableDesignation$applied,
-			recursivePatternArm4.propertyPatternClause
-		);
-	const recursivePattern$arm2$applied: Routes<Table>['recursivePattern$arm2$applied'] = K.recursivePattern$arm2(
-		$at('recursivePattern$seated'),
-		$at('buildRecursivePatternArm2')
-	);
-	const recursivePattern$arm2arm4: Routes<Table>['recursivePattern$arm2arm4'] = K.recursivePattern$arm2arm4(
-		recursivePattern$arm2$applied,
-		$at('buildRecursivePatternArm4')
-	);
-	const recursivePattern$arm2arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2arm4$recursivePatternArm3'] =
-		K.recursivePattern$arm2arm4$recursivePatternArm3(
-			recursivePattern$arm2$applied,
-			recursivePatternArm4.recursivePatternArm3
-		);
-	const recursivePattern$arm2arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2arm4$propertyPatternClause'] =
-		K.recursivePattern$arm2arm4$propertyPatternClause(
-			recursivePattern$arm2$applied,
-			recursivePatternArm4.propertyPatternClause
-		);
-	const recursivePattern$arm2$recursivePatternArm1$applied: Routes<Table>['recursivePattern$arm2$recursivePatternArm1$applied'] =
-		K.recursivePattern$arm2$recursivePatternArm1(
-			$at('recursivePattern$seated'),
-			recursivePatternArm2.recursivePatternArm1
-		);
-	const recursivePattern$arm2$recursivePatternArm1arm4: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4'] =
-		K.recursivePattern$arm2$recursivePatternArm1arm4(
-			recursivePattern$arm2$recursivePatternArm1$applied,
-			$at('buildRecursivePatternArm4')
-		);
-	const recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3'] =
-		K.recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3(
-			recursivePattern$arm2$recursivePatternArm1$applied,
-			recursivePatternArm4.recursivePatternArm3
-		);
-	const recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause'] =
-		K.recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause(
-			recursivePattern$arm2$recursivePatternArm1$applied,
-			recursivePatternArm4.propertyPatternClause
-		);
-	const recursivePattern$arm2$propertyPatternClause$applied: Routes<Table>['recursivePattern$arm2$propertyPatternClause$applied'] =
-		K.recursivePattern$arm2$propertyPatternClause(
-			$at('recursivePattern$seated'),
-			recursivePatternArm2.propertyPatternClause
-		);
-	const recursivePattern$arm2$propertyPatternClausearm4: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4'] =
-		K.recursivePattern$arm2$propertyPatternClausearm4(
-			recursivePattern$arm2$propertyPatternClause$applied,
-			$at('buildRecursivePatternArm4')
-		);
-	const recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3'] =
-		K.recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3(
-			recursivePattern$arm2$propertyPatternClause$applied,
-			recursivePatternArm4.recursivePatternArm3
-		);
-	const recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause: Routes<Table>['recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause'] =
-		K.recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause(
-			recursivePattern$arm2$propertyPatternClause$applied,
-			recursivePatternArm4.propertyPatternClause
-		);
 	const recursivePattern: Routes<Table>['recursivePattern'] = Object.freeze(
 		Object.assign(delegate($at('recursivePattern$seated')), {
-			positionalPatternClause: Object.freeze(
-				Object.assign(recursivePattern$positionalPatternClause, {
-					discard: recursivePattern$positionalPatternClausediscard,
-					parenthesizedVariableDesignation: recursivePattern$positionalPatternClauseparenthesizedVariableDesignation,
-					arm2: recursivePattern$positionalPatternClausearm2,
-					arm4: recursivePattern$positionalPatternClausearm4,
-					arm2$recursivePatternArm1: recursivePattern$positionalPatternClausearm2$recursivePatternArm1,
-					arm2$propertyPatternClause: recursivePattern$positionalPatternClausearm2$propertyPatternClause,
-					arm4$recursivePatternArm3: recursivePattern$positionalPatternClausearm4$recursivePatternArm3,
-					arm4$propertyPatternClause: recursivePattern$positionalPatternClausearm4$propertyPatternClause
-				} as const)
-			),
-			discard: Object.freeze(
-				Object.assign(recursivePattern$discard, {
-					arm2: recursivePattern$discardarm2,
-					arm4: recursivePattern$discardarm4,
-					arm2$recursivePatternArm1: recursivePattern$discardarm2$recursivePatternArm1,
-					arm2$propertyPatternClause: recursivePattern$discardarm2$propertyPatternClause,
-					arm4$recursivePatternArm3: recursivePattern$discardarm4$recursivePatternArm3,
-					arm4$propertyPatternClause: recursivePattern$discardarm4$propertyPatternClause
-				} as const)
-			),
-			parenthesizedVariableDesignation: Object.freeze(
-				Object.assign(recursivePattern$parenthesizedVariableDesignation, {
-					arm2: recursivePattern$parenthesizedVariableDesignationarm2,
-					arm4: recursivePattern$parenthesizedVariableDesignationarm4,
-					arm2$recursivePatternArm1: recursivePattern$parenthesizedVariableDesignationarm2$recursivePatternArm1,
-					arm2$propertyPatternClause: recursivePattern$parenthesizedVariableDesignationarm2$propertyPatternClause,
-					arm4$recursivePatternArm3: recursivePattern$parenthesizedVariableDesignationarm4$recursivePatternArm3,
-					arm4$propertyPatternClause: recursivePattern$parenthesizedVariableDesignationarm4$propertyPatternClause
-				} as const)
-			),
-			arm2: Object.freeze(
-				Object.assign(recursivePattern$arm2, {
-					recursivePatternArm1: Object.freeze(
-						Object.assign(recursivePattern$arm2$recursivePatternArm1, {
-							arm4: recursivePattern$arm2$recursivePatternArm1arm4,
-							arm4$recursivePatternArm3: recursivePattern$arm2$recursivePatternArm1arm4$recursivePatternArm3,
-							arm4$propertyPatternClause: recursivePattern$arm2$recursivePatternArm1arm4$propertyPatternClause
-						} as const)
-					),
-					propertyPatternClause: Object.freeze(
-						Object.assign(recursivePattern$arm2$propertyPatternClause, {
-							arm4: recursivePattern$arm2$propertyPatternClausearm4,
-							arm4$recursivePatternArm3: recursivePattern$arm2$propertyPatternClausearm4$recursivePatternArm3,
-							arm4$propertyPatternClause: recursivePattern$arm2$propertyPatternClausearm4$propertyPatternClause
-						} as const)
-					),
-					arm4: recursivePattern$arm2arm4,
-					arm4$recursivePatternArm3: recursivePattern$arm2arm4$recursivePatternArm3,
-					arm4$propertyPatternClause: recursivePattern$arm2arm4$propertyPatternClause
-				} as const)
-			),
-			arm4: Object.freeze(
-				Object.assign(recursivePattern$arm4, {
-					recursivePatternArm3: recursivePattern$arm4$recursivePatternArm3,
-					propertyPatternClause: recursivePattern$arm4$propertyPatternClause
-				} as const)
-			)
+			discard: recursivePattern$discard,
+			parenthesizedVariableDesignation: recursivePattern$parenthesizedVariableDesignation
 		} as const)
 	);
 	const varPattern$discard: Routes<Table>['varPattern$discard'] = K.varPattern$discard(
@@ -7603,41 +6017,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('buildSwitchSectionArm1'),
 			declarationPattern.parenthesizedVariableDesignation
 		);
-	const switchSectionArm1$recursive$positionalPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause'] =
-		K.switchSectionArm1$recursive$positionalPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause
-		);
 	const switchSectionArm1$recursive$discard: Routes<Table>['switchSectionArm1$recursive$discard'] =
 		K.switchSectionArm1$recursive$discard($at('buildSwitchSectionArm1'), recursivePattern.discard);
 	const switchSectionArm1$recursive$parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation'] =
 		K.switchSectionArm1$recursive$parenthesizedVariableDesignation(
 			$at('buildSwitchSectionArm1'),
 			recursivePattern.parenthesizedVariableDesignation
-		);
-	const switchSectionArm1$recursive$arm2: Routes<Table>['switchSectionArm1$recursive$arm2'] =
-		K.switchSectionArm1$recursive$arm2($at('buildSwitchSectionArm1'), recursivePattern.arm2);
-	const switchSectionArm1$recursive$arm4: Routes<Table>['switchSectionArm1$recursive$arm4'] =
-		K.switchSectionArm1$recursive$arm4($at('buildSwitchSectionArm1'), recursivePattern.arm4);
-	const switchSectionArm1$recursive$arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1'] =
-		K.switchSectionArm1$recursive$arm2$recursivePatternArm1(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.recursivePatternArm1
-		);
-	const switchSectionArm1$recursive$arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$arm2$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.propertyPatternClause
-		);
-	const switchSectionArm1$recursive$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm4$recursivePatternArm3'] =
-		K.switchSectionArm1$recursive$arm4$recursivePatternArm3(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm4.recursivePatternArm3
-		);
-	const switchSectionArm1$recursive$arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm4$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$arm4$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm4.propertyPatternClause
 		);
 	const switchSectionArm1$var$discard: Routes<Table>['switchSectionArm1$var$discard'] = K.switchSectionArm1$var$discard(
 		$at('buildSwitchSectionArm1'),
@@ -7657,142 +6042,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.switchSectionArm1$parenthesizedWithDesignation$parenthesizedVariableDesignation(
 			$at('buildSwitchSectionArm1'),
 			parenthesizedPatternWithDesignation.parenthesizedVariableDesignation
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$discard: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$discard'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$discard(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.discard
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.parenthesizedVariableDesignation
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$arm2: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$arm2(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.arm2
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$arm4: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$arm4(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.arm4
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.arm2$recursivePatternArm1
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.arm2$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.arm4$recursivePatternArm3
-		);
-	const switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.positionalPatternClause.arm4$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$discard$arm2: Routes<Table>['switchSectionArm1$recursive$discard$arm2'] =
-		K.switchSectionArm1$recursive$discard$arm2($at('buildSwitchSectionArm1'), recursivePattern.discard.arm2);
-	const switchSectionArm1$recursive$discard$arm4: Routes<Table>['switchSectionArm1$recursive$discard$arm4'] =
-		K.switchSectionArm1$recursive$discard$arm4($at('buildSwitchSectionArm1'), recursivePattern.discard.arm4);
-	const switchSectionArm1$recursive$discard$arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$discard$arm2$recursivePatternArm1'] =
-		K.switchSectionArm1$recursive$discard$arm2$recursivePatternArm1(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.discard.arm2$recursivePatternArm1
-		);
-	const switchSectionArm1$recursive$discard$arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm2$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$discard$arm2$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.discard.arm2$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$discard$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$discard$arm4$recursivePatternArm3'] =
-		K.switchSectionArm1$recursive$discard$arm4$recursivePatternArm3(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.discard.arm4$recursivePatternArm3
-		);
-	const switchSectionArm1$recursive$discard$arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$discard$arm4$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$discard$arm4$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.discard.arm4$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2'] =
-		K.switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.parenthesizedVariableDesignation.arm2
-		);
-	const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4'] =
-		K.switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.parenthesizedVariableDesignation.arm4
-		);
-	const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1'] =
-		K.switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.parenthesizedVariableDesignation.arm2$recursivePatternArm1
-		);
-	const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.parenthesizedVariableDesignation.arm2$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3'] =
-		K.switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.parenthesizedVariableDesignation.arm4$recursivePatternArm3
-		);
-	const switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.parenthesizedVariableDesignation.arm4$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$arm2$arm4: Routes<Table>['switchSectionArm1$recursive$arm2$arm4'] =
-		K.switchSectionArm1$recursive$arm2$arm4($at('buildSwitchSectionArm1'), recursivePattern.arm2.arm4);
-	const switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3'] =
-		K.switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.arm4$recursivePatternArm3
-		);
-	const switchSectionArm1$recursive$arm2$arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$arm4$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$arm2$arm4$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.arm4$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4'] =
-		K.switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.recursivePatternArm1.arm4
-		);
-	const switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3'] =
-		K.switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.recursivePatternArm1.arm4$recursivePatternArm3
-		);
-	const switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.recursivePatternArm1.arm4$propertyPatternClause
-		);
-	const switchSectionArm1$recursive$arm2$propertyPatternClause$arm4: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4'] =
-		K.switchSectionArm1$recursive$arm2$propertyPatternClause$arm4(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.propertyPatternClause.arm4
-		);
-	const switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3'] =
-		K.switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.propertyPatternClause.arm4$recursivePatternArm3
-		);
-	const switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause: Routes<Table>['switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause'] =
-		K.switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause(
-			$at('buildSwitchSectionArm1'),
-			recursivePattern.arm2.propertyPatternClause.arm4$propertyPatternClause
 		);
 	const switchSectionArm1: Routes<Table>['switchSectionArm1'] = Object.freeze({
 		constant: Object.freeze(
@@ -7871,74 +6120,8 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		discard: switchSectionArm1$discard,
 		recursive: Object.freeze(
 			Object.assign(switchSectionArm1$recursive, {
-				positionalPatternClause: Object.freeze(
-					Object.assign(switchSectionArm1$recursive$positionalPatternClause, {
-						discard: switchSectionArm1$recursive$positionalPatternClause$discard,
-						parenthesizedVariableDesignation:
-							switchSectionArm1$recursive$positionalPatternClause$parenthesizedVariableDesignation,
-						arm2: switchSectionArm1$recursive$positionalPatternClause$arm2,
-						arm4: switchSectionArm1$recursive$positionalPatternClause$arm4,
-						arm2$recursivePatternArm1: switchSectionArm1$recursive$positionalPatternClause$arm2$recursivePatternArm1,
-						arm2$propertyPatternClause: switchSectionArm1$recursive$positionalPatternClause$arm2$propertyPatternClause,
-						arm4$recursivePatternArm3: switchSectionArm1$recursive$positionalPatternClause$arm4$recursivePatternArm3,
-						arm4$propertyPatternClause: switchSectionArm1$recursive$positionalPatternClause$arm4$propertyPatternClause
-					} as const)
-				),
-				discard: Object.freeze(
-					Object.assign(switchSectionArm1$recursive$discard, {
-						arm2: switchSectionArm1$recursive$discard$arm2,
-						arm4: switchSectionArm1$recursive$discard$arm4,
-						arm2$recursivePatternArm1: switchSectionArm1$recursive$discard$arm2$recursivePatternArm1,
-						arm2$propertyPatternClause: switchSectionArm1$recursive$discard$arm2$propertyPatternClause,
-						arm4$recursivePatternArm3: switchSectionArm1$recursive$discard$arm4$recursivePatternArm3,
-						arm4$propertyPatternClause: switchSectionArm1$recursive$discard$arm4$propertyPatternClause
-					} as const)
-				),
-				parenthesizedVariableDesignation: Object.freeze(
-					Object.assign(switchSectionArm1$recursive$parenthesizedVariableDesignation, {
-						arm2: switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2,
-						arm4: switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4,
-						arm2$recursivePatternArm1:
-							switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$recursivePatternArm1,
-						arm2$propertyPatternClause:
-							switchSectionArm1$recursive$parenthesizedVariableDesignation$arm2$propertyPatternClause,
-						arm4$recursivePatternArm3:
-							switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$recursivePatternArm3,
-						arm4$propertyPatternClause:
-							switchSectionArm1$recursive$parenthesizedVariableDesignation$arm4$propertyPatternClause
-					} as const)
-				),
-				arm2: Object.freeze(
-					Object.assign(switchSectionArm1$recursive$arm2, {
-						arm4: switchSectionArm1$recursive$arm2$arm4,
-						arm4$recursivePatternArm3: switchSectionArm1$recursive$arm2$arm4$recursivePatternArm3,
-						arm4$propertyPatternClause: switchSectionArm1$recursive$arm2$arm4$propertyPatternClause,
-						recursivePatternArm1: Object.freeze(
-							Object.assign(switchSectionArm1$recursive$arm2$recursivePatternArm1, {
-								arm4: switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4,
-								arm4$recursivePatternArm3:
-									switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$recursivePatternArm3,
-								arm4$propertyPatternClause:
-									switchSectionArm1$recursive$arm2$recursivePatternArm1$arm4$propertyPatternClause
-							} as const)
-						),
-						propertyPatternClause: Object.freeze(
-							Object.assign(switchSectionArm1$recursive$arm2$propertyPatternClause, {
-								arm4: switchSectionArm1$recursive$arm2$propertyPatternClause$arm4,
-								arm4$recursivePatternArm3:
-									switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$recursivePatternArm3,
-								arm4$propertyPatternClause:
-									switchSectionArm1$recursive$arm2$propertyPatternClause$arm4$propertyPatternClause
-							} as const)
-						)
-					} as const)
-				),
-				arm4: Object.freeze(
-					Object.assign(switchSectionArm1$recursive$arm4, {
-						recursivePatternArm3: switchSectionArm1$recursive$arm4$recursivePatternArm3,
-						propertyPatternClause: switchSectionArm1$recursive$arm4$propertyPatternClause
-					} as const)
-				)
+				discard: switchSectionArm1$recursive$discard,
+				parenthesizedVariableDesignation: switchSectionArm1$recursive$parenthesizedVariableDesignation
 			} as const)
 		),
 		var: Object.freeze(
@@ -8219,11 +6402,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			F.buildSwitchSectionArm2,
 			switchSectionArm1.declaration.parenthesizedVariableDesignation
 		);
-	const switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause'] =
-		K.switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause(
-			F.buildSwitchSectionArm2,
-			switchSectionArm1.recursive.positionalPatternClause
-		);
 	const switchSectionArm2$switchSectionArm1$recursive$discard: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$discard'] =
 		K.switchSectionArm2$switchSectionArm1$recursive$discard(
 			F.buildSwitchSectionArm2,
@@ -8233,30 +6411,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation(
 			F.buildSwitchSectionArm2,
 			switchSectionArm1.recursive.parenthesizedVariableDesignation
-		);
-	const switchSectionArm2$switchSectionArm1$recursive$arm2: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2'] =
-		K.switchSectionArm2$switchSectionArm1$recursive$arm2(F.buildSwitchSectionArm2, switchSectionArm1.recursive.arm2);
-	const switchSectionArm2$switchSectionArm1$recursive$arm4: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4'] =
-		K.switchSectionArm2$switchSectionArm1$recursive$arm4(F.buildSwitchSectionArm2, switchSectionArm1.recursive.arm4);
-	const switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'] =
-		K.switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1(
-			F.buildSwitchSectionArm2,
-			switchSectionArm1.recursive.arm2.recursivePatternArm1
-		);
-	const switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause'] =
-		K.switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause(
-			F.buildSwitchSectionArm2,
-			switchSectionArm1.recursive.arm2.propertyPatternClause
-		);
-	const switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'] =
-		K.switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3(
-			F.buildSwitchSectionArm2,
-			switchSectionArm1.recursive.arm4.recursivePatternArm3
-		);
-	const switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause: Routes<Table>['switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause'] =
-		K.switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause(
-			F.buildSwitchSectionArm2,
-			switchSectionArm1.recursive.arm4.propertyPatternClause
 		);
 	const switchSectionArm2$switchSectionArm1$var$discard: Routes<Table>['switchSectionArm2$switchSectionArm1$var$discard'] =
 		K.switchSectionArm2$switchSectionArm1$var$discard(F.buildSwitchSectionArm2, switchSectionArm1.var.discard);
@@ -8355,22 +6509,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 				discard: switchSectionArm2$switchSectionArm1$discard,
 				recursive: Object.freeze(
 					Object.assign(switchSectionArm2$switchSectionArm1$recursive, {
-						positionalPatternClause: switchSectionArm2$switchSectionArm1$recursive$positionalPatternClause,
 						discard: switchSectionArm2$switchSectionArm1$recursive$discard,
 						parenthesizedVariableDesignation:
-							switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation,
-						arm2: Object.freeze(
-							Object.assign(switchSectionArm2$switchSectionArm1$recursive$arm2, {
-								recursivePatternArm1: switchSectionArm2$switchSectionArm1$recursive$arm2$recursivePatternArm1,
-								propertyPatternClause: switchSectionArm2$switchSectionArm1$recursive$arm2$propertyPatternClause
-							} as const)
-						),
-						arm4: Object.freeze(
-							Object.assign(switchSectionArm2$switchSectionArm1$recursive$arm4, {
-								recursivePatternArm3: switchSectionArm2$switchSectionArm1$recursive$arm4$recursivePatternArm3,
-								propertyPatternClause: switchSectionArm2$switchSectionArm1$recursive$arm4$propertyPatternClause
-							} as const)
-						)
+							switchSectionArm2$switchSectionArm1$recursive$parenthesizedVariableDesignation
 					} as const)
 				),
 				var: Object.freeze(
@@ -8691,11 +6832,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			$at('buildSwitchSection'),
 			switchSectionArm2.switchSectionArm1.declaration.parenthesizedVariableDesignation
 		);
-	const switchSection$arm2$switchSectionArm1$recursive$positionalPatternClause: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$positionalPatternClause'] =
-		K.switchSection$arm2$switchSectionArm1$recursive$positionalPatternClause(
-			$at('buildSwitchSection'),
-			switchSectionArm2.switchSectionArm1.recursive.positionalPatternClause
-		);
 	const switchSection$arm2$switchSectionArm1$recursive$discard: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$discard'] =
 		K.switchSection$arm2$switchSectionArm1$recursive$discard(
 			$at('buildSwitchSection'),
@@ -8705,36 +6841,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.switchSection$arm2$switchSectionArm1$recursive$parenthesizedVariableDesignation(
 			$at('buildSwitchSection'),
 			switchSectionArm2.switchSectionArm1.recursive.parenthesizedVariableDesignation
-		);
-	const switchSection$arm2$switchSectionArm1$recursive$arm2: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm2'] =
-		K.switchSection$arm2$switchSectionArm1$recursive$arm2(
-			$at('buildSwitchSection'),
-			switchSectionArm2.switchSectionArm1.recursive.arm2
-		);
-	const switchSection$arm2$switchSectionArm1$recursive$arm4: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm4'] =
-		K.switchSection$arm2$switchSectionArm1$recursive$arm4(
-			$at('buildSwitchSection'),
-			switchSectionArm2.switchSectionArm1.recursive.arm4
-		);
-	const switchSection$arm2$switchSectionArm1$recursive$arm2$recursivePatternArm1: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm2$recursivePatternArm1'] =
-		K.switchSection$arm2$switchSectionArm1$recursive$arm2$recursivePatternArm1(
-			$at('buildSwitchSection'),
-			switchSectionArm2.switchSectionArm1.recursive.arm2.recursivePatternArm1
-		);
-	const switchSection$arm2$switchSectionArm1$recursive$arm2$propertyPatternClause: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm2$propertyPatternClause'] =
-		K.switchSection$arm2$switchSectionArm1$recursive$arm2$propertyPatternClause(
-			$at('buildSwitchSection'),
-			switchSectionArm2.switchSectionArm1.recursive.arm2.propertyPatternClause
-		);
-	const switchSection$arm2$switchSectionArm1$recursive$arm4$recursivePatternArm3: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm4$recursivePatternArm3'] =
-		K.switchSection$arm2$switchSectionArm1$recursive$arm4$recursivePatternArm3(
-			$at('buildSwitchSection'),
-			switchSectionArm2.switchSectionArm1.recursive.arm4.recursivePatternArm3
-		);
-	const switchSection$arm2$switchSectionArm1$recursive$arm4$propertyPatternClause: Routes<Table>['switchSection$arm2$switchSectionArm1$recursive$arm4$propertyPatternClause'] =
-		K.switchSection$arm2$switchSectionArm1$recursive$arm4$propertyPatternClause(
-			$at('buildSwitchSection'),
-			switchSectionArm2.switchSectionArm1.recursive.arm4.propertyPatternClause
 		);
 	const switchSection$arm2$switchSectionArm1$var$discard: Routes<Table>['switchSection$arm2$switchSectionArm1$var$discard'] =
 		K.switchSection$arm2$switchSectionArm1$var$discard(
@@ -8841,22 +6947,9 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 							discard: switchSection$arm2$switchSectionArm1$discard,
 							recursive: Object.freeze(
 								Object.assign(switchSection$arm2$switchSectionArm1$recursive, {
-									positionalPatternClause: switchSection$arm2$switchSectionArm1$recursive$positionalPatternClause,
 									discard: switchSection$arm2$switchSectionArm1$recursive$discard,
 									parenthesizedVariableDesignation:
-										switchSection$arm2$switchSectionArm1$recursive$parenthesizedVariableDesignation,
-									arm2: Object.freeze(
-										Object.assign(switchSection$arm2$switchSectionArm1$recursive$arm2, {
-											recursivePatternArm1: switchSection$arm2$switchSectionArm1$recursive$arm2$recursivePatternArm1,
-											propertyPatternClause: switchSection$arm2$switchSectionArm1$recursive$arm2$propertyPatternClause
-										} as const)
-									),
-									arm4: Object.freeze(
-										Object.assign(switchSection$arm2$switchSectionArm1$recursive$arm4, {
-											recursivePatternArm3: switchSection$arm2$switchSectionArm1$recursive$arm4$recursivePatternArm3,
-											propertyPatternClause: switchSection$arm2$switchSectionArm1$recursive$arm4$propertyPatternClause
-										} as const)
-									)
+										switchSection$arm2$switchSectionArm1$recursive$parenthesizedVariableDesignation
 								} as const)
 							),
 							var: Object.freeze(

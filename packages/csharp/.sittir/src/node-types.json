@@ -7626,86 +7626,19 @@
           }
         ]
       },
-      "type": {
+      "property_pattern_clause": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "alias_qualified_name",
-            "named": true
-          },
-          {
-            "type": "generic_name",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "qualified_name",
+            "type": "property_pattern_clause",
             "named": true
           }
         ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "discard",
-          "named": true
-        },
-        {
-          "type": "parenthesized_variable_designation",
-          "named": true
-        },
-        {
-          "type": "positional_pattern_clause",
-          "named": true
-        },
-        {
-          "type": "property_pattern_clause",
-          "named": true
-        },
-        {
-          "type": "recursive_pattern_arm2",
-          "named": true
-        },
-        {
-          "type": "recursive_pattern_arm4",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "recursive_pattern_arm1",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "positional_pattern_clause",
-          "named": true
-        },
-        {
-          "type": "property_pattern_clause",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "recursive_pattern_arm2",
-    "named": true,
-    "fields": {
+      },
       "type": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "type",
@@ -7715,61 +7648,15 @@
       }
     },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
-          "type": "property_pattern_clause",
+          "type": "discard",
           "named": true
         },
         {
-          "type": "recursive_pattern_arm1",
-          "named": true
-        },
-        {
-          "type": "variable_designation",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "recursive_pattern_arm3",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "positional_pattern_clause",
-          "named": true
-        },
-        {
-          "type": "property_pattern_clause",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "recursive_pattern_arm4",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "property_pattern_clause",
-          "named": true
-        },
-        {
-          "type": "recursive_pattern_arm3",
-          "named": true
-        },
-        {
-          "type": "variable_designation",
+          "type": "parenthesized_variable_designation",
           "named": true
         }
       ]

@@ -2250,22 +2250,13 @@
     "severity": "error",
     "grammar": "c_sharp",
     "ownerKind": "recursive_pattern",
-    "message": "[collect-slots] kind 'recursive_pattern': member rule:recursive_pattern:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[6]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "message": "[collect-slots] kind 'recursive_pattern': member rule:recursive_pattern:root is not a leaf or a choice of leaves (choice-with-structured-arms: choice[12]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
     "canProceed": false,
     "details": {
       "bucket": "choice-with-structured-arms",
-      "shape": "choice[6]",
+      "shape": "choice[12]",
       "ruleId": "rule:recursive_pattern:root"
     }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "error",
-    "grammar": "c_sharp",
-    "ownerKind": "recursive_pattern",
-    "message": "[collect-slots] kind 'recursive_pattern': choice rule:recursive_pattern:root is a singular mixed row — structured named arm(s) [seq[4](choice positional_pattern_clause property_pattern_clause choice), seq[3](choice positional_pattern_clause property_pattern_clause), seq[2](positional_pattern_clause choice)] alongside union arm(s) [positional_pattern_clause, recursive_pattern_arm2, recursive_pattern_arm4]. Resolve with variant(name) in edits: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
-    "canProceed": false
   },
   {
     "scope": "grammar",
@@ -2289,6 +2280,66 @@
     "grammar": "c_sharp",
     "ownerKind": "recursive_pattern",
     "message": "[collect-slots] kind 'recursive_pattern': choice rule:recursive_pattern:members.2/members.1 routes 2 unnamed-nonterminal arm(s) [discard, parenthesized_variable_designation] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c_sharp",
+    "ownerKind": "recursive_pattern",
+    "message": "[collect-slots] kind 'recursive_pattern': choice rule:recursive_pattern:members.4/members.3 routes 2 unnamed-nonterminal arm(s) [discard, parenthesized_variable_designation] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c_sharp",
+    "ownerKind": "recursive_pattern",
+    "message": "[collect-slots] kind 'recursive_pattern': choice rule:recursive_pattern:members.6/members.2 routes 2 unnamed-nonterminal arm(s) [discard, parenthesized_variable_designation] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c_sharp",
+    "ownerKind": "recursive_pattern",
+    "message": "[collect-slots] kind 'recursive_pattern': choice rule:recursive_pattern:members.8/members.2 routes 2 unnamed-nonterminal arm(s) [discard, parenthesized_variable_designation] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "name"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c_sharp",
+    "ownerKind": "recursive_pattern",
+    "message": "[collect-slots] kind 'recursive_pattern': choice rule:recursive_pattern:members.10/members.1 routes 2 unnamed-nonterminal arm(s) [discard, parenthesized_variable_designation] into one union slot alongside 1 label-routed arm(s) [field(name):identifier]",
     "canProceed": true,
     "details": {
       "unionSlot": "content",

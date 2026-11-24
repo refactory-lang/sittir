@@ -420,7 +420,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162,
 	163, 165, 170, 171, 172, 173, 174, 175, 176, 177, 179, 180, 181, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192,
 	193, 194, 195, 196, 197, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
-	230, 231, 243, 244, 245, 246, 247, 248, 249, 250, 283, 289, 329, 339, 347, 349, 351, 485, 487, 546, 551, 552, 553, 558
+	230, 231, 243, 244, 245, 246, 247, 248, 249, 250, 283, 289, 329, 339, 347, 349, 351, 485, 487, 542, 547, 548, 549, 554
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	global_statement: new Set([
@@ -430,7 +430,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		349, 350, 351, 352, 353, 354, 356, 357, 358, 362, 363, 368, 369, 370, 372, 373, 374, 375, 376, 377, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 491, 494, 520, 531, 532, 533, 545, 548, 549, 615
+		484, 485, 486, 487, 491, 494, 520, 527, 528, 529, 541, 544, 545, 611
 	]),
 	extern_alias_directive: new Set([
 		1, 3, 33, 54, 66, 72, 102, 107, 137, 138, 139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 486, 487
@@ -450,7 +450,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	bracketed_argument_list: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -458,7 +458,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	nullable_type: new Set([
 		1, 3, 33, 54, 66, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137, 138,
@@ -469,7 +469,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 323, 325, 326, 330, 333, 334, 336, 339, 344, 486,
 		487
 	]),
-	calling_convention: new Set([541]),
+	calling_convention: new Set([537]),
 	scoped_type: new Set([
 		1, 3, 33, 54, 66, 72, 102, 107, 137, 138, 139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 323, 325,
 		326, 340, 486, 487
@@ -480,7 +480,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	return_statement: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -488,7 +488,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	yield_statement: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -496,7 +496,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	throw_statement: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -504,7 +504,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	catch_filter_clause: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -512,7 +512,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	finally_clause: new Set([314]),
 	unsafe_statement: new Set([314]),
@@ -522,7 +522,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 382, 383, 403,
 		404, 405, 406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449,
 		452, 453, 454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477,
-		479, 482, 484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		479, 482, 484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	parenthesized_pattern: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 113,
@@ -530,8 +530,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		202, 203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 380, 381,
 		382, 383, 384, 385, 386, 387, 388, 392, 393, 394, 395, 396, 398, 403, 404, 405, 406, 407, 408, 422, 423, 424, 425,
 		426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453, 454, 456, 457, 458, 459, 460, 461,
-		462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520, 531,
-		532, 533, 545, 615
+		462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520, 527,
+		528, 529, 541, 611
 	]),
 	var_pattern: new Set([
 		1, 3, 33, 54, 66, 72, 102, 107, 113, 137, 138, 139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 398,
@@ -549,7 +549,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		382, 383, 384, 385, 386, 387, 388, 391, 392, 393, 394, 395, 396, 398, 403, 404, 405, 406, 407, 408, 422, 423, 424,
 		425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453, 454, 456, 457, 458, 459, 460,
 		461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520,
-		529, 531, 532, 533, 545, 615
+		525, 527, 528, 529, 541, 611
 	]),
 	negated_pattern: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 113,
@@ -557,8 +557,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		202, 203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 380, 381,
 		382, 383, 384, 385, 386, 387, 388, 392, 393, 394, 395, 396, 398, 403, 404, 405, 406, 407, 408, 422, 423, 424, 425,
 		426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453, 454, 456, 457, 458, 459, 460, 461,
-		462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520, 531,
-		532, 533, 545, 615
+		462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520, 527,
+		528, 529, 541, 611
 	]),
 	_variable_designation: new Set([
 		1, 3, 33, 54, 66, 72, 102, 107, 113, 137, 138, 139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 398,
@@ -570,7 +570,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	join_into_clause: new Set([
 		1, 3, 33, 54, 66, 72, 102, 107, 137, 138, 139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 486, 487
@@ -581,7 +581,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	select_clause: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -589,7 +589,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	when_clause: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -597,7 +597,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	await_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -605,7 +605,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	throw_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -613,7 +613,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	interpolation_alignment_clause: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -621,7 +621,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	member_binding_expression: new Set([
 		1, 3, 33, 54, 66, 72, 102, 107, 137, 138, 139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 326, 486,
@@ -633,7 +633,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	parenthesized_lvalue_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -641,7 +641,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	anonymous_object_creation_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -649,7 +649,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	implicit_stackalloc_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -657,7 +657,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	collection_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -665,7 +665,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	collection_element: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -673,7 +673,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	expression_element: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -681,7 +681,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	spread_element: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -689,7 +689,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	initializer_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -697,7 +697,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	default_expression: new Set([
 		1, 3, 33, 54, 66, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137, 138,
@@ -720,7 +720,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	ref_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -728,7 +728,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	reftype_expression: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -736,7 +736,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	character_literal: new Set([164, 206, 207, 208, 209]),
 	identifier: new Set([
@@ -748,7 +748,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	preproc_else_in_enum_member_declaration: new Set([273]),
 	preproc_else_in_attribute_list: new Set([260]),
@@ -774,7 +774,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	switch_section_arm2: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -782,7 +782,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 522, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 522, 527, 528, 529, 541, 611
 	]),
 	list_pattern_elements: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 113,
@@ -790,8 +790,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		202, 203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 380, 381,
 		382, 383, 384, 385, 386, 387, 388, 392, 393, 394, 395, 396, 398, 403, 404, 405, 406, 407, 408, 422, 423, 424, 425,
 		426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453, 454, 456, 457, 458, 459, 460, 461,
-		462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520, 531,
-		532, 533, 545, 615
+		462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520, 527,
+		528, 529, 541, 611
 	]),
 	subpatterns: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 113,
@@ -800,7 +800,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		382, 383, 384, 385, 386, 387, 388, 391, 392, 393, 394, 395, 396, 398, 403, 404, 405, 406, 407, 408, 422, 423, 424,
 		425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453, 454, 456, 457, 458, 459, 460,
 		461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482, 484, 485, 486, 487, 494, 520,
-		531, 532, 533, 545, 615
+		527, 528, 529, 541, 611
 	]),
 	switch_expression_arms: new Set([432]),
 	anonymous_object_member_declarators: new Set([
@@ -809,7 +809,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	collection_elements: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -817,7 +817,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	expressions: new Set([
 		1, 3, 33, 54, 64, 66, 69, 72, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 102, 107, 137,
@@ -825,7 +825,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	with_initializers: new Set([468]),
 	type_parameter_constraint_default: new Set([
@@ -840,7 +840,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		203, 204, 205, 206, 207, 208, 209, 313, 323, 325, 326, 329, 330, 333, 334, 336, 339, 340, 342, 344, 403, 404, 405,
 		406, 407, 408, 422, 423, 424, 425, 426, 427, 428, 429, 430, 434, 435, 436, 437, 444, 446, 447, 448, 449, 452, 453,
 		454, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 469, 470, 471, 472, 473, 474, 475, 476, 477, 479, 482,
-		484, 485, 486, 487, 494, 520, 531, 532, 533, 545, 615
+		484, 485, 486, 487, 494, 520, 527, 528, 529, 541, 611
 	]),
 	implicit_parameter: new Set([
 		1, 3, 33, 54, 66, 72, 102, 107, 137, 138, 139, 140, 141, 142, 144, 145, 146, 147, 172, 173, 174, 175, 176, 487
@@ -2097,17 +2097,30 @@ const _K36: readonly string[] = [
 	'conditional_access_expression',
 	'cast_expression'
 ];
-const _K37: readonly string[] = ['member_binding_expression', 'element_binding_expression'];
-const _K38: readonly string[] = [
+const _K37: readonly string[] = [
+	'alias_qualified_name',
+	'qualified_name',
+	'identifier',
+	'generic_name',
+	'array_type',
+	'nullable_type',
+	'pointer_type',
+	'function_pointer_type',
+	'tuple_type',
+	'ref_type',
+	'scoped_type'
+];
+const _K38: readonly string[] = ['member_binding_expression', 'element_binding_expression'];
+const _K39: readonly string[] = [
 	'string_content',
 	'escape_sequence_arm1',
 	'escape_sequence_arm2',
 	'escape_sequence_arm3',
 	'escape_sequence_arm4'
 ];
-const _K39: readonly string[] = ['interpolation'];
-const _K40: readonly string[] = ['string_content'];
-const _K41: readonly string[] = [
+const _K40: readonly string[] = ['interpolation'];
+const _K41: readonly string[] = ['string_content'];
+const _K42: readonly string[] = [
 	'null_literal',
 	'integer_literal_arm1',
 	'integer_literal_arm2',
@@ -2115,7 +2128,7 @@ const _K41: readonly string[] = [
 	'boolean_literal',
 	'predefined_type'
 ];
-const _K42: readonly string[] = [
+const _K43: readonly string[] = [
 	'base_keyword',
 	'binary_expression',
 	'interpolated_string_expression',
@@ -2176,7 +2189,7 @@ const _K42: readonly string[] = [
 	'alias_qualified_name',
 	'qualified_name'
 ];
-const _K43: readonly string[] = [
+const _K44: readonly string[] = [
 	'base_keyword',
 	'binary_expression',
 	'interpolated_string_expression',
@@ -2226,7 +2239,7 @@ const _K43: readonly string[] = [
 	'query_expression',
 	'preproc_if_in_expression'
 ];
-const _K44: readonly string[] = [
+const _K45: readonly string[] = [
 	'block',
 	'base_keyword',
 	'binary_expression',
@@ -2286,37 +2299,37 @@ const _K44: readonly string[] = [
 	'pointer_indirection_expression',
 	'parenthesized_lvalue_expression'
 ];
-const _K45: readonly string[] = ['expression_element', 'spread_element'];
-const _K46: readonly string[] = [
+const _K46: readonly string[] = ['expression_element', 'spread_element'];
+const _K47: readonly string[] = [
 	'character_literal_content',
 	'escape_sequence_arm1',
 	'escape_sequence_arm2',
 	'escape_sequence_arm3',
 	'escape_sequence_arm4'
 ];
-const _K47: readonly string[] = [
+const _K48: readonly string[] = [
 	'string_literal_content',
 	'escape_sequence_arm1',
 	'escape_sequence_arm2',
 	'escape_sequence_arm3',
 	'escape_sequence_arm4'
 ];
-const _K48: readonly string[] = ['identifier_token', '_reserved_identifier'];
-const _K49: readonly string[] = [
+const _K49: readonly string[] = ['identifier_token', '_reserved_identifier'];
+const _K50: readonly string[] = [
 	'boolean_literal',
 	'integer_literal_arm1',
 	'integer_literal_arm2',
 	'integer_literal_arm3'
 ];
-const _K50: readonly string[] = [
+const _K51: readonly string[] = [
 	'identifier',
 	'character_literal',
 	'unary_expression',
 	'preproc_binary_expression',
 	'preproc_parenthesized_expression'
 ];
-const _K51: readonly string[] = ['preproc_else', 'preproc_elif'];
-const _K52: readonly string[] = [
+const _K52: readonly string[] = ['preproc_else', 'preproc_elif'];
+const _K53: readonly string[] = [
 	'extern_alias_directive',
 	'using_directive',
 	'global_attribute',
@@ -2353,14 +2366,14 @@ const _K52: readonly string[] = [
 	'local_declaration_statement',
 	'local_function_statement'
 ];
-const _K53: readonly string[] = ['preproc_else_in_top_level', 'preproc_elif_in_top_level'];
-const _K54: readonly string[] = ['preproc_else_in_expression', 'preproc_elif_in_expression'];
-const _K55: readonly string[] = ['preproc_else_in_enum_member_declaration', 'preproc_elif_in_enum_member_declaration'];
-const _K56: readonly string[] = ['preproc_else_in_attribute_list', 'preproc_elif_in_attribute_list'];
-const _K57: readonly string[] = ['preproc_line_arm1', 'preproc_line_arm2'];
-const _K58: readonly string[] = ['preproc_pragma_arm1', 'preproc_pragma_arm2'];
-const _K59: readonly string[] = ['enum_member_declaration', 'preproc_if_in_enum_member_declaration'];
-const _K60: readonly string[] = [
+const _K54: readonly string[] = ['preproc_else_in_top_level', 'preproc_elif_in_top_level'];
+const _K55: readonly string[] = ['preproc_else_in_expression', 'preproc_elif_in_expression'];
+const _K56: readonly string[] = ['preproc_else_in_enum_member_declaration', 'preproc_elif_in_enum_member_declaration'];
+const _K57: readonly string[] = ['preproc_else_in_attribute_list', 'preproc_elif_in_attribute_list'];
+const _K58: readonly string[] = ['preproc_line_arm1', 'preproc_line_arm2'];
+const _K59: readonly string[] = ['preproc_pragma_arm1', 'preproc_pragma_arm2'];
+const _K60: readonly string[] = ['enum_member_declaration', 'preproc_if_in_enum_member_declaration'];
+const _K61: readonly string[] = [
 	'variable_declaration',
 	'base_keyword',
 	'binary_expression',
@@ -2420,7 +2433,7 @@ const _K60: readonly string[] = [
 	'pointer_indirection_expression',
 	'parenthesized_lvalue_expression'
 ];
-const _K61: readonly string[] = [
+const _K62: readonly string[] = [
 	'base_keyword',
 	'binary_expression',
 	'interpolated_string_expression',
@@ -2480,9 +2493,7 @@ const _K61: readonly string[] = [
 	'parenthesized_lvalue_expression',
 	'switch_section_arm1'
 ];
-const _K62: readonly string[] = ['recursive_pattern_arm1', 'property_pattern_clause'];
-const _K63: readonly string[] = ['recursive_pattern_arm3', 'property_pattern_clause'];
-const _K64: readonly string[] = [
+const _K63: readonly string[] = [
 	'anonymous_object_member_declarator_arm',
 	'base_keyword',
 	'binary_expression',
@@ -2542,9 +2553,9 @@ const _K64: readonly string[] = [
 	'pointer_indirection_expression',
 	'parenthesized_lvalue_expression'
 ];
-const _K65: readonly string[] = ['identifier'];
-const _K66: readonly string[] = ['identifier', 'tuple_pattern'];
-const _K67: readonly string[] = ['constructor_constraint', 'implicit_type', 'predefined_type'];
+const _K64: readonly string[] = ['identifier'];
+const _K65: readonly string[] = ['identifier', 'tuple_pattern'];
+const _K66: readonly string[] = ['constructor_constraint', 'implicit_type', 'predefined_type'];
 
 export function resolveCompilationUnit_shebangDirective(
 	value: T.CompilationUnit.LooseConfig['shebangDirective']
@@ -7767,7 +7778,12 @@ export function coerceToListPattern(input?: T.ListPattern.Loose): ReturnType<typ
 export function resolveRecursivePattern_type(
 	value: T.RecursivePattern.LooseConfig['type']
 ): Admit<T.RecursivePattern['_type']> {
-	return _resolveOne<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>(value, _K0, _super_name);
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, [], () =>
+			_resolveOne<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName | T.Type>(value, _K10, _K37)
+		),
+		[]
+	);
 }
 
 export function resolveRecursivePattern_positionalPatternClause(
@@ -7795,18 +7811,6 @@ export function resolveRecursivePattern_variableDesignation(
 	);
 }
 
-export function resolveRecursivePattern_recursivePatternArm2(
-	value: T.RecursivePattern.LooseConfig['recursivePatternArm2']
-): Admit<T.RecursivePattern['_recursive_pattern_arm2']> {
-	return _resolveOneBranch<T.RecursivePatternArm2>(value, 'recursive_pattern_arm2', undefined, true);
-}
-
-export function resolveRecursivePattern_recursivePatternArm4(
-	value: T.RecursivePattern.LooseConfig['recursivePatternArm4']
-): Admit<T.RecursivePattern['_recursive_pattern_arm4']> {
-	return _resolveOneBranch<T.RecursivePatternArm4>(value, 'recursive_pattern_arm4', undefined, true);
-}
-
 export function coerceToRecursivePattern<const I extends T.RecursivePattern.Loose | undefined>(
 	input: RefusingInput<I, T.RecursivePattern.Loose>
 ): ReturnType<typeof F.buildRecursivePattern>;
@@ -7819,9 +7823,7 @@ export function coerceToRecursivePattern(input?: T.RecursivePattern.Loose): Retu
 		type: resolveRecursivePattern_type(input?.type),
 		positionalPatternClause: resolveRecursivePattern_positionalPatternClause(input?.positionalPatternClause),
 		propertyPatternClause: resolveRecursivePattern_propertyPatternClause(input?.propertyPatternClause),
-		variableDesignation: resolveRecursivePattern_variableDesignation(input?.variableDesignation),
-		recursivePatternArm2: resolveRecursivePattern_recursivePatternArm2(input?.recursivePatternArm2),
-		recursivePatternArm4: resolveRecursivePattern_recursivePatternArm4(input?.recursivePatternArm4)
+		variableDesignation: resolveRecursivePattern_variableDesignation(input?.variableDesignation)
 	});
 }
 
@@ -8748,7 +8750,7 @@ export function resolveConditionalAccessExpression_condition(
 export function resolveConditionalAccessExpression_content(
 	value: T.ConditionalAccessExpression.LooseConfig['content']
 ): Admit<T.ConditionalAccessExpression['_content']> {
-	return _resolveOne<T.MemberBindingExpression | T.ElementBindingExpression>(value, _K0, _K37);
+	return _resolveOne<T.MemberBindingExpression | T.ElementBindingExpression>(value, _K0, _K38);
 }
 
 export function coerceToConditionalAccessExpression<const I extends T.ConditionalAccessExpression.Loose>(
@@ -9159,19 +9161,19 @@ export function coerceToElementAccessExpression(
 export function resolveInterpolatedStringExpression_interpolatedStringContents(
 	value: T.InterpolatedStringExpression.LooseConfig['interpolatedStringContents']
 ): Admit<T.InterpolatedStringExpression['_interpolated_string_contents']> {
-	return _resolveMany<T.StringContent | T.EscapeSequence | T.Interpolation>(value, _K38, _K39);
+	return _resolveMany<T.StringContent | T.EscapeSequence | T.Interpolation>(value, _K39, _K40);
 }
 
 export function resolveInterpolatedStringExpression_interpolatedVerbatimStringContents(
 	value: T.InterpolatedStringExpression.LooseConfig['interpolatedVerbatimStringContents']
 ): Admit<T.InterpolatedStringExpression['_interpolated_verbatim_string_contents']> {
-	return _resolveMany<T.StringContent | T.Interpolation>(value, _K40, _K39);
+	return _resolveMany<T.StringContent | T.Interpolation>(value, _K41, _K40);
 }
 
 export function resolveInterpolatedStringExpression_interpolatedRawStringContents(
 	value: T.InterpolatedStringExpression.LooseConfig['interpolatedRawStringContents']
 ): Admit<T.InterpolatedStringExpression['_interpolated_raw_string_contents']> {
-	return _resolveMany<T.StringContent | T.Interpolation>(value, _K40, _K39);
+	return _resolveMany<T.StringContent | T.Interpolation>(value, _K41, _K40);
 }
 
 export function resolveInterpolatedStringExpression_interpolationRegularStart(
@@ -9412,7 +9414,7 @@ export function resolveMemberAccessExpression_expression(
 							| T.QualifiedName
 							| T.Identifier
 							| T.GenericName
-						>(value, _K41, _K42)
+						>(value, _K42, _K43)
 				),
 				[
 					['bool', TSKindId.BoolKeyword] as const,
@@ -9533,7 +9535,7 @@ export function resolveParenthesizedExpression_nonLvalueExpression(
 	value: T.ParenthesizedExpression.LooseConfig['nonLvalueExpression']
 ): Admit<T.ParenthesizedExpression['_non_lvalue_expression']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.NonLvalueExpression>(value, _K5, _K43)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.NonLvalueExpression>(value, _K5, _K44)),
 		[]
 	);
 }
@@ -9553,7 +9555,7 @@ export function coerceToParenthesizedExpression(
 					_resolveOne<T.NonLvalueExpression>(
 						configFieldOr(input, 'nonLvalueExpression', () => input, TSKindId.ParenthesizedExpression),
 						_K5,
-						_K43
+						_K44
 					)
 			),
 			[]
@@ -9630,7 +9632,7 @@ export function resolveLambdaExpression_body(
 	value: T.LambdaExpression.LooseConfig['body']
 ): Admit<T.LambdaExpression['_body']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Block | T.Expression>(value, _K5, _K44)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Block | T.Expression>(value, _K5, _K45)),
 		[]
 	);
 }
@@ -9918,7 +9920,7 @@ export function coerceToCollectionExpression(...args: unknown[]): ReturnType<typ
 export function resolveCollectionElement_content(
 	value: T.CollectionElement.LooseConfig['content']
 ): Admit<T.CollectionElement['_content']> {
-	return _resolveOne<T.ExpressionElement | T.SpreadElement>(value, _K0, _K45);
+	return _resolveOne<T.ExpressionElement | T.SpreadElement>(value, _K0, _K46);
 }
 
 export function coerceToCollectionElement<const I extends T.CollectionElement.Loose>(
@@ -9933,7 +9935,7 @@ export function coerceToCollectionElement(
 		_resolveOne<T.ExpressionElement | T.SpreadElement>(
 			configFieldOr(input, 'content', () => input, TSKindId.CollectionElement),
 			_K0,
-			_K45
+			_K46
 		)
 	);
 }
@@ -10445,7 +10447,7 @@ export function coerceToNullLiteral(_input?: T.NullLiteral.Loose): typeof F.buil
 export function resolveCharacterLiteral_content(
 	value: T.CharacterLiteral.LooseConfig['content']
 ): Admit<T.CharacterLiteral['_content']> {
-	return _resolveOne<T.CharacterLiteralContent | T.EscapeSequence>(value, _K46, _K0);
+	return _resolveOne<T.CharacterLiteralContent | T.EscapeSequence>(value, _K47, _K0);
 }
 
 export function coerceToCharacterLiteral<const I extends T.CharacterLiteral.Loose>(
@@ -10457,7 +10459,7 @@ export function coerceToCharacterLiteral(input: T.CharacterLiteral.Loose): Retur
 	return F.buildCharacterLiteral(
 		_resolveOne<T.CharacterLiteralContent | T.EscapeSequence>(
 			configFieldOr(input, 'content', () => input, TSKindId.CharacterLiteral),
-			_K46,
+			_K47,
 			_K0
 		)
 	);
@@ -10476,7 +10478,7 @@ export function coerceToCharacterLiteralContent(
 export function resolveStringLiteral_elements(
 	value: T.StringLiteral.LooseConfig['elements']
 ): Admit<T.StringLiteral['_elements']> {
-	return _resolveMany<T.StringLiteralContent | T.EscapeSequence>(value, _K47, _K0);
+	return _resolveMany<T.StringLiteralContent | T.EscapeSequence>(value, _K48, _K0);
 }
 
 export function resolveStringLiteral_stringLiteralEncoding(
@@ -10688,7 +10690,7 @@ export function resolveIdentifier_content(value: T.Identifier.LooseConfig['conte
 							| TSKindId.WhenKeyword
 							| TSKindId.WhereKeyword
 							| TSKindId.YieldKeyword
-						>(value, _K48, _K0)
+						>(value, _K49, _K0)
 				),
 				[
 					['alias', TSKindId.AliasKeyword] as const,
@@ -10805,7 +10807,7 @@ export function coerceToIdentifier(input: T.Identifier.Loose): ReturnType<typeof
 								| TSKindId.YieldKeyword
 							>(
 								configFieldOr(input, 'content', () => input, TSKindId.Identifier),
-								_K48,
+								_K49,
 								_K0
 							)
 					),
@@ -10853,7 +10855,7 @@ export function resolvePreprocIf_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -10875,7 +10877,7 @@ export function resolvePreprocIf_declarations(
 export function resolvePreprocIf_alternative(
 	value: T.PreprocIf.LooseConfig['alternative']
 ): Admit<T.PreprocIf['_alternative']> {
-	return _resolveOne<T.PreprocElse | T.PreprocElif>(value, _K0, _K51);
+	return _resolveOne<T.PreprocElse | T.PreprocElif>(value, _K0, _K52);
 }
 
 export function coerceToPreprocIf<const I extends T.PreprocIf.Loose>(
@@ -10935,7 +10937,7 @@ export function resolvePreprocElif_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -10957,7 +10959,7 @@ export function resolvePreprocElif_declarations(
 export function resolvePreprocElif_alternative(
 	value: T.PreprocElif.LooseConfig['alternative']
 ): Admit<T.PreprocElif['_alternative']> {
-	return _resolveOne<T.PreprocElse | T.PreprocElif>(value, _K0, _K51);
+	return _resolveOne<T.PreprocElse | T.PreprocElif>(value, _K0, _K52);
 }
 
 export function coerceToPreprocElif<const I extends T.PreprocElif.Loose>(
@@ -10990,7 +10992,7 @@ export function resolvePreprocIfInTopLevel_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11017,7 +11019,7 @@ export function resolvePreprocIfInTopLevel_elements(
 				| T.TypeDeclaration
 				| T.FileScopedNamespaceDeclaration
 				| T.Statement
-			>(_v, _K2, _K52)
+			>(_v, _K2, _K53)
 		),
 		(item) => coerceMixedEnumStorage(item, [])
 	);
@@ -11026,7 +11028,7 @@ export function resolvePreprocIfInTopLevel_elements(
 export function resolvePreprocIfInTopLevel_alternative(
 	value: T.PreprocIfInTopLevel.LooseConfig['alternative']
 ): Admit<T.PreprocIfInTopLevel['_alternative']> {
-	return _resolveOne<T.PreprocElseInTopLevel | T.PreprocElifInTopLevel>(value, _K0, _K53);
+	return _resolveOne<T.PreprocElseInTopLevel | T.PreprocElifInTopLevel>(value, _K0, _K54);
 }
 
 export function coerceToPreprocIfInTopLevel<const I extends T.PreprocIfInTopLevel.Loose>(
@@ -11075,7 +11077,7 @@ export function coerceToPreprocElseInTopLevel(
 					| T.TypeDeclaration
 					| T.FileScopedNamespaceDeclaration
 					| T.Statement
-				>(_v, _K2, _K52)
+				>(_v, _K2, _K53)
 			),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildPreprocElseInTopLevel>)
@@ -11097,7 +11099,7 @@ export function resolvePreprocElifInTopLevel_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11124,7 +11126,7 @@ export function resolvePreprocElifInTopLevel_elements(
 				| T.TypeDeclaration
 				| T.FileScopedNamespaceDeclaration
 				| T.Statement
-			>(_v, _K2, _K52)
+			>(_v, _K2, _K53)
 		),
 		(item) => coerceMixedEnumStorage(item, [])
 	);
@@ -11133,7 +11135,7 @@ export function resolvePreprocElifInTopLevel_elements(
 export function resolvePreprocElifInTopLevel_alternative(
 	value: T.PreprocElifInTopLevel.LooseConfig['alternative']
 ): Admit<T.PreprocElifInTopLevel['_alternative']> {
-	return _resolveOne<T.PreprocElseInTopLevel | T.PreprocElifInTopLevel>(value, _K0, _K53);
+	return _resolveOne<T.PreprocElseInTopLevel | T.PreprocElifInTopLevel>(value, _K0, _K54);
 }
 
 export function coerceToPreprocElifInTopLevel<const I extends T.PreprocElifInTopLevel.Loose>(
@@ -11168,7 +11170,7 @@ export function resolvePreprocIfInExpression_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11193,7 +11195,7 @@ export function resolvePreprocIfInExpression_expression(
 export function resolvePreprocIfInExpression_alternative(
 	value: T.PreprocIfInExpression.LooseConfig['alternative']
 ): Admit<T.PreprocIfInExpression['_alternative']> {
-	return _resolveOne<T.PreprocElseInExpression | T.PreprocElifInExpression>(value, _K0, _K54);
+	return _resolveOne<T.PreprocElseInExpression | T.PreprocElifInExpression>(value, _K0, _K55);
 }
 
 export function coerceToPreprocIfInExpression<const I extends T.PreprocIfInExpression.Loose>(
@@ -11263,7 +11265,7 @@ export function resolvePreprocElifInExpression_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11288,7 +11290,7 @@ export function resolvePreprocElifInExpression_expression(
 export function resolvePreprocElifInExpression_alternative(
 	value: T.PreprocElifInExpression.LooseConfig['alternative']
 ): Admit<T.PreprocElifInExpression['_alternative']> {
-	return _resolveOne<T.PreprocElseInExpression | T.PreprocElifInExpression>(value, _K0, _K54);
+	return _resolveOne<T.PreprocElseInExpression | T.PreprocElifInExpression>(value, _K0, _K55);
 }
 
 export function coerceToPreprocElifInExpression<const I extends T.PreprocElifInExpression.Loose>(
@@ -11323,7 +11325,7 @@ export function resolvePreprocIfInEnumMemberDeclaration_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11345,7 +11347,7 @@ export function resolvePreprocIfInEnumMemberDeclaration_enumMemberDeclaration(
 export function resolvePreprocIfInEnumMemberDeclaration_alternative(
 	value: T.PreprocIfInEnumMemberDeclaration.LooseConfig['alternative']
 ): Admit<T.PreprocIfInEnumMemberDeclaration['_alternative']> {
-	return _resolveOne<T.PreprocElseInEnumMemberDeclaration | T.PreprocElifInEnumMemberDeclaration>(value, _K0, _K55);
+	return _resolveOne<T.PreprocElseInEnumMemberDeclaration | T.PreprocElifInEnumMemberDeclaration>(value, _K0, _K56);
 }
 
 export function coerceToPreprocIfInEnumMemberDeclaration<const I extends T.PreprocIfInEnumMemberDeclaration.Loose>(
@@ -11409,7 +11411,7 @@ export function resolvePreprocElifInEnumMemberDeclaration_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11431,7 +11433,7 @@ export function resolvePreprocElifInEnumMemberDeclaration_enumMemberDeclaration(
 export function resolvePreprocElifInEnumMemberDeclaration_alternative(
 	value: T.PreprocElifInEnumMemberDeclaration.LooseConfig['alternative']
 ): Admit<T.PreprocElifInEnumMemberDeclaration['_alternative']> {
-	return _resolveOne<T.PreprocElseInEnumMemberDeclaration | T.PreprocElifInEnumMemberDeclaration>(value, _K0, _K55);
+	return _resolveOne<T.PreprocElseInEnumMemberDeclaration | T.PreprocElifInEnumMemberDeclaration>(value, _K0, _K56);
 }
 
 export function coerceToPreprocElifInEnumMemberDeclaration<const I extends T.PreprocElifInEnumMemberDeclaration.Loose>(
@@ -11466,7 +11468,7 @@ export function resolvePreprocIfInAttributeList_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11488,7 +11490,7 @@ export function resolvePreprocIfInAttributeList_attributeList(
 export function resolvePreprocIfInAttributeList_alternative(
 	value: T.PreprocIfInAttributeList.LooseConfig['alternative']
 ): Admit<T.PreprocIfInAttributeList['_alternative']> {
-	return _resolveOne<T.PreprocElseInAttributeList | T.PreprocElifInAttributeList>(value, _K0, _K56);
+	return _resolveOne<T.PreprocElseInAttributeList | T.PreprocElifInAttributeList>(value, _K0, _K57);
 }
 
 export function coerceToPreprocIfInAttributeList<const I extends T.PreprocIfInAttributeList.Loose>(
@@ -11550,7 +11552,7 @@ export function resolvePreprocElifInAttributeList_condition(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11572,7 +11574,7 @@ export function resolvePreprocElifInAttributeList_attributeList(
 export function resolvePreprocElifInAttributeList_alternative(
 	value: T.PreprocElifInAttributeList.LooseConfig['alternative']
 ): Admit<T.PreprocElifInAttributeList['_alternative']> {
-	return _resolveOne<T.PreprocElseInAttributeList | T.PreprocElifInAttributeList>(value, _K0, _K56);
+	return _resolveOne<T.PreprocElseInAttributeList | T.PreprocElifInAttributeList>(value, _K0, _K57);
 }
 
 export function coerceToPreprocElifInAttributeList<const I extends T.PreprocElifInAttributeList.Loose>(
@@ -11615,7 +11617,7 @@ export function resolvePreprocParenthesizedExpression_preprocExpression(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11649,8 +11651,8 @@ export function coerceToPreprocParenthesizedExpression(
 								| T.PreprocParenthesizedExpression
 							>(
 								configFieldOr(input, 'preprocExpression', () => input, TSKindId.PreprocParenthesizedExpression),
-								_K49,
-								_K50
+								_K50,
+								_K51
 							)
 					),
 					[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
@@ -11674,7 +11676,7 @@ export function resolveUnaryExpression_argument(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11706,8 +11708,8 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 								| T.PreprocParenthesizedExpression
 							>(
 								configFieldOr(input, 'argument', () => input, TSKindId.UnaryExpression),
-								_K49,
-								_K50
+								_K50,
+								_K51
 							)
 					),
 					[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
@@ -11731,7 +11733,7 @@ export function resolvePreprocBinaryExpression_left(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11767,7 +11769,7 @@ export function resolvePreprocBinaryExpression_right(
 					| T.UnaryExpression
 					| T.PreprocBinaryExpression
 					| T.PreprocParenthesizedExpression
-				>(value, _K49, _K50)
+				>(value, _K50, _K51)
 			),
 			[['true', TSKindId.TrueKeyword] as const, ['false', TSKindId.FalseKeyword] as const]
 		)
@@ -11852,7 +11854,7 @@ export function resolvePreprocLine_content(
 					_resolveOne<TSKindId.DefaultKeyword | TSKindId.HiddenKeyword | T.PreprocLineArm1 | T.PreprocLineArm2>(
 						value,
 						_K0,
-						_K57
+						_K58
 					)
 				),
 				[['default', TSKindId.DefaultKeyword] as const, ['hidden', TSKindId.HiddenKeyword] as const]
@@ -11882,7 +11884,7 @@ export function coerceToPreprocLine(input: T.PreprocLine.Loose): ReturnType<type
 export function resolvePreprocPragma_content(
 	value: T.PreprocPragma.LooseConfig['content']
 ): Admit<T.PreprocPragma['_content']> {
-	return _resolveOne<T.PreprocPragmaArm1 | T.PreprocPragmaArm2>(value, _K0, _K58);
+	return _resolveOne<T.PreprocPragmaArm1 | T.PreprocPragmaArm2>(value, _K0, _K59);
 }
 
 export function resolvePreprocPragma_preprocIfText2(
@@ -12465,7 +12467,7 @@ export function coerceToEnumMemberDeclarationListElements(
 		...(_listElements(
 			_rest,
 			undefined,
-			(els) => _resolveMany<T.EnumMemberDeclaration | T.PreprocIfInEnumMemberDeclaration>(els, _K0, _K59),
+			(els) => _resolveMany<T.EnumMemberDeclaration | T.PreprocIfInEnumMemberDeclaration>(els, _K0, _K60),
 			['enum_member_declaration', 'preproc_if_in_enum_member_declaration']
 		) as unknown as NonEmptyArray<Admit<T.EnumMemberDeclaration | T.PreprocIfInEnumMemberDeclaration>>)
 	);
@@ -12672,7 +12674,7 @@ export function coerceToForStatementConditionsInitializer(
 	})();
 	return F.buildForStatementConditionsInitializer(
 		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.VariableDeclaration | T.Expression>(_v, _K5, _K60)),
+			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.VariableDeclaration | T.Expression>(_v, _K5, _K61)),
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildForStatementConditionsInitializer>)
 	);
@@ -12717,7 +12719,7 @@ export function resolveSwitchSectionArm2_content(
 	value: T.SwitchSectionArm2.LooseConfig['content']
 ): Admit<T.SwitchSectionArm2['_content']> {
 	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.SwitchSectionArm1>(value, _K5, _K61)),
+		_resolveKindEnum(value, [], () => _resolveOne<T.Expression | T.SwitchSectionArm1>(value, _K5, _K62)),
 		[]
 	);
 }
@@ -12739,7 +12741,7 @@ export function coerceToSwitchSectionArm2(
 					_resolveOne<T.Expression | T.SwitchSectionArm1>(
 						configFieldOr(input, 'content', () => input, TSKindId.SwitchSectionArm2),
 						_K5,
-						_K61
+						_K62
 					)
 			),
 			[]
@@ -12782,147 +12784,6 @@ export function coerceToListPatternElements(
 			'type_pattern'
 		]) as unknown as NonEmptyArray<Admit<T.Pattern | TSKindId.DotDot>>)
 	);
-}
-
-export function resolveRecursivePatternArm1_positionalPatternClause(
-	value: T.RecursivePatternArm1.LooseConfig['positionalPatternClause'] | undefined
-): T.RecursivePatternArm1.Config['positionalPatternClause'] {
-	return _resolveOneBranch<T.PositionalPatternClause>(
-		value,
-		'positional_pattern_clause'
-	) as unknown as T.RecursivePatternArm1.Config['positionalPatternClause'];
-}
-
-export function resolveRecursivePatternArm1_propertyPatternClause(
-	value: T.RecursivePatternArm1.LooseConfig['propertyPatternClause']
-): Admit<T.RecursivePatternArm1['_property_pattern_clause']> {
-	return _resolveOneBranch<T.PropertyPatternClause>(value, 'property_pattern_clause', undefined, true);
-}
-
-export function coerceToRecursivePatternArm1<const I extends T.RecursivePatternArm1.Loose | undefined>(
-	input: RefusingInput<I, T.RecursivePatternArm1.Loose>
-): ReturnType<typeof F.buildRecursivePatternArm1>;
-export function coerceToRecursivePatternArm1(input?: undefined): ReturnType<typeof F.buildRecursivePatternArm1>;
-export function coerceToRecursivePatternArm1(
-	input?: T.RecursivePatternArm1.Loose
-): ReturnType<typeof F.buildRecursivePatternArm1> {
-	if (!_isLooseConfig<T.RecursivePatternArm1.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildRecursivePatternArm1>;
-	currentHandle()?.admit(TSKindId.RecursivePatternArm1, [input]);
-	return F.buildRecursivePatternArm1({
-		positionalPatternClause: resolveRecursivePatternArm1_positionalPatternClause(input?.positionalPatternClause),
-		propertyPatternClause: resolveRecursivePatternArm1_propertyPatternClause(input?.propertyPatternClause)
-	});
-}
-
-export function resolveRecursivePatternArm2_type(
-	value: T.RecursivePatternArm2.LooseConfig['type']
-): Admit<T.RecursivePatternArm2['_type']> {
-	return coerceMixedEnumStorage(
-		_resolveKindEnum(value, [], () => _resolveOne<T.Type>(value, _K10, _K11)),
-		[]
-	);
-}
-
-export function resolveRecursivePatternArm2_content(
-	value: T.RecursivePatternArm2.LooseConfig['content']
-): Admit<T.RecursivePatternArm2['_content']> {
-	return _resolveOne<T.RecursivePatternArm1 | T.PropertyPatternClause>(value, _K0, _K62);
-}
-
-export function resolveRecursivePatternArm2_variableDesignation(
-	value: T.RecursivePatternArm2.LooseConfig['variableDesignation']
-): T.RecursivePatternArm2.Config['variableDesignation'] {
-	return _resolveOneBranch<T.VariableDesignation>(
-		value,
-		'_variable_designation',
-		undefined,
-		true
-	) as unknown as T.RecursivePatternArm2.Config['variableDesignation'];
-}
-
-export function coerceToRecursivePatternArm2<const I extends T.RecursivePatternArm2.Loose>(
-	input: RefusingInput<I, T.RecursivePatternArm2.Loose>
-): ReturnType<typeof F.buildRecursivePatternArm2>;
-export function coerceToRecursivePatternArm2(
-	input: T.RecursivePatternArm2.Loose
-): ReturnType<typeof F.buildRecursivePatternArm2> {
-	if (!_isLooseConfig<T.RecursivePatternArm2.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildRecursivePatternArm2>;
-	currentHandle()?.admit(TSKindId.RecursivePatternArm2, [input]);
-	return F.buildRecursivePatternArm2({
-		type: resolveRecursivePatternArm2_type(input.type),
-		content: resolveRecursivePatternArm2_content(input.content),
-		variableDesignation: resolveRecursivePatternArm2_variableDesignation(input.variableDesignation)
-	});
-}
-
-export function resolveRecursivePatternArm3_positionalPatternClause(
-	value: T.RecursivePatternArm3.LooseConfig['positionalPatternClause'] | undefined
-): T.RecursivePatternArm3.Config['positionalPatternClause'] {
-	return _resolveOneBranch<T.PositionalPatternClause>(
-		value,
-		'positional_pattern_clause'
-	) as unknown as T.RecursivePatternArm3.Config['positionalPatternClause'];
-}
-
-export function resolveRecursivePatternArm3_propertyPatternClause(
-	value: T.RecursivePatternArm3.LooseConfig['propertyPatternClause'] | undefined
-): T.RecursivePatternArm3.Config['propertyPatternClause'] {
-	return (Array.isArray(value) && value.length > 0
-		? F.buildPropertyPatternClause(coerceToSubpatterns(...(value as unknown as Parameters<typeof coerceToSubpatterns>)))
-		: _resolveOneBranch<T.PropertyPatternClause>(
-				value,
-				'property_pattern_clause'
-			)) as unknown as T.RecursivePatternArm3.Config['propertyPatternClause'];
-}
-
-export function coerceToRecursivePatternArm3<const I extends T.RecursivePatternArm3.Loose | undefined>(
-	input: RefusingInput<I, T.RecursivePatternArm3.Loose>
-): ReturnType<typeof F.buildRecursivePatternArm3>;
-export function coerceToRecursivePatternArm3(input?: undefined): ReturnType<typeof F.buildRecursivePatternArm3>;
-export function coerceToRecursivePatternArm3(
-	input?: T.RecursivePatternArm3.Loose
-): ReturnType<typeof F.buildRecursivePatternArm3> {
-	if (!_isLooseConfig<T.RecursivePatternArm3.LooseConfig | undefined>(input))
-		return input as unknown as ReturnType<typeof F.buildRecursivePatternArm3>;
-	currentHandle()?.admit(TSKindId.RecursivePatternArm3, [input]);
-	return F.buildRecursivePatternArm3({
-		positionalPatternClause: resolveRecursivePatternArm3_positionalPatternClause(input?.positionalPatternClause),
-		propertyPatternClause: resolveRecursivePatternArm3_propertyPatternClause(input?.propertyPatternClause)
-	});
-}
-
-export function resolveRecursivePatternArm4_content(
-	value: T.RecursivePatternArm4.LooseConfig['content']
-): Admit<T.RecursivePatternArm4['_content']> {
-	return _resolveOne<T.RecursivePatternArm3 | T.PropertyPatternClause>(value, _K0, _K63);
-}
-
-export function resolveRecursivePatternArm4_variableDesignation(
-	value: T.RecursivePatternArm4.LooseConfig['variableDesignation']
-): T.RecursivePatternArm4.Config['variableDesignation'] {
-	return _resolveOneBranch<T.VariableDesignation>(
-		value,
-		'_variable_designation',
-		undefined,
-		true
-	) as unknown as T.RecursivePatternArm4.Config['variableDesignation'];
-}
-
-export function coerceToRecursivePatternArm4<const I extends T.RecursivePatternArm4.Loose>(
-	input: RefusingInput<I, T.RecursivePatternArm4.Loose>
-): ReturnType<typeof F.buildRecursivePatternArm4>;
-export function coerceToRecursivePatternArm4(
-	input: T.RecursivePatternArm4.Loose
-): ReturnType<typeof F.buildRecursivePatternArm4> {
-	if (!_isLooseConfig<T.RecursivePatternArm4.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildRecursivePatternArm4>;
-	currentHandle()?.admit(TSKindId.RecursivePatternArm4, [input]);
-	return F.buildRecursivePatternArm4({
-		content: resolveRecursivePatternArm4_content(input.content),
-		variableDesignation: resolveRecursivePatternArm4_variableDesignation(input.variableDesignation)
-	});
 }
 
 export function coerceToSubpatterns<const A extends T.Subpatterns.LooseArgs>(
@@ -13042,7 +12903,7 @@ export function coerceToAnonymousObjectMemberDeclarators(
 			(els) =>
 				listStorage(
 					_resolveKindEnumItems(els, [], (_v) =>
-						_resolveMany<T.AnonymousObjectMemberDeclaratorArm | T.Expression>(_v, _K5, _K64)
+						_resolveMany<T.AnonymousObjectMemberDeclaratorArm | T.Expression>(_v, _K5, _K63)
 					),
 					(item) => coerceMixedEnumStorage(item, [])
 				),
@@ -13348,7 +13209,7 @@ export function resolvePreprocPragmaArm1_operator(
 export function resolvePreprocPragmaArm1_elements(
 	value: T.PreprocPragmaArm1.LooseConfig['elements']
 ): Admit<T.PreprocPragmaArm1['_element']> {
-	return _resolveMany<T.Identifier | T.IntegerLiteral>(value, _super_integer_literal, _K65);
+	return _resolveMany<T.Identifier | T.IntegerLiteral>(value, _super_integer_literal, _K64);
 }
 
 export function coerceToPreprocPragmaArm1<const I extends T.PreprocPragmaArm1.Loose>(
@@ -13533,7 +13394,7 @@ export function resolveForeachStatementInitializerArm_type(
 export function resolveForeachStatementInitializerArm_left(
 	value: T.ForeachStatementInitializerArm.LooseConfig['left']
 ): Admit<T.ForeachStatementInitializerArm['_left']> {
-	return _resolveOne<T.Identifier | T.TuplePattern>(value, _K0, _K66);
+	return _resolveOne<T.Identifier | T.TuplePattern>(value, _K0, _K65);
 }
 
 export function coerceToForeachStatementInitializerArm<const I extends T.ForeachStatementInitializerArm.Loose>(
@@ -13782,7 +13643,7 @@ export function resolveTypeParameterConstraintDefault_content(
 ): Admit<T.TypeParameterConstraintDefault['_content']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [TSKindId.ConstructorConstraint], () =>
-			_resolveOne<TSKindId.ConstructorConstraint | T.Type>(value, _K67, _K11)
+			_resolveOne<TSKindId.ConstructorConstraint | T.Type>(value, _K66, _K11)
 		),
 		[['new()', TSKindId.ConstructorConstraint] as const]
 	);
@@ -13804,7 +13665,7 @@ export function coerceToTypeParameterConstraintDefault(
 				() =>
 					_resolveOne<TSKindId.ConstructorConstraint | T.Type>(
 						configFieldOr(input, 'content', () => input, TSKindId.TypeParameterConstraintDefault),
-						_K67,
+						_K66,
 						_K11
 					)
 			),
@@ -14393,7 +14254,7 @@ export function resolveImplicitParameter_content(
 							| TSKindId.WhenKeyword
 							| TSKindId.WhereKeyword
 							| TSKindId.YieldKeyword
-						>(value, _K48, _K0)
+						>(value, _K49, _K0)
 				),
 				[
 					['alias', TSKindId.AliasKeyword] as const,
@@ -14513,7 +14374,7 @@ export function coerceToImplicitParameter(
 								| TSKindId.YieldKeyword
 							>(
 								configFieldOr(input, 'content', () => input, TSKindId.ImplicitParameter),
-								_K48,
+								_K49,
 								_K0
 							)
 					),
@@ -14788,10 +14649,6 @@ export interface _FromMap {
 	readonly switch_section_arm1: typeof coerceToSwitchSectionArm1;
 	readonly switch_section_arm2: typeof coerceToSwitchSectionArm2;
 	readonly list_pattern_elements: typeof coerceToListPatternElements;
-	readonly recursive_pattern_arm1: typeof coerceToRecursivePatternArm1;
-	readonly recursive_pattern_arm2: typeof coerceToRecursivePatternArm2;
-	readonly recursive_pattern_arm3: typeof coerceToRecursivePatternArm3;
-	readonly recursive_pattern_arm4: typeof coerceToRecursivePatternArm4;
 	readonly subpatterns: typeof coerceToSubpatterns;
 	readonly switch_expression_arms: typeof coerceToSwitchExpressionArms;
 	readonly anonymous_object_member_declarators: typeof coerceToAnonymousObjectMemberDeclarators;
@@ -15090,10 +14947,6 @@ export const _fromMap: _FromMap = {
 	switch_section_arm1: coerceToSwitchSectionArm1,
 	switch_section_arm2: coerceToSwitchSectionArm2,
 	list_pattern_elements: coerceToListPatternElements,
-	recursive_pattern_arm1: coerceToRecursivePatternArm1,
-	recursive_pattern_arm2: coerceToRecursivePatternArm2,
-	recursive_pattern_arm3: coerceToRecursivePatternArm3,
-	recursive_pattern_arm4: coerceToRecursivePatternArm4,
 	subpatterns: coerceToSubpatterns,
 	switch_expression_arms: coerceToSwitchExpressionArms,
 	anonymous_object_member_declarators: coerceToAnonymousObjectMemberDeclarators,

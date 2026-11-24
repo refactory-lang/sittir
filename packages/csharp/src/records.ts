@@ -555,14 +555,12 @@ export const records = {
 		variable_designation: { word: 5, width: 9, inline: 9, forms: 8, built: 3 }
 	},
 	RecursivePatternNode: {
-		words: 66,
-		builtWords: 8,
-		type_: { word: 2, width: 3, forms: 1, built: 2 },
-		positional_pattern_clause: { word: 5, width: 3, inline: 3, forms: 8, built: 3 },
-		property_pattern_clause: { word: 8, width: 5, inline: 5, forms: 8, built: 4 },
-		variable_designation: { word: 13, width: 7, inline: 6, forms: 10, built: 5 },
-		recursive_pattern_arm2: { word: 20, width: 25, inline: 25, forms: 8, built: 6 },
-		recursive_pattern_arm4: { word: 45, width: 21, inline: 21, forms: 8, built: 7 }
+		words: 21,
+		builtWords: 6,
+		type_: { word: 2, width: 4, forms: 3, built: 2 },
+		positional_pattern_clause: { word: 6, width: 3, inline: 3, forms: 8, built: 3 },
+		property_pattern_clause: { word: 9, width: 5, inline: 5, forms: 8, built: 4 },
+		variable_designation: { word: 14, width: 7, inline: 6, forms: 10, built: 5 }
 	},
 	PositionalPatternClauseNode: {
 		words: 3,
@@ -1183,31 +1181,6 @@ export const records = {
 	},
 	SwitchSectionArm2Node: { words: 6, builtWords: 3, content: { word: 2, width: 4, forms: 3, built: 2 } },
 	ListPatternElementsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 4, forms: 3, built: 2 } },
-	RecursivePatternArm1Node: {
-		words: 10,
-		builtWords: 4,
-		positional_pattern_clause: { word: 2, width: 3, inline: 3, forms: 8, built: 2 },
-		property_pattern_clause: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
-	},
-	RecursivePatternArm2Node: {
-		words: 25,
-		builtWords: 5,
-		type_: { word: 2, width: 4, forms: 3, built: 2 },
-		content: { word: 6, width: 10, inline: 10, forms: 8, built: 3 },
-		variable_designation: { word: 16, width: 9, inline: 9, forms: 8, built: 4 }
-	},
-	RecursivePatternArm3Node: {
-		words: 10,
-		builtWords: 4,
-		positional_pattern_clause: { word: 2, width: 3, inline: 3, forms: 8, built: 2 },
-		property_pattern_clause: { word: 5, width: 5, inline: 5, forms: 8, built: 3 }
-	},
-	RecursivePatternArm4Node: {
-		words: 21,
-		builtWords: 4,
-		content: { word: 2, width: 10, inline: 10, forms: 8, built: 2 },
-		variable_designation: { word: 12, width: 9, inline: 9, forms: 8, built: 3 }
-	},
 	SubpatternsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	SwitchExpressionArmsNode: { words: 3, builtWords: 3, item: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	AnonymousObjectMemberDeclaratorsNode: {

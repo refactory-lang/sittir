@@ -6699,149 +6699,420 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "PREC_DYNAMIC",
-            "value": 1,
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "type",
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "type",
+                "content": {
+                  "type": "PREC_DYNAMIC",
+                  "value": 1,
                   "content": {
                     "type": "SYMBOL",
                     "name": "_name"
                   }
                 },
-                {
-                  "type": "FIELD",
-                  "name": "positional_pattern_clause",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "positional_pattern_clause"
-                  },
-                  "metadata": {
-                    "fieldSource": "enriched"
-                  }
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "positional_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "positional_pattern_clause"
                 },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "property_pattern_clause",
+                    "content": {
                       "type": "SYMBOL",
                       "name": "property_pattern_clause"
                     },
-                    {
-                      "type": "BLANK"
+                    "metadata": {
+                      "fieldSource": "override"
                     }
-                  ]
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_variable_designation"
-                }
-              ],
-              "annotations": {
-                "variantOf": "recursive_pattern"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_variable_designation"
               }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
             }
           },
           {
-            "type": "PREC_DYNAMIC",
-            "value": -1,
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "type",
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "type",
+                "content": {
+                  "type": "PREC_DYNAMIC",
+                  "value": -1,
                   "content": {
                     "type": "SYMBOL",
                     "name": "_name"
                   }
                 },
-                {
-                  "type": "FIELD",
-                  "name": "positional_pattern_clause",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "positional_pattern_clause"
-                  },
-                  "metadata": {
-                    "fieldSource": "enriched"
-                  }
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "positional_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "positional_pattern_clause"
                 },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "property_pattern_clause",
+                    "content": {
                       "type": "SYMBOL",
                       "name": "property_pattern_clause"
                     },
-                    {
-                      "type": "BLANK"
+                    "metadata": {
+                      "fieldSource": "override"
                     }
-                  ]
-                }
-              ],
-              "annotations": {
-                "variantOf": "recursive_pattern"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
               }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
             }
           },
           {
-            "type": "PREC_DYNAMIC",
-            "value": 1,
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "positional_pattern_clause",
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "positional_pattern_clause",
+                "content": {
+                  "type": "PREC_DYNAMIC",
+                  "value": 1,
                   "content": {
                     "type": "SYMBOL",
                     "name": "positional_pattern_clause"
-                  },
-                  "metadata": {
-                    "fieldSource": "enriched"
                   }
                 },
-                {
-                  "type": "SYMBOL",
-                  "name": "_variable_designation"
+                "metadata": {
+                  "fieldSource": "override"
                 }
-              ],
-              "annotations": {
-                "variantOf": "recursive_pattern"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_variable_designation"
               }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
             }
           },
           {
-            "type": "SYMBOL",
+            "type": "FIELD",
             "name": "positional_pattern_clause",
+            "content": {
+              "type": "SYMBOL",
+              "name": "positional_pattern_clause"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            },
             "annotations": {
-              "variant": "positional_pattern_clause",
               "variantOf": "recursive_pattern"
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "recursive_pattern_arm2",
-            "metadata": {
-              "symbolSource": "group-lift"
-            },
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "type",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "positional_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "positional_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "property_pattern_clause",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "property_pattern_clause"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_variable_designation"
+              }
+            ],
             "annotations": {
-              "variant": "arm2",
               "variantOf": "recursive_pattern"
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "recursive_pattern_arm4",
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "type",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "positional_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "positional_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "property_pattern_clause",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "property_pattern_clause"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "type",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "property_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "property_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_variable_designation"
+              }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "type",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "type"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "property_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "property_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "positional_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "positional_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "property_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "property_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_variable_designation"
+              }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "positional_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "positional_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "property_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "property_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "property_pattern_clause",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "property_pattern_clause"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_variable_designation"
+              }
+            ],
+            "annotations": {
+              "variantOf": "recursive_pattern"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "property_pattern_clause",
+            "content": {
+              "type": "SYMBOL",
+              "name": "property_pattern_clause"
+            },
             "metadata": {
-              "symbolSource": "group-lift"
+              "fieldSource": "override"
             },
             "annotations": {
-              "variant": "arm4",
               "variantOf": "recursive_pattern"
             }
           }
@@ -14923,174 +15194,6 @@
               {
                 "type": "STRING",
                 "value": ","
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "recursive_pattern_arm1": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "positional_pattern_clause"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "property_pattern_clause"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "recursive_pattern_arm2": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "type",
-            "content": {
-              "type": "SYMBOL",
-              "name": "type"
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "recursive_pattern_arm1",
-                "metadata": {
-                  "symbolSource": "group-lift"
-                },
-                "annotations": {
-                  "variant": "recursive_pattern_arm1",
-                  "variantOf": "recursive_pattern_arm2"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "property_pattern_clause",
-                "annotations": {
-                  "variant": "property_pattern_clause",
-                  "variantOf": "recursive_pattern_arm2"
-                }
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_variable_designation"
-                },
-                "named": true,
-                "value": "variable_designation",
-                "metadata": {
-                  "aliasSource": "visible-group"
-                }
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "recursive_pattern_arm3": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "positional_pattern_clause"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "property_pattern_clause"
-          }
-        ]
-      },
-      "annotations": {
-        "hoisted": true
-      }
-    },
-    "recursive_pattern_arm4": {
-      "type": "PREC_LEFT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "recursive_pattern_arm3",
-                "metadata": {
-                  "symbolSource": "group-lift"
-                },
-                "annotations": {
-                  "variant": "recursive_pattern_arm3",
-                  "variantOf": "recursive_pattern_arm4"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "property_pattern_clause",
-                "annotations": {
-                  "variant": "property_pattern_clause",
-                  "variantOf": "recursive_pattern_arm4"
-                }
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_variable_designation"
-                },
-                "named": true,
-                "value": "variable_designation",
-                "metadata": {
-                  "aliasSource": "visible-group"
-                }
               },
               {
                 "type": "BLANK"

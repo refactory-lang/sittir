@@ -748,7 +748,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[395, 'or_pattern'],
 	[396, 'declaration_pattern'],
 	[397, '_variable_designation'],
-	[618, '_variable_designation'],
+	[614, '_variable_designation'],
 	[398, 'parenthesized_variable_designation'],
 	[399, 'expression'],
 	[400, 'non_lvalue_expression'],
@@ -876,99 +876,95 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[522, 'switch_section_arm1'],
 	[523, 'switch_section_arm2'],
 	[524, 'list_pattern_elements'],
-	[525, 'recursive_pattern_arm1'],
-	[526, 'recursive_pattern_arm2'],
-	[527, 'recursive_pattern_arm3'],
-	[528, 'recursive_pattern_arm4'],
-	[529, 'subpatterns'],
-	[530, 'switch_expression_arms'],
-	[531, 'anonymous_object_member_declarators'],
-	[532, 'collection_elements'],
-	[533, 'expressions'],
-	[534, 'with_initializers'],
-	[535, 'preproc_line_arm1'],
-	[536, 'preproc_line_arm2'],
-	[537, 'preproc_pragma_arm1'],
-	[538, 'preproc_pragma_arm2'],
-	[539, 'attribute_argument_arm'],
-	[540, 'property_declaration_arm'],
-	[541, 'calling_convention_arm'],
-	[542, 'foreach_statement_initializer_arm'],
-	[543, 'subpattern_arm'],
-	[544, 'query_body_group'],
-	[545, 'anonymous_object_member_declarator_arm'],
-	[546, 'ref_readonly'],
-	[547, 'ordering'],
-	[548, 'switch_statement_parenthesized'],
-	[549, 'switch_statement_tuple'],
-	[550, 'type_parameter_constraint_class'],
-	[551, 'type_parameter_constraint_struct'],
-	[552, 'type_parameter_constraint_notnull'],
-	[553, 'type_parameter_constraint_unmanaged'],
-	[554, 'type_parameter_constraint_default'],
-	[555, 'enum_declaration_with_body'],
-	[556, 'enum_declaration_without_body'],
-	[557, 'declaration_list_body_with_body'],
-	[558, 'declaration_list_body_without_body'],
-	[559, 'type_argument_list_unbound'],
-	[560, 'type_argument_list_bound'],
-	[561, 'record_base_names'],
-	[562, 'record_base_primary_constructor'],
-	[563, 'using_directive_alias'],
-	[564, 'compilation_unit_repeat1'],
-	[565, '_class_declaration_initializer_repeat1'],
-	[566, '_class_declaration_initializer_repeat2'],
-	[567, '_class_declaration_initializer_repeat3'],
-	[568, '_class_declaration_initializer_repeat4'],
-	[569, '_record_declaration_initializer_repeat1'],
-	[570, 'type_parameter_list_repeat1'],
-	[571, 'base_list_repeat1'],
-	[572, 'type_parameter_constraints_clause_repeat1'],
-	[573, 'conversion_operator_declaration_repeat1'],
-	[574, 'declaration_list_repeat1'],
-	[575, 'accessor_list_repeat1'],
-	[576, 'tuple_pattern_repeat1'],
-	[577, 'block_repeat1'],
-	[578, 'variable_declaration_repeat1'],
-	[579, 'using_variable_declaration_repeat1'],
-	[580, 'array_rank_specifier_repeat1'],
-	[581, 'function_pointer_type_repeat1'],
-	[582, 'tuple_type_repeat1'],
-	[583, 'switch_body_repeat1'],
-	[584, 'try_statement_repeat1'],
-	[585, 'catch_clause_repeat1'],
-	[586, '_query_body_repeat1'],
-	[587, '_query_body_repeat2'],
-	[588, 'order_by_clause_repeat1'],
-	[589, 'interpolated_string_expression_repeat1'],
-	[590, 'interpolated_string_expression_repeat2'],
-	[591, 'interpolated_string_expression_repeat3'],
-	[592, 'implicit_array_creation_expression_repeat1'],
-	[593, 'tuple_expression_repeat1'],
-	[594, 'string_literal_repeat1'],
-	[595, 'preproc_if_in_top_level_repeat1'],
-	[596, 'attributes_repeat1'],
-	[597, '_attribute_argument_list_optional1_repeat1'],
-	[598, 'enum_member_declaration_list_elements_repeat1'],
-	[599, '_record_base_optional1_repeat1'],
-	[600, '_bracketed_parameter_list_optional1_repeat1'],
-	[601, 'arguments_repeat1'],
-	[602, '_calling_convention_optional1_repeat1'],
-	[603, 'for_statement_conditions_initializer_repeat1'],
-	[604, 'list_pattern_elements_repeat1'],
-	[605, '_positional_pattern_clause_optional1_repeat1'],
-	[606, 'subpatterns_repeat1'],
-	[607, '_parenthesized_variable_designation_optional1_repeat1'],
-	[608, 'switch_expression_arms_repeat1'],
-	[609, 'anonymous_object_member_declarators_repeat1'],
-	[610, 'collection_elements_repeat1'],
-	[611, 'expressions_repeat1'],
-	[612, 'with_initializers_repeat1'],
-	[613, '_preproc_pragma_optional1_repeat1'],
-	[614, 'type_argument_list_bound_repeat1'],
-	[615, 'element_binding_expression'],
-	[616, 'implicit_parameter'],
-	[617, 'interpolation_quote'],
+	[525, 'subpatterns'],
+	[526, 'switch_expression_arms'],
+	[527, 'anonymous_object_member_declarators'],
+	[528, 'collection_elements'],
+	[529, 'expressions'],
+	[530, 'with_initializers'],
+	[531, 'preproc_line_arm1'],
+	[532, 'preproc_line_arm2'],
+	[533, 'preproc_pragma_arm1'],
+	[534, 'preproc_pragma_arm2'],
+	[535, 'attribute_argument_arm'],
+	[536, 'property_declaration_arm'],
+	[537, 'calling_convention_arm'],
+	[538, 'foreach_statement_initializer_arm'],
+	[539, 'subpattern_arm'],
+	[540, 'query_body_group'],
+	[541, 'anonymous_object_member_declarator_arm'],
+	[542, 'ref_readonly'],
+	[543, 'ordering'],
+	[544, 'switch_statement_parenthesized'],
+	[545, 'switch_statement_tuple'],
+	[546, 'type_parameter_constraint_class'],
+	[547, 'type_parameter_constraint_struct'],
+	[548, 'type_parameter_constraint_notnull'],
+	[549, 'type_parameter_constraint_unmanaged'],
+	[550, 'type_parameter_constraint_default'],
+	[551, 'enum_declaration_with_body'],
+	[552, 'enum_declaration_without_body'],
+	[553, 'declaration_list_body_with_body'],
+	[554, 'declaration_list_body_without_body'],
+	[555, 'type_argument_list_unbound'],
+	[556, 'type_argument_list_bound'],
+	[557, 'record_base_names'],
+	[558, 'record_base_primary_constructor'],
+	[559, 'using_directive_alias'],
+	[560, 'compilation_unit_repeat1'],
+	[561, '_class_declaration_initializer_repeat1'],
+	[562, '_class_declaration_initializer_repeat2'],
+	[563, '_class_declaration_initializer_repeat3'],
+	[564, '_class_declaration_initializer_repeat4'],
+	[565, '_record_declaration_initializer_repeat1'],
+	[566, 'type_parameter_list_repeat1'],
+	[567, 'base_list_repeat1'],
+	[568, 'type_parameter_constraints_clause_repeat1'],
+	[569, 'conversion_operator_declaration_repeat1'],
+	[570, 'declaration_list_repeat1'],
+	[571, 'accessor_list_repeat1'],
+	[572, 'tuple_pattern_repeat1'],
+	[573, 'block_repeat1'],
+	[574, 'variable_declaration_repeat1'],
+	[575, 'using_variable_declaration_repeat1'],
+	[576, 'array_rank_specifier_repeat1'],
+	[577, 'function_pointer_type_repeat1'],
+	[578, 'tuple_type_repeat1'],
+	[579, 'switch_body_repeat1'],
+	[580, 'try_statement_repeat1'],
+	[581, 'catch_clause_repeat1'],
+	[582, '_query_body_repeat1'],
+	[583, '_query_body_repeat2'],
+	[584, 'order_by_clause_repeat1'],
+	[585, 'interpolated_string_expression_repeat1'],
+	[586, 'interpolated_string_expression_repeat2'],
+	[587, 'interpolated_string_expression_repeat3'],
+	[588, 'implicit_array_creation_expression_repeat1'],
+	[589, 'tuple_expression_repeat1'],
+	[590, 'string_literal_repeat1'],
+	[591, 'preproc_if_in_top_level_repeat1'],
+	[592, 'attributes_repeat1'],
+	[593, '_attribute_argument_list_optional1_repeat1'],
+	[594, 'enum_member_declaration_list_elements_repeat1'],
+	[595, '_record_base_optional1_repeat1'],
+	[596, '_bracketed_parameter_list_optional1_repeat1'],
+	[597, 'arguments_repeat1'],
+	[598, '_calling_convention_optional1_repeat1'],
+	[599, 'for_statement_conditions_initializer_repeat1'],
+	[600, 'list_pattern_elements_repeat1'],
+	[601, '_positional_pattern_clause_optional1_repeat1'],
+	[602, 'subpatterns_repeat1'],
+	[603, '_parenthesized_variable_designation_optional1_repeat1'],
+	[604, 'switch_expression_arms_repeat1'],
+	[605, 'anonymous_object_member_declarators_repeat1'],
+	[606, 'collection_elements_repeat1'],
+	[607, 'expressions_repeat1'],
+	[608, 'with_initializers_repeat1'],
+	[609, '_preproc_pragma_optional1_repeat1'],
+	[610, 'type_argument_list_bound_repeat1'],
+	[611, 'element_binding_expression'],
+	[612, 'implicit_parameter'],
+	[613, 'interpolation_quote'],
 	[65535, 'ERROR']
 ]);
 
@@ -1371,7 +1367,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[395, 'or_pattern'],
 	[396, 'declaration_pattern'],
 	[397, '_variable_designation'],
-	[618, 'variable_designation'],
+	[614, 'variable_designation'],
 	[398, 'parenthesized_variable_designation'],
 	[399, 'expression'],
 	[400, 'non_lvalue_expression'],
@@ -1499,99 +1495,95 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[522, 'switch_section_arm1'],
 	[523, 'switch_section_arm2'],
 	[524, 'list_pattern_elements'],
-	[525, 'recursive_pattern_arm1'],
-	[526, 'recursive_pattern_arm2'],
-	[527, 'recursive_pattern_arm3'],
-	[528, 'recursive_pattern_arm4'],
-	[529, 'subpatterns'],
-	[530, 'switch_expression_arms'],
-	[531, 'anonymous_object_member_declarators'],
-	[532, 'collection_elements'],
-	[533, 'expressions'],
-	[534, 'with_initializers'],
-	[535, 'preproc_line_arm1'],
-	[536, 'preproc_line_arm2'],
-	[537, 'preproc_pragma_arm1'],
-	[538, 'preproc_pragma_arm2'],
-	[539, 'attribute_argument_arm'],
-	[540, 'property_declaration_arm'],
-	[541, 'calling_convention_arm'],
-	[542, 'foreach_statement_initializer_arm'],
-	[543, 'subpattern_arm'],
-	[544, 'query_body_group'],
-	[545, 'anonymous_object_member_declarator_arm'],
-	[546, 'ref_readonly'],
-	[547, 'ordering'],
-	[548, 'switch_statement_parenthesized'],
-	[549, 'switch_statement_tuple'],
-	[550, 'type_parameter_constraint_class'],
-	[551, 'type_parameter_constraint_struct'],
-	[552, 'type_parameter_constraint_notnull'],
-	[553, 'type_parameter_constraint_unmanaged'],
-	[554, 'type_parameter_constraint_default'],
-	[555, 'enum_declaration_with_body'],
-	[556, 'enum_declaration_without_body'],
-	[557, 'declaration_list_body_with_body'],
-	[558, 'declaration_list_body_without_body'],
-	[559, 'type_argument_list_unbound'],
-	[560, 'type_argument_list_bound'],
-	[561, 'record_base_names'],
-	[562, 'record_base_primary_constructor'],
-	[563, 'using_directive_alias'],
-	[564, 'compilation_unit_repeat1'],
-	[565, '_class_declaration_initializer_repeat1'],
-	[566, '_class_declaration_initializer_repeat2'],
-	[567, '_class_declaration_initializer_repeat3'],
-	[568, '_class_declaration_initializer_repeat4'],
-	[569, '_record_declaration_initializer_repeat1'],
-	[570, 'type_parameter_list_repeat1'],
-	[571, 'base_list_repeat1'],
-	[572, 'type_parameter_constraints_clause_repeat1'],
-	[573, 'conversion_operator_declaration_repeat1'],
-	[574, 'declaration_list_repeat1'],
-	[575, 'accessor_list_repeat1'],
-	[576, 'tuple_pattern_repeat1'],
-	[577, 'block_repeat1'],
-	[578, 'variable_declaration_repeat1'],
-	[579, 'using_variable_declaration_repeat1'],
-	[580, 'array_rank_specifier_repeat1'],
-	[581, 'function_pointer_type_repeat1'],
-	[582, 'tuple_type_repeat1'],
-	[583, 'switch_body_repeat1'],
-	[584, 'try_statement_repeat1'],
-	[585, 'catch_clause_repeat1'],
-	[586, '_query_body_repeat1'],
-	[587, '_query_body_repeat2'],
-	[588, 'order_by_clause_repeat1'],
-	[589, 'interpolated_string_expression_repeat1'],
-	[590, 'interpolated_string_expression_repeat2'],
-	[591, 'interpolated_string_expression_repeat3'],
-	[592, 'implicit_array_creation_expression_repeat1'],
-	[593, 'tuple_expression_repeat1'],
-	[594, 'string_literal_repeat1'],
-	[595, 'preproc_if_in_top_level_repeat1'],
-	[596, 'attributes_repeat1'],
-	[597, '_attribute_argument_list_optional1_repeat1'],
-	[598, 'enum_member_declaration_list_elements_repeat1'],
-	[599, '_record_base_optional1_repeat1'],
-	[600, '_bracketed_parameter_list_optional1_repeat1'],
-	[601, 'arguments_repeat1'],
-	[602, '_calling_convention_optional1_repeat1'],
-	[603, 'for_statement_conditions_initializer_repeat1'],
-	[604, 'list_pattern_elements_repeat1'],
-	[605, '_positional_pattern_clause_optional1_repeat1'],
-	[606, 'subpatterns_repeat1'],
-	[607, '_parenthesized_variable_designation_optional1_repeat1'],
-	[608, 'switch_expression_arms_repeat1'],
-	[609, 'anonymous_object_member_declarators_repeat1'],
-	[610, 'collection_elements_repeat1'],
-	[611, 'expressions_repeat1'],
-	[612, 'with_initializers_repeat1'],
-	[613, '_preproc_pragma_optional1_repeat1'],
-	[614, 'type_argument_list_bound_repeat1'],
-	[615, 'element_binding_expression'],
-	[616, 'implicit_parameter'],
-	[617, 'interpolation_quote'],
+	[525, 'subpatterns'],
+	[526, 'switch_expression_arms'],
+	[527, 'anonymous_object_member_declarators'],
+	[528, 'collection_elements'],
+	[529, 'expressions'],
+	[530, 'with_initializers'],
+	[531, 'preproc_line_arm1'],
+	[532, 'preproc_line_arm2'],
+	[533, 'preproc_pragma_arm1'],
+	[534, 'preproc_pragma_arm2'],
+	[535, 'attribute_argument_arm'],
+	[536, 'property_declaration_arm'],
+	[537, 'calling_convention_arm'],
+	[538, 'foreach_statement_initializer_arm'],
+	[539, 'subpattern_arm'],
+	[540, 'query_body_group'],
+	[541, 'anonymous_object_member_declarator_arm'],
+	[542, 'ref_readonly'],
+	[543, 'ordering'],
+	[544, 'switch_statement_parenthesized'],
+	[545, 'switch_statement_tuple'],
+	[546, 'type_parameter_constraint_class'],
+	[547, 'type_parameter_constraint_struct'],
+	[548, 'type_parameter_constraint_notnull'],
+	[549, 'type_parameter_constraint_unmanaged'],
+	[550, 'type_parameter_constraint_default'],
+	[551, 'enum_declaration_with_body'],
+	[552, 'enum_declaration_without_body'],
+	[553, 'declaration_list_body_with_body'],
+	[554, 'declaration_list_body_without_body'],
+	[555, 'type_argument_list_unbound'],
+	[556, 'type_argument_list_bound'],
+	[557, 'record_base_names'],
+	[558, 'record_base_primary_constructor'],
+	[559, 'using_directive_alias'],
+	[560, 'compilation_unit_repeat1'],
+	[561, '_class_declaration_initializer_repeat1'],
+	[562, '_class_declaration_initializer_repeat2'],
+	[563, '_class_declaration_initializer_repeat3'],
+	[564, '_class_declaration_initializer_repeat4'],
+	[565, '_record_declaration_initializer_repeat1'],
+	[566, 'type_parameter_list_repeat1'],
+	[567, 'base_list_repeat1'],
+	[568, 'type_parameter_constraints_clause_repeat1'],
+	[569, 'conversion_operator_declaration_repeat1'],
+	[570, 'declaration_list_repeat1'],
+	[571, 'accessor_list_repeat1'],
+	[572, 'tuple_pattern_repeat1'],
+	[573, 'block_repeat1'],
+	[574, 'variable_declaration_repeat1'],
+	[575, 'using_variable_declaration_repeat1'],
+	[576, 'array_rank_specifier_repeat1'],
+	[577, 'function_pointer_type_repeat1'],
+	[578, 'tuple_type_repeat1'],
+	[579, 'switch_body_repeat1'],
+	[580, 'try_statement_repeat1'],
+	[581, 'catch_clause_repeat1'],
+	[582, '_query_body_repeat1'],
+	[583, '_query_body_repeat2'],
+	[584, 'order_by_clause_repeat1'],
+	[585, 'interpolated_string_expression_repeat1'],
+	[586, 'interpolated_string_expression_repeat2'],
+	[587, 'interpolated_string_expression_repeat3'],
+	[588, 'implicit_array_creation_expression_repeat1'],
+	[589, 'tuple_expression_repeat1'],
+	[590, 'string_literal_repeat1'],
+	[591, 'preproc_if_in_top_level_repeat1'],
+	[592, 'attributes_repeat1'],
+	[593, '_attribute_argument_list_optional1_repeat1'],
+	[594, 'enum_member_declaration_list_elements_repeat1'],
+	[595, '_record_base_optional1_repeat1'],
+	[596, '_bracketed_parameter_list_optional1_repeat1'],
+	[597, 'arguments_repeat1'],
+	[598, '_calling_convention_optional1_repeat1'],
+	[599, 'for_statement_conditions_initializer_repeat1'],
+	[600, 'list_pattern_elements_repeat1'],
+	[601, '_positional_pattern_clause_optional1_repeat1'],
+	[602, 'subpatterns_repeat1'],
+	[603, '_parenthesized_variable_designation_optional1_repeat1'],
+	[604, 'switch_expression_arms_repeat1'],
+	[605, 'anonymous_object_member_declarators_repeat1'],
+	[606, 'collection_elements_repeat1'],
+	[607, 'expressions_repeat1'],
+	[608, 'with_initializers_repeat1'],
+	[609, '_preproc_pragma_optional1_repeat1'],
+	[610, 'type_argument_list_bound_repeat1'],
+	[611, 'element_binding_expression'],
+	[612, 'implicit_parameter'],
+	[613, 'interpolation_quote'],
 	[65535, 'ERROR']
 ]);
 
@@ -2648,14 +2640,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SwitchSectionArm2;
 		case 'list_pattern_elements':
 			return TSKindId.ListPatternElements;
-		case 'recursive_pattern_arm1':
-			return TSKindId.RecursivePatternArm1;
-		case 'recursive_pattern_arm2':
-			return TSKindId.RecursivePatternArm2;
-		case 'recursive_pattern_arm3':
-			return TSKindId.RecursivePatternArm3;
-		case 'recursive_pattern_arm4':
-			return TSKindId.RecursivePatternArm4;
 		case 'subpatterns':
 			return TSKindId.Subpatterns;
 		case 'switch_expression_arms':
@@ -11091,51 +11075,74 @@ export interface ListPattern {
 
 export interface RecursivePattern {
 	readonly $type: TSKindId.RecursivePattern;
-	readonly _type?: AliasQualifiedName | QualifiedName | Identifier | GenericName;
+	readonly _type?: AliasQualifiedName | QualifiedName | Identifier | GenericName | Type;
 	readonly _positional_pattern_clause?: PositionalPatternClause;
 	readonly _property_pattern_clause?: PropertyPatternClause;
 	readonly _variable_designation?: TSKindId.Discard | ParenthesizedVariableDesignation | Identifier;
-	readonly _recursive_pattern_arm2?: RecursivePatternArm2;
-	readonly _recursive_pattern_arm4?: RecursivePatternArm4;
 	readonly __slotNames__?: {
 		readonly _type: 'type';
 		readonly _positional_pattern_clause: 'positionalPatternClause';
 		readonly _property_pattern_clause: 'propertyPatternClause';
 		readonly _variable_designation: 'variableDesignation';
-		readonly _recursive_pattern_arm2: 'recursivePatternArm2';
-		readonly _recursive_pattern_arm4: 'recursivePatternArm4';
 	};
 	readonly __inputHints__?: {
+		readonly type?:
+			| KindEnum<
+					| 'var'
+					| 'bool'
+					| 'byte'
+					| 'char'
+					| 'decimal'
+					| 'double'
+					| 'float'
+					| 'int'
+					| 'long'
+					| 'object'
+					| 'sbyte'
+					| 'short'
+					| 'string'
+					| 'uint'
+					| 'ulong'
+					| 'ushort'
+					| 'nint'
+					| 'nuint'
+					| 'void',
+					| TSKindId.VarKeyword
+					| TSKindId.BoolKeyword
+					| TSKindId.ByteKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.DecimalKeyword
+					| TSKindId.DoubleKeyword
+					| TSKindId.FloatKeyword
+					| TSKindId.IntKeyword
+					| TSKindId.LongKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.SbyteKeyword
+					| TSKindId.ShortKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.UintKeyword
+					| TSKindId.UlongKeyword
+					| TSKindId.UshortKeyword
+					| TSKindId.NintKeyword
+					| TSKindId.NuintKeyword
+					| TSKindId.VoidKeyword
+			  >
+			| AliasQualifiedName
+			| QualifiedName
+			| Identifier
+			| GenericName
+			| Type;
 		readonly variable_designation?: KindEnum<'_', TSKindId.Discard> | ParenthesizedVariableDesignation | Identifier;
 	};
 	readonly __looseHints__?: {
+		readonly positional_pattern_clause?: readonly Subpattern[];
 		readonly property_pattern_clause?: NonEmptyArray<Subpattern>;
 	};
 	readonly __slotHints__?: {
-		readonly type: SlotHint<NonNullable<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>>;
+		readonly type: SlotHint<NonNullable<NonNullable<T.RecursivePattern.Config>['type']>>;
 		readonly positionalPatternClause: SlotHint<NonNullable<T.PositionalPatternClause>>;
 		readonly propertyPatternClause: SlotHint<T.PropertyPatternClause, true>;
 		readonly variableDesignation: SlotHint<NonNullable<NonNullable<T.RecursivePattern.Config>['variableDesignation']>>;
-		readonly recursivePatternArm2: SlotHint<NonNullable<T.RecursivePatternArm2>>;
-		readonly recursivePatternArm4: SlotHint<NonNullable<T.RecursivePatternArm4>>;
-		readonly $clears: {
-			readonly type: 'recursivePatternArm2' | 'recursivePatternArm4';
-			readonly positionalPatternClause: 'recursivePatternArm2' | 'recursivePatternArm4';
-			readonly propertyPatternClause: 'recursivePatternArm2' | 'recursivePatternArm4';
-			readonly variableDesignation: 'recursivePatternArm2' | 'recursivePatternArm4';
-			readonly recursivePatternArm2:
-				| 'type'
-				| 'positionalPatternClause'
-				| 'propertyPatternClause'
-				| 'variableDesignation'
-				| 'recursivePatternArm4';
-			readonly recursivePatternArm4:
-				| 'type'
-				| 'positionalPatternClause'
-				| 'propertyPatternClause'
-				| 'variableDesignation'
-				| 'recursivePatternArm2';
-		};
 		readonly $listSlots: {
 			readonly propertyPatternClause: ListSlotHint<
 				T.Subpattern | T.Pattern,
@@ -11143,12 +11150,10 @@ export interface RecursivePattern {
 			>;
 		};
 	};
-	readonly type: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | undefined;
+	readonly type: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | Type | undefined;
 	readonly positionalPatternClause: () => PositionalPatternClause | undefined;
 	readonly propertyPatternClause: () => PropertyPatternClause | undefined;
 	readonly variableDesignation: () => TSKindId.Discard | ParenthesizedVariableDesignation | Identifier | undefined;
-	readonly recursivePatternArm2: () => RecursivePatternArm2 | undefined;
-	readonly recursivePatternArm4: () => RecursivePatternArm4 | undefined;
 }
 
 export interface PositionalPatternClause {
@@ -16072,174 +16077,6 @@ export interface ListPatternElements {
 	readonly items: () => NonEmptyArray<Pattern | TSKindId.DotDot>;
 }
 
-export interface RecursivePatternArm1 {
-	readonly $type: TSKindId.RecursivePatternArm1;
-	readonly _positional_pattern_clause: PositionalPatternClause;
-	readonly _property_pattern_clause?: PropertyPatternClause;
-	readonly __slotNames__?: {
-		readonly _positional_pattern_clause: 'positionalPatternClause';
-		readonly _property_pattern_clause: 'propertyPatternClause';
-	};
-	readonly __inputHints__?: {
-		readonly positional_pattern_clause: readonly Subpattern[];
-	};
-	readonly __wrapperHints__?: {
-		readonly positional_pattern_clause: PositionalPatternClause;
-	};
-	readonly __looseHints__?: {
-		readonly positional_pattern_clause: readonly Subpattern[];
-		readonly property_pattern_clause?: NonEmptyArray<Subpattern>;
-	};
-	readonly __slotHints__?: {
-		readonly positionalPatternClause: SlotHint<NonNullable<T.RecursivePatternArm1.Config>['positionalPatternClause']>;
-		readonly propertyPatternClause: SlotHint<T.PropertyPatternClause, true>;
-		readonly $listSlots: {
-			readonly propertyPatternClause: ListSlotHint<
-				T.Subpattern | T.Pattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
-		};
-	};
-	readonly positionalPatternClause: () => readonly Subpattern[];
-	readonly propertyPatternClause: () => PropertyPatternClause | undefined;
-}
-
-export interface RecursivePatternArm2 {
-	readonly $type: TSKindId.RecursivePatternArm2;
-	readonly _type: Type;
-	readonly _content: RecursivePatternArm1 | PropertyPatternClause;
-	readonly _variable_designation?: VariableDesignation;
-	readonly __slotNames__?: {
-		readonly _type: 'type';
-		readonly _content: 'content';
-		readonly _variable_designation: 'variableDesignation';
-	};
-	readonly __inputHints__?: {
-		readonly type:
-			| KindEnum<
-					| 'var'
-					| 'bool'
-					| 'byte'
-					| 'char'
-					| 'decimal'
-					| 'double'
-					| 'float'
-					| 'int'
-					| 'long'
-					| 'object'
-					| 'sbyte'
-					| 'short'
-					| 'string'
-					| 'uint'
-					| 'ulong'
-					| 'ushort'
-					| 'nint'
-					| 'nuint'
-					| 'void',
-					| TSKindId.VarKeyword
-					| TSKindId.BoolKeyword
-					| TSKindId.ByteKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.DecimalKeyword
-					| TSKindId.DoubleKeyword
-					| TSKindId.FloatKeyword
-					| TSKindId.IntKeyword
-					| TSKindId.LongKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.SbyteKeyword
-					| TSKindId.ShortKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.UintKeyword
-					| TSKindId.UlongKeyword
-					| TSKindId.UshortKeyword
-					| TSKindId.NintKeyword
-					| TSKindId.NuintKeyword
-					| TSKindId.VoidKeyword
-			  >
-			| Type;
-		readonly variable_designation?: TSKindId.Discard | ParenthesizedVariableDesignation | Identifier | undefined;
-	};
-	readonly __wrapperHints__?: {
-		readonly variable_designation: VariableDesignation;
-	};
-	readonly __looseHints__?: {
-		readonly variable_designation?:
-			| VariableDesignation
-			| '_'
-			| readonly ('_' | ParenthesizedVariableDesignation | Identifier)[];
-	};
-	readonly __slotHints__?: {
-		readonly type: SlotHint<NonNullable<T.RecursivePatternArm2.Config>['type']>;
-		readonly content: SlotHint<T.RecursivePatternArm1 | T.PropertyPatternClause>;
-		readonly variableDesignation: SlotHint<NonNullable<T.RecursivePatternArm2.Config>['variableDesignation'], true>;
-	};
-	readonly type: () => Type;
-	readonly content: () => RecursivePatternArm1 | PropertyPatternClause;
-	readonly variableDesignation: () => TSKindId.Discard | ParenthesizedVariableDesignation | Identifier | undefined;
-}
-
-export interface RecursivePatternArm3 {
-	readonly $type: TSKindId.RecursivePatternArm3;
-	readonly _positional_pattern_clause: PositionalPatternClause;
-	readonly _property_pattern_clause: PropertyPatternClause;
-	readonly __slotNames__?: {
-		readonly _positional_pattern_clause: 'positionalPatternClause';
-		readonly _property_pattern_clause: 'propertyPatternClause';
-	};
-	readonly __inputHints__?: {
-		readonly positional_pattern_clause: readonly Subpattern[];
-		readonly property_pattern_clause: readonly Subpattern[];
-	};
-	readonly __wrapperHints__?: {
-		readonly positional_pattern_clause: PositionalPatternClause;
-		readonly property_pattern_clause: PropertyPatternClause;
-	};
-	readonly __looseHints__?: {
-		readonly positional_pattern_clause: readonly Subpattern[];
-		readonly property_pattern_clause: NonEmptyArray<Subpattern> | Subpatterns;
-	};
-	readonly __slotHints__?: {
-		readonly positionalPatternClause: SlotHint<NonNullable<T.RecursivePatternArm3.Config>['positionalPatternClause']>;
-		readonly propertyPatternClause: SlotHint<NonNullable<T.RecursivePatternArm3.Config>['propertyPatternClause']>;
-		readonly $listSlots: {
-			readonly propertyPatternClause: ListSlotHint<
-				T.Subpattern | T.Pattern,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
-		};
-	};
-	readonly positionalPatternClause: () => readonly Subpattern[];
-	readonly propertyPatternClause: () => readonly Subpattern[];
-}
-
-export interface RecursivePatternArm4 {
-	readonly $type: TSKindId.RecursivePatternArm4;
-	readonly _content: RecursivePatternArm3 | PropertyPatternClause;
-	readonly _variable_designation?: VariableDesignation;
-	readonly __slotNames__?: {
-		readonly _content: 'content';
-		readonly _variable_designation: 'variableDesignation';
-	};
-	readonly __inputHints__?: {
-		readonly variable_designation?: TSKindId.Discard | ParenthesizedVariableDesignation | Identifier | undefined;
-	};
-	readonly __wrapperHints__?: {
-		readonly variable_designation: VariableDesignation;
-	};
-	readonly __looseHints__?: {
-		readonly variable_designation?:
-			| VariableDesignation
-			| '_'
-			| readonly ('_' | ParenthesizedVariableDesignation | Identifier)[];
-	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<T.RecursivePatternArm3 | T.PropertyPatternClause>;
-		readonly variableDesignation: SlotHint<NonNullable<T.RecursivePatternArm4.Config>['variableDesignation'], true>;
-	};
-	readonly content: () => RecursivePatternArm3 | PropertyPatternClause;
-	readonly variableDesignation: () => TSKindId.Discard | ParenthesizedVariableDesignation | Identifier | undefined;
-}
-
 export interface Subpatterns {
 	readonly $type: TSKindId.Subpatterns;
 	readonly _item: NonEmptyArray<Subpattern>;
@@ -18568,10 +18405,6 @@ export interface OptionsHintMap {
 	switchSectionArm1: SwitchSectionArm1.Hints;
 	switchSectionArm2: SwitchSectionArm2.Hints;
 	listPatternElements: ListPatternElements.Hints;
-	recursivePatternArm1: RecursivePatternArm1.Hints;
-	recursivePatternArm2: RecursivePatternArm2.Hints;
-	recursivePatternArm3: RecursivePatternArm3.Hints;
-	recursivePatternArm4: RecursivePatternArm4.Hints;
 	subpatterns: Subpatterns.Hints;
 	switchExpressionArms: SwitchExpressionArms.Hints;
 	anonymousObjectMemberDeclarators: AnonymousObjectMemberDeclarators.Hints;
@@ -21569,30 +21402,6 @@ export namespace ListPatternElements {
 				readonly varPattern?: { readonly after?: LayoutKindId };
 			};
 		};
-	}
-}
-
-export namespace RecursivePatternArm1 {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-	}
-}
-
-export namespace RecursivePatternArm2 {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-	}
-}
-
-export namespace RecursivePatternArm3 {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-	}
-}
-
-export namespace RecursivePatternArm4 {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 	}
 }
 
@@ -25183,62 +24992,6 @@ export interface ListPatternElementsNs extends NodeNs<
 	readonly BuildArgs: ListPatternElements.BuildArgs;
 	readonly LooseArgs: ListPatternElements.LooseArgs;
 }
-export interface RecursivePatternArm1Ns extends NodeNs<
-	RecursivePatternArm1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	RecursivePatternArm1.Bound,
-	never,
-	TSKindId.RecursivePatternArm1,
-	RecursivePatternArm1.Parsed,
-	never
-> {
-	readonly BuildArgs: RecursivePatternArm1.BuildArgs;
-	readonly LooseArgs: RecursivePatternArm1.LooseArgs;
-}
-export interface RecursivePatternArm2Ns extends NodeNs<
-	RecursivePatternArm2,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	RecursivePatternArm2.Bound,
-	never,
-	TSKindId.RecursivePatternArm2,
-	RecursivePatternArm2.Parsed,
-	never
-> {
-	readonly BuildArgs: RecursivePatternArm2.BuildArgs;
-	readonly LooseArgs: RecursivePatternArm2.LooseArgs;
-}
-export interface RecursivePatternArm3Ns extends NodeNs<
-	RecursivePatternArm3,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	RecursivePatternArm3.Bound,
-	never,
-	TSKindId.RecursivePatternArm3,
-	RecursivePatternArm3.Parsed,
-	never
-> {
-	readonly BuildArgs: RecursivePatternArm3.BuildArgs;
-	readonly LooseArgs: RecursivePatternArm3.LooseArgs;
-}
-export interface RecursivePatternArm4Ns extends NodeNs<
-	RecursivePatternArm4,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	RecursivePatternArm4.Bound,
-	never,
-	TSKindId.RecursivePatternArm4,
-	RecursivePatternArm4.Parsed,
-	never
-> {
-	readonly BuildArgs: RecursivePatternArm4.BuildArgs;
-	readonly LooseArgs: RecursivePatternArm4.LooseArgs;
-}
 export interface SubpatternsNs extends NodeNs<
 	Subpatterns,
 	LeafScalarMap,
@@ -26085,10 +25838,6 @@ export interface NamespaceMap {
 	[TSKindId.SwitchSectionArm1]: SwitchSectionArm1Ns;
 	[TSKindId.SwitchSectionArm2]: SwitchSectionArm2Ns;
 	[TSKindId.ListPatternElements]: ListPatternElementsNs;
-	[TSKindId.RecursivePatternArm1]: RecursivePatternArm1Ns;
-	[TSKindId.RecursivePatternArm2]: RecursivePatternArm2Ns;
-	[TSKindId.RecursivePatternArm3]: RecursivePatternArm3Ns;
-	[TSKindId.RecursivePatternArm4]: RecursivePatternArm4Ns;
 	[TSKindId.Subpatterns]: SubpatternsNs;
 	[TSKindId.SwitchExpressionArms]: SwitchExpressionArmsNs;
 	[TSKindId.AnonymousObjectMemberDeclarators]: AnonymousObjectMemberDeclaratorsNs;
@@ -26392,10 +26141,6 @@ export interface BoundByKindId {
 	[TSKindId.SwitchSectionArm1]: SwitchSectionArm1.Bound;
 	[TSKindId.SwitchSectionArm2]: SwitchSectionArm2.Bound;
 	[TSKindId.ListPatternElements]: ListPatternElements.Bound;
-	[TSKindId.RecursivePatternArm1]: RecursivePatternArm1.Bound;
-	[TSKindId.RecursivePatternArm2]: RecursivePatternArm2.Bound;
-	[TSKindId.RecursivePatternArm3]: RecursivePatternArm3.Bound;
-	[TSKindId.RecursivePatternArm4]: RecursivePatternArm4.Bound;
 	[TSKindId.Subpatterns]: Subpatterns.Bound;
 	[TSKindId.SwitchExpressionArms]: SwitchExpressionArms.Bound;
 	[TSKindId.AnonymousObjectMemberDeclarators]: AnonymousObjectMemberDeclarators.Bound;
@@ -26676,10 +26421,6 @@ export interface ParsedByKindId {
 	[TSKindId.SwitchSectionArm1]: SwitchSectionArm1.Parsed;
 	[TSKindId.SwitchSectionArm2]: SwitchSectionArm2.Parsed;
 	[TSKindId.ListPatternElements]: ListPatternElements.Parsed;
-	[TSKindId.RecursivePatternArm1]: RecursivePatternArm1.Parsed;
-	[TSKindId.RecursivePatternArm2]: RecursivePatternArm2.Parsed;
-	[TSKindId.RecursivePatternArm3]: RecursivePatternArm3.Parsed;
-	[TSKindId.RecursivePatternArm4]: RecursivePatternArm4.Parsed;
 	[TSKindId.Subpatterns]: Subpatterns.Parsed;
 	[TSKindId.SwitchExpressionArms]: SwitchExpressionArms.Parsed;
 	[TSKindId.AnonymousObjectMemberDeclarators]: AnonymousObjectMemberDeclarators.Parsed;
@@ -27187,10 +26928,6 @@ export interface TypeKeyOf {
 	[TSKindId.SwitchSectionArm1]: 'switchSectionArm1';
 	[TSKindId.SwitchSectionArm2]: 'switchSectionArm2';
 	[TSKindId.ListPatternElements]: 'listPatternElements';
-	[TSKindId.RecursivePatternArm1]: 'recursivePatternArm1';
-	[TSKindId.RecursivePatternArm2]: 'recursivePatternArm2';
-	[TSKindId.RecursivePatternArm3]: 'recursivePatternArm3';
-	[TSKindId.RecursivePatternArm4]: 'recursivePatternArm4';
 	[TSKindId.Subpatterns]: 'subpatterns';
 	[TSKindId.SwitchExpressionArms]: 'switchExpressionArms';
 	[TSKindId.AnonymousObjectMemberDeclarators]: 'anonymousObjectMemberDeclarators';
@@ -30054,40 +29791,32 @@ export namespace RecursivePattern {
 	>;
 	export type BuildArgs = ArmRows<
 		[config?: Partial<WidenSlots<ConfigOf<T.RecursivePattern>, { variableDesignation: Admit<T.VariableDesignation> }>>],
-		| 'type'
-		| 'positionalPatternClause'
-		| 'propertyPatternClause'
-		| 'variableDesignation'
-		| 'recursivePatternArm2'
-		| 'recursivePatternArm4',
+		'type' | 'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation',
 		[
 			[
 				'type' | 'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation',
 				'type' | 'positionalPatternClause' | 'variableDesignation'
 			],
-			['type' | 'positionalPatternClause', 'type' | 'positionalPatternClause'],
+			['type' | 'positionalPatternClause' | 'propertyPatternClause', 'type' | 'positionalPatternClause'],
 			['positionalPatternClause', 'positionalPatternClause'],
-			['recursivePatternArm2', 'recursivePatternArm2'],
-			['recursivePatternArm4', 'recursivePatternArm4']
+			['type' | 'propertyPatternClause', 'type' | 'propertyPatternClause'],
+			['positionalPatternClause' | 'propertyPatternClause', 'positionalPatternClause' | 'propertyPatternClause'],
+			['propertyPatternClause', 'propertyPatternClause']
 		]
 	>;
 	export type LooseArgs = ArmRows<
 		[config?: T.RecursivePattern.Loose],
-		| 'type'
-		| 'positionalPatternClause'
-		| 'propertyPatternClause'
-		| 'variableDesignation'
-		| 'recursivePatternArm2'
-		| 'recursivePatternArm4',
+		'type' | 'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation',
 		[
 			[
 				'type' | 'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation',
 				'type' | 'positionalPatternClause' | 'variableDesignation'
 			],
-			['type' | 'positionalPatternClause', 'type' | 'positionalPatternClause'],
+			['type' | 'positionalPatternClause' | 'propertyPatternClause', 'type' | 'positionalPatternClause'],
 			['positionalPatternClause', 'positionalPatternClause'],
-			['recursivePatternArm2', 'recursivePatternArm2'],
-			['recursivePatternArm4', 'recursivePatternArm4']
+			['type' | 'propertyPatternClause', 'type' | 'propertyPatternClause'],
+			['positionalPatternClause' | 'propertyPatternClause', 'positionalPatternClause' | 'propertyPatternClause'],
+			['propertyPatternClause', 'propertyPatternClause']
 		]
 	>;
 	export type Kind = TSKindId.RecursivePattern;
@@ -33582,106 +33311,6 @@ export namespace ListPatternElements {
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'items'>, KeyRefusesEmpty<LooseConfig, 'items'>, SetterRefusesEmpty<Bound, 'items'>]
 	>;
-}
-export namespace RecursivePatternArm1 {
-	export type Config = ConfigFor<TSKindId.RecursivePatternArm1>;
-	export interface Bound extends BoundOf<T.RecursivePatternArm1, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RecursivePatternArm1['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.RecursivePatternArm1, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RecursivePatternArm1['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.RecursivePatternArm1['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.RecursivePatternArm1>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RecursivePatternArm1>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.RecursivePatternArm1>>];
-	export type LooseArgs = [config?: T.RecursivePatternArm1.Loose];
-	export type Kind = TSKindId.RecursivePatternArm1;
-}
-export namespace RecursivePatternArm2 {
-	export type Config = ConfigFor<TSKindId.RecursivePatternArm2>;
-	export interface Bound extends BoundOf<T.RecursivePatternArm2, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RecursivePatternArm2['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.RecursivePatternArm2, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RecursivePatternArm2['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.RecursivePatternArm2['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.RecursivePatternArm2>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RecursivePatternArm2>;
-	export type BuildArgs = [config: ConfigOf<T.RecursivePatternArm2>];
-	export type LooseArgs = [config: T.RecursivePatternArm2.Loose];
-	export type Kind = TSKindId.RecursivePatternArm2;
-}
-export namespace RecursivePatternArm3 {
-	export type Config = ConfigFor<TSKindId.RecursivePatternArm3>;
-	export interface Bound extends BoundOf<T.RecursivePatternArm3, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RecursivePatternArm3['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.RecursivePatternArm3, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RecursivePatternArm3['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.RecursivePatternArm3['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.RecursivePatternArm3>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RecursivePatternArm3>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.RecursivePatternArm3>>];
-	export type LooseArgs = [config?: T.RecursivePatternArm3.Loose];
-	export type Kind = TSKindId.RecursivePatternArm3;
-}
-export namespace RecursivePatternArm4 {
-	export type Config = ConfigFor<TSKindId.RecursivePatternArm4>;
-	export interface Bound extends BoundOf<T.RecursivePatternArm4, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RecursivePatternArm4['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.RecursivePatternArm4, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RecursivePatternArm4['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.RecursivePatternArm4['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.RecursivePatternArm4>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RecursivePatternArm4>;
-	export type BuildArgs = [config: ConfigOf<T.RecursivePatternArm4>];
-	export type LooseArgs = [config: T.RecursivePatternArm4.Loose];
-	export type Kind = TSKindId.RecursivePatternArm4;
 }
 export namespace Subpatterns {
 	export type Config = ConfigFor<TSKindId.Subpatterns>;

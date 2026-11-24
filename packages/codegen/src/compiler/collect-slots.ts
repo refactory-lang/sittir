@@ -204,12 +204,14 @@ function stampArms(
 function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 	return slot.with({
 		required: undefined,
-		values: slot.values.map((v) =>
-			v.multiplicity === 'single'
-				? { ...v, multiplicity: 'optional' as const }
-				: v.multiplicity === 'nonEmptyArray'
-					? { ...v, multiplicity: 'array' as const }
-					: v
+		values: dedupeValues(
+			slot.values.map((v) =>
+				v.multiplicity === 'single'
+					? { ...v, multiplicity: 'optional' as const }
+					: v.multiplicity === 'nonEmptyArray'
+						? { ...v, multiplicity: 'array' as const }
+						: v
+			)
 		)
 	});
 }

@@ -2420,14 +2420,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			const node = ir.switchSection.arm2.switchSectionArm1.recursive({
 				switchSectionArm2: [
 					{
-						type: {
-							$type: TSKindId.AliasQualifiedName,
-							alias: { $type: TSKindId.IdentifierToken, text: 'test' } as never,
-							name: {
-								$type: TSKindId.Identifier,
-								content: { $type: TSKindId.IdentifierToken, text: 'test' } as never
-							} as never
-						} as never,
+						type: TSKindId.ImplicitType as never,
 						positionalPatternClause: { $type: TSKindId.PositionalPatternClause, subpatterns: [] } as never,
 						variableDesignation: TSKindId.Discard as never
 					}
@@ -2899,20 +2892,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			expect((node as any).switchSectionArm2()).toBeDefined();
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
-		it('arm2.switchSectionArm1.recursive.positionalPatternClause builds the parent', () => {
-			const node = ir.switchSection.arm2.switchSectionArm1.recursive.positionalPatternClause({
-				switchSectionArm2: [
-					{
-						pattern: [
-							{ positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never] }
-						]
-					}
-				]
-			});
-			expect(node.$type).toBe(TSKindId.SwitchSection);
-			expect((node as any).switchSectionArm2()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('arm2.switchSectionArm1.recursive.discard builds the parent', () => {
 			const node = ir.switchSection.arm2.switchSectionArm1.recursive.discard({
 				switchSectionArm2: [{ pattern: [{}] }]
@@ -2924,121 +2903,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		it('arm2.switchSectionArm1.recursive.parenthesizedVariableDesignation builds the parent', () => {
 			const node = ir.switchSection.arm2.switchSectionArm1.recursive.parenthesizedVariableDesignation({
 				switchSectionArm2: [{ pattern: [{ variableDesignation: [TSKindId.Discard as never] }] }]
-			});
-			expect(node.$type).toBe(TSKindId.SwitchSection);
-			expect((node as any).switchSectionArm2()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.switchSectionArm1.recursive.arm2 builds the parent', () => {
-			const node = ir.switchSection.arm2.switchSectionArm1.recursive.arm2({
-				switchSectionArm2: [
-					{
-						pattern: [
-							{
-								type: TSKindId.ImplicitType as never,
-								content: {
-									$type: TSKindId.RecursivePatternArm1,
-									positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-								} as never
-							}
-						]
-					}
-				]
-			});
-			expect(node.$type).toBe(TSKindId.SwitchSection);
-			expect((node as any).switchSectionArm2()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.switchSectionArm1.recursive.arm4 builds the parent', () => {
-			const node = ir.switchSection.arm2.switchSectionArm1.recursive.arm4({
-				switchSectionArm2: [
-					{
-						pattern: [
-							{
-								content: {
-									$type: TSKindId.RecursivePatternArm3,
-									positionalPatternClause: [
-										{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never
-									],
-									propertyPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-								} as never
-							}
-						]
-					}
-				]
-			});
-			expect(node.$type).toBe(TSKindId.SwitchSection);
-			expect((node as any).switchSectionArm2()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.switchSectionArm1.recursive.arm2.recursivePatternArm1 builds the parent', () => {
-			const node = ir.switchSection.arm2.switchSectionArm1.recursive.arm2.recursivePatternArm1({
-				switchSectionArm2: [
-					{
-						pattern: [
-							{
-								type: TSKindId.ImplicitType as never,
-								positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-							}
-						]
-					}
-				]
-			});
-			expect(node.$type).toBe(TSKindId.SwitchSection);
-			expect((node as any).switchSectionArm2()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.switchSectionArm1.recursive.arm2.propertyPatternClause builds the parent', () => {
-			const node = ir.switchSection.arm2.switchSectionArm1.recursive.arm2.propertyPatternClause({
-				switchSectionArm2: [
-					{
-						pattern: [
-							{
-								type: TSKindId.ImplicitType as never,
-								content: ir.subpatterns({
-									$type: TSKindId.Subpattern,
-									pattern: TSKindId.Discard as never
-								} as never) as never
-							}
-						]
-					}
-				]
-			});
-			expect(node.$type).toBe(TSKindId.SwitchSection);
-			expect((node as any).switchSectionArm2()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.switchSectionArm1.recursive.arm4.recursivePatternArm3 builds the parent', () => {
-			const node = ir.switchSection.arm2.switchSectionArm1.recursive.arm4.recursivePatternArm3({
-				switchSectionArm2: [
-					{
-						pattern: [
-							{
-								positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never],
-								propertyPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-							}
-						]
-					}
-				]
-			});
-			expect(node.$type).toBe(TSKindId.SwitchSection);
-			expect((node as any).switchSectionArm2()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.switchSectionArm1.recursive.arm4.propertyPatternClause builds the parent', () => {
-			const node = ir.switchSection.arm2.switchSectionArm1.recursive.arm4.propertyPatternClause({
-				switchSectionArm2: [
-					{
-						pattern: [
-							{
-								content: ir.subpatterns({
-									$type: TSKindId.Subpattern,
-									pattern: TSKindId.Discard as never
-								} as never) as never
-							}
-						]
-					}
-				]
 			});
 			expect(node.$type).toBe(TSKindId.SwitchSection);
 			expect((node as any).switchSectionArm2()).toBeDefined();
@@ -3880,14 +3744,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('recursive_pattern', () => {
 		it('factory produces correct type', () => {
 			const node = ir.recursivePattern({
-				type: {
-					$type: TSKindId.AliasQualifiedName,
-					alias: { $type: TSKindId.IdentifierToken, text: 'test' } as never,
-					name: {
-						$type: TSKindId.Identifier,
-						content: { $type: TSKindId.IdentifierToken, text: 'test' } as never
-					} as never
-				} as never,
+				type: TSKindId.ImplicitType as never,
 				positionalPatternClause: { $type: TSKindId.PositionalPatternClause, subpatterns: [] } as never,
 				variableDesignation: TSKindId.Discard as never
 			});
@@ -3896,14 +3753,7 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.recursivePattern({
-				type: {
-					$type: TSKindId.AliasQualifiedName,
-					alias: { $type: TSKindId.IdentifierToken, text: 'test' } as never,
-					name: {
-						$type: TSKindId.Identifier,
-						content: { $type: TSKindId.IdentifierToken, text: 'test' } as never
-					} as never
-				} as never,
+				type: TSKindId.ImplicitType as never,
 				positionalPatternClause: { $type: TSKindId.PositionalPatternClause, subpatterns: [] } as never,
 				variableDesignation: TSKindId.Discard as never
 			});
@@ -3913,14 +3763,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	});
 
 	describe('recursive_pattern sub-factories', () => {
-		it('positionalPatternClause builds the parent', () => {
-			const node = ir.recursivePattern.positionalPatternClause({
-				positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-			});
-			expect(node.$type).toBe(TSKindId.RecursivePattern);
-			expect((node as any).positionalPatternClause()?.$type).toBe(TSKindId.PositionalPatternClause);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
 		it('discard builds the parent', () => {
 			const node = ir.recursivePattern.discard({});
 			expect(node.$type).toBe(TSKindId.RecursivePattern);
@@ -3934,65 +3776,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			});
 			expect(node.$type).toBe(TSKindId.RecursivePattern);
 			expect((node as any).variableDesignation()).toBeDefined();
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2 builds the parent', () => {
-			const node = ir.recursivePattern.arm2({
-				type: TSKindId.ImplicitType as never,
-				content: {
-					$type: TSKindId.RecursivePatternArm1,
-					positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-				} as never
-			});
-			expect(node.$type).toBe(TSKindId.RecursivePattern);
-			expect((node as any).recursivePatternArm2()?.$type).toBe(TSKindId.RecursivePatternArm2);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm4 builds the parent', () => {
-			const node = ir.recursivePattern.arm4({
-				content: {
-					$type: TSKindId.RecursivePatternArm3,
-					positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never],
-					propertyPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-				} as never
-			});
-			expect(node.$type).toBe(TSKindId.RecursivePattern);
-			expect((node as any).recursivePatternArm4()?.$type).toBe(TSKindId.RecursivePatternArm4);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.recursivePatternArm1 builds the parent', () => {
-			const node = ir.recursivePattern.arm2.recursivePatternArm1({
-				type: TSKindId.ImplicitType as never,
-				positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-			});
-			expect(node.$type).toBe(TSKindId.RecursivePattern);
-			expect((node as any).recursivePatternArm2()?.$type).toBe(TSKindId.RecursivePatternArm2);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm2.propertyPatternClause builds the parent', () => {
-			const node = ir.recursivePattern.arm2.propertyPatternClause({
-				type: TSKindId.ImplicitType as never,
-				content: ir.subpatterns({ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never) as never
-			});
-			expect(node.$type).toBe(TSKindId.RecursivePattern);
-			expect((node as any).recursivePatternArm2()?.$type).toBe(TSKindId.RecursivePatternArm2);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm4.recursivePatternArm3 builds the parent', () => {
-			const node = ir.recursivePattern.arm4.recursivePatternArm3({
-				positionalPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never],
-				propertyPatternClause: [{ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never]
-			});
-			expect(node.$type).toBe(TSKindId.RecursivePattern);
-			expect((node as any).recursivePatternArm4()?.$type).toBe(TSKindId.RecursivePatternArm4);
-			expect(node.$render!().length).toBeGreaterThan(0);
-		});
-		it('arm4.propertyPatternClause builds the parent', () => {
-			const node = ir.recursivePattern.arm4.propertyPatternClause({
-				content: ir.subpatterns({ $type: TSKindId.Subpattern, pattern: TSKindId.Discard as never } as never) as never
-			});
-			expect(node.$type).toBe(TSKindId.RecursivePattern);
-			expect((node as any).recursivePatternArm4()?.$type).toBe(TSKindId.RecursivePatternArm4);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
