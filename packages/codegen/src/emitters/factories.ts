@@ -1818,6 +1818,7 @@ function forwardedConstruction(
 	const target = forwardedConstructorTarget(node, nodeMap, kindEntries);
 	if (target === null) return null;
 	const targetNode = nodeMap.nodes.get(target)!;
+	const takesOptions = (params: string): boolean => /(^|[\s,([])options\??:/.test(params);
 	const withheld = registeredSlots(node).length > 0 && restForwardTarget(node, nodeMap, kindEntries) !== null;
 	const forwardedOptions = forwardedOptionsTarget(node, nodeMap);
 	const trailingOptions =
@@ -1831,7 +1832,7 @@ function forwardedConstruction(
 	const targetParams = targetSurface?.params;
 	const surfaceOverloads = (surfaceOf: typeof targetSurface, trailing?: string): readonly string[] | undefined =>
 		(surfaceOf?.paramsOverloads ?? (surfaceOf?.params === undefined ? [] : [surfaceOf.params])).map((params) =>
-			trailing === undefined ? params : `${params}, ${trailing}`
+			trailing === undefined || takesOptions(params) ? params : `${params}, ${trailing}`
 		);
 	const targetOverloads = withheld
 		? []
@@ -1839,7 +1840,7 @@ function forwardedConstruction(
 			? undefined
 			: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingOptions) ?? [])])];
 	const chainedDeclarations = (chainedSurface?.declarations ?? []).map((entry) =>
-		trailingOptions === undefined ? entry : withTrailingParam(entry, trailingOptions)
+		trailingOptions === undefined || takesOptions(entry.params) ? entry : withTrailingParam(entry, trailingOptions)
 	);
 	const targetDeclarations = withheld
 		? []
