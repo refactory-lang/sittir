@@ -16,14 +16,14 @@
   - `implicit_array_creation_expression` already has the slot, `comma`, with `multiple: true` and one terminal of multiplicity `array`, but `"storage":"boolean"`;
   - `type_argument_list_unbound` (`<` `repeat(',')` `>`) is a pattern leaf with no slots, because every token of it is fixed text. It becomes a node whose slot is the count, with `<` and `>` as fixed text.
 - The slot takes its name the way any slot does (C#: `commas`).
-- **Open with the maintainer:** python's `import_prefix` is a rule whose whole body is `repeat1('.')`, today a leaf whose text varies (`'..'`). The rule above would make it a count too (`{ dots: 2 }`), which changes a stable grammar's public surface.
+- **Python's `import_prefix` is a count too** (the maintainer, 2026-11-24: "yes"). Its whole body is `repeat1('.')`, today a leaf whose text varies (`'..'`). It becomes a node whose one slot is the count, `dots`, so `from .. import x` reads `{ dots: 2 }`. This changes a stable grammar's public surface.
 
 ## Read, build and render
 
-| | `new[,,] { 1 }` | `new[] { 1 }` | `typeof(D<,>)` |
-|---|---|---|---|
-| read | `{ commas: 2 }` | `{ commas: 0 }` | `{ commas: 1 }` |
-| build | `{ commas: 2 }` | `{ commas: 0 }` or absent | `{ commas: 1 }` |
+| | `new[,,] { 1 }` | `new[] { 1 }` | `typeof(D<,>)` | `from .. import x` |
+|---|---|---|---|---|
+| read | `{ commas: 2 }` | `{ commas: 0 }` | `{ commas: 1 }` | `{ dots: 2 }` |
+| build | `{ commas: 2 }` | `{ commas: 0 }` or absent | `{ commas: 1 }` | `{ dots: 2 }`; 0 is refused |
 
 - **Read.** The slot reads as a non-negative integer, and a `repeat1` slot reads 1 or more. The portable surface reads it as a number.
 - **Build.** The slot takes a non-negative integer, and a `repeat1` slot takes 1 or more. Anything else is refused at build, naming the slot. A `repeat` slot left out is 0.
@@ -38,7 +38,8 @@
 
 ## Verification
 
-- typescript, rust, regex and scm generate byte-identical: none of them holds such a repeat. So does python, unless `import_prefix` is ruled in.
+- typescript, rust, regex and scm generate byte-identical: none of them holds such a repeat.
+- Python changes only at `import_prefix`, and its API rows go to the maintainer with the PR. `from . import x` and `from .. import x` read their counts, render untouched as their source, and rebuild to the same text in both storages. A count of 0 is refused at build.
 - C#: `new[,] {1}`, `new[,,] {1}`, `new[] {1}` and `typeof(D<,>)` parse with no errors, read their counts, render untouched as their source, and rebuild to the same text in both storages. A negative count, and a count of 0 in a `repeat1` slot, are refused at build.
 - `new[1] {1}` stays refused by the parse (CS0178).
 
