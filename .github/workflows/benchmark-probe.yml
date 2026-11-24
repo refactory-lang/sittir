@@ -36,7 +36,7 @@ on:
         type: boolean
         default: false
       phase:
-        description: The corpus phase a phase profile runs, parse, render or edit.
+        description: The corpus phase a phase profile runs, parse, render or edit, or built, the render of built Rust function items.
         type: string
         default: render
       storage:

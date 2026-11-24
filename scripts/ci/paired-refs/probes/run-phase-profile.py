@@ -1,5 +1,7 @@
-# Usage: PHASE=<parse|render|edit> python3 run-phase-profile.py <out-dir> <grammar,...> <name>=<tree>[@<storage>]...
+# Usage: PHASE=<parse|render|edit|built> python3 run-phase-profile.py <out-dir> <grammar,...> <name>=<tree>[@<storage>]...
 # Where one corpus phase's time goes in arena storage, by function, per tree.
+# PHASE=built renders built Rust function items (phase-profile.mjs) and is
+# sampled as render is; its grammar is rust.
 # Each tree is profiled once per grammar, under the first name given for it and
 # in arena storage whatever its storage suffix: phase-profile.mjs (WARMUP
 # untimed batches, then BATCHES timed, a fresh engine every PER_ENGINE: 50
@@ -80,7 +82,7 @@ for arg in sys.argv[3:]:
 names = list(trees)
 out.mkdir(parents=True, exist_ok=True)
 PHASE = os.environ.get('PHASE') or 'render'
-assert PHASE in ('parse', 'render', 'edit'), f'PHASE {PHASE} is not parse, render or edit'
+assert PHASE in ('parse', 'render', 'edit', 'built'), f'PHASE {PHASE} is not parse, render, edit or built'
 STORAGE = os.environ.get('STORAGE') or 'arena'
 assert STORAGE in ('arena', 'object'), f'STORAGE {STORAGE} is not arena or object'
 MEASURE = os.environ.get('MEASURE') or 'samples'

@@ -1,5 +1,7 @@
-// Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <parse|render|edit> <receipt.json> <warmup batches> <batches> <batches per engine>
-// One corpus phase alone, in arena storage (STORAGE=object for object storage), for a profiler. Each batch parses
+// Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <parse|render|edit|built> <receipt.json> <warmup batches> <batches> <batches per engine>
+// One corpus phase alone, in arena storage (STORAGE=object for object storage), for a profiler. A built batch
+// builds 8000 Rust function items, each named x by a name node of its own, as the paired construction worker's
+// distinct-name case does, and renders them (renderPhase); the build is untimed. Every other batch parses
 // <grammar>'s corpus (corpus-batch.mjs's parsePhase), the parse being the phase
 // itself for parse (the roots' text, from an untimed renderPhase, checked
 // after it), else runs the phase over every
@@ -47,7 +49,13 @@ const language = (await import(`${root}/packages/${grammar}/dist/index.js`)).def
 
 let engine;
 const parsed = () => parsePhase(engine, sources);
+const BUILT_ROOTS = 8000;
+const built = () => {
+  const b = engine.build;
+  return Array.from({ length: BUILT_ROOTS }, () => b.functionItem({ name: b.identifier('x'), parameters: b.parameters(), body: b.block({ statements: [] }) }));
+};
 const phases = {
+  built: { fn: renderPhase, input: built, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {}, roots: (roots) => roots },
   parse: { fn: parsePhase, input: () => sources, run: (input) => parsePhase(engine, input), texts: (roots) => renderPhase(engine, roots), release() {}, roots: (_, roots) => roots },
   render: { fn: renderPhase, input: parsed, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {}, roots: (roots) => roots },
   edit: {
@@ -68,6 +76,7 @@ const phases = {
 };
 const timed = phases[phase];
 assert.ok(timed, `phase ${phase} is not one of ${Object.keys(phases).join(', ')}`);
+assert.ok(phase !== 'built' || grammar === 'rust', `the built phase builds Rust function items, not ${grammar} nodes`);
 
 function perfWindow() {
   const ctl = openSync(process.env.PERF_CTL, constants.O_WRONLY);
@@ -251,11 +260,11 @@ try {
   const sampling = sampler?.finish();
   const sorted = [...phaseMs].sort((a, b) => a - b);
   writeFileSync(receipt, JSON.stringify({
-    root, grammar, phase, nodeStorage: storage, entries: sources.length, warmupBatches, batches, batchesPerEngine,
+    root, grammar, phase, nodeStorage: storage, entries: phase === 'built' ? BUILT_ROOTS : sources.length, warmupBatches, batches, batchesPerEngine,
     buildProfile: engine.diagnostics.buildProfile, node: process.version, cpu: cpuModel(), sampled: sampler !== undefined, sampling,
     texts, phaseMsMedian: sorted[sorted.length >> 1], phaseMsTotal: phaseMs.reduce((sum, ms) => sum + ms, 0), mapped, phaseMs
   }, null, 1) + '\n');
-  console.log(JSON.stringify({ grammar, phase, batches, entries: sources.length, phaseMsMedian: sorted[sorted.length >> 1], mapped }));
+  console.log(JSON.stringify({ grammar, phase, batches, entries: phase === 'built' ? BUILT_ROOTS : sources.length, phaseMsMedian: sorted[sorted.length >> 1], mapped }));
 } finally {
   engine?.dispose();
 }
