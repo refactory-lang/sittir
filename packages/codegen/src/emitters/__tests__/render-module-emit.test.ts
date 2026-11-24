@@ -752,6 +752,20 @@ describe('node read facts', () => {
 		expect(envelopeListOf(envelope, ctx.nodeMap)).toBeUndefined();
 	});
 
+	it('leaves an alias with a storage kind on that kind\'s record, even when its content is a list', () => {
+		const list = node('FieldInitializerListElementsNode');
+		const envelope = node('TypeIdentifierNode');
+		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
+		if (!(envelope instanceof AssembledAlias)) throw new Error('the envelope is an alias');
+		const nodeMap = { ...ctx.nodeMap, nodes: new Map([...model.nodeMap.nodes, [content!, list]]) };
+		expect(envelopeListOf(envelope, nodeMap)).toBe(list);
+		const stored = Object.assign(Object.create(envelope) as AssembledAlias, { aliasStorageNode: node('ArgumentsNode') });
+		expect(envelopeListOf(stored, nodeMap)).toBeUndefined();
+		const [item] = slotKindNames(listItemSlot(list)!);
+		const nested = { ...ctx, nodeMap: { ...ctx.nodeMap, nodes: new Map([...nodeMap.nodes, [item!, stored]]) } };
+		expect(() => nodeArgs(list, ownId(list), nested, list.slots)).not.toThrow();
+	});
+
 	it('refuses an envelope that holds more than one list, since its record is one list\'s', () => {
 		const first = node('FieldInitializerListElementsNode');
 		const second = node('ArgumentsElementsNode');

@@ -232,17 +232,21 @@ function hoistedExpr(expr: string, hoist: Hoist | undefined, hop: (reader: Hoist
 	return hoist === undefined ? expr : `hoistRead(${expr}, [${[...hoist.readers.slice(0, hoist.itemsAt).map(hop), ...(hoist.itemsHop === undefined ? [] : [hoist.itemsHop])].join(', ')}], ${hoist.list})`;
 }
 
-function slotReadExpr(slot: SlotModel, config: SlotAccessorConfig): string {
+function slotReadExpr(slot: SlotModel, config: SlotAccessorConfig, receiver = 'this'): string {
 	const one = config.required ? config.elemType : `${config.elemType} | undefined`;
 	if (!storesNodes(config.storageInfo)) return blankForRead(config.blank, `this.${slot.storageKey}`);
 	const key = JSON.stringify(slot.storageKey);
 	if (slot.arity === 'many') return `hydrateSlots<${config.elemType}>(this, ${key}, tree)`;
-	const role = config.aliasContent === true ? `, contentRole(this, () => ${dataAccessExpr('this', slot.storageKey)})` : '';
+	const role = config.aliasContent === true ? `, contentRole(this, () => ${dataAccessExpr(receiver, slot.storageKey)})` : '';
 	return spelledReadExpr(config.source, `hydrateSlot<${one}>(this, ${key}, tree${role})`);
 }
 
+function typedReceiver(node: AuthoredCompound | AssembledList): string {
+	return `(this as T.${node.typeName})`;
+}
+
 function slotAccessorBody({ slot, config, hoist }: AccessorSlot): string {
-	return `return ${hoistedExpr(slotReadExpr(slot, config), hoist, ({ accessor }) => `function (this: object) { return ${slotReadExpr(accessor.slot, accessor.config)}; }`)}`;
+	return `return ${hoistedExpr(slotReadExpr(slot, config), hoist, ({ accessor, node }) => `function (this: object) { return ${slotReadExpr(accessor.slot, accessor.config, typedReceiver(node))}; }`)}`;
 }
 
 const SAFE_IDENT_KEY = /^_[A-Za-z_$][A-Za-z0-9_$]*$/;
@@ -348,7 +352,7 @@ function objectNativeReaders(node: AuthoredCompound | AssembledList, kindEntries
 			[
 				`function ${nativeReaderName('object', node, accessor)}(this: object) {`,
 				'  const tree = (this as Held)[READ_TREE]!;',
-				`  return ${slotReadExpr(accessor.slot, accessor.config)};`,
+				`  return ${slotReadExpr(accessor.slot, accessor.config, typedReceiver(node))};`,
 				'}'
 			].join('\n')
 		);

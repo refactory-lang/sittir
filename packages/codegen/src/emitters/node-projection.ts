@@ -348,6 +348,7 @@ function envelopeConcreteContents(envelope: AssembledAlias, nodeMap: NodeMap): A
 }
 
 export function envelopeListOf(envelope: AssembledAlias, nodeMap: NodeMap): AssembledNode | undefined {
+	if (envelope.aliasStorageNode !== undefined) return undefined;
 	const contents = envelopeConcreteContents(envelope, nodeMap);
 	const lists = contents.filter((content) => content instanceof AssembledList);
 	if (new Set(lists.map((list) => list.kind)).size > 1) {
@@ -412,7 +413,7 @@ function refuseFlatListCycle(list: AssembledNode, ctx: ReadFactsCtx): void {
 				seen.add(kind);
 				const held = ctx.nodeMap.nodes.get(kind);
 				if (held instanceof AssembledAlias) {
-					if (envelopeContentIsList(held, ctx.nodeMap)) continue;
+					if (held.aliasStorageNode !== undefined || envelopeContentIsList(held, ctx.nodeMap)) continue;
 					for (const content of envelopeContentKinds(held)) reach(content, from, [...envelopes, kind]);
 				} else if (held !== undefined && listItemSlot(held) !== undefined) {
 					const path = [...trail, from, ...envelopes, kind];
