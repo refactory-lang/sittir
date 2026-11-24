@@ -91,6 +91,7 @@ function kindOfValue(value: NodeOrTerminal): string | undefined {
 }
 
 function isInlinedMember(value: LabelledValue, nodeMap: NodeMap): boolean {
+	if (!isNodeRef(value)) return false;
 	const owner = nodeMap.nodes.get(value.variantOf ?? '');
 	if (!(owner instanceof AssembledSupertype)) return false;
 	const kind = kindOfValue(value);

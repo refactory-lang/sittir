@@ -7906,7 +7906,7 @@ Neither supertype case applies to a kind the parser shows as a concrete node (`i
 
 ### `packages/codegen/src/compiler/link.ts::collectSubtypeRefs`
 
-Collects the subtypes of a choice, as symbol refs. A bare symbol is its own subtype. A named alias over a symbol becomes a ref to that symbol's storage kind, with the alias's value as `aliasedTo` when it differs from the storage name, so the parse name the parser emits at that position is kept on the subtype. A named alias over a string becomes a symbol whose name is the matching kind (or the literal text), carrying `literal` and `aliasedTo`. An unnamed alias is skipped. A string member becomes a symbol unless `ctx.isWordShaped` says it is a word, in which case it is not a subtype. Choice, sequence, token, optional and repeat wrappers are walked through. Other rules yield nothing.
+Collects the subtypes of a choice, as symbol refs. A bare symbol is its own subtype. A named alias over a symbol becomes a ref to that symbol's storage kind, with the alias's value as `aliasedTo` when it differs from the storage name, so the parse name the parser emits at that position is kept on the subtype. A named alias over a string becomes a symbol whose name is the matching kind (or the literal text), carrying `literal` and `aliasedTo`. An unnamed alias is skipped. A string member becomes a symbol named by the matching kind (or the literal text), carrying `literal` and the string's annotations, so a fixed word keeps its variant label as any other member does. Choice, sequence, token, optional and repeat wrappers are walked through. Other rules yield nothing.
 
 ### `packages/codegen/src/compiler/link.ts::resolveRule`
 

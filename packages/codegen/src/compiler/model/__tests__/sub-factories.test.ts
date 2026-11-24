@@ -4,6 +4,7 @@ import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL 
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../../types/rule.ts';
 import { EmitHaltedError } from '../../../types/diagnostics.ts';
+import { AssembledSupertype } from '../node-map.ts';
 import {
 	armConfigKeys,
 	elementsSeatOf,
@@ -246,6 +247,28 @@ describe('sub-factories — subFactoriesOf', () => {
 		const held = subFactoriesOf(nodeMap.nodes.get('holder')!, nodeMap);
 		expect(held.entries.map((e) => e.name).sort()).toEqual(['circle', 'other', 'square']);
 		expect(subFactoriesOf(nodeMap.nodes.get('fielded')!, nodeMap).entries).toEqual([]);
+	});
+
+	it('a fixed word member of a hidden supertype stays a labelled member and keeps its value arm where it is inlined', () => {
+		const { nodeMap } = buildNodeMap({
+			root: { type: SEQ, members: [{ type: SYMBOL, name: 'holder' }, { type: SYMBOL, name: '_name' }] },
+			holder: { type: SEQ, members: [{ type: STRING, value: 'as' }, { type: FIELD, name: 'name', content: { type: SYMBOL, name: '_name' } }] },
+			_name: {
+				type: CHOICE,
+				members: [
+					{ type: SYMBOL, name: 'identifier', ...label('_name', 'identifier') },
+					{ type: SYMBOL, name: 'number', ...label('_name', 'number') },
+					{ type: STRING, value: 'default', annotations: { variantOf: '_name' } }
+				]
+			},
+			identifier: { type: PATTERN, value: '[a-z]+' },
+			number: { type: PATTERN, value: '[0-9]+' }
+		});
+		const supertype = nodeMap.nodes.get('_name');
+		if (!(supertype instanceof AssembledSupertype)) throw new Error('_name is a supertype');
+		expect(supertype.variantSubtypes?.map((ref) => ref.variant)).toEqual(['identifier', 'number', 'default']);
+		const held = subFactoriesOf(nodeMap.nodes.get('holder')!, nodeMap);
+		expect(held.entries.map((entry) => [entry.name, entry.arm.via])).toEqual([['default', 'value']]);
 	});
 
 	it("a hidden copy in an unnamed slot mounts its source's labelled members", () => {

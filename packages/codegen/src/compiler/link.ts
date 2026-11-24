@@ -2020,9 +2020,13 @@ function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'
 				}
 				return;
 			case STRING: {
-				if (ctx.isWordShaped(current.value)) return;
 				const entry = findEntryForLiteralText(ctx.kindEntries, current.value);
-				subtypes.push({ type: SYMBOL, name: entry?.kind ?? current.value, literal: current.value });
+				subtypes.push({
+					type: SYMBOL,
+					name: entry?.kind ?? current.value,
+					literal: current.value,
+					...(current.annotations === undefined ? {} : { annotations: current.annotations })
+				});
 				return;
 			}
 			case CHOICE:

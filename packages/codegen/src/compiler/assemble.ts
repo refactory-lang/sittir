@@ -442,9 +442,8 @@ function resolveSupertypeSubtypes(
 	const compoundCtx: CompoundModelTypeCtx = { simplifiedRules: ctx.rules, kindEntries };
 	const refOf = (s: SymbolRule | SupertypeRule['subtypes'][number]): SubtypeRef => {
 		const display = aliasEnvelopeOf(s, compoundCtx);
-		return display !== undefined
-			? { name: display, storageKindId: s.aliasedToId, ...armFactsOf(s, compoundCtx) }
-			: { name: s.name, storageKindId: s.kindId, ...armFactsOf(s, compoundCtx) };
+		const armFacts = armFactsOf(s.literal === undefined ? s : { ...s, resolvedKind: s.name }, compoundCtx);
+		return display !== undefined ? { name: display, storageKindId: s.aliasedToId, ...armFacts } : { name: s.name, storageKindId: s.kindId, ...armFacts };
 	};
 	const subtypes: SubtypeRef[] =
 		rule.type === SUPERTYPE

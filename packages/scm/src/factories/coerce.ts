@@ -466,7 +466,6 @@ function _isLooseConfig<C>(v: C | AnyUntypedNode): v is C {
 }
 
 // Interned resolver kind lists (dedup)
-const _super_node_identifier: readonly string[] = ['identifier'];
 const _super_list_element: readonly string[] = ['capture', 'list_element_quantifier'];
 const _super_named_node_group: readonly string[] = ['named_node_group_children', 'named_node_group_anchored_last'];
 const _K0: readonly string[] = [];
@@ -482,9 +481,10 @@ const _K1: readonly string[] = [
 ];
 const _K2: readonly string[] = ['string_content_text'];
 const _K3: readonly string[] = ['escape_sequence'];
-const _K4: readonly string[] = ['capture', 'string'];
-const _K5: readonly string[] = ['string'];
-const _K6: readonly string[] = [
+const _K4: readonly string[] = ['identifier'];
+const _K5: readonly string[] = ['capture', 'string'];
+const _K6: readonly string[] = ['string'];
+const _K7: readonly string[] = [
 	'named_node_plain',
 	'named_node_supertyped',
 	'anonymous_node',
@@ -495,7 +495,7 @@ const _K6: readonly string[] = [
 	'field_definition',
 	'group_expression_arm'
 ];
-const _K7: readonly string[] = [
+const _K8: readonly string[] = [
 	'named_node_plain',
 	'named_node_supertyped',
 	'anonymous_node',
@@ -507,8 +507,8 @@ const _K7: readonly string[] = [
 	'negated_field',
 	'named_node_expression_arm'
 ];
-const _K8: readonly string[] = ['_immediate_identifier'];
-const _K9: readonly string[] = ['immediate_string'];
+const _K9: readonly string[] = ['_immediate_identifier'];
+const _K10: readonly string[] = ['immediate_string'];
 
 export const coerceToProgram: EmptyForm<
 	T.EmptyProgram,
@@ -695,7 +695,7 @@ export const coerceToParameters: Seat<T.Parameters.LooseArgs, ReturnType<typeof 
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildParameters(
-		...(_resolveMany<T.Capture | T.String | T.Identifier>(_elems, _super_node_identifier, _K4) as unknown as Parameters<
+		...(_resolveMany<T.Capture | T.String | T.Identifier>(_elems, _K4, _K5) as unknown as Parameters<
 			typeof F.buildParameters
 		>)
 	);
@@ -764,7 +764,7 @@ export const coerceToGrouping: ConfigSeat<T.Grouping.Loose, ReturnType<typeof F.
 };
 
 export function resolveMissingNode_name(value: T.MissingNode.LooseConfig['name']): Admit<T.MissingNode['_name']> {
-	return _resolveOne<T.Identifier | T.String>(value, _super_node_identifier, _K5);
+	return _resolveOne<T.Identifier | T.String>(value, _K4, _K6);
 }
 
 export function resolveMissingNode_elements(
@@ -939,13 +939,13 @@ export const coerceToListElementQuantifier: ConfigSeat<
 export function resolveGroupExpressionArm_left(
 	value: T.GroupExpressionArm.LooseConfig['left']
 ): Admit<T.GroupExpressionArm['_left']> {
-	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
+	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K7);
 }
 
 export function resolveGroupExpressionArm_right(
 	value: T.GroupExpressionArm.LooseConfig['right']
 ): Admit<T.GroupExpressionArm['_right']> {
-	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
+	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K7);
 }
 
 export const coerceToGroupExpressionArm: ConfigSeat<
@@ -964,13 +964,13 @@ export const coerceToGroupExpressionArm: ConfigSeat<
 export function resolveNamedNodeExpressionArm_left(
 	value: T.NamedNodeExpressionArm.LooseConfig['left']
 ): Admit<T.NamedNodeExpressionArm['_left']> {
-	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K8);
 }
 
 export function resolveNamedNodeExpressionArm_right(
 	value: T.NamedNodeExpressionArm.LooseConfig['right']
 ): Admit<T.NamedNodeExpressionArm['_right']> {
-	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K8);
 }
 
 export const coerceToNamedNodeExpressionArm: ConfigSeat<
@@ -989,7 +989,7 @@ export const coerceToNamedNodeExpressionArm: ConfigSeat<
 export function resolveGroupingGroup_groupExpression(
 	value: T.GroupingGroup.LooseConfig['groupExpression']
 ): Admit<T.GroupingGroup['_group_expression']> {
-	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K6);
+	return _resolveOne<T.Definition | T.GroupExpressionArm>(value, _K0, _K7);
 }
 
 export function resolveGroupingGroup_anchor(
@@ -1061,7 +1061,7 @@ export function resolveNamedNodeSupertyped_supertype(
 export function resolveNamedNodeSupertyped_name(
 	value: T.NamedNodeSupertyped.LooseConfig['name']
 ): Admit<T.NamedNodeSupertyped['_name']> {
-	return _resolveOne<T.ImmediateIdentifier | T.ImmediateString>(value, _K8, _K9);
+	return _resolveOne<T.ImmediateIdentifier | T.ImmediateString>(value, _K9, _K10);
 }
 
 export function resolveNamedNodeSupertyped_namedNodeGroup(
@@ -1100,7 +1100,7 @@ export function resolveNamedNodeGroupChildren_anchor(
 export function resolveNamedNodeGroupChildren_namedNodeExpressions(
 	value: T.NamedNodeGroupChildren.LooseConfig['namedNodeExpressions']
 ): Admit<T.NamedNodeGroupChildren['_named_node_expressions']> {
-	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7) as Admit<
+	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K8) as Admit<
 		T.NamedNodeGroupChildren['_named_node_expressions']
 	>;
 }
@@ -1127,13 +1127,13 @@ export function resolveNamedNodeGroupAnchoredLast_anchor(
 export function resolveNamedNodeGroupAnchoredLast_namedNodeExpressions(
 	value: T.NamedNodeGroupAnchoredLast.LooseConfig['namedNodeExpressions']
 ): Admit<T.NamedNodeGroupAnchoredLast['_named_node_expressions']> {
-	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveMany<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K8);
 }
 
 export function resolveNamedNodeGroupAnchoredLast_last(
 	value: T.NamedNodeGroupAnchoredLast.LooseConfig['last']
 ): Admit<T.NamedNodeGroupAnchoredLast['_last']> {
-	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K7);
+	return _resolveOne<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>(value, _K0, _K8);
 }
 
 export const coerceToNamedNodeGroupAnchoredLast: ConfigSeat<

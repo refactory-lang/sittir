@@ -16,6 +16,7 @@ import type {
 	RestType,
 	PropertyIdentifier,
 	Identifier,
+	DefaultKeyword,
 	ParenthesizedExpression,
 	String,
 	Number,
@@ -24,7 +25,7 @@ import type {
 } from './types.js';
 export type * from './types.js';
 
-export type ModuleExportName = Identifier | String;
+export type ModuleExportName = Identifier | String | DefaultKeyword;
 
 export type FormalParameter = RequiredParameter | OptionalParameter;
 

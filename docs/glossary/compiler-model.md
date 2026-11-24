@@ -5370,7 +5370,7 @@ Whether a mounted child can be a node arm. A supertype qualifies when it is vari
 ### `packages/codegen/src/compiler/model/sub-factories.ts::armValuesOf`
 
 The values `derive` walks for one slot. A value mounts one of two ways: a
-labelled value (`isLabelled`) mounts unless it is itself a member of the
+labelled value (`isLabelled`) mounts unless it is a node-backed member of the
 supertype its label names (`isInlinedMember` — an inlined supertype member
 is that supertype's own arm, not a second arm of the slot holding the
 reference to it) or fails `seatsInlinedLabel` (a label minted by an inline
@@ -5396,11 +5396,13 @@ storage kind, or a terminal's `resolvedKind`.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::isInlinedMember`
 
-Whether a labelled value is one of the very supertype's own subtypes that
-its label names (`owner = nodeMap.nodes.get(value.variantOf)`, matched by
-`kindOfValue` against `owner.subtypes`). `armValuesOf` skips such a value:
-it is the supertype's own arm, surfaced when the supertype itself is
-walked, not a second arm of the parent slot holding the reference to it.
+Whether a labelled node-backed value is one of the very supertype's own
+subtypes that its label names (`owner = nodeMap.nodes.get(value.variantOf)`,
+matched by `kindOfValue` against `owner.subtypes`). `armValuesOf` skips such
+a value: it is the supertype's own arm, surfaced when the supertype itself
+is walked, not a second arm of the parent slot holding the reference to it.
+A terminal value is never one: a fixed token has no builder of its own, so
+its value arm is the only route that seats it at the slot.
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::seatsInlinedLabel`
 

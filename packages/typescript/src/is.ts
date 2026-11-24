@@ -237,6 +237,7 @@ export interface KindMembers {
 		| TSKindId.TemplateLiteralType
 		| TSKindId.IntersectionType
 		| TSKindId.UnionType
+		| TSKindId.ConstKeyword
 		| TSKindId.FunctionType
 		| TSKindId.ReadonlyType
 		| TSKindId.ConstructorType
@@ -272,7 +273,8 @@ export interface KindMembers {
 		| TSKindId.ConditionalType
 		| TSKindId.TemplateLiteralType
 		| TSKindId.IntersectionType
-		| TSKindId.UnionType;
+		| TSKindId.UnionType
+		| TSKindId.ConstKeyword;
 	[TSKindId.IndexSignature]: TSKindId.IndexSignatureColon | TSKindId.IndexSignatureMappedTypeClause;
 	[TSKindId.ClassBodyMember]:
 		| TSKindId.ClassBodyMemberMethod
@@ -1673,11 +1675,11 @@ const _supertype_methodSignature_ids = new Set<number>([461, 462, 463]);
 const _supertype_abstractMethodSignature_ids = new Set<number>([464, 465, 466]);
 const _supertype_type_ids = new Set<number>([
 	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
-	350, 348, 382, 381, 383, 380, 345, 349, 335, 336
+	350, 348, 382, 381, 68, 383, 380, 345, 349, 335, 336
 ]);
 const _supertype_primaryType_ids = new Set<number>([
 	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
-	350, 348, 382, 381
+	350, 348, 382, 381, 68
 ]);
 const _supertype_indexSignature_ids = new Set<number>([411, 412]);
 const _supertype_classBodyMember_ids = new Set<number>([408, 409, 290, 410, 407]);

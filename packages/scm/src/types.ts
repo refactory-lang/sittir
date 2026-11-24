@@ -444,7 +444,8 @@ export enum NamedNodeExpressionKind {
 }
 
 export enum NodeIdentifierKind {
-	Identifier = 'identifier'
+	Identifier = 'identifier',
+	Underscore = 'underscore'
 }
 
 export enum NamedNodeKind {
@@ -901,6 +902,7 @@ export type Blankline = TSKindId.Blankline;
 export type DoubleBlankline = TSKindId.DoubleBlankline;
 export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
+export type Underscore = TSKindId.Underscore;
 
 // Supertype unions
 export type Definition = NamedNode | AnonymousNode | MissingNode | Grouping | Predicate | List | FieldDefinition;
@@ -1604,6 +1606,7 @@ export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKin
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface UnderscoreNs extends KeywordNs<TSKindId.Underscore, '_', TSKindId.Underscore> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface ImmediateIdentifierNs extends LeafNs<
 	ImmediateIdentifier,
@@ -1651,6 +1654,7 @@ export interface NamespaceMap {
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
+	[TSKindId.Underscore]: UnderscoreNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.ImmediateIdentifier]: ImmediateIdentifierNs;
 	[TSKindId.StringContentText]: StringContentTextNs;
@@ -1773,6 +1777,7 @@ export interface TypeKeyOf {
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
+	[TSKindId.Underscore]: 'underscore';
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.ImmediateIdentifier]: 'immediateIdentifier';
 	[TSKindId.StringContentText]: 'stringContentText';
@@ -2576,6 +2581,16 @@ export namespace Dedent {
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Kind = TSKindId.Dedent;
+}
+export namespace Underscore {
+	export type Config = UnderscoreNs['Config'];
+	export type Bound = UnderscoreNs['Bound'];
+	export type Parsed = UnderscoreNs['Bound'];
+	export type Loose = UnderscoreNs['Loose'];
+	export type LooseConfig = UnderscoreNs['LooseConfig'];
+	export type BuildArgs = UnderscoreNs['BuildArgs'];
+	export type LooseArgs = UnderscoreNs['LooseArgs'];
+	export type Kind = TSKindId.Underscore;
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];

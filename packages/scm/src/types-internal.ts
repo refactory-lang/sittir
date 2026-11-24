@@ -5,6 +5,7 @@ import type {
 	GroupExpressionArm,
 	NamedNodeExpressionArm,
 	Identifier,
+	Underscore,
 	Definition,
 	TSKindId
 } from './types.js';
@@ -14,7 +15,7 @@ export type GroupExpression = Definition | GroupExpressionArm;
 
 export type NamedNodeExpression = Definition | NegatedField | NamedNodeExpressionArm;
 
-export type NodeIdentifier = Identifier;
+export type NodeIdentifier = Identifier | Underscore;
 
 export namespace GroupExpression {
 	export type Kind = '_group_expression';

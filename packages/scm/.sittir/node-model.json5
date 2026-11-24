@@ -57,7 +57,7 @@
 		{"kind":"_list_element","modelType":"supertype","typeName":"ListElement","irKey":"listElement","builderPath":["listElement"],"subtypes":["capture","list_element_quantifier"]},
 		{"kind":"_named_node_expression","modelType":"supertype","typeName":"NamedNodeExpression","subtypes":["definition","named_node_expression_arm","negated_field"]},
 		{"kind":"_newline","modelType":"punctuation","typeName":"Newline","builderPathAlternates":[["layout","newline"]],"unit":true,"layout":true,"text":"\n","factoryShape":"constant"},
-		{"kind":"_node_identifier","modelType":"supertype","typeName":"NodeIdentifier","subtypes":["identifier"]},
+		{"kind":"_node_identifier","modelType":"supertype","typeName":"NodeIdentifier","subtypes":["identifier","underscore"]},
 		{"kind":"_space","modelType":"punctuation","typeName":"Space","builderPathAlternates":[["layout","space"]],"unit":true,"layout":true,"text":" ","factoryShape":"constant"},
 		{"kind":"_tab","modelType":"punctuation","typeName":"Tab","builderPathAlternates":[["layout","tab"]],"unit":true,"layout":true,"text":"\t","factoryShape":"constant"},
 		{"kind":"_tight","modelType":"punctuation","typeName":"Tight","builderPathAlternates":[["layout","tight"]],"unit":true,"layout":true,"text":"","factoryShape":"constant"},

@@ -2616,7 +2616,8 @@ export enum ExportStatementKind {
 
 export enum ModuleExportNameKind {
 	Identifier = 'identifier',
-	String = 'string'
+	String = 'string',
+	DefaultKeyword = 'default_keyword'
 }
 
 export enum DeclarationKind {
@@ -2859,7 +2860,8 @@ export enum PrimaryTypeKind {
 	ConditionalType = 'conditional_type',
 	TemplateLiteralType = 'template_literal_type',
 	IntersectionType = 'intersection_type',
-	UnionType = 'union_type'
+	UnionType = 'union_type',
+	ConstKeyword = 'const_keyword'
 }
 
 export enum IndexSignatureKind {
@@ -5439,7 +5441,8 @@ export interface SatisfiesExpression {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -5452,6 +5455,7 @@ export interface SatisfiesExpression {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -5595,7 +5599,8 @@ export interface ImplementsClause {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -5608,6 +5613,7 @@ export interface ImplementsClause {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type
 		>;
@@ -5956,7 +5962,8 @@ export interface TypeAliasDeclaration {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -5969,6 +5976,7 @@ export interface TypeAliasDeclaration {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
@@ -6185,7 +6193,8 @@ export interface OmittingTypeAnnotation {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6198,6 +6207,7 @@ export interface OmittingTypeAnnotation {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6227,7 +6237,8 @@ export interface AddingTypeAnnotation {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6240,6 +6251,7 @@ export interface AddingTypeAnnotation {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6269,7 +6281,8 @@ export interface OptingTypeAnnotation {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6282,6 +6295,7 @@ export interface OptingTypeAnnotation {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6311,7 +6325,8 @@ export interface TypeAnnotation {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6324,6 +6339,7 @@ export interface TypeAnnotation {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6495,7 +6511,8 @@ export interface OptionalType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6508,6 +6525,7 @@ export interface OptionalType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6537,7 +6555,8 @@ export interface RestType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6550,6 +6569,7 @@ export interface RestType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6588,7 +6608,8 @@ export interface ConstructorType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6601,6 +6622,7 @@ export interface ConstructorType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6654,7 +6676,8 @@ export interface TemplateType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6667,6 +6690,7 @@ export interface TemplateType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| PrimaryType
 			| InferType;
@@ -6711,7 +6735,8 @@ export interface InferType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6724,6 +6749,7 @@ export interface InferType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6764,7 +6790,8 @@ export interface ConditionalType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6777,6 +6804,7 @@ export interface ConditionalType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly right:
@@ -6792,7 +6820,8 @@ export interface ConditionalType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6805,6 +6834,7 @@ export interface ConditionalType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly consequence:
@@ -6820,7 +6850,8 @@ export interface ConditionalType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6833,6 +6864,7 @@ export interface ConditionalType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly alternative:
@@ -6848,7 +6880,8 @@ export interface ConditionalType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6861,6 +6894,7 @@ export interface ConditionalType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -6968,7 +7002,8 @@ export interface TypePredicate {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -6981,6 +7016,7 @@ export interface TypePredicate {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -7262,7 +7298,8 @@ export interface IndexTypeQuery {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7275,6 +7312,7 @@ export interface IndexTypeQuery {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| PrimaryType;
 	};
@@ -7306,7 +7344,8 @@ export interface LookupType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7319,6 +7358,7 @@ export interface LookupType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| PrimaryType;
 		readonly index_type:
@@ -7334,7 +7374,8 @@ export interface LookupType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7347,6 +7388,7 @@ export interface LookupType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -7382,7 +7424,8 @@ export interface MappedTypeClause {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7395,6 +7438,7 @@ export interface MappedTypeClause {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly alias?:
@@ -7410,7 +7454,8 @@ export interface MappedTypeClause {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7423,6 +7468,7 @@ export interface MappedTypeClause {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -7511,7 +7557,8 @@ export interface FlowMaybeType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7524,6 +7571,7 @@ export interface FlowMaybeType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| PrimaryType;
 	};
@@ -7553,7 +7601,8 @@ export interface ParenthesizedType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7566,6 +7615,7 @@ export interface ParenthesizedType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -7865,7 +7915,8 @@ export interface DefaultType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7878,6 +7929,7 @@ export interface DefaultType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -7910,7 +7962,8 @@ export interface Constraint {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -7923,6 +7976,7 @@ export interface Constraint {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -8004,7 +8058,8 @@ export interface ArrayType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8017,6 +8072,7 @@ export interface ArrayType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| PrimaryType;
 	};
@@ -8083,7 +8139,8 @@ export interface ReadonlyType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8096,6 +8153,7 @@ export interface ReadonlyType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -8127,7 +8185,8 @@ export interface UnionType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8140,6 +8199,7 @@ export interface UnionType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly right:
@@ -8155,7 +8215,8 @@ export interface UnionType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8168,6 +8229,7 @@ export interface UnionType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -8201,7 +8263,8 @@ export interface IntersectionType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8214,6 +8277,7 @@ export interface IntersectionType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly right:
@@ -8229,7 +8293,8 @@ export interface IntersectionType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8242,6 +8307,7 @@ export interface IntersectionType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -8279,7 +8345,8 @@ export interface FunctionType {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8292,6 +8359,7 @@ export interface FunctionType {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type
 			| Asserts
@@ -8564,7 +8632,8 @@ export interface AmbientDeclarationModule {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -8577,6 +8646,7 @@ export interface AmbientDeclarationModule {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 		readonly terminator?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
@@ -9153,7 +9223,8 @@ export interface IndexSignatureColon {
 					| 'never'
 					| 'object'
 					| 'this'
-					| '*',
+					| '*'
+					| 'const',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
 					| TSKindId.BooleanKeyword
@@ -9166,6 +9237,7 @@ export interface IndexSignatureColon {
 					| TSKindId.ObjectKeyword
 					| TSKindId.ThisKeyword
 					| TSKindId.Star
+					| TSKindId.ConstKeyword
 			  >
 			| Type;
 	};
@@ -11472,6 +11544,8 @@ export type Dedent = TSKindId.Dedent;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 export type ThisType = TSKindId.ThisType;
+export type DefaultKeyword = TSKindId.DefaultKeyword;
+export type ConstKeyword = TSKindId.ConstKeyword;
 
 // Supertype unions
 export type ExportStatement = ExportStatementDefault | ExportStatementEqualsExport | ExportStatementNamespaceExport;
@@ -11628,7 +11702,8 @@ export type PrimaryType =
 	| ConditionalType
 	| TemplateLiteralType
 	| IntersectionType
-	| UnionType;
+	| UnionType
+	| ConstKeyword;
 
 export type IndexSignature = IndexSignatureColon | IndexSignatureMappedTypeClause;
 
@@ -18510,6 +18585,8 @@ export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
 export interface ThisTypeNs extends KeywordNs<TSKindId.ThisType, 'this', TSKindId.ThisType> {}
+export interface DefaultKeywordNs extends KeywordNs<TSKindId.DefaultKeyword, 'default', TSKindId.DefaultKeyword> {}
+export interface ConstKeywordNs extends KeywordNs<TSKindId.ConstKeyword, 'const', TSKindId.ConstKeyword> {}
 export interface UnescapedDoubleStringFragmentNs extends LeafNs<
 	UnescapedDoubleStringFragment,
 	string,
@@ -18808,6 +18885,8 @@ export interface NamespaceMap {
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.ThisType]: ThisTypeNs;
+	[TSKindId.DefaultKeyword]: DefaultKeywordNs;
+	[TSKindId.ConstKeyword]: ConstKeywordNs;
 	[TSKindId.UnescapedDoubleStringFragment]: UnescapedDoubleStringFragmentNs;
 	[TSKindId.UnescapedSingleStringFragment]: UnescapedSingleStringFragmentNs;
 	[TSKindId.RegexPattern]: RegexPatternNs;
@@ -19780,6 +19859,8 @@ export interface TypeKeyOf {
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
 	[TSKindId.ThisType]: 'thisType';
+	[TSKindId.DefaultKeyword]: 'defaultKeyword';
+	[TSKindId.ConstKeyword]: 'constKeyword';
 	[TSKindId.UnescapedDoubleStringFragment]: 'unescapedDoubleStringFragment';
 	[TSKindId.UnescapedSingleStringFragment]: 'unescapedSingleStringFragment';
 	[TSKindId.RegexPattern]: 'regexPattern';
@@ -27379,6 +27460,26 @@ export namespace ThisType {
 	export type BuildArgs = ThisTypeNs['BuildArgs'];
 	export type LooseArgs = ThisTypeNs['LooseArgs'];
 	export type Kind = TSKindId.ThisType;
+}
+export namespace DefaultKeyword {
+	export type Config = DefaultKeywordNs['Config'];
+	export type Bound = DefaultKeywordNs['Bound'];
+	export type Parsed = DefaultKeywordNs['Bound'];
+	export type Loose = DefaultKeywordNs['Loose'];
+	export type LooseConfig = DefaultKeywordNs['LooseConfig'];
+	export type BuildArgs = DefaultKeywordNs['BuildArgs'];
+	export type LooseArgs = DefaultKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.DefaultKeyword;
+}
+export namespace ConstKeyword {
+	export type Config = ConstKeywordNs['Config'];
+	export type Bound = ConstKeywordNs['Bound'];
+	export type Parsed = ConstKeywordNs['Bound'];
+	export type Loose = ConstKeywordNs['Loose'];
+	export type LooseConfig = ConstKeywordNs['LooseConfig'];
+	export type BuildArgs = ConstKeywordNs['BuildArgs'];
+	export type LooseArgs = ConstKeywordNs['LooseArgs'];
+	export type Kind = TSKindId.ConstKeyword;
 }
 export namespace UnescapedDoubleStringFragment {
 	export type Config = UnescapedDoubleStringFragmentNs['Config'];

@@ -5475,7 +5475,7 @@ impl ::sittir_core::render::Render for MethodSignatureNodeRecord<'_> {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = TypeNodeRecord)]
 pub enum TypeNode {
-    #[kind(kind::PARENTHESIZED_TYPE, kind::PREDEFINED_TYPE, kind::NESTED_TYPE_IDENTIFIER, kind::GENERIC_TYPE, kind::OBJECT_TYPE, kind::ARRAY_TYPE, kind::TUPLE_TYPE, kind::FLOW_MAYBE_TYPE, kind::TYPE_QUERY, kind::INDEX_TYPE_QUERY, kind::EXISTENTIAL_TYPE, kind::LITERAL_TYPE, kind::LOOKUP_TYPE, kind::CONDITIONAL_TYPE, kind::TEMPLATE_LITERAL_TYPE, kind::INTERSECTION_TYPE, kind::UNION_TYPE, kind::PRIMARY_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD, display(kind::_TYPE_IDENTIFIER), display(kind::_THIS_TYPE))]
+    #[kind(kind::PARENTHESIZED_TYPE, kind::PREDEFINED_TYPE, kind::NESTED_TYPE_IDENTIFIER, kind::GENERIC_TYPE, kind::OBJECT_TYPE, kind::ARRAY_TYPE, kind::TUPLE_TYPE, kind::FLOW_MAYBE_TYPE, kind::TYPE_QUERY, kind::INDEX_TYPE_QUERY, kind::EXISTENTIAL_TYPE, kind::LITERAL_TYPE, kind::LOOKUP_TYPE, kind::CONDITIONAL_TYPE, kind::TEMPLATE_LITERAL_TYPE, kind::INTERSECTION_TYPE, kind::UNION_TYPE, kind::CONST_KEYWORD, kind::PRIMARY_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD, display(kind::_TYPE_IDENTIFIER), display(kind::_THIS_TYPE))]
     PrimaryType(PrimaryTypeNode),
     #[kind(kind::FUNCTION_TYPE)]
     FunctionType(FunctionTypeNode),
@@ -5640,6 +5640,8 @@ pub enum PrimaryTypeNode {
     IntersectionType(IntersectionTypeNode),
     #[kind(kind::UNION_TYPE)]
     UnionType(UnionTypeNode),
+    #[kind(kind::CONST_KEYWORD)]
+    ConstKeyword,
 }
 
 impl ::sittir_core::prepare::Prepare for PrimaryTypeNode {
@@ -5664,6 +5666,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeNode {
             PrimaryTypeNode::TemplateLiteralType(t) => t.prepare(ctx),
             PrimaryTypeNode::IntersectionType(t) => t.prepare(ctx),
             PrimaryTypeNode::UnionType(t) => t.prepare(ctx),
+            PrimaryTypeNode::ConstKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -5687,6 +5690,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeNode {
             PrimaryTypeNode::TemplateLiteralType(t) => t.gap_edges(),
             PrimaryTypeNode::IntersectionType(t) => t.gap_edges(),
             PrimaryTypeNode::UnionType(t) => t.gap_edges(),
+            PrimaryTypeNode::ConstKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -5710,6 +5714,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeNode {
             PrimaryTypeNode::TemplateLiteralType(t) => t.snapshot_edge(),
             PrimaryTypeNode::IntersectionType(t) => t.snapshot_edge(),
             PrimaryTypeNode::UnionType(t) => t.snapshot_edge(),
+            PrimaryTypeNode::ConstKeyword => None,
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
@@ -5733,6 +5738,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeNode {
             PrimaryTypeNode::TemplateLiteralType(t) => t.source_coordinate(),
             PrimaryTypeNode::IntersectionType(t) => t.source_coordinate(),
             PrimaryTypeNode::UnionType(t) => t.source_coordinate(),
+            PrimaryTypeNode::ConstKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -5756,6 +5762,7 @@ impl ::sittir_core::prepare::Prepare for PrimaryTypeNode {
             PrimaryTypeNode::TemplateLiteralType(t) => t.source_separator(ctx),
             PrimaryTypeNode::IntersectionType(t) => t.source_separator(ctx),
             PrimaryTypeNode::UnionType(t) => t.source_separator(ctx),
+            PrimaryTypeNode::ConstKeyword => None,
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5788,6 +5795,7 @@ impl ::sittir_core::view::KindOf for PrimaryTypeNode {
             Self::TemplateLiteralType(inner) => inner.kind_in(kinds),
             Self::IntersectionType(inner) => inner.kind_in(kinds),
             Self::UnionType(inner) => inner.kind_in(kinds),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -5813,6 +5821,7 @@ fn primary_type_node_to_any(t: PrimaryTypeNode) -> AnyNode {
         PrimaryTypeNode::TemplateLiteralType(inner) => AnyNode::TemplateLiteralType(inner),
         PrimaryTypeNode::IntersectionType(inner) => AnyNode::IntersectionType(inner),
         PrimaryTypeNode::UnionType(inner) => AnyNode::UnionType(inner),
+        PrimaryTypeNode::ConstKeyword => AnyNode::ConstKeyword,
     }
 }
 
@@ -5845,6 +5854,7 @@ impl ::sittir_core::view::KindOf for PrimaryTypeNodeRecord<'_> {
             Self::TemplateLiteralType(inner) => inner.kind_in(kinds),
             Self::IntersectionType(inner) => inner.kind_in(kinds),
             Self::UnionType(inner) => inner.kind_in(kinds),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16378,6 +16388,8 @@ pub enum TemplateTypeTypeNodeSlot {
     #[kind(kind::EXISTENTIAL_TYPE)]
     #[node(edged)]
     ExistentialType(::sittir_core::options::Edges),
+    #[kind(kind::CONST_KEYWORD)]
+    ConstKeyword,
 }
 
 impl ::sittir_core::prepare::Prepare for TemplateTypeTypeNodeSlot {
@@ -16403,6 +16415,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeNodeSlot {
             TemplateTypeTypeNodeSlot::InferType(t) => t.prepare(ctx),
             TemplateTypeTypeNodeSlot::ThisType => Ok(()),
             TemplateTypeTypeNodeSlot::ExistentialType(_) => Ok(()),
+            TemplateTypeTypeNodeSlot::ConstKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16427,6 +16440,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeNodeSlot {
             TemplateTypeTypeNodeSlot::InferType(t) => t.gap_edges(),
             TemplateTypeTypeNodeSlot::ThisType => None,
             TemplateTypeTypeNodeSlot::ExistentialType(edges) => Some(edges),
+            TemplateTypeTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -16451,6 +16465,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeNodeSlot {
             TemplateTypeTypeNodeSlot::InferType(t) => t.snapshot_edge(),
             TemplateTypeTypeNodeSlot::ThisType => None,
             TemplateTypeTypeNodeSlot::ExistentialType(_) => None,
+            TemplateTypeTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
@@ -16475,6 +16490,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeNodeSlot {
             TemplateTypeTypeNodeSlot::InferType(t) => t.source_coordinate(),
             TemplateTypeTypeNodeSlot::ThisType => None,
             TemplateTypeTypeNodeSlot::ExistentialType(_) => None,
+            TemplateTypeTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -16499,6 +16515,7 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeTypeNodeSlot {
             TemplateTypeTypeNodeSlot::InferType(t) => t.source_separator(ctx),
             TemplateTypeTypeNodeSlot::ThisType => None,
             TemplateTypeTypeNodeSlot::ExistentialType(_) => None,
+            TemplateTypeTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -16532,6 +16549,7 @@ impl ::sittir_core::view::KindOf for TemplateTypeTypeNodeSlot {
             Self::InferType(inner) => inner.kind_in(kinds),
             Self::ThisType => [::sittir_core::types::KindId(509)].iter().any(|k| kinds.contains(k)),
             Self::ExistentialType(_) => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16559,6 +16577,7 @@ impl ::sittir_core::render::Render for TemplateTypeTypeNodeSlot {
             TemplateTypeTypeNodeSlot::InferType(inner) => inner.render(w),
             TemplateTypeTypeNodeSlot::ThisType => render_this_type(w),
             TemplateTypeTypeNodeSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(364), edges, w, render_existential_type),
+            TemplateTypeTypeNodeSlot::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -16587,6 +16606,7 @@ impl ::sittir_core::view::KindOf for TemplateTypeTypeNodeSlotRecord<'_> {
             Self::InferType(inner) => inner.kind_in(kinds),
             Self::ThisType => [::sittir_core::types::KindId(509)].iter().any(|k| kinds.contains(k)),
             Self::ExistentialType(_) => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -16614,6 +16634,7 @@ impl ::sittir_core::render::Render for TemplateTypeTypeNodeSlotRecord<'_> {
             TemplateTypeTypeNodeSlotRecord::InferType(inner) => inner.render(w),
             TemplateTypeTypeNodeSlotRecord::ThisType => render_this_type(w),
             TemplateTypeTypeNodeSlotRecord::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(364), edges, w, render_existential_type),
+            TemplateTypeTypeNodeSlotRecord::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -18057,6 +18078,8 @@ pub enum FunctionTypeReturnTypeNodeSlot {
     #[kind(kind::EXISTENTIAL_TYPE)]
     #[node(edged)]
     ExistentialType(::sittir_core::options::Edges),
+    #[kind(kind::CONST_KEYWORD)]
+    ConstKeyword,
 }
 
 impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeNodeSlot {
@@ -18089,6 +18112,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeNodeSlot {
             FunctionTypeReturnTypeNodeSlot::TypePredicate(t) => t.prepare(ctx),
             FunctionTypeReturnTypeNodeSlot::ThisType => Ok(()),
             FunctionTypeReturnTypeNodeSlot::ExistentialType(_) => Ok(()),
+            FunctionTypeReturnTypeNodeSlot::ConstKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18120,6 +18144,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeNodeSlot {
             FunctionTypeReturnTypeNodeSlot::TypePredicate(t) => t.gap_edges(),
             FunctionTypeReturnTypeNodeSlot::ThisType => None,
             FunctionTypeReturnTypeNodeSlot::ExistentialType(edges) => Some(edges),
+            FunctionTypeReturnTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18151,6 +18176,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeNodeSlot {
             FunctionTypeReturnTypeNodeSlot::TypePredicate(t) => t.snapshot_edge(),
             FunctionTypeReturnTypeNodeSlot::ThisType => None,
             FunctionTypeReturnTypeNodeSlot::ExistentialType(_) => None,
+            FunctionTypeReturnTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
@@ -18182,6 +18208,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeNodeSlot {
             FunctionTypeReturnTypeNodeSlot::TypePredicate(t) => t.source_coordinate(),
             FunctionTypeReturnTypeNodeSlot::ThisType => None,
             FunctionTypeReturnTypeNodeSlot::ExistentialType(_) => None,
+            FunctionTypeReturnTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -18213,6 +18240,7 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeReturnTypeNodeSlot {
             FunctionTypeReturnTypeNodeSlot::TypePredicate(t) => t.source_separator(ctx),
             FunctionTypeReturnTypeNodeSlot::ThisType => None,
             FunctionTypeReturnTypeNodeSlot::ExistentialType(_) => None,
+            FunctionTypeReturnTypeNodeSlot::ConstKeyword => None,
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -18253,6 +18281,7 @@ impl ::sittir_core::view::KindOf for FunctionTypeReturnTypeNodeSlot {
             Self::TypePredicate(inner) => inner.kind_in(kinds),
             Self::ThisType => [::sittir_core::types::KindId(509)].iter().any(|k| kinds.contains(k)),
             Self::ExistentialType(_) => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18287,6 +18316,7 @@ impl ::sittir_core::render::Render for FunctionTypeReturnTypeNodeSlot {
             FunctionTypeReturnTypeNodeSlot::TypePredicate(inner) => inner.render(w),
             FunctionTypeReturnTypeNodeSlot::ThisType => render_this_type(w),
             FunctionTypeReturnTypeNodeSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(364), edges, w, render_existential_type),
+            FunctionTypeReturnTypeNodeSlot::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -18322,6 +18352,7 @@ impl ::sittir_core::view::KindOf for FunctionTypeReturnTypeNodeSlotRecord<'_> {
             Self::TypePredicate(inner) => inner.kind_in(kinds),
             Self::ThisType => [::sittir_core::types::KindId(509)].iter().any(|k| kinds.contains(k)),
             Self::ExistentialType(_) => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18356,6 +18387,7 @@ impl ::sittir_core::render::Render for FunctionTypeReturnTypeNodeSlotRecord<'_> 
             FunctionTypeReturnTypeNodeSlotRecord::TypePredicate(inner) => inner.render(w),
             FunctionTypeReturnTypeNodeSlotRecord::ThisType => render_this_type(w),
             FunctionTypeReturnTypeNodeSlotRecord::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(364), edges, w, render_existential_type),
+            FunctionTypeReturnTypeNodeSlotRecord::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -18509,6 +18541,8 @@ pub enum TupleTypeMembersItemNodeSlot {
     #[kind(kind::EXISTENTIAL_TYPE)]
     #[node(edged)]
     ExistentialType(::sittir_core::options::Edges),
+    #[kind(kind::CONST_KEYWORD)]
+    ConstKeyword,
 }
 
 impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemNodeSlot {
@@ -18543,6 +18577,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemNodeSlot {
             TupleTypeMembersItemNodeSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.prepare(ctx),
             TupleTypeMembersItemNodeSlot::ThisType => Ok(()),
             TupleTypeMembersItemNodeSlot::ExistentialType(_) => Ok(()),
+            TupleTypeMembersItemNodeSlot::ConstKeyword => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -18576,6 +18611,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemNodeSlot {
             TupleTypeMembersItemNodeSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.gap_edges(),
             TupleTypeMembersItemNodeSlot::ThisType => None,
             TupleTypeMembersItemNodeSlot::ExistentialType(edges) => Some(edges),
+            TupleTypeMembersItemNodeSlot::ConstKeyword => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -18609,6 +18645,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemNodeSlot {
             TupleTypeMembersItemNodeSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.snapshot_edge(),
             TupleTypeMembersItemNodeSlot::ThisType => None,
             TupleTypeMembersItemNodeSlot::ExistentialType(_) => None,
+            TupleTypeMembersItemNodeSlot::ConstKeyword => None,
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
@@ -18642,6 +18679,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemNodeSlot {
             TupleTypeMembersItemNodeSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_coordinate(),
             TupleTypeMembersItemNodeSlot::ThisType => None,
             TupleTypeMembersItemNodeSlot::ExistentialType(_) => None,
+            TupleTypeMembersItemNodeSlot::ConstKeyword => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -18675,6 +18713,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeMembersItemNodeSlot {
             TupleTypeMembersItemNodeSlot::TypeQueryCallExpressionInTypeAnnotation(t) => t.source_separator(ctx),
             TupleTypeMembersItemNodeSlot::ThisType => None,
             TupleTypeMembersItemNodeSlot::ExistentialType(_) => None,
+            TupleTypeMembersItemNodeSlot::ConstKeyword => None,
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -18717,6 +18756,7 @@ impl ::sittir_core::view::KindOf for TupleTypeMembersItemNodeSlot {
             Self::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.kind_in(kinds),
             Self::ThisType => [::sittir_core::types::KindId(509)].iter().any(|k| kinds.contains(k)),
             Self::ExistentialType(_) => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18753,6 +18793,7 @@ impl ::sittir_core::render::Render for TupleTypeMembersItemNodeSlot {
             TupleTypeMembersItemNodeSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
             TupleTypeMembersItemNodeSlot::ThisType => render_this_type(w),
             TupleTypeMembersItemNodeSlot::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(364), edges, w, render_existential_type),
+            TupleTypeMembersItemNodeSlot::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -18790,6 +18831,7 @@ impl ::sittir_core::view::KindOf for TupleTypeMembersItemNodeSlotRecord<'_> {
             Self::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.kind_in(kinds),
             Self::ThisType => [::sittir_core::types::KindId(509)].iter().any(|k| kinds.contains(k)),
             Self::ExistentialType(_) => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
+            Self::ConstKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -18826,6 +18868,7 @@ impl ::sittir_core::render::Render for TupleTypeMembersItemNodeSlotRecord<'_> {
             TupleTypeMembersItemNodeSlotRecord::TypeQueryCallExpressionInTypeAnnotation(inner) => inner.render(w),
             TupleTypeMembersItemNodeSlotRecord::ThisType => render_this_type(w),
             TupleTypeMembersItemNodeSlotRecord::ExistentialType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(364), edges, w, render_existential_type),
+            TupleTypeMembersItemNodeSlotRecord::ConstKeyword => render_const_keyword(w),
         }
     }
 }
@@ -50674,7 +50717,7 @@ impl ::sittir_core::prepare::SeatTarget for PrimaryTypeNode {
             Self::TemplateLiteralType(t) => t.seat_target(table, ctx),
             Self::IntersectionType(t) => t.seat_target(table, ctx),
             Self::UnionType(t) => t.seat_target(table, ctx),
-            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::ThisType { .. } => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::ThisType { .. } | Self::ConstKeyword { .. } => None,
         }
     }
 }
@@ -51382,7 +51425,7 @@ impl ::sittir_core::prepare::SeatTarget for TemplateTypeTypeNodeSlot {
             Self::IntersectionType(t) => t.seat_target(table, ctx),
             Self::UnionType(t) => t.seat_target(table, ctx),
             Self::InferType(t) => t.seat_target(table, ctx),
-            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::ThisType { .. } => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::ThisType { .. } | Self::ConstKeyword { .. } => None,
         }
     }
 }
@@ -51473,7 +51516,7 @@ impl ::sittir_core::prepare::SeatTarget for FunctionTypeReturnTypeNodeSlot {
             Self::InferType(t) => t.seat_target(table, ctx),
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
             Self::TypeQueryCallExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
-            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::Asserts { .. } | Self::TypePredicate { .. } | Self::ThisType { .. } => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::Asserts { .. } | Self::TypePredicate { .. } | Self::ThisType { .. } | Self::ConstKeyword { .. } => None,
         }
     }
 }
@@ -51516,7 +51559,7 @@ impl ::sittir_core::prepare::SeatTarget for TupleTypeMembersItemNodeSlot {
             Self::InferType(t) => t.seat_target(table, ctx),
             Self::TypeQueryMemberExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
             Self::TypeQueryCallExpressionInTypeAnnotation(t) => t.seat_target(table, ctx),
-            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::ThisType { .. } => None,
+            Self::PredefinedType { .. } | Self::TypeIdentifier { .. } | Self::ThisType { .. } | Self::ConstKeyword { .. } => None,
         }
     }
 }
@@ -57378,6 +57421,7 @@ fn render_primary_type(t: &PrimaryTypeNode, w: &mut dyn ::sittir_core::render::R
         PrimaryTypeNode::TemplateLiteralType(inner) => inner.render(w),
         PrimaryTypeNode::IntersectionType(inner) => inner.render(w),
         PrimaryTypeNode::UnionType(inner) => inner.render(w),
+        PrimaryTypeNode::ConstKeyword => render_const_keyword(w),
     }
 }
 
@@ -57403,6 +57447,7 @@ fn render_primary_type_record(t: &PrimaryTypeNodeRecord<'_>, w: &mut dyn ::sitti
         PrimaryTypeNodeRecord::TemplateLiteralType(inner) => inner.render(w),
         PrimaryTypeNodeRecord::IntersectionType(inner) => inner.render(w),
         PrimaryTypeNodeRecord::UnionType(inner) => inner.render(w),
+        PrimaryTypeNodeRecord::ConstKeyword => render_const_keyword(w),
     }
 }
 

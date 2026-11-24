@@ -170,6 +170,18 @@ function aliasedSourceRaw(arms: readonly ('lhs' | 'rest')[]): RawGrammar {
 }
 
 describe('Link — hidden rule classification', () => {
+	it('keeps a word token arm of a supertype as a member', () => {
+		const raw = makeRaw(
+			{
+				expression: { type: CHOICE, members: [{ type: STRING, value: 'this' }, { type: SYMBOL, name: 'identifier' }] },
+				identifier: { type: PATTERN, value: '[a-z]+' }
+			},
+			{ supertypes: ['expression'], word: 'identifier' }
+		);
+		const { subtypes } = linkPredicted(raw).rules['expression'] as unknown as { subtypes: readonly { name: string; literal?: string }[] };
+		expect(subtypes.map((subtype) => subtype.literal ?? subtype.name)).toEqual(['this', 'identifier']);
+	});
+
 	it('classifies hidden choice-of-symbols in supertypes as supertype', () => {
 		const raw = makeRaw(
 			{

@@ -591,6 +591,7 @@ type attribute_call$287_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -663,6 +664,8 @@ const attribute_call$287_typeArguments$item = (value: attribute_call$287_typeArg
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -709,8 +712,8 @@ const attribute_call$287_typeArguments$item = (value: attribute_call$287_typeArg
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -2755,6 +2758,7 @@ type clause_default$374_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -2827,6 +2831,8 @@ const clause_default$374_type = (value: clause_default$374_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -2873,8 +2879,8 @@ const clause_default$374_type = (value: clause_default$374_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -4562,6 +4568,7 @@ type clause_implements$312_types$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -4634,6 +4641,8 @@ const clause_implements$312_types = (value: clause_implements$312_types$Item) =>
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -4680,8 +4689,8 @@ const clause_implements$312_types = (value: clause_implements$312_types$Item) =>
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -5025,6 +5034,7 @@ type clause_mapped_type$361_alias$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -5097,6 +5107,8 @@ const clause_mapped_type$361_alias = (value: clause_mapped_type$361_alias$Item) 
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -5143,8 +5155,8 @@ const clause_mapped_type$361_alias = (value: clause_mapped_type$361_alias$Item) 
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -5302,6 +5314,7 @@ type clause_mapped_type$361_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -5374,6 +5387,8 @@ const clause_mapped_type$361_type = (value: clause_mapped_type$361_type$Item) =>
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -5420,8 +5435,8 @@ const clause_mapped_type$361_type = (value: clause_mapped_type$361_type$Item) =>
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -9950,6 +9965,7 @@ type declaration_member_signature_construct$376_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -10024,6 +10040,8 @@ const declaration_member_signature_construct$376_type = (
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -10070,8 +10088,8 @@ const declaration_member_signature_construct$376_type = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -10216,6 +10234,7 @@ type declaration_member_signature_index$411_indexType$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -10290,6 +10309,8 @@ const declaration_member_signature_index$411_indexType = (
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -10336,8 +10357,8 @@ const declaration_member_signature_index$411_indexType = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -10516,6 +10537,7 @@ type declaration_member_signature_index$411_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -10588,6 +10610,8 @@ const declaration_member_signature_index$411_type = (value: declaration_member_s
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -10652,8 +10676,8 @@ const declaration_member_signature_index$411_type = (value: declaration_member_s
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -10821,6 +10845,7 @@ type declaration_member_signature_index_mapped$412_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -10895,6 +10920,8 @@ const declaration_member_signature_index_mapped$412_type = (
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -10959,8 +10986,8 @@ const declaration_member_signature_index_mapped$412_type = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -13219,6 +13246,7 @@ type declaration_module_property$401_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -13291,6 +13319,8 @@ const declaration_module_property$401_type = (value: declaration_module_property
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -13337,8 +13367,8 @@ const declaration_module_property$401_type = (value: declaration_module_property
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -14028,6 +14058,7 @@ type declaration_parameter$328_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -14100,6 +14131,8 @@ const declaration_parameter$328_type = (value: declaration_parameter$328_type$It
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -14146,8 +14179,8 @@ const declaration_parameter$328_type = (value: declaration_parameter$328_type$It
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -14842,6 +14875,7 @@ type declaration_parameter$329_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -14914,6 +14948,8 @@ const declaration_parameter$329_type = (value: declaration_parameter$329_type$It
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -14960,8 +14996,8 @@ const declaration_parameter$329_type = (value: declaration_parameter$329_type$It
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -15651,6 +15687,7 @@ type declaration_parameter_private$328_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -15723,6 +15760,8 @@ const declaration_parameter_private$328_type = (value: declaration_parameter_pri
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -15769,8 +15808,8 @@ const declaration_parameter_private$328_type = (value: declaration_parameter_pri
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -16465,6 +16504,7 @@ type declaration_parameter_private$329_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -16537,6 +16577,8 @@ const declaration_parameter_private$329_type = (value: declaration_parameter_pri
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -16583,8 +16625,8 @@ const declaration_parameter_private$329_type = (value: declaration_parameter_pri
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -17274,6 +17316,7 @@ type declaration_parameter_protected$328_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -17346,6 +17389,8 @@ const declaration_parameter_protected$328_type = (value: declaration_parameter_p
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -17392,8 +17437,8 @@ const declaration_parameter_protected$328_type = (value: declaration_parameter_p
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -18088,6 +18133,7 @@ type declaration_parameter_protected$329_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -18160,6 +18206,8 @@ const declaration_parameter_protected$329_type = (value: declaration_parameter_p
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -18206,8 +18254,8 @@ const declaration_parameter_protected$329_type = (value: declaration_parameter_p
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -18897,6 +18945,7 @@ type declaration_parameter_public$328_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -18969,6 +19018,8 @@ const declaration_parameter_public$328_type = (value: declaration_parameter_publ
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -19015,8 +19066,8 @@ const declaration_parameter_public$328_type = (value: declaration_parameter_publ
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -19711,6 +19762,7 @@ type declaration_parameter_public$329_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -19783,6 +19835,8 @@ const declaration_parameter_public$329_type = (value: declaration_parameter_publ
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -19829,8 +19883,8 @@ const declaration_parameter_public$329_type = (value: declaration_parameter_publ
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -20459,6 +20513,7 @@ type declaration_parameter_receiver$473_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -20531,6 +20586,8 @@ const declaration_parameter_receiver$473_type = (value: declaration_parameter_re
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -20577,8 +20634,8 @@ const declaration_parameter_receiver$473_type = (value: declaration_parameter_re
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -20796,6 +20853,7 @@ type declaration_type_type_alias$325_value$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -20868,6 +20926,8 @@ const declaration_type_type_alias$325_value = (value: declaration_type_type_alia
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -20914,8 +20974,8 @@ const declaration_type_type_alias$325_value = (value: declaration_type_type_alia
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -21081,6 +21141,7 @@ type declaration_variable$440_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -21153,6 +21214,8 @@ const declaration_variable$440_type = (value: declaration_variable$440_type$Item
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -21199,8 +21262,8 @@ const declaration_variable$440_type = (value: declaration_variable$440_type$Item
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -21825,6 +21888,7 @@ type declaration_variable$441_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -21897,6 +21961,8 @@ const declaration_variable$441_type = (value: declaration_variable$441_type$Item
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -21943,8 +22009,8 @@ const declaration_variable$441_type = (value: declaration_variable$441_type$Item
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -22156,6 +22222,7 @@ type declaration_variable_pattern$440_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -22228,6 +22295,8 @@ const declaration_variable_pattern$440_type = (value: declaration_variable_patte
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -22274,8 +22343,8 @@ const declaration_variable_pattern$440_type = (value: declaration_variable_patte
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -23450,6 +23519,7 @@ type element_template_substitution$347_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -23514,6 +23584,8 @@ const element_template_substitution$347_type = (value: element_template_substitu
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -23552,8 +23624,8 @@ const element_template_substitution$347_type = (value: element_template_substitu
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 364, 365, 366,
-					367, 369, 378, 379, 381, 382, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 364, 365,
+					366, 367, 369, 378, 379, 381, 382, 509, 510
 				]
 			)
 		)
@@ -23637,6 +23709,7 @@ type element_tuple_member$340_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -23709,6 +23782,8 @@ const element_tuple_member$340_type = (value: element_tuple_member$340_type$Item
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -23755,8 +23830,8 @@ const element_tuple_member$340_type = (value: element_tuple_member$340_type$Item
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -23914,6 +23989,7 @@ type element_tuple_member_optional$341_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -23986,6 +24062,8 @@ const element_tuple_member_optional$341_type = (value: element_tuple_member_opti
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -24032,8 +24110,8 @@ const element_tuple_member_optional$341_type = (value: element_tuple_member_opti
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -58147,6 +58225,7 @@ type expression_call$423_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -58219,6 +58298,8 @@ const expression_call$423_typeArguments$item = (value: expression_call$423_typeA
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -58265,8 +58346,8 @@ const expression_call$423_typeArguments$item = (value: expression_call$423_typeA
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -59779,6 +59860,7 @@ type expression_call$425_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -59851,6 +59933,8 @@ const expression_call$425_typeArguments$item = (value: expression_call$425_typeA
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -59897,8 +59981,8 @@ const expression_call$425_typeArguments$item = (value: expression_call$425_typeA
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -60706,6 +60790,7 @@ type expression_call_construct$257_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -60780,6 +60865,8 @@ const expression_call_construct$257_typeArguments$item = (
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -60826,8 +60913,8 @@ const expression_call_construct$257_typeArguments$item = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -61171,6 +61258,7 @@ type expression_call_construct_bare$257_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -61245,6 +61333,8 @@ const expression_call_construct_bare$257_typeArguments$item = (
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -61291,8 +61381,8 @@ const expression_call_construct_bare$257_typeArguments$item = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -62829,6 +62919,7 @@ type expression_cast_assertion_angle_bracket$305_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -62903,6 +62994,8 @@ const expression_cast_assertion_angle_bracket$305_type = (
 				return b.typeArguments(b.types(40));
 			case 'boolean':
 				return b.typeArguments(b.types(42));
+			case 'const':
+				return b.typeArguments(b.types(68));
 			case 'never':
 				return b.typeArguments(b.types(127));
 			case 'number':
@@ -62949,8 +63042,8 @@ const expression_cast_assertion_angle_bracket$305_type = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -63079,6 +63172,7 @@ type expression_cast_assertion_angle_bracket$305_type$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -63153,6 +63247,8 @@ const expression_cast_assertion_angle_bracket$305_type$item = (
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -63199,8 +63295,8 @@ const expression_cast_assertion_angle_bracket$305_type$item = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -64247,6 +64343,7 @@ type expression_cast_satisfies$307_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -64319,6 +64416,8 @@ const expression_cast_satisfies$307_type = (value: expression_cast_satisfies$307
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -64365,8 +64464,8 @@ const expression_cast_satisfies$307_type = (value: expression_cast_satisfies$307
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -66886,6 +66985,7 @@ type expression_instantiation$308_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -66960,6 +67060,8 @@ const expression_instantiation$308_typeArguments$item = (
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -67006,8 +67108,8 @@ const expression_instantiation$308_typeArguments$item = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -67547,6 +67649,7 @@ type expression_instantiation$357_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -67621,6 +67724,8 @@ const expression_instantiation$357_typeArguments$item = (
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -67667,8 +67772,8 @@ const expression_instantiation$357_typeArguments$item = (
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -68723,6 +68828,7 @@ type expression_parenthesized$418_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -68795,6 +68901,8 @@ const expression_parenthesized$418_type = (value: expression_parenthesized$418_t
 				return b.typeAnnotation(40);
 			case 'boolean':
 				return b.typeAnnotation(42);
+			case 'const':
+				return b.typeAnnotation(68);
 			case 'never':
 				return b.typeAnnotation(127);
 			case 'number':
@@ -68841,8 +68949,8 @@ const expression_parenthesized$418_type = (value: expression_parenthesized$418_t
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -86936,6 +87044,7 @@ type type_array$378_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -86998,6 +87107,8 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -87036,8 +87147,8 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366,
+					367, 369, 378, 379, 381, 382, 509, 510
 				]
 			)
 		)
@@ -87085,6 +87196,7 @@ type type_conditional$350_alternative$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -87157,6 +87269,8 @@ const type_conditional$350_alternative = (value: type_conditional$350_alternativ
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -87203,8 +87317,8 @@ const type_conditional$350_alternative = (value: type_conditional$350_alternativ
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -87333,6 +87447,7 @@ type type_conditional$350_consequence$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -87405,6 +87520,8 @@ const type_conditional$350_consequence = (value: type_conditional$350_consequenc
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -87451,8 +87568,8 @@ const type_conditional$350_consequence = (value: type_conditional$350_consequenc
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -87581,6 +87698,7 @@ type type_conditional$350_left$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -87653,6 +87771,8 @@ const type_conditional$350_left = (value: type_conditional$350_left$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -87699,8 +87819,8 @@ const type_conditional$350_left = (value: type_conditional$350_left$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -87829,6 +87949,7 @@ type type_conditional$350_right$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -87901,6 +88022,8 @@ const type_conditional$350_right = (value: type_conditional$350_right$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -87947,8 +88070,8 @@ const type_conditional$350_right = (value: type_conditional$350_right$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -88111,6 +88234,7 @@ type type_generic$351_typeArguments$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -88183,6 +88307,8 @@ const type_generic$351_typeArguments$item = (value: type_generic$351_typeArgumen
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -88229,8 +88355,8 @@ const type_generic$351_typeArguments$item = (value: type_generic$351_typeArgumen
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -88458,6 +88584,7 @@ type type_index_query$359_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -88520,6 +88647,8 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -88558,8 +88687,8 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366,
+					367, 369, 378, 379, 381, 382, 509, 510
 				]
 			)
 		)
@@ -88636,6 +88765,7 @@ type type_infer$349_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -88708,6 +88838,8 @@ const type_infer$349_type = (value: type_infer$349_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -88754,8 +88886,8 @@ const type_infer$349_type = (value: type_infer$349_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -88884,6 +89016,7 @@ type type_intersection$382_left$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -88956,6 +89089,8 @@ const type_intersection$382_left = (value: type_intersection$382_left$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -89002,8 +89137,8 @@ const type_intersection$382_left = (value: type_intersection$382_left$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -89132,6 +89267,7 @@ type type_intersection$382_right$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -89204,6 +89340,8 @@ const type_intersection$382_right = (value: type_intersection$382_right$Item) =>
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -89250,8 +89388,8 @@ const type_intersection$382_right = (value: type_intersection$382_right$Item) =>
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -89497,6 +89635,7 @@ type type_lookup$360_indexType$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -89569,6 +89708,8 @@ const type_lookup$360_indexType = (value: type_lookup$360_indexType$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -89615,8 +89756,8 @@ const type_lookup$360_indexType = (value: type_lookup$360_indexType$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -89745,6 +89886,7 @@ type type_lookup$360_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -89807,6 +89949,8 @@ const type_lookup$360_type = (value: type_lookup$360_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -89845,8 +89989,8 @@ const type_lookup$360_type = (value: type_lookup$360_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366,
+					367, 369, 378, 379, 381, 382, 509, 510
 				]
 			)
 		)
@@ -89894,6 +90038,7 @@ type type_nullable$365_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -89956,6 +90101,8 @@ const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -89994,8 +90141,8 @@ const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366, 367,
-					369, 378, 379, 381, 382, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 346, 348, 350, 351, 358, 359, 360, 362, 364, 365, 366,
+					367, 369, 378, 379, 381, 382, 509, 510
 				]
 			)
 		)
@@ -90218,6 +90365,7 @@ type type_optional$342_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -90290,6 +90438,8 @@ const type_optional$342_type = (value: type_optional$342_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -90336,8 +90486,8 @@ const type_optional$342_type = (value: type_optional$342_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -90466,6 +90616,7 @@ type type_parenthesized$366_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -90538,6 +90689,8 @@ const type_parenthesized$366_type = (value: type_parenthesized$366_type$Item) =>
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -90584,8 +90737,8 @@ const type_parenthesized$366_type = (value: type_parenthesized$366_type$Item) =>
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -90789,6 +90942,7 @@ type type_predicate$352_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -90861,6 +91015,8 @@ const type_predicate$352_type = (value: type_predicate$352_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -90907,8 +91063,8 @@ const type_predicate$352_type = (value: type_predicate$352_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -91127,6 +91283,7 @@ type type_readonly$380_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -91199,6 +91356,8 @@ const type_readonly$380_type = (value: type_readonly$380_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -91245,8 +91404,8 @@ const type_readonly$380_type = (value: type_readonly$380_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -91375,6 +91534,7 @@ type type_rest$343_type$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -91447,6 +91607,8 @@ const type_rest$343_type = (value: type_rest$343_type$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -91493,8 +91655,8 @@ const type_rest$343_type = (value: type_rest$343_type$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -91652,6 +91814,7 @@ type type_tuple$379_tupleTypeMembers$item$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -91732,6 +91895,8 @@ const type_tuple$379_tupleTypeMembers$item = (value: type_tuple$379_tupleTypeMem
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -91778,8 +91943,8 @@ const type_tuple$379_tupleTypeMembers$item = (value: type_tuple$379_tupleTypeMem
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 340, 341, 342, 343, 345, 346, 348, 349, 350,
-					351, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 340, 341, 342, 343, 345, 346, 348, 349,
+					350, 351, 358, 359, 360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -91916,6 +92081,7 @@ type type_union$381_left$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -91988,6 +92154,8 @@ const type_union$381_left = (value: type_union$381_left$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -92034,8 +92202,8 @@ const type_union$381_left = (value: type_union$381_left$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
@@ -92164,6 +92332,7 @@ type type_union$381_right$Item =
 	| '*'
 	| 'any'
 	| 'boolean'
+	| 'const'
 	| 'never'
 	| 'number'
 	| 'object'
@@ -92236,6 +92405,8 @@ const type_union$381_right = (value: type_union$381_right$Item) => {
 				return 40;
 			case 'boolean':
 				return 42;
+			case 'const':
+				return 68;
 			case 'never':
 				return 127;
 			case 'number':
@@ -92282,8 +92453,8 @@ const type_union$381_right = (value: type_union$381_right$Item) => {
 			seated(
 				value,
 				[
-					40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360,
-					362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
+					40, 41, 42, 43, 44, 46, 68, 78, 125, 126, 127, 319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359,
+					360, 362, 364, 365, 366, 367, 369, 378, 379, 380, 381, 382, 383, 509, 510
 				]
 			)
 		)
