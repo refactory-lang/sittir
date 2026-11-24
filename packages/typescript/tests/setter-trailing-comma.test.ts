@@ -128,3 +128,24 @@ describe('a statement block forwarded by a finally clause or an ambient global (
 		expect(() => ts.build.finallyClause(block, { terminator: ts.kinds.AutomaticSemicolon })).toThrow();
 	});
 });
+
+describe('a bare label takes its statement options after it, on the strict and default engines', () => {
+	it('break takes the terminator option after the label (strict)', async () => {
+		await using ts = await createEngine(typescript, { api: 'strict' });
+		expect(ts.build.breakStatement(ts.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon }).$render()).toBe('break x\n');
+		expect(ts.build.continueStatement(ts.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon }).$render()).toBe('continue x\n');
+	});
+
+	it('break takes the terminator option after the label (default)', async () => {
+		await using ts = await createEngine(typescript);
+		expect(ts.build.breakStatement(ts.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon }).$render()).toBe('break x\n');
+		expect(ts.build.continueStatement(ts.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon }).$render()).toBe('continue x\n');
+	});
+});
+
+describe('the setter parameter elements sub-builder (strict)', () => {
+	it('takes the config form with the trailing comma option', async () => {
+		await using ts = await createEngine(typescript, { api: 'strict' });
+		expect(ts.build.formalParametersSetAccessorSignature.elements({ pattern: ts.kinds.This }, { trailingComma: ts.kinds.Comma }).$render()).toBe('(this,)');
+	});
+});

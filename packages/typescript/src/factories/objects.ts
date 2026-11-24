@@ -2198,6 +2198,10 @@ export function buildBreakStatement<V extends Admit<T.StatementIdentifier | T.St
 export function buildBreakStatement<V extends Admit<T.Identifier>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildBreakStatement>;
+export function buildBreakStatement<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.BreakStatement.Options
+): ReturnType<typeof _buildBreakStatement>;
 export function buildBreakStatement(...args: unknown[]) {
 	if (args[0] === undefined) {
 		return _buildBreakStatement(args[0] as unknown as Parameters<typeof _buildBreakStatement>[0], args[1] as never);
@@ -2285,6 +2289,10 @@ export function buildContinueStatement<V extends Admit<T.StatementIdentifier | T
 ): ReturnType<typeof _buildContinueStatement>;
 export function buildContinueStatement<V extends Admit<T.Identifier>>(
 	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildContinueStatement>;
+export function buildContinueStatement<V extends Admit<T.Identifier>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ContinueStatement.Options
 ): ReturnType<typeof _buildContinueStatement>;
 export function buildContinueStatement(...args: unknown[]) {
 	if (args[0] === undefined) {
@@ -19941,6 +19949,17 @@ export function buildFormalParametersElementsSetAccessorSignature<
 	TypeSlot extends T.SetterParameter.Config['type']
 >(
 	config: RefusingConfig<T.SetterParameter.Config, { decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }>
+): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
+export function buildFormalParametersElementsSetAccessorSignature<
+	DecoratorsSlot extends T.SetterParameter.Config['decorators'],
+	PatternSlot extends T.SetterParameter.Config['pattern'],
+	TypeSlot extends T.SetterParameter.Config['type']
+>(
+	config: RefusingConfig<
+		T.SetterParameter.Config,
+		{ decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }
+	>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
 export function buildFormalParametersElementsSetAccessorSignature(...args: unknown[]) {
 	if (args[0] === undefined) {

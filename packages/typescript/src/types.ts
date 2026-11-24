@@ -20568,7 +20568,8 @@ export namespace BreakStatement {
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.BreakStatement>, 'terminator'>;
 	export type BuildArgs =
 		| [value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>, options?: T.BreakStatement.Options]
-		| [value: Admit<T.Identifier>];
+		| [value: Admit<T.Identifier>]
+		| [value: Admit<T.Identifier>, options?: T.BreakStatement.Options];
 	export type LooseArgs = [value?: T.BreakStatement.Loose, options?: T.BreakStatement.Options];
 	export type Kind = TSKindId.BreakStatement;
 }
@@ -20595,7 +20596,8 @@ export namespace ContinueStatement {
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ContinueStatement>, 'terminator'>;
 	export type BuildArgs =
 		| [value?: Admit<T.StatementIdentifier | T.StatementIdentifier.Types>, options?: T.ContinueStatement.Options]
-		| [value: Admit<T.Identifier>];
+		| [value: Admit<T.Identifier>]
+		| [value: Admit<T.Identifier>, options?: T.ContinueStatement.Options];
 	export type LooseArgs = [value?: T.ContinueStatement.Loose, options?: T.ContinueStatement.Options];
 	export type Kind = TSKindId.ContinueStatement;
 }
@@ -26485,7 +26487,8 @@ export namespace FormalParametersElementsSetAccessorSignature {
 	>;
 	export type BuildArgs =
 		| [value: Admit<T.SetterParameter>, options?: T.FormalParametersElementsSetAccessorSignature.Options]
-		| [config: T.SetterParameter.Config];
+		| [config: T.SetterParameter.Config]
+		| [config: T.SetterParameter.Config, options?: T.FormalParametersElementsSetAccessorSignature.Options];
 	export type LooseArgs = [
 		value: T.FormalParametersElementsSetAccessorSignature.Loose,
 		options?: T.FormalParametersElementsSetAccessorSignature.Options

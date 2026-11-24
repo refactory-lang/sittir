@@ -1820,7 +1820,12 @@ function forwardedConstruction(
 	const targetNode = nodeMap.nodes.get(target)!;
 	const withheld = registeredSlots(node).length > 0 && restForwardTarget(node, nodeMap, kindEntries) !== null;
 	const forwardedOptions = forwardedOptionsTarget(node, nodeMap);
-	const trailingOptions = forwardedOptions === undefined ? undefined : `options?: T.${forwardedOptions.typeName}.Options`;
+	const trailingOptions =
+		forwardedOptions !== undefined
+			? `options?: T.${forwardedOptions.typeName}.Options`
+			: spellingTypeOf(node, nodeMap, kindEntries) === undefined
+				? undefined
+				: `options?: T.${node.typeName}.Options`;
 	const targetSurface = constructorSurface(target, nodeMap, kindEntries, { immediate: true });
 	const chainedSurface = constructorSurface(target, nodeMap, kindEntries);
 	const targetParams = targetSurface?.params;
