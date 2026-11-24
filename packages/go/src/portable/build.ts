@@ -648,7 +648,7 @@ const element_spread$210_expression = (value: element_spread$210_expression$Item
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('element.spread.expression', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('element.spread.expression', value);
 	}
@@ -933,7 +933,7 @@ const expression_assignment_compound_add$184_left = (value: expression_assignmen
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.add.left', value);
 	}
@@ -1218,7 +1218,7 @@ const expression_assignment_compound_add$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.add.left', value);
 	}
@@ -1503,7 +1503,7 @@ const expression_assignment_compound_add$184_right = (value: expression_assignme
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.add.right', value);
 	}
@@ -1788,7 +1788,7 @@ const expression_assignment_compound_add$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.add.right', value);
 	}
@@ -2075,7 +2075,7 @@ const expression_assignment_compound_bitwise_and$184_left = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 	}
@@ -2360,7 +2360,7 @@ const expression_assignment_compound_bitwise_and$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 	}
@@ -2647,7 +2647,7 @@ const expression_assignment_compound_bitwise_and$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 	}
@@ -2932,7 +2932,7 @@ const expression_assignment_compound_bitwise_and$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 	}
@@ -3219,7 +3219,7 @@ const expression_assignment_compound_bitwise_or$184_left = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 	}
@@ -3504,7 +3504,7 @@ const expression_assignment_compound_bitwise_or$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 	}
@@ -3791,7 +3791,7 @@ const expression_assignment_compound_bitwise_or$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 	}
@@ -4076,7 +4076,7 @@ const expression_assignment_compound_bitwise_or$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 	}
@@ -4363,7 +4363,7 @@ const expression_assignment_compound_bitwise_xor$184_left = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 	}
@@ -4648,7 +4648,7 @@ const expression_assignment_compound_bitwise_xor$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 	}
@@ -4935,7 +4935,7 @@ const expression_assignment_compound_bitwise_xor$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 	}
@@ -5220,7 +5220,7 @@ const expression_assignment_compound_bitwise_xor$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 	}
@@ -5505,7 +5505,7 @@ const expression_assignment_compound_divide$184_left = (value: expression_assign
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.divide.left', value);
 	}
@@ -5790,7 +5790,7 @@ const expression_assignment_compound_divide$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.divide.left', value);
 	}
@@ -6077,7 +6077,7 @@ const expression_assignment_compound_divide$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.divide.right', value);
 	}
@@ -6362,7 +6362,7 @@ const expression_assignment_compound_divide$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.divide.right', value);
 	}
@@ -6647,7 +6647,7 @@ const expression_assignment_compound_modulo$184_left = (value: expression_assign
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 	}
@@ -6932,7 +6932,7 @@ const expression_assignment_compound_modulo$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 	}
@@ -7219,7 +7219,7 @@ const expression_assignment_compound_modulo$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 	}
@@ -7504,7 +7504,7 @@ const expression_assignment_compound_modulo$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 	}
@@ -7791,7 +7791,7 @@ const expression_assignment_compound_multiply$184_left = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 	}
@@ -8076,7 +8076,7 @@ const expression_assignment_compound_multiply$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 	}
@@ -8363,7 +8363,7 @@ const expression_assignment_compound_multiply$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 	}
@@ -8648,7 +8648,7 @@ const expression_assignment_compound_multiply$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 	}
@@ -8935,7 +8935,7 @@ const expression_assignment_compound_shift_left$184_left = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 	}
@@ -9220,7 +9220,7 @@ const expression_assignment_compound_shift_left$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 	}
@@ -9507,7 +9507,7 @@ const expression_assignment_compound_shift_left$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 	}
@@ -9792,7 +9792,7 @@ const expression_assignment_compound_shift_left$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 	}
@@ -10079,7 +10079,7 @@ const expression_assignment_compound_shift_right$184_left = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 	}
@@ -10364,7 +10364,7 @@ const expression_assignment_compound_shift_right$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 	}
@@ -10651,7 +10651,7 @@ const expression_assignment_compound_shift_right$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 	}
@@ -10936,7 +10936,7 @@ const expression_assignment_compound_shift_right$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 	}
@@ -11223,7 +11223,7 @@ const expression_assignment_compound_subtract$184_left = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 	}
@@ -11508,7 +11508,7 @@ const expression_assignment_compound_subtract$184_left$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 	}
@@ -11795,7 +11795,7 @@ const expression_assignment_compound_subtract$184_right = (
 		case 'literal.string':
 			return b.expressionList(literal_string$228(value));
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return b.expressionList(literal_string_raw$227(value));
 		default:
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 	}
@@ -12080,7 +12080,7 @@ const expression_assignment_compound_subtract$184_right$item = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 	}
@@ -12363,7 +12363,7 @@ const expression_binary$225_left = (value: expression_binary$225_left$Item) => {
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.left', value);
 	}
@@ -12720,7 +12720,7 @@ const expression_binary$225_right = (value: expression_binary$225_right$Item) =>
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.right', value);
 	}
@@ -13003,7 +13003,7 @@ const expression_binary_arithmetic_add$225_left = (value: expression_binary_arit
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 	}
@@ -13286,7 +13286,7 @@ const expression_binary_arithmetic_add$225_right = (value: expression_binary_ari
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 	}
@@ -13569,7 +13569,7 @@ const expression_binary_arithmetic_divide$225_left = (value: expression_binary_a
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 	}
@@ -13852,7 +13852,7 @@ const expression_binary_arithmetic_divide$225_right = (value: expression_binary_
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 	}
@@ -14135,7 +14135,7 @@ const expression_binary_arithmetic_modulo$225_left = (value: expression_binary_a
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 	}
@@ -14418,7 +14418,7 @@ const expression_binary_arithmetic_modulo$225_right = (value: expression_binary_
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 	}
@@ -14701,7 +14701,7 @@ const expression_binary_arithmetic_multiply$225_left = (value: expression_binary
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 	}
@@ -14986,7 +14986,7 @@ const expression_binary_arithmetic_multiply$225_right = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 	}
@@ -15269,7 +15269,7 @@ const expression_binary_arithmetic_subtract$225_left = (value: expression_binary
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 	}
@@ -15554,7 +15554,7 @@ const expression_binary_arithmetic_subtract$225_right = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 	}
@@ -15837,7 +15837,7 @@ const expression_binary_bitwise_and$225_left = (value: expression_binary_bitwise
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.bitwise.and.left', value);
 	}
@@ -16120,7 +16120,7 @@ const expression_binary_bitwise_and$225_right = (value: expression_binary_bitwis
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.bitwise.and.right', value);
 	}
@@ -16403,7 +16403,7 @@ const expression_binary_bitwise_or$225_left = (value: expression_binary_bitwise_
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.bitwise.or.left', value);
 	}
@@ -16686,7 +16686,7 @@ const expression_binary_bitwise_or$225_right = (value: expression_binary_bitwise
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.bitwise.or.right', value);
 	}
@@ -16969,7 +16969,7 @@ const expression_binary_bitwise_xor$225_left = (value: expression_binary_bitwise
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 	}
@@ -17252,7 +17252,7 @@ const expression_binary_bitwise_xor$225_right = (value: expression_binary_bitwis
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 	}
@@ -17535,7 +17535,7 @@ const expression_binary_comparison_equal$225_left = (value: expression_binary_co
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.equal.left', value);
 	}
@@ -17818,7 +17818,7 @@ const expression_binary_comparison_equal$225_right = (value: expression_binary_c
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.equal.right', value);
 	}
@@ -18101,7 +18101,7 @@ const expression_binary_comparison_greater$225_left = (value: expression_binary_
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.greater.left', value);
 	}
@@ -18384,7 +18384,7 @@ const expression_binary_comparison_greater$225_right = (value: expression_binary
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.greater.right', value);
 	}
@@ -18669,7 +18669,7 @@ const expression_binary_comparison_greater_equal$225_left = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 	}
@@ -18954,7 +18954,7 @@ const expression_binary_comparison_greater_equal$225_right = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 	}
@@ -19237,7 +19237,7 @@ const expression_binary_comparison_less$225_left = (value: expression_binary_com
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.less.left', value);
 	}
@@ -19520,7 +19520,7 @@ const expression_binary_comparison_less$225_right = (value: expression_binary_co
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.less.right', value);
 	}
@@ -19805,7 +19805,7 @@ const expression_binary_comparison_less_equal$225_left = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 	}
@@ -20090,7 +20090,7 @@ const expression_binary_comparison_less_equal$225_right = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 	}
@@ -20375,7 +20375,7 @@ const expression_binary_comparison_not_equal$225_left = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 	}
@@ -20660,7 +20660,7 @@ const expression_binary_comparison_not_equal$225_right = (
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 	}
@@ -20943,7 +20943,7 @@ const expression_binary_logical_and$225_left = (value: expression_binary_logical
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.logical.and.left', value);
 	}
@@ -21226,7 +21226,7 @@ const expression_binary_logical_and$225_right = (value: expression_binary_logica
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.logical.and.right', value);
 	}
@@ -21509,7 +21509,7 @@ const expression_binary_logical_or$225_left = (value: expression_binary_logical_
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.logical.or.left', value);
 	}
@@ -21792,7 +21792,7 @@ const expression_binary_logical_or$225_right = (value: expression_binary_logical
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.binary.logical.or.right', value);
 	}
@@ -22075,7 +22075,7 @@ const expression_parenthesized$208_expression = (value: expression_parenthesized
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('expression.parenthesized.expression', value);
 	}
@@ -22193,7 +22193,24 @@ const literal_string$228_elements = (value: literal_string$228_elements$Item) =>
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xuU]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$76(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:[0-9]{2,3}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$77(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2,}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$78(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$79(value);
+			return literal_string_escape$80(value);
 		case 'literal.string.text':
 			return literal_string_text$75(value);
 		default:
@@ -22780,7 +22797,7 @@ const type_array$161_length = (value: type_array$161_length$Item) => {
 		case 'literal.string':
 			return literal_string$228(value);
 		case 'literal.string.raw':
-			return unbuilt('type.array.length', value);
+			return literal_string_raw$227(value);
 		default:
 			return unbuilt('type.array.length', value);
 	}
@@ -23992,6 +24009,18 @@ const type_pointer$160_type = (value: type_pointer$160_type$Item) => {
 			return unbuilt('type.pointer.type', value);
 	}
 };
+const comment_block$111 = (input: PathInput<GoMap, 'comment.block'>): ReturnType<typeof b.commentArm2> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
+	const text = input.$value;
+	return b.commentArm2(text);
+};
+const comment_line$110 = (input: PathInput<GoMap, 'comment.line'>): ReturnType<typeof b.commentArm1> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
+	const text = input.$value;
+	return b.commentArm1(text);
+};
 const declaration_parameter_variadic$151 = (
 	input: PathInput<GoMap, 'declaration.parameter.variadic'>
 ): ReturnType<typeof b.variadicParameterDeclaration> => {
@@ -24659,6 +24688,54 @@ const literal_string$228 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
 	return b.interpretedStringLiteral(...(input.elements ?? []).map(literal_string$228_elements));
 };
+const literal_string_escape$76 = (
+	input: PathInput<GoMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm1> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm1(text);
+};
+const literal_string_escape$77 = (
+	input: PathInput<GoMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm2> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm2(text);
+};
+const literal_string_escape$78 = (
+	input: PathInput<GoMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm3> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm3(text);
+};
+const literal_string_escape$79 = (
+	input: PathInput<GoMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm4> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm4(text);
+};
+const literal_string_escape$80 = (
+	input: PathInput<GoMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm5> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm5(text);
+};
+const literal_string_raw$227 = (
+	input: PathInput<GoMap, 'literal.string.raw'>
+): ReturnType<typeof b.rawStringLiteral> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.raw', unroutedSlot);
+	const text = input.$value;
+	return b.rawStringLiteral(b.rawStringLiteralContent(text));
+};
 const literal_string_text$75 = (
 	input: PathInput<GoMap, 'literal.string.text'>
 ): ReturnType<typeof b.interpretedStringLiteralContent> => {
@@ -24716,6 +24793,12 @@ const type_pointer$160 = (input: PathInput<GoMap, 'type.pointer'>): ReturnType<t
 	const unroutedSlot = unroutedIn(input, ['type']);
 	if (unroutedSlot !== undefined) return unrouted('type.pointer', unroutedSlot);
 	return b.pointerType(type_pointer$160_type(input.type));
+};
+const comment_block = (input: PathInput<GoMap, 'comment.block'>) => {
+	return comment_block$111(input);
+};
+const comment_line = (input: PathInput<GoMap, 'comment.line'>) => {
+	return comment_line$110(input);
 };
 const declaration_parameter_variadic = (input: PathInput<GoMap, 'declaration.parameter.variadic'>) => {
 	return declaration_parameter_variadic$151(input);
@@ -24874,6 +24957,26 @@ const literal_number_integer_octal = (input: PathInput<GoMap, 'literal.number.in
 const literal_string = (input: PathInput<GoMap, 'literal.string'>) => {
 	return literal_string$228(input);
 };
+const literal_string_escape = (input: PathInput<GoMap, 'literal.string.escape'>) => {
+	if ((typeof input.$value !== 'string' || /^(?:(?:[^xuU]))$/u.test(input.$value)) && input.$value !== undefined)
+		return literal_string_escape$76(input);
+	if ((typeof input.$value !== 'string' || /^(?:(?:[0-9]{2,3}))$/u.test(input.$value)) && input.$value !== undefined)
+		return literal_string_escape$77(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2,}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$78(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$79(input);
+	return literal_string_escape$80(input);
+};
+const literal_string_raw = (input: PathInput<GoMap, 'literal.string.raw'>) => {
+	return literal_string_raw$227(input);
+};
 const statement_break = (input: PathInput<GoMap, 'statement.break'>) => {
 	return statement_break$189(input);
 };
@@ -24887,6 +24990,7 @@ const type_parenthesized = (input: PathInput<GoMap, 'type.parenthesized'>) => {
 	return type_parenthesized$156(input);
 };
 export const portableBuild = {
+	comment: { block: comment_block, line: comment_line },
 	declaration: { parameter: { variadic: declaration_parameter_variadic } },
 	element: { spread: element_spread },
 	expression: {
@@ -24939,7 +25043,7 @@ export const portableBuild = {
 				octal: literal_number_integer_octal
 			}
 		},
-		string: literal_string
+		string: Object.assign(literal_string, { escape: literal_string_escape, raw: literal_string_raw })
 	},
 	statement: { break: statement_break, continue: statement_continue },
 	type: { generic: type_generic, parenthesized: type_parenthesized }

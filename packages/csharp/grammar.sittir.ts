@@ -1,7 +1,9 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import { enrich, field, preference, variant, wire } from '../codegen/src/dsl/index.ts';
+import { alias, enrich, field, preference, variant, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+
+const realExponent = () => seq(field('marker', choice('e', 'E')), field('exponent_sign', optional(choice('-', '+'))), field('exponent', /[0-9][0-9_]*/));
 
 export default grammar(enrich(base), wire({
 	resolutions,
@@ -27,6 +29,19 @@ export default grammar(enrich(base), wire({
 		raw_string_content: /[\s\S]+/
 	}),
 	edits: {
+		_bracketed_parameter_list_optional1: { '0/0/1': alias('parameter_array'), '1/0/1/0/1': alias('parameter_array') },
+		switch_statement: { '1/0': variant('parenthesized'), '1/1': variant('tuple') },
+		type_parameter_constraint: { 0: variant('class'), 1: variant('struct'), 2: variant('notnull'), 3: variant('unmanaged'), '*': variant('', { default: true }) },
+		real_literal: {
+			'0/0/0': field('integer'),
+			'0/0/2': field('fraction'),
+			'0/0/3/0': realExponent(),
+			'1/0/1': field('fraction'),
+			'1/0/2/0': realExponent(),
+			'2/0/0': field('integer'),
+			'2/0/1': realExponent(),
+			'3/0/0': field('integer')
+		},
 		argument: { 1: field('modifier') },
 		preproc_nullable: { 1: field('setting'), 2: field('target') },
 		preproc_line: { '1/3/1': field('start_line'), '1/3/3': field('start_character'), '1/3/7': field('end_line'), '1/3/9': field('end_character'), '1/3/11/0': field('character_offset') },

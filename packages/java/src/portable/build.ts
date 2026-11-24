@@ -17037,7 +17037,24 @@ const literal_string$327_elements = (value: literal_string$327_elements$Item) =>
 		case 'expression.interpolation':
 			return expression_interpolation$167(value);
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$130(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$131(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$132(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$133(value);
+			return literal_string_escape$134(value);
 		case 'literal.string.text':
 			return literal_string_text$10(value);
 		default:
@@ -17073,7 +17090,24 @@ const literal_string$328_elements = (value: literal_string$328_elements$Item) =>
 		case 'expression.interpolation':
 			return expression_interpolation$167(value);
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(value.$value)) && value.$value !== undefined)
+				return b.multilineStringLiteralArm1(literal_string_escape$130(value));
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return b.multilineStringLiteralArm1(literal_string_escape$131(value));
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return b.multilineStringLiteralArm1(literal_string_escape$132(value));
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return b.multilineStringLiteralArm1(literal_string_escape$133(value));
+			return b.multilineStringLiteralArm1(literal_string_escape$134(value));
 		case 'literal.string.text':
 			return literal_string_text$166(value);
 		default:
@@ -17109,7 +17143,24 @@ const literal_string_multiline$328_elements = (value: literal_string_multiline$3
 		case 'expression.interpolation':
 			return expression_interpolation$167(value);
 		case 'literal.string.escape':
-			return unbuilt('literal.string.multiline.elements', value);
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(value.$value)) && value.$value !== undefined)
+				return b.multilineStringLiteralArm1(literal_string_escape$130(value));
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return b.multilineStringLiteralArm1(literal_string_escape$131(value));
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return b.multilineStringLiteralArm1(literal_string_escape$132(value));
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return b.multilineStringLiteralArm1(literal_string_escape$133(value));
+			return b.multilineStringLiteralArm1(literal_string_escape$134(value));
 		case 'literal.string.text':
 			return literal_string_text$166(value);
 		default:
@@ -18309,6 +18360,26 @@ const statement_throw$219_expression = (value: statement_throw$219_expression$It
 			return unbuilt('statement.throw.expression', value);
 	}
 };
+const comment_block$118 = (input: PathInput<JavaMap, 'comment.block'>): ReturnType<typeof b.blockComment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
+	const text = input.$value;
+	return b.blockComment(text);
+};
+const comment_block_doc$118 = (input: PathInput<JavaMap, 'comment.block.doc'>): ReturnType<typeof b.blockComment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block.doc', unroutedSlot);
+	const text = input.$value;
+	if (!new RegExp('^/\\*\\*', 'u').test('/*' + text + '/'))
+		throw new Error('portable build: the block_comment built for comment.block.doc does not read as comment.block.doc');
+	return b.blockComment(text);
+};
+const comment_line$117 = (input: PathInput<JavaMap, 'comment.line'>): ReturnType<typeof b.lineComment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
+	const text = input.$value;
+	return b.lineComment(text);
+};
 const expression_assignment_compound_add$172 = (
 	input: PathInput<JavaMap, 'expression.assignment.compound.add'>
 ): ReturnType<typeof b.assignmentExpression> => {
@@ -18793,6 +18864,46 @@ const literal_string$328 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
 	return b.stringLiteralTextBlock(...(input.elements ?? []).map(literal_string$328_elements));
 };
+const literal_string_escape$130 = (
+	input: PathInput<JavaMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm1> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm1(text);
+};
+const literal_string_escape$131 = (
+	input: PathInput<JavaMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm2> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm2(text);
+};
+const literal_string_escape$132 = (
+	input: PathInput<JavaMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm3> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm3(text);
+};
+const literal_string_escape$133 = (
+	input: PathInput<JavaMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm4> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm4(text);
+};
+const literal_string_escape$134 = (
+	input: PathInput<JavaMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceArm5> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceArm5(text);
+};
 const literal_string_multiline$328 = (
 	input: PathInput<JavaMap, 'literal.string.multiline'>
 ): ReturnType<typeof b.stringLiteralTextBlock> => {
@@ -18851,6 +18962,15 @@ const statement_try$330 = (input: PathInput<JavaMap, 'statement.try'>): ReturnTy
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('statement.try', unroutedSlot);
 	return b.tryStatementFinally({});
+};
+const comment_block = (input: PathInput<JavaMap, 'comment.block'>) => {
+	return comment_block$118(input);
+};
+const comment_block_doc = (input: PathInput<JavaMap, 'comment.block.doc'>) => {
+	return comment_block_doc$118(input);
+};
+const comment_line = (input: PathInput<JavaMap, 'comment.line'>) => {
+	return comment_line$117(input);
 };
 const expression_assignment_compound_add = (input: PathInput<JavaMap, 'expression.assignment.compound.add'>) => {
 	return expression_assignment_compound_add$172(input);
@@ -18984,6 +19104,23 @@ const literal_string = (input: PathInput<JavaMap, 'literal.string'>) => {
 		return literal_string$327(input);
 	return literal_string$328(input);
 };
+const literal_string_escape = (input: PathInput<JavaMap, 'literal.string.escape'>) => {
+	if ((typeof input.$value !== 'string' || /^(?:(?:[^xu0-7]))$/u.test(input.$value)) && input.$value !== undefined)
+		return literal_string_escape$130(input);
+	if ((typeof input.$value !== 'string' || /^(?:(?:[0-7]{1,3}))$/u.test(input.$value)) && input.$value !== undefined)
+		return literal_string_escape$131(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$132(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:u[0-9a-fA-F]{4}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$133(input);
+	return literal_string_escape$134(input);
+};
 const literal_string_multiline = (input: PathInput<JavaMap, 'literal.string.multiline'>) => {
 	return literal_string_multiline$328(input);
 };
@@ -19006,6 +19143,7 @@ const statement_try = (input: PathInput<JavaMap, 'statement.try'>) => {
 	return statement_try$330(input);
 };
 export const portableBuild = {
+	comment: { block: Object.assign(comment_block, { doc: comment_block_doc }), line: comment_line },
 	expression: {
 		assignment: {
 			compound: {
@@ -19058,7 +19196,7 @@ export const portableBuild = {
 				octal: literal_number_integer_octal
 			})
 		},
-		string: Object.assign(literal_string, { multiline: literal_string_multiline })
+		string: Object.assign(literal_string, { escape: literal_string_escape, multiline: literal_string_multiline })
 	},
 	statement: {
 		block: statement_block,

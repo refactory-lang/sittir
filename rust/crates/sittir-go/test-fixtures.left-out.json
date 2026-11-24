@@ -1,0 +1,13 @@
+{
+  "function_declaration": 2,
+  "interface_type": 3,
+  "source_file": 1,
+  "source_file_arm1": 1,
+  "source_file_arm2": 2,
+  "type_constraint": 3,
+  "type_declaration": 1,
+  "type_parameter_declaration": 3,
+  "type_parameter_declarations": 3,
+  "type_parameter_list": 3,
+  "type_spec": 1
+}

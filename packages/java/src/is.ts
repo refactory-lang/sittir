@@ -948,7 +948,72 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TemplateExpression };
 	};
-	statement<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Statement]>;
+	readonly statement: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Statement]>;
+		declaration: IsGuards['declaration'];
+		expression<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatement };
+		labeled<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LabeledStatement };
+		if<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.IfStatement };
+		while<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WhileStatement };
+		readonly for: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForStatement };
+			arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForStatement };
+		};
+		enhancedFor<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnhancedForStatement };
+		block<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Block };
+		semi<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.Semi>;
+		readonly assert: {
+			<T extends { readonly $type: number } | number>(
+				v: T
+			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssertStatement };
+			arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssertStatement };
+		};
+		do<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DoStatement };
+		break<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BreakStatement };
+		continue<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ContinueStatement };
+		return<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ReturnStatement };
+		yield<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldStatement };
+		switch<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SwitchExpression };
+		synchronized<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SynchronizedStatement };
+		localVariable<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.LocalVariableDeclaration };
+		throw<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ThrowStatement };
+		try: IsGuards['tryStatement'];
+		tryWithResources<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TryWithResourcesStatement };
+	};
 	readonly tryStatement: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.TryStatement]>;
 		catches<T extends { readonly $type: number } | number>(
@@ -1257,6 +1322,26 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ArrayCreationExpression_guard = _g(TSKindId.ArrayCreationExpression);
 	const _kind_ArrayCreationExpressionArm2_guard = _g(TSKindId.ArrayCreationExpressionArm2);
 	const _kind_TemplateExpression_guard = _g(TSKindId.TemplateExpression);
+	const _kind_ExpressionStatement_guard = _g(TSKindId.ExpressionStatement);
+	const _kind_LabeledStatement_guard = _g(TSKindId.LabeledStatement);
+	const _kind_IfStatement_guard = _g(TSKindId.IfStatement);
+	const _kind_WhileStatement_guard = _g(TSKindId.WhileStatement);
+	const _kind_ForStatementArm_guard = _g(TSKindId.ForStatementArm);
+	const _kind_ForStatement_guard = _g(TSKindId.ForStatement);
+	const _kind_EnhancedForStatement_guard = _g(TSKindId.EnhancedForStatement);
+	const _kind_Block_guard = _g(TSKindId.Block);
+	const _kind_Semi_guard = _mg(TSKindId.Semi);
+	const _kind_AssertStatementArm_guard = _g(TSKindId.AssertStatementArm);
+	const _kind_AssertStatement_guard = _g(TSKindId.AssertStatement);
+	const _kind_DoStatement_guard = _g(TSKindId.DoStatement);
+	const _kind_BreakStatement_guard = _g(TSKindId.BreakStatement);
+	const _kind_ContinueStatement_guard = _g(TSKindId.ContinueStatement);
+	const _kind_ReturnStatement_guard = _g(TSKindId.ReturnStatement);
+	const _kind_YieldStatement_guard = _g(TSKindId.YieldStatement);
+	const _kind_SynchronizedStatement_guard = _g(TSKindId.SynchronizedStatement);
+	const _kind_LocalVariableDeclaration_guard = _g(TSKindId.LocalVariableDeclaration);
+	const _kind_ThrowStatement_guard = _g(TSKindId.ThrowStatement);
+	const _kind_TryWithResourcesStatement_guard = _g(TSKindId.TryWithResourcesStatement);
 	const _kind_TryStatementCatches_guard = _g(TSKindId.TryStatementCatches);
 	const _kind_TryStatementFinally_guard = _g(TSKindId.TryStatementFinally);
 	const _kind_ModuleDeclaration_guard = _g(TSKindId.ModuleDeclaration);
@@ -1292,10 +1377,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Dimensions_guard = _g(TSKindId.Dimensions);
 	const _kind_SwitchBlock_guard = _g(TSKindId.SwitchBlock);
 	const _kind_SwitchBlockStatementGroup_guard = _g(TSKindId.SwitchBlockStatementGroup);
-	const _kind_ExpressionStatement_guard = _g(TSKindId.ExpressionStatement);
 	const _kind_SwitchRule_guard = _g(TSKindId.SwitchRule);
-	const _kind_ThrowStatement_guard = _g(TSKindId.ThrowStatement);
-	const _kind_Block_guard = _g(TSKindId.Block);
 	const _kind_SwitchLabelArm_guard = _g(TSKindId.SwitchLabelArm);
 	const _kind_SwitchLabel_guard = _g(TSKindId.SwitchLabel);
 	const _kind_TypePattern_guard = _g(TSKindId.TypePattern);
@@ -1309,28 +1391,13 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_RecordPatternComponent_guard = _g(TSKindId.RecordPatternComponent);
 	const _kind_RecordPatternComponentArm_guard = _g(TSKindId.RecordPatternComponentArm);
 	const _kind_Guard_guard = _g(TSKindId.Guard);
-	const _kind_LabeledStatement_guard = _g(TSKindId.LabeledStatement);
-	const _kind_AssertStatementArm_guard = _g(TSKindId.AssertStatementArm);
-	const _kind_AssertStatement_guard = _g(TSKindId.AssertStatement);
-	const _kind_DoStatement_guard = _g(TSKindId.DoStatement);
-	const _kind_BreakStatement_guard = _g(TSKindId.BreakStatement);
-	const _kind_ContinueStatement_guard = _g(TSKindId.ContinueStatement);
-	const _kind_ReturnStatement_guard = _g(TSKindId.ReturnStatement);
-	const _kind_YieldStatement_guard = _g(TSKindId.YieldStatement);
-	const _kind_SynchronizedStatement_guard = _g(TSKindId.SynchronizedStatement);
 	const _kind_CatchClause_guard = _g(TSKindId.CatchClause);
 	const _kind_CatchFormalParameter_guard = _g(TSKindId.CatchFormalParameter);
 	const _kind_CatchType_guard = _g(TSKindId.CatchType);
 	const _kind_FinallyClause_guard = _g(TSKindId.FinallyClause);
-	const _kind_TryWithResourcesStatement_guard = _g(TSKindId.TryWithResourcesStatement);
 	const _kind_ResourceSpecification_guard = _g(TSKindId.ResourceSpecification);
 	const _kind_ResourceArm_guard = _g(TSKindId.ResourceArm);
 	const _kind_Resource_guard = _g(TSKindId.Resource);
-	const _kind_IfStatement_guard = _g(TSKindId.IfStatement);
-	const _kind_WhileStatement_guard = _g(TSKindId.WhileStatement);
-	const _kind_ForStatementArm_guard = _g(TSKindId.ForStatementArm);
-	const _kind_ForStatement_guard = _g(TSKindId.ForStatement);
-	const _kind_EnhancedForStatement_guard = _g(TSKindId.EnhancedForStatement);
 	const _kind_MarkerAnnotation_guard = _g(TSKindId.MarkerAnnotation);
 	const _kind_Annotation_guard = _g(TSKindId.Annotation);
 	const _kind_AnnotationArgumentList_guard = _g(TSKindId.AnnotationArgumentList);
@@ -1370,7 +1437,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ReceiverParameter_guard = _g(TSKindId.ReceiverParameter);
 	const _kind_SpreadParameter_guard = _g(TSKindId.SpreadParameter);
 	const _kind_Throws_guard = _g(TSKindId.Throws);
-	const _kind_LocalVariableDeclaration_guard = _g(TSKindId.LocalVariableDeclaration);
 	const _kind_MethodDeclaration_guard = _g(TSKindId.MethodDeclaration);
 	const _kind_CompactConstructorDeclaration_guard = _g(TSKindId.CompactConstructorDeclaration);
 	const _kind_LineComment_guard = _g(TSKindId.LineComment);
@@ -1418,6 +1484,12 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _form_ArrayCreationExpression_guard = _vg(_g(TSKindId.ArrayCreationExpression), {
 		arm1: _at(_kind_ArrayCreationExpression_guard, 'content', _kind_ArrayCreationExpressionArm1_guard),
 		arm2: _at(_kind_ArrayCreationExpression_guard, 'content', _kind_ArrayCreationExpressionArm2_guard)
+	});
+	const _form_ForStatement_guard = _vg(_g(TSKindId.ForStatement), {
+		arm: _at(_kind_ForStatement_guard, 'content', _kind_ForStatementArm_guard)
+	});
+	const _form_AssertStatement_guard = _vg(_g(TSKindId.AssertStatement), {
+		arm: _at(_kind_AssertStatement_guard, 'content', _kind_AssertStatementArm_guard)
 	});
 	const _form_WildcardBounds_guard = _vg(_g(TSKindId.WildcardBounds), {
 		arm: _at(_kind_WildcardBounds_guard, 'content', _kind_WildcardBoundsArm_guard, true)
@@ -1476,16 +1548,10 @@ export function guardsWith(test: KindTest): IsGuards {
 			})
 		)
 	});
-	const _form_AssertStatement_guard = _vg(_g(TSKindId.AssertStatement), {
-		arm: _at(_kind_AssertStatement_guard, 'content', _kind_AssertStatementArm_guard)
-	});
 	const _form_Resource_guard = _vg(_g(TSKindId.Resource), {
 		arm: _at(_kind_Resource_guard, 'content', _kind_ResourceArm_guard, true),
 		identifier: _at(_kind_Resource_guard, 'content', _kind_Identifier_guard, true),
 		fieldAccess: _at(_kind_Resource_guard, 'content', _kind_FieldAccess_guard, true)
-	});
-	const _form_ForStatement_guard = _vg(_g(TSKindId.ForStatement), {
-		arm: _at(_kind_ForStatement_guard, 'content', _kind_ForStatementArm_guard)
 	});
 	const _form_ExplicitConstructorInvocation_guard = _vg(_g(TSKindId.ExplicitConstructorInvocation), {
 		arm1: _at(_kind_ExplicitConstructorInvocation_guard, 'content', _kind_ExplicitConstructorInvocationArm1_guard),
@@ -1573,6 +1639,29 @@ export function guardsWith(test: KindTest): IsGuards {
 		methodReference: _form_MethodReference_guard,
 		arrayCreation: _form_ArrayCreationExpression_guard,
 		template: _kind_TemplateExpression_guard
+	});
+	const _supertype_statement_guard = _vg(_mg(208), {
+		declaration: _supertype_declaration_guard,
+		expression: _kind_ExpressionStatement_guard,
+		labeled: _kind_LabeledStatement_guard,
+		if: _kind_IfStatement_guard,
+		while: _kind_WhileStatement_guard,
+		for: _form_ForStatement_guard,
+		enhancedFor: _kind_EnhancedForStatement_guard,
+		block: _kind_Block_guard,
+		semi: _kind_Semi_guard,
+		assert: _form_AssertStatement_guard,
+		do: _kind_DoStatement_guard,
+		break: _kind_BreakStatement_guard,
+		continue: _kind_ContinueStatement_guard,
+		return: _kind_ReturnStatement_guard,
+		yield: _kind_YieldStatement_guard,
+		switch: _kind_SwitchExpression_guard,
+		synchronized: _kind_SynchronizedStatement_guard,
+		localVariable: _kind_LocalVariableDeclaration_guard,
+		throw: _kind_ThrowStatement_guard,
+		try: _supertype_tryStatement_guard,
+		tryWithResources: _kind_TryWithResourcesStatement_guard
 	});
 	const _supertype_expression_guard = _vg(_mg(170), {
 		assignment: _kind_AssignmentExpression_guard,
@@ -1753,7 +1842,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		expression: _supertype_expression_guard,
 		updateExpression: _supertype_updateExpression_guard,
 		primaryExpression: _supertype_primaryExpression_guard,
-		statement: _mg(208),
+		statement: _supertype_statement_guard,
 		tryStatement: _supertype_tryStatement_guard,
 		declaration: _supertype_declaration_guard,
 		moduleDirective: _supertype_moduleDirective_guard,

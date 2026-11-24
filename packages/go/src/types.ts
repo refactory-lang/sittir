@@ -2027,7 +2027,7 @@ export interface TypeParameterDeclaration {
 	};
 	readonly __slotHints__?: {
 		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
-		readonly bounds: SlotHint<T.TypeConstraint | T.TypeConstraint.Types>;
+		readonly bounds: SlotHint<T.TypeConstraint>;
 	};
 	readonly names: () => NonEmptyArray<Identifier>;
 	readonly bounds: () => TypeConstraint;
@@ -4908,7 +4908,6 @@ export interface TypeConstraint {
 	readonly __slotHints__?: {
 		readonly types: SlotHint<NonEmptyArray<T.Type | T.TypeIdentifier.Types>, false, true>;
 	};
-	readonly __aliasContent__?: TypeConstraint.Types;
 	readonly types: () => NonEmptyArray<Type>;
 }
 
@@ -6280,11 +6279,7 @@ export namespace RawStringLiteral {
 
 export namespace InterpretedStringLiteral {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly dquote?: { readonly after?: LayoutKindId };
-		};
+		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 	}
 }
 
@@ -13985,7 +13980,6 @@ export namespace FieldIdentifier {
 }
 export namespace TypeConstraint {
 	export type Config = ConfigFor<TSKindId.TypeConstraint>;
-	export type Types = SupertypeSurface<Type, BoundByKindId>;
 	export interface Bound extends BoundOf<T.TypeConstraint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.TypeConstraint['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;

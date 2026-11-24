@@ -7,6 +7,9 @@ import { delimitedLeafVerdicts, type LeafSafety } from '../model/delimited.ts';
 const SAFETY_COLUMNS: readonly LeafSafety[] = ['guard-excludes-closer', 'reserved-word', 'regular-token', 'unguarded'];
 
 const CENSUS: Readonly<Record<string, Record<LeafSafety, number>>> = {
+	csharp: { 'guard-excludes-closer': 18, 'reserved-word': 0, 'regular-token': 7, unguarded: 0 },
+	go: { 'guard-excludes-closer': 8, 'reserved-word': 0, 'regular-token': 0, unguarded: 0 },
+	java: { 'guard-excludes-closer': 10, 'reserved-word': 0, 'regular-token': 1, unguarded: 0 },
 	python: { 'guard-excludes-closer': 2, 'reserved-word': 0, 'regular-token': 0, unguarded: 0 },
 	regex: { 'guard-excludes-closer': 16, 'reserved-word': 0, 'regular-token': 0, unguarded: 0 },
 	rust: { 'guard-excludes-closer': 25, 'reserved-word': 0, 'regular-token': 1, unguarded: 0 },

@@ -1037,6 +1037,29 @@ export interface Routes<Table extends AnyTable> {
 		readonly cast: Routes<Table>['assertStatement$cast'] & { readonly arm: Routes<Table>['assertStatement$cast$arm'] };
 		readonly switch: Routes<Table>['assertStatement$switch'];
 	};
+	readonly statement: {
+		readonly declaration: Routes<Table>['declaration'];
+		readonly expression: Table['buildExpressionStatement'];
+		readonly labeled: Table['buildLabeledStatement'];
+		readonly if: Table['buildIfStatement'];
+		readonly while: Table['buildWhileStatement'];
+		readonly for: Routes<Table>['forStatement'];
+		readonly enhancedFor: Table['buildEnhancedForStatement'];
+		readonly block: Table['buildBlock'];
+		readonly semi: typeof TSKindId.Semi;
+		readonly assert: Routes<Table>['assertStatement'];
+		readonly do: Table['buildDoStatement'];
+		readonly break: Table['buildBreakStatement'];
+		readonly continue: Table['buildContinueStatement'];
+		readonly return: Table['buildReturnStatement'];
+		readonly yield: Table['buildYieldStatement'];
+		readonly switch: Table['buildSwitchExpression'];
+		readonly synchronized: Table['buildSynchronizedStatement'];
+		readonly localVariable: Table['buildLocalVariableDeclaration'];
+		readonly throw: Table['buildThrowStatement'];
+		readonly try: Routes<Table>['tryStatement'];
+		readonly tryWithResources: Table['buildTryWithResourcesStatement'];
+	};
 	readonly expression: {
 		readonly assignment: Table['buildAssignmentExpression'];
 		readonly binary: Table['buildBinaryExpression'];
@@ -1197,6 +1220,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly decimalFloatingPointLiteralArm4: Routes<Table>['decimalFloatingPointLiteralArm4'];
 	readonly literal: Routes<Table>['literal'];
 	readonly primaryExpression: Routes<Table>['primaryExpression'];
+	readonly statement: Routes<Table>['statement'];
 	readonly expression: Routes<Table>['expression'];
 	readonly true: typeof F.buildTrue;
 	readonly false: typeof F.buildFalse;
@@ -1220,28 +1244,6 @@ export interface Ir<Table extends AnyTable> {
 	readonly stringFragment: typeof F.buildStringFragment;
 	readonly multilineStringFragment: typeof F.buildMultilineStringFragment;
 	readonly identifier: typeof F.buildIdentifier;
-	readonly statement: {
-		readonly declaration: Routes<Table>['declaration'];
-		readonly expression: Table['buildExpressionStatement'];
-		readonly labeled: Table['buildLabeledStatement'];
-		readonly if: Table['buildIfStatement'];
-		readonly while: Table['buildWhileStatement'];
-		readonly for: Routes<Table>['forStatement'];
-		readonly enhancedFor: Table['buildEnhancedForStatement'];
-		readonly block: Table['buildBlock'];
-		readonly assert: Routes<Table>['assertStatement'];
-		readonly do: Table['buildDoStatement'];
-		readonly break: Table['buildBreakStatement'];
-		readonly continue: Table['buildContinueStatement'];
-		readonly return: Table['buildReturnStatement'];
-		readonly yield: Table['buildYieldStatement'];
-		readonly switch: Table['buildSwitchExpression'];
-		readonly synchronized: Table['buildSynchronizedStatement'];
-		readonly localVariable: Table['buildLocalVariableDeclaration'];
-		readonly throw: Table['buildThrowStatement'];
-		readonly try: Routes<Table>['tryStatement'];
-		readonly tryWithResources: Table['buildTryWithResourcesStatement'];
-	};
 	readonly type: { readonly annotated: Table['buildAnnotatedType'] };
 	readonly unannotatedType: {
 		readonly void: typeof F.buildVoidType;
@@ -1904,6 +1906,29 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			switch: assertStatement$switch
 		} as const)
 	);
+	const statement: Routes<Table>['statement'] = Object.freeze({
+		declaration: declaration,
+		expression: $at('buildExpressionStatement'),
+		labeled: $at('buildLabeledStatement'),
+		if: $at('buildIfStatement'),
+		while: $at('buildWhileStatement'),
+		for: forStatement,
+		enhancedFor: $at('buildEnhancedForStatement'),
+		block: $at('buildBlock'),
+		semi: TSKindId.Semi,
+		assert: assertStatement,
+		do: $at('buildDoStatement'),
+		break: $at('buildBreakStatement'),
+		continue: $at('buildContinueStatement'),
+		return: $at('buildReturnStatement'),
+		yield: $at('buildYieldStatement'),
+		switch: $at('buildSwitchExpression'),
+		synchronized: $at('buildSynchronizedStatement'),
+		localVariable: $at('buildLocalVariableDeclaration'),
+		throw: $at('buildThrowStatement'),
+		try: tryStatement,
+		tryWithResources: $at('buildTryWithResourcesStatement')
+	} as const);
 	const expression: Routes<Table>['expression'] = Object.freeze({
 		assignment: $at('buildAssignmentExpression'),
 		binary: $at('buildBinaryExpression'),
@@ -2062,6 +2087,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		decimalFloatingPointLiteralArm4: decimalFloatingPointLiteralArm4,
 		literal: literal,
 		primaryExpression: primaryExpression,
+		statement: statement,
 		expression: expression,
 		true: F.buildTrue,
 		false: F.buildFalse,
@@ -2085,28 +2111,6 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		stringFragment: F.buildStringFragment,
 		multilineStringFragment: F.buildMultilineStringFragment,
 		identifier: F.buildIdentifier,
-		statement: Object.freeze({
-			declaration: declaration,
-			expression: $at('buildExpressionStatement'),
-			labeled: $at('buildLabeledStatement'),
-			if: $at('buildIfStatement'),
-			while: $at('buildWhileStatement'),
-			for: forStatement,
-			enhancedFor: $at('buildEnhancedForStatement'),
-			block: $at('buildBlock'),
-			assert: assertStatement,
-			do: $at('buildDoStatement'),
-			break: $at('buildBreakStatement'),
-			continue: $at('buildContinueStatement'),
-			return: $at('buildReturnStatement'),
-			yield: $at('buildYieldStatement'),
-			switch: $at('buildSwitchExpression'),
-			synchronized: $at('buildSynchronizedStatement'),
-			localVariable: $at('buildLocalVariableDeclaration'),
-			throw: $at('buildThrowStatement'),
-			try: tryStatement,
-			tryWithResources: $at('buildTryWithResourcesStatement')
-		} as const),
 		type: Object.freeze({ annotated: $at('buildAnnotatedType') } as const),
 		unannotatedType: Object.freeze({
 			void: F.buildVoidType,

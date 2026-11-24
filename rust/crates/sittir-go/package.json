@@ -1,0 +1,32 @@
+{
+	"name": "sittir-go",
+	"private": true,
+	"description": "Grammar-local Rust / napi-rs engine for @sittir/go.",
+	"keywords": [
+		"go",
+		"n-api",
+		"napi",
+		"native",
+		"sittir",
+		"tree-sitter"
+	],
+	"homepage": "https://github.com/refactory-lang/sittir#readme",
+	"license": "MIT",
+	"author": "Pradeep Mouli",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/refactory-lang/sittir.git",
+		"directory": "rust/crates/sittir-go"
+	},
+	"scripts": {
+		"build": "tsx ../../../scripts/build-native.mts go --release",
+		"build:debug": "tsx ../../../scripts/build-native.mts go",
+		"build:gate": "tsx ../../../scripts/build-native.mts go --profile gate"
+	},
+	"devDependencies": {
+		"@napi-rs/cli": "catalog:"
+	},
+	"engines": {
+		"node": ">=24.12.0"
+	}
+}

@@ -11,7 +11,10 @@ const CENSUS: Readonly<Record<string, readonly string[]>> = {
 	typescript: ['ts'],
 	python: ['py'],
 	scm: ['scm'],
-	regex: []
+	regex: [],
+	csharp: ['cs'],
+	go: ['go'],
+	java: ['java']
 };
 
 describe('the file types every grammar package declares', () => {

@@ -36426,10 +36426,8 @@ fn render_string_literal_line<N: StringLiteralLineFields + ?Sized>(node: &N, w: 
     };
     w.edge(::sittir_core::types::KindId(327), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("\"")?;
-    w.site_at(options::SITE_STRING_LITERAL_LINE_DQUOTE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     elements.render(w)?;
-    w.site_at(options::SITE_STRING_LITERAL_LINE_DQUOTE_BEFORE);
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(327), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -36452,10 +36450,8 @@ fn render_string_literal_text_block<N: StringLiteralTextBlockFields + ?Sized>(no
     };
     w.edge(::sittir_core::types::KindId(328), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("\"\"\"")?;
-    w.site_at(options::SITE_STRING_LITERAL_TEXT_BLOCK_DQUOTE_DQUOTE_DQUOTE_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     elements.render(w)?;
-    w.site_at(options::SITE_STRING_LITERAL_TEXT_BLOCK_DQUOTE_DQUOTE_DQUOTE_BEFORE);
     w.text("\"\"\"")?;
     w.edge(::sittir_core::types::KindId(328), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())

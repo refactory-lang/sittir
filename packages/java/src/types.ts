@@ -9575,21 +9575,13 @@ export namespace FormalParametersList {
 
 export namespace StringLiteralLine {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly dquote?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-		};
+		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 	}
 }
 
 export namespace StringLiteralTextBlock {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly dquoteDquoteDquote?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-		};
+		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 	}
 }
 

@@ -7,9 +7,11 @@ import {
 	NATIVE_TARGETS,
 	NODE_ENGINES,
 	allGrammars,
+	grammarPackage,
 	grammarPackageDir,
 	nativeCrateDir,
 	nodeRangeOfNodeApi,
+	parserNameOf,
 	workspaceNodeApiLevel
 } from '../../grammars.ts';
 import { nativeCrateFiles } from '../native-crate.ts';
@@ -44,7 +46,7 @@ describe("napi reads a grammar crate's config from its own file", () => {
 
 describe('every grammar crate holds the generated crate files', () => {
 	for (const grammar of allGrammars()) {
-		for (const file of nativeCrateFiles(grammar)) {
+		for (const file of nativeCrateFiles(grammar, parserNameOf(grammarPackage(grammar)))) {
 			it(`${grammar} ${file.path}`, () => {
 				expect(readFileSync(join(nativeCrateDir(grammar), file.path), 'utf8')).toBe(file.contents);
 			});

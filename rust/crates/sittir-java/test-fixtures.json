@@ -28081,9 +28081,6 @@
                                     {
                                       "$_layout": {
                                         "trivia": {
-                                          "inner": [
-                                            149
-                                          ],
                                           "leading": [
                                             149
                                           ],
@@ -28340,9 +28337,6 @@
                                 {
                                   "$_layout": {
                                     "trivia": {
-                                      "inner": [
-                                        149
-                                      ],
                                       "leading": [
                                         149
                                       ],
@@ -28721,9 +28715,6 @@
                               {
                                 "$_layout": {
                                   "trivia": {
-                                    "inner": [
-                                      149
-                                    ],
                                     "leading": [
                                       149
                                     ],
@@ -28948,9 +28939,6 @@
                         {
                           "$_layout": {
                             "trivia": {
-                              "inner": [
-                                149
-                              ],
                               "leading": [
                                 149
                               ],
@@ -29101,9 +29089,6 @@
                           {
                             "$_layout": {
                               "trivia": {
-                                "inner": [
-                                  149
-                                ],
                                 "leading": [
                                   149
                                 ],
@@ -29610,9 +29595,6 @@
                     {
                       "$_layout": {
                         "trivia": {
-                          "inner": [
-                            149
-                          ],
                           "leading": [
                             149
                           ],
@@ -29741,9 +29723,6 @@
                   {
                     "$_layout": {
                       "trivia": {
-                        "inner": [
-                          149
-                        ],
                         "leading": [
                           149
                         ],
@@ -29818,9 +29797,6 @@
               {
                 "$_layout": {
                   "trivia": {
-                    "inner": [
-                      149
-                    ],
                     "leading": [
                       149
                     ],
@@ -29884,9 +29860,6 @@
             {
               "$_layout": {
                 "trivia": {
-                  "inner": [
-                    149
-                  ],
                   "leading": [
                     149
                   ],
@@ -29947,9 +29920,6 @@
           {
             "$_layout": {
               "trivia": {
-                "inner": [
-                  149
-                ],
                 "leading": [
                   149
                 ],
@@ -29999,9 +29969,6 @@
         {
           "$_layout": {
             "trivia": {
-              "inner": [
-                149
-              ],
               "leading": [
                 149
               ],
@@ -30038,17 +30005,6 @@
     "expectedOutput": "\"\"",
     "grammar": "java",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "inner": [
-            149
-          ]
-        }
-      },
       "$type": 327,
       "_elements": []
     },
@@ -127736,9 +127692,6 @@
           "_expression": {
             "$_layout": {
               "trivia": {
-                "inner": [
-                  149
-                ],
                 "trailing": [
                   149
                 ]
@@ -127768,13 +127721,6 @@
             "$type": 327,
             "_elements": [
               {
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      149
-                    ]
-                  }
-                },
                 "$type": 130,
                 "_content": "\""
               }
@@ -127862,9 +127808,6 @@
       "_expression": {
         "$_layout": {
           "trivia": {
-            "inner": [
-              149
-            ],
             "trailing": [
               149
             ]
@@ -127909,13 +127852,6 @@
         "$type": 327,
         "_elements": [
           {
-            "$_layout": {
-              "trivia": {
-                "trailing": [
-                  149
-                ]
-              }
-            },
             "$type": 130,
             "_content": "\""
           }
@@ -128027,17 +127963,6 @@
     "expectedOutput": "\"\"",
     "grammar": "java",
     "input": {
-      "$_layout": {
-        "changed": {
-          "leading": true,
-          "trailing": true
-        },
-        "trivia": {
-          "inner": [
-            149
-          ]
-        }
-      },
       "$type": 327,
       "_elements": []
     },
@@ -128067,13 +127992,6 @@
       "$type": 327,
       "_elements": [
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                149
-              ]
-            }
-          },
           "$type": 130,
           "_content": "\""
         }
@@ -129553,13 +129471,6 @@
                 "_content": "\""
               },
               {
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      149
-                    ]
-                  }
-                },
                 "$type": 130,
                 "_content": "?"
               }
@@ -129647,13 +129558,6 @@
             "_content": "\""
           },
           {
-            "$_layout": {
-              "trivia": {
-                "trailing": [
-                  149
-                ]
-              }
-            },
             "$type": 130,
             "_content": "?"
           }
@@ -129730,13 +129634,6 @@
           "_content": "\""
         },
         {
-          "$_layout": {
-            "trivia": {
-              "trailing": [
-                149
-              ]
-            }
-          },
           "$type": 130,
           "_content": "?"
         }

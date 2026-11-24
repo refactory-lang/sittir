@@ -237,6 +237,88 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "c_sharp",
+    "message": "conflict between _reserved_identifier, type_parameter_constraint_notnull on ';' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_reserved_identifier",
+          "type_parameter_constraint_notnull"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_reserved_identifier"
+        ],
+        [
+          "type_parameter_constraint_notnull",
+          "type_parameter_constraint"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "_delegate_declaration_initializer",
+          "'where'",
+          "identifier",
+          "':'",
+          "'notnull'"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "_reserved_identifier",
+          "type_parameter_constraint_notnull"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c_sharp",
+    "message": "conflict between _reserved_identifier, type_parameter_constraint_unmanaged on ';' resolved by AddConflict (upstream-declared)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_reserved_identifier",
+          "type_parameter_constraint_unmanaged"
+        ]
+      },
+      "step": "upstream-declared",
+      "sourceChains": [
+        [
+          "_reserved_identifier"
+        ],
+        [
+          "type_parameter_constraint_unmanaged",
+          "type_parameter_constraint"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "_delegate_declaration_initializer",
+          "'where'",
+          "identifier",
+          "':'",
+          "'unmanaged'"
+        ],
+        "lookahead": "';'",
+        "interpretations": [
+          "_reserved_identifier",
+          "type_parameter_constraint_unmanaged"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c_sharp",
     "message": "conflict between _simple_name, anonymous_object_member_declarator_arm on '=' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {
@@ -1824,46 +1906,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "c_sharp",
-    "message": "conflict between type_parameter_constraint, _reserved_identifier on ';' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "type_parameter_constraint",
-          "_reserved_identifier"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "type_parameter_constraint"
-        ],
-        [
-          "_reserved_identifier"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "_delegate_declaration_initializer",
-          "'where'",
-          "identifier",
-          "':'",
-          "'notnull'"
-        ],
-        "lookahead": "';'",
-        "interpretations": [
-          "type_parameter_constraint",
-          "_reserved_identifier"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "c_sharp",
     "message": "conflict between using_directive, modifier, using_directive_arm on 'alias' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -2070,15 +2112,6 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "grammar": "c_sharp",
-    "ownerKind": "type_parameter_constraint",
-    "message": "[collect-slots] kind 'type_parameter_constraint': choice rule:type_parameter_constraint:root has unnamed-nonterminal arm(s) [type_parameter_constraint_arm, constructor_constraint] but cannot union-route — offending arm(s): literal \"struct\", literal \"notnull\", literal \"unmanaged\". Restructure via variant() / a real rule / field() in overrides.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "c_sharp",
@@ -2265,6 +2298,21 @@
     }
   },
   {
+    "scope": "grammar",
+    "code": "union-slot-routed",
+    "severity": "warning",
+    "grammar": "c_sharp",
+    "ownerKind": "type_parameter_constraint_default",
+    "message": "[collect-slots] kind 'type_parameter_constraint_default': choice rule:type_parameter_constraint_default:root routes 1 unnamed-nonterminal arm(s) [constructor_constraint] into one union slot alongside 1 label-routed arm(s) [field(type):type]",
+    "canProceed": true,
+    "details": {
+      "unionSlot": "content",
+      "degenerateFields": [
+        "type"
+      ]
+    }
+  },
+  {
     "code": "token-interior-unstructurable",
     "ownerKind": "identifier_token",
     "message": "token interior: 'identifier_token' has an optional literal \"@\" that is not a name (not word-shaped, or only underscores), so it has no name of its own and the token stays opaque. Resolve with a patch naming it: field('<name>', ...) on the literal inside the token makes it a slot",
@@ -2276,5 +2324,44 @@
     "canProceed": false,
     "scope": "grammar",
     "grammar": "c_sharp"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "csharp",
+    "code": "accessor-class-clash",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "accessor 'elements' holds flags (using_directive, parameter, lambda_expression, anonymous_method_expression); list (class_declaration, struct_declaration, record_declaration, conversion_operator_declaration, bracketed_parameter_list, parameter_list, tuple_pattern, catch_clause, string_literal, preproc_if_in_top_level, preproc_else_in_top_level, preproc_elif_in_top_level, preproc_pragma_arm1, calling_convention_arm); single (enum_member_declaration_list, list_pattern); rename the choice side, or name the slot for what it holds",
+    "details": {
+      "name": "elements",
+      "classes": {
+        "flags": [
+          "using_directive",
+          "parameter",
+          "lambda_expression",
+          "anonymous_method_expression"
+        ],
+        "list": [
+          "class_declaration",
+          "struct_declaration",
+          "record_declaration",
+          "conversion_operator_declaration",
+          "bracketed_parameter_list",
+          "parameter_list",
+          "tuple_pattern",
+          "catch_clause",
+          "string_literal",
+          "preproc_if_in_top_level",
+          "preproc_else_in_top_level",
+          "preproc_elif_in_top_level",
+          "preproc_pragma_arm1",
+          "calling_convention_arm"
+        ],
+        "single": [
+          "enum_member_declaration_list",
+          "list_pattern"
+        ]
+      }
+    }
   }
 ]

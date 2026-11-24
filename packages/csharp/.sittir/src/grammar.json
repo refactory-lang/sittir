@@ -1780,53 +1780,46 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "type_parameter_constraint_arm",
+          "name": "type_parameter_constraint_class",
           "metadata": {
             "symbolSource": "group-lift"
           },
           "annotations": {
-            "variant": "arm",
-            "variantOf": "type_parameter_constraint"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "struct",
-          "annotations": {
-            "variantOf": "type_parameter_constraint"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "notnull",
-          "annotations": {
-            "variantOf": "type_parameter_constraint"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "unmanaged",
-          "annotations": {
+            "variant": "class",
             "variantOf": "type_parameter_constraint"
           }
         },
         {
           "type": "SYMBOL",
-          "name": "constructor_constraint",
+          "name": "type_parameter_constraint_struct",
           "annotations": {
-            "variant": "constructor_constraint",
+            "variant": "struct",
             "variantOf": "type_parameter_constraint"
           }
         },
         {
-          "type": "FIELD",
-          "name": "type",
-          "content": {
-            "type": "SYMBOL",
-            "name": "type"
-          },
+          "type": "SYMBOL",
+          "name": "type_parameter_constraint_notnull",
           "annotations": {
+            "variant": "notnull",
             "variantOf": "type_parameter_constraint"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_parameter_constraint_unmanaged",
+          "annotations": {
+            "variant": "unmanaged",
+            "variantOf": "type_parameter_constraint"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_parameter_constraint_default",
+          "annotations": {
+            "variant": "",
+            "variantOf": "type_parameter_constraint",
+            "default": true
           }
         }
       ]
@@ -5341,58 +5334,22 @@
       ]
     },
     "switch_statement": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
-          "value": "switch"
+          "type": "SYMBOL",
+          "name": "switch_statement_parenthesized",
+          "annotations": {
+            "variant": "parenthesized",
+            "variantOf": "switch_statement"
+          }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "("
-                },
-                {
-                  "type": "FIELD",
-                  "name": "value",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "expression"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": ")"
-                }
-              ],
-              "annotations": {
-                "variantOf": "switch_statement"
-              }
-            },
-            {
-              "type": "FIELD",
-              "name": "value",
-              "content": {
-                "type": "SYMBOL",
-                "name": "tuple_expression"
-              },
-              "annotations": {
-                "variantOf": "switch_statement"
-              }
-            }
-          ]
-        },
-        {
-          "type": "FIELD",
-          "name": "body",
-          "content": {
-            "type": "SYMBOL",
-            "name": "switch_body"
+          "type": "SYMBOL",
+          "name": "switch_statement_tuple",
+          "annotations": {
+            "variant": "tuple",
+            "variantOf": "switch_statement"
           }
         }
       ]
@@ -13474,23 +13431,97 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "PATTERN",
-            "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            "type": "FIELD",
+            "name": "integer",
+            "content": {
+              "type": "PATTERN",
+              "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "STRING",
             "value": "."
           },
           {
-            "type": "PATTERN",
-            "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            "type": "FIELD",
+            "name": "fraction",
+            "content": {
+              "type": "PATTERN",
+              "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "CHOICE",
             "members": [
               {
-                "type": "PATTERN",
-                "value": "[eE][+-]?[0-9][0-9_]*"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "marker",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "e"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "E"
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "exponent_sign",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "-"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "+"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "BLANK"
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "exponent",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9][0-9_]*"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  }
+                ]
               },
               {
                 "type": "BLANK"
@@ -13526,15 +13557,82 @@
             "value": "."
           },
           {
-            "type": "PATTERN",
-            "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            "type": "FIELD",
+            "name": "fraction",
+            "content": {
+              "type": "PATTERN",
+              "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "CHOICE",
             "members": [
               {
-                "type": "PATTERN",
-                "value": "[eE][+-]?[0-9][0-9_]*"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "marker",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "e"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "E"
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "exponent_sign",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "-"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "+"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "BLANK"
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "exponent",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9][0-9_]*"
+                    },
+                    "metadata": {
+                      "fieldSource": "override"
+                    }
+                  }
+                ]
               },
               {
                 "type": "BLANK"
@@ -13566,12 +13664,79 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "PATTERN",
-            "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            "type": "FIELD",
+            "name": "integer",
+            "content": {
+              "type": "PATTERN",
+              "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
-            "type": "PATTERN",
-            "value": "[eE][+-]?[0-9][0-9_]*"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "marker",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "e"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "E"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "exponent_sign",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "-"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "+"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "exponent",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[0-9][0-9_]*"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
+              }
+            ]
           },
           {
             "type": "CHOICE",
@@ -13598,8 +13763,15 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "PATTERN",
-            "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            "type": "FIELD",
+            "name": "integer",
+            "content": {
+              "type": "PATTERN",
+              "value": "([0-9][0-9_]*[0-9]|[0-9])"
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           },
           {
             "type": "PATTERN",
@@ -13953,8 +14125,13 @@
                 "name": "parameter"
               },
               {
-                "type": "SYMBOL",
-                "name": "_parameter_array"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_parameter_array"
+                },
+                "named": true,
+                "value": "parameter_array"
               }
             ]
           },
@@ -13982,8 +14159,13 @@
                       "name": "parameter"
                     },
                     {
-                      "type": "SYMBOL",
-                      "name": "_parameter_array"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_parameter_array"
+                      },
+                      "named": true,
+                      "value": "parameter_array"
                     }
                   ]
                 },
@@ -15530,30 +15712,6 @@
         "hoisted": true
       }
     },
-    "type_parameter_constraint_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "class"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "?"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        }
-      ],
-      "annotations": {
-        "hoisted": true
-      }
-    },
     "property_declaration_arm": {
       "type": "SEQ",
       "members": [
@@ -16132,6 +16290,144 @@
         }
       ]
     },
+    "switch_statement_parenthesized": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "switch"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "FIELD",
+              "name": "value",
+              "content": {
+                "type": "SYMBOL",
+                "name": "expression"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ],
+          "annotations": {
+            "variantOf": "switch_statement"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "switch_body"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "switch_statement_tuple": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "switch"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "tuple_expression"
+          },
+          "annotations": {
+            "variantOf": "switch_statement"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "switch_body"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "type_parameter_constraint_class": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "class"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "?"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
+    "type_parameter_constraint_struct": {
+      "type": "STRING",
+      "value": "struct"
+    },
+    "type_parameter_constraint_notnull": {
+      "type": "STRING",
+      "value": "notnull"
+    },
+    "type_parameter_constraint_unmanaged": {
+      "type": "STRING",
+      "value": "unmanaged"
+    },
+    "type_parameter_constraint_default": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "constructor_constraint",
+          "annotations": {
+            "variant": "constructor_constraint",
+            "variantOf": "type_parameter_constraint"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type"
+          },
+          "annotations": {
+            "variantOf": "type_parameter_constraint"
+          }
+        }
+      ],
+      "annotations": {
+        "hoisted": true
+      }
+    },
     "enum_declaration_with_body": {
       "type": "SEQ",
       "members": [
@@ -16468,6 +16764,14 @@
       "parenthesized_pattern"
     ],
     [
+      "_reserved_identifier",
+      "type_parameter_constraint_notnull"
+    ],
+    [
+      "_reserved_identifier",
+      "type_parameter_constraint_unmanaged"
+    ],
+    [
       "_simple_name",
       "anonymous_object_member_declarator_arm"
     ],
@@ -16635,10 +16939,6 @@
     [
       "type_parameter",
       "_simple_name"
-    ],
-    [
-      "type_parameter_constraint",
-      "_reserved_identifier"
     ],
     [
       "using_directive",
@@ -16811,6 +17111,8 @@
     "comment",
     "_layout",
     "_tuple_pattern_element",
+    "switch_statement",
+    "type_parameter_constraint",
     "enum_declaration",
     "_declaration_list_body",
     "type_argument_list",

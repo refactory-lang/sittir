@@ -425,10 +425,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "sittir-csharp"
+version = "0.0.0"
+dependencies = [
+ "cc",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "serde",
+ "serde_json",
+ "sittir-core",
+ "sittir-engine",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "sittir-engine"
 version = "0.0.0"
 dependencies = [
  "tree-sitter",
+]
+
+[[package]]
+name = "sittir-go"
+version = "0.0.0"
+dependencies = [
+ "cc",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "serde",
+ "serde_json",
+ "sittir-core",
+ "sittir-engine",
+ "tree-sitter-language",
 ]
 
 [[package]]

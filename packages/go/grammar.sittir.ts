@@ -1,7 +1,8 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import { copy, enrich, field, preference, replace, variant, wire } from '../codegen/src/dsl/index.ts';
+import type { FieldRule, GrammarRule, SeqRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
+import { copy, enrich, field, preference, replace, variant, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
 export default grammar(enrich(base), wire({
 	resolutions,
@@ -26,7 +27,7 @@ export default grammar(enrich(base), wire({
 		channel_type: { 0: variant('bidirectional'), 1: variant('send_only'), 2: variant('receive_only') },
 		field_declaration_arm: {
 			'.': ($, arm) => {
-				const type = (arm as { members: [unknown, { content: unknown }] }).members[1];
+				const type = (arm as unknown as SeqRule<readonly [GrammarRule, FieldRule]>).members[1];
 				return field('type', choice(replace(copy($.pointer_type), 'type:', type.content), type.content));
 			}
 		},

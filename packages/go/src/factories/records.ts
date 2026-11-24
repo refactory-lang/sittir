@@ -1733,12 +1733,7 @@ export function buildTypeParameterDeclaration(
 ): T.TypeParameterDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.TypeParameterDeclaration, [config]);
 	const _name = listStorage<NonNullable<T.TypeParameterDeclaration['_name']>>(config.names);
-	const _bounds = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_bounds']>>(config.bounds, [
-		[
-			[299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
-			(v: unknown) => buildTypeConstraint(v as never)
-		]
-	]);
+	const _bounds = config.bounds;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'type_parameter_declaration', { names: _name, bounds: _bounds });
 	const arena = builtArenaOf(handle);
@@ -1758,12 +1753,7 @@ function buildTypeParameterDeclaration$patch(
 ): T.TypeParameterDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.TypeParameterDeclaration, [config]);
 	const _name = listStorage<NonNullable<T.TypeParameterDeclaration['_name']>>(config.names);
-	const _bounds = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_bounds']>>(config.bounds, [
-		[
-			[299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
-			(v: unknown) => buildTypeConstraint(v as never)
-		]
-	]);
+	const _bounds = config.bounds;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'type_parameter_declaration', { names: _name, bounds: _bounds });
 	const arena = builtArenaOf(handle);
@@ -1808,12 +1798,7 @@ function buildTypeParameterDeclaration$set(
 		}
 		case 'bounds': {
 			const config = input;
-			const _bounds = admitAliasContent<NonNullable<T.TypeParameterDeclaration['_bounds']>>(config.bounds, [
-				[
-					[299, 158, 226, 160, 164, 168, 161, 163, 171, 266, 267, 268, 173, 165, 156],
-					(v: unknown) => buildTypeConstraint(v as never)
-				]
-			]);
+			const _bounds = config.bounds;
 			return setSlot(
 				source,
 				TSKindId.TypeParameterDeclaration as const,
@@ -1835,7 +1820,7 @@ function withTypeParameterDeclaration(node: object, setter: string, args: readon
 				)
 			);
 		case 'bounds':
-			return applySetter(args, (value: Admit<T.TypeConstraint | T.TypeConstraint.Types>) =>
+			return applySetter(args, (value: Admit<T.TypeConstraint>) =>
 				rebuilt(node, handle, () => buildTypeParameterDeclaration$set(node, 'bounds', { bounds: value }))
 			);
 	}

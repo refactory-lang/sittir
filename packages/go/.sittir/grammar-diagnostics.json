@@ -2406,22 +2406,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block: arm 111 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "comment.line: arm 110 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration: name has no exact set"
   },
   {
@@ -3502,23 +3486,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.escape: arm 76 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.string.multiline: rawStringLiteralContent has no exact set"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.raw: arm 227 builds its text through a content slot"
   },
   {
     "scope": "grammar",

@@ -4653,16 +4653,8 @@
 			"text": "\""
 		},
 		{
-			"kind": "seam",
-			"field": "dquote_after"
-		},
-		{
 			"kind": "slot",
 			"name": "elements"
-		},
-		{
-			"kind": "seam",
-			"field": "dquote_before"
 		},
 		{
 			"kind": "text",
@@ -4683,16 +4675,8 @@
 			"text": "\"\"\""
 		},
 		{
-			"kind": "seam",
-			"field": "dquote_dquote_dquote_after"
-		},
-		{
 			"kind": "slot",
 			"name": "elements"
-		},
-		{
-			"kind": "seam",
-			"field": "dquote_dquote_dquote_before"
 		},
 		{
 			"kind": "text",

@@ -2127,10 +2127,6 @@
 			"text": "\""
 		},
 		{
-			"kind": "seam",
-			"field": "dquote_after"
-		},
-		{
 			"kind": "slot",
 			"name": "elements"
 		},

@@ -2598,30 +2598,6 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "comment.block: arm 118 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "comment.block.doc: arm 118 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "comment.line: arm 117 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "declaration.constant: modifiers has no exact set"
   },
   {
@@ -3055,14 +3031,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "literal.null: arm 16 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "java",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.escape: arm 130 builds its text through a content slot"
   },
   {
     "scope": "grammar",
