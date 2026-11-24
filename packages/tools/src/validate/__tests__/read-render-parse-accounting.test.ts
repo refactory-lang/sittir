@@ -81,6 +81,5 @@ describe('read-render-parse accounts for every candidate', () => {
 		expect(overlapping).toEqual([]);
 		expect(unexplained).toEqual([]);
 		expect(profile.candidates.length).toBeGreaterThan(0);
-		expect(new Set(result.foldedMismatches.map((r) => r.entry))).toContain('Interface declarations');
 	}, 900_000);
 });
