@@ -110,6 +110,29 @@ fn a_side_read_alone_holds_what_placing_every_layout_owner_gives_it_over_a_corpu
     assert!(found.is_empty(), "{} differences:\n{}", found.len(), found.iter().take(40).cloned().collect::<Vec<_>>().join("\n"));
 }
 
+/// How many times placing every layout owner of `source` routes a node's
+/// children.
+fn routings<G: EngineGrammar>(grammar: G, options: sittir_core::options::ResolvedOptions, source: &str) -> usize {
+    let parsed = parsed(grammar, options, source);
+    let mut nodes = parsed.nodes();
+    let calls = std::cell::Cell::new(0);
+    let routes = |nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid| {
+        calls.set(calls.get() + 1);
+        grammar.slot_routes(nodes, at)
+    };
+    Placement::new(grammar.surface_kinds()).place_all(Source { nodes: &mut nodes, routes: &routes });
+    calls.get()
+}
+
+#[test]
+fn placing_a_list_routes_it_once_however_many_comments_it_holds() {
+    let count = |items: usize| {
+        let list = (0..items).map(|item| format!("  /* c{item} */ a{item},")).collect::<Vec<_>>().join("\n");
+        routings(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &format!("x = [\n{list}\n];\n"))
+    };
+    assert_eq!(count(1_000), count(10));
+}
+
 /// The edge items of `source` the rule over a list's children gives
 /// (`trivia_table::edge_item`), against the ones the placement publishes, for
 /// every list a layout owner's walk reaches: none inside an extra or an

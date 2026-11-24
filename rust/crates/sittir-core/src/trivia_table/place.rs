@@ -164,6 +164,15 @@ struct Plan {
     entries: Vec<(Place, Assigned)>,
 }
 
+/// A node's segments as `trivia_table::owner` reads them: `before` as the
+/// siblings ahead of a gap, whose end edges count, and `after` as those past
+/// it, whose start edges count.
+#[derive(Debug)]
+struct Siblings {
+    before: Vec<Sibling>,
+    after: Vec<Sibling>,
+}
+
 /// A gap by its owner and the segment after it.
 type Gap = (NodeIndex, usize);
 
@@ -421,7 +430,7 @@ impl Placement {
             published
         });
         let counted = nodes.bound().is_some();
-        let mut placer = Placer { nodes, routes, kinds: self.kinds, state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
+        let mut placer = Placer { nodes, routes, kinds: self.kinds, state: &mut state, published, kids: HashMap::default(), plans: HashMap::default(), siblings: HashMap::default(), placed: PlacedSides::new(), ranks: HashMap::default(), counted };
         f(&mut placer)
     }
 
@@ -504,6 +513,7 @@ struct Placer<'t, 's, 'n> {
     published: &'s Published,
     kids: HashMap<NodeIndex, Arc<[Kid]>, IndexState>,
     plans: HashMap<Gap, Arc<Plan>, IndexState>,
+    siblings: HashMap<NodeIndex, Arc<Siblings>, IndexState>,
     placed: PlacedSides,
     /// Each node's rank at a byte, for the bytes a token with no width was
     /// asked at.
@@ -1025,10 +1035,10 @@ impl<'t> Placer<'t, '_, '_> {
         }
         let left = shape.left(gap);
         let from = left.map_or(0, |token| token.end);
-        let entries: Vec<Kid> = shape.entries.iter().zip(&shape.entry_gaps).filter(|&(_, &at)| at as usize == gap).map(|(&entry, _)| entry).collect();
+        let entries = &shape.entries[shape.entry_gaps.partition_point(|&at| (at as usize) < gap)..shape.entry_gaps.partition_point(|&at| at as usize <= gap)];
         let default = self.place(shape, gap);
         let mut placed = Vec::with_capacity(entries.len());
-        for entry in &entries {
+        for entry in entries {
             placed.push((!self.kinds.layout.contains(&entry.grammar)).then(|| self.owned(shape, gap, entry)));
         }
         let trailed = placed.iter().rposition(|placed| matches!(placed, Some(Place::Side(_, TriviaSide::Trailing))));
@@ -1079,17 +1089,9 @@ impl<'t> Placer<'t, '_, '_> {
         if !shape.holds {
             return Place::Side(shape.node.index, TriviaSide::Inner);
         }
-        let routed = (self.routes)(&mut *self.nodes, &shape.node);
-        let sibling = |segment: &Segment, edge: fn(&Kid, &Segment) -> bool| Sibling {
-            span: Span { start: segment.first.start, end: segment.last.end },
-            holder: segment.kid.is_some_and(|kid| shape.kids[kid].holder() && edge(&shape.kids[kid], segment)),
-            entry: false,
-            flag: segment.kid.zip(routed.as_ref()).is_some_and(|(kid, routed)| routed.is_flag(shape.kids[kid].index)),
-        };
-        let before: Vec<Sibling> = shape.segments[..gap].iter().map(|segment| sibling(segment, |kid, segment| kid.end == segment.last.end)).collect();
-        let after: Vec<Sibling> = shape.segments[gap..].iter().map(|segment| sibling(segment, |kid, segment| kid.start == segment.first.start)).collect();
+        let siblings = self.siblings(shape);
         let kid = |at: usize| shape.segments[at].kid.map(|kid| shape.kids[kid]);
-        match owner(&before, entry.span(), &after, self.text()) {
+        match owner(&siblings.before[..gap], entry.span(), &siblings.after[gap..], self.text()) {
             Owner::Trailing { at } => {
                 let segment = shape.segments[at];
                 let node = if at + 1 == gap {
@@ -1110,6 +1112,29 @@ impl<'t> Placer<'t, '_, '_> {
             }
             Owner::Inner => Place::Side(shape.node.index, TriviaSide::Inner),
         }
+    }
+
+    /// The segments of `shape` as `owner` reads them, its children routed
+    /// once however many entries its gaps hold.
+    fn siblings(&mut self, shape: &Shape) -> Arc<Siblings> {
+        let index = shape.node.index;
+        if let Some(siblings) = self.siblings.get(&index) {
+            return Arc::clone(siblings);
+        }
+        let mut flags: Vec<NodeIndex> = (self.routes)(&mut *self.nodes, &shape.node).map_or_else(Vec::new, |routed| routed.children.iter().zip(&routed.routes).filter(|(_, route)| route.is_flag(routed.flags)).map(|(kid, _)| kid.index).collect());
+        flags.sort_unstable();
+        let sibling = |segment: &Segment, edge: fn(&Kid, &Segment) -> bool| Sibling {
+            span: Span { start: segment.first.start, end: segment.last.end },
+            holder: segment.kid.is_some_and(|kid| shape.kids[kid].holder() && edge(&shape.kids[kid], segment)),
+            entry: false,
+            flag: segment.kid.is_some_and(|kid| flags.binary_search(&shape.kids[kid].index).is_ok()),
+        };
+        let siblings = Arc::new(Siblings {
+            before: shape.segments.iter().map(|segment| sibling(segment, |kid, segment| kid.end == segment.last.end)).collect(),
+            after: shape.segments.iter().map(|segment| sibling(segment, |kid, segment| kid.start == segment.first.start)).collect(),
+        });
+        self.siblings.insert(index, Arc::clone(&siblings));
+        siblings
     }
 
     fn side_holder(&mut self, shape: &Shape, kid: Option<usize>, through: bool, side: TriviaSide, edge: u32) -> Option<NodeIndex> {
