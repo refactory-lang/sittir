@@ -73,6 +73,12 @@ impl HeaderLayout {
         Ok((word & ((1 << shift) - 1)) | codes << shift)
     }
 
+    /// Whether this layout keeps no value on any side.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.leading.iter().all(|gap| gap.is_empty()) && self.trailing.is_empty()
+    }
+
     /// The values this layout keeps for `side`, in order: three for the
     /// leading side, one for the trailing side, none for any other.
     #[must_use]

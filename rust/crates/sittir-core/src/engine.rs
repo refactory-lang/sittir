@@ -2959,16 +2959,20 @@ pub type AdmitEntry = fn(crate::types::KindId) -> Result<(), crate::arena::Arena
 /// `usize` counts.
 const MADE_CHUNKS: usize = usize::BITS as usize;
 
+/// The chunks of a `Made`, each of doubling size, made on first use.
+type MadeChunks<T> = [std::cell::OnceCell<Box<[std::cell::OnceCell<T>]>>; MADE_CHUNKS];
+
 /// What a call made, each value where it was put: in chunks of doubling
-/// size, so a value keeps its place as the list grows.
+/// size, so a value keeps its place as the list grows. A call that makes
+/// nothing holds no chunk table.
 struct Made<T> {
-    chunks: [std::cell::OnceCell<Box<[std::cell::OnceCell<T>]>>; MADE_CHUNKS],
+    chunks: std::cell::OnceCell<Box<MadeChunks<T>>>,
     len: std::cell::Cell<usize>,
 }
 
 impl<T> Made<T> {
     fn new() -> Self {
-        Self { chunks: std::array::from_fn(|_| std::cell::OnceCell::new()), len: std::cell::Cell::new(0) }
+        Self { chunks: std::cell::OnceCell::new(), len: std::cell::Cell::new(0) }
     }
 
     /// The chunk the value at `at` lies in, and its place there.
@@ -2979,7 +2983,7 @@ impl<T> Made<T> {
 
     fn get(&self, at: usize) -> Option<&T> {
         let (chunk, place) = Self::place(at);
-        self.chunks[chunk].get()?.get(place)?.get()
+        self.chunks.get()?[chunk].get()?.get(place)?.get()
     }
 
     /// Each value, in the order put.
@@ -2991,7 +2995,8 @@ impl<T> Made<T> {
     fn push(&self, value: T) -> usize {
         let at = self.len.get();
         let (chunk, place) = Self::place(at);
-        let held = self.chunks[chunk].get_or_init(|| (0..1_usize << chunk).map(|_| std::cell::OnceCell::new()).collect());
+        let chunks = self.chunks.get_or_init(|| Box::new(std::array::from_fn(|_| std::cell::OnceCell::new())));
+        let held = chunks[chunk].get_or_init(|| (0..1_usize << chunk).map(|_| std::cell::OnceCell::new()).collect());
         held[place].get_or_init(|| value);
         self.len.set(at + 1);
         at

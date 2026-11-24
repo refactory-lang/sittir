@@ -195,6 +195,14 @@ impl ArenaRead for CountedChunks<'_> {
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
         self.0.string_chunk(n)
     }
+
+    fn read_chunk(&self, n: u32) -> bool {
+        self.0.read_chunk(n)
+    }
+
+    fn read_entry(&self, at: Address) -> bool {
+        self.0.read_entry(at)
+    }
 }
 
 #[test]
@@ -331,12 +339,12 @@ fn rebuilt_source(shape: Rebuilt, items: usize) -> String {
     }
 }
 
-/// The run entries one render of a list rebuilt in `shape` from the parsed
-/// leaves of its source decodes, per hundred items.
-fn decoded_rebuilding(shape: Rebuilt, items: usize) -> u64 {
+/// An engine holding the parse of the source of `shape` with `items` items,
+/// and the built record of its list rebuilt in `shape` from the parsed
+/// leaves of that source.
+fn rebuilding(shape: Rebuilt, items: usize) -> (Engine<sittir_rust::RustGrammar>, Address) {
     let source = rebuilt_source(shape, items);
     let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
-    let options = engine.options().clone();
     let root = engine.parse_records::<RustNode>(&source).expect("a parse").root.expect("a root");
     let store = engine.written().clone();
     let at = {
@@ -381,6 +389,14 @@ fn decoded_rebuilding(shape: Rebuilt, items: usize) -> u64 {
         }
         rebuilt_record(&mut chunks, &store, first, Some(&cells))
     };
+    (engine, at)
+}
+
+/// The run entries one render of a list rebuilt in `shape` from the parsed
+/// leaves of its source decodes, per hundred items.
+fn decoded_rebuilding(shape: Rebuilt, items: usize) -> u64 {
+    let (engine, at) = rebuilding(shape, items);
+    let options = engine.options().clone();
     let built = engine.written().built();
     let before = run_entries_decoded();
     let text = engine.render_at(&built, at, ChangedEdges::default(), &options, false, |_| Ok(())).expect("a render");
@@ -397,4 +413,37 @@ fn a_rebuilt_list_renders_in_linear_run_decodes() {
         let (small, large) = (decoded_rebuilding(shape, 400), decoded_rebuilding(shape, 6400));
         assert!(large <= small + small / 10, "{name}: run entries decoded per hundred items grow with the list: {small} at 400 items, {large} at 6400");
     }
+}
+
+/// The chunk lookups a prepare of a built list of built calls makes per
+/// built record. It only falls.
+const PREPARE_LOOKUPS_A_BUILT_RECORD: u32 = 27;
+
+#[test]
+fn a_built_records_prepare_reads_its_words_and_sides_once() {
+    let items = 100;
+    let (engine, at) = rebuilding(Rebuilt::AlternatingWithCalls, items);
+    let options = engine.options().clone();
+    let built = engine.written().built();
+    let counted = CountedChunks(&*built, std::cell::Cell::new(0));
+    let trees = SourceRecords::new(&engine, &built, |_| Ok(()));
+    let read = ReadSources::over(&trees);
+    let kind = chunks_kind(&built, at);
+    let root = CellAt { cell: Cell::Child { kind, at, changed: ChangedEdges::default() }, node: None, site: None };
+    drop(prepare_root::<_, RustNode>(Some(&counted), &counted, engine.written(), root, &RenderContext::new(&options, &read), sittir_rust::RustGrammar::KIND_BITS).expect("a prepare"));
+    let records = u32::try_from(items / 2 + 1).expect("a count");
+    let lookups = counted.1.get();
+    assert!(lookups <= records * PREPARE_LOOKUPS_A_BUILT_RECORD, "{lookups} chunk lookups preparing {records} built records, over {PREPARE_LOOKUPS_A_BUILT_RECORD} a record");
+}
+
+/// The bytes the sources a render reads through take before it reads one.
+const UNREAD_SOURCES_BYTES: usize = 16 * std::mem::size_of::<usize>();
+
+#[test]
+fn a_renders_sources_hold_a_few_words_until_it_reads_one() {
+    type Records<'a> = sittir_core::engine::Records<'a, sittir_rust::RustGrammar>;
+    let made = std::mem::size_of::<SourceRecords<'_, sittir_rust::RustGrammar>>();
+    let read = std::mem::size_of::<ReadSources<'_, sittir_rust::RustGrammar, Records<'_>>>();
+    assert!(made <= UNREAD_SOURCES_BYTES, "a render's records of its sources take {made} bytes before it reads a source");
+    assert!(read <= UNREAD_SOURCES_BYTES, "a render's sources read take {read} bytes before it reads one");
 }

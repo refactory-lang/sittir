@@ -44,7 +44,7 @@ use crate::types::KindId;
 
 pub use admit::{admit, BodySlot, CellShape, EdgePart, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
-pub(crate) use borrowed::{rewrite_layout, side_of};
+pub(crate) use borrowed::{header_word, record_words, rewrite_layout, side_of};
 pub use built::{render_entry_at, render_record_entry};
 pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
@@ -53,7 +53,7 @@ pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::{aligned_kids, runs_agree, AlignedKids, BackerParity, RecordGrammar};
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, seat_through, view_kind_in, CellAt, LayoutAt, PrepareRecord, RecordAt, RecordPrep, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot};
-pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
+pub use view::{built_leaf_place, checked_record, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
 pub use run_nodes::{node_record, NodeSite, RunNodes, RunTable};
 pub use side::{read_entry_starts, read_spans, Row, SideRecord, SideSlot, Sides};

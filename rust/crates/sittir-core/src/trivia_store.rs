@@ -606,8 +606,35 @@ impl<T: Clone> TriviaStore<T> {
     where
         T: crate::trivia::FromTriviaText,
     {
+        self.sides_with(place, self.header(place, arena)?, arena)
+    }
+
+    /// `sides`, `header` the header word of the record `place` names as its
+    /// caller read it.
+    ///
+    /// # Errors
+    ///
+    /// As `side`, and `ArenaError::Malformed` for a header layout code past
+    /// the widest layout kind.
+    #[cfg(feature = "arena")]
+    pub fn sides_under(&self, place: Place, header: u32, arena: &dyn ArenaRead) -> Result<Option<crate::trivia::NodeTrivia<T>>, ArenaError>
+    where
+        T: crate::trivia::FromTriviaText,
+    {
+        self.sides_with(place, self.header_of(place, header)?, arena)
+    }
+
+    /// `sides`, `header` the record's header (`header`): none at once when
+    /// the store holds no row and the header keeps no layout code.
+    #[cfg(feature = "arena")]
+    fn sides_with(&self, place: Place, header: Option<(crate::arena::cell::HeaderLayout, u32)>, arena: &dyn ArenaRead) -> Result<Option<crate::trivia::NodeTrivia<T>>, ArenaError>
+    where
+        T: crate::trivia::FromTriviaText,
+    {
         let sides = self.read();
-        let header = self.header(place, arena)?;
+        if sides.is_empty() && header.as_ref().is_none_or(|(layout, _)| layout.is_empty()) {
+            return Ok(None);
+        }
         let side = |side| match Self::keyed(place, side) {
             Some((keyed, side)) if keyed == place => self.kept_side(&sides, keyed, side, header.as_ref())?.map(|kept| self.expanded(&kept, arena)).transpose(),
             Some((keyed, side)) => self.kept_side(&sides, keyed, side, self.header(keyed, arena)?.as_ref())?.map(|kept| self.expanded(&kept, arena)).transpose(),
@@ -903,6 +930,14 @@ impl<T: Clone> TriviaStore<T> {
     fn header(&self, place: Place, arena: &dyn ArenaRead) -> Result<Option<(crate::arena::cell::HeaderLayout, u32)>, ArenaError> {
         let (Some(at), Some(_)) = (place.as_record(), self.whitespace) else { return Ok(None) };
         let Ok(word) = arena.word(at) else { return Ok(None) };
+        self.header_of(place, word)
+    }
+
+    /// The header `word` of the record `place` names, decoded as `header`
+    /// decodes it.
+    #[cfg(feature = "arena")]
+    fn header_of(&self, place: Place, word: u32) -> Result<Option<(crate::arena::cell::HeaderLayout, u32)>, ArenaError> {
+        let (Some(_), Some(_)) = (place.as_record(), self.whitespace) else { return Ok(None) };
         Ok(Some((crate::arena::cell::HeaderLayout::of(word, self.kind_bits)?, word)))
     }
 

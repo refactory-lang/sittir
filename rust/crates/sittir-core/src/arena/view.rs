@@ -300,7 +300,7 @@ impl<'a, T> RecordCtx<'a, T> {
         if ctx.node.is_none() {
             return Ok(None);
         }
-        record_of(ctx, at, crate::record::HEADER_WORDS, kind)?;
+        checked_record(ctx, at, crate::record::HEADER_WORDS, kind)?;
         Ok(Some(ctx))
     }
 
@@ -486,11 +486,22 @@ pub trait RecordView<'a, T>: Sized {
 /// `ArenaError::Malformed` for a header of another kind or a parsed address
 /// the native writer never allocated as a record.
 pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) -> Result<(&[u32], super::SideRecord), ArenaError> {
-    let found = ctx.arena.header_kind(at, ctx.bits)?;
+    let (words, side) = checked_record(ctx, at, len, kind)?;
+    Ok((words, ctx.side(side)?))
+}
+
+/// What `record_of` checks of a record before it reads its side record:
+/// its words, checked as `record_of` checks them, and the address of its
+/// side record, from one read of its words.
+///
+/// # Errors
+///
+/// As `record_of`, but for what reading the side record refuses.
+pub fn checked_record<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) -> Result<(&[u32], Address), ArenaError> {
+    let (found, side, words) = super::record_words(ctx.arena, at, len, ctx.bits)?;
     if found != kind {
         return Err(malformed("record kind", u32::from(found.0)));
     }
-    let words = ctx.words(at, len)?;
     #[cfg(debug_assertions)]
     if ctx.node.is_none() && ctx.arena.released(at) {
         return Err(malformed("released record", at.0));
@@ -498,7 +509,7 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     if ctx.node.is_some() && !ctx.arena.read_chunk(at.chunk()) {
         return Err(malformed("record address", at.0));
     }
-    Ok((words, ctx.side(super::side_of(ctx.arena, at)?)?))
+    Ok((words, side))
 }
 
 /// The cells of the parsed record at `at` in `arena`, as its kind's shape,

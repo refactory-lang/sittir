@@ -63,11 +63,7 @@ pub trait ArenaRead {
     /// a header past the written words, and a header with flags, a link
     /// record's, which names a node of another tree.
     fn header_kind(&self, at: Address, bits: u32) -> Result<KindId, ArenaError> {
-        let word = self.words(at.record()?, HEADER_WORDS)?[0];
-        match super::cell::header_of(word, bits) {
-            (kind, 0) => Ok(kind),
-            _ => Err(ArenaError::Malformed { what: "record kind", word }),
-        }
+        kind_in(self.words(at.record()?, HEADER_WORDS)?, bits)
     }
 
     /// A string reference checked for bounds and UTF-8 on this read.
@@ -88,7 +84,41 @@ pub trait ArenaRead {
 /// `ArenaError::Malformed` for address 0, which names no record, and what
 /// reading a header past the written words refuses.
 pub(crate) fn side_of(arena: &dyn ArenaRead, at: Address) -> Result<Address, ArenaError> {
-    Ok(Address(arena.words(at.record()?, HEADER_WORDS)?[1]))
+    Ok(side_in(arena.words(at.record()?, HEADER_WORDS)?))
+}
+
+/// The `len` words of the record at `at`, `len` at least its header's,
+/// with the kind its header names (`header_kind`) and the address of its
+/// side record (`side_of`), from one read of its words.
+///
+/// # Errors
+///
+/// What `header_kind` refuses, and what reading `len` words past the
+/// written words refuses.
+pub(crate) fn record_words(arena: &dyn ArenaRead, at: Address, len: u32, bits: u32) -> Result<(KindId, Address, &[u32]), ArenaError> {
+    let words = arena.words(at.record()?, len.max(HEADER_WORDS))?;
+    Ok((kind_in(words, bits)?, side_in(words), words))
+}
+
+/// The kind the record header `header` names, its kind field `bits` bits;
+/// refuses a header with flags.
+fn kind_in(header: &[u32], bits: u32) -> Result<KindId, ArenaError> {
+    let word = header_word(header);
+    match super::cell::header_of(word, bits) {
+        (kind, 0) => Ok(kind),
+        _ => Err(ArenaError::Malformed { what: "record kind", word }),
+    }
+}
+
+/// The header word of the record header `header`: its kind, flags and
+/// layout codes.
+pub(crate) fn header_word(header: &[u32]) -> u32 {
+    header[0]
+}
+
+/// The address of the side record the record header `header` names.
+fn side_in(header: &[u32]) -> Address {
+    Address(header[1])
 }
 
 /// Rewrites, through `change`, the layout a record's header word keeps

@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use super::view::ParsedRow;
-use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, HydrateNode, Prepared, RecordCtx, RecordView};
+use super::{checked_record, place_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, HydrateNode, Prepared, RecordCtx, RecordView};
 use crate::layout::{merge_source_sides, slots_or_source, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::delimiters::{DelimiterSlot, DelimiterToken, SetFacet, TokenFacts};
@@ -193,6 +193,8 @@ struct RecordKey {
     /// The record; none for a parsed leaf, which has none.
     at: Option<Address>,
     side_at: Address,
+    /// The record's header word, as its key read it; 0 for no record.
+    header: u32,
     place: PrepPlace,
 }
 
@@ -203,17 +205,17 @@ impl RecordKey {
         match at.cell {
             Cell::Child { kind, at: record, .. } if claims(kind) => {
                 let view = view.child(record)?;
-                record_of(view, record, HEADER_WORDS, kind)?;
+                let (words, side_at) = checked_record(view, record, HEADER_WORDS, kind)?;
                 let place = place_of(view, record)?;
-                Ok(Self { node: view.node(), at: Some(record), side_at: super::side_of(view.arena(), record)?, place })
+                Ok(Self { node: view.node(), at: Some(record), side_at, header: super::header_word(words), place })
             }
-            Cell::BuiltLeaf { kind, .. } if claims(kind) => Ok(Self { node: None, at: None, side_at: Address::NONE, place: super::built_leaf_place(at.site)? }),
+            Cell::BuiltLeaf { kind, .. } if claims(kind) => Ok(Self { node: None, at: None, side_at: Address::NONE, header: 0, place: super::built_leaf_place(at.site)? }),
             Cell::ReadLeaf { kind, at: record, name, .. } if claims(kind) => {
-                Ok(Self { node: None, at: Some(record), side_at: Address::NONE, place: super::linked_leaf_place(view, record, name, at.site)? })
+                Ok(Self { node: None, at: Some(record), side_at: Address::NONE, header: 0, place: super::linked_leaf_place(view, record, name, at.site)? })
             }
             Cell::NamedLeaf { kind, id, .. } if claims(kind) => {
                 let place = super::leaf_place(view, id, at.site)?;
-                Ok(Self { node: view.node(), at: None, side_at: Address::NONE, place })
+                Ok(Self { node: view.node(), at: None, side_at: Address::NONE, header: 0, place })
             }
             cell => Err(malformed("prepared cell", cell.kind().map_or(0, |kind| u32::from(kind.0)))),
         }
@@ -223,6 +225,15 @@ impl RecordKey {
     fn side<T>(&self, prep: &RecordPrep<'_, T>) -> Result<super::SideRecord, ArenaError> {
         if self.side_at == Address::NONE { return Ok(super::SideRecord::default()) }
         prep.view(self.node)?.side(self.side_at)
+    }
+
+    /// The sides writes gave the node at `place` (`TriviaStore::sides`),
+    /// the record's header read from the key when `place` is the record's.
+    fn stored_sides<T: Clone + crate::trivia::FromTriviaText>(&self, prep: &RecordPrep<'_, T>, place: Place) -> Result<Option<NodeTrivia<T>>, ArenaError> {
+        match self.at {
+            Some(at) if place.as_record() == Some(at) => prep.store.sides_under(place, self.header, prep.built),
+            _ => prep.store.sides(place, prep.built),
+        }
     }
 }
 
@@ -374,8 +385,8 @@ impl<T: Clone + crate::trivia::FromTriviaText + 'static> LayoutAt<'_, T> {
         let (mut trivia, units) = match (self.at(prep)?, self.key.place) {
             (Some(at), PrepPlace::Stored(Place::Node(id))) if id.site().is_none() => (source_sides(prep, at), units(id)?),
             (Some(at), _) => (source_sides(prep, at), Vec::new()),
-            (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => (read_entries(prep, prep.store.sides(place, prep.built)?)?, units(id)?),
-            (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (read_entries(prep, prep.store.sides(place, prep.built)?)?, Vec::new()),
+            (None, PrepPlace::Stored(place @ Place::Node(id))) if id.site().is_none() => (read_entries(prep, self.key.stored_sides(prep, place)?)?, units(id)?),
+            (None, PrepPlace::Stored(place @ (Place::Node(_) | Place::RootLeaf))) => (read_entries(prep, self.key.stored_sides(prep, place)?)?, Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
         merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref().map(NodeIdOrOwnedCoordinate::at), prep.sources);
@@ -841,7 +852,7 @@ pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt
 pub fn record_snapshot_edge<T: Prepare + Clone + crate::trivia::FromTriviaText>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool) -> Option<SnapshotEdge> {
     let key = RecordKey::of(prep, at, claims).ok()?;
     let side = key.side(prep).ok()?;
-    crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| prep.store.sides(place, prep.built).ok().flatten()).as_ref())
+    crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| key.stored_sides(prep, place).ok().flatten()).as_ref())
 }
 
 /// `KindOf::kind_in` of the value `at` names, read through its view `V`.
