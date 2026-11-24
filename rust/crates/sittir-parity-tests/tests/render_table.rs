@@ -210,6 +210,17 @@ fn a_side_record_reads_its_fields_from_one_lookup_of_its_chunk() {
 }
 
 #[test]
+fn a_records_sides_read_its_header_once() {
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::node::AnyNode>("fn f() {}\n").expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let counted = CountedChunks(&*built, std::cell::Cell::new(0));
+    let sides = engine.written().sides(sittir_core::trivia_store::Place::record(root), &counted).expect("its sides");
+    assert_eq!(sides, None, "a record no write and no parse gave a side");
+    assert!(counted.1.get() <= 1, "{} chunk lookups for the sides of one record: one for its header", counted.1.get());
+}
+
+#[test]
 fn a_calls_records_read_the_engines_options_through_a_borrow() {
     let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
     let root = engine.parse_records::<sittir_rust::render::node::AnyNode>("fn f() {}\n").expect("a parse").root.expect("a root");

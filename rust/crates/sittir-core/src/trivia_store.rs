@@ -571,7 +571,7 @@ impl<T: Clone> TriviaStore<T> {
         T: crate::trivia::FromTriviaText,
     {
         let Some((place, side)) = Self::keyed(place, side) else { return Ok(None) };
-        self.kept_side(&self.read(), place, side, arena)?.map(|kept| self.expanded(&kept, arena)).transpose()
+        self.kept_side(&self.read(), place, side, self.header(place, arena)?.as_ref())?.map(|kept| self.expanded(&kept, arena)).transpose()
     }
 
     /// Whether a write gave `side` of the read's node at `place` in place of
@@ -592,7 +592,7 @@ impl<T: Clone> TriviaStore<T> {
     #[cfg(feature = "arena")]
     pub fn ends_with_layout(&self, place: Place, side: TriviaSide, kind: KindId, arena: &dyn ArenaRead) -> Result<bool, ArenaError> {
         let Some((place, side)) = Self::keyed(place, side) else { return Ok(false) };
-        Ok(matches!(self.kept_side(&self.read(), place, side, arena)?.as_deref().and_then(<[CompactEntry]>::last), Some(&CompactEntry::Layout { kind: last }) if last == kind))
+        Ok(matches!(self.kept_side(&self.read(), place, side, self.header(place, arena)?.as_ref())?.as_deref().and_then(<[CompactEntry]>::last), Some(&CompactEntry::Layout { kind: last }) if last == kind))
     }
 
     /// The sides writes gave the node at `place`, as its trivia, or `None`
@@ -607,8 +607,10 @@ impl<T: Clone> TriviaStore<T> {
         T: crate::trivia::FromTriviaText,
     {
         let sides = self.read();
+        let header = self.header(place, arena)?;
         let side = |side| match Self::keyed(place, side) {
-            Some((place, side)) => self.kept_side(&sides, place, side, arena)?.map(|kept| self.expanded(&kept, arena)).transpose(),
+            Some((keyed, side)) if keyed == place => self.kept_side(&sides, keyed, side, header.as_ref())?.map(|kept| self.expanded(&kept, arena)).transpose(),
+            Some((keyed, side)) => self.kept_side(&sides, keyed, side, self.header(keyed, arena)?.as_ref())?.map(|kept| self.expanded(&kept, arena)).transpose(),
             None => Ok(None),
         };
         let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading)?, trailing: side(TriviaSide::Trailing)?, inner: side(TriviaSide::Inner)? };
@@ -644,8 +646,12 @@ impl<T: Clone> TriviaStore<T> {
     where
         T: crate::trivia::FromTriviaText,
     {
+        let sides = self.read();
         let mut units: Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)> = Vec::new();
-        for (site, side, kept) in self.unit_sides(&self.read(), holder, arena)? {
+        if sides.is_empty() {
+            return Ok(units);
+        }
+        for (site, side, kept) in self.unit_sides(&sides, holder, arena)? {
             let (word, item) = (site.word, crate::types::ItemIndex(site.item));
             if units.last().is_none_or(|unit| (unit.0, unit.1) != (word, item)) {
                 units.push((word, item, crate::trivia::NodeTrivia::default()));
@@ -889,26 +895,34 @@ impl<T: Clone> TriviaStore<T> {
         Ok((gaps.is_empty() || !row.is_empty()).then_some(row))
     }
 
-    /// The entries `side` of the node at `place` holds as this store keeps
-    /// them, `sides` its rows, read under `arena`: for a record, built or a
-    /// read's, the gap members its header keeps for the side
-    /// (`header_split`), then its row; `None` when it holds neither.
+    /// The header of the record `place` names, read under `arena`, with the
+    /// word it was decoded from: what `kept_side` reads a side's gap members
+    /// from. `None` for a place with no record, a store that keeps no gap
+    /// members, or a record `arena` does not hold.
     #[cfg(feature = "arena")]
-    fn kept_side<'r>(&self, sides: &'r SideRows<Place, CompactEntry>, place: Place, side: TriviaSide, arena: &dyn ArenaRead) -> Result<Option<std::borrow::Cow<'r, [CompactEntry]>>, ArenaError> {
+    fn header(&self, place: Place, arena: &dyn ArenaRead) -> Result<Option<(crate::arena::cell::HeaderLayout, u32)>, ArenaError> {
+        let (Some(at), Some(_)) = (place.as_record(), self.whitespace) else { return Ok(None) };
+        let Ok(word) = arena.word(at) else { return Ok(None) };
+        Ok(Some((crate::arena::cell::HeaderLayout::of(word, self.kind_bits)?, word)))
+    }
+
+    /// The entries `side` of the node at `place` holds as this store keeps
+    /// them, `sides` its rows and `header` its record's (`header`): for a
+    /// record, built or a read's, the gap members its header keeps for the
+    /// side (`header_split`), then its row; `None` when it holds neither.
+    #[cfg(feature = "arena")]
+    fn kept_side<'r>(&self, sides: &'r SideRows<Place, CompactEntry>, place: Place, side: TriviaSide, header: Option<&(crate::arena::cell::HeaderLayout, u32)>) -> Result<Option<std::borrow::Cow<'r, [CompactEntry]>>, ArenaError> {
         let row = sides.get(place, side);
-        let (Some(at), Some(table)) = (place.as_record(), self.whitespace) else { return Ok(row.map(std::borrow::Cow::Borrowed)) };
-        let Ok(header) = arena.word(at) else { return Ok(row.map(std::borrow::Cow::Borrowed)) };
-        let layout = crate::arena::cell::HeaderLayout::of(header, self.kind_bits)?;
-        let gaps = layout
-            .side(side)
-            .iter()
-            .take_while(|gap| !gap.is_empty())
-            .map(|&gap| table.gap_kind(gap).map(|kind| CompactEntry::Layout { kind }).ok_or(ArenaError::Malformed { what: "header layout code naming no gap kind of the grammar", word: header }))
-            .collect::<Result<Vec<_>, _>>()?;
-        if gaps.is_empty() {
+        let (Some((layout, word)), Some(table)) = (header, self.whitespace) else { return Ok(row.map(std::borrow::Cow::Borrowed)) };
+        let codes = layout.side(side);
+        if codes.first().is_none_or(|gap| gap.is_empty()) {
             return Ok(row.map(std::borrow::Cow::Borrowed));
         }
-        Ok(Some(std::borrow::Cow::Owned(gaps.into_iter().chain(row.unwrap_or_default().iter().copied()).collect())))
+        let gaps = codes
+            .iter()
+            .take_while(|gap| !gap.is_empty())
+            .map(|&gap| table.gap_kind(gap).map(|kind| CompactEntry::Layout { kind }).ok_or(ArenaError::Malformed { what: "header layout code naming no gap kind of the grammar", word: *word }));
+        Ok(Some(std::borrow::Cow::Owned(gaps.chain(row.unwrap_or_default().iter().copied().map(Ok)).collect::<Result<_, _>>()?)))
     }
 
     /// `side` of the node at `place` holds `entries`, as `write_side`, and
