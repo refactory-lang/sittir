@@ -1703,6 +1703,10 @@ The tolerance the comparison of a node's own render carries: delimiter spellings
 
 A read-render-parse candidate whose AST matched only where a kind's flags came in another order, with the reorders accepted.
 
+### `packages/tools/src/validate/read-render-parse.ts::ReadRenderParseResult::foldedMismatches`
+
+The candidates whose syntax tree did not match while another candidate of the same kind did. They are the reason such a candidate has no parity fixture: a fixture is recorded only for a candidate that matches, and a folded row is that candidate's trace. The fixture-side accounting therefore holds with no separate left-out count, so the folded count is the one ceiling that moves.
+
 ### `packages/tools/src/validate/read-render-parse.ts::ReadRenderParseResult::flagReordered`
 
 The candidates that matched only after a flag reorder.
