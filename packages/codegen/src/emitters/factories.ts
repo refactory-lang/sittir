@@ -2456,7 +2456,7 @@ function fieldCarryingFactoryText(
 				`  const builtSelf =`,
 				`    typeof args[0] === 'object' && args[0] !== null &&`,
 				`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)});`,
-				`  if ((built || builtSelf) && args[1] !== undefined && (typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)) {`,
+				`  if ((built || builtSelf) && typeof args[1] === 'object' && args[1] !== null && (args[1] as { $type?: unknown }).$type === undefined) {`,
 				`    throw new TypeError('${node.typeName}: a built node carries its own options; pass them when the node is built');`,
 				`  }`,
 				`  return built && args[1] === undefined`,

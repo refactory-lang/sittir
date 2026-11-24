@@ -238,8 +238,9 @@ export function buildString(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.String as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('String: a built node carries its own options; pass them when the node is built');
 	}
@@ -325,8 +326,9 @@ export function buildImmediateString(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ImmediateString as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('ImmediateString: a built node carries its own options; pass them when the node is built');
 	}

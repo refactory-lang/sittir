@@ -10203,6 +10203,10 @@ export function coerceToFormalParametersSetAccessorSignature(
 		);
 	if (isNodeOfKind(input, TSKindId.FormalParametersSetAccessorSignature))
 		return input as unknown as ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
+	if (isNodeOfKind(input, TSKindId.FormalParametersElementsSetAccessorSignature) && options[0] !== undefined)
+		throw new TypeError(
+			'FormalParametersSetAccessorSignature: a built node carries its own options; pass them when the node is built'
+		);
 	return F.buildFormalParametersSetAccessorSignature(
 		coerceToFormalParametersElementsSetAccessorSignature(
 			configFieldOr(

@@ -372,8 +372,9 @@ export function buildExportClause(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ExportClause as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('ExportClause: a built node carries its own options; pass them when the node is built');
 	}
@@ -930,8 +931,9 @@ export function buildNamedImports(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.NamedImports as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('NamedImports: a built node carries its own options; pass them when the node is built');
 	}
@@ -4118,8 +4120,9 @@ export function buildFinallyClause(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.FinallyClause as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('FinallyClause: a built node carries its own options; pass them when the node is built');
 	}
@@ -13149,8 +13152,9 @@ export function buildEnumBody(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.EnumBody as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('EnumBody: a built node carries its own options; pass them when the node is built');
 	}
@@ -14892,8 +14896,9 @@ export function buildAssertsAnnotation(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.AssertsAnnotation as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('AssertsAnnotation: a built node carries its own options; pass them when the node is built');
 	}
@@ -16390,8 +16395,9 @@ export function buildTypePredicateAnnotation(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypePredicateAnnotation as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError(
 			'TypePredicateAnnotation: a built node carries its own options; pass them when the node is built'
@@ -16827,8 +16833,9 @@ export function buildTypeQueryCallExpression(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeQueryCallExpression as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError(
 			'TypeQueryCallExpression: a built node carries its own options; pass them when the node is built'
@@ -17785,8 +17792,9 @@ export function buildTypeArguments(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeArguments as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('TypeArguments: a built node carries its own options; pass them when the node is built');
 	}
@@ -18614,8 +18622,9 @@ export function buildTypeParameters(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TypeParameters as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('TypeParameters: a built node carries its own options; pass them when the node is built');
 	}
@@ -19405,8 +19414,9 @@ export function buildTupleType(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.TupleType as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('TupleType: a built node carries its own options; pass them when the node is built');
 	}
@@ -21395,8 +21405,9 @@ export function buildAmbientDeclarationGlobal(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.AmbientDeclarationGlobal as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError(
 			'AmbientDeclarationGlobal: a built node carries its own options; pass them when the node is built'
@@ -25257,8 +25268,9 @@ export function buildParenthesizedExpressionSequence(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.ParenthesizedExpressionSequence as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError(
 			'ParenthesizedExpressionSequence: a built node carries its own options; pass them when the node is built'
@@ -29331,8 +29343,9 @@ export function buildFormalParametersSetAccessorSignature(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersSetAccessorSignature as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError(
 			'FormalParametersSetAccessorSignature: a built node carries its own options; pass them when the node is built'
@@ -34309,8 +34322,9 @@ export function buildFormalParametersElementsReceiverGroup(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.FormalParametersElementsReceiverGroup as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError(
 			'FormalParametersElementsReceiverGroup: a built node carries its own options; pass them when the node is built'

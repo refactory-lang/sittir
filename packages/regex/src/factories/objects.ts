@@ -668,8 +668,9 @@ export function buildAnonymousCapturingGroup(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.AnonymousCapturingGroup as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError(
 			'AnonymousCapturingGroup: a built node carries its own options; pass them when the node is built'
@@ -840,8 +841,9 @@ export function buildNonCapturingGroup(...args: unknown[]) {
 		(args[0] as { $type?: unknown }).$type === (TSKindId.NonCapturingGroup as const);
 	if (
 		(built || builtSelf) &&
-		args[1] !== undefined &&
-		(typeof args[1] !== 'object' || args[1] === null || (args[1] as { $type?: unknown }).$type === undefined)
+		typeof args[1] === 'object' &&
+		args[1] !== null &&
+		(args[1] as { $type?: unknown }).$type === undefined
 	) {
 		throw new TypeError('NonCapturingGroup: a built node carries its own options; pass them when the node is built');
 	}

@@ -540,6 +540,12 @@ function emitBranchFrom(
 					);
 				}
 				body.push(`  if (${builtTest}) return input as unknown as ${spelledType ?? returnType};`);
+				if (forwardedTarget !== undefined) {
+					const targetTest = `${inputOptional ? 'input !== undefined && ' : ''}isNodeOfKind(input, ${kindDiscriminantCheck(forwardedTarget.kind, kindEntries, nodeMap)})`;
+					body.push(
+						`  if (${targetTest} && options[0] !== undefined) throw new TypeError('${typeName}: a built node carries its own options; pass them when the node is built');`
+					);
+				}
 			}
 		} else {
 			const bareKind =

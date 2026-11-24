@@ -162,3 +162,31 @@ describe('the setter parameter elements sub-builder (strict)', () => {
 		expect(() => ts.build.formalParametersSetAccessorSignature(built, { trailingComma: ts.kinds.Comma })).toThrow('carries its own options');
 	});
 });
+
+describe('a kind id after a built block is a statement, not options', () => {
+	it('keeps a kind id argument as a statement (strict)', async () => {
+		await using ts = await createEngine(typescript, { api: 'strict' });
+		const block = [...ts.parse('function f() {}').$query().$descendants.ofType(ts.kinds.StatementBlock)][0]!;
+		expect(() => (ts.build.finallyClause as (...a: unknown[]) => unknown)(block, ts.kinds.EmptyStatement)).not.toThrow();
+	});
+
+	it('keeps a kind id argument as a statement (default)', async () => {
+		await using ts = await createEngine(typescript);
+		const block = [...ts.parse('function f() {}').$query().$descendants.ofType(ts.kinds.StatementBlock)][0]!;
+		expect(() => (ts.build.finallyClause as (...a: unknown[]) => unknown)(block, ts.kinds.EmptyStatement)).not.toThrow();
+	});
+});
+
+describe('parsed setter elements given options, on both engines', () => {
+	it('refuses options after a parsed elements node (strict)', async () => {
+		await using ts = await createEngine(typescript, { api: 'strict' });
+		const parsed = [...ts.parse('class A { set x(v: number,) {} }\n').$query().$descendants.ofType(ts.kinds.FormalParametersElementsSetAccessorSignature)][0]!;
+		expect(() => (ts.build.formalParametersSetAccessorSignature as (...a: unknown[]) => unknown)(parsed, { trailingComma: ts.kinds.Comma })).toThrow('carries its own options');
+	});
+
+	it('refuses options after a parsed elements node (default)', async () => {
+		await using ts = await createEngine(typescript);
+		const parsed = [...ts.parse('class A { set x(v: number,) {} }\n').$query().$descendants.ofType(ts.kinds.FormalParametersElementsSetAccessorSignature)][0]!;
+		expect(() => (ts.build.formalParametersSetAccessorSignature as (...a: unknown[]) => unknown)(parsed, { trailingComma: ts.kinds.Comma })).toThrow('carries its own options');
+	});
+});
