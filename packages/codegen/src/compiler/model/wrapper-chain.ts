@@ -200,16 +200,19 @@ export function wrapperChainOfSlot(nodeMap: NodeMap, slot: AssembledNonterminal)
 	return chainTablesOf(nodeMap).bySlot.get(slot);
 }
 
+function isListHop(nodeMap: NodeMap, chain: WrapperChain, hop: number): boolean {
+	return nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(chain.slots[hop]!);
+}
+
 export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScope = '', holderOptional = false, from = 0): string {
 	const builder = (kind: string): string => `${factoryScope}${nodeMap.nodes.get(kind)!.rawFactoryName}`;
-	const consumesList = (hop: number): boolean => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(chain.slots[hop]!);
-	const rest = chain.storage.some((_, hop) => hop >= from && consumesList(hop));
+	const rest = chain.storage.some((_, hop) => hop >= from && isListHop(nodeMap, chain, hop));
 	const wrapped = (from: number, seed: string, listed: boolean): string => {
 		let expr = seed;
 		let list = listed;
 		for (let hop = chain.storage.length - 1; hop >= from; hop--) {
 			const make = builder(chain.storage[hop]!);
-			if (consumesList(hop)) {
+			if (isListHop(nodeMap, chain, hop)) {
 				expr = `(${make} as unknown as (...items: never[]) => never)(...(${expr} as never[]))`;
 				list = false;
 			} else {
@@ -229,8 +232,7 @@ export function chainWrapExpr(chain: WrapperChain, nodeMap: NodeMap, factoryScop
 }
 
 export function hoistedCardinality(chain: WrapperChain, slot: AssembledNonterminal, nodeMap: NodeMap): SlotCardinality {
-	const listed = (hop: number): boolean => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(chain.slots[hop]!);
-	const multiple = isMultiple(slot) || chain.storage.some((_, hop) => listed(hop));
+	const multiple = isMultiple(slot) || chain.storage.some((_, hop) => isListHop(nodeMap, chain, hop));
 	const last = chain.slots[chain.slots.length - 1]!;
 	return { required: isRequired(slot) && chain.slots.every(isRequired), multiple, nonEmpty: isMultiple(slot) ? isNonEmpty(slot) : isNonEmpty(last) };
 }
@@ -240,7 +242,7 @@ export function chainReadsAsList(nodeMap: NodeMap, chain: WrapperChain, slot: As
 	return (
 		isMultiple(slot) ||
 		kindsOf(last).some((name) => nodeMap.nodes.get(name) instanceof AssembledList) ||
-		chain.slots.some((inner, hop) => nodeMap.nodes.get(chain.storage[hop]!) instanceof AssembledList || isMultiple(inner))
+		chain.storage.some((_, hop) => isListHop(nodeMap, chain, hop))
 	);
 }
 

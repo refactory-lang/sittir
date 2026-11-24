@@ -3,13 +3,13 @@ import { join } from 'node:path';
 import { PACKAGES_DIR } from '../grammars.ts';
 import { VOCABULARY_DIR } from './facts.ts';
 import { snake } from './names.ts';
-import { byCodepoint, readVocabulary, type Vocabulary } from './vocabulary.ts';
+import { byCodepoint, declaredFlags, readVocabulary, type Vocabulary } from './vocabulary.ts';
 
 export const VOCABULARY_PATHS_FILE = join(PACKAGES_DIR, 'common', 'src', 'portable', 'vocabulary-paths.ts');
 
 export function vocabularyFlagPaths(vocabulary: Vocabulary): readonly (readonly [path: string, segment: string, flag: string])[] {
 	return [...vocabulary.kinds.keys()]
-		.flatMap((path) => [...vocabulary.members(path)].flatMap(([name, member]) => (member.flag ? [[path, snake(name), name] as const] : [])))
+		.flatMap((path) => declaredFlags(vocabulary, path).map((name) => [path, snake(name), name] as const))
 		.sort(([a, f], [b, g]) => byCodepoint(`${a}.${f}`, `${b}.${g}`));
 }
 
@@ -21,6 +21,16 @@ export function emitVocabularyPaths(vocabulary: Vocabulary): string {
 		'export const vocabularyPaths = Object.freeze([',
 		paths.map((path) => `\t'${path}'`).join(',\n'),
 		'] as const);',
+		'',
+		'export const vocabularyNamespaces = Object.freeze([',
+		[...vocabulary.namespaces].sort(byCodepoint).map((path) => `\t'${path}'`).join(',\n'),
+		'] as const);',
+		'',
+		'export const vocabularyAliases = Object.freeze([',
+		vocabulary.aliases.map(({ path, target, feature }) => `\t['${path}', '${target}', ${feature === undefined ? 'null' : `'${feature}'`}]`).join(',\n'),
+		'] as const);',
+		'',
+		'export const vocabularyAliasPaths = Object.freeze(vocabularyAliases.map(([path]) => path));',
 		'',
 		'export const vocabularyPathFeatures: Readonly<Record<string, string>> = Object.freeze({',
 		[...vocabulary.kinds].flatMap(([path, kind]) => (kind.feature === undefined ? [] : [[path, kind.feature] as const])).sort(([a], [b]) => byCodepoint(a, b)).map(([path, feature]) => `\t'${path}': '${feature}'`).join(',\n'),

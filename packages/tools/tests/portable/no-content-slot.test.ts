@@ -6,7 +6,7 @@ import python from '../../../python/src/index.ts';
 import rust from '../../../rust/src/index.ts';
 import typescript from '../../../typescript/src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 type Leading = { readonly $trivia: { leading(): readonly unknown[] } };
 interface Runtime {
 	readonly engine: { parse(source: string): { statements(): readonly unknown[] }; render(value: never): unknown };
@@ -39,17 +39,17 @@ const leading = (runtime: Runtime, source: string): Read => {
 	return runtime.read(comment as never) as Read;
 };
 
-describe('a wrapper around one member reads as that member', () => {
+describe('a wrapper around one slot reads as that slot', () => {
 	it.each([
 		['python', '@cache\ndef f():\n    pass\n', 'declaration.function', { decorators: ['cache'] }],
 		['python', '@functools.cache\ndef f():\n    pass\n', 'declaration.function', { decorators: [{ $path: 'expression.member', object: 'functools', property: 'cache' }] }],
-		['typescript', '@x\nclass A {}\n', 'declaration.class', { decorators: ['x'] }],
+		['typescript', '@x\nclass A {}\n', 'declaration.type.class', { decorators: ['x'] }],
 		['python', 'def f(x: int) -> int:\n    pass\n', 'declaration.function', { returnType: 'int', parameters: [expect.objectContaining({ type: 'int' })] }],
 		['python', 'x: int\n', 'declaration.variable', { type: 'int' }],
-		['rust', 'struct S {\n    #[a]\n    x: u8,\n}\n', 'declaration.field', { attributes: [{ $path: 'attribute', path: 'a' }] }]
-	] as const)('%s reads %j as %s holding %j, and builds it back', (grammar, source, path, members) => {
+		['rust', 'struct S {\n    #[a]\n    x: u8,\n}\n', 'declaration.member.field', { attributes: [{ $path: 'attribute', path: 'a' }] }]
+	] as const)('%s reads %j as %s holding %j, and builds it back', (grammar, source, path, slots) => {
 		const runtime = runtimes[grammar];
-		expect(found(runtime, source, path)).toMatchObject(members);
+		expect(found(runtime, source, path)).toMatchObject(slots);
 		expect(reads(readOf(runtime, source)).map((read) => read.$path)).not.toContain('attribute.decorator');
 		expect(rendered(runtime, readOf(runtime, source))).toBe(source);
 	});
@@ -77,10 +77,10 @@ describe('an unnamed slot reads under the name of what it holds', () => {
 		['typescript', 'type T = "a";\n', 'type.literal', 'value'],
 		['rust', 'fn f() {\n    g::<T>();\n}\n', 'element.type_argument', 'argument'],
 		['rust', 'fn f() {\n    S { a: 1 };\n}\n', 'element.struct.field', 'name']
-	] as const)('%s reads %j as %s with its %s, never content, and builds it back', (grammar, source, path, member) => {
+	] as const)('%s reads %j as %s with its %s, never content, and builds it back', (grammar, source, path, slot) => {
 		const runtime = runtimes[grammar];
 		const read = found(runtime, source, path);
-		expect(read).toHaveProperty(member);
+		expect(read).toHaveProperty(slot);
 		expect(read).not.toHaveProperty('content');
 		expect(rendered(runtime, readOf(runtime, source))).toBe(source);
 	});

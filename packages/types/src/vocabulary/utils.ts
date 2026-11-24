@@ -32,6 +32,7 @@ export type In<G extends GrammarMap, F, T> = Composing<G['features'], F, T>;
 export interface Missing<F> {
 	readonly $missing: F;
 	readonly $absent: never;
+	readonly $path: `$missing:${string}`;
 }
 
 declare const flag: unique symbol;
@@ -52,10 +53,14 @@ type FlagsAt<G extends GrammarMap, P> = P extends keyof G['flags'] ? G['flags'][
 
 type Dropped<T, N> = { readonly [M in keyof T as M extends N ? never : M]: T[M] };
 
-type Named<T, D extends string, N extends string> = [D | N] extends [never] ? T : Dropped<T & { readonly $flags?: readonly N[] }, D | N>;
+type FactsAt<G extends GrammarMap, P> = P extends keyof G['facts'] ? G['facts'][P] : {};
+
+type Named<T, D extends string, N extends string, F> = [D | N | keyof F] extends [never]
+	? T
+	: Dropped<T & { readonly $flags?: readonly N[]; readonly $at?: { readonly [M in keyof F]?: { readonly index: number; readonly spelling?: F[M] } } }, D | N>;
 
 export type NamedFlags<G extends GrammarMap, T> = T extends readonly unknown[]
 	? { readonly [I in keyof T]: NamedFlags<G, T[I]> }
 	: T extends { readonly $path: infer P }
-		? Named<T, FeatureFlagsAt<G, P>, FlagsAt<G, P>>
+		? Named<T, FeatureFlagsAt<G, P>, FlagsAt<G, P>, FactsAt<G, P>>
 		: T;

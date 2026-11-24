@@ -9,16 +9,7 @@ export namespace Expression {
 	export interface Reference<G extends GrammarMap, K extends Under<'expression.reference'> = 'expression.reference'> extends SubKindOf<V.Expression<G, K>> {
 		// claimed by r
 		readonly $path: K;
-		readonly argument: Slot<
-			G,
-			K,
-			'argument',
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Statement.Any<G>
-			| V.Type.Primitive<G>
-		>;
+		readonly argument: Slot<G, K, 'argument', V.Expression.Any<G>>;
 		readonly exclusive?: Flag;
 		readonly raw?: Flag;
 		readonly writable?: Flag;

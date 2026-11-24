@@ -3,6 +3,7 @@ import type {
 	Cond,
 	KindMembership,
 	PortableKind,
+	PortableNamespace,
 	PortableRows,
 	PresenceRef,
 	QueryFlags,
@@ -254,7 +255,7 @@ interface QueryView extends Iterable<unknown> {
 	map(fn: Fn): QueryView;
 	flatMap(fn: Fn): QueryView;
 	slice(start?: number, end?: number): QueryView;
-	ofType(kind: number | PortableKind): QueryView;
+	ofType(kind: number | PortableKind | PortableNamespace): QueryView;
 	where(condition: Where): QueryView;
 	find(predicate?: Fn): unknown;
 	findIndex(predicate: Fn): number;
@@ -298,16 +299,19 @@ function sliceStep(start: number | undefined, end: number | undefined): Step {
 
 function ofTypeSteps(context: Context, kind: unknown): readonly Step[] {
 	if (typeof kind === 'number') return [{ op: 'ofKinds', kinds: new Set(context.hooks.membership.membersOf(kind)) }];
-	if (!isPortableKind(kind)) refuse('query: ofType takes a kind id or a portable kind');
+	const path = portablePathArgument(kind);
+	if (path === undefined) refuse('query: ofType takes a kind id, a portable kind or a portable namespace');
 	const rows = context.hooks.portable;
-	const read = rows === undefined ? undefined : portablePathOf(rows, kind.$path);
+	const read = rows === undefined ? undefined : portablePathOf(rows, path);
 	if (rows === undefined || read === undefined) return [{ op: 'ofKinds', kinds: new Set() }];
 	const ofKinds: Step = { op: 'ofKinds', kinds: new Set(read.ids) };
-	return read.exact ? [ofKinds] : [ofKinds, { op: 'filter', fn: (node) => readsAs(rows, kind.$path, node as AnyUntypedNode | number) }];
+	return read.exact ? [ofKinds] : [ofKinds, { op: 'filter', fn: (node) => readsAs(rows, path, node as AnyUntypedNode | number) }];
 }
 
-function isPortableKind(value: unknown): value is PortableKind {
-	return typeof value === 'object' && value !== null && typeof (value as PortableKind).$path === 'string';
+function portablePathArgument(value: unknown): string | undefined {
+	if (typeof value !== 'object' || value === null) return undefined;
+	const { $path, $namespace } = value as Partial<PortableKind & PortableNamespace>;
+	return typeof $path === 'string' ? $path : typeof $namespace === 'string' ? $namespace : undefined;
 }
 
 function whereStep(context: Context, steps: readonly Step[], condition: Where): Step {

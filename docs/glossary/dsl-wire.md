@@ -954,7 +954,7 @@ The copy effect of a copy the context made, or `undefined` for a name that is no
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireNoteCopyDisplay`
 
-Stamps the name a copy's reference shows it under on its copy effect (`CopyEffect.display`): the source's own name for a reference that aliases back, the shown name for a named one, and none for a bare reference to a hidden copy. Its reference is made by `primitives/copy.ts::copyReference`, which calls it, and the effect log's display families read it (`verbs/effects.ts::displayFamiliesOf`). Within an edits entry it also records the display as the entry's (`WireEntryScope`), for the check after the entry.
+Stamps the name a copy's reference shows it under on its copy effect (`CopyEffect.display`): the source's own name for a reference that aliases back, the shown name for a named one, and none for a bare reference to a hidden copy. A bare reference never replaces a display the copy already has, so the stamp does not depend on which reference comes last. Its reference is made by `primitives/copy.ts::copyReference`, which calls it, and the effect log's display families read it (`verbs/effects.ts::displayFamiliesOf`). Within an edits entry it also records the display as the entry's (`WireEntryScope`), for the check after the entry.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::wireCopyReference`
 
@@ -986,7 +986,7 @@ Whether the edit applying now edits a copy's body.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::sourceBodyOf`
 
-A source rule's body as the layer leaves it: its deposit, or else the body its own layer function gives (`evaluateLayerRule`, which runs it now if it has not run), or else the base's body. A kind the layer's edits mint has no body until its deposit exists. So a copy carries what the layer does to its source, through its `rules:` callback and its edits entries. The body is taken below the pattern and visible-external rewrites, as a deposit is.
+A source rule's body as the layer leaves it: a lift's body as an edit in place left it, or its deposit, or else the body its own layer function gives (`evaluateLayerRule`, which runs it now if it has not run), or else the base's body. A kind the layer's edits mint has no body until its deposit exists. So a copy carries what the layer does to its source, through its `rules:` callback and its edits entries. The body is taken below the pattern and visible-external rewrites, as a deposit is.
 
 ### `packages/codegen/src/dsl/wire/wire.ts::sameCopy`
 

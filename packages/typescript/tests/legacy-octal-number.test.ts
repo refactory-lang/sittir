@@ -5,7 +5,7 @@ import { portableRuntime } from '@sittir/common/engine';
 import { sharedEngine } from '@sittir/common/testing';
 import typescript from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 type Spanned = { readonly $type?: unknown; readonly $_layout?: { readonly at?: { readonly $span?: { readonly start: number; readonly end: number } } } };
 
 const ts = await sharedEngine(() => createEngine(typescript));
@@ -33,10 +33,11 @@ describe('legacy octal numbers', () => {
 		expect(order.indexOf('number_legacy_octal')).toBeLessThan(order.indexOf('number_decimal'));
 	});
 
-	it('take a leading zero followed by octal digits with a nonzero one; a form holding an 8 or a 9, and zero, stay decimal', () => {
-		const source = 'let a = 0377;\nlet b = 007;\nlet c = 08;\nlet d = 0389;\nlet e = 00;\nlet f = 0;\n';
+	it('take a leading zero followed by octal digits with a nonzero one, apart from the prefixed octal kind; a form holding an 8 or a 9, and zero, stay decimal', () => {
+		const source = 'let a = 0377;\nlet b = 007;\nlet c = 08;\nlet d = 0389;\nlet e = 00;\nlet f = 0;\nlet g = 0o17;\n';
 		const root = native.parseAndRead(source, { depth: Infinity }).root;
 		expect(kindsOf(source, ts.kinds.NumberLegacyOctal, root)).toEqual(['0377', '007']);
+		expect(kindsOf(source, ts.kinds.NumberOctal, root)).toEqual(['0o17']);
 		expect(kindsOf(source, ts.kinds.NumberDecimal, root)).toEqual(['08', '0389', '00', '0']);
 	});
 

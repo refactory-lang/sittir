@@ -267,6 +267,9 @@ export const buildForHeaderLetConstKind = dispatched(() => backend().buildForHea
 export const buildForHeaderUsingKind = dispatched(() => backend().buildForHeaderUsingKind);
 export const buildForHeaderUsingKindPlain = dispatched(() => backend().buildForHeaderUsingKindPlain);
 export const buildForHeaderUsingKindAwait = dispatched(() => backend().buildForHeaderUsingKindAwait);
+export const buildForInitializerLetConstKind = dispatched(() => backend().buildForInitializerLetConstKind);
+export const buildForInitializerVarKind = dispatched(() => backend().buildForInitializerVarKind);
+export const buildForInitializerUsingKind = dispatched(() => backend().buildForInitializerUsingKind);
 export const buildFormalParametersGetAccessorSignature = O.buildFormalParametersGetAccessorSignature;
 export const buildFormalParametersSetAccessorSignature = dispatched(
 	() => backend().buildFormalParametersSetAccessorSignature
@@ -558,6 +561,9 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
+	for_initializer_let_const_kind: buildForInitializerLetConstKind,
+	for_initializer_var_kind: buildForInitializerVarKind,
+	for_initializer_using_kind: buildForInitializerUsingKind,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,

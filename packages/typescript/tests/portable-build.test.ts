@@ -7,6 +7,44 @@ const runtime = await portableRuntime(await createEngine(typescript, { api: 'str
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
 describe('the portable build through the strict table', () => {
+	it("reads a function's, a method's, a constructor's and an accessor's block as their statements, and builds the block from them", () => {
+		const firstOf = (source: string): Readonly<Record<string, unknown>> => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly Readonly<Record<string, unknown>>[] }).statements[0]!;
+		const fn = firstOf('function f() { x(); }');
+		expect(fn).toMatchObject({ $path: 'declaration.function', statements: [{ $path: 'expression.call', function: 'x' }] });
+		expect(fn).not.toHaveProperty('body');
+		expect(render(runtime.build(fn as never))).toBe('function f() {\n  x();\n}');
+		expect(firstOf('function* g() { yield 1; }')).toMatchObject({ $path: 'declaration.function', statements: [{ $path: 'expression.yield' }] });
+		const members = firstOf('class C { constructor() { a(); } m() { b(); } get p() { return 1; } set p(v) { c(); } }').members as readonly Readonly<Record<string, unknown>>[];
+		expect(members.map((member) => [member.$path, (member.statements as readonly unknown[] | undefined)?.length, 'body' in member])).toEqual([
+			['declaration.member.constructor', 1, false],
+			['declaration.member.method', 1, false],
+			['declaration.member.property.getter', 1, false],
+			['declaration.member.property.setter', 1, false]
+		]);
+	});
+	it("reads an if's and an else's bare statement and block alike as their statements, an else's bare if included, and builds them in blocks, but for an else holding one if", () => {
+		const ifOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
+		const bare = ifOf('if (a) x(); else y();');
+		expect(bare).toEqual(ifOf('if (a) { x(); } else { y(); }'));
+		expect(bare).toMatchObject({
+			$path: 'statement.if',
+			statements: [{ $path: 'expression.call', function: 'x' }],
+			alternative: { $path: 'clause.else', statements: [{ $path: 'expression.call', function: 'y' }] }
+		});
+		expect(render(runtime.build(bare as never))).toBe('if (a) {\n  x();\n} else {\n  y();\n}');
+		expect(ifOf('if (a) {} else if (b) {}')).toEqual(ifOf('if (a) {} else { if (b) {} }'));
+		expect(render(runtime.build(ifOf('if (a) {} else { if (b) {} }') as never))).toBe('if (a) {} else if (b) {}');
+	});
+
+	it("reads a loop's bare statement and its block alike as its statements, and builds them in the block", () => {
+		const loopOf = (source: string): unknown => (runtime.read(runtime.engine.parse(source)) as { readonly statements: readonly unknown[] }).statements[0];
+		const bare = loopOf('while (a) x();');
+		expect(bare).toEqual(loopOf('while (a) { x(); }'));
+		expect(bare).toMatchObject({ $path: 'statement.loop.while', statements: [{ $path: 'expression.call', function: 'x' }] });
+		expect(render(runtime.build(bare as never))).toBe('while (a) {\n  x();\n}');
+		expect(render(runtime.build({ $path: 'statement.loop.do_while', condition: { $path: 'expression.parenthesized', expression: 'a' }, statements: [] }))).toBe('do {} while (a);');
+	});
+
 	it("builds an arrow function's single parameter through the mount that seats it at the function's key", () => {
 		expect(render(runtime.build({ $path: 'expression.lambda', parameters: 'a', body: 'x' }))).toBe('a => x');
 	});
@@ -35,11 +73,11 @@ describe('the portable build through the strict table', () => {
 			expect(render(built)).toBe('export { a } from "m";');
 			expect(runtime.read(built as never)).toEqual({ $path: 'statement.export', exportClause, source });
 		}
-		expect(() => runtime.build({ $path: 'statement.export', source })).toThrow('statement.export builds this structure (members source); it needs exportClause');
+		expect(() => runtime.build({ $path: 'statement.export', source })).toThrow('statement.export builds this structure (slots source); it needs exportClause');
 	});
 
 	it('builds an exported declaration in the plain form at statement.export and through the default keyword at statement.export.default, each reading back as its path', () => {
-		const declaration = { $path: 'declaration.class', name: 'C', body: [], decorators: [] };
+		const declaration = { $path: 'declaration.type.class', name: 'C', members: [], decorators: [] };
 		for (const [path, text] of [['statement.export', 'export class C {}'], ['statement.export.default', 'export default class C {}']] as const) {
 			const built = runtime.build({ $path: path, declaration });
 			expect(render(built)).toBe(text);
@@ -77,14 +115,13 @@ describe('the portable build through the strict table', () => {
 
 	it('builds a default export of a value through the nested mount, and of a declaration through the default form', () => {
 		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x;');
-		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };
+		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], statements: [] };
 		expect(render(runtime.build({ $path: 'statement.export.default', declaration }))).toBe('export default function f() {}');
 	});
 
 	it("builds a catch parameter at the key its clause takes flattened, and an exported declaration without a default", () => {
-		const block = { $path: 'statement.block', statements: [] };
-		expect(render(runtime.build({ $path: 'clause.catch', name: 'e', body: block }))).toBe('catch (e) {}');
-		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: block };
+		expect(render(runtime.build({ $path: 'clause.catch', name: 'e', statements: [] }))).toBe('catch (e) {}');
+		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], statements: [] };
 		expect(render(runtime.build({ $path: 'statement.export', declaration }))).toBe('export function f() {}');
 	});
 });

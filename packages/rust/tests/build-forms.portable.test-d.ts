@@ -47,16 +47,15 @@ export const boundedConstant: In<'declaration.type_parameter.value'> = { $path: 
 export const flaggedConstant: In<'declaration.type_parameter.value'> = { $path: 'declaration.type_parameter.value', name, type, $flags: ['const'] };
 
 declare const flag: Flag;
-declare const body: At<'declaration.function'>['body'];
 declare const fnName: At<'declaration.function'>['name'];
-export const asyncFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['async', 'unsafe'] };
-export const asyncPublic: In<'declaration.function.public'> = { $path: 'declaration.function.public', name: fnName, parameters: [], body, $flags: ['async'] };
+export const asyncFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], $flags: ['async', 'unsafe'] };
+export const asyncPublic: In<'declaration.function.public'> = { $path: 'declaration.function.public', name: fnName, parameters: [], statements: [], $flags: ['async'] };
 // @ts-expect-error a function declares no static; a method does
-export const staticFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['static'] };
+export const staticFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], $flags: ['static'] };
 // @ts-expect-error generator functions are a feature rust lacks
-export const generatorFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, $flags: ['generator'] };
-// @ts-expect-error a flag is named in $flags, never written as a member
-export const memberFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], body, async: flag };
+export const generatorFunction: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], $flags: ['generator'] };
+// @ts-expect-error a flag is named in $flags, never written as a slot
+export const slotFlag: In<'declaration.function'> = { $path: 'declaration.function', name: fnName, parameters: [], statements: [], async: flag };
 
 export const readAsync: At<'declaration.function'>['$flags'] = ['async'];
 // @ts-expect-error a read function carries no static
@@ -66,5 +65,12 @@ export const readReference: At<'declaration.parameter.receiver'>['$flags'] = ['r
 type Defaults = V.Contract<RustMap['features']>;
 type NestedReceiver = Extract<NonNullable<V.Read<Defaults, 'declaration.function'>['receiver']>, { readonly $path: 'declaration.parameter.receiver' }>;
 export const nestedReference: NestedReceiver = { $path: 'declaration.parameter.receiver', $flags: ['reference'] };
-// @ts-expect-error a nested default carries its flags in $flags, never as a member
-export const nestedMember: NestedReceiver = { $path: 'declaration.parameter.receiver', reference: flag };
+// @ts-expect-error a nested default carries its flags in $flags, never as a slot
+export const nestedSlot: NestedReceiver = { $path: 'declaration.parameter.receiver', reference: flag };
+
+declare const tupleMember: At<'type.tuple'>['types'][number];
+export const oneTupleMember: In<'type.tuple'> = { $path: 'type.tuple', types: [tupleMember] };
+// @ts-expect-error a tuple type holds at least one type
+export const noTupleMembers: In<'type.tuple'> = { $path: 'type.tuple', types: [] };
+declare const callee: At<'expression.call'>['function'];
+export const plainCall: In<'expression.call'> = { $path: 'expression.call', function: callee, arguments: [], typeArguments: [] };

@@ -726,19 +726,19 @@
     "named": true,
     "subtypes": [
       {
-        "type": "range_expression_bare",
+        "type": "range_expression_bounded",
         "named": true
       },
       {
-        "type": "range_expression_binary",
+        "type": "range_expression_lower_bounded",
         "named": true
       },
       {
-        "type": "range_expression_postfix",
+        "type": "range_expression_unbounded",
         "named": true
       },
       {
-        "type": "range_expression_prefix",
+        "type": "range_expression_upper_bounded",
         "named": true
       }
     ]
@@ -748,11 +748,15 @@
     "named": true,
     "subtypes": [
       {
-        "type": "range_pattern_prefix",
+        "type": "range_pattern_bounded",
         "named": true
       },
       {
-        "type": "range_pattern_with_left",
+        "type": "range_pattern_lower_bounded",
+        "named": true
+      },
+      {
+        "type": "range_pattern_upper_bounded",
         "named": true
       }
     ]
@@ -5429,12 +5433,7 @@
     }
   },
   {
-    "type": "range_expression_bare",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "range_expression_binary",
+    "type": "range_expression_bounded",
     "named": true,
     "fields": {
       "end": {
@@ -5478,7 +5477,7 @@
     }
   },
   {
-    "type": "range_expression_postfix",
+    "type": "range_expression_lower_bounded",
     "named": true,
     "fields": {
       "operator": {
@@ -5504,7 +5503,12 @@
     }
   },
   {
-    "type": "range_expression_prefix",
+    "type": "range_expression_unbounded",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "range_expression_upper_bounded",
     "named": true,
     "fields": {
       "end": {
@@ -5530,10 +5534,44 @@
     }
   },
   {
-    "type": "range_pattern_prefix",
+    "type": "range_pattern_bounded",
     "named": true,
     "fields": {
-      "right": {
+      "end": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_literal_pattern",
+            "named": true
+          },
+          {
+            "type": "crate",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
+            "named": true
+          },
+          {
+            "type": "self_module",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          }
+        ]
+      },
+      "start": {
         "multiple": false,
         "required": true,
         "types": [
@@ -5570,10 +5608,10 @@
     }
   },
   {
-    "type": "range_pattern_with_left",
+    "type": "range_pattern_lower_bounded",
     "named": true,
     "fields": {
-      "left": {
+      "start": {
         "multiple": false,
         "required": true,
         "types": [
@@ -5607,32 +5645,13 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "range_pattern_with_left_bare",
-          "named": true
-        },
-        {
-          "type": "range_pattern_with_left_with_right",
-          "named": true
-        }
-      ]
     }
   },
   {
-    "type": "range_pattern_with_left_bare",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "range_pattern_with_left_with_right",
+    "type": "range_pattern_upper_bounded",
     "named": true,
     "fields": {
-      "right": {
+      "end": {
         "multiple": false,
         "required": true,
         "types": [

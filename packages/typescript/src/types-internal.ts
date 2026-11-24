@@ -111,6 +111,9 @@ export interface SubBuilderRowKind {
 	'forHeader.lhs': TSKindId.ForHeaderLhs;
 	'forHeader.usingKind': TSKindId.ForHeaderUsingKind;
 	'forHeader.varKind': TSKindId.ForHeaderVarKind;
+	'forInitializer.letConstKind': TSKindId.ForInitializerLetConstKind;
+	'forInitializer.usingKind': TSKindId.ForInitializerUsingKind;
+	'forInitializer.varKind': TSKindId.ForInitializerVarKind;
 	'importSpecifier.as': TSKindId.ImportSpecifierAs;
 	'importSpecifier.name': TSKindId.ImportSpecifierName;
 	'indexSignature.colon': TSKindId.IndexSignatureColon;

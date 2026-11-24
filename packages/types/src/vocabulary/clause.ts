@@ -22,6 +22,6 @@ export namespace Clause {
 	export interface Else<G extends GrammarMap, K extends Under<'clause.else'> = 'clause.else'> extends SubKindOf<V.Clause<G, K>> {
 		// claimed by prt
 		readonly $path: K;
-		readonly body: Slot<G, K, 'body', V.Declaration.Any<G> | V.Expression.Any<G> | V.Identifier.Any<G> | V.Literal.Any<G> | V.Statement.Any<G>>;
+		readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
 	}
 }

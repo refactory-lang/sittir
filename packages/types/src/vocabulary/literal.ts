@@ -19,12 +19,12 @@ export namespace Literal {
 		readonly $value: boolean;
 	}
 	export namespace Boolean {
-		export interface False<G extends GrammarMap, K extends Under<'literal.boolean.false'> = 'literal.boolean.false'> extends SubKindOf<V.Literal.Boolean<G, K>> {
+		export interface False<G extends GrammarMap, K extends Under<'literal.boolean.false'> = 'literal.boolean.false'> extends SubKindOf<V.Literal.Boolean<G, K>, '$value'> {
 			// claimed by prt
 			readonly $path: K;
 			readonly $value: false;
 		}
-		export interface True<G extends GrammarMap, K extends Under<'literal.boolean.true'> = 'literal.boolean.true'> extends SubKindOf<V.Literal.Boolean<G, K>> {
+		export interface True<G extends GrammarMap, K extends Under<'literal.boolean.true'> = 'literal.boolean.true'> extends SubKindOf<V.Literal.Boolean<G, K>, '$value'> {
 			// claimed by prt
 			readonly $path: K;
 			readonly $value: true;
@@ -36,7 +36,7 @@ export namespace Literal {
 		readonly $value: number | bigint;
 	}
 	export namespace Number {
-		export interface Float<G extends GrammarMap, K extends Under<'literal.number.float'> = 'literal.number.float'> extends SubKindOf<V.Literal.Number<G, K>> {
+		export interface Float<G extends GrammarMap, K extends Under<'literal.number.float'> = 'literal.number.float'> extends SubKindOf<V.Literal.Number<G, K>, '$value'> {
 			// claimed by prt
 			readonly $path: K;
 			readonly $value: number;
@@ -44,24 +44,19 @@ export namespace Literal {
 		export interface Integer<G extends GrammarMap, K extends Under<'literal.number.integer'> = 'literal.number.integer'> extends SubKindOf<V.Literal.Number<G, K>> {
 			// claimed by prt
 			readonly $path: K;
-			readonly content?: Slot<G, K, 'content', unknown>;
-			// r only
 		}
 		export namespace Integer {
-			export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.binary'> = 'literal.number.integer.binary'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
+			export interface Binary<G extends GrammarMap, K extends Under<'literal.number.integer.binary'> = 'literal.number.integer.binary'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'suffix'> {
 				// claimed by prt
 				readonly $path: K;
-				readonly content: Slot<G, K, 'content', unknown>;
 			}
-			export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.hex'> = 'literal.number.integer.hex'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
+			export interface Hex<G extends GrammarMap, K extends Under<'literal.number.integer.hex'> = 'literal.number.integer.hex'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'suffix'> {
 				// claimed by prt
 				readonly $path: K;
-				readonly content: Slot<G, K, 'content', unknown>;
 			}
-			export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.octal'> = 'literal.number.integer.octal'> extends SubKindOf<V.Literal.Number.Integer<G, K>> {
+			export interface Octal<G extends GrammarMap, K extends Under<'literal.number.integer.octal'> = 'literal.number.integer.octal'> extends SubKindOf<V.Literal.Number.Integer<G, K>, 'suffix'> {
 				// claimed by prt
 				readonly $path: K;
-				readonly content: Slot<G, K, 'content', unknown>;
 			}
 		}
 		export interface Negative<G extends GrammarMap, K extends Under<'literal.number.negative'> = 'literal.number.negative'> extends SubKindOf<V.Literal.Number<G, K>, '$value'> {

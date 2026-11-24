@@ -41,10 +41,10 @@ export function refuseSplitDisplays(rule: RuntimeRule): RuntimeRule {
 	const shown = wireEntryShown();
 	if (shown.size === 0) return rule;
 	const displays = referenceDisplays(rule);
-	for (const [copy, display] of shown)
-		for (const other of displays.get(copy) ?? [])
-			if (other !== display)
-				throw new VerbRefusal('edit-site-conflict', `the copy '${copy}' is shown as '${display ?? copy}' and as '${other ?? copy}'`, { copy, displays: [display ?? copy, other ?? copy] });
+	for (const [copy, display] of shown) {
+		const [first, second] = new Set([display, ...(displays.get(copy) ?? [])].filter((name) => name !== undefined));
+		if (second !== undefined) throw new VerbRefusal('edit-site-conflict', `the copy '${copy}' is shown as '${first}' and as '${second}'`, { copy, displays: [first, second] });
+	}
 	return rule;
 }
 

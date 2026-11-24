@@ -13,14 +13,18 @@ export namespace Declaration {
 		readonly unsafe?: Flag;
 		// r only
 	}
-	export namespace Interface {
-		export interface Trait<G extends GrammarMap, K extends Under<'declaration.interface.trait'> = 'declaration.interface.trait'> {
-			readonly unsafe?: Flag;
+	export namespace Type {
+		export namespace Interface {
+			export interface Trait<G extends GrammarMap, K extends Under<'declaration.type.interface.trait'> = 'declaration.type.interface.trait'> {
+				readonly unsafe?: Flag;
+			}
 		}
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly unsafe?: Flag;
-		// rt only
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+			readonly unsafe?: Flag;
+			// rt only
+		}
 	}
 	export namespace Module {
 		export interface Foreign<G extends GrammarMap, K extends Under<'declaration.module.foreign'> = 'declaration.module.foreign'> {

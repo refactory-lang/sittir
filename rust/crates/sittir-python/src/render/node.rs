@@ -35824,13 +35824,12 @@ fn render_string<N: StringFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_content"),
-        join: ::sittir_core::render::JoinArm::BOTH,
+        join: ::sittir_core::render::JoinArm::NONE,
     };
     let string_end = node.string_end();
     let string_start = node.string_start();
     w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_start", ::sittir_core::types::ItemIndex(0), w, |w| string_start.render(w))?;
-    if content.is_present() { w.join_arm(::sittir_core::render::JoinArm::BOTH); }
     content.render(w)?;
     w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_end", ::sittir_core::types::ItemIndex(0), w, |w| string_end.render(w))?;
@@ -35850,9 +35849,8 @@ fn render_string_content<N: StringContentFields + ?Sized>(node: &N, w: &mut dyn 
         head: None,
         tail: None,
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_elements"),
-        join: ::sittir_core::render::JoinArm::PREVIOUS,
+        join: ::sittir_core::render::JoinArm::NONE,
     };
-    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     elements.render(w)?;
     Ok(())
 }
@@ -35896,7 +35894,6 @@ fn render_format_specifier<N: FormatSpecifierFields + ?Sized>(node: &N, w: &mut 
     };
     w.edge(::sittir_core::types::KindId(259), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text(":")?;
-    w.site_at(options::SITE_FORMAT_SPECIFIER_COLON_AFTER);
     elements.render(w)?;
     w.edge(::sittir_core::types::KindId(259), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())

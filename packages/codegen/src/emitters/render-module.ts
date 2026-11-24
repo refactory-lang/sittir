@@ -4204,15 +4204,18 @@ function kindFieldKindOfLines(typeName: string): string[] {
 }
 
 
-interface StructSlot {
+export interface StructSlot {
 	readonly slot: AssembledNonterminal;
 	readonly owner: AssembledNode;
 	readonly forceOptional: boolean;
 }
 
+export function numberedSlotsOf(node: AssembledNode, nodeMap: NodeMap): readonly StructSlot[] {
+	return isCompoundOf(node) ? structSlotsOf(node, renderSlotModelOf(node), nodeMap) : [];
+}
+
 export function nodeSlotNumbers(node: AssembledNode, nodeMap: NodeMap): ReadonlyMap<string, number> {
-	if (!isCompoundOf(node)) return new Map();
-	return new Map(structSlotsOf(node, renderSlotModelOf(node), nodeMap).map(({ slot }, index) => [slot.storageName, index]));
+	return new Map(numberedSlotsOf(node, nodeMap).map(({ slot }, index) => [slot.storageName, index]));
 }
 
 function structSlotsOf(node: AssembledNode, slotModel: RenderSlotModel, nodeMap: NodeMap): StructSlot[] {

@@ -167,6 +167,7 @@ export interface SubBuilderRowKind {
 	'charLiteralEscaped.simple': TSKindId.CharLiteralEscapedSimple;
 	'charLiteralEscaped.unicodeBraced': TSKindId.CharLiteralEscapedUnicodeBraced;
 	'charLiteralEscaped.unicodeFixed': TSKindId.CharLiteralEscapedUnicodeFixed;
+	closureExpression: TSKindId.ClosureExpressionExpr;
 	'closureExpression.block': TSKindId.ClosureExpressionBlock;
 	'closureExpression.expr': TSKindId.ClosureExpressionExpr;
 	comment: TSKindId.LineComment;
@@ -233,12 +234,13 @@ export interface SubBuilderRowKind {
 	'orPattern.prefix': TSKindId.OrPatternPrefix;
 	'pointerType.const': TSKindId.PointerTypeConst;
 	'pointerType.mut': TSKindId.PointerTypeMut;
-	'rangeExpression.bare': TSKindId.RangeExpressionBare;
-	'rangeExpression.binary': TSKindId.RangeExpressionBinary;
-	'rangeExpression.postfix': TSKindId.RangeExpressionPostfix;
-	'rangeExpression.prefix': TSKindId.RangeExpressionPrefix;
-	'rangePattern.prefix': TSKindId.RangePatternPrefix;
-	'rangePattern.withLeft': TSKindId.RangePatternWithLeft;
+	'rangeExpression.bounded': TSKindId.RangeExpressionBounded;
+	'rangeExpression.lowerBounded': TSKindId.RangeExpressionLowerBounded;
+	'rangeExpression.unbounded': TSKindId.RangeExpressionUnbounded;
+	'rangeExpression.upperBounded': TSKindId.RangeExpressionUpperBounded;
+	'rangePattern.bounded': TSKindId.RangePatternBounded;
+	'rangePattern.lowerBounded': TSKindId.RangePatternLowerBounded;
+	'rangePattern.upperBounded': TSKindId.RangePatternUpperBounded;
 	'referenceExpression.bare': TSKindId.ReferenceExpressionBare;
 	'referenceExpression.mut': TSKindId.ReferenceExpressionMut;
 	'referenceExpression.rawConst': TSKindId.ReferenceExpressionRawConst;

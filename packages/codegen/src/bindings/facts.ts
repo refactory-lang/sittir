@@ -77,9 +77,9 @@ export interface UnclaimedFact {
 	readonly reason: string | null;
 }
 
-export type MemberFact = MemberRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean; readonly tested?: true };
+export type SlotFact = SlotRouteFact & { readonly claims?: readonly number[]; readonly leadMatch?: LeadLeadMatch; readonly flag?: boolean; readonly tested?: true };
 
-type MemberRouteFact =
+type SlotRouteFact =
 	| ({ readonly route: 'rename'; readonly owner: string; readonly name: string; readonly token?: string } & SlotSelector)
 	| ({ readonly route: 'dropped'; readonly owner: string; readonly token?: string } & SlotSelector)
 	| {
@@ -94,7 +94,7 @@ type MemberRouteFact =
 			readonly route: 'kind';
 			readonly owner: string;
 			readonly name: string;
-			readonly member: string;
+			readonly slot: string;
 			readonly kind: string;
 	  }
 	| ({
@@ -106,9 +106,9 @@ type MemberRouteFact =
 			readonly via: readonly SlotSelector[];
 	  } & SlotSelector);
 
-export type NamedMemberFact = Exclude<MemberFact, { readonly route: 'dropped' }>;
+export type NamedSlotFact = Exclude<SlotFact, { readonly route: 'dropped' }>;
 
-export const isNamedMember = (member: MemberFact): member is NamedMemberFact => member.route !== 'dropped';
+export const isNamedSlot = (slot: SlotFact): slot is NamedSlotFact => slot.route !== 'dropped';
 
 export interface ContainerCapture extends SlotSelector {
 	readonly name: string;
@@ -155,7 +155,7 @@ export class BindingsSyntaxError extends Error {
 
 export interface BindingFacts {
 	readonly claims: readonly ClaimFact[];
-	readonly members: readonly MemberFact[];
+	readonly slots: readonly SlotFact[];
 	readonly containers: readonly ContainerFact[];
 	readonly templates: readonly TemplateFact[];
 	readonly unclaimed: readonly UnclaimedFact[];
@@ -170,9 +170,13 @@ export interface ModelSlot {
 	readonly storage: string;
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
+	readonly fixedTokens?: true;
+	readonly registered?: true;
+	readonly valueSource?: true;
 	readonly mounts?: Readonly<Record<string, ModelMount>>;
 	readonly flattens?: readonly string[];
 	readonly tuples?: readonly string[];
+	readonly chain?: { readonly storage: readonly string[]; readonly slots: readonly string[]; readonly list?: true };
 }
 
 export interface ModelMount {
@@ -406,7 +410,7 @@ function bindSite(
 	return { ...site, down: bindPath(site.down, siteRootKind(site, claim), rename, fieldNameOf) };
 }
 
-function bindMember(m: MemberFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): MemberFact {
+function bindSlot(m: SlotFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): SlotFact {
 	if (m.route === 'presence')
 		return { ...m, owner: rename(m.owner), via: bindVia(m.via, m.owner, rename, fieldNameOf) };
 	if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
@@ -438,7 +442,7 @@ interface SitedPlacement {
 	readonly aliased: boolean;
 }
 
-function sitedPlacement(claim: ClaimFact, nameAt: NameAt): SitedPlacement {
+function sitedPlacement(claim: ClaimFact, nameAt: NameAt, shortened: ReadonlySet<string>): SitedPlacement {
 	let scope: string | undefined;
 	const within = claim.within
 		.toReversed()
@@ -449,20 +453,20 @@ function sitedPlacement(claim: ClaimFact, nameAt: NameAt): SitedPlacement {
 		})
 		.toReversed();
 	if (claim.kind === null || claim.kind === WILDCARD) return { kind: claim.kind, within, aliased: false };
-	const at = nameAt(claim.kind, scope, ownName(claim));
+	const at = nameAt(claim.kind, scope, ownName(claim, shortened));
 	return { kind: at.name, within, aliased: at.scope !== claim.kind };
 }
 
-const ownName = (claim: ClaimFact): string => boundKindName(claim.vocab, isParserHiddenName(claim.kind!));
+const ownName = (claim: ClaimFact, shortened: ReadonlySet<string>): string => boundKindName(claim.vocab, isParserHiddenName(claim.kind!), shortened);
 
 const readsAbove = (claim: ClaimFact): boolean =>
 	claim.predicates.some((p) => p.subject !== null && p.subject.up > 0) || claim.children.some((child) => child.subject.up > 0);
 
-const namesItsAlias = (claim: ClaimFact, placed: SitedPlacement): boolean => placed.aliased && !readsAbove(claim) && placed.kind === ownName(claim);
+const namesItsAlias = (claim: ClaimFact, placed: SitedPlacement, shortened: ReadonlySet<string>): boolean => placed.aliased && !readsAbove(claim) && placed.kind === ownName(claim, shortened);
 
-function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf, nameAt: NameAt): ClaimFact {
-	const placed = sitedPlacement(claim, nameAt);
-	const unplaced = namesItsAlias(claim, placed);
+function bindClaim(claim: ClaimFact, rename: (kind: string) => string, shortened: ReadonlySet<string>, fieldNameOf: FieldNameOf, nameAt: NameAt): ClaimFact {
+	const placed = sitedPlacement(claim, nameAt, shortened);
+	const unplaced = namesItsAlias(claim, placed, shortened);
 	return {
 		...claim,
 		...(claim.match === undefined ? {} : { match: bindMatch(claim.match, rename, fieldNameOf) }),
@@ -500,11 +504,12 @@ function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldName
 export function bindFacts(
 	facts: BindingFacts,
 	rename: (kind: string) => string,
+	shortened: ReadonlySet<string>,
 	fieldNameOf: FieldNameOf = unchangedField,
 	nameAt: NameAt = unsited(rename)
 ): BindingFacts {
-	const claims = facts.claims.map((claim) => bindClaim(claim, rename, fieldNameOf, nameAt));
-	const ownersOf = (m: MemberFact, owner: string): ReadonlyMap<string, readonly number[]> => {
+	const claims = facts.claims.map((claim) => bindClaim(claim, rename, shortened, fieldNameOf, nameAt));
+	const ownersOf = (m: SlotFact, owner: string): ReadonlyMap<string, readonly number[]> => {
 		const owners = new Map<string, number[]>();
 		for (const i of m.claims ?? []) {
 			const at = facts.claims[i]?.kind === m.owner ? (claims[i]!.kind ?? owner) : owner;
@@ -514,8 +519,8 @@ export function bindFacts(
 	};
 	return {
 		claims,
-		members: facts.members.flatMap((m): MemberFact[] => {
-			const bound = m.leadMatch === undefined ? bindMember(m, rename, fieldNameOf) : { ...bindMember(m, rename, fieldNameOf), leadMatch: bindLeadMatch(m.leadMatch, rename, fieldNameOf) };
+		slots: facts.slots.flatMap((m): SlotFact[] => {
+			const bound = m.leadMatch === undefined ? bindSlot(m, rename, fieldNameOf) : { ...bindSlot(m, rename, fieldNameOf), leadMatch: bindLeadMatch(m.leadMatch, rename, fieldNameOf) };
 			const owners = ownersOf(m, bound.owner);
 			if (owners.size <= 1 && (owners.size === 0 || owners.has(bound.owner))) return [bound];
 			return [...owners].map(([owner, ids]) => ({ ...bound, owner, claims: ids }));

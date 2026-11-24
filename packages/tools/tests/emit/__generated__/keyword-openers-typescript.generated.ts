@@ -68,7 +68,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					}),
 				}))),
 			}), ts.build.forStatement({
-				initializer: ts.build.lexicalDeclaration({
+				initializer: ts.build.forInitializerLetConstKind({
 					kind: ts.kinds.LetKeyword,
 					declarators: [ts.build.variableDeclaratorPlain({
 						name: ts.build.identifier("i"),
@@ -107,7 +107,7 @@ export function rebuildKeywordOpenersTypescriptGenerated() {
 					value: ts.build.parenthesizedExpressionTyped({
 						expression: ts.build.number.decimal("1"),
 					}),
-					bodies: [ts.build.breakStatement()],
+					statements: [ts.build.breakStatement()],
 				})),
 			}), ts.build.throwStatement(ts.build.parenthesizedExpressionTyped({
 				expression: ts.build.newExpression({

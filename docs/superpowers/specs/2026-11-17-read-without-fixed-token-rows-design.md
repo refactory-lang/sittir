@@ -120,6 +120,7 @@ The render body is the only source of that order:
 - **No built record to copy.** A built record answers no navigation: a query facet refuses a node with no parsed tree (`query.ts::queryFacet`), and `siblings` answers parsed trees only.
 - **Cells are not in document order.** `recordLayoutOf` puts every boolean slot as a bit in the presence words, ahead of all cells.
   - Word cells follow the render body in all five grammars, and every body writes its slots in one order on every arm.
+  - A source can still write a holder's keywords in another order: typescript's class field takes `readonly abstract` and `abstract readonly`, and `protected declare` puts a unit before a flag. Those keywords are listed in the body's order all the same and nothing records the source's. No query yields a flag, a render of an untouched node is its source slice, and the parity test aligns a holder's keywords by role (brainstorm's call, 2026-11-23, after probing both storages).
   - A boolean slot written after a word cell puts a kind's cells out of document order. That is 28 kinds: rust 4, typescript 20, python 1, regex 2, scm 1.
   - Two examples: rust `reference_type` `&'a mut T` stores `mutable_specifier` before the lifetime, and typescript `subscript_expression` `a?.[0]` stores `optional_chain` before the object.
 

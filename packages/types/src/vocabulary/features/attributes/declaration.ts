@@ -2,13 +2,16 @@ import type { GrammarMap, Slot } from '../../map.ts';
 import type { Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
-	export interface EnumMember<G extends GrammarMap, K extends Under<'declaration.enum_member'> = 'declaration.enum_member'> {
-		readonly attributes?: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];
-		// r only
-	}
-	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
-		readonly attributes?: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];
-		// r only
+	export namespace Member {
+		export type Attribute<G extends GrammarMap> = V.Attribute.Any<G>;
+		export interface EnumMember<G extends GrammarMap, K extends Under<'declaration.member.enum_member'> = 'declaration.member.enum_member'> {
+			readonly attributes?: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];
+			// r only
+		}
+		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
+			readonly attributes?: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];
+			// r only
+		}
 	}
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
 		readonly attributes?: Slot<G, K, 'attributes', V.Attribute.Any<G>>[];

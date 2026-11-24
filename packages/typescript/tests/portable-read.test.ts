@@ -3,7 +3,7 @@ import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
 import typescript from '../src/index.ts';
 
-type Read = { readonly $path: string; readonly [member: string]: unknown };
+type Read = { readonly $path: string; readonly [slot: string]: unknown };
 
 const runtime = await portableRuntime(await createEngine(typescript, { api: 'strict', verifyStructure: 'runtime' }));
 const read = (source: string): Read => runtime.read(runtime.engine.parse(source)) as Read;
@@ -24,12 +24,12 @@ describe('the portable read', () => {
 	});
 
 	it('reads a delegating yield at its holder and a negative literal type in its seat, and builds the delegate only with its operand', () => {
-		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ body: { statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] } });
+		expect(firstOf('function* f() {\n  yield* x;\n}\n')).toMatchObject({ statements: [{ $path: 'expression.yield.delegate', expression: 'x' }] });
 		expect(firstOf('type T = -1;\n')).toMatchObject({ value: { $path: 'type.literal', value: { $path: 'literal.number.negative', value: { $path: 'literal.number.integer', $value: 1 } } } });
 		expect(() => runtime.build({ $path: 'expression.yield.delegate' } as never)).toThrow('it needs expression');
 	});
 
-	it('reads the members a binding captures from its slot, and builds an import back', () => {
+	it('reads the slots a binding captures from its grammar slot, and builds an import back', () => {
 		const clause = { $path: 'clause.import.names', specifiers: [{ $path: 'clause.import.specifier', name: 'a' }, { $path: 'clause.import.specifier', name: 'b', alias: 'c' }] };
 		expect(firstOf('import {a, b as c} from "x";')).toMatchObject({ importClause: clause });
 		expect(roundTrip('import {a, b as c} from "x";')).toBe('import { a, b as c } from "x";\n');
@@ -46,9 +46,31 @@ describe('the portable read', () => {
 	});
 
 	it('reads a static readonly field as a value with both flags, each set through the slot that holds its token, and builds it back', () => {
-		const field = (firstOf('class C { static readonly x = 1; }') as { readonly body: readonly unknown[] }).body[0];
-		expect(field).toEqual({ $path: 'declaration.field', $flags: ['static', 'readonly'], decorators: [], name: 'x', value: { $path: 'literal.number.integer', $value: 1 } });
+		const field = (firstOf('class C { static readonly x = 1; }') as { readonly members: readonly unknown[] }).members[0];
+		expect(field).toEqual({ $path: 'declaration.member.field', $flags: ['static', 'readonly'], decorators: [], name: 'x', value: { $path: 'literal.number.integer', $value: 1 } });
 		expect(roundTrip('class C { static readonly x = 1; }')).toBe('class C {\n  static readonly x = 1;\n}\n');
+	});
+
+	it.each([
+		['let', 'declaration.variable.reassignable'],
+		['const', 'declaration.variable.constant'],
+		['var', 'declaration.variable.reassignable.function_scoped']
+	])('builds a statement-level `%s` declaration read on its own, which the for header kinds sharing its path do not take from it', (keyword, path) => {
+		const declaration = firstOf(`${keyword} i = 0;\n`) as Read;
+		expect(declaration.$path).toBe(path);
+		expect(String(runtime.engine.render(runtime.build(declaration) as never))).toBe(`${keyword} i = 0;`);
+	});
+
+	it.each([
+		['let', 'declaration.variable.reassignable'],
+		['const', 'declaration.variable.constant'],
+		['var', 'declaration.variable.reassignable.function_scoped']
+	])('reads a classic for header\'s `%s` declaration as the path a statement-level one reads as, and builds the loop back', (keyword, path) => {
+		const source = `for (${keyword} i = 0; i < 3; i++) {}\n`;
+		const loop = firstOf(source) as Read;
+		expect(loop.initializer).toMatchObject({ $path: path });
+		expect((firstOf(`${keyword} i = 0;\n`) as Read).$path).toBe(path);
+		expect(roundTrip(source)).toBe(source);
 	});
 
 	it('reads a construct call without parentheses as the bare refinement with no arguments, and one with empty parentheses as the call with none, and builds each back', () => {
@@ -78,14 +100,14 @@ describe('the portable read', () => {
 		expect(String(runtime.engine.render(runtime.engine.build.constraint(bound, { operator: typescript.kinds.Colon })))).toBe(': string');
 	});
 
-	it('leaves out a member whose route needs a member the node does not have', () => {
+	it('leaves out a slot whose route needs a grammar slot the node does not have', () => {
 		expect(firstOf('import x = require("y");')).not.toHaveProperty('source');
 		expect(roundTrip('import x = require("y");')).toBe('import x = require("y");\n');
 	});
 
 	it('reads a method decorator onto the method, and builds it back', () => {
 		const source = 'class C {\n  @d\n  m() {}\n}\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', decorators: ['d'] }] });
+		expect(firstOf(source)).toMatchObject({ members: [{ $path: 'declaration.member.method', name: 'm', decorators: ['d'] }] });
 		expect(roundTrip(source)).toBe(source);
 	});
 
@@ -97,13 +119,13 @@ describe('the portable read', () => {
 
 	it("reads an interface body as its members, empty or not, and builds the braces back", () => {
 		expect(firstOf('interface I {\n  a: string;\n  m(): void;\n}')).toMatchObject({
-			$path: 'declaration.interface',
-			body: [
-				{ $path: 'declaration.field.signature', name: 'a', type: 'string' },
-				{ $path: 'declaration.method.signature', name: 'm' }
+			$path: 'declaration.type.interface',
+			members: [
+				{ $path: 'declaration.member.field.signature', name: 'a', type: 'string' },
+				{ $path: 'declaration.member.method.signature', name: 'm' }
 			]
 		});
-		expect(firstOf('interface I {}')).toMatchObject({ $path: 'declaration.interface', body: [] });
+		expect(firstOf('interface I {}')).toMatchObject({ $path: 'declaration.type.interface', members: [] });
 		for (const source of ['interface I {\n  a: string;\n  m(): void;\n}', 'interface I {}', 'interface J extends I {\n  b: number;\n}']) {
 			expect(roundTrip(source)).toBe(`${source}\n`);
 		}
@@ -117,9 +139,9 @@ describe('the portable read', () => {
 		expect(roundTrip(source)).toBe(source);
 	});
 
-	it('reads a list member no route finds as an empty list, parsed and built alike', () => {
+	it('reads a list slot no route finds as an empty list, parsed and built alike', () => {
 		expect(firstOf('function f() {}')).toMatchObject({ $path: 'declaration.function', parameters: [] });
-		expect(firstOf('class C { m() {} }')).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', parameters: [] }] });
+		expect(firstOf('class C { m() {} }')).toMatchObject({ members: [{ $path: 'declaration.member.method', name: 'm', parameters: [] }] });
 		const built = runtime.build(firstOf('function f() {}') as Read) as { readonly $type: number };
 		expect((runtime.read(built) as Read).parameters).toEqual([]);
 		for (const source of ['function f() {}', 'class C {\n  m() {}\n}']) expect(roundTrip(source)).toBe(`${source}\n`);
@@ -153,7 +175,7 @@ describe('the portable read', () => {
 
 	it('reads the `this` type as the receiver type, by its text', () => {
 		const source = 'class C {\n  m(): this {\n    return this;\n  }\n}\n';
-		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', returnType: 'this' }] });
+		expect(firstOf(source)).toMatchObject({ members: [{ $path: 'declaration.member.method', returnType: 'this' }] });
 		expect(roundTrip(source)).toBe(source);
 		expect(typescript.is.portable.type.receiver('this')).toBe(true);
 	});
@@ -273,7 +295,7 @@ describe('the portable read', () => {
 		expect(roundTrip('type X = typeof f<T>;')).toBe('type X = typeof f<T>;\n');
 	});
 
-	it.each(['private', 'protected', 'public'])('keeps a receiver whole that states %s, which no receiver member holds, and builds it back as written', (modifier) => {
+	it.each(['private', 'protected', 'public'])('keeps a receiver whole that states %s, which no receiver slot holds, and builds it back as written', (modifier) => {
 		const source = `class K { m(${modifier} this: K) {} }`;
 		const carries: unknown[] = [];
 		runtime.read(runtime.engine.parse(source), (_, carry) => carries.push(carry));
@@ -292,8 +314,8 @@ describe('the portable read', () => {
 		['class C implements A {}', 'implements', ['A']],
 		['interface I extends A, B {}', 'extends', ['A', 'B']],
 		['interface I extends A {}', 'extends', ['A']]
-	])('reads the heritage of %j as a list, one type or many, and builds it back', (source, member, types) => {
-		expect((firstOf(source) as Read)[member]).toEqual(types);
+	])('reads the heritage of %j as a list, one type or many, and builds it back', (source, slot, types) => {
+		expect((firstOf(source) as Read)[slot]).toEqual(types);
 		expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 

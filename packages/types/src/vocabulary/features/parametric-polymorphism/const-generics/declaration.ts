@@ -3,7 +3,7 @@ import type { SubKindOf, Under } from '../../../utils.ts';
 import type * as V from '../../../index.ts';
 export namespace Declaration {
 	export namespace TypeParameter {
-		export interface Value<G extends GrammarMap, K extends Under<'declaration.type_parameter.value'> = 'declaration.type_parameter.value'> extends SubKindOf<V.Declaration.TypeParameter<G, K>> {
+		export interface Value<G extends GrammarMap, K extends Under<'declaration.type_parameter.value'> = 'declaration.type_parameter.value'> extends SubKindOf<V.Declaration.TypeParameter<G, K>, 'attributes' | 'bounds' | 'const' | 'default' | 'name'> {
 			// claimed by r
 			readonly $path: K;
 			readonly const?: never;

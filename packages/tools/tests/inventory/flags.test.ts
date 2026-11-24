@@ -29,13 +29,13 @@ function vocabularyIn(dir: string): void {
 }
 
 describe('the vocabulary flags', () => {
-	it('are the members declared with the marker type Flag, and a boolean member is data', async () => {
+	it('are the slots declared with the marker type Flag, and a boolean slot is data', async () => {
 		const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
 		vocabularyIn(dir);
 		const vocabulary = await readVocabulary(dir);
 		rmSync(dir, { recursive: true, force: true });
 		expect([...vocabulary.flags].sort()).toEqual(['exclusive', 'writable']);
-		expect(vocabulary.members('expression.complex').get('sign')).toEqual({ optional: true, flag: false });
-		expect(vocabulary.members('expression.complex').get('writable')).toEqual({ optional: true, flag: true });
+		expect(vocabulary.slots('expression.complex').get('sign')).toEqual({ optional: true, flag: false });
+		expect(vocabulary.slots('expression.complex').get('writable')).toEqual({ optional: true, flag: true });
 	});
 });

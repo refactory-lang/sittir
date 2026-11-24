@@ -6,9 +6,11 @@ export namespace Declaration {
 		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
 		// r only
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
-		// rt only
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+			readonly extern?: Slot<G, K, 'extern', V.Modifier.Extern<G>>;
+			// rt only
+		}
 	}
 	export namespace Module {
 		export interface Foreign<G extends GrammarMap, K extends Under<'declaration.module.foreign'> = 'declaration.module.foreign'> extends SubKindOf<V.Declaration.Module<G, K>> {
@@ -18,7 +20,7 @@ export namespace Declaration {
 		}
 	}
 	export namespace Parameter {
-		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'> extends SubKindOf<V.Declaration.Parameter<G, K>> {
+		export interface Variadic<G extends GrammarMap, K extends Under<'declaration.parameter.variadic'> = 'declaration.parameter.variadic'> extends SubKindOf<V.Declaration.Parameter<G, K>, 'mutable'> {
 			// claimed by r
 			readonly $path: K;
 			readonly pattern?: Slot<G, K, 'pattern', unknown>;

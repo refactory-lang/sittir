@@ -3776,8 +3776,8 @@ function withSwitchBody(node: object, setter: string, args: readonly unknown[]):
 
 export function buildSwitchCase<
 	ValueSlot extends T.SwitchCase.Config['value'],
-	BodiesSlot extends T.SwitchCase.Config['bodies']
->(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; bodies: BodiesSlot }>): T.SwitchCase.Bound;
+	StatementsSlot extends T.SwitchCase.Config['statements']
+>(config: RefusingConfig<T.SwitchCase.Config, { value: ValueSlot; statements: StatementsSlot }>): T.SwitchCase.Bound;
 export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound {
 	currentHandle()?.admit(TSKindId.SwitchCase, [config]);
 	const _value = rejectReservedText(
@@ -3786,15 +3786,15 @@ export function buildSwitchCase(config: T.SwitchCase.Config): T.SwitchCase.Bound
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
+	const _statements = listStorage<NonNullable<T.SwitchCase['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _body });
+	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _statements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SwitchCase as const);
 		storeCell(arena, record, 2, 2, _value);
-		storeList(arena, record, 3, 6, _body);
+		storeList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchCase.Bound;
 	});
@@ -3808,28 +3808,28 @@ function buildSwitchCase$patch(source: object, config: T.SwitchCase.Config): T.S
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
+	const _statements = listStorage<NonNullable<T.SwitchCase['_statements']>>(config.statements ?? [], kindIdStorage);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_case', { value: _value, statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _body });
+	handle?.verifyStored?.(TSKindId.SwitchCase as const, { _value, _statements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SwitchCase as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'value', _value));
-		patchList(arena, record, 3, 6, _body);
+		patchList(arena, record, 3, 6, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchCase.Bound;
 	});
 }
 function buildSwitchCase$set(
 	source: object,
-	...[slot, input]: ['value', Partial<T.SwitchCase.Config>] | ['bodies', Partial<T.SwitchCase.Config>]
+	...[slot, input]: ['value', Partial<T.SwitchCase.Config>] | ['statements', Partial<T.SwitchCase.Config>]
 ): T.SwitchCase.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'value':
-			case 'bodies':
+			case 'statements':
 				return buildSwitchCase$patch(source, { ...(inputs.config as T.SwitchCase.Config), ...input });
 		}
 	}
@@ -3851,16 +3851,16 @@ function buildSwitchCase$set(
 				_value
 			) as unknown as T.SwitchCase.Bound;
 		}
-		case 'bodies': {
+		case 'statements': {
 			const config = input;
-			const _body = listStorage<NonNullable<T.SwitchCase['_body']>>(config.bodies ?? [], kindIdStorage);
+			const _statements = listStorage<NonNullable<T.SwitchCase['_statements']>>(config.statements ?? [], kindIdStorage);
 			return setSlot(
 				source,
 				TSKindId.SwitchCase as const,
 				'switch_case',
 				1,
-				'bodies',
-				_body
+				'statements',
+				_statements
 			) as unknown as T.SwitchCase.Bound;
 		}
 	}
@@ -3872,14 +3872,17 @@ function withSwitchCase(node: object, setter: string, args: readonly unknown[]):
 			return applySetter(args, (value: Admit<NonNullable<T.SwitchCase.Config>['value']>) =>
 				rebuilt(node, handle, () => buildSwitchCase$set(node, 'value', { value: value }))
 			);
-		case 'bodies':
+		case 'statements':
 			return applySetter(
 				args,
 				(
 					...values: Admit<
-						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['bodies']>, readonly unknown[]>[number][]
+						Extract<NonNullable<NonNullable<T.SwitchCase.Config>['statements']>, readonly unknown[]>[number][]
 					>
-				) => rebuilt(node, handle, () => buildSwitchCase$set(node, 'bodies', { bodies: restItems('bodies', values) }))
+				) =>
+					rebuilt(node, handle, () =>
+						buildSwitchCase$set(node, 'statements', { statements: restItems('statements', values) })
+					)
 			);
 	}
 	throw new Error(`switch_case has no $with.${setter}`);
@@ -3890,14 +3893,14 @@ export function buildSwitchDefault<A extends Admit<T.Statement[]>>(
 ): T.SwitchDefault.Bound;
 export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	currentHandle()?.admit(TSKindId.SwitchDefault, children);
-	const _body = children;
+	const _statements = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_default', { bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_default', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _body });
+	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.SwitchDefault as const);
-		storeList(arena, record, 2, 2, _body);
+		storeList(arena, record, 2, 2, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchDefault.Bound;
 	});
@@ -3905,14 +3908,14 @@ export function buildSwitchDefault(...children: Admit<T.Statement[]>): T.SwitchD
 
 function buildSwitchDefault$patch(source: object, ...children: Admit<T.Statement[]>): T.SwitchDefault.Bound {
 	currentHandle()?.admit(TSKindId.SwitchDefault, children);
-	const _body = children;
+	const _statements = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'switch_default', { bodies: _body });
+	if (handle !== undefined) admitChildren(handle, 'switch_default', { statements: _statements });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _body });
+	handle?.verifyStored?.(TSKindId.SwitchDefault as const, { _statements });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.SwitchDefault as const);
-		patchList(arena, record, 2, 2, _body);
+		patchList(arena, record, 2, 2, _statements);
 		const node = arena.view(record);
 		return node as unknown as T.SwitchDefault.Bound;
 	});
@@ -3920,9 +3923,9 @@ function buildSwitchDefault$patch(source: object, ...children: Admit<T.Statement
 function withSwitchDefault(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'bodies':
+		case 'statements':
 			return applySetter(args, (...vs: Admit<T.Statement>[]) =>
-				rebuilt(node, handle, () => buildSwitchDefault$patch(node, ...restItems('bodies', vs)))
+				rebuilt(node, handle, () => buildSwitchDefault$patch(node, ...restItems('statements', vs)))
 			);
 	}
 	throw new Error(`switch_default has no $with.${setter}`);
@@ -4190,16 +4193,22 @@ export function buildObject(): T.EmptyObject;
 export function buildObject<
 	A extends Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.Object.Bound;
 export function buildObject(
 	...children: Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 ): T.Object.Bound {
@@ -4229,8 +4238,11 @@ function buildObject$patch(
 	source: object,
 	...children: Admit<
 		(
-			| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-			| T.ShorthandPropertyIdentifier.Types
+			| (
+					| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
+					| T.ShorthandPropertyIdentifier.Types
+			  )
+			| null
 		)[]
 	>
 ): T.Object.Bound {
@@ -4276,16 +4288,22 @@ export function buildObjectPattern(): T.EmptyObjectPattern;
 export function buildObjectPattern<
 	A extends Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 >(...children: A & RefuseUndeclared<A>): T.ObjectPattern.Bound;
 export function buildObjectPattern(
 	...children: Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 ): T.ObjectPattern.Bound {
@@ -4315,8 +4333,11 @@ function buildObjectPattern$patch(
 	source: object,
 	...children: Admit<
 		(
-			| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-			| T.ShorthandPropertyIdentifierPattern.Types
+			| (
+					| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
+					| T.ShorthandPropertyIdentifierPattern.Types
+			  )
+			| null
 		)[]
 	>
 ): T.ObjectPattern.Bound {
@@ -4615,10 +4636,10 @@ function withObjectAssignmentPattern(node: object, setter: string, args: readonl
 }
 
 export function buildArray(): T.EmptyArray;
-export function buildArray<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArray<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Array.Bound;
-export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
+export function buildArray(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Array.elements'),
@@ -4638,7 +4659,10 @@ export function buildArray(...children: Admit<(T.Expression | T.SpreadElement)[]
 	});
 }
 
-function buildArray$patch(source: object, ...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Array.Bound {
+function buildArray$patch(
+	source: object,
+	...children: Admit<((T.Expression | T.SpreadElement) | null)[]>
+): T.Array.Bound {
 	currentHandle()?.admit(TSKindId.Array, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Array.elements'),
@@ -4669,10 +4693,12 @@ function withArray(node: object, setter: string, args: readonly unknown[]): unkn
 }
 
 export function buildArrayPattern(): T.EmptyArrayPattern;
-export function buildArrayPattern<A extends Admit<(T.Pattern | T.AssignmentPattern)[]>>(
+export function buildArrayPattern<A extends Admit<((T.Pattern | T.AssignmentPattern) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.ArrayPattern.Bound;
-export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPattern)[]>): T.ArrayPattern.Bound {
+export function buildArrayPattern(
+	...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>
+): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
 	const _elements = admitHoles(children, 'ArrayPattern.elements');
 	const handle = currentHandle();
@@ -4689,7 +4715,7 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 
 function buildArrayPattern$patch(
 	source: object,
-	...children: Admit<(T.Pattern | T.AssignmentPattern)[]>
+	...children: Admit<((T.Pattern | T.AssignmentPattern) | null)[]>
 ): T.ArrayPattern.Bound {
 	currentHandle()?.admit(TSKindId.ArrayPattern, children);
 	const _elements = admitHoles(children, 'ArrayPattern.elements');
@@ -9089,10 +9115,10 @@ export const buildNull: TSKindId.Null = TSKindId.Null;
 export const buildUndefined: TSKindId.Undefined = TSKindId.Undefined;
 
 export function buildArguments(): T.EmptyArguments;
-export function buildArguments<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildArguments<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): T.Arguments.Bound;
-export function buildArguments(...children: Admit<(T.Expression | T.SpreadElement)[]>): T.Arguments.Bound {
+export function buildArguments(...children: Admit<((T.Expression | T.SpreadElement) | null)[]>): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
 		admitHoles(children, 'Arguments.elements'),
@@ -9114,7 +9140,7 @@ export function buildArguments(...children: Admit<(T.Expression | T.SpreadElemen
 
 function buildArguments$patch(
 	source: object,
-	...children: Admit<(T.Expression | T.SpreadElement)[]>
+	...children: Admit<((T.Expression | T.SpreadElement) | null)[]>
 ): T.Arguments.Bound {
 	currentHandle()?.admit(TSKindId.Arguments, children);
 	const _elements = rejectReservedText(
@@ -16772,7 +16798,7 @@ function withTypeQuerySubscriptExpression(node: object, setter: string, args: re
 export function buildTypeQueryCallExpression<V extends Admit<T.Arguments>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
-export function buildTypeQueryCallExpression<A extends Admit<(T.Expression | T.SpreadElement)[]>>(
+export function buildTypeQueryCallExpression<A extends Admit<((T.Expression | T.SpreadElement) | null)[]>>(
 	...children: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildTypeQueryCallExpression>;
 export function buildTypeQueryCallExpression(...args: unknown[]) {
@@ -28976,6 +29002,264 @@ export function buildForHeaderUsingKindAwait(
 	});
 }
 
+export function buildForInitializerLetConstKind<
+	DeclaratorsSlot extends T.ForInitializerLetConstKind.Config['declarators']
+>(
+	config: RefusingConfig<T.ForInitializerLetConstKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerLetConstKind.Bound;
+export function buildForInitializerLetConstKind(
+	config: T.ForInitializerLetConstKind.Config
+): T.ForInitializerLetConstKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerLetConstKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_let_const_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerLetConstKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForInitializerLetConstKind as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerLetConstKind.Bound;
+	});
+}
+
+function buildForInitializerLetConstKind$patch(
+	source: object,
+	config: T.ForInitializerLetConstKind.Config
+): T.ForInitializerLetConstKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerLetConstKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_let_const_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerLetConstKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ForInitializerLetConstKind as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'kind', _kind));
+		patchList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerLetConstKind.Bound;
+	});
+}
+function buildForInitializerLetConstKind$set(
+	source: object,
+	...[slot, input]:
+		| ['kind', Partial<T.ForInitializerLetConstKind.Config>]
+		| ['declarators', Partial<T.ForInitializerLetConstKind.Config>]
+): T.ForInitializerLetConstKind.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'kind':
+			case 'declarators':
+				return buildForInitializerLetConstKind$patch(source, {
+					...(inputs.config as T.ForInitializerLetConstKind.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'kind': {
+			const config = input;
+			const _kind = kindIdStorage<NonNullable<T.ForInitializerLetConstKind['_kind']>>(config.kind);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerLetConstKind as const,
+				'for_initializer_let_const_kind',
+				0,
+				'kind',
+				_kind
+			) as unknown as T.ForInitializerLetConstKind.Bound;
+		}
+		case 'declarators': {
+			const config = input;
+			const _declarators = listStorage<NonNullable<T.ForInitializerLetConstKind['_declarators']>>(config.declarators);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerLetConstKind as const,
+				'for_initializer_let_const_kind',
+				1,
+				'declarators',
+				_declarators
+			) as unknown as T.ForInitializerLetConstKind.Bound;
+		}
+	}
+}
+function withForInitializerLetConstKind(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerLetConstKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerLetConstKind$set(node, 'kind', { kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerLetConstKind$set(node, 'declarators', { declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_let_const_kind has no $with.${setter}`);
+}
+
+export function buildForInitializerVarKind<A extends NonEmptyArray<Admit<T.VariableDeclarator>>>(
+	...children: A & RefuseUndeclared<A>
+): T.ForInitializerVarKind.Bound;
+export function buildForInitializerVarKind(
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.ForInitializerVarKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerVarKind, children);
+	const _declarators = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'for_initializer_var_kind', { declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerVarKind as const, { _declarators });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForInitializerVarKind as const);
+		storeList(arena, record, 2, 2, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerVarKind.Bound;
+	});
+}
+
+function buildForInitializerVarKind$patch(
+	source: object,
+	...children: NonEmptyArray<Admit<T.VariableDeclarator>>
+): T.ForInitializerVarKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerVarKind, children);
+	const _declarators = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'for_initializer_var_kind', { declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerVarKind as const, { _declarators });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ForInitializerVarKind as const);
+		patchList(arena, record, 2, 2, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerVarKind.Bound;
+	});
+}
+function withForInitializerVarKind(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'declarators':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () => buildForInitializerVarKind$patch(node, ...restItems('declarators', vs)))
+			);
+	}
+	throw new Error(`for_initializer_var_kind has no $with.${setter}`);
+}
+
+export function buildForInitializerUsingKind<DeclaratorsSlot extends T.ForInitializerUsingKind.Config['declarators']>(
+	config: RefusingConfig<T.ForInitializerUsingKind.Config, { declarators: DeclaratorsSlot }>
+): T.ForInitializerUsingKind.Bound;
+export function buildForInitializerUsingKind(
+	config: T.ForInitializerUsingKind.Config
+): T.ForInitializerUsingKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerUsingKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_using_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerUsingKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.ForInitializerUsingKind as const);
+		storeCell(arena, record, 2, 2, _kind);
+		storeList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerUsingKind.Bound;
+	});
+}
+
+function buildForInitializerUsingKind$patch(
+	source: object,
+	config: T.ForInitializerUsingKind.Config
+): T.ForInitializerUsingKind.Bound {
+	currentHandle()?.admit(TSKindId.ForInitializerUsingKind, [config]);
+	const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+	const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'for_initializer_using_kind', { kind: _kind, declarators: _declarators });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ForInitializerUsingKind as const, { _kind, _declarators });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.ForInitializerUsingKind as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'kind', _kind));
+		patchList(arena, record, 3, 3, _declarators);
+		const node = arena.view(record);
+		return node as unknown as T.ForInitializerUsingKind.Bound;
+	});
+}
+function buildForInitializerUsingKind$set(
+	source: object,
+	...[slot, input]:
+		| ['kind', Partial<T.ForInitializerUsingKind.Config>]
+		| ['declarators', Partial<T.ForInitializerUsingKind.Config>]
+): T.ForInitializerUsingKind.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'kind':
+			case 'declarators':
+				return buildForInitializerUsingKind$patch(source, {
+					...(inputs.config as T.ForInitializerUsingKind.Config),
+					...input
+				});
+		}
+	}
+	switch (slot) {
+		case 'kind': {
+			const config = input;
+			const _kind = kindIdStorage<NonNullable<T.ForInitializerUsingKind['_kind']>>(config.kind);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerUsingKind as const,
+				'for_initializer_using_kind',
+				0,
+				'kind',
+				_kind
+			) as unknown as T.ForInitializerUsingKind.Bound;
+		}
+		case 'declarators': {
+			const config = input;
+			const _declarators = listStorage<NonNullable<T.ForInitializerUsingKind['_declarators']>>(config.declarators);
+			return setSlot(
+				source,
+				TSKindId.ForInitializerUsingKind as const,
+				'for_initializer_using_kind',
+				1,
+				'declarators',
+				_declarators
+			) as unknown as T.ForInitializerUsingKind.Bound;
+		}
+	}
+}
+function withForInitializerUsingKind(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (value: Admit<NonNullable<T.ForInitializerUsingKind.Config>['kind']>) =>
+				rebuilt(node, handle, () => buildForInitializerUsingKind$set(node, 'kind', { kind: value }))
+			);
+		case 'declarators':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.VariableDeclarator>>) =>
+				rebuilt(node, handle, () =>
+					buildForInitializerUsingKind$set(node, 'declarators', { declarators: restItems('declarators', values) })
+				)
+			);
+	}
+	throw new Error(`for_initializer_using_kind has no $with.${setter}`);
+}
+
 export const buildFormalParametersGetAccessorSignature: TSKindId.FormalParametersGetAccessorSignature =
 	TSKindId.FormalParametersGetAccessorSignature;
 
@@ -34797,6 +35081,9 @@ export type FluentKindMap = {
 	for_header_var_kind: T.ForHeaderVarKind.Bound;
 	for_header_let_const_kind: T.ForHeaderLetConstKind.Bound;
 	for_header_using_kind: T.ForHeaderUsingKind.Bound;
+	for_initializer_let_const_kind: T.ForInitializerLetConstKind.Bound;
+	for_initializer_var_kind: T.ForInitializerVarKind.Bound;
+	for_initializer_using_kind: T.ForInitializerUsingKind.Bound;
 	_formal_parameters_get_accessor_signature: T.FormalParametersGetAccessorSignature;
 	_formal_parameters_set_accessor_signature: T.FormalParametersSetAccessorSignature.Bound;
 	_formal_parameters_elements_set_accessor_signature: T.FormalParametersElementsSetAccessorSignature.Bound;
@@ -35078,6 +35365,9 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
+	for_initializer_let_const_kind: buildForInitializerLetConstKind,
+	for_initializer_var_kind: buildForInitializerVarKind,
+	for_initializer_using_kind: buildForInitializerUsingKind,
 	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
 	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
 	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
@@ -35297,72 +35587,75 @@ export const builtViews: BuiltViews = Object.freeze({
 		394: withImportClauseGroup,
 		396: withCatchClauseGroup,
 		397: withGetAccessorSignature,
-		399: withAmbientDeclarationGlobal,
-		400: withAmbientDeclarationModule,
-		401: withObjectTypeContent,
-		402: withLiteralTypeNegativeNumber,
-		404: withBinaryExpressionIn,
-		405: withBinaryExpressionDefault,
-		407: withClassBodyMemberMethod,
-		408: withClassBodyMemberMethodSig,
-		409: withClassBodyMemberDeclaration,
-		410: withIndexSignatureColon,
-		411: withIndexSignatureMappedTypeClause,
-		412: withImportStatementClauseFrom,
-		413: withYieldExpressionDelegate,
-		415: withImportSpecifierName,
-		416: withImportSpecifierAs,
-		417: withParenthesizedExpressionTyped,
-		418: withParenthesizedExpressionSequence,
-		420: withExportStatementEqualsExport,
-		421: withExportStatementNamespaceExport,
-		422: withCallExpressionCall,
-		423: withCallExpressionTemplateCall,
-		424: withCallExpressionMember,
-		425: withStringDouble,
-		426: withStringSingle,
-		427: withUpdateExpressionPostfix,
-		428: withUpdateExpressionPrefix,
-		429: withArrowFunctionParameter,
-		430: withClassHeritageExtendsClause,
-		431: withImportClauseDefaultImport,
-		432: withExportStatementDefaultFrom,
-		433: withExportStatementDefaultDeclaration,
-		434: withExportStatementDefaultFromStarFrom,
-		435: withExportStatementDefaultFromNsFrom,
-		436: withExportStatementDefaultFromClauseFrom,
-		437: withExportStatementDefaultDeclarationDefaultKw,
-		438: withExportStatementDefaultDeclarationDefaultKwValue,
-		439: withVariableDeclaratorPlain,
-		440: withVariableDeclaratorDefinite,
-		443: withForHeaderLhs,
-		444: withForHeaderVarKind,
-		445: withForHeaderLetConstKind,
-		446: withForHeaderUsingKind,
-		449: withFormalParametersSetAccessorSignature,
-		450: withFormalParametersElementsSetAccessorSignature,
-		451: withSetterParameter,
-		454: withMethodDefinitionPlain,
-		455: withMethodDefinitionGetter,
-		456: withMethodDefinitionSetter,
-		457: withMethodSignaturePlain,
-		458: withMethodSignatureGetter,
-		459: withMethodSignatureSetter,
-		460: withAbstractMethodSignaturePlain,
-		461: withAbstractMethodSignatureGetter,
-		462: withAbstractMethodSignatureSetter,
-		463: withPublicFieldDefinitionPlain,
-		464: withPublicFieldDefinitionAccessor,
-		465: withConstructorDeclaration,
-		469: withReceiverParameterDeclaration,
-		471: withFormalParametersElementsReceiver,
-		472: withFormalParametersElementsReceiverGroup,
-		499: withInterfaceBody,
-		501: withPropertyIdentifier,
-		502: withShorthandPropertyIdentifier,
-		503: withShorthandPropertyIdentifierPattern,
-		504: withStatementIdentifier,
-		506: withTypeIdentifier
+		400: withAmbientDeclarationGlobal,
+		401: withAmbientDeclarationModule,
+		402: withObjectTypeContent,
+		403: withLiteralTypeNegativeNumber,
+		405: withBinaryExpressionIn,
+		406: withBinaryExpressionDefault,
+		408: withClassBodyMemberMethod,
+		409: withClassBodyMemberMethodSig,
+		410: withClassBodyMemberDeclaration,
+		411: withIndexSignatureColon,
+		412: withIndexSignatureMappedTypeClause,
+		413: withImportStatementClauseFrom,
+		414: withYieldExpressionDelegate,
+		416: withImportSpecifierName,
+		417: withImportSpecifierAs,
+		418: withParenthesizedExpressionTyped,
+		419: withParenthesizedExpressionSequence,
+		421: withExportStatementEqualsExport,
+		422: withExportStatementNamespaceExport,
+		423: withCallExpressionCall,
+		424: withCallExpressionTemplateCall,
+		425: withCallExpressionMember,
+		426: withStringDouble,
+		427: withStringSingle,
+		428: withUpdateExpressionPostfix,
+		429: withUpdateExpressionPrefix,
+		430: withArrowFunctionParameter,
+		431: withClassHeritageExtendsClause,
+		432: withImportClauseDefaultImport,
+		433: withExportStatementDefaultFrom,
+		434: withExportStatementDefaultDeclaration,
+		435: withExportStatementDefaultFromStarFrom,
+		436: withExportStatementDefaultFromNsFrom,
+		437: withExportStatementDefaultFromClauseFrom,
+		438: withExportStatementDefaultDeclarationDefaultKw,
+		439: withExportStatementDefaultDeclarationDefaultKwValue,
+		440: withVariableDeclaratorPlain,
+		441: withVariableDeclaratorDefinite,
+		444: withForHeaderLhs,
+		445: withForHeaderVarKind,
+		446: withForHeaderLetConstKind,
+		447: withForHeaderUsingKind,
+		448: withForInitializerLetConstKind,
+		449: withForInitializerVarKind,
+		450: withForInitializerUsingKind,
+		453: withFormalParametersSetAccessorSignature,
+		454: withFormalParametersElementsSetAccessorSignature,
+		455: withSetterParameter,
+		458: withMethodDefinitionPlain,
+		459: withMethodDefinitionGetter,
+		460: withMethodDefinitionSetter,
+		461: withMethodSignaturePlain,
+		462: withMethodSignatureGetter,
+		463: withMethodSignatureSetter,
+		464: withAbstractMethodSignaturePlain,
+		465: withAbstractMethodSignatureGetter,
+		466: withAbstractMethodSignatureSetter,
+		467: withPublicFieldDefinitionPlain,
+		468: withPublicFieldDefinitionAccessor,
+		469: withConstructorDeclaration,
+		473: withReceiverParameterDeclaration,
+		475: withFormalParametersElementsReceiver,
+		476: withFormalParametersElementsReceiverGroup,
+		503: withInterfaceBody,
+		505: withPropertyIdentifier,
+		506: withShorthandPropertyIdentifier,
+		507: withShorthandPropertyIdentifierPattern,
+		508: withStatementIdentifier,
+		510: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		2: 4,
@@ -35538,72 +35831,75 @@ export const builtViews: BuiltViews = Object.freeze({
 		394: 3,
 		396: 4,
 		397: 3,
-		399: 3,
-		400: 5,
-		401: 3,
+		400: 3,
+		401: 5,
 		402: 3,
-		404: 4,
-		405: 5,
-		407: 5,
-		408: 4,
+		403: 3,
+		405: 4,
+		406: 5,
+		408: 5,
 		409: 4,
-		410: 7,
-		411: 6,
-		412: 4,
-		413: 3,
-		415: 4,
-		416: 5,
-		417: 4,
-		418: 3,
-		420: 4,
+		410: 4,
+		411: 7,
+		412: 6,
+		413: 4,
+		414: 3,
+		416: 4,
+		417: 5,
+		418: 4,
+		419: 3,
 		421: 4,
-		422: 5,
-		423: 4,
-		424: 5,
-		425: 3,
+		422: 4,
+		423: 5,
+		424: 4,
+		425: 5,
 		426: 3,
-		427: 4,
+		427: 3,
 		428: 4,
-		429: 3,
-		430: 4,
+		429: 4,
+		430: 3,
 		431: 4,
-		432: 5,
-		433: 4,
-		434: 3,
-		435: 4,
+		432: 4,
+		433: 5,
+		434: 4,
+		435: 3,
 		436: 4,
-		437: 3,
-		438: 4,
-		439: 5,
-		440: 4,
-		443: 5,
-		444: 6,
-		445: 7,
+		437: 4,
+		438: 3,
+		439: 4,
+		440: 5,
+		441: 4,
+		444: 5,
+		445: 6,
 		446: 7,
+		447: 7,
+		448: 4,
 		449: 3,
-		450: 3,
-		451: 7,
-		454: 9,
+		450: 4,
+		453: 3,
+		454: 3,
 		455: 7,
-		456: 7,
-		457: 8,
-		458: 6,
-		459: 6,
-		460: 8,
-		461: 6,
+		458: 9,
+		459: 7,
+		460: 7,
+		461: 8,
 		462: 6,
-		463: 9,
+		463: 6,
 		464: 8,
-		465: 5,
-		469: 7,
-		471: 4,
-		472: 3,
-		499: 5,
-		501: 3,
-		502: 3,
-		503: 3,
-		504: 3,
-		506: 3
+		465: 6,
+		466: 6,
+		467: 9,
+		468: 8,
+		469: 5,
+		473: 7,
+		475: 4,
+		476: 3,
+		503: 5,
+		505: 3,
+		506: 3,
+		507: 3,
+		508: 3,
+		510: 3
 	}),
 	cells: Object.freeze({
 		2: 2,
@@ -35779,24 +36075,23 @@ export const builtViews: BuiltViews = Object.freeze({
 		394: 2,
 		396: 2,
 		397: 2,
-		399: 2,
 		400: 2,
 		401: 2,
 		402: 2,
-		404: 2,
+		403: 2,
 		405: 2,
-		407: 2,
+		406: 2,
 		408: 2,
 		409: 2,
-		410: 3,
+		410: 2,
 		411: 3,
-		412: 2,
+		412: 3,
 		413: 2,
-		415: 2,
+		414: 2,
 		416: 2,
 		417: 2,
 		418: 2,
-		420: 2,
+		419: 2,
 		421: 2,
 		422: 2,
 		423: 2,
@@ -35808,8 +36103,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		429: 2,
 		430: 2,
 		431: 2,
-		432: 3,
-		433: 2,
+		432: 2,
+		433: 3,
 		434: 2,
 		435: 2,
 		436: 2,
@@ -35817,17 +36112,17 @@ export const builtViews: BuiltViews = Object.freeze({
 		438: 2,
 		439: 2,
 		440: 2,
-		443: 2,
+		441: 2,
 		444: 2,
 		445: 2,
 		446: 2,
+		447: 2,
+		448: 2,
 		449: 2,
 		450: 2,
-		451: 3,
-		454: 3,
+		453: 2,
+		454: 2,
 		455: 3,
-		456: 3,
-		457: 3,
 		458: 3,
 		459: 3,
 		460: 3,
@@ -35835,16 +36130,20 @@ export const builtViews: BuiltViews = Object.freeze({
 		462: 3,
 		463: 3,
 		464: 3,
-		465: 2,
-		469: 3,
-		471: 2,
-		472: 2,
-		499: 2,
-		501: 2,
-		502: 2,
+		465: 3,
+		466: 3,
+		467: 3,
+		468: 3,
+		469: 2,
+		473: 3,
+		475: 2,
+		476: 2,
 		503: 2,
-		504: 2,
-		506: 2
+		505: 2,
+		506: 2,
+		507: 2,
+		508: 2,
+		510: 2
 	}),
 	places: Object.freeze({
 		2: [[2, 2, 2, 4, 0]],
@@ -36418,161 +36717,154 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 3, 3, 1, 0]
 		],
 		397: [[2, 2, 3, 1, 0]],
-		399: [[2, 2, 3, 1, 0]],
-		400: [
+		400: [[2, 2, 3, 1, 0]],
+		401: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 18, 0]
 		],
-		401: [
+		402: [
 			[2, 2, 1, 1, 3],
 			['side', true, true]
 		],
-		402: [[2, 2, 3, 1, 0]],
-		404: [
+		403: [[2, 2, 3, 1, 0]],
+		405: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		405: [
+		406: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0],
 			[7, 4, 4, 3, 0]
 		],
-		407: [
+		408: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 1, 18, 0]
-		],
-		408: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 1, 2, 0]
 		],
 		409: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0]
 		],
 		410: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 1, 2, 0]
+		],
+		411: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 4, 3, 0],
 			[11, 6, 3, 1, 0]
 		],
-		411: [
+		412: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		412: [
+		413: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		413: [[2, 2, 4, 3, 0]],
-		415: [
+		414: [[2, 2, 4, 3, 0]],
+		416: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 3, 1, 0]
 		],
-		416: [
+		417: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0],
 			[7, 4, 3, 1, 0]
 		],
-		417: [
+		418: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		418: [[2, 2, 3, 1, 0]],
-		420: [
+		419: [[2, 2, 3, 1, 0]],
+		421: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0]
 		],
-		421: [
+		422: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0]
 		],
-		422: [
+		423: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
 			[9, 4, 3, 1, 0]
-		],
-		423: [
-			[2, 2, 4, 3, 0],
-			[6, 3, 3, 1, 0]
 		],
 		424: [
 			[2, 2, 4, 3, 0],
+			[6, 3, 3, 1, 0]
+		],
+		425: [
+			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0],
 			[9, 4, 3, 1, 0]
 		],
-		425: [[2, 2, 1, 1, 3]],
 		426: [[2, 2, 1, 1, 3]],
-		427: [
+		427: [[2, 2, 1, 1, 3]],
+		428: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0]
 		],
-		428: [
+		429: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 4, 3, 0]
 		],
-		429: [[2, 2, 3, 1, 0]],
-		430: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
+		430: [[2, 2, 3, 1, 0]],
 		431: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
 		432: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
+		433: [
 			[2, 0],
 			[3, 3, 3, 1, 0],
 			[6, 4, 1, 2, 0]
 		],
-		433: [
+		434: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		434: [[2, 2, 3, 1, 0]],
-		435: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
+		435: [[2, 2, 3, 1, 0]],
 		436: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		437: [[2, 2, 3, 1, 0]],
-		438: [
+		437: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
+		],
+		438: [[2, 2, 3, 1, 0]],
+		439: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 1, 2, 0]
 		],
-		439: [
+		440: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 4, 3, 0]
 		],
-		440: [
+		441: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		443: [
+		444: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 1, 2, 0],
 			[6, 4, 4, 3, 0]
 		],
-		444: [
+		445: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0],
 			[9, 4, 1, 2, 0],
 			[10, 5, 4, 3, 0]
-		],
-		445: [
-			[2, 2, 1, 2, 0],
-			[3, 3, 3, 1, 0],
-			[6, 4, 1, 18, 0],
-			[7, 5, 1, 2, 0],
-			[8, 6, 4, 3, 0]
 		],
 		446: [
 			[2, 2, 1, 2, 0],
@@ -36581,9 +36873,25 @@ export const builtViews: BuiltViews = Object.freeze({
 			[7, 5, 1, 2, 0],
 			[8, 6, 4, 3, 0]
 		],
-		449: [[2, 2, 3, 1, 0]],
-		450: [[2, 2, 3, 1, 0]],
-		451: [
+		447: [
+			[2, 2, 1, 2, 0],
+			[3, 3, 3, 1, 0],
+			[6, 4, 1, 18, 0],
+			[7, 5, 1, 2, 0],
+			[8, 6, 4, 3, 0]
+		],
+		448: [
+			[2, 2, 1, 2, 0],
+			[3, 3, 1, 1, 3]
+		],
+		449: [[2, 2, 1, 1, 3]],
+		450: [
+			[2, 2, 1, 2, 0],
+			[3, 3, 1, 1, 3]
+		],
+		453: [[2, 2, 3, 1, 0]],
+		454: [[2, 2, 3, 1, 0]],
+		455: [
 			[3, 3, 1, 1, 3],
 			[4, 4, 1, 2, 0],
 			[2, 0],
@@ -36591,7 +36899,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 4, 3, 0],
 			[9, 6, 3, 1, 0]
 		],
-		454: [
+		458: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[2, 1],
@@ -36605,7 +36913,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[13, 7, 3, 1, 0],
 			[16, 8, 3, 1, 0]
 		],
-		455: [
+		459: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[2, 1],
@@ -36613,7 +36921,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[7, 5, 3, 1, 0],
 			[10, 6, 3, 1, 0]
 		],
-		456: [
+		460: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[2, 1],
@@ -36621,7 +36929,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[7, 5, 3, 1, 0],
 			[10, 6, 3, 1, 0]
 		],
-		457: [
+		461: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[2, 1],
@@ -36634,21 +36942,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[10, 6, 3, 1, 0],
 			[13, 7, 3, 1, 0]
 		],
-		458: [
+		462: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		459: [
+		463: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[2, 1],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		460: [
+		464: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[2, 1],
@@ -36658,19 +36966,19 @@ export const builtViews: BuiltViews = Object.freeze({
 			[10, 6, 3, 1, 0],
 			[13, 7, 3, 1, 0]
 		],
-		461: [
+		465: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		462: [
+		466: [
 			[3, 3, 1, 2, 0],
 			[2, 0],
 			[4, 4, 3, 1, 0],
 			[7, 5, 3, 1, 0]
 		],
-		463: [
+		467: [
 			[3, 3, 1, 1, 3],
 			[2, 0],
 			[4, 4, 1, 2, 0],
@@ -36683,7 +36991,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[9, 7, 3, 1, 0],
 			[12, 8, 4, 3, 0]
 		],
-		464: [
+		468: [
 			[3, 3, 1, 1, 3],
 			[4, 4, 1, 2, 0],
 			[2, 0],
@@ -36693,12 +37001,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[8, 6, 3, 1, 0],
 			[11, 7, 4, 3, 0]
 		],
-		465: [
+		469: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 3, 1, 0],
 			[6, 4, 3, 1, 0]
 		],
-		469: [
+		473: [
 			[3, 3, 1, 1, 3],
 			[4, 4, 1, 2, 0],
 			[2, 0],
@@ -36706,21 +37014,21 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 5, 3, 1, 0],
 			[8, 6, 4, 3, 0]
 		],
-		471: [
+		475: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		472: [[2, 2, 3, 1, 0]],
-		499: [
+		476: [[2, 2, 3, 1, 0]],
+		503: [
 			[2, 2, 1, 2, 0],
 			[3, 3, 3, 1, 0],
 			[6, 4, 1, 2, 0]
 		],
-		501: [[2, 2, 3, 1, 0]],
-		502: [[2, 2, 3, 1, 0]],
-		503: [[2, 2, 3, 1, 0]],
-		504: [[2, 2, 3, 1, 0]],
-		506: [[2, 2, 3, 1, 0]]
+		505: [[2, 2, 3, 1, 0]],
+		506: [[2, 2, 3, 1, 0]],
+		507: [[2, 2, 3, 1, 0]],
+		508: [[2, 2, 3, 1, 0]],
+		510: [[2, 2, 3, 1, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,

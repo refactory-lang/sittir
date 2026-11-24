@@ -558,7 +558,7 @@ export function wireCopyOf(copy: string): CopyEffect | undefined {
 
 export function wireNoteCopyDisplay(copy: string, display: string | undefined): void {
 	const effect = currentContext?.copies.get(copy);
-	if (effect === undefined) return;
+	if (effect === undefined || (display === undefined && effect.display !== undefined)) return;
 	currentContext!.copies.set(copy, { ...effect, display });
 	currentContext!.entry?.shown.set(copy, display);
 }
@@ -579,7 +579,7 @@ export function wireEditCopy(copy: string, edit: (body: RuntimeRule) => RuntimeR
 }
 
 function sourceBodyOf(context: WireContext, source: string): RuntimeRule | undefined {
-	const deposit = context.deposits.get(source);
+	const deposit = context.liftBodies.get(source) ?? context.deposits.get(source);
 	if (deposit !== undefined) return deposit;
 	if (context.editedMints.has(source)) return undefined;
 	const body = evaluateLayerRule(context, source, context.currentDollar, context.baseRuleBodies[source]);

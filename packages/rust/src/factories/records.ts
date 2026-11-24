@@ -13507,7 +13507,7 @@ export function buildClosureParameters(
 		[
 			[
 				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
-				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
+				317, 325, 326, 321, 322, 420, 421, 419, 386, 387, 300, 259, 425
 			],
 			(v: unknown) => buildClosureParameter(v as never)
 		]
@@ -13533,7 +13533,7 @@ function buildClosureParameters$patch(
 		[
 			[
 				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
-				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
+				317, 325, 326, 321, 322, 420, 421, 419, 386, 387, 300, 259, 425
 			],
 			(v: unknown) => buildClosureParameter(v as never)
 		]
@@ -22788,69 +22788,69 @@ function withPointerTypeMut(node: object, setter: string, args: readonly unknown
 	throw new Error(`pointer_type_mut has no $with.${setter}`);
 }
 
-export function buildRangeExpressionBinary<
-	StartSlot extends T.RangeExpressionBinary.Config['start'],
-	EndSlot extends T.RangeExpressionBinary.Config['end']
+export function buildRangeExpressionBounded<
+	StartSlot extends T.RangeExpressionBounded.Config['start'],
+	EndSlot extends T.RangeExpressionBounded.Config['end']
 >(
-	config: RefusingConfig<T.RangeExpressionBinary.Config, { start: StartSlot; end: EndSlot }>
-): T.RangeExpressionBinary.Bound;
-export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config): T.RangeExpressionBinary.Bound {
-	currentHandle()?.admit(TSKindId.RangeExpressionBinary, [config]);
-	const _start = kindIdStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start);
-	const _operator = kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator);
-	const _end = kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end);
+	config: RefusingConfig<T.RangeExpressionBounded.Config, { start: StartSlot; end: EndSlot }>
+): T.RangeExpressionBounded.Bound;
+export function buildRangeExpressionBounded(config: T.RangeExpressionBounded.Config): T.RangeExpressionBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangeExpressionBounded, [config]);
+	const _start = kindIdStorage<NonNullable<T.RangeExpressionBounded['_start']>>(config.start);
+	const _operator = kindIdStorage<NonNullable<T.RangeExpressionBounded['_operator']>>(config.operator);
+	const _end = kindIdStorage<NonNullable<T.RangeExpressionBounded['_end']>>(config.end);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_expression_binary', { start: _start, operator: _operator, end: _end });
+		admitChildren(handle, 'range_expression_bounded', { start: _start, operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionBinary as const, { _start, _operator, _end });
+	handle?.verifyStored?.(TSKindId.RangeExpressionBounded as const, { _start, _operator, _end });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.RangeExpressionBinary as const);
+		const record = arena.record(TSKindId.RangeExpressionBounded as const);
 		storeCell(arena, record, 2, 2, _start);
 		storeCell(arena, record, 3, 6, _operator);
 		storeCell(arena, record, 4, 7, _end);
 		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionBinary.Bound;
+		return node as unknown as T.RangeExpressionBounded.Bound;
 	});
 }
 
-function buildRangeExpressionBinary$patch(
+function buildRangeExpressionBounded$patch(
 	source: object,
-	config: T.RangeExpressionBinary.Config
-): T.RangeExpressionBinary.Bound {
-	currentHandle()?.admit(TSKindId.RangeExpressionBinary, [config]);
-	const _start = kindIdStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start);
-	const _operator = kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator);
-	const _end = kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end);
+	config: T.RangeExpressionBounded.Config
+): T.RangeExpressionBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangeExpressionBounded, [config]);
+	const _start = kindIdStorage<NonNullable<T.RangeExpressionBounded['_start']>>(config.start);
+	const _operator = kindIdStorage<NonNullable<T.RangeExpressionBounded['_operator']>>(config.operator);
+	const _end = kindIdStorage<NonNullable<T.RangeExpressionBounded['_end']>>(config.end);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'range_expression_binary', { start: _start, operator: _operator, end: _end });
+		admitChildren(handle, 'range_expression_bounded', { start: _start, operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionBinary as const, { _start, _operator, _end });
+	handle?.verifyStored?.(TSKindId.RangeExpressionBounded as const, { _start, _operator, _end });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.RangeExpressionBinary as const);
+		const record = arena.copy(source, TSKindId.RangeExpressionBounded as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
 		patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
 		patchCell(arena, record, 4, 7, carriedSlot(source, 'end', _end));
 		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionBinary.Bound;
+		return node as unknown as T.RangeExpressionBounded.Bound;
 	});
 }
-function buildRangeExpressionBinary$set(
+function buildRangeExpressionBounded$set(
 	source: object,
 	...[slot, input]:
-		| ['start', Partial<T.RangeExpressionBinary.Config>]
-		| ['operator', Partial<T.RangeExpressionBinary.Config>]
-		| ['end', Partial<T.RangeExpressionBinary.Config>]
-): T.RangeExpressionBinary.Bound {
+		| ['start', Partial<T.RangeExpressionBounded.Config>]
+		| ['operator', Partial<T.RangeExpressionBounded.Config>]
+		| ['end', Partial<T.RangeExpressionBounded.Config>]
+): T.RangeExpressionBounded.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'start':
 			case 'operator':
 			case 'end':
-				return buildRangeExpressionBinary$patch(source, {
-					...(inputs.config as T.RangeExpressionBinary.Config),
+				return buildRangeExpressionBounded$patch(source, {
+					...(inputs.config as T.RangeExpressionBounded.Config),
 					...input
 				});
 		}
@@ -22858,156 +22858,162 @@ function buildRangeExpressionBinary$set(
 	switch (slot) {
 		case 'start': {
 			const config = input;
-			const _start = kindIdStorage<NonNullable<T.RangeExpressionBinary['_start']>>(config.start);
+			const _start = kindIdStorage<NonNullable<T.RangeExpressionBounded['_start']>>(config.start);
 			return setSlot(
 				source,
-				TSKindId.RangeExpressionBinary as const,
-				'range_expression_binary',
+				TSKindId.RangeExpressionBounded as const,
+				'range_expression_bounded',
 				0,
 				'start',
 				_start
-			) as unknown as T.RangeExpressionBinary.Bound;
+			) as unknown as T.RangeExpressionBounded.Bound;
 		}
 		case 'operator': {
 			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.RangeExpressionBinary['_operator']>>(config.operator);
+			const _operator = kindIdStorage<NonNullable<T.RangeExpressionBounded['_operator']>>(config.operator);
 			return setSlot(
 				source,
-				TSKindId.RangeExpressionBinary as const,
-				'range_expression_binary',
+				TSKindId.RangeExpressionBounded as const,
+				'range_expression_bounded',
 				1,
 				'operator',
 				_operator
-			) as unknown as T.RangeExpressionBinary.Bound;
+			) as unknown as T.RangeExpressionBounded.Bound;
 		}
 		case 'end': {
 			const config = input;
-			const _end = kindIdStorage<NonNullable<T.RangeExpressionBinary['_end']>>(config.end);
+			const _end = kindIdStorage<NonNullable<T.RangeExpressionBounded['_end']>>(config.end);
 			return setSlot(
 				source,
-				TSKindId.RangeExpressionBinary as const,
-				'range_expression_binary',
+				TSKindId.RangeExpressionBounded as const,
+				'range_expression_bounded',
 				2,
 				'end',
 				_end
-			) as unknown as T.RangeExpressionBinary.Bound;
+			) as unknown as T.RangeExpressionBounded.Bound;
 		}
 	}
 }
-function withRangeExpressionBinary(node: object, setter: string, args: readonly unknown[]): unknown {
+function withRangeExpressionBounded(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'start':
-			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['start']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary$set(node, 'start', { start: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBounded.Config>['start']>) =>
+				rebuilt(node, handle, () => buildRangeExpressionBounded$set(node, 'start', { start: value }))
 			);
 		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary$set(node, 'operator', { operator: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBounded.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangeExpressionBounded$set(node, 'operator', { operator: value }))
 			);
 		case 'end':
-			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBinary.Config>['end']>) =>
-				rebuilt(node, handle, () => buildRangeExpressionBinary$set(node, 'end', { end: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangeExpressionBounded.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangeExpressionBounded$set(node, 'end', { end: value }))
 			);
 	}
-	throw new Error(`range_expression_binary has no $with.${setter}`);
+	throw new Error(`range_expression_bounded has no $with.${setter}`);
 }
 
-export function buildRangeExpressionPostfix<V extends Admit<T.Expression>>(
+export function buildRangeExpressionLowerBounded<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
-): T.RangeExpressionPostfix.Bound;
-export function buildRangeExpressionPostfix(value: Admit<T.Expression>): T.RangeExpressionPostfix.Bound {
-	const _start = kindIdStorage<NonNullable<T.RangeExpressionPostfix['_start']>>(value);
+): T.RangeExpressionLowerBounded.Bound;
+export function buildRangeExpressionLowerBounded(value: Admit<T.Expression>): T.RangeExpressionLowerBounded.Bound {
+	const _start = kindIdStorage<NonNullable<T.RangeExpressionLowerBounded['_start']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_expression_postfix', { start: _start });
+	if (handle !== undefined) admitChildren(handle, 'range_expression_lower_bounded', { start: _start });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionPostfix as const, { _start });
+	handle?.verifyStored?.(TSKindId.RangeExpressionLowerBounded as const, { _start });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.RangeExpressionPostfix as const);
+		const record = arena.record(TSKindId.RangeExpressionLowerBounded as const);
 		storeCell(arena, record, 2, 2, _start);
 		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionPostfix.Bound;
+		return node as unknown as T.RangeExpressionLowerBounded.Bound;
 	});
 }
 
-function buildRangeExpressionPostfix$patch(source: object, value: Admit<T.Expression>): T.RangeExpressionPostfix.Bound {
-	const _start = kindIdStorage<NonNullable<T.RangeExpressionPostfix['_start']>>(value);
+function buildRangeExpressionLowerBounded$patch(
+	source: object,
+	value: Admit<T.Expression>
+): T.RangeExpressionLowerBounded.Bound {
+	const _start = kindIdStorage<NonNullable<T.RangeExpressionLowerBounded['_start']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_expression_postfix', { start: _start });
+	if (handle !== undefined) admitChildren(handle, 'range_expression_lower_bounded', { start: _start });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionPostfix as const, { _start });
+	handle?.verifyStored?.(TSKindId.RangeExpressionLowerBounded as const, { _start });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.RangeExpressionPostfix as const);
+		const record = arena.copy(source, TSKindId.RangeExpressionLowerBounded as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
 		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionPostfix.Bound;
+		return node as unknown as T.RangeExpressionLowerBounded.Bound;
 	});
 }
-function withRangeExpressionPostfix(node: object, setter: string, args: readonly unknown[]): unknown {
+function withRangeExpressionLowerBounded(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'start':
 			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildRangeExpressionPostfix$patch(node, value))
+				rebuilt(node, handle, () => buildRangeExpressionLowerBounded$patch(node, value))
 			);
 	}
-	throw new Error(`range_expression_postfix has no $with.${setter}`);
+	throw new Error(`range_expression_lower_bounded has no $with.${setter}`);
 }
 
-export function buildRangeExpressionPrefix<V extends Admit<T.Expression>>(
+export function buildRangeExpressionUpperBounded<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
-): T.RangeExpressionPrefix.Bound;
-export function buildRangeExpressionPrefix(value: Admit<T.Expression>): T.RangeExpressionPrefix.Bound {
-	const _end = kindIdStorage<NonNullable<T.RangeExpressionPrefix['_end']>>(value);
+): T.RangeExpressionUpperBounded.Bound;
+export function buildRangeExpressionUpperBounded(value: Admit<T.Expression>): T.RangeExpressionUpperBounded.Bound {
+	const _end = kindIdStorage<NonNullable<T.RangeExpressionUpperBounded['_end']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_expression_prefix', { end: _end });
+	if (handle !== undefined) admitChildren(handle, 'range_expression_upper_bounded', { end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionPrefix as const, { _end });
+	handle?.verifyStored?.(TSKindId.RangeExpressionUpperBounded as const, { _end });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.RangeExpressionPrefix as const);
+		const record = arena.record(TSKindId.RangeExpressionUpperBounded as const);
 		storeCell(arena, record, 2, 2, _end);
 		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionPrefix.Bound;
+		return node as unknown as T.RangeExpressionUpperBounded.Bound;
 	});
 }
 
-function buildRangeExpressionPrefix$patch(source: object, value: Admit<T.Expression>): T.RangeExpressionPrefix.Bound {
-	const _end = kindIdStorage<NonNullable<T.RangeExpressionPrefix['_end']>>(value);
+function buildRangeExpressionUpperBounded$patch(
+	source: object,
+	value: Admit<T.Expression>
+): T.RangeExpressionUpperBounded.Bound {
+	const _end = kindIdStorage<NonNullable<T.RangeExpressionUpperBounded['_end']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_expression_prefix', { end: _end });
+	if (handle !== undefined) admitChildren(handle, 'range_expression_upper_bounded', { end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionPrefix as const, { _end });
+	handle?.verifyStored?.(TSKindId.RangeExpressionUpperBounded as const, { _end });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.RangeExpressionPrefix as const);
+		const record = arena.copy(source, TSKindId.RangeExpressionUpperBounded as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'end', _end));
 		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionPrefix.Bound;
+		return node as unknown as T.RangeExpressionUpperBounded.Bound;
 	});
 }
-function withRangeExpressionPrefix(node: object, setter: string, args: readonly unknown[]): unknown {
+function withRangeExpressionUpperBounded(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'end':
 			return applySetter(args, (value: Admit<NonNullable<T.Expression>>) =>
-				rebuilt(node, handle, () => buildRangeExpressionPrefix$patch(node, value))
+				rebuilt(node, handle, () => buildRangeExpressionUpperBounded$patch(node, value))
 			);
 	}
-	throw new Error(`range_expression_prefix has no $with.${setter}`);
+	throw new Error(`range_expression_upper_bounded has no $with.${setter}`);
 }
 
-export function buildRangeExpressionBare(): T.RangeExpressionBare.Bound {
+export function buildRangeExpressionUnbounded(): T.RangeExpressionUnbounded.Bound {
 	const handle = currentHandle();
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangeExpressionBare as const, {});
+	handle?.verifyStored?.(TSKindId.RangeExpressionUnbounded as const, {});
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.RangeExpressionBare as const);
+		const record = arena.record(TSKindId.RangeExpressionUnbounded as const);
 		const node = arena.view(record);
-		return node as unknown as T.RangeExpressionBare.Bound;
+		return node as unknown as T.RangeExpressionUnbounded.Bound;
 	});
 }
 
-function withRangeExpressionBare(_node: object, setter: string, _args: readonly unknown[]): unknown {
-	throw new Error(`range_expression_bare has no $with.${setter}`);
+function withRangeExpressionUnbounded(_node: object, setter: string, _args: readonly unknown[]): unknown {
+	throw new Error(`range_expression_unbounded has no $with.${setter}`);
 }
 
 export function buildExpressionStatementWithSemi<V extends Admit<T.Expression>>(
@@ -25151,180 +25157,70 @@ function withMacroDefinitionBrace(node: object, setter: string, args: readonly u
 	throw new Error(`macro_definition_brace has no $with.${setter}`);
 }
 
-export function buildRangePatternPrefix<RightSlot extends T.RangePatternPrefix.Config['right']>(
-	config: RefusingConfig<T.RangePatternPrefix.Config, { right: RightSlot }>
-): T.RangePatternPrefix.Bound;
-export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.RangePatternPrefix.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
-	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-		'RangePatternPrefix.right',
+export function buildRangePatternUpperBounded<EndSlot extends T.RangePatternUpperBounded.Config['end']>(
+	config: RefusingConfig<T.RangePatternUpperBounded.Config, { end: EndSlot }>
+): T.RangePatternUpperBounded.Bound;
+export function buildRangePatternUpperBounded(
+	config: T.RangePatternUpperBounded.Config
+): T.RangePatternUpperBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangePatternUpperBounded, [config]);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternUpperBounded['_operator']>>(config.operator);
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternUpperBounded['_end']>>(config.end),
+		'RangePatternUpperBounded.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_upper_bounded', { operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternUpperBounded as const, { _operator, _end });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.RangePatternPrefix as const);
+		const record = arena.record(TSKindId.RangePatternUpperBounded as const);
 		storeCell(arena, record, 2, 2, _operator);
-		storeCell(arena, record, 3, 3, _right);
+		storeCell(arena, record, 3, 3, _end);
 		const node = arena.view(record);
-		return node as unknown as T.RangePatternPrefix.Bound;
+		return node as unknown as T.RangePatternUpperBounded.Bound;
 	});
 }
 
-function buildRangePatternPrefix$patch(
+function buildRangePatternUpperBounded$patch(
 	source: object,
-	config: T.RangePatternPrefix.Config
-): T.RangePatternPrefix.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternPrefix, [config]);
-	const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-		'RangePatternPrefix.right',
+	config: T.RangePatternUpperBounded.Config
+): T.RangePatternUpperBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangePatternUpperBounded, [config]);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternUpperBounded['_operator']>>(config.operator);
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternUpperBounded['_end']>>(config.end),
+		'RangePatternUpperBounded.end',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_prefix', { operator: _operator, right: _right });
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_upper_bounded', { operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _operator, _right });
+	handle?.verifyStored?.(TSKindId.RangePatternUpperBounded as const, { _operator, _end });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.RangePatternPrefix as const);
+		const record = arena.copy(source, TSKindId.RangePatternUpperBounded as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'end', _end));
 		const node = arena.view(record);
-		return node as unknown as T.RangePatternPrefix.Bound;
+		return node as unknown as T.RangePatternUpperBounded.Bound;
 	});
 }
-function buildRangePatternPrefix$set(
-	source: object,
-	...[slot, input]: ['operator', Partial<T.RangePatternPrefix.Config>] | ['right', Partial<T.RangePatternPrefix.Config>]
-): T.RangePatternPrefix.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'operator':
-			case 'right':
-				return buildRangePatternPrefix$patch(source, { ...(inputs.config as T.RangePatternPrefix.Config), ...input });
-		}
-	}
-	switch (slot) {
-		case 'operator': {
-			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.RangePatternPrefix['_operator']>>(config.operator);
-			return setSlot(
-				source,
-				TSKindId.RangePatternPrefix as const,
-				'range_pattern_prefix',
-				0,
-				'operator',
-				_operator
-			) as unknown as T.RangePatternPrefix.Bound;
-		}
-		case 'right': {
-			const config = input;
-			const _right = rejectKeywordText(
-				kindIdStorage<NonNullable<T.RangePatternPrefix['_right']>>(config.right),
-				'RangePatternPrefix.right',
-				TSKindId.Identifier,
-				['self', 'super', 'crate']
-			);
-			return setSlot(
-				source,
-				TSKindId.RangePatternPrefix as const,
-				'range_pattern_prefix',
-				1,
-				'right',
-				_right
-			) as unknown as T.RangePatternPrefix.Bound;
-		}
-	}
-}
-function withRangePatternPrefix(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix$set(node, 'operator', { operator: value }))
-			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternPrefix.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternPrefix$set(node, 'right', { right: value }))
-			);
-	}
-	throw new Error(`range_pattern_prefix has no $with.${setter}`);
-}
-
-export function buildRangePatternWithLeftWithRight<RightSlot extends T.RangePatternWithLeftWithRight.Config['right']>(
-	config: RefusingConfig<T.RangePatternWithLeftWithRight.Config, { right: RightSlot }>
-): T.RangePatternWithLeftWithRight.Bound;
-export function buildRangePatternWithLeftWithRight(
-	config: T.RangePatternWithLeftWithRight.Config
-): T.RangePatternWithLeftWithRight.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
-	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-		'RangePatternWithLeftWithRight.right',
-		TSKindId.Identifier,
-		['self', 'super', 'crate']
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _right });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.RangePatternWithLeftWithRight as const);
-		storeCell(arena, record, 2, 2, _operator);
-		storeCell(arena, record, 3, 3, _right);
-		const node = arena.view(record);
-		return node as unknown as T.RangePatternWithLeftWithRight.Bound;
-	});
-}
-
-function buildRangePatternWithLeftWithRight$patch(
-	source: object,
-	config: T.RangePatternWithLeftWithRight.Config
-): T.RangePatternWithLeftWithRight.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternWithLeftWithRight, [config]);
-	const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
-	const _right = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-		'RangePatternWithLeftWithRight.right',
-		TSKindId.Identifier,
-		['self', 'super', 'crate']
-	);
-	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'range_pattern_with_left_with_right', { operator: _operator, right: _right });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _operator, _right });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.RangePatternWithLeftWithRight as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'operator', _operator));
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'right', _right));
-		const node = arena.view(record);
-		return node as unknown as T.RangePatternWithLeftWithRight.Bound;
-	});
-}
-function buildRangePatternWithLeftWithRight$set(
+function buildRangePatternUpperBounded$set(
 	source: object,
 	...[slot, input]:
-		| ['operator', Partial<T.RangePatternWithLeftWithRight.Config>]
-		| ['right', Partial<T.RangePatternWithLeftWithRight.Config>]
-): T.RangePatternWithLeftWithRight.Bound {
+		| ['operator', Partial<T.RangePatternUpperBounded.Config>]
+		| ['end', Partial<T.RangePatternUpperBounded.Config>]
+): T.RangePatternUpperBounded.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'operator':
-			case 'right':
-				return buildRangePatternWithLeftWithRight$patch(source, {
-					...(inputs.config as T.RangePatternWithLeftWithRight.Config),
+			case 'end':
+				return buildRangePatternUpperBounded$patch(source, {
+					...(inputs.config as T.RangePatternUpperBounded.Config),
 					...input
 				});
 		}
@@ -25332,166 +25228,293 @@ function buildRangePatternWithLeftWithRight$set(
 	switch (slot) {
 		case 'operator': {
 			const config = input;
-			const _operator = kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_operator']>>(config.operator);
+			const _operator = kindIdStorage<NonNullable<T.RangePatternUpperBounded['_operator']>>(config.operator);
 			return setSlot(
 				source,
-				TSKindId.RangePatternWithLeftWithRight as const,
-				'range_pattern_with_left_with_right',
+				TSKindId.RangePatternUpperBounded as const,
+				'range_pattern_upper_bounded',
 				0,
 				'operator',
 				_operator
-			) as unknown as T.RangePatternWithLeftWithRight.Bound;
+			) as unknown as T.RangePatternUpperBounded.Bound;
 		}
-		case 'right': {
+		case 'end': {
 			const config = input;
-			const _right = rejectKeywordText(
-				kindIdStorage<NonNullable<T.RangePatternWithLeftWithRight['_right']>>(config.right),
-				'RangePatternWithLeftWithRight.right',
+			const _end = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternUpperBounded['_end']>>(config.end),
+				'RangePatternUpperBounded.end',
 				TSKindId.Identifier,
 				['self', 'super', 'crate']
 			);
 			return setSlot(
 				source,
-				TSKindId.RangePatternWithLeftWithRight as const,
-				'range_pattern_with_left_with_right',
+				TSKindId.RangePatternUpperBounded as const,
+				'range_pattern_upper_bounded',
 				1,
-				'right',
-				_right
-			) as unknown as T.RangePatternWithLeftWithRight.Bound;
+				'end',
+				_end
+			) as unknown as T.RangePatternUpperBounded.Bound;
 		}
 	}
 }
-function withRangePatternWithLeftWithRight(node: object, setter: string, args: readonly unknown[]): unknown {
+function withRangePatternUpperBounded(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'operator':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$set(node, 'operator', { operator: value }))
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternUpperBounded.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternUpperBounded$set(node, 'operator', { operator: value }))
 			);
-		case 'right':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeftWithRight$set(node, 'right', { right: value }))
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternUpperBounded.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternUpperBounded$set(node, 'end', { end: value }))
 			);
 	}
-	throw new Error(`range_pattern_with_left_with_right has no $with.${setter}`);
+	throw new Error(`range_pattern_upper_bounded has no $with.${setter}`);
 }
 
-export const buildRangePatternWithLeftBare: TSKindId.RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
-
-export function buildRangePatternWithLeft<
-	LeftSlot extends T.RangePatternWithLeft.Config['left'],
-	ContentSlot extends T.RangePatternWithLeft.Config['content']
+export function buildRangePatternBounded<
+	StartSlot extends T.RangePatternBounded.Config['start'],
+	EndSlot extends T.RangePatternBounded.Config['end']
 >(
-	config: RefusingConfig<T.RangePatternWithLeft.Config, { left: LeftSlot; content: ContentSlot }>
-): T.RangePatternWithLeft.Bound;
-export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config): T.RangePatternWithLeft.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [config]);
-	const _left = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-		'RangePatternWithLeft.left',
+	config: RefusingConfig<T.RangePatternBounded.Config, { start: StartSlot; end: EndSlot }>
+): T.RangePatternBounded.Bound;
+export function buildRangePatternBounded(config: T.RangePatternBounded.Config): T.RangePatternBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangePatternBounded, [config]);
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternBounded['_start']>>(config.start),
+		'RangePatternBounded.start',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
-	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternBounded['_operator']>>(config.operator);
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternBounded['_end']>>(config.end),
+		'RangePatternBounded.end',
+		TSKindId.Identifier,
+		['self', 'super', 'crate']
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'range_pattern_bounded', { start: _start, operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _left, _content });
+	handle?.verifyStored?.(TSKindId.RangePatternBounded as const, { _start, _operator, _end });
 	return arena.scope(() => {
-		const record = arena.record(TSKindId.RangePatternWithLeft as const);
-		storeCell(arena, record, 2, 2, _left);
-		storeCell(arena, record, 3, 6, _content);
+		const record = arena.record(TSKindId.RangePatternBounded as const);
+		storeCell(arena, record, 2, 2, _start);
+		storeCell(arena, record, 3, 6, _operator);
+		storeCell(arena, record, 4, 7, _end);
 		const node = arena.view(record);
-		return node as unknown as T.RangePatternWithLeft.Bound;
+		return node as unknown as T.RangePatternBounded.Bound;
 	});
 }
 
-function buildRangePatternWithLeft$patch(
+function buildRangePatternBounded$patch(
 	source: object,
-	config: T.RangePatternWithLeft.Config
-): T.RangePatternWithLeft.Bound {
-	currentHandle()?.admit(TSKindId.RangePatternWithLeft, [config]);
-	const _left = rejectKeywordText(
-		kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-		'RangePatternWithLeft.left',
+	config: T.RangePatternBounded.Config
+): T.RangePatternBounded.Bound {
+	currentHandle()?.admit(TSKindId.RangePatternBounded, [config]);
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternBounded['_start']>>(config.start),
+		'RangePatternBounded.start',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
-	const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
+	const _operator = kindIdStorage<NonNullable<T.RangePatternBounded['_operator']>>(config.operator);
+	const _end = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternBounded['_end']>>(config.end),
+		'RangePatternBounded.end',
+		TSKindId.Identifier,
+		['self', 'super', 'crate']
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'range_pattern_with_left', { left: _left, content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'range_pattern_bounded', { start: _start, operator: _operator, end: _end });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _left, _content });
+	handle?.verifyStored?.(TSKindId.RangePatternBounded as const, { _start, _operator, _end });
 	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.RangePatternWithLeft as const);
-		patchCell(arena, record, 2, 2, carriedSlot(source, 'left', _left));
-		patchCell(arena, record, 3, 6, carriedSlot(source, 'content', _content));
+		const record = arena.copy(source, TSKindId.RangePatternBounded as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'operator', _operator));
+		patchCell(arena, record, 4, 7, carriedSlot(source, 'end', _end));
 		const node = arena.view(record);
-		return node as unknown as T.RangePatternWithLeft.Bound;
+		return node as unknown as T.RangePatternBounded.Bound;
 	});
 }
-function buildRangePatternWithLeft$set(
+function buildRangePatternBounded$set(
 	source: object,
 	...[slot, input]:
-		| ['left', Partial<T.RangePatternWithLeft.Config>]
-		| ['content', Partial<T.RangePatternWithLeft.Config>]
-): T.RangePatternWithLeft.Bound {
+		| ['start', Partial<T.RangePatternBounded.Config>]
+		| ['operator', Partial<T.RangePatternBounded.Config>]
+		| ['end', Partial<T.RangePatternBounded.Config>]
+): T.RangePatternBounded.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'left':
-			case 'content':
-				return buildRangePatternWithLeft$patch(source, {
-					...(inputs.config as T.RangePatternWithLeft.Config),
-					...input
-				});
+			case 'start':
+			case 'operator':
+			case 'end':
+				return buildRangePatternBounded$patch(source, { ...(inputs.config as T.RangePatternBounded.Config), ...input });
 		}
 	}
 	switch (slot) {
-		case 'left': {
+		case 'start': {
 			const config = input;
-			const _left = rejectKeywordText(
-				kindIdStorage<NonNullable<T.RangePatternWithLeft['_left']>>(config.left),
-				'RangePatternWithLeft.left',
+			const _start = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternBounded['_start']>>(config.start),
+				'RangePatternBounded.start',
 				TSKindId.Identifier,
 				['self', 'super', 'crate']
 			);
 			return setSlot(
 				source,
-				TSKindId.RangePatternWithLeft as const,
-				'range_pattern_with_left',
+				TSKindId.RangePatternBounded as const,
+				'range_pattern_bounded',
 				0,
-				'left',
-				_left
-			) as unknown as T.RangePatternWithLeft.Bound;
+				'start',
+				_start
+			) as unknown as T.RangePatternBounded.Bound;
 		}
-		case 'content': {
+		case 'operator': {
 			const config = input;
-			const _content = kindIdStorage<NonNullable<T.RangePatternWithLeft['_content']>>(config.content);
+			const _operator = kindIdStorage<NonNullable<T.RangePatternBounded['_operator']>>(config.operator);
 			return setSlot(
 				source,
-				TSKindId.RangePatternWithLeft as const,
-				'range_pattern_with_left',
+				TSKindId.RangePatternBounded as const,
+				'range_pattern_bounded',
 				1,
-				'content',
-				_content
-			) as unknown as T.RangePatternWithLeft.Bound;
+				'operator',
+				_operator
+			) as unknown as T.RangePatternBounded.Bound;
+		}
+		case 'end': {
+			const config = input;
+			const _end = rejectKeywordText(
+				kindIdStorage<NonNullable<T.RangePatternBounded['_end']>>(config.end),
+				'RangePatternBounded.end',
+				TSKindId.Identifier,
+				['self', 'super', 'crate']
+			);
+			return setSlot(
+				source,
+				TSKindId.RangePatternBounded as const,
+				'range_pattern_bounded',
+				2,
+				'end',
+				_end
+			) as unknown as T.RangePatternBounded.Bound;
 		}
 	}
 }
-function withRangePatternWithLeft(node: object, setter: string, args: readonly unknown[]): unknown {
+function withRangePatternBounded(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'left':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['left']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft$set(node, 'left', { left: value }))
+		case 'start':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternBounded.Config>['start']>) =>
+				rebuilt(node, handle, () => buildRangePatternBounded$set(node, 'start', { start: value }))
 			);
-		case 'content':
-			return applySetter(args, (value: Admit<NonNullable<T.RangePatternWithLeft.Config>['content']>) =>
-				rebuilt(node, handle, () => buildRangePatternWithLeft$set(node, 'content', { content: value }))
+		case 'operator':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternBounded.Config>['operator']>) =>
+				rebuilt(node, handle, () => buildRangePatternBounded$set(node, 'operator', { operator: value }))
+			);
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.RangePatternBounded.Config>['end']>) =>
+				rebuilt(node, handle, () => buildRangePatternBounded$set(node, 'end', { end: value }))
 			);
 	}
-	throw new Error(`range_pattern_with_left has no $with.${setter}`);
+	throw new Error(`range_pattern_bounded has no $with.${setter}`);
+}
+
+export function buildRangePatternLowerBounded<
+	V extends Admit<
+		| T.LiteralPattern
+		| TSKindId.SelfModule
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.Identifier
+		| T.ScopedIdentifier
+	>
+>(value: V & RefuseUndeclared<V>): T.RangePatternLowerBounded.Bound;
+export function buildRangePatternLowerBounded(
+	value: Admit<
+		| T.LiteralPattern
+		| TSKindId.SelfModule
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.Identifier
+		| T.ScopedIdentifier
+	>
+): T.RangePatternLowerBounded.Bound {
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternLowerBounded['_start']>>(value),
+		'RangePatternLowerBounded.start',
+		TSKindId.Identifier,
+		['self', 'super', 'crate']
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_lower_bounded', { start: _start });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.RangePatternLowerBounded as const, { _start });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.RangePatternLowerBounded as const);
+		storeCell(arena, record, 2, 2, _start);
+		const node = arena.view(record);
+		return node as unknown as T.RangePatternLowerBounded.Bound;
+	});
+}
+
+function buildRangePatternLowerBounded$patch(
+	source: object,
+	value: Admit<
+		| T.LiteralPattern
+		| TSKindId.SelfModule
+		| T.Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| T.Identifier
+		| T.ScopedIdentifier
+	>
+): T.RangePatternLowerBounded.Bound {
+	const _start = rejectKeywordText(
+		kindIdStorage<NonNullable<T.RangePatternLowerBounded['_start']>>(value),
+		'RangePatternLowerBounded.start',
+		TSKindId.Identifier,
+		['self', 'super', 'crate']
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'range_pattern_lower_bounded', { start: _start });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.RangePatternLowerBounded as const, { _start });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.RangePatternLowerBounded as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
+		const node = arena.view(record);
+		return node as unknown as T.RangePatternLowerBounded.Bound;
+	});
+}
+function withRangePatternLowerBounded(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'start':
+			return applySetter(
+				args,
+				(
+					value: Admit<
+						NonNullable<
+							| T.LiteralPattern
+							| TSKindId.SelfModule
+							| T.Metavariable
+							| TSKindId.Super
+							| TSKindId.Crate
+							| T.Identifier
+							| T.ScopedIdentifier
+						>
+					>
+				) => rebuilt(node, handle, () => buildRangePatternLowerBounded$patch(node, value))
+			);
+	}
+	throw new Error(`range_pattern_lower_bounded has no $with.${setter}`);
 }
 
 export function buildStructItemBrace<
@@ -30048,10 +30071,10 @@ export type FluentKindMap = {
 	or_pattern_prefix: T.OrPatternPrefix.Bound;
 	pointer_type_const: T.PointerTypeConst.Bound;
 	pointer_type_mut: T.PointerTypeMut.Bound;
-	range_expression_binary: T.RangeExpressionBinary.Bound;
-	range_expression_postfix: T.RangeExpressionPostfix.Bound;
-	range_expression_prefix: T.RangeExpressionPrefix.Bound;
-	range_expression_bare: T.RangeExpressionBare.Bound;
+	range_expression_bounded: T.RangeExpressionBounded.Bound;
+	range_expression_lower_bounded: T.RangeExpressionLowerBounded.Bound;
+	range_expression_upper_bounded: T.RangeExpressionUpperBounded.Bound;
+	range_expression_unbounded: T.RangeExpressionUnbounded.Bound;
 	expression_statement_with_semi: T.ExpressionStatementWithSemi.Bound;
 	foreign_mod_item_semi: T.ForeignModItemSemi.Bound;
 	foreign_mod_item_body: T.ForeignModItemBody.Bound;
@@ -30078,10 +30101,9 @@ export type FluentKindMap = {
 	macro_definition_paren: T.MacroDefinitionParen.Bound;
 	macro_definition_bracket: T.MacroDefinitionBracket.Bound;
 	macro_definition_brace: T.MacroDefinitionBrace.Bound;
-	range_pattern_prefix: T.RangePatternPrefix.Bound;
-	range_pattern_with_left_with_right: T.RangePatternWithLeftWithRight.Bound;
-	range_pattern_with_left_bare: T.RangePatternWithLeftBare;
-	range_pattern_with_left: T.RangePatternWithLeft.Bound;
+	range_pattern_upper_bounded: T.RangePatternUpperBounded.Bound;
+	range_pattern_bounded: T.RangePatternBounded.Bound;
+	range_pattern_lower_bounded: T.RangePatternLowerBounded.Bound;
 	struct_item_brace: T.StructItemBrace.Bound;
 	struct_item_tuple: T.StructItemTuple.Bound;
 	struct_item_unit: T.StructItemUnit.Bound;
@@ -30328,10 +30350,10 @@ export const _factoryMap = {
 	or_pattern_prefix: buildOrPatternPrefix,
 	pointer_type_const: buildPointerTypeConst,
 	pointer_type_mut: buildPointerTypeMut,
-	range_expression_binary: buildRangeExpressionBinary,
-	range_expression_postfix: buildRangeExpressionPostfix,
-	range_expression_prefix: buildRangeExpressionPrefix,
-	range_expression_bare: buildRangeExpressionBare,
+	range_expression_bounded: buildRangeExpressionBounded,
+	range_expression_lower_bounded: buildRangeExpressionLowerBounded,
+	range_expression_upper_bounded: buildRangeExpressionUpperBounded,
+	range_expression_unbounded: buildRangeExpressionUnbounded,
 	expression_statement_with_semi: buildExpressionStatementWithSemi,
 	foreign_mod_item_semi: buildForeignModItemSemi,
 	foreign_mod_item_body: buildForeignModItemBody,
@@ -30358,10 +30380,9 @@ export const _factoryMap = {
 	macro_definition_paren: buildMacroDefinitionParen,
 	macro_definition_bracket: buildMacroDefinitionBracket,
 	macro_definition_brace: buildMacroDefinitionBrace,
-	range_pattern_prefix: buildRangePatternPrefix,
-	range_pattern_with_left_with_right: buildRangePatternWithLeftWithRight,
-	range_pattern_with_left_bare: buildRangePatternWithLeftBare,
-	range_pattern_with_left: buildRangePatternWithLeft,
+	range_pattern_upper_bounded: buildRangePatternUpperBounded,
+	range_pattern_bounded: buildRangePatternBounded,
+	range_pattern_lower_bounded: buildRangePatternLowerBounded,
 	struct_item_brace: buildStructItemBrace,
 	struct_item_tuple: buildStructItemTuple,
 	struct_item_unit: buildStructItemUnit,
@@ -30597,10 +30618,10 @@ export const builtViews: BuiltViews = Object.freeze({
 		387: withOrPatternPrefix,
 		388: withPointerTypeConst,
 		389: withPointerTypeMut,
-		390: withRangeExpressionBinary,
-		391: withRangeExpressionPostfix,
-		392: withRangeExpressionPrefix,
-		393: withRangeExpressionBare,
+		390: withRangeExpressionBounded,
+		391: withRangeExpressionLowerBounded,
+		392: withRangeExpressionUpperBounded,
+		393: withRangeExpressionUnbounded,
 		394: withExpressionStatementWithSemi,
 		395: withForeignModItemSemi,
 		396: withForeignModItemBody,
@@ -30624,34 +30645,34 @@ export const builtViews: BuiltViews = Object.freeze({
 		416: withMacroDefinitionParen,
 		417: withMacroDefinitionBracket,
 		418: withMacroDefinitionBrace,
-		419: withRangePatternPrefix,
-		420: withRangePatternWithLeftWithRight,
-		422: withRangePatternWithLeft,
-		423: withStructItemBrace,
-		424: withStructItemTuple,
-		425: withStructItemUnit,
-		427: withAttributedFieldDeclaration,
-		428: withAttributedEnumVariant,
-		429: withAttributedParameter,
-		430: withAttributedTypeParameter,
-		431: withArgument,
-		432: withAttributedOrderedField,
-		433: withTypeArgument,
-		434: withMatchBlockArms,
-		435: withArrayExpressionSemi,
-		436: withArrayExpressionList,
-		437: withTraitInterfaceDeclarationBody,
-		438: withExtensionDeclarationBody,
-		439: withReceiverParameterDeclaration,
-		440: withAttributedParameterReceiver,
-		441: withParametersElementsReceiver,
-		442: withParametersElementsReceiverGroup,
-		476: withClosureParameter,
-		478: withFieldIdentifier,
-		480: withMethodDeclaration,
-		482: withShorthandFieldIdentifier,
-		483: withSignatureMethodDeclaration,
-		484: withTypeIdentifier
+		419: withRangePatternUpperBounded,
+		420: withRangePatternBounded,
+		421: withRangePatternLowerBounded,
+		422: withStructItemBrace,
+		423: withStructItemTuple,
+		424: withStructItemUnit,
+		426: withAttributedFieldDeclaration,
+		427: withAttributedEnumVariant,
+		428: withAttributedParameter,
+		429: withAttributedTypeParameter,
+		430: withArgument,
+		431: withAttributedOrderedField,
+		432: withTypeArgument,
+		433: withMatchBlockArms,
+		434: withArrayExpressionSemi,
+		435: withArrayExpressionList,
+		436: withTraitInterfaceDeclarationBody,
+		437: withExtensionDeclarationBody,
+		438: withReceiverParameterDeclaration,
+		439: withAttributedParameterReceiver,
+		440: withParametersElementsReceiver,
+		441: withParametersElementsReceiverGroup,
+		475: withClosureParameter,
+		477: withFieldIdentifier,
+		479: withMethodDeclaration,
+		481: withShorthandFieldIdentifier,
+		482: withSignatureMethodDeclaration,
+		483: withTypeIdentifier
 	}),
 	words: Object.freeze({
 		123: 4,
@@ -30866,33 +30887,33 @@ export const builtViews: BuiltViews = Object.freeze({
 		417: 4,
 		418: 4,
 		419: 4,
-		420: 4,
-		422: 4,
+		420: 5,
+		421: 3,
+		422: 7,
 		423: 7,
-		424: 7,
-		425: 5,
+		424: 5,
+		426: 4,
 		427: 4,
 		428: 4,
 		429: 4,
 		430: 4,
-		431: 4,
-		432: 5,
-		433: 4,
-		434: 3,
-		435: 4,
+		431: 5,
+		432: 4,
+		433: 3,
+		434: 4,
+		435: 3,
 		436: 3,
 		437: 3,
-		438: 3,
+		438: 4,
 		439: 4,
 		440: 4,
-		441: 4,
-		442: 3,
-		476: 3,
-		478: 3,
-		480: 10,
-		482: 3,
-		483: 9,
-		484: 3
+		441: 3,
+		475: 3,
+		477: 3,
+		479: 10,
+		481: 3,
+		482: 9,
+		483: 3
 	}),
 	cells: Object.freeze({
 		123: 2,
@@ -31108,10 +31129,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		418: 2,
 		419: 2,
 		420: 2,
+		421: 2,
 		422: 2,
 		423: 2,
 		424: 2,
-		425: 2,
+		426: 2,
 		427: 2,
 		428: 2,
 		429: 2,
@@ -31123,17 +31145,16 @@ export const builtViews: BuiltViews = Object.freeze({
 		435: 2,
 		436: 2,
 		437: 2,
-		438: 2,
-		439: 3,
+		438: 3,
+		439: 2,
 		440: 2,
 		441: 2,
-		442: 2,
-		476: 2,
-		478: 2,
-		480: 2,
+		475: 2,
+		477: 2,
+		479: 2,
+		481: 2,
 		482: 2,
-		483: 2,
-		484: 2
+		483: 2
 	}),
 	places: Object.freeze({
 		123: [[2, 2, 2, 4, 0]],
@@ -31805,12 +31826,17 @@ export const builtViews: BuiltViews = Object.freeze({
 			[3, 3, 4, 3, 0]
 		],
 		420: [
-			[2, 2, 1, 2, 0],
-			[3, 3, 4, 3, 0]
-		],
-		422: [
 			[2, 2, 4, 3, 0],
-			[6, 3, 4, 3, 0]
+			[6, 3, 1, 2, 0],
+			[7, 4, 4, 3, 0]
+		],
+		421: [[2, 2, 4, 3, 0]],
+		422: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0],
+			[8, 4, 3, 1, 0],
+			[11, 5, 3, 1, 0],
+			[14, 6, 3, 1, 0]
 		],
 		423: [
 			[2, 2, 3, 1, 0],
@@ -31822,68 +31848,61 @@ export const builtViews: BuiltViews = Object.freeze({
 		424: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
-			[8, 4, 3, 1, 0],
-			[11, 5, 3, 1, 0],
-			[14, 6, 3, 1, 0]
-		],
-		425: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0]
+		],
+		426: [
+			[2, 2, 1, 1, 3],
+			[3, 3, 3, 1, 0]
 		],
 		427: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
 		428: [
-			[2, 2, 1, 1, 3],
-			[3, 3, 3, 1, 0]
-		],
-		429: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 4, 3, 0]
 		],
-		430: [
+		429: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0]
 		],
-		431: [
+		430: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 4, 3, 0]
 		],
-		432: [
+		431: [
 			[2, 2, 1, 1, 3],
 			[3, 3, 3, 1, 0],
 			[6, 4, 4, 3, 0]
 		],
-		433: [
+		432: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 3, 1, 0]
 		],
-		434: [[2, 2, 1, 1, 3]],
-		435: [
+		433: [[2, 2, 1, 1, 3]],
+		434: [
 			[2, 2, 4, 3, 0],
 			[6, 3, 4, 3, 0]
 		],
-		436: [[2, 2, 3, 1, 0]],
+		435: [[2, 2, 3, 1, 0]],
+		436: [[2, 2, 1, 3, 4]],
 		437: [[2, 2, 1, 3, 4]],
-		438: [[2, 2, 1, 3, 4]],
-		439: [
+		438: [
 			[2, 0],
 			[3, 3, 4, 3, 0]
+		],
+		439: [
+			[2, 2, 3, 1, 0],
+			[5, 3, 3, 1, 0]
 		],
 		440: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0]
 		],
-		441: [
-			[2, 2, 3, 1, 0],
-			[5, 3, 3, 1, 0]
-		],
-		442: [[2, 2, 3, 1, 0]],
-		476: [[2, 2, 4, 3, 0]],
-		478: [[2, 2, 3, 1, 0]],
-		480: [
+		441: [[2, 2, 3, 1, 0]],
+		475: [[2, 2, 4, 3, 0]],
+		477: [[2, 2, 3, 1, 0]],
+		479: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -31893,8 +31912,8 @@ export const builtViews: BuiltViews = Object.freeze({
 			[21, 8, 3, 1, 0],
 			[24, 9, 3, 1, 0]
 		],
-		482: [[2, 2, 3, 1, 0]],
-		483: [
+		481: [[2, 2, 3, 1, 0]],
+		482: [
 			[2, 2, 3, 1, 0],
 			[5, 3, 3, 1, 0],
 			[8, 4, 3, 1, 0],
@@ -31903,7 +31922,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[17, 7, 4, 3, 0],
 			[21, 8, 3, 1, 0]
 		],
-		484: [[2, 2, 3, 1, 0]]
+		483: [[2, 2, 3, 1, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifier,

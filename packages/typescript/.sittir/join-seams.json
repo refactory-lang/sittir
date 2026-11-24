@@ -1,7 +1,7 @@
 {
 	"parser": {
-		"source": "89981457df27652d4235f7a07e42bf2873b559ce7d3e51d8cb46c7c9c7448982",
-		"wasm": "11404771c927c5020ff3a63cfa8e67dcf6384008a6cf6d5948a32902a4aaa700"
+		"source": "2e857bfb7d3a43ebd24f5b0cc798cc4f960d986ac1a209e73f764a4efda35811",
+		"wasm": "2d654a5c4fc71498d4e5551d6e1cb04c5855b2227351e79fa7f5f61e72818c68"
 	},
 	"inputs": "aa4ef9667a9fd2b855822439158d4655f15899b6fb427206703d6c337983933a",
 	"seams": [
@@ -21,7 +21,7 @@
 		{"seam":"_parameter_name_set_accessor_signature:members.4","next":"proven"},
 		{"seam":"_parameter_name_set_accessor_signature:members.4/members.0","next":"proven"},
 		{"seam":"_type_query_instantiation_expression:members.1","next":"proven"},
-		{"seam":"abstract_class_declaration:members.6","next":"unproven"},
+		{"seam":"abstract_class_declaration:members.6","next":"proven"},
 		{"seam":"adding_type_annotation:members.1","next":"proven"},
 		{"seam":"ambient_declaration_module:members.4","next":"proven"},
 		{"seam":"arguments:members.1","next":"proven"},
@@ -101,8 +101,8 @@
 		{"seam":"binary_expression_in:members.2","next":"proven"},
 		{"seam":"call_expression_call:members.1","next":"proven"},
 		{"seam":"call_expression_call:members.1/members.0","next":"proven"},
-		{"seam":"class:members.5","next":"unproven"},
-		{"seam":"class_declaration:members.5","next":"unproven"},
+		{"seam":"class:members.5","next":"proven"},
+		{"seam":"class_declaration:members.5","next":"proven"},
 		{"seam":"computed_property_name:members.1","next":"proven"},
 		{"seam":"conditional_type:members.2","next":"proven"},
 		{"seam":"conditional_type:members.3","next":"proven"},
@@ -261,6 +261,7 @@
 		"_enum_body_element",
 		"_expressions",
 		"_extends_clause_single",
+		"_for_initializer",
 		"_formal_parameter",
 		"_formal_parameters_elements_receiver",
 		"_formal_parameters_elements_set_accessor_signature",
@@ -320,6 +321,9 @@
 		"field_definition",
 		"flow_maybe_type",
 		"for_in_statement",
+		"for_initializer_let_const_kind",
+		"for_initializer_using_kind",
+		"for_initializer_var_kind",
 		"for_statement",
 		"formal_parameters_elements",
 		"formal_parameters_elements_receiver",
@@ -406,22 +410,22 @@
 		"|"
 	],
 	"blocked": [
-		{"seam":"flow_maybe_type:members.1","state":199,"previous":"?","next":".0","reason":"the instance lexed the token in another state"},
-		{"seam":"flow_maybe_type:members.1","state":199,"previous":"?","next":"?","reason":"the instance lexed the token in another state"},
+		{"seam":"flow_maybe_type:members.1","state":198,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":198,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":2,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":2,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":212,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":212,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":224,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":224,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":225,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":225,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":243,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":243,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":244,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":244,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":216,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":216,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":221,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":221,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":223,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":223,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":231,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":231,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":241,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
+		{"seam":"flow_maybe_type:members.1","state":241,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":3,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
 		{"seam":"flow_maybe_type:members.1","state":3,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"regex:members.1","state":124,"previous":"/","next":"=","reason":"spaced text has a parse error at the seam"}
+		{"seam":"regex:members.1","state":119,"previous":"/","next":"=","reason":"spaced text has a parse error at the seam"}
 	]
 }

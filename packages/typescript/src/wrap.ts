@@ -1523,14 +1523,11 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle): T.ForS
 		...data,
 		$type: TSKindId.ForStatement as const,
 		initializer() {
-			return hydrateSlot<
-				| T.LexicalDeclaration
-				| T.VariableDeclaration
-				| T.UsingDeclaration
-				| T.Expression
-				| T.SequenceExpression
-				| TSKindId.EmptyStatement
-			>(this, '_initializer', tree);
+			return hydrateSlot<T.ForInitializer | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(
+				this,
+				'_initializer',
+				tree
+			);
 		},
 		condition() {
 			return hydrateSlot<T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(this, '_condition', tree);
@@ -2410,8 +2407,8 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle): T.SwitchCa
 		value() {
 			return hydrateSlot<T.Expression | T.SequenceExpression>(this, '_value', tree);
 		},
-		bodies() {
-			return hydrateSlots<T.Statement>(this, '_body', tree);
+		statements() {
+			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2428,7 +2425,7 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle): T.SwitchCa
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { value: wrapSwitchCase$with$value, bodies: wrapSwitchCase$with$bodies, [RECEIVER]: node };
+	node.$with = { value: wrapSwitchCase$with$value, statements: wrapSwitchCase$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchCase.Parsed;
 }
@@ -2443,11 +2440,14 @@ function wrapSwitchCase$with(node: Held, setter: string, args: readonly unknown[
 					wrapSwitchCase({ ...$edited(data), _value: admitSlot(handle, 'switch_case', 'value', v) }, tree)
 				)
 			);
-		case 'bodies':
-			return applySetter(args, (...v: NonNullable<T.SwitchCase['_body']>[number][]) =>
+		case 'statements':
+			return applySetter(args, (...v: NonNullable<T.SwitchCase['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapSwitchCase(
-						{ ...$edited(data), _body: admitSlot(handle, 'switch_case', 'bodies', restItems('bodies', v)) },
+						{
+							...$edited(data),
+							_statements: admitSlot(handle, 'switch_case', 'statements', restItems('statements', v))
+						},
 						tree
 					)
 				)
@@ -2458,8 +2458,8 @@ function wrapSwitchCase$with(node: Held, setter: string, args: readonly unknown[
 function wrapSwitchCase$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapSwitchCase$with(receiverOf(this, '$with.value'), 'value', args);
 }
-function wrapSwitchCase$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSwitchCase$with(receiverOf(this, '$with.bodies'), 'bodies', args);
+function wrapSwitchCase$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSwitchCase$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.SwitchDefault.Parsed {
@@ -2467,8 +2467,8 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 	const node = {
 		...data,
 		$type: TSKindId.SwitchDefault as const,
-		bodies() {
-			return hydrateSlots<T.Statement>(this, '_body', tree);
+		statements() {
+			return hydrateSlots<T.Statement>(this, '_statements', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -2485,7 +2485,7 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle): T.Sw
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { bodies: wrapSwitchDefault$with$bodies, [RECEIVER]: node };
+	node.$with = { statements: wrapSwitchDefault$with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchDefault.Parsed;
 }
@@ -2494,11 +2494,14 @@ function wrapSwitchDefault$with(node: Held, setter: string, args: readonly unkno
 	const data = node[INPUT] as T.SwitchDefault;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'bodies':
-			return applySetter(args, (...v: NonNullable<T.SwitchDefault['_body']>[number][]) =>
+		case 'statements':
+			return applySetter(args, (...v: NonNullable<T.SwitchDefault['_statements']>[number][]) =>
 				rebuilt(node, handle, () =>
 					wrapSwitchDefault(
-						{ ...$edited(data), _body: admitSlot(handle, 'switch_default', 'bodies', restItems('bodies', v)) },
+						{
+							...$edited(data),
+							_statements: admitSlot(handle, 'switch_default', 'statements', restItems('statements', v))
+						},
 						tree
 					)
 				)
@@ -2506,8 +2509,8 @@ function wrapSwitchDefault$with(node: Held, setter: string, args: readonly unkno
 	}
 	throw new Error(`switch_default has no $with.${setter}`);
 }
-function wrapSwitchDefault$with$bodies(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapSwitchDefault$with(receiverOf(this, '$with.bodies'), 'bodies', args);
+function wrapSwitchDefault$with$statements(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapSwitchDefault$with(receiverOf(this, '$with.statements'), 'statements', args);
 }
 
 export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle): T.CatchClause.Parsed {
@@ -18476,6 +18479,213 @@ function wrapForHeaderUsingKind$with$right(this: Received<Held>, ...args: unknow
 	return wrapForHeaderUsingKind$with(receiverOf(this, '$with.right'), 'right', args);
 }
 
+export function wrapForInitializerLetConstKind(
+	data: T.ForInitializerLetConstKind,
+	tree: TreeHandle
+): T.ForInitializerLetConstKind.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForInitializerLetConstKind as const,
+		kind() {
+			return this._kind;
+		},
+		declarators() {
+			return hydrateSlots<T.VariableDeclarator>(this, '_declarators', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		kind: wrapForInitializerLetConstKind$with$kind,
+		declarators: wrapForInitializerLetConstKind$with$declarators,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerLetConstKind.Parsed;
+}
+function wrapForInitializerLetConstKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ForInitializerLetConstKind;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (v: NonNullable<T.ForInitializerLetConstKind['_kind']>) =>
+				rebuilt(node, handle, () =>
+					wrapForInitializerLetConstKind(
+						{ ...$edited(data), _kind: admitSlot(handle, 'for_initializer_let_const_kind', 'kind', v) },
+						tree
+					)
+				)
+			);
+		case 'declarators':
+			return applySetter(
+				args,
+				(...v: NonEmptyArray<NonNullable<T.ForInitializerLetConstKind['_declarators']>[number]>) =>
+					rebuilt(node, handle, () =>
+						wrapForInitializerLetConstKind(
+							{
+								...$edited(data),
+								_declarators: admitSlot(
+									handle,
+									'for_initializer_let_const_kind',
+									'declarators',
+									restItems('declarators', v)
+								)
+							},
+							tree
+						)
+					)
+			);
+	}
+	throw new Error(`for_initializer_let_const_kind has no $with.${setter}`);
+}
+function wrapForInitializerLetConstKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForInitializerLetConstKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function wrapForInitializerLetConstKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForInitializerLetConstKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
+export function wrapForInitializerVarKind(
+	data: T.ForInitializerVarKind,
+	tree: TreeHandle
+): T.ForInitializerVarKind.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForInitializerVarKind as const,
+		declarators() {
+			return hydrateSlots<T.VariableDeclarator>(this, '_declarators', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { declarators: wrapForInitializerVarKind$with$declarators, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerVarKind.Parsed;
+}
+function wrapForInitializerVarKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ForInitializerVarKind;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'declarators':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ForInitializerVarKind['_declarators']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapForInitializerVarKind(
+						{
+							...$edited(data),
+							_declarators: admitSlot(handle, 'for_initializer_var_kind', 'declarators', restItems('declarators', v))
+						},
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`for_initializer_var_kind has no $with.${setter}`);
+}
+function wrapForInitializerVarKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForInitializerVarKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
+export function wrapForInitializerUsingKind(
+	data: T.ForInitializerUsingKind,
+	tree: TreeHandle
+): T.ForInitializerUsingKind.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ForInitializerUsingKind as const,
+		kind() {
+			return this._kind;
+		},
+		declarators() {
+			return hydrateSlots<T.VariableDeclarator>(this, '_declarators', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && indexOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && indexOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = {
+		kind: wrapForInitializerUsingKind$with$kind,
+		declarators: wrapForInitializerUsingKind$with$declarators,
+		[RECEIVER]: node
+	};
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerUsingKind.Parsed;
+}
+function wrapForInitializerUsingKind$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.ForInitializerUsingKind;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'kind':
+			return applySetter(args, (v: NonNullable<T.ForInitializerUsingKind['_kind']>) =>
+				rebuilt(node, handle, () =>
+					wrapForInitializerUsingKind(
+						{ ...$edited(data), _kind: admitSlot(handle, 'for_initializer_using_kind', 'kind', v) },
+						tree
+					)
+				)
+			);
+		case 'declarators':
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.ForInitializerUsingKind['_declarators']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapForInitializerUsingKind(
+						{
+							...$edited(data),
+							_declarators: admitSlot(handle, 'for_initializer_using_kind', 'declarators', restItems('declarators', v))
+						},
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`for_initializer_using_kind has no $with.${setter}`);
+}
+function wrapForInitializerUsingKind$with$kind(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForInitializerUsingKind$with(receiverOf(this, '$with.kind'), 'kind', args);
+}
+function wrapForInitializerUsingKind$with$declarators(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapForInitializerUsingKind$with(receiverOf(this, '$with.declarators'), 'declarators', args);
+}
+
 export function wrapFormalParametersSetAccessorSignature(
 	data: T.FormalParametersSetAccessorSignature,
 	tree: TreeHandle
@@ -22839,14 +23049,7 @@ function viewSwitchStatement(data: RecordPosition, tree: TreeHandle): T.SwitchSt
 }
 
 function viewForStatement$initializer(this: RecordHandle) {
-	return viewSlot<
-		| T.LexicalDeclaration
-		| T.VariableDeclaration
-		| T.UsingDeclaration
-		| T.Expression
-		| T.SequenceExpression
-		| TSKindId.EmptyStatement
-	>(this, 2, 4, 3, 2);
+	return viewSlot<T.ForInitializer | T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(this, 2, 4, 3, 2);
 }
 function viewForStatement$condition(this: RecordHandle) {
 	return viewSlot<T.Expression | T.SequenceExpression | TSKindId.EmptyStatement>(this, 6, 4, 3, 3);
@@ -23280,7 +23483,7 @@ function viewSwitchBody(data: RecordPosition, tree: TreeHandle): T.SwitchBody.Pa
 function viewSwitchCase$value(this: RecordHandle) {
 	return viewSlot<T.Expression | T.SequenceExpression>(this, 2, 4, 3, 2);
 }
-function viewSwitchCase$bodies(this: RecordHandle) {
+function viewSwitchCase$statements(this: RecordHandle) {
 	return viewSlots<T.Statement>(this, 6, 1, 4, 3, 3);
 }
 function viewSwitchCase(data: RecordPosition, tree: TreeHandle): T.SwitchCase.Parsed {
@@ -23292,7 +23495,7 @@ function viewSwitchCase(data: RecordPosition, tree: TreeHandle): T.SwitchCase.Pa
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		value: viewSwitchCase$value,
-		bodies: viewSwitchCase$bodies,
+		statements: viewSwitchCase$statements,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -23303,12 +23506,12 @@ function viewSwitchCase(data: RecordPosition, tree: TreeHandle): T.SwitchCase.Pa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { value: $with$value, bodies: $with$bodies, [RECEIVER]: node };
+	node.$with = { value: $with$value, statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchCase.Parsed;
 }
 
-function viewSwitchDefault$bodies(this: RecordHandle) {
+function viewSwitchDefault$statements(this: RecordHandle) {
 	return viewSlots<T.Statement>(this, 2, 1, 4, 3, 2);
 }
 function viewSwitchDefault(data: RecordPosition, tree: TreeHandle): T.SwitchDefault.Parsed {
@@ -23319,7 +23522,7 @@ function viewSwitchDefault(data: RecordPosition, tree: TreeHandle): T.SwitchDefa
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		bodies: viewSwitchDefault$bodies,
+		statements: viewSwitchDefault$statements,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -23330,7 +23533,7 @@ function viewSwitchDefault(data: RecordPosition, tree: TreeHandle): T.SwitchDefa
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { bodies: $with$bodies, [RECEIVER]: node };
+	node.$with = { statements: $with$statements, [RECEIVER]: node };
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.SwitchDefault.Parsed;
 }
@@ -30702,6 +30905,95 @@ function viewForHeaderUsingKind(data: RecordPosition, tree: TreeHandle): T.ForHe
 	return node as unknown as T.ForHeaderUsingKind.Parsed;
 }
 
+function viewForInitializerLetConstKind$kind(this: RecordHandle) {
+	return childSlot(this, 2, 1, 2, 2);
+}
+function viewForInitializerLetConstKind$declarators(this: RecordHandle) {
+	return viewSlots<T.VariableDeclarator>(this, 3, 1, 3, 1, 3);
+}
+function viewForInitializerLetConstKind(data: RecordPosition, tree: TreeHandle): T.ForInitializerLetConstKind.Parsed {
+	const node = {
+		$type: TSKindId.ForInitializerLetConstKind as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		kind: viewForInitializerLetConstKind$kind,
+		declarators: viewForInitializerLetConstKind$declarators,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { kind: $with$kind, declarators: $with$declarators, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerLetConstKind.Parsed;
+}
+
+function viewForInitializerVarKind$declarators(this: RecordHandle) {
+	return viewSlots<T.VariableDeclarator>(this, 2, 1, 3, 1, 2);
+}
+function viewForInitializerVarKind(data: RecordPosition, tree: TreeHandle): T.ForInitializerVarKind.Parsed {
+	const node = {
+		$type: TSKindId.ForInitializerVarKind as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		declarators: viewForInitializerVarKind$declarators,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { declarators: $with$declarators, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerVarKind.Parsed;
+}
+
+function viewForInitializerUsingKind$kind(this: RecordHandle) {
+	return childSlot(this, 2, 1, 2, 2);
+}
+function viewForInitializerUsingKind$declarators(this: RecordHandle) {
+	return viewSlots<T.VariableDeclarator>(this, 3, 1, 3, 1, 3);
+}
+function viewForInitializerUsingKind(data: RecordPosition, tree: TreeHandle): T.ForInitializerUsingKind.Parsed {
+	const node = {
+		$type: TSKindId.ForInitializerUsingKind as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		kind: viewForInitializerUsingKind$kind,
+		declarators: viewForInitializerUsingKind$declarators,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { kind: $with$kind, declarators: $with$declarators, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.ForInitializerUsingKind.Parsed;
+}
+
 function viewFormalParametersSetAccessorSignature$elements(this: RecordHandle) {
 	return viewSlot<T.FormalParametersElementsSetAccessorSignature>(this, 2, 3, 1, 2);
 }
@@ -32206,9 +32498,6 @@ function $with$attributeKind(this: Received<RecordPosition>, ...args: unknown[])
 function $with$automaticSemicolon(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.automaticSemicolon'), _wrap, 'automaticSemicolon', args);
 }
-function $with$bodies(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.bodies'), _wrap, 'bodies', args);
-}
 function $with$body(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.body'), _wrap, 'body', args);
 }
@@ -32799,6 +33088,11 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ForHeaderVarKind]: (d, t) => wrapForHeaderVarKind(d as unknown as T.ForHeaderVarKind, t),
 	[TSKindId.ForHeaderLetConstKind]: (d, t) => wrapForHeaderLetConstKind(d as unknown as T.ForHeaderLetConstKind, t),
 	[TSKindId.ForHeaderUsingKind]: (d, t) => wrapForHeaderUsingKind(d as unknown as T.ForHeaderUsingKind, t),
+	[TSKindId.ForInitializerLetConstKind]: (d, t) =>
+		wrapForInitializerLetConstKind(d as unknown as T.ForInitializerLetConstKind, t),
+	[TSKindId.ForInitializerVarKind]: (d, t) => wrapForInitializerVarKind(d as unknown as T.ForInitializerVarKind, t),
+	[TSKindId.ForInitializerUsingKind]: (d, t) =>
+		wrapForInitializerUsingKind(d as unknown as T.ForInitializerUsingKind, t),
 	[TSKindId.FormalParametersSetAccessorSignature]: (d, t) =>
 		wrapFormalParametersSetAccessorSignature(d as unknown as T.FormalParametersSetAccessorSignature, t),
 	[TSKindId.FormalParametersElementsSetAccessorSignature]: (d, t) =>
@@ -33063,6 +33357,9 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.ForHeaderVarKind]: viewForHeaderVarKind,
 	[TSKindId.ForHeaderLetConstKind]: viewForHeaderLetConstKind,
 	[TSKindId.ForHeaderUsingKind]: viewForHeaderUsingKind,
+	[TSKindId.ForInitializerLetConstKind]: viewForInitializerLetConstKind,
+	[TSKindId.ForInitializerVarKind]: viewForInitializerVarKind,
+	[TSKindId.ForInitializerUsingKind]: viewForInitializerUsingKind,
 	[TSKindId.FormalParametersSetAccessorSignature]: viewFormalParametersSetAccessorSignature,
 	[TSKindId.FormalParametersElementsSetAccessorSignature]: viewFormalParametersElementsSetAccessorSignature,
 	[TSKindId.SetterParameter]: viewSetterParameter,

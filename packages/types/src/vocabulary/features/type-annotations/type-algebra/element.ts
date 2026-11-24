@@ -8,7 +8,7 @@ export namespace Element {
 		// t only
 	}
 	export namespace Template {
-		export interface Substitution<G extends GrammarMap, K extends Under<'element.template.substitution'> = 'element.template.substitution'> extends SubKindOf<V.Element.Template<G, K>> {
+		export interface Substitution<G extends GrammarMap, K extends Under<'element.template.substitution'> = 'element.template.substitution'> extends SubKindOf<V.Element.Template<G, K>, 'type'> {
 			// claimed by t
 			readonly $path: K;
 			readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
@@ -22,14 +22,14 @@ export namespace Element {
 		// t only
 	}
 	export namespace Tuple {
-		export interface Member<G extends GrammarMap, K extends Under<'element.tuple.member'> = 'element.tuple.member'> extends SubKindOf<V.Element.Tuple<G, K>> {
+		export interface Member<G extends GrammarMap, K extends Under<'element.tuple.member'> = 'element.tuple.member'> extends SubKindOf<V.Element.Tuple<G, K>, 'name' | 'type'> {
 			// claimed by t
 			readonly $path: K;
 			readonly name: Slot<G, K, 'name', V.Identifier.Any<G> | V.Pattern.Rest<G>>;
 			readonly type: Slot<G, K, 'type', V.Identifier.Any<G> | V.Type.Any<G>>;
 		}
 		export namespace Member {
-			export interface Optional<G extends GrammarMap, K extends Under<'element.tuple.member.optional'> = 'element.tuple.member.optional'> extends SubKindOf<V.Element.Tuple.Member<G, K>> {
+			export interface Optional<G extends GrammarMap, K extends Under<'element.tuple.member.optional'> = 'element.tuple.member.optional'> extends SubKindOf<V.Element.Tuple.Member<G, K>, 'name' | 'type'> {
 				// claimed by t
 				readonly $path: K;
 				readonly name: Slot<G, K, 'name', V.Identifier.Any<G>>;

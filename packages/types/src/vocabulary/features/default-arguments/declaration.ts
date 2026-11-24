@@ -3,16 +3,7 @@ import type { Under } from '../../utils.ts';
 import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Parameter<G extends GrammarMap, K extends Under<'declaration.parameter'> = 'declaration.parameter'> {
-		readonly default?: Slot<
-			G,
-			K,
-			'default',
-			| V.Declaration.Module<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Any<G>
-		>;
+		readonly default?: Slot<G, K, 'default', V.Expression.Any<G>>;
 		// pt only
 	}
 	export namespace Parameter {

@@ -21,7 +21,7 @@ describe('the shared portable guards read a rust node', () => {
 	it('pass a function_item read from a rust engine', () => {
 		expect(guard('declaration.function')(item)).toBe(true);
 		expect(guard('declaration')(item)).toBe(true);
-		expect(guard('declaration.struct')(item)).toBe(false);
+		expect(guard('declaration.type.struct')(item)).toBe(false);
 	});
 
 	it('refuse a bare kind id and a node no engine stamped', () => {
@@ -51,7 +51,7 @@ describe('the shared portable guards read a rust node', () => {
 			.$descendants.ofType(rust.kinds.MethodDeclaration)
 			.find();
 		expect(method).toBeDefined();
-		expect(guard('declaration.method')(method)).toBe(true);
+		expect(guard('declaration.member.method')(method)).toBe(true);
 		expect(guard('declaration.function')(method)).toBe(false);
 	});
 });

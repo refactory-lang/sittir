@@ -383,7 +383,7 @@ Refuses to show a copy's reference as `shown` when the reference already has a d
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::refuseSplitDisplays`
 
-The check after an edits entry. Every copy the entry gave a display (`wire/wire.ts::wireEntryShown`) must show that display at every reference reachable from the entry's result (`referenceDisplays`). If any reference shows another, that is a `VerbRefusal` `edit-site-conflict` naming the copy and both displays. So an entry that shows one reference of a copy under a new name, and leaves another under the old one, is refused whole. A bare reference to a hidden copy shows no display and is named by the copy's own name. Returns the rule.
+The check after an edits entry. For each copy the entry gave a reference (`wire/wire.ts::wireEntryShown`), the names the copy is shown under, the entry's display and the display of every reference reachable from the entry's result (`referenceDisplays`), are one name at most. Two names are a `VerbRefusal` `edit-site-conflict` naming the copy and both. A bare reference shows no name, so a hidden copy shown under a new name at one reference stays bare at another, as its source's reference is there. A copy aliased back to its visible source shows the source's name, so a new name at another reference of it is a second name, as a hidden rule takes one display (`hidden-display-fold`). Returns the rule.
 
 ### `packages/codegen/src/dsl/primitives/copy.ts::referenceDisplays`
 

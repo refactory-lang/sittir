@@ -26,115 +26,119 @@ export namespace Declaration {
 			}
 		}
 	}
-	export namespace Enum {
-		export interface Private<G extends GrammarMap, K extends Under<'declaration.enum.private'> = 'declaration.enum.private'> extends RefinedBy<V.Declaration.Enum<G, K>, V.Modifier.Visibility.Private<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export interface Public<G extends GrammarMap, K extends Under<'declaration.enum.public'> = 'declaration.enum.public'> extends RefinedBy<V.Declaration.Enum<G, K>, V.Modifier.Visibility.Public<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export namespace Public {
-			export interface Internal<G extends GrammarMap, K extends Under<'declaration.enum.public.internal'> = 'declaration.enum.public.internal'> extends RefinedBy<V.Declaration.Enum.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+	export namespace Type {
+		export namespace Enum {
+			export interface Private<G extends GrammarMap, K extends Under<'declaration.type.enum.private'> = 'declaration.type.enum.private'> extends RefinedBy<V.Declaration.Type.Enum<G, K>, V.Modifier.Visibility.Private<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
-			export interface Parent<G extends GrammarMap, K extends Under<'declaration.enum.public.parent'> = 'declaration.enum.public.parent'> extends RefinedBy<V.Declaration.Enum.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Restricted<G extends GrammarMap, K extends Under<'declaration.enum.public.restricted'> = 'declaration.enum.public.restricted'> extends RefinedBy<V.Declaration.Enum.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-		}
-	}
-	export namespace EnumMember {
-		export interface Private<G extends GrammarMap, K extends Under<'declaration.enum_member.private'> = 'declaration.enum_member.private'> extends RefinedBy<V.Declaration.EnumMember<G, K>, V.Modifier.Visibility.Private<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export interface Public<G extends GrammarMap, K extends Under<'declaration.enum_member.public'> = 'declaration.enum_member.public'> extends RefinedBy<V.Declaration.EnumMember<G, K>, V.Modifier.Visibility.Public<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export namespace Public {
-			export interface Internal<G extends GrammarMap, K extends Under<'declaration.enum_member.public.internal'> = 'declaration.enum_member.public.internal'> extends RefinedBy<V.Declaration.EnumMember.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Parent<G extends GrammarMap, K extends Under<'declaration.enum_member.public.parent'> = 'declaration.enum_member.public.parent'> extends RefinedBy<V.Declaration.EnumMember.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Restricted<G extends GrammarMap, K extends Under<'declaration.enum_member.public.restricted'> = 'declaration.enum_member.public.restricted'> extends RefinedBy<V.Declaration.EnumMember.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-		}
-		export namespace Struct {
-			export interface Private<G extends GrammarMap, K extends Under<'declaration.enum_member.struct.private'> = 'declaration.enum_member.struct.private'> extends RefinedBy<V.Declaration.EnumMember.Struct<G, K>, V.Modifier.Visibility.Private<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Public<G extends GrammarMap, K extends Under<'declaration.enum_member.struct.public'> = 'declaration.enum_member.struct.public'> extends RefinedBy<V.Declaration.EnumMember.Struct<G, K>, V.Modifier.Visibility.Public<G>> {
+			export interface Public<G extends GrammarMap, K extends Under<'declaration.type.enum.public'> = 'declaration.type.enum.public'> extends RefinedBy<V.Declaration.Type.Enum<G, K>, V.Modifier.Visibility.Public<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
 			export namespace Public {
-				export interface Internal<G extends GrammarMap, K extends Under<'declaration.enum_member.struct.public.internal'> = 'declaration.enum_member.struct.public.internal'> extends RefinedBy<V.Declaration.EnumMember.Struct.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+				export interface Internal<G extends GrammarMap, K extends Under<'declaration.type.enum.public.internal'> = 'declaration.type.enum.public.internal'> extends RefinedBy<V.Declaration.Type.Enum.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Parent<G extends GrammarMap, K extends Under<'declaration.enum_member.struct.public.parent'> = 'declaration.enum_member.struct.public.parent'> extends RefinedBy<V.Declaration.EnumMember.Struct.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+				export interface Parent<G extends GrammarMap, K extends Under<'declaration.type.enum.public.parent'> = 'declaration.type.enum.public.parent'> extends RefinedBy<V.Declaration.Type.Enum.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.enum_member.struct.public.restricted'> = 'declaration.enum_member.struct.public.restricted'> extends RefinedBy<V.Declaration.EnumMember.Struct.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-					// claimed by r
-					readonly $path: K;
-				}
-			}
-		}
-		export namespace Tuple {
-			export interface Private<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple.private'> = 'declaration.enum_member.tuple.private'> extends RefinedBy<V.Declaration.EnumMember.Tuple<G, K>, V.Modifier.Visibility.Private<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Public<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple.public'> = 'declaration.enum_member.tuple.public'> extends RefinedBy<V.Declaration.EnumMember.Tuple<G, K>, V.Modifier.Visibility.Public<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export namespace Public {
-				export interface Internal<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple.public.internal'> = 'declaration.enum_member.tuple.public.internal'> extends RefinedBy<V.Declaration.EnumMember.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
-					// claimed by r
-					readonly $path: K;
-				}
-				export interface Parent<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple.public.parent'> = 'declaration.enum_member.tuple.public.parent'> extends RefinedBy<V.Declaration.EnumMember.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
-					// claimed by r
-					readonly $path: K;
-				}
-				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.enum_member.tuple.public.restricted'> = 'declaration.enum_member.tuple.public.restricted'> extends RefinedBy<V.Declaration.EnumMember.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type.enum.public.restricted'> = 'declaration.type.enum.public.restricted'> extends RefinedBy<V.Declaration.Type.Enum.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
 			}
 		}
 	}
-	export namespace Field {
-		export namespace Public {
-			export interface Internal<G extends GrammarMap, K extends Under<'declaration.field.public.internal'> = 'declaration.field.public.internal'> extends RefinedBy<V.Declaration.Field.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+	export namespace Member {
+		export namespace EnumMember {
+			export interface Private<G extends GrammarMap, K extends Under<'declaration.member.enum_member.private'> = 'declaration.member.enum_member.private'> extends RefinedBy<V.Declaration.Member.EnumMember<G, K>, V.Modifier.Visibility.Private<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
-			export interface Parent<G extends GrammarMap, K extends Under<'declaration.field.public.parent'> = 'declaration.field.public.parent'> extends RefinedBy<V.Declaration.Field.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+			export interface Public<G extends GrammarMap, K extends Under<'declaration.member.enum_member.public'> = 'declaration.member.enum_member.public'> extends RefinedBy<V.Declaration.Member.EnumMember<G, K>, V.Modifier.Visibility.Public<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
-			export interface Restricted<G extends GrammarMap, K extends Under<'declaration.field.public.restricted'> = 'declaration.field.public.restricted'> extends RefinedBy<V.Declaration.Field.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-				// claimed by r
-				readonly $path: K;
+			export namespace Public {
+				export interface Internal<G extends GrammarMap, K extends Under<'declaration.member.enum_member.public.internal'> = 'declaration.member.enum_member.public.internal'> extends RefinedBy<V.Declaration.Member.EnumMember.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Parent<G extends GrammarMap, K extends Under<'declaration.member.enum_member.public.parent'> = 'declaration.member.enum_member.public.parent'> extends RefinedBy<V.Declaration.Member.EnumMember.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.member.enum_member.public.restricted'> = 'declaration.member.enum_member.public.restricted'> extends RefinedBy<V.Declaration.Member.EnumMember.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+			}
+			export namespace Struct {
+				export interface Private<G extends GrammarMap, K extends Under<'declaration.member.enum_member.struct.private'> = 'declaration.member.enum_member.struct.private'> extends RefinedBy<V.Declaration.Member.EnumMember.Struct<G, K>, V.Modifier.Visibility.Private<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Public<G extends GrammarMap, K extends Under<'declaration.member.enum_member.struct.public'> = 'declaration.member.enum_member.struct.public'> extends RefinedBy<V.Declaration.Member.EnumMember.Struct<G, K>, V.Modifier.Visibility.Public<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export namespace Public {
+					export interface Internal<G extends GrammarMap, K extends Under<'declaration.member.enum_member.struct.public.internal'> = 'declaration.member.enum_member.struct.public.internal'> extends RefinedBy<V.Declaration.Member.EnumMember.Struct.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Parent<G extends GrammarMap, K extends Under<'declaration.member.enum_member.struct.public.parent'> = 'declaration.member.enum_member.struct.public.parent'> extends RefinedBy<V.Declaration.Member.EnumMember.Struct.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Restricted<G extends GrammarMap, K extends Under<'declaration.member.enum_member.struct.public.restricted'> = 'declaration.member.enum_member.struct.public.restricted'> extends RefinedBy<V.Declaration.Member.EnumMember.Struct.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+				}
+			}
+			export namespace Tuple {
+				export interface Private<G extends GrammarMap, K extends Under<'declaration.member.enum_member.tuple.private'> = 'declaration.member.enum_member.tuple.private'> extends RefinedBy<V.Declaration.Member.EnumMember.Tuple<G, K>, V.Modifier.Visibility.Private<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Public<G extends GrammarMap, K extends Under<'declaration.member.enum_member.tuple.public'> = 'declaration.member.enum_member.tuple.public'> extends RefinedBy<V.Declaration.Member.EnumMember.Tuple<G, K>, V.Modifier.Visibility.Public<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export namespace Public {
+					export interface Internal<G extends GrammarMap, K extends Under<'declaration.member.enum_member.tuple.public.internal'> = 'declaration.member.enum_member.tuple.public.internal'> extends RefinedBy<V.Declaration.Member.EnumMember.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Parent<G extends GrammarMap, K extends Under<'declaration.member.enum_member.tuple.public.parent'> = 'declaration.member.enum_member.tuple.public.parent'> extends RefinedBy<V.Declaration.Member.EnumMember.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Restricted<G extends GrammarMap, K extends Under<'declaration.member.enum_member.tuple.public.restricted'> = 'declaration.member.enum_member.tuple.public.restricted'> extends RefinedBy<V.Declaration.Member.EnumMember.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+				}
+			}
+		}
+		export namespace Field {
+			export namespace Public {
+				export interface Internal<G extends GrammarMap, K extends Under<'declaration.member.field.public.internal'> = 'declaration.member.field.public.internal'> extends RefinedBy<V.Declaration.Member.Field.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Parent<G extends GrammarMap, K extends Under<'declaration.member.field.public.parent'> = 'declaration.member.field.public.parent'> extends RefinedBy<V.Declaration.Member.Field.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.member.field.public.restricted'> = 'declaration.member.field.public.restricted'> extends RefinedBy<V.Declaration.Member.Field.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
 			}
 		}
 	}
@@ -186,60 +190,64 @@ export namespace Declaration {
 			}
 		}
 	}
-	export namespace Interface {
-		export namespace Trait {
-			export interface Private<G extends GrammarMap, K extends Under<'declaration.interface.trait.private'> = 'declaration.interface.trait.private'> extends RefinedBy<V.Declaration.Interface.Trait<G, K>, V.Modifier.Visibility.Private<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Public<G extends GrammarMap, K extends Under<'declaration.interface.trait.public'> = 'declaration.interface.trait.public'> extends RefinedBy<V.Declaration.Interface.Trait<G, K>, V.Modifier.Visibility.Public<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export namespace Public {
-				export interface Internal<G extends GrammarMap, K extends Under<'declaration.interface.trait.public.internal'> = 'declaration.interface.trait.public.internal'> extends RefinedBy<V.Declaration.Interface.Trait.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+	export namespace Type {
+		export namespace Interface {
+			export namespace Trait {
+				export interface Private<G extends GrammarMap, K extends Under<'declaration.type.interface.trait.private'> = 'declaration.type.interface.trait.private'> extends RefinedBy<V.Declaration.Type.Interface.Trait<G, K>, V.Modifier.Visibility.Private<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Parent<G extends GrammarMap, K extends Under<'declaration.interface.trait.public.parent'> = 'declaration.interface.trait.public.parent'> extends RefinedBy<V.Declaration.Interface.Trait.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+				export interface Public<G extends GrammarMap, K extends Under<'declaration.type.interface.trait.public'> = 'declaration.type.interface.trait.public'> extends RefinedBy<V.Declaration.Type.Interface.Trait<G, K>, V.Modifier.Visibility.Public<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.interface.trait.public.restricted'> = 'declaration.interface.trait.public.restricted'> extends RefinedBy<V.Declaration.Interface.Trait.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-					// claimed by r
-					readonly $path: K;
+				export namespace Public {
+					export interface Internal<G extends GrammarMap, K extends Under<'declaration.type.interface.trait.public.internal'> = 'declaration.type.interface.trait.public.internal'> extends RefinedBy<V.Declaration.Type.Interface.Trait.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Parent<G extends GrammarMap, K extends Under<'declaration.type.interface.trait.public.parent'> = 'declaration.type.interface.trait.public.parent'> extends RefinedBy<V.Declaration.Type.Interface.Trait.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type.interface.trait.public.restricted'> = 'declaration.type.interface.trait.public.restricted'> extends RefinedBy<V.Declaration.Type.Interface.Trait.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
 				}
 			}
 		}
 	}
-	export namespace Method {
-		export namespace Public {
-			export interface Internal<G extends GrammarMap, K extends Under<'declaration.method.public.internal'> = 'declaration.method.public.internal'> extends RefinedBy<V.Declaration.Method.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Parent<G extends GrammarMap, K extends Under<'declaration.method.public.parent'> = 'declaration.method.public.parent'> extends RefinedBy<V.Declaration.Method.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Restricted<G extends GrammarMap, K extends Under<'declaration.method.public.restricted'> = 'declaration.method.public.restricted'> extends RefinedBy<V.Declaration.Method.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-		}
-		export namespace Signature {
+	export namespace Member {
+		export namespace Method {
 			export namespace Public {
-				export interface Internal<G extends GrammarMap, K extends Under<'declaration.method.signature.public.internal'> = 'declaration.method.signature.public.internal'> extends RefinedBy<V.Declaration.Method.Signature.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+				export interface Internal<G extends GrammarMap, K extends Under<'declaration.member.method.public.internal'> = 'declaration.member.method.public.internal'> extends RefinedBy<V.Declaration.Member.Method.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Parent<G extends GrammarMap, K extends Under<'declaration.method.signature.public.parent'> = 'declaration.method.signature.public.parent'> extends RefinedBy<V.Declaration.Method.Signature.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+				export interface Parent<G extends GrammarMap, K extends Under<'declaration.member.method.public.parent'> = 'declaration.member.method.public.parent'> extends RefinedBy<V.Declaration.Member.Method.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.method.signature.public.restricted'> = 'declaration.method.signature.public.restricted'> extends RefinedBy<V.Declaration.Method.Signature.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.member.method.public.restricted'> = 'declaration.member.method.public.restricted'> extends RefinedBy<V.Declaration.Member.Method.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
 					readonly $path: K;
+				}
+			}
+			export namespace Signature {
+				export namespace Public {
+					export interface Internal<G extends GrammarMap, K extends Under<'declaration.member.method.signature.public.internal'> = 'declaration.member.method.signature.public.internal'> extends RefinedBy<V.Declaration.Member.Method.Signature.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Parent<G extends GrammarMap, K extends Under<'declaration.member.method.signature.public.parent'> = 'declaration.member.method.signature.public.parent'> extends RefinedBy<V.Declaration.Member.Method.Signature.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Restricted<G extends GrammarMap, K extends Under<'declaration.member.method.signature.public.restricted'> = 'declaration.member.method.signature.public.restricted'> extends RefinedBy<V.Declaration.Member.Method.Signature.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
 				}
 			}
 		}
@@ -268,123 +276,125 @@ export namespace Declaration {
 			}
 		}
 	}
-	export namespace Struct {
-		export interface Private<G extends GrammarMap, K extends Under<'declaration.struct.private'> = 'declaration.struct.private'> extends RefinedBy<V.Declaration.Struct<G, K>, V.Modifier.Visibility.Private<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export interface Public<G extends GrammarMap, K extends Under<'declaration.struct.public'> = 'declaration.struct.public'> extends RefinedBy<V.Declaration.Struct<G, K>, V.Modifier.Visibility.Public<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export namespace Public {
-			export interface Internal<G extends GrammarMap, K extends Under<'declaration.struct.public.internal'> = 'declaration.struct.public.internal'> extends RefinedBy<V.Declaration.Struct.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+	export namespace Type {
+		export namespace Struct {
+			export interface Private<G extends GrammarMap, K extends Under<'declaration.type.struct.private'> = 'declaration.type.struct.private'> extends RefinedBy<V.Declaration.Type.Struct<G, K>, V.Modifier.Visibility.Private<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
-			export interface Parent<G extends GrammarMap, K extends Under<'declaration.struct.public.parent'> = 'declaration.struct.public.parent'> extends RefinedBy<V.Declaration.Struct.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Restricted<G extends GrammarMap, K extends Under<'declaration.struct.public.restricted'> = 'declaration.struct.public.restricted'> extends RefinedBy<V.Declaration.Struct.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-		}
-		export namespace Tuple {
-			export interface Private<G extends GrammarMap, K extends Under<'declaration.struct.tuple.private'> = 'declaration.struct.tuple.private'> extends RefinedBy<V.Declaration.Struct.Tuple<G, K>, V.Modifier.Visibility.Private<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Public<G extends GrammarMap, K extends Under<'declaration.struct.tuple.public'> = 'declaration.struct.tuple.public'> extends RefinedBy<V.Declaration.Struct.Tuple<G, K>, V.Modifier.Visibility.Public<G>> {
+			export interface Public<G extends GrammarMap, K extends Under<'declaration.type.struct.public'> = 'declaration.type.struct.public'> extends RefinedBy<V.Declaration.Type.Struct<G, K>, V.Modifier.Visibility.Public<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
 			export namespace Public {
-				export interface Internal<G extends GrammarMap, K extends Under<'declaration.struct.tuple.public.internal'> = 'declaration.struct.tuple.public.internal'> extends RefinedBy<V.Declaration.Struct.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+				export interface Internal<G extends GrammarMap, K extends Under<'declaration.type.struct.public.internal'> = 'declaration.type.struct.public.internal'> extends RefinedBy<V.Declaration.Type.Struct.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Parent<G extends GrammarMap, K extends Under<'declaration.struct.tuple.public.parent'> = 'declaration.struct.tuple.public.parent'> extends RefinedBy<V.Declaration.Struct.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+				export interface Parent<G extends GrammarMap, K extends Under<'declaration.type.struct.public.parent'> = 'declaration.type.struct.public.parent'> extends RefinedBy<V.Declaration.Type.Struct.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.struct.tuple.public.restricted'> = 'declaration.struct.tuple.public.restricted'> extends RefinedBy<V.Declaration.Struct.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type.struct.public.restricted'> = 'declaration.type.struct.public.restricted'> extends RefinedBy<V.Declaration.Type.Struct.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
 					readonly $path: K;
+				}
+			}
+			export namespace Tuple {
+				export interface Private<G extends GrammarMap, K extends Under<'declaration.type.struct.tuple.private'> = 'declaration.type.struct.tuple.private'> extends RefinedBy<V.Declaration.Type.Struct.Tuple<G, K>, V.Modifier.Visibility.Private<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Public<G extends GrammarMap, K extends Under<'declaration.type.struct.tuple.public'> = 'declaration.type.struct.tuple.public'> extends RefinedBy<V.Declaration.Type.Struct.Tuple<G, K>, V.Modifier.Visibility.Public<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export namespace Public {
+					export interface Internal<G extends GrammarMap, K extends Under<'declaration.type.struct.tuple.public.internal'> = 'declaration.type.struct.tuple.public.internal'> extends RefinedBy<V.Declaration.Type.Struct.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Parent<G extends GrammarMap, K extends Under<'declaration.type.struct.tuple.public.parent'> = 'declaration.type.struct.tuple.public.parent'> extends RefinedBy<V.Declaration.Type.Struct.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type.struct.tuple.public.restricted'> = 'declaration.type.struct.tuple.public.restricted'> extends RefinedBy<V.Declaration.Type.Struct.Tuple.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+				}
+			}
+			export namespace Unit {
+				export interface Private<G extends GrammarMap, K extends Under<'declaration.type.struct.unit.private'> = 'declaration.type.struct.unit.private'> extends RefinedBy<V.Declaration.Type.Struct.Unit<G, K>, V.Modifier.Visibility.Private<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Public<G extends GrammarMap, K extends Under<'declaration.type.struct.unit.public'> = 'declaration.type.struct.unit.public'> extends RefinedBy<V.Declaration.Type.Struct.Unit<G, K>, V.Modifier.Visibility.Public<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export namespace Public {
+					export interface Internal<G extends GrammarMap, K extends Under<'declaration.type.struct.unit.public.internal'> = 'declaration.type.struct.unit.public.internal'> extends RefinedBy<V.Declaration.Type.Struct.Unit.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Parent<G extends GrammarMap, K extends Under<'declaration.type.struct.unit.public.parent'> = 'declaration.type.struct.unit.public.parent'> extends RefinedBy<V.Declaration.Type.Struct.Unit.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
+					export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type.struct.unit.public.restricted'> = 'declaration.type.struct.unit.public.restricted'> extends RefinedBy<V.Declaration.Type.Struct.Unit.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+						// claimed by r
+						readonly $path: K;
+					}
 				}
 			}
 		}
-		export namespace Unit {
-			export interface Private<G extends GrammarMap, K extends Under<'declaration.struct.unit.private'> = 'declaration.struct.unit.private'> extends RefinedBy<V.Declaration.Struct.Unit<G, K>, V.Modifier.Visibility.Private<G>> {
+		export namespace TypeAlias {
+			export interface Private<G extends GrammarMap, K extends Under<'declaration.type.type_alias.private'> = 'declaration.type.type_alias.private'> extends RefinedBy<V.Declaration.Type.TypeAlias<G, K>, V.Modifier.Visibility.Private<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
-			export interface Public<G extends GrammarMap, K extends Under<'declaration.struct.unit.public'> = 'declaration.struct.unit.public'> extends RefinedBy<V.Declaration.Struct.Unit<G, K>, V.Modifier.Visibility.Public<G>> {
+			export interface Public<G extends GrammarMap, K extends Under<'declaration.type.type_alias.public'> = 'declaration.type.type_alias.public'> extends RefinedBy<V.Declaration.Type.TypeAlias<G, K>, V.Modifier.Visibility.Public<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
 			export namespace Public {
-				export interface Internal<G extends GrammarMap, K extends Under<'declaration.struct.unit.public.internal'> = 'declaration.struct.unit.public.internal'> extends RefinedBy<V.Declaration.Struct.Unit.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+				export interface Internal<G extends GrammarMap, K extends Under<'declaration.type.type_alias.public.internal'> = 'declaration.type.type_alias.public.internal'> extends RefinedBy<V.Declaration.Type.TypeAlias.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Parent<G extends GrammarMap, K extends Under<'declaration.struct.unit.public.parent'> = 'declaration.struct.unit.public.parent'> extends RefinedBy<V.Declaration.Struct.Unit.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+				export interface Parent<G extends GrammarMap, K extends Under<'declaration.type.type_alias.public.parent'> = 'declaration.type.type_alias.public.parent'> extends RefinedBy<V.Declaration.Type.TypeAlias.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
-				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.struct.unit.public.restricted'> = 'declaration.struct.unit.public.restricted'> extends RefinedBy<V.Declaration.Struct.Unit.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type.type_alias.public.restricted'> = 'declaration.type.type_alias.public.restricted'> extends RefinedBy<V.Declaration.Type.TypeAlias.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
 					// claimed by r
 					readonly $path: K;
 				}
 			}
 		}
-	}
-	export namespace TypeAlias {
-		export interface Private<G extends GrammarMap, K extends Under<'declaration.type_alias.private'> = 'declaration.type_alias.private'> extends RefinedBy<V.Declaration.TypeAlias<G, K>, V.Modifier.Visibility.Private<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export interface Public<G extends GrammarMap, K extends Under<'declaration.type_alias.public'> = 'declaration.type_alias.public'> extends RefinedBy<V.Declaration.TypeAlias<G, K>, V.Modifier.Visibility.Public<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export namespace Public {
-			export interface Internal<G extends GrammarMap, K extends Under<'declaration.type_alias.public.internal'> = 'declaration.type_alias.public.internal'> extends RefinedBy<V.Declaration.TypeAlias.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+		export namespace Union {
+			export interface Private<G extends GrammarMap, K extends Under<'declaration.type.union.private'> = 'declaration.type.union.private'> extends RefinedBy<V.Declaration.Type.Union<G, K>, V.Modifier.Visibility.Private<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
-			export interface Parent<G extends GrammarMap, K extends Under<'declaration.type_alias.public.parent'> = 'declaration.type_alias.public.parent'> extends RefinedBy<V.Declaration.TypeAlias.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+			export interface Public<G extends GrammarMap, K extends Under<'declaration.type.union.public'> = 'declaration.type.union.public'> extends RefinedBy<V.Declaration.Type.Union<G, K>, V.Modifier.Visibility.Public<G>> {
 				// claimed by r
 				readonly $path: K;
 			}
-			export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type_alias.public.restricted'> = 'declaration.type_alias.public.restricted'> extends RefinedBy<V.Declaration.TypeAlias.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-		}
-	}
-	export namespace Union {
-		export interface Private<G extends GrammarMap, K extends Under<'declaration.union.private'> = 'declaration.union.private'> extends RefinedBy<V.Declaration.Union<G, K>, V.Modifier.Visibility.Private<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export interface Public<G extends GrammarMap, K extends Under<'declaration.union.public'> = 'declaration.union.public'> extends RefinedBy<V.Declaration.Union<G, K>, V.Modifier.Visibility.Public<G>> {
-			// claimed by r
-			readonly $path: K;
-		}
-		export namespace Public {
-			export interface Internal<G extends GrammarMap, K extends Under<'declaration.union.public.internal'> = 'declaration.union.public.internal'> extends RefinedBy<V.Declaration.Union.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Parent<G extends GrammarMap, K extends Under<'declaration.union.public.parent'> = 'declaration.union.public.parent'> extends RefinedBy<V.Declaration.Union.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
-				// claimed by r
-				readonly $path: K;
-			}
-			export interface Restricted<G extends GrammarMap, K extends Under<'declaration.union.public.restricted'> = 'declaration.union.public.restricted'> extends RefinedBy<V.Declaration.Union.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
-				// claimed by r
-				readonly $path: K;
+			export namespace Public {
+				export interface Internal<G extends GrammarMap, K extends Under<'declaration.type.union.public.internal'> = 'declaration.type.union.public.internal'> extends RefinedBy<V.Declaration.Type.Union.Public<G, K>, V.Modifier.Visibility.Public.Internal<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Parent<G extends GrammarMap, K extends Under<'declaration.type.union.public.parent'> = 'declaration.type.union.public.parent'> extends RefinedBy<V.Declaration.Type.Union.Public<G, K>, V.Modifier.Visibility.Public.Parent<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
+				export interface Restricted<G extends GrammarMap, K extends Under<'declaration.type.union.public.restricted'> = 'declaration.type.union.public.restricted'> extends RefinedBy<V.Declaration.Type.Union.Public<G, K>, V.Modifier.Visibility.Public.Restricted<G>> {
+					// claimed by r
+					readonly $path: K;
+				}
 			}
 		}
 	}

@@ -69,7 +69,7 @@ import {
 	type FactoryEntry,
 	type Hydrate
 } from '../grammar-internals.ts';
-import { NODE_MODEL_FILE, PORTABLE_BUILD_FILE, REPO_ROOT, UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, nodeModelPath, sittirDirOf, upstreamPackage } from '@sittir/codegen/grammars';
+import { NODE_MODEL_FILE, PORTABLE_TABLE_FILE, REPO_ROOT, UPSTREAM_WASM, grammarPackageDir, grammarRequire, isGrammar, nodeModelPath, sittirDirOf, upstreamPackage } from '@sittir/codegen/grammars';
 import { CORPUS_ROOT, localCorpusPath, upstreamCorpusDir } from '../corpus/layout.ts';
 import type {
 	CodegenSurface,
@@ -705,7 +705,7 @@ export interface DelimiterSpelling {
 export async function loadDelimiterSpellings(grammar: string): Promise<Readonly<Record<string, DelimiterSpelling>>> {
 	const { delimiterFacets } = await loadNodeModel(grammar);
 	const interiors = (await requireGrammarModule(grammar, 'consts.ts')).TOKEN_INTERIORS as Readonly<Record<string, TokenInterior>>;
-	const table = (await importGrammarModule(grammar, PORTABLE_BUILD_FILE))?.build;
+	const table = (await importGrammarModule(grammar, PORTABLE_TABLE_FILE))?.build;
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const spelled = (kind: string, facets: Readonly<Record<string, DelimiterFacet>>): Readonly<Record<string, DelimiterFacet>> => {
 		const token = table?.delimiters?.[kindIdFromName(kind)];

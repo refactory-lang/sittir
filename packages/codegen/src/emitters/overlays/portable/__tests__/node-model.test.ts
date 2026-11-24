@@ -24,10 +24,11 @@ const input = async (scm: string): Promise<GrammarInput> => ({
 });
 
 describe('emitPortableNodeModel', () => {
-	it('writes each kind\'s routes in kind order: its default vocabulary kind, read entries, members with their build paths, and its unwrap', async () => {
+	it('writes each kind\'s routes in kind order: its default vocabulary kind, read entries, slots with their build paths, and its unwrap', async () => {
 		const text = emitPortableNodeModel(
 			resolveRoutes(await input(['(alpha operator: "+") @expression.add', '(alpha left: (_) @lhs) @expression.binary', '(zeta) @expression.z'].join('\n'))),
-			(entry) => (entry.pins.length === 0 ? [] : [{ up: 0, via: [], plan: { op: 'eq', text: entry.pins[0]!.text, slots: { 1: 0 } } }])
+			(entry) => (entry.pins.length === 0 ? [] : [{ up: 0, via: [], plan: { op: 'eq', text: entry.pins[0]!.text, slots: { 1: 0 } } }]),
+			[]
 		);
 		const model = JSON.parse(text);
 		expect(Object.keys(model.kinds)).toEqual(['alpha', 'wrapper', 'zeta']);
@@ -38,12 +39,12 @@ describe('emitPortableNodeModel', () => {
 					vocab: 'expression.add',
 					toplevel: true,
 					within: [],
-					pins: [{ member: 'operator', slot: 'operator', text: '+' }],
+					pins: [{ name: 'operator', slot: 'operator', text: '+' }],
 					test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { 1: 0 } } }]
 				},
 				{ vocab: 'expression.binary', toplevel: true, within: [], pins: [], test: [] }
 			],
-			members: [
+			slots: [
 				{ name: 'lhs', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] },
 				{ name: 'left', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] }
 			]
@@ -56,5 +57,16 @@ describe('emitPortableNodeModel', () => {
 			]
 		});
 		expect(text.endsWith('}\n')).toBe(true);
+	});
+
+	it('stamps a kind that reads as a covered family path with its cases, its refinements and any case two of them take', async () => {
+		const routes = resolveRoutes(await input(['(alpha operator: "+") @expression.binary.add', '(alpha) @expression.binary'].join('\n')));
+		const entry = routes.readEntries.get('alpha')!.find((candidate) => candidate.vocab === 'expression.binary')!;
+		const covered = { entry, refinements: ['expression.binary.add'], cases: 1 };
+		expect(JSON.parse(emitPortableNodeModel(routes, () => [], [{ ...covered, overlapping: [] }])).kinds.alpha.covered).toEqual([{ path: 'expression.binary', cases: 1, refinements: ['expression.binary.add'] }]);
+		expect(JSON.parse(emitPortableNodeModel(routes, () => [], [{ ...covered, overlapping: ['alpha'] }])).kinds.alpha.covered).toEqual([
+			{ path: 'expression.binary', cases: 1, refinements: ['expression.binary.add'], overlapping: ['alpha'] }
+		]);
+		expect(JSON.parse(emitPortableNodeModel(routes, () => [], [])).kinds.alpha.covered).toBeUndefined();
 	});
 });

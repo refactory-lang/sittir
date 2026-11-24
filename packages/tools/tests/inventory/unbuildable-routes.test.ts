@@ -10,17 +10,17 @@ const CEILING: Readonly<Record<string, readonly string[]>> = {
 };
 
 interface PortableModel {
-	readonly kinds: Readonly<Record<string, { readonly members?: readonly { readonly name: string; readonly route: string; readonly path: unknown; readonly spelled?: true }[] }>>;
+	readonly kinds: Readonly<Record<string, { readonly slots?: readonly { readonly name: string; readonly route: string; readonly path: unknown; readonly spelled?: true }[] }>>;
 }
 
 const unbuildable = (grammar: string): string[] => {
 	const model = JSON.parse(readFileSync(nodeModelPath(grammar, PORTABLE_NODE_MODEL_FILE), 'utf8')) as PortableModel;
 	return Object.entries(model.kinds)
-		.flatMap(([kind, { members = [] }]) => members.filter((m) => m.path === null && m.spelled !== true && m.route !== 'delimiter').map((m) => `${kind}.${m.name}`))
+		.flatMap(([kind, { slots = [] }]) => slots.filter((m) => m.path === null && m.spelled !== true && m.route !== 'delimiter').map((m) => `${kind}.${m.name}`))
 		.sort();
 };
 
-describe('members a portable build cannot reach', () => {
+describe('slots a portable build cannot reach', () => {
 	for (const grammar of bindingGrammars()) {
 		it(`are exactly ${grammar}'s recorded ones: a new one is a regression, a fixed one leaves the list`, () => {
 			expect(unbuildable(grammar)).toEqual(CEILING[grammar] ?? []);

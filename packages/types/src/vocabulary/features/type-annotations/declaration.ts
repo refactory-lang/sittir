@@ -4,12 +4,14 @@ import type * as V from '../../index.ts';
 export namespace Declaration {
 	export interface Constant<G extends GrammarMap, K extends Under<'declaration.constant'> = 'declaration.constant'> {
 	}
-	export interface Constructor<G extends GrammarMap, K extends Under<'declaration.constructor'> = 'declaration.constructor'> {
-	}
-	export interface Field<G extends GrammarMap, K extends Under<'declaration.field'> = 'declaration.field'> {
-	}
-	export namespace Field {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.field.signature'> = 'declaration.field.signature'> {
+	export namespace Member {
+		export interface Constructor<G extends GrammarMap, K extends Under<'declaration.member.constructor'> = 'declaration.member.constructor'> {
+		}
+		export interface Field<G extends GrammarMap, K extends Under<'declaration.member.field'> = 'declaration.member.field'> {
+		}
+		export namespace Field {
+			export interface Signature<G extends GrammarMap, K extends Under<'declaration.member.field.signature'> = 'declaration.member.field.signature'> {
+			}
 		}
 	}
 	export interface Function<G extends GrammarMap, K extends Under<'declaration.function'> = 'declaration.function'> {
@@ -29,24 +31,26 @@ export namespace Declaration {
 		export interface Signature<G extends GrammarMap, K extends Under<'declaration.function.signature'> = 'declaration.function.signature'> {
 		}
 	}
-	export interface Method<G extends GrammarMap, K extends Under<'declaration.method'> = 'declaration.method'> {
-		readonly returnType?: Slot<
-			G,
-			K,
-			'returnType',
-			| V.Clause.Bounds.Removed<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-			| V.Pattern.Rest<G>
-			| V.Type.Any<G>
-		>;
-	}
-	export namespace Method {
-		export interface Signature<G extends GrammarMap, K extends Under<'declaration.method.signature'> = 'declaration.method.signature'> {
+	export namespace Member {
+		export interface Method<G extends GrammarMap, K extends Under<'declaration.member.method'> = 'declaration.member.method'> {
+			readonly returnType?: Slot<
+				G,
+				K,
+				'returnType',
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Any<G>
+				| V.Identifier.Any<G>
+				| V.Literal.Any<G>
+				| V.Pattern.Rest<G>
+				| V.Type.Any<G>
+			>;
 		}
-		export namespace Signature {
-			export interface Abstract<G extends GrammarMap, K extends Under<'declaration.method.signature.abstract'> = 'declaration.method.signature.abstract'> {
+		export namespace Method {
+			export interface Signature<G extends GrammarMap, K extends Under<'declaration.member.method.signature'> = 'declaration.member.method.signature'> {
+			}
+			export namespace Signature {
+				export interface Abstract<G extends GrammarMap, K extends Under<'declaration.member.method.signature.abstract'> = 'declaration.member.method.signature.abstract'> {
+				}
 			}
 		}
 	}
@@ -69,17 +73,19 @@ export namespace Declaration {
 		export interface TypedDefault<G extends GrammarMap, K extends Under<'declaration.parameter.typed_default'> = 'declaration.parameter.typed_default'> {
 		}
 	}
-	export interface Property<G extends GrammarMap, K extends Under<'declaration.property'> = 'declaration.property'> {
-	}
-	export namespace Property {
-		export interface Getter<G extends GrammarMap, K extends Under<'declaration.property.getter'> = 'declaration.property.getter'> {
+	export namespace Member {
+		export interface Property<G extends GrammarMap, K extends Under<'declaration.member.property'> = 'declaration.member.property'> {
 		}
-		export namespace Signature {
-			export namespace Abstract {
-				export interface Getter<G extends GrammarMap, K extends Under<'declaration.property.signature.abstract.getter'> = 'declaration.property.signature.abstract.getter'> {
-				}
+		export namespace Property {
+			export interface Getter<G extends GrammarMap, K extends Under<'declaration.member.property.getter'> = 'declaration.member.property.getter'> {
 			}
-			export interface Getter<G extends GrammarMap, K extends Under<'declaration.property.signature.getter'> = 'declaration.property.signature.getter'> {
+			export namespace Signature {
+				export namespace Abstract {
+					export interface Getter<G extends GrammarMap, K extends Under<'declaration.member.property.signature.abstract.getter'> = 'declaration.member.property.signature.abstract.getter'> {
+					}
+				}
+				export interface Getter<G extends GrammarMap, K extends Under<'declaration.member.property.signature.getter'> = 'declaration.member.property.signature.getter'> {
+				}
 			}
 		}
 	}

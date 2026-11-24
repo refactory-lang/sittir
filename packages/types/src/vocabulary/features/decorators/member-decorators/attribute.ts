@@ -5,16 +5,7 @@ export namespace Attribute {
 	export interface Call<G extends GrammarMap, K extends Under<'attribute.call'> = 'attribute.call'> extends SubKindOf<V.Attribute<G, K>> {
 		// claimed by t
 		readonly $path: K;
-		readonly arguments: Slot<
-			G,
-			K,
-			'arguments',
-			| V.Declaration.Module<G>
-			| V.Element.Spread<G>
-			| V.Expression.Any<G>
-			| V.Identifier.Any<G>
-			| V.Literal.Any<G>
-		>[];
+		readonly arguments: Slot<G, K, 'arguments', V.Expression.AnyWithArgument<G>>[];
 		readonly function: Slot<G, K, 'function', V.Attribute.Member<G> | V.Identifier.Any<G>>;
 		readonly typeArguments?: Slot<G, K, 'typeArguments', V.Identifier.Any<G> | V.Type.Any<G>>[];
 	}

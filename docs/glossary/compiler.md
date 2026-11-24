@@ -7662,7 +7662,7 @@ emitter resolves slots through rule ids.
 
 Only a display the kind catalog lists as an alias symbol is minted. A display
 without one is only the public name of its storage's own symbol (rust
-`_range_expression_bare` 369 shown as `range_expression_bare`): the parser
+`_range_expression_unbounded` shown as `range_expression_unbounded`): the parser
 issues no node the display could own, so the storage kind is the node, and a
 minted display would be a second kind claiming the same id.
 ```

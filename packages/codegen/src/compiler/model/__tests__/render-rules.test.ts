@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { DEDENT_TEXT, INDENT_TEXT, spacingLabelOf } from '../../../dsl/primitives/spacing.ts';
 import type { NodeMap } from '../../types.ts';
 import type { RenderRule } from '../../../types/rule.ts';
-import { flanksOf, isSeamChoice, resolveRenderRules, seamChoiceDefault, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
+import { flanksOf, isSeamChoice, mixedSeamChoices, resolveRenderRules, seamChoiceDefault, seamPartOf, seamRenderRules, spaceRenderRules, spacedSeparatorOf, spacingSitesOf } from '../render-rules.ts';
 import { AssembledBranch, AssembledEnum, AssembledKeyword, AssembledSupertype, AssembledPunctuation } from '../node-map.ts';
 import { preference } from '../../../dsl/primitives/preference.ts';
 import { formatPreferencePath } from '../../../dsl/primitives/preference-path.ts';
 import { stampDisplay } from '../display-name.ts';
 import { FIXTURE_LINE_ENDINGS } from '../../../__tests__/helpers/node-map-fixtures.ts';
+import { joinsOutsideLists, NO_JOINS } from '../join-seams/index.ts';
 
 const sym = (name: string, extra: object = {}): RenderRule =>
 	({ type: 'SYMBOL', name, nonterminal: true, ...extra }) as unknown as RenderRule;
@@ -22,6 +23,7 @@ const kindEntries = [
 	{ kind: 'lbrace', anon: true, symbolName: '{', literalText: '{', member: 'Lbrace', id: 9 },
 	{ kind: 'fn', anon: true, symbolName: 'fn', literalText: 'fn', member: 'Fn', id: 10 },
 	{ kind: 'semi', anon: true, symbolName: ';', literalText: ';', member: 'Semi', id: 11 },
+	{ kind: 'dquote', anon: true, symbolName: '"', literalText: '"', member: 'Dquote', id: 12 },
 	{ kind: 'tight', member: 'Tight', id: 90 },
 	{ kind: 'space', member: 'Space', id: 91 },
 	{ kind: 'newline', member: 'Newline', id: 92 },
@@ -31,7 +33,7 @@ const kindEntries = [
 function nodeMapOf(
 	rules: Record<string, RenderRule>,
 	slots: Record<string, string>,
-	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]> } = {}
+	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]>; extrasRun?: RegExp } = {}
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
 	const stub = (kind: string) => ({ kind, display: stampDisplay(kind, undefined, [], 'phantom'), endTerminals: [] });
@@ -52,7 +54,7 @@ function nodeMapOf(
 	const slotByRuleId = new Map(
 		Object.entries(slots).map(([id, name]) => [
 			id,
-			{ name, values: (opts.slotKinds?.[id] ?? []).map((kind) => ({ node: { kind }, multiplicity: 'array' })) }
+			{ name, sourceRuleIds: [id], values: (opts.slotKinds?.[id] ?? []).map((kind) => ({ node: { kind }, multiplicity: 'array' })) }
 		])
 	);
 	return {
@@ -61,6 +63,7 @@ function nodeMapOf(
 		normalizedRules: rules,
 		slotByRuleId,
 		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name })),
+		nodelessExtrasRun: opts.extrasRun,
 		lineEndings: FIXTURE_LINE_ENDINGS
 	} as unknown as NodeMap;
 }
@@ -643,6 +646,95 @@ describe('seamRenderRules', () => {
 		expect(seamRenderRules(spaceRenderRules(config), config).rules).toBe(rules);
 	});
 
+	describe('beside a list that admits no extras', () => {
+		const fragments = (list: object) => sym('fragment', { id: 'r8', multiplicity: 'array', fieldName: 'elements', ...list });
+		const quoted = (list: object) => ({ string: seq(str('"'), fragments(list), str('"')) });
+		const seamDefaults = (rules: Record<string, RenderRule>): Record<string, string> => {
+			const nodeMap = nodeMapOf(rules, { r8: 'elements' });
+			const config = { nodeMap, kindEntries };
+			const sites = spacingSitesOf(seamRenderRules(spaceRenderRules(config), config), nodeMap);
+			return Object.fromEntries(sites.filter((site) => site.spacing.at === 'seam').map((site) => [site.address, site.defaultArm]));
+		};
+
+		it('stamps the list with every rule id its slot holds', () => {
+			const nodeMap = nodeMapOf(quoted({ immediate: true, absorbedIds: ['r9'] }), { r8: 'elements' });
+			(nodeMap.slotByRuleId.get('r8') as unknown as { sourceRuleIds: string[] }).sourceRuleIds = ['r8', 'r9'];
+			expect([...spaceRenderRules({ nodeMap, kindEntries }).noExtrasLists!].sort()).toEqual(['r8', 'r9']);
+		});
+
+		it('writes no seam on either side, so a rebuilt "" stays empty', () => {
+			expect(seamDefaults(quoted({ immediate: true }))).toEqual({});
+		});
+
+		it('writes no seam where the list is the edge of a nested group', () => {
+			expect(seamDefaults({ string: seq(seq(str('"'), fragments({ immediate: true })), str('"')) })).toEqual({});
+		});
+
+		it('keeps the default space beside a list whose gaps may hold extras', () => {
+			expect(seamDefaults(quoted({}))).toEqual({ dquote_after: 'space', dquote_before: 'space' });
+		});
+
+		describe('a repeat of plain tokens', () => {
+			const rules = { item: seq(str('fn'), sym('name', { id: 'r8', multiplicity: 'nonEmptyArray', fieldName: 'names' }), str(';')), name: sym('x', { tokenized: true }) };
+			const spacedWith = (extrasRun: RegExp) => {
+				const nodeMap = nodeMapOf(rules, { r8: 'names' }, { extrasRun });
+				const config = { nodeMap, kindEntries };
+				const spaced = spaceRenderRules(config);
+				const sites = spacingSitesOf(seamRenderRules(spaced, config), nodeMap);
+				return { stamped: [...spaced.noExtrasLists!], seams: sites.filter((site) => site.spacing.at === 'seam').map((site) => site.address).sort() };
+			};
+
+			it('keeps its seams where the extras hold a space', () => {
+				expect(spacedWith(/\s/)).toEqual({ stamped: [], seams: ['fn_after', 'semi_before'] });
+			});
+
+			it('admits no extras where a space is content', () => {
+				expect(spacedWith(/\r?\n/)).toEqual({ stamped: ['r8'], seams: [] });
+			});
+		});
+
+		describe('a seam side that is a choice', () => {
+			const others = sym('other', { id: 'r9', multiplicity: 'array', fieldName: 'others', immediate: true });
+			const mixedIn = (arms: RenderRule): readonly object[] =>
+				mixedSeamChoices(spaceRenderRules({ nodeMap: nodeMapOf({ string: seq(str('"'), arms, str('"')) }, { r8: 'elements', r9: 'others' }), kindEntries }));
+
+			it('names the kind and side where a stamped list shares the choice with another arm', () => {
+				expect(mixedIn(choice(fragments({ immediate: true }), str('x')))).toEqual([
+					{ kind: 'string', side: 'before' },
+					{ kind: 'string', side: 'after' }
+				]);
+			});
+
+			it('names one reached through a nested group', () => {
+				expect(mixedIn(seq(choice(fragments({ immediate: true }), str('x')), str('y')))).toEqual([
+					{ kind: 'string', side: 'before' },
+					{ kind: 'string', side: 'after' }
+				]);
+			});
+
+			it('passes a choice whose arms are all stamped lists', () => {
+				expect(mixedIn(choice(fragments({ immediate: true }), others))).toEqual([]);
+			});
+
+			it('passes a choice holding no stamped list', () => {
+				expect(mixedIn(choice(fragments({}), str('x')))).toEqual([]);
+			});
+		});
+	});
+});
+
+describe('joinsOutsideLists', () => {
+	it('takes the rule ids of the lists out of both join arms and leaves the rest', () => {
+		const joins = { ...NO_JOINS, joinsNext: new Set(['a', 'b']), joinsPrevious: new Set(['b', 'c']), pairs: ['{{'] } as never;
+		const out = joinsOutsideLists(joins, new Set(['b']) as never);
+		expect([...out.joinsNext]).toEqual(['a']);
+		expect([...out.joinsPrevious]).toEqual(['c']);
+		expect(out.pairs).toEqual(['{{']);
+	});
+
+	it('returns the joins it was given where there are no lists', () => {
+		expect(joinsOutsideLists(NO_JOINS, undefined)).toBe(NO_JOINS);
+	});
 });
 
 describe('a seated child edge', () => {

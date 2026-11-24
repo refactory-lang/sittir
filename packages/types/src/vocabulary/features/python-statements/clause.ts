@@ -14,6 +14,11 @@ export namespace Clause {
 			| V.Literal.Any<G>
 			| V.Pattern.Any<G>
 		>;
-		readonly consequence: Slot<G, K, 'consequence', V.Declaration.TypeAlias<G> | V.Statement.Any<G>>;
+		readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
+	}
+	export namespace Case {
+		export interface Match<G extends GrammarMap, K extends Under<'clause.case.match'> = 'clause.case.match'> {
+			readonly statements?: Slot<G, K, 'statements', V.Statement.Any<G>>[];
+		}
 	}
 }

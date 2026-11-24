@@ -281,6 +281,10 @@ export interface KindMembers {
 		| TSKindId.ClassBodyMemberDeclaration
 		| TSKindId.EmptyMember;
 	[TSKindId.EnumBodyElement]: TSKindId.EnumBodyElementName | TSKindId.EnumAssignment;
+	[TSKindId.ForInitializer]:
+		| TSKindId.ForInitializerLetConstKind
+		| TSKindId.ForInitializerVarKind
+		| TSKindId.ForInitializerUsingKind;
 	[TSKindId.NumberBigint]:
 		| TSKindId.NumberBigintHex
 		| TSKindId.NumberBigintBinary
@@ -1042,6 +1046,15 @@ export interface IsGuards {
 	forHeaderUsingKind<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderUsingKind };
+	forInitializerLetConstKind<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInitializerLetConstKind };
+	forInitializerVarKind<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInitializerVarKind };
+	forInitializerUsingKind<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInitializerUsingKind };
 	readonly formalParametersSetAccessorSignature: {
 		<T extends { readonly $type: number } | number>(
 			v: T
@@ -1481,6 +1494,18 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.EnumAssignment };
 	};
+	readonly forInitializer: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.ForInitializer]>;
+		letConstKind<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInitializerLetConstKind };
+		varKind<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInitializerVarKind };
+		usingKind<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForInitializerUsingKind };
+	};
 	readonly numberBigint: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.NumberBigint]>;
 		hex<T extends { readonly $type: number } | number>(
@@ -1613,54 +1638,55 @@ export interface IsGuards {
 	thisType<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.ThisType>;
 }
 
-const _supertype_exportStatement_ids = new Set<number>([432, 433, 420, 421]);
+const _supertype_exportStatement_ids = new Set<number>([433, 434, 421, 422]);
 const _supertype_declaration_ids = new Set<number>([
 	249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313
 ]);
-const _supertype_importSpecifier_ids = new Set<number>([415, 416]);
+const _supertype_importSpecifier_ids = new Set<number>([416, 417]);
 const _supertype_statement_ids = new Set<number>([
-	432, 433, 420, 421, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
+	433, 434, 421, 422, 198, 224, 206, 249, 251, 246, 208, 207, 209, 303, 314, 315, 316, 325, 322, 320, 318, 313, 211,
 	213, 214, 215, 216, 218, 219, 220, 221, 222, 223, 225, 226, 227, 228
 ]);
-const _supertype_variableDeclarator_ids = new Set<number>([439, 440]);
-const _supertype_forHeader_ids = new Set<number>([443, 444, 445, 446]);
-const _supertype_parenthesizedExpression_ids = new Set<number>([417, 418]);
+const _supertype_variableDeclarator_ids = new Set<number>([440, 441]);
+const _supertype_forHeader_ids = new Set<number>([444, 445, 446, 447]);
+const _supertype_parenthesizedExpression_ids = new Set<number>([418, 419]);
 const _supertype_expression_ids = new Set<number>([
-	306, 307, 308, 305, 260, 259, 417, 418, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151,
-	425, 426, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 441, 442, 422, 423, 424, 300, 262, 264, 258, 270,
-	405, 404, 268, 427, 428, 257, 237
+	306, 307, 308, 305, 260, 259, 418, 419, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151,
+	426, 427, 274, 276, 281, 282, 283, 238, 242, 248, 252, 250, 245, 442, 443, 423, 424, 425, 300, 262, 264, 258, 270,
+	406, 405, 268, 428, 429, 257, 237
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	260, 259, 417, 418, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 425, 426, 274, 276,
-	281, 282, 283, 238, 242, 248, 252, 250, 245, 441, 442, 422, 423, 424, 300
+	260, 259, 418, 419, 110, 1, 279, 280, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 426, 427, 274, 276,
+	281, 282, 283, 238, 242, 248, 252, 250, 245, 442, 443, 423, 424, 425, 300
 ]);
-const _supertype_callExpression_ids = new Set<number>([422, 423, 424]);
-const _supertype_binaryExpression_ids = new Set<number>([405, 404]);
-const _supertype_updateExpression_ids = new Set<number>([427, 428]);
-const _supertype_string_ids = new Set<number>([425, 426]);
+const _supertype_callExpression_ids = new Set<number>([423, 424, 425]);
+const _supertype_binaryExpression_ids = new Set<number>([406, 405]);
+const _supertype_updateExpression_ids = new Set<number>([428, 429]);
+const _supertype_string_ids = new Set<number>([426, 427]);
 const _supertype_comment_ids = new Set<number>([138, 139]);
 const _supertype_number_ids = new Set<number>([140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151]);
-const _supertype_metaProperty_ids = new Set<number>([441, 442]);
+const _supertype_metaProperty_ids = new Set<number>([442, 443]);
 const _supertype_pattern_ids = new Set<number>([261, 292]);
-const _supertype_methodDefinition_ids = new Set<number>([454, 455, 456]);
-const _supertype_publicFieldDefinition_ids = new Set<number>([463, 464]);
-const _supertype_methodSignature_ids = new Set<number>([457, 458, 459]);
-const _supertype_abstractMethodSignature_ids = new Set<number>([460, 461, 462]);
+const _supertype_methodDefinition_ids = new Set<number>([458, 459, 460]);
+const _supertype_publicFieldDefinition_ids = new Set<number>([467, 468]);
+const _supertype_methodSignature_ids = new Set<number>([461, 462, 463]);
+const _supertype_abstractMethodSignature_ids = new Set<number>([464, 465, 466]);
 const _supertype_type_ids = new Set<number>([
-	506, 244, 505, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
+	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
 	350, 348, 382, 381, 383, 380, 345, 349, 335, 336
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	506, 244, 505, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
+	510, 244, 509, 366, 40, 41, 42, 43, 44, 125, 78, 126, 127, 46, 319, 351, 369, 378, 379, 365, 358, 359, 364, 362, 360,
 	350, 348, 382, 381
 ]);
-const _supertype_indexSignature_ids = new Set<number>([410, 411]);
-const _supertype_classBodyMember_ids = new Set<number>([407, 408, 290, 409, 406]);
+const _supertype_indexSignature_ids = new Set<number>([411, 412]);
+const _supertype_classBodyMember_ids = new Set<number>([408, 409, 290, 410, 407]);
 const _supertype_enumBodyElement_ids = new Set<number>([388, 324]);
+const _supertype_forInitializer_ids = new Set<number>([448, 449, 450]);
 const _supertype_numberBigint_ids = new Set<number>([148, 149, 150, 151]);
-const _supertype_exportStatementDefault_ids = new Set<number>([432, 433]);
+const _supertype_exportStatementDefault_ids = new Set<number>([433, 434]);
 const _supertype_layout_ids = new Set<number>([182, 183, 184, 185, 186, 187, 188, 189]);
-const _supertype_methodDefinitionClassBodyMemberMethod_ids = new Set<number>([454, 465, 455, 456]);
+const _supertype_methodDefinitionClassBodyMemberMethod_ids = new Set<number>([458, 469, 459, 460]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.ExportStatement, _supertype_exportStatement_ids],
@@ -1688,6 +1714,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.IndexSignature, _supertype_indexSignature_ids],
 	[TSKindId.ClassBodyMember, _supertype_classBodyMember_ids],
 	[TSKindId.EnumBodyElement, _supertype_enumBodyElement_ids],
+	[TSKindId.ForInitializer, _supertype_forInitializer_ids],
 	[TSKindId.NumberBigint, _supertype_numberBigint_ids],
 	[TSKindId.ExportStatementDefault, _supertype_exportStatementDefault_ids],
 	[TSKindId.MethodDefinitionClassBodyMemberMethod, _supertype_methodDefinitionClassBodyMemberMethod_ids],
@@ -1841,6 +1868,9 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_EmptyMember_guard = _mg(TSKindId.EmptyMember);
 	const _kind_EnumBodyElementName_guard = _g(TSKindId.EnumBodyElementName);
 	const _kind_EnumAssignment_guard = _g(TSKindId.EnumAssignment);
+	const _kind_ForInitializerLetConstKind_guard = _g(TSKindId.ForInitializerLetConstKind);
+	const _kind_ForInitializerVarKind_guard = _g(TSKindId.ForInitializerVarKind);
+	const _kind_ForInitializerUsingKind_guard = _g(TSKindId.ForInitializerUsingKind);
 	const _kind_NumberBigintHex_guard = _g(TSKindId.NumberBigintHex);
 	const _kind_NumberBigintBinary_guard = _g(TSKindId.NumberBigintBinary);
 	const _kind_NumberBigintOctal_guard = _g(TSKindId.NumberBigintOctal);
@@ -2192,13 +2222,18 @@ export function guardsWith(test: KindTest): IsGuards {
 		name: _kind_EnumBodyElementName_guard,
 		assignment: _kind_EnumAssignment_guard
 	});
-	const _supertype_numberBigint_guard = _vg(_mg(403), {
+	const _supertype_forInitializer_guard = _vg(_mg(399), {
+		letConstKind: _kind_ForInitializerLetConstKind_guard,
+		varKind: _kind_ForInitializerVarKind_guard,
+		usingKind: _kind_ForInitializerUsingKind_guard
+	});
+	const _supertype_numberBigint_guard = _vg(_mg(404), {
 		hex: _kind_NumberBigintHex_guard,
 		binary: _kind_NumberBigintBinary_guard,
 		octal: _kind_NumberBigintOctal_guard,
 		decimal: _kind_NumberBigintDecimal_guard
 	});
-	const _supertype_exportStatementDefault_guard = _vg(_mg(419), {
+	const _supertype_exportStatementDefault_guard = _vg(_mg(420), {
 		from: _form_ExportStatementDefaultFrom_guard,
 		declaration: _form_ExportStatementDefaultDeclaration_guard
 	});
@@ -2456,6 +2491,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		forHeaderVarKind: _kind_ForHeaderVarKind_guard,
 		forHeaderLetConstKind: _kind_ForHeaderLetConstKind_guard,
 		forHeaderUsingKind: _kind_ForHeaderUsingKind_guard,
+		forInitializerLetConstKind: _kind_ForInitializerLetConstKind_guard,
+		forInitializerVarKind: _kind_ForInitializerVarKind_guard,
+		forInitializerUsingKind: _kind_ForInitializerUsingKind_guard,
 		formalParametersSetAccessorSignature: _form_FormalParametersSetAccessorSignature_guard,
 		formalParametersElementsSetAccessorSignature: _kind_FormalParametersElementsSetAccessorSignature_guard,
 		setterParameter: _kind_SetterParameter_guard,
@@ -2507,6 +2545,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		indexSignature: _supertype_indexSignature_guard,
 		classBodyMember: _supertype_classBodyMember_guard,
 		enumBodyElement: _supertype_enumBodyElement_guard,
+		forInitializer: _supertype_forInitializer_guard,
 		numberBigint: _supertype_numberBigint_guard,
 		exportStatementDefault: _supertype_exportStatementDefault_guard,
 		layout: _sg(_supertype_layout_ids),

@@ -118,13 +118,13 @@ const SCM: &str = r#"; a comment
 #[test]
 fn the_rust_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults(), &probe_input("engine.rs"));
-    assert_eq!(words, ArenaWords { chunks: 4, words: 51622, hash: 11_652_785_817_057_947_092 });
+    assert_eq!(words, ArenaWords { chunks: 4, words: 51622, hash: 6_967_138_680_320_751_256 });
 }
 
 #[test]
 fn the_typescript_fixture_tree_reads_to_the_same_words() {
     let words = deep_read::<_, sittir_typescript::render::AnyNode>(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), &probe_input("create-engine.ts"));
-    assert_eq!(words, ArenaWords { chunks: 2, words: 29202, hash: 16_396_936_150_628_732_031 });
+    assert_eq!(words, ArenaWords { chunks: 2, words: 29202, hash: 12_216_211_177_870_384_515 });
 }
 
 #[test]

@@ -97,15 +97,15 @@ a supertype of `impl_item_body` and `impl_item_semi`.
 ```text
 				// range_pattern: the base rule is
 				//   choice(
-				//     seq(field('left', X), choice(             ← 0
-				//       seq(enum('...', '..=', '..'), field('right', X)),  ← 0/1/0 "left_with_right"
-				//       '..',                                               ← 0/1/1 "left_bare"
+				//     seq(field('start', X), choice(             ← 0
+				//       seq(enum('...', '..=', '..'), field('end', X)),  ← 0/1/0 "bounded"
+				//       '..',                                             ← 0/1/1 "lower_bounded"
 				//     )),
-				//     seq(enum, field('right', X)),             ← 1 "prefix"
+				//     seq(enum, field('end', X)),                ← 1 "upper_bounded"
 				//   )
-				// Flatten the adoption so the inner-choice arms get their own
-				// variant names — the asymmetry (`..=`/`...` require a right,
-				// bare `..` doesn't) means these are genuine structural variants.
+				// Arm 0 has no variant of its own, so its two inner variants
+				// each take its sequence and the rule is three flat arms, each
+				// holding its own `start` and `end`.
 ```
 
 ### `visibility_modifier` (`packages/rust/grammar.sittir.ts:204`)
@@ -579,13 +579,14 @@ because the names are base externals (`baseExternalNames`).
 ### `range_expression` (`packages/rust/grammar.sittir.ts`, `edits`)
 
 `range_expression` is a flattened parent: its four arms are the variant
-kinds `range_expression_binary`, `_postfix`, `_prefix` and `_bare`, and the
+kinds `range_expression_bounded`, `_lower_bounded`, `_upper_bounded` and
+`_unbounded`, and the
 parent itself is a supertype with no node of its own.
 
-Three patch sets in order. `{ '-1': alias('range_expression_bare') }` first:
+Three patch sets in order. `{ '-1': alias('range_expression_unbounded') }` first:
 the bare `..` arm (RangeFull, `let x = ..;`) is a lone literal, so it becomes
-`alias($._range_expression_bare, $.range_expression_bare)` with
-`_range_expression_bare` authored in `rules:`. Then the field labels of the
+`alias($._range_expression_unbounded, $.range_expression_unbounded)` with
+`_range_expression_unbounded` authored in `rules:`. Then the field labels of the
 three sequence arms (`start`, `operator`, `end`), which land on the
 base-shape choice arms; the bare arm is left unfielded. Then the `variant()`
 splits `'0'..'3'`.

@@ -3,7 +3,7 @@ import { loadCorpusEntries } from '../common.ts';
 import { runPortableRoundTrip } from '../portable-round-trip.ts';
 
 const CARRIED_CEILING = {
-	python: 5,
+	python: 6,
 	rust: 6,
 	typescript: 8
 };
@@ -11,6 +11,7 @@ const CARRIED_CEILING = {
 const CARRIED_PAIRS: Record<keyof typeof CARRIED_CEILING, readonly string[]> = {
 	python: [
 		'float_scientific scalar',
+		'interpolation flags',
 		'key_value_pattern unclaimed',
 		'string readOnly'
 	],

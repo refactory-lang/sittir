@@ -10193,6 +10193,7 @@
             "type": "SYMBOL",
             "name": "_suite_block_class_definition",
             "annotations": {
+              "default": true,
               "variant": "block_class_declaration",
               "variantOf": "_suite"
             }
