@@ -93,10 +93,12 @@ pub struct AlignedKids {
 }
 
 /// The children of the node at `run` in `records` beside those of the node
-/// at `row` in `tree`: a node with a place by its kinds and span, a unit by
-/// its kind and its slot route, each in its own order since a unit has no
-/// offset to sit among the extras beside it by, and a child the holder routes
-/// as a fixed token or a separator as one the records don't list.
+/// at `row` in `tree`: a node with a place by its kinds and span, in order; a
+/// unit by its kind and its slot route, as one of its holder's units in any
+/// order, since the records list a holder's units and flags as its render
+/// body writes its slots and the source may write them in another; and a
+/// child the holder routes as a fixed token or a separator as one the
+/// records don't list. A unit either side has and the other lacks is apart.
 pub fn aligned_kids<G: crate::engine::EngineGrammar>(grammar: G, records: &mut dyn crate::nodes::Nodes<'_>, run: NodeIndex, tree: &mut dyn crate::nodes::Nodes<'_>, row: NodeIndex) -> AlignedKids {
     use crate::read::Route;
     let (met, kept) = (records.kids(run), tree.kids(row));
@@ -104,22 +106,25 @@ pub fn aligned_kids<G: crate::engine::EngineGrammar>(grammar: G, records: &mut d
     let routed = grammar.slot_routes(tree, &at);
     let route = |kid: &crate::nodes::Kid| routed.as_ref().and_then(|routed| routed.children.iter().position(|child| child.index == kid.index).map(|found| routed.routes[found]));
     let (units, placed): (Vec<_>, Vec<_>) = met.iter().copied().partition(|one| records.is_unit(one.index));
-    let (mut next_placed, mut next_unit) = (0, 0);
+    let mut next_placed = 0;
+    let mut taken = vec![false; units.len()];
     let mut aligned = AlignedKids::default();
     for kid in kept.iter() {
+        let unit = matches!(route(kid), Some(Route::Slot { .. })).then(|| units.iter().zip(&taken).position(|(one, &taken)| !taken && (one.grammar == kid.grammar || one.grammar == kid.display || grammar.unit_id(tree, kid) == Some(one.grammar)))).flatten();
         if let Some(one) = placed.get(next_placed).filter(|one| (one.grammar, one.display, one.start, one.end) == (kid.grammar, kid.display, kid.start, kid.end)) {
             aligned.held.push((*one, *kid));
             next_placed += 1;
-        } else if let Some(one) = units.get(next_unit).copied().filter(|one| matches!(route(kid), Some(Route::Slot { .. })) && (one.grammar == kid.grammar || one.grammar == kid.display || grammar.unit_id(tree, kid) == Some(one.grammar))) {
-            aligned.held.push((one, *kid));
-            next_unit += 1;
+        } else if let Some(at) = unit {
+            aligned.held.push((units[at], *kid));
+            taken[at] = true;
         } else if matches!(route(kid), Some(Route::Layout | Route::Separator { .. })) {
             aligned.fixed.push(*kid);
         } else {
             aligned.apart = aligned.apart.or(Some(*kid));
         }
     }
-    aligned.apart = aligned.apart.or_else(|| placed.get(next_placed).or_else(|| units.get(next_unit)).copied());
+    let untaken = units.iter().zip(&taken).find(|&(_, &taken)| !taken).map(|(one, _)| one);
+    aligned.apart = aligned.apart.or_else(|| placed.get(next_placed).or(untaken).copied());
     aligned
 }
 
