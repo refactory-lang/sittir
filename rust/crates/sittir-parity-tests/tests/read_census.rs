@@ -54,6 +54,7 @@ struct Tally {
     side_records: Count,
     side_encoded_words: u64,
     side_fields: BTreeMap<String, Count>,
+    read_sides: Count,
     side_at_zero_width: u64,
     side_at_header_only: u64,
     side_at_extra: u64,
@@ -136,6 +137,13 @@ fn census<G: RecordGrammar + Copy, N: HydrateNode + RecordCells>(grammar: G, opt
             }
         }
         let Some(root) = parsed.root else { continue };
+        let source = sittir_core::arena::RunNodes::source_of(arena, root).expect("the root's source");
+        let read_side = SideRecord {
+            spans: sittir_core::arena::read_spans(arena, source).expect("the read's spans"),
+            starts: sittir_core::arena::read_entry_starts(arena, source).expect("the read's starts").map(<[u32]>::to_vec),
+            ..SideRecord::default()
+        };
+        tally.read_sides.add(encoded(&read_side).len() as u64);
         let mut seen = HashSet::new();
         let mut pending = vec![root];
         while let Some(at) = pending.pop() {
@@ -620,6 +628,8 @@ fn the_side_words_a_census_attributes_are_the_words_their_encoder_writes() {
     let source = "// lead\nfn f<T>(a: u8, b: T,) -> Vec<u8> {\n    let x = [1, 2,];\n    x.len(); /* t */\n}\n\nstruct S { a: u8, }\n";
     let tally = census::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "rust", "guard", &[("guard".to_string(), source.to_string())]);
     assert!(tally.side_records.n > 0, "the source's records keep side records");
+    let attributed = tally.records.words + tally.side_records.words + tally.list_runs.words + tally.link_records.words + tally.read_sides.words;
+    assert_eq!(attributed, tally.chunk_words, "every word of a one-chunk read is a record's, a side record's, a list run's or the read's own side record's");
     assert_eq!(tally.side_records.words, tally.side_encoded_words, "words attributed to side record fields, flags word included, against the words their encoder writes");
     let run = &tally.side_fields["run"];
     let entries = tally.rows.values().map(|count| count.words).sum::<u64>() + tally.run_records.words;
