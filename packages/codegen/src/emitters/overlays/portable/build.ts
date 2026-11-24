@@ -1220,7 +1220,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	for (const [path, arms] of byPath) {
 		const built = new Set(arms.map((arm) => arm.kind));
 		const left = [...(inheriting.get(path) ?? [])].filter((kind) => !built.has(kind) && refinedBy(path, kind));
-		if (arms.length > 0 && left.length > 0 && arms.every((arm) => ownRefinement(path, arm.kind))) byPath.set(path, []);
+		const slotKey = (names: readonly string[]): string => [...new Set(names)].sort().join(',');
+		const armSlots = new Set(arms.map((arm) => slotKey(arm.arm.members.map((member) => member.name))));
+		const alike = (kind: string): boolean =>
+			(routes.readEntries.get(kind) ?? []).some((entry) => entry.vocab === path && armSlots.has(slotKey(entryRoutes(entry).flatMap((route) => (route.flag === true ? [] : [route.name])))));
+		if (arms.length > 0 && arms.every((arm) => ownRefinement(path, arm.kind)) && left.some(alike)) byPath.set(path, []);
 	}
 	const seatedAt = (member: PortableMemberStep): string[] =>
 		member.seats.flatMap((seat) => [...seat.kinds.map((kind) => `${seat.at[0]} ${seat.at[1]} ${kind}`), ...(seat.within ?? []).flatMap((container) => (container.members ?? []).flatMap(seatedAt))]);

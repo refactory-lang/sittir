@@ -7,9 +7,17 @@ import rust from '../src/index.ts';
 const runtime = await portableRuntime(await sharedEngine(() => createEngine(rust, { api: 'strict' })));
 const render = (node: unknown): string => String(runtime.engine.render(node as never));
 
-describe('expression.range is a family no build takes', () => {
-	it('throws for the family path', () => {
-		expect(() => runtime.build({ $path: 'expression.range', start: 'a', end: 'b' } as never)).toThrow(/does not build in rust/);
+describe('expression.range keeps the arms whose slots tell the forms apart', () => {
+	it.each([
+		[{}, '..'],
+		[{ start: 'a' }, 'a..'],
+		[{ end: 'b' }, '..b']
+	])('builds %j', (input, text) => {
+		expect(render(runtime.build({ $path: 'expression.range', ...input } as never))).toBe(text);
+	});
+
+	it('refuses a start and an end together, the form its refinement builds', () => {
+		expect(() => runtime.build({ $path: 'expression.range', start: 'a', end: 'b' } as never)).toThrow(/no rust form of expression.range builds this structure/);
 	});
 
 	it('still reads and rebuilds a parse of each form', () => {
