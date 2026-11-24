@@ -225,7 +225,7 @@ describe('a choice whose arms share a slot takes exactly one arm', () => {
 		expect((halted as EmitHaltedError).blocking as readonly GrammarDiagnostic[]).toMatchObject([{ code: 'shared-slot-choice', ownerKind: 'host' }]);
 	});
 
-	describe('a later arm of flags only, admitting no set of them an earlier arm refuses, is the source’s other order', () => {
+	describe('a later arm of keywords only, admitting no set of them an earlier arm refuses, is the source’s other order', () => {
 		const opt = (rule: unknown) => choice(rule, blank);
 		const flag = (name: string) => field(name, sym(`_kw_${name}`));
 		const flags = {
@@ -248,6 +248,19 @@ describe('a choice whose arms share a slot takes exactly one arm', () => {
 			const body = emit().bodies.get('host')!;
 			expect(rendered(body, new Set(['abstract', 'readonly', 'name']))).toEqual(['abstract', 'readonly', 'name']);
 			expect(rendered(body, new Set(['static', 'override', 'readonly', 'name']))).toEqual(['static', 'override', 'readonly', 'name']);
+		});
+
+		it('takes a unit, one slot every kind of which is fixed text, as a keyword beside the flags', () => {
+			const mode = () => field('mode', choice(sym('_kw_ref'), sym('_kw_in')));
+			const { nodeMap, emit } = compile({
+				host: seq(choice(seq(opt(choice(flag('static'), flag('abstract'))), opt(mode())), seq(opt(mode()), opt(flag('abstract')))), field('name', sym('x'))),
+				_kw_ref: str('ref'),
+				_kw_in: str('in'),
+				...flags
+			});
+			expect(nodeMap.assembleWarnings).not.toContainEqual(expect.objectContaining({ code: 'shared-slot-choice' }));
+			const body = emit().bodies.get('host')!;
+			expect(rendered(body, new Set(['abstract', 'mode', 'name']))).toEqual(['abstract', 'mode', 'name']);
 		});
 
 		it('still refuses a later flag arm that admits a set the earlier arm refuses', () => {

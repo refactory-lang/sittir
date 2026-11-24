@@ -205,17 +205,19 @@ function partitionOfChoice(kind: string, choice: Extract<RenderRule, { type: 'CH
 		}
 		return orAbsent(product);
 	};
-	const holdsOnlyFlags = (rule: RenderRule): boolean => {
+	const holdsOnlyKeywords = (rule: RenderRule): boolean => {
 		const kinds = kindsAtSlots(rule);
 		const slots = slotsIn(rule);
 		return slots.length > 0 && slots.every((slot) => {
-			const held = kinds.get(slotNameInBody(slot));
-			const node = held?.length === 1 ? input.nodes.get(held[0]!) : undefined;
-			return !isMultiple(slot) && node !== undefined && isFixedTextLeaf(node);
+			const held = kinds.get(slotNameInBody(slot)) ?? [];
+			return !isMultiple(slot) && held.length > 0 && held.every((name) => {
+				const node = input.nodes.get(name);
+				return node !== undefined && isFixedTextLeaf(node);
+			});
 		});
 	};
 	const isOtherOrder = (later: RenderRule, earlier: RenderRule): boolean => {
-		if (!holdsOnlyFlags(later)) return false;
+		if (!holdsOnlyKeywords(later)) return false;
 		const written = new Set(fixedTextsOf(earlier));
 		if (!fixedTextsOf(later).every((text) => written.has(text))) return false;
 		const admitted = slotSetsOf(earlier);
