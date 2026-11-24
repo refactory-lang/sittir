@@ -3898,6 +3898,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -3921,19 +3934,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},
@@ -4242,6 +4242,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -4265,19 +4278,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},
@@ -4586,6 +4586,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -4609,19 +4622,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},
@@ -4930,6 +4930,19 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -4953,19 +4966,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134
 								}
 							]
 						},
@@ -24152,91 +24152,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.binary': {
-			root: true,
-			arms: [
-				{
-					kind: 404,
-					builder: 'binaryExpressionIn',
-					members: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [404, 'left'],
-									kinds: [
-										1, 109, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 235, 236, 237, 238,
-										242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 404, 405, 417, 418, 422, 423, 424, 425,
-										426, 427, 428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [404, 'right'],
-									kinds: [
-										1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 403, 404, 405, 417, 418, 422, 423, 424, 425, 426,
-										427, 428, 441, 442
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 442,
-										'new.target': 441,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'expression.binary.arithmetic.add': {
 			root: true,

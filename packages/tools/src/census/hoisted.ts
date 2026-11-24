@@ -18,6 +18,7 @@ interface CensusNode {
 	readonly kind: string;
 	readonly modelType?: string;
 	readonly seated?: true;
+	readonly unbuildable?: true;
 	readonly builderPath?: readonly string[];
 	readonly slots?: readonly CensusSlot[];
 	readonly elementSeats?: readonly { readonly kind: string }[];
@@ -36,7 +37,7 @@ export interface CensusModel {
 export function hoistedCensus(model: CensusModel): HoistedCensus {
 	const nodes = Array.isArray(model.nodes) ? model.nodes : Object.values(model.nodes);
 	const hoisted = nodes
-		.filter((n) => n.seated === true && n.modelType !== 'list')
+		.filter((n) => n.seated === true && n.unbuildable !== true && n.modelType !== 'list')
 		.map((n) => n.kind)
 		.sort();
 	const seatedSet = new Set<string>();

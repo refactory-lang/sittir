@@ -1316,6 +1316,9 @@ export interface IsGuards {
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormatSpecifierText };
 	wildcardPattern<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardPattern>;
+	lineContinuationNul<T extends { readonly $type: number } | number>(
+		v: T
+	): v is NarrowTo<T, TSKindId.LineContinuationNul>;
 	stringFragment<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringFragment };
@@ -2105,6 +2108,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		keywordSeparator: _kind_KeywordSeparator_guard,
 		formatSpecifierText: _kind_FormatSpecifierText_guard,
 		wildcardPattern: _kind_WildcardPattern_guard,
+		lineContinuationNul: _kind_LineContinuationNul_guard,
 		stringFragment: _kind_StringFragment_guard,
 		escapeInterpolation: _kind_EscapeInterpolation_guard,
 		indent: _kind_Indent_guard,

@@ -862,9 +862,9 @@ export const querySlots: QuerySlots = Object.freeze({
 		['declare', 1, 'declare', '_declare', 32],
 		['accessibilityModifier', 2, undefined, '_accessibility_modifier'],
 		['static', 3, 'static', '_static', 52],
-		['override', 4, 'override', '_override', 327],
-		['readonly', 5, 'readonly', '_readonly', 38],
-		['abstract', 6, 'abstract', '_abstract', 134],
+		['abstract', 4, 'abstract', '_abstract', 134],
+		['override', 5, 'override', '_override', 327],
+		['readonly', 6, 'readonly', '_readonly', 38],
 		['name', 7, undefined, '_name'],
 		['optionality', 8, undefined, '_optionality'],
 		['type', 9, undefined, '_type'],
@@ -4210,9 +4210,9 @@ export const structure: StructureTable = Object.freeze({
 		booleans: [
 			['_declare', 'PublicFieldDefinitionPlain.declare'],
 			['_static', 'PublicFieldDefinitionPlain.static'],
+			['_abstract', 'PublicFieldDefinitionPlain.abstract'],
 			['_override', 'PublicFieldDefinitionPlain.override'],
-			['_readonly', 'PublicFieldDefinitionPlain.readonly'],
-			['_abstract', 'PublicFieldDefinitionPlain.abstract']
+			['_readonly', 'PublicFieldDefinitionPlain.readonly']
 		],
 		kindIds: [
 			['_accessibility_modifier', 'PublicFieldDefinitionPlain.accessibilityModifier', [34, 35, 36]],
@@ -4227,9 +4227,9 @@ export const structure: StructureTable = Object.freeze({
 			'declare',
 			'accessibilityModifier',
 			'static',
+			'abstract',
 			'override',
 			'readonly',
-			'abstract',
 			'name',
 			'optionality',
 			'type',

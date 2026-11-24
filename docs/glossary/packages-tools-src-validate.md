@@ -1154,6 +1154,10 @@ A storage run's render result while the run goes on: the counts and failures of 
 
 The `BuiltRenderResult` of a run: its counts and failures, with `total` and `casesByKind` read from its cases.
 
+### `packages/tools/src/validate/built-render.ts::BuiltRenderResult::flagReordered`
+
+The count of built renders that matched only where a kind's flags came in another order.
+
 ### `packages/tools/src/validate/built-render.ts::BuiltRenderResult::spellingNormalized`
 
 The count of built renders that matched only after spelling normalization.
@@ -1691,9 +1695,33 @@ A fixture the render check reads.
 
 The context in which a render is reparsed.
 
+### `packages/tools/src/validate/read-render-parse.ts::ownRenderTolerance`
+
+The tolerance the comparison of a node's own render carries: delimiter spellings and the own-side extras, and no flags. A tree's own render keeps its source's modifier order, so a swap in untouched code fails.
+
+### `packages/tools/src/validate/read-render-parse.ts::FlagReorderedCandidate`
+
+A read-render-parse candidate whose AST matched only where a kind's flags came in another order, with the reorders accepted.
+
+### `packages/tools/src/validate/read-render-parse.ts::ReadRenderParseResult::flagReordered`
+
+The candidates that matched only after a flag reorder.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::flagReordered`
+
+The count of portable round trips that matched only where a kind's flags came in another order.
+
 ### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::delimiters`
 
 The delimiter spellings the comparison reads, loaded per grammar.
+
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::flags`
+
+The flag tokens the comparison reads, loaded per grammar. Where two nodes of one kind hold the same flags in another order and agree on everything else, the comparison passes and records the reorder in `reordered`; a changed set of flags, or a reorder of any other child, still mismatches.
+
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::reordered`
+
+The flag reorders the comparison accepted, one note each.
 
 ### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::normalized`
 
@@ -1786,6 +1814,18 @@ The token interior the delimiter reads.
 ### `packages/tools/src/validate/common.ts::loadDelimiterSpellings`
 
 Loads each delimiter's spelling record for a grammar: its interior, and its facets with their spellings from the grammar's portable build table. A delimiter with no interior is left out.
+
+### `packages/tools/src/validate/common.ts::FlagTokens`
+
+The tokens a kind's flags are written as in a parse: the anonymous tokens by text and the named children by kind. They come from the values of the kind's boolean-storage slots in the node model, so no kind or token is listed by hand.
+
+### `packages/tools/src/validate/common.ts::loadFlagTokens`
+
+Loads each flag-holding kind's flag tokens for a grammar, from the loaded node model. The AST comparison reads them to accept the same flags of one kind in another order.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::flagTokens`
+
+Each kind's flag tokens, from the loaded node model, by kind.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::delimiterFacets`
 

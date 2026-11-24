@@ -10833,9 +10833,9 @@ export interface PublicFieldDefinitionPlain {
 	readonly _declare: boolean;
 	readonly _accessibility_modifier?: TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword;
 	readonly _static: boolean;
+	readonly _abstract: boolean;
 	readonly _override: boolean;
 	readonly _readonly: boolean;
-	readonly _abstract: boolean;
 	readonly _name: PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly _optionality?: TSKindId.Qmark | TSKindId.Bang;
 	readonly _type?: TypeAnnotation;
@@ -10845,9 +10845,9 @@ export interface PublicFieldDefinitionPlain {
 		readonly _declare: 'declare';
 		readonly _accessibility_modifier: 'accessibilityModifier';
 		readonly _static: 'static';
+		readonly _abstract: 'abstract';
 		readonly _override: 'override';
 		readonly _readonly: 'readonly';
-		readonly _abstract: 'abstract';
 		readonly _name: 'name';
 		readonly _optionality: 'optionality';
 		readonly _type: 'type';
@@ -10866,9 +10866,9 @@ export interface PublicFieldDefinitionPlain {
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 		readonly override?: BaseBooleanKeyword<'override'>;
 		readonly readonly?: BaseBooleanKeyword<'readonly'>;
-		readonly abstract?: BaseBooleanKeyword<'abstract'>;
 		readonly optionality?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 		readonly type?: Type | undefined;
 		readonly value?:
@@ -10906,9 +10906,9 @@ export interface PublicFieldDefinitionPlain {
 			true
 		>;
 		readonly static: SlotHint<NonNullable<T.PublicFieldDefinitionPlain.Config>['static'], true>;
+		readonly abstract: SlotHint<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract'], true>;
 		readonly override: SlotHint<NonNullable<T.PublicFieldDefinitionPlain.Config>['override'], true>;
 		readonly readonly: SlotHint<NonNullable<T.PublicFieldDefinitionPlain.Config>['readonly'], true>;
-		readonly abstract: SlotHint<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract'], true>;
 		readonly name: SlotHint<
 			| T.PropertyIdentifier
 			| T.PrivatePropertyIdentifier
@@ -10934,9 +10934,9 @@ export interface PublicFieldDefinitionPlain {
 		| TSKindId.ProtectedKeyword
 		| undefined;
 	readonly static: () => boolean;
+	readonly abstract: () => boolean;
 	readonly override: () => boolean;
 	readonly readonly: () => boolean;
-	readonly abstract: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
 	readonly optionality: () => TSKindId.Qmark | TSKindId.Bang | undefined;
 	readonly type: () => Type | undefined;

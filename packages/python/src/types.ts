@@ -6517,7 +6517,6 @@ export type WildcardPattern = TSKindId.WildcardPattern;
 export type IntegerDecimalImaginary = Terminal<TSKindId.IntegerDecimalImaginary, string>;
 export type IntegerDecimalPlain = Terminal<TSKindId.IntegerDecimalPlain, string>;
 export type LineContinuationNewline = Terminal<TSKindId.LineContinuationNewline, string> & TriviaFlanks;
-export type LineContinuationNul = TSKindId.LineContinuationNul;
 export type StringFragment = Terminal<TSKindId.StringFragment, string>;
 export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
 export type Indent = TSKindId.Indent;
@@ -6838,6 +6837,7 @@ export namespace SuiteClassDefinition {
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
+export type LineContinuationNul = TSKindId.LineContinuationNul;
 
 export type PythonNode = NodeOfNamespaces<NamespaceMap>;
 
@@ -11717,11 +11717,6 @@ export interface PositionalSeparatorNs extends KeywordNs<
 > {}
 export interface KeywordSeparatorNs extends KeywordNs<TSKindId.KeywordSeparator, '*', TSKindId.KeywordSeparator> {}
 export interface WildcardPatternNs extends KeywordNs<TSKindId.WildcardPattern, '_', TSKindId.WildcardPattern> {}
-export interface LineContinuationNulNs extends KeywordNs<
-	TSKindId.LineContinuationNul,
-	'\\\u0000',
-	TSKindId.LineContinuationNul
-> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
 export interface TightNs extends KeywordNs<TSKindId.Tight, '', TSKindId.Tight> {}
@@ -11969,7 +11964,6 @@ export interface NamespaceMap {
 	[TSKindId.PositionalSeparator]: PositionalSeparatorNs;
 	[TSKindId.KeywordSeparator]: KeywordSeparatorNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
-	[TSKindId.LineContinuationNul]: LineContinuationNulNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
 	[TSKindId.Tight]: TightNs;
@@ -12680,7 +12674,6 @@ export interface TypeKeyOf {
 	[TSKindId.PositionalSeparator]: 'positionalSeparator';
 	[TSKindId.KeywordSeparator]: 'keywordSeparator';
 	[TSKindId.WildcardPattern]: 'wildcardPattern';
-	[TSKindId.LineContinuationNul]: 'lineContinuationNul';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
 	[TSKindId.Tight]: 'tight';
@@ -18458,16 +18451,6 @@ export namespace WildcardPattern {
 	export type BuildArgs = WildcardPatternNs['BuildArgs'];
 	export type LooseArgs = WildcardPatternNs['LooseArgs'];
 	export type Kind = TSKindId.WildcardPattern;
-}
-export namespace LineContinuationNul {
-	export type Config = LineContinuationNulNs['Config'];
-	export type Bound = LineContinuationNulNs['Bound'];
-	export type Parsed = LineContinuationNulNs['Bound'];
-	export type Loose = LineContinuationNulNs['Loose'];
-	export type LooseConfig = LineContinuationNulNs['LooseConfig'];
-	export type BuildArgs = LineContinuationNulNs['BuildArgs'];
-	export type LooseArgs = LineContinuationNulNs['LooseArgs'];
-	export type Kind = TSKindId.LineContinuationNul;
 }
 export namespace Indent {
 	export type Config = IndentNs['Config'];

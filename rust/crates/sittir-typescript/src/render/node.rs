@@ -42625,15 +42625,15 @@ pub struct PublicFieldDefinitionPlainNode {
     #[wire(key = "_static")]
     #[slot(field = field::STATIC, presence = kind::STATIC_KEYWORD, word = 2, bit = 1)]
     pub static_: bool,
+    #[wire(key = "_abstract")]
+    #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD, word = 2, bit = 2)]
+    pub abstract_: bool,
     #[wire(key = "_override")]
-    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER, word = 2, bit = 2)]
+    #[slot(field = field::OVERRIDE, presence = kind::OVERRIDE_MODIFIER, word = 2, bit = 3)]
     pub override_: bool,
     #[wire(key = "_readonly")]
-    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD, word = 2, bit = 3)]
+    #[slot(field = field::READONLY, presence = kind::READONLY_KEYWORD, word = 2, bit = 4)]
     pub readonly: bool,
-    #[wire(key = "_abstract")]
-    #[slot(field = field::ABSTRACT, presence = kind::ABSTRACT_KEYWORD, word = 2, bit = 4)]
-    pub abstract_: bool,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 5, width = 15, inline = 14, forms = 9, built = 5)]
     pub name: ::sittir_core::SlotValue<PairKeyNodeSlot>,
@@ -55613,9 +55613,9 @@ fn render_public_field_definition_plain<N: PublicFieldDefinitionPlainFields + ?S
         w.site_at(options::SITE_PUBLIC_FIELD_DEFINITION_PLAIN_ACCESSIBILITY_MODIFIER_AFTER);
     }
     static_.render(w)?;
+    abstract_.render(w)?;
     override_.render(w)?;
     readonly.render(w)?;
-    abstract_.render(w)?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
     if optionality.is_present() {
         w.site_at(options::SITE_PUBLIC_FIELD_DEFINITION_PLAIN_OPTIONALITY_BEFORE);
