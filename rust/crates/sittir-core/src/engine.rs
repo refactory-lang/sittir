@@ -2809,14 +2809,24 @@ impl<G: EngineGrammar> Engine<G> {
         let mut built = self.written.built_mut();
         let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r') }).map_err(|refusal| refusal.to_string())?;
         let mut writer = crate::arena::ReadWriter::new(&mut built);
+        let refused = |writer: crate::arena::ReadWriter<'_>, refusal: crate::arena::HydrateError| match writer.abandon(entry) {
+            Ok(()) => refusal.describe(&G::kind_name),
+            Err(release) => format!("{}; giving back what the read placed refused: {release}", refusal.describe(&G::kind_name)),
+        };
         let root = if root.is_error() {
-            let root = crate::arena::hydrate_error(&mut tree.walk(), source, Some(entry), grammar.surface_kinds(), &mut writer).map_err(|refusal| refusal.describe(&G::kind_name))?;
+            let root = match crate::arena::hydrate_error(&mut tree.walk(), source, Some(entry), grammar.surface_kinds(), &mut writer) {
+                Ok(root) => root,
+                Err(refusal) => return Err(refused(writer, refusal)),
+            };
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             root
         } else {
             let mut ctx = crate::read::ReadCtx::new(source, crate::types::TreeId(0), grammar.shows()).with_relaxes(grammar.relaxes()).with_read_options(&self.options);
             let (mut placed, mut apart) = (Vec::new(), Vec::new());
-            let root = crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut writer, &mut placed, &mut apart).map_err(|refusal| refusal.describe(&G::kind_name))?;
+            let root = match crate::arena::hydrate_whole::<N>(&mut tree.walk(), &mut ctx, Some(entry), grammar.surface_kinds(), &mut writer, &mut placed, &mut apart) {
+                Ok(root) => root,
+                Err(refusal) => return Err(refused(writer, refusal)),
+            };
             writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             drop(built);
             if let Some(kept) = kept {

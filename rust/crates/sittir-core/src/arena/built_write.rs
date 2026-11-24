@@ -98,6 +98,21 @@ impl<'a> ReadWriter<'a> {
         root.map_or(Ok(()), |root| self.chunks.hand_to_handle(root))
     }
 
+    /// Gives back what a refused read placed: each entry it wrote, which no
+    /// holder names yet, and the count `write_source` took of the source's
+    /// entry `source`. Entries an earlier read placed in the same chunk stay;
+    /// a chunk left with nothing live is freed.
+    ///
+    /// # Errors
+    ///
+    /// What reaching an entry's or the source's count refuses.
+    pub fn abandon(self, source: Address) -> Result<(), ArenaError> {
+        for span in self.spans {
+            self.chunks.retire_placed(span)?;
+        }
+        self.chunks.release(super::count::Held::Text(source), false, &mut |_| Vec::new())
+    }
+
     /// The record at `at` is named by no run, and is released once the
     /// read's counts are in (`ReadWriter::finish`).
     pub(crate) fn leaves_unwritten(&mut self, at: Address) {

@@ -14,6 +14,18 @@ const arrayOf = (count: number): string => `const a = [${Array.from({ length: co
 
 const itemsOf = (root: Root): readonly Leaf[] => root.statements()[0]!.declarators()[0]!.value().elements();
 
+const REFUSED =
+	'a list slot holds a leaf at item 262144, past the 262144 leaf items a list slot holds in arena storage, whose node names give an item 18 bits; object storage holds the list';
+
+interface ArenaEngine extends Disposable {
+	parse(source: string): object;
+	render(node: object): { toString(): string };
+	release(node: object): void;
+	readonly diagnostics: { builtMemory(): { chunks: number; counts: number; live: number } };
+}
+
+const released = { chunks: 0, counts: 0, live: 0 };
+
 describe('a list slot names its leaf items by their item, 262,144 of them in arena storage', () => {
 	for (const nodeStorage of ['object', 'arena'] as const) {
 		it(`${nodeStorage}: a 70,000-item array is queried, its last item reached, and a leading side written and read back`, { timeout: 120_000 }, async () => {
@@ -42,11 +54,35 @@ describe('a list slot names its leaf items by their item, 262,144 of them in are
 		const source = arrayOf(262_145);
 		{
 			using ts = await createEngine(typescript, { nodeStorage: 'arena' });
-			expect(() => ts.parse(source)).toThrow(
-				'a list slot holds a leaf at item 262144, past the 262144 leaf items a list slot holds in arena storage, whose node names give an item 18 bits; object storage holds the list'
-			);
+			expect(() => ts.parse(source)).toThrow(REFUSED);
 		}
 		using ts = await createEngine(typescript, { nodeStorage: 'object' });
 		expect((ts.parse(source) as unknown as Root).$render()).toBe(source);
+	});
+
+	it('arena: a refused parse holds no memory however often it is refused, and a parse after it releases to nothing', { timeout: 120_000 }, async () => {
+		using ts = (await createEngine(typescript, { nodeStorage: 'arena' })) as unknown as ArenaEngine;
+		const refused = arrayOf(262_145);
+		for (let attempt = 0; attempt < 3; attempt++) {
+			expect(() => ts.parse(refused)).toThrow(REFUSED);
+			expect(ts.diagnostics.builtMemory()).toEqual(released);
+		}
+		const source = arrayOf(3);
+		const root = ts.parse(source);
+		expect(String(ts.render(root))).toBe(source);
+		ts.release(root);
+		expect(ts.diagnostics.builtMemory()).toEqual(released);
+	});
+
+	it('arena: a parse refused beside a live one gives back its own entries and leaves the live one whole', { timeout: 120_000 }, async () => {
+		using ts = (await createEngine(typescript, { nodeStorage: 'arena' })) as unknown as ArenaEngine;
+		const source = arrayOf(3);
+		const live = ts.parse(source);
+		const held = ts.diagnostics.builtMemory();
+		expect(() => ts.parse(arrayOf(262_145))).toThrow(REFUSED);
+		expect(ts.diagnostics.builtMemory()).toEqual(held);
+		expect(String(ts.render(live))).toBe(source);
+		ts.release(live);
+		expect(ts.diagnostics.builtMemory()).toEqual(released);
 	});
 });

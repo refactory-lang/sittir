@@ -201,6 +201,17 @@ impl CountTable {
         Ok(ordinal)
     }
 
+    /// The words in `words` an entry starts at, in order.
+    fn starts(&self, words: std::ops::Range<u32>) -> Vec<u32> {
+        let bytes = self.read();
+        words
+            .filter(|&word| {
+                let block = (word / 64) as usize;
+                block < self.blocks && read_u32(bytes, META_HEAD + block * 8 + if word % 64 >= 32 { 4 } else { 0 }) >> (word % 32) & 1 == 1
+            })
+            .collect()
+    }
+
     /// The count byte of the entry starting at `word`, read.
     pub(super) fn peek(&self, word: u32) -> Result<u8, ArenaError> {
         let ordinal = self.ordinal(word)?;
@@ -493,6 +504,25 @@ impl BuiltChunks {
     fn retire(&mut self, at: Address) -> Result<(), ArenaError> {
         if self.drop_one(at)? {
             self.dead(at)?;
+        }
+        Ok(())
+    }
+
+    /// Retires each entry that starts in `span`, each holding the one count
+    /// it was placed with and named by no holder: what a read placed before
+    /// it was refused. A chunk left with nothing live is freed.
+    ///
+    /// # Errors
+    ///
+    /// What reaching an entry's count refuses.
+    pub(super) fn retire_placed(&mut self, span: std::ops::Range<Address>) -> Result<(), ArenaError> {
+        let Some(last) = span.end.0.checked_sub(1).map(Address) else { return Ok(()) };
+        for chunk in span.start.chunk()..=last.chunk() {
+            let from = if chunk == span.start.chunk() { span.start.word() } else { 0 };
+            let to = if chunk == last.chunk() { last.word() + 1 } else { super::CHUNK_WORDS };
+            for word in self.table(chunk)?.starts(from..to) {
+                self.retire(Address::new(chunk, word).ok_or(malformed("entry address", word))?)?;
+            }
         }
         Ok(())
     }
