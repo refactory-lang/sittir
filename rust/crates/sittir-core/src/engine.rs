@@ -2784,6 +2784,16 @@ impl<G: EngineGrammar> Engine<G> {
         self.read_records::<N>(source, None)
     }
 
+    /// A read's `refusal`, naming what giving back what the read placed
+    /// refused when `released` did.
+    #[cfg(feature = "arena")]
+    fn given_back(refusal: String, released: Result<(), crate::arena::ArenaError>) -> String {
+        match released {
+            Ok(()) => refusal,
+            Err(release) => format!("{refusal}; giving back what the read placed refused: {release}"),
+        }
+    }
+
     /// `parse_records`, and each side the read placed. A diagnostic.
     ///
     /// # Errors
@@ -2809,10 +2819,7 @@ impl<G: EngineGrammar> Engine<G> {
         let mut built = self.written.built_mut();
         let entry = built.write_source(&crate::arena::source::Source { text: source, breaks_lf: !source.contains('\r') }).map_err(|refusal| refusal.to_string())?;
         let mut writer = crate::arena::ReadWriter::new(&mut built);
-        let refused = |writer: crate::arena::ReadWriter<'_>, refusal: crate::arena::HydrateError| match writer.abandon(entry) {
-            Ok(()) => refusal.describe(&G::kind_name),
-            Err(release) => format!("{}; giving back what the read placed refused: {release}", refusal.describe(&G::kind_name)),
-        };
+        let refused = |writer: crate::arena::ReadWriter<'_>, refusal: crate::arena::HydrateError| Self::given_back(refusal.describe(&G::kind_name), writer.abandon(entry));
         let root = if root.is_error() {
             let root = match crate::arena::hydrate_error(&mut tree.walk(), source, Some(entry), grammar.surface_kinds(), &mut writer) {
                 Ok(root) => root,
@@ -2832,7 +2839,9 @@ impl<G: EngineGrammar> Engine<G> {
             if let Some(kept) = kept {
                 kept.extend_from_slice(&placed);
             }
-            self.place_extras(placed, apart).map_err(|refusal| refusal.to_string())?;
+            if let Err(refusal) = self.place_extras(placed, apart) {
+                return Err(Self::given_back(refusal.to_string(), root.map_or(Ok(()), |root| self.written.release(crate::arena::count::Held::Record(root), true))));
+            }
             root
         };
         Ok(ParsedRecords { root, source: entry, errors })
