@@ -19309,8 +19309,6 @@ export namespace Parameter {
 			readonly inKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly outKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly refKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly scopedKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly thisKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }

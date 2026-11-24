@@ -3007,81 +3007,161 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "FIELD",
-                  "name": "this",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_kw_this"
-                  },
-                  "metadata": {
-                    "fieldSource": "override"
-                  }
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "scoped",
-                  "content": {
-                    "type": "PREC_DYNAMIC",
-                    "value": 1,
-                    "content": {
-                      "type": "STRING",
-                      "value": "scoped"
-                    }
-                  },
-                  "metadata": {
-                    "fieldSource": "override"
-                  }
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "FIELD",
-                  "name": "mode",
-                  "content": {
-                    "type": "PREC_DYNAMIC",
-                    "value": 1,
-                    "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
                       "type": "CHOICE",
                       "members": [
                         {
-                          "type": "STRING",
-                          "value": "ref"
+                          "type": "FIELD",
+                          "name": "this",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_kw_this"
+                          },
+                          "metadata": {
+                            "fieldSource": "override"
+                          }
                         },
                         {
-                          "type": "SYMBOL",
-                          "name": "ref_readonly"
+                          "type": "BLANK"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "FIELD",
+                          "name": "scoped",
+                          "content": {
+                            "type": "PREC_DYNAMIC",
+                            "value": 1,
+                            "content": {
+                              "type": "STRING",
+                              "value": "scoped"
+                            }
+                          },
+                          "metadata": {
+                            "fieldSource": "override"
+                          }
                         },
                         {
-                          "type": "STRING",
-                          "value": "out"
+                          "type": "BLANK"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "FIELD",
+                          "name": "mode",
+                          "content": {
+                            "type": "PREC_DYNAMIC",
+                            "value": 1,
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": "ref"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "ref_readonly"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "out"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "in"
+                                }
+                              ]
+                            }
+                          },
+                          "metadata": {
+                            "fieldSource": "override"
+                          }
                         },
                         {
-                          "type": "STRING",
-                          "value": "in"
+                          "type": "BLANK"
                         }
                       ]
                     }
-                  },
-                  "metadata": {
-                    "fieldSource": "override"
+                  ],
+                  "annotations": {
+                    "variantOf": "parameter"
                   }
                 },
                 {
-                  "type": "BLANK"
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "FIELD",
+                          "name": "mode",
+                          "content": {
+                            "type": "PREC_DYNAMIC",
+                            "value": 1,
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": "ref"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "ref_readonly"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "out"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "in"
+                                }
+                              ]
+                            }
+                          },
+                          "metadata": {
+                            "fieldSource": "override"
+                          }
+                        },
+                        {
+                          "type": "BLANK"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "FIELD",
+                          "name": "this",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_kw_this"
+                          },
+                          "metadata": {
+                            "fieldSource": "override"
+                          }
+                        },
+                        {
+                          "type": "BLANK"
+                        }
+                      ]
+                    }
+                  ],
+                  "annotations": {
+                    "variantOf": "parameter"
+                  }
                 }
               ]
             },

@@ -5494,16 +5494,8 @@
 					"test": "this",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "this_before"
-						},
-						{
 							"kind": "slot",
 							"name": "this"
-						},
-						{
-							"kind": "seam",
-							"field": "this_after"
 						}
 					]
 				}
@@ -5516,16 +5508,8 @@
 					"test": "scoped",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "scoped_before"
-						},
-						{
 							"kind": "slot",
 							"name": "scoped"
-						},
-						{
-							"kind": "seam",
-							"field": "scoped_after"
 						}
 					]
 				}

@@ -7,4 +7,4 @@
 // (packages/csharp/src/backend.ts) compares it against the TS-side copy to
 // detect a native binary built from older generated code.
 
-pub const RENDER_MODULE_HASH: &str = "3473931e2bd7e8897716913d4831429f07cdf121c1582c82caee5bdb0c9ef99a";
+pub const RENDER_MODULE_HASH: &str = "a462514fe6120d6c643c94441079fd92311728c9aefa40e5bc197abe69c353ce";

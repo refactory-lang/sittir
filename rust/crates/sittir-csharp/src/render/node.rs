@@ -55984,16 +55984,8 @@ fn render_parameter<N: ParameterFields + ?Sized>(node: &N, w: &mut dyn ::sittir_
     let type_ = View::new(node.type_(), "{}");
     w.edge(::sittir_core::types::KindId(308), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     attribute_lists.render(w)?;
-    if this.is_present() {
-        w.site_at(options::SITE_PARAMETER_THIS_BEFORE);
-        this.render(w)?;
-        w.site_at(options::SITE_PARAMETER_THIS_AFTER);
-    }
-    if scoped.is_present() {
-        w.site_at(options::SITE_PARAMETER_SCOPED_BEFORE);
-        scoped.render(w)?;
-        w.site_at(options::SITE_PARAMETER_SCOPED_AFTER);
-    }
+    this.render(w)?;
+    scoped.render(w)?;
     if mode.kind_in(&*w, &[::sittir_core::types::KindId(67)]) { w.site_at(options::SITE_PARAMETER_REF_KEYWORD_BEFORE); }
     if mode.kind_in(&*w, &[::sittir_core::types::KindId(53)]) { w.site_at(options::SITE_PARAMETER_OUT_KEYWORD_BEFORE); }
     if mode.kind_in(&*w, &[::sittir_core::types::KindId(52)]) { w.site_at(options::SITE_PARAMETER_IN_KEYWORD_BEFORE); }

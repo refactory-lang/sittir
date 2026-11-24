@@ -13,7 +13,7 @@ export default grammar(enrich(base), wire({
 	options: { indent: preference('    ') },
 	expectDiagnostics: {
 		'token-interior-unstructurable': ['identifier_token'],
-		'unclassifiable-shape': ['interpolated_string_expression', 'lambda_expression', 'recursive_pattern'],
+		'unclassifiable-shape': ['interpolated_string_expression', 'lambda_expression', 'parameter', 'recursive_pattern'],
 		'union-slot-mixed-row': ['recursive_pattern'],
 		'union-slot-routed-repeated': ['for_statement_conditions_initializer']
 	},
@@ -68,13 +68,10 @@ export default grammar(enrich(base), wire({
 		_lambda_expression_init: { '.': ($) => seq(field('attribute_lists', repeat($._attribute_list)), staticAsync(), optional(field('type', $.type)), field('parameters', $._lambda_parameters)) },
 		anonymous_method_expression: { '.': ($) => seq(staticAsync(), 'delegate', optional(field('parameters', $.parameter_list)), field('block', $.block)) },
 		parameter: {
-			1: ($) =>
-				seq(
-					flag('this'),
-					optional(field('scoped', prec.dynamic(1, 'scoped'))),
-					optional(field('mode', prec.dynamic(1, choice('ref', $.ref_readonly, 'out', 'in')))),
-					optional(field('type', $.type))
-				)
+			1: ($) => {
+				const mode = () => optional(field('mode', prec.dynamic(1, choice('ref', $.ref_readonly, 'out', 'in'))));
+				return seq(choice(seq(flag('this'), optional(field('scoped', prec.dynamic(1, 'scoped'))), mode()), seq(mode(), flag('this'))), optional(field('type', $.type)));
+			}
 		}
 	},
 	rules: {

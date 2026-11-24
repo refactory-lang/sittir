@@ -64,8 +64,12 @@ describe.each(Object.entries(engines))('C# modifiers are flags in %s storage', (
 		['scoped ref int x', false, true],
 		['this scoped ref readonly int x', true, true],
 		['out int x', false, false],
-		['in int x', false, false]
+		['in int x', false, false],
+		['ref this int x', true, false],
+		['in this int x', true, false]
 	])('a parameter %s reads this and scoped as flags and one mode', (parameter, isThis, isScoped) => {
+		const parsed = engine.parse(`static class C { static void M(${parameter}) {} }`);
+		expect(parsed.$errors).toHaveLength(0);
 		const node = firstOf(engine, `static class C { static void M(${parameter}) {} }`, kinds.Parameter!);
 		expect([node.this!(), node.scoped!()]).toEqual([isThis, isScoped]);
 		expect(rendered(engine, node)).toBe(parameter);
@@ -81,5 +85,7 @@ describe.each(Object.entries(engines))('C# modifiers are flags in %s storage', (
 		expect(rendered(engine, ir.lambdaExpression!({ async: true, static: true, parameters: ir.implicitParameter!('x'), body: id('x') }))).toBe('static async x => x');
 		expect(rendered(engine, ir.anonymousMethodExpression!({ async: true, static: true, block: ir.block!([]) }))).toBe('static async delegate { }');
 		expect(rendered(engine, ir.parameter!({ mode: 'ref readonly', scoped: true, this: true, type: id('T'), name: id('x') }))).toBe('this scoped ref readonly T x');
+		expect(rendered(engine, ir.parameter!({ mode: 'ref', this: true, type: id('int'), name: id('x') }))).toBe('this ref int x');
+		expect(rendered(engine, ir.parameter!({ mode: 'in', this: true, type: id('int'), name: id('x') }))).toBe('this in int x');
 	});
 });
