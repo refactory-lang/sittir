@@ -98,7 +98,9 @@ pub struct AlignedKids {
 /// order, since the records list a holder's units and flags as its render
 /// body writes its slots and the source may write them in another; and a
 /// child the holder routes as a fixed token or a separator as one the
-/// records don't list. A unit either side has and the other lacks is apart.
+/// records don't list. A holder read without routing its children, an
+/// envelope, holds its content in its slot. A unit either side has and the
+/// other lacks is apart.
 pub fn aligned_kids<G: crate::engine::EngineGrammar>(grammar: G, records: &mut dyn crate::nodes::Nodes<'_>, run: NodeIndex, tree: &mut dyn crate::nodes::Nodes<'_>, row: NodeIndex) -> AlignedKids {
     use crate::read::Route;
     let (met, kept) = (records.kids(run), tree.kids(row));
@@ -110,7 +112,7 @@ pub fn aligned_kids<G: crate::engine::EngineGrammar>(grammar: G, records: &mut d
     let mut taken = vec![false; units.len()];
     let mut aligned = AlignedKids::default();
     for kid in kept.iter() {
-        let unit = matches!(route(kid), Some(Route::Slot { .. })).then(|| units.iter().zip(&taken).position(|(one, &taken)| !taken && (one.grammar == kid.grammar || one.grammar == kid.display || grammar.unit_id(tree, kid) == Some(one.grammar)))).flatten();
+        let unit = (routed.is_none() || matches!(route(kid), Some(Route::Slot { .. }))).then(|| units.iter().zip(&taken).position(|(one, &taken)| !taken && (one.grammar == kid.grammar || one.grammar == kid.display || grammar.unit_id(tree, kid) == Some(one.grammar)))).flatten();
         if let Some(one) = placed.get(next_placed).filter(|one| (one.grammar, one.display, one.start, one.end) == (kid.grammar, kid.display, kid.start, kid.end)) {
             aligned.held.push((*one, *kid));
             next_placed += 1;

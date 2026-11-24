@@ -216,7 +216,7 @@ fn the_records_answer_every_node_as_the_tree_does() {
     let nodes = [
         ("python", grammar_nodes_agree::<_, sittir_python::render::AnyNode>("python", sittir_python::PythonGrammar, sittir_python::render::options::defaults, &[python().source])),
         ("regex", grammar_nodes_agree::<_, sittir_regex::render::AnyNode>("regex", sittir_regex::RegexGrammar, sittir_regex::render::options::defaults, &[])),
-        ("rust", grammar_nodes_agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults, &[rust().source])),
+        ("rust", grammar_nodes_agree::<_, sittir_rust::render::AnyNode>("rust", sittir_rust::RustGrammar, sittir_rust::render::options::defaults, &[rust().source, "fn f() {\n    g(|_| 1);\n    h(|_, x| x);\n}\n"])),
         ("scm", grammar_nodes_agree::<_, sittir_scm::render::AnyNode>("scm", sittir_scm::ScmGrammar, sittir_scm::render::options::defaults, &[])),
         ("typescript", grammar_nodes_agree::<_, sittir_typescript::render::AnyNode>("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults, &[typescript().source])),
     ];

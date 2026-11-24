@@ -998,29 +998,6 @@ impl<'a> Hydration<'a> {
         self.meet_under(cursor, kid.count)
     }
 
-    /// Writes the row of every child of the node `cursor` stands on, and of
-    /// every node under each child but `entered`, whose walk wrote its own.
-    /// The cursor ends where it started.
-    ///
-    /// # Errors
-    ///
-    /// What writing a row refuses.
-    pub fn meet_children_but(&mut self, cursor: &mut TreeCursor<'_>, entered: NodeIndex) -> Result<(), HydrateError> {
-        if !cursor.goto_first_child() {
-            return Ok(());
-        }
-        let met = loop {
-            if let Err(refusal) = self.meet(cursor).and_then(|kid| if kid.index == entered { Ok(()) } else { self.meet_under(cursor, kid.count) }) {
-                break Err(refusal);
-            }
-            if !cursor.goto_next_sibling() {
-                break Ok(());
-            }
-        };
-        cursor.goto_parent();
-        met
-    }
-
     /// Sets the presence bit `bit` of word `word` of `draft` when `present`.
     ///
     /// # Errors
@@ -1175,6 +1152,41 @@ fn hydrate_value<T: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<
     let value = crate::stack::grown(|| T::hydrate(cursor, ctx, &mut *records))?;
     records.took(&value);
     Ok(value)
+}
+
+/// The content of an envelope that wraps a hidden node: the first child of
+/// the node `cursor` stands on that is no entry, met and then taken as a
+/// slot takes a child (`hydrate_value`), every other child met with all
+/// under it, in the order the walk meets them. The cursor ends where it
+/// started.
+///
+/// # Errors
+///
+/// `unwrapped` when every child is an entry, and what meeting a child or
+/// hydrating the content refuses.
+pub fn hydrate_wrapped<T: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, records: &mut Hydration<'_>, unwrapped: HydrateError) -> Result<Hydrated, HydrateError> {
+    if !cursor.goto_first_child() {
+        return Err(unwrapped);
+    }
+    let mut content = None;
+    let walked = loop {
+        let child = match records.meet(cursor) {
+            Ok(child) => child,
+            Err(refusal) => break Err(refusal),
+        };
+        if content.is_none() && !child.entry() {
+            ctx.at = Some(child);
+            content = Some(hydrate_value::<T>(cursor, ctx, records));
+        } else if let Err(refusal) = records.meet_under(cursor, child.count) {
+            break Err(refusal);
+        }
+        if !cursor.goto_next_sibling() {
+            break Ok(());
+        }
+    };
+    cursor.goto_parent();
+    walked?;
+    content.unwrap_or(Err(unwrapped))
 }
 
 fn one(acc: &mut Option<Hydrated>, at: SlotSite, value: impl FnOnce() -> Result<Hydrated, HydrateError>) -> Result<(), HydrateError> {

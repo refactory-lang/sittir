@@ -298,41 +298,17 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     let shape = crate::views::cell_shape(field, slot)?;
     let wraps_hidden = attrs.wraps_hidden;
     let message = format!("{ident}: an envelope's content read from its own row is no node with a record, since a tree holds one record per row");
-    let (hidden, restore) = if wraps_hidden {
-        (
-            quote! {
-                let __unwrapped = __rt::ReadError::Unadmitted { kind: __at.grammar, index: __at.index };
-                if !cursor.goto_first_child() {
-                    return ::core::result::Result::Err(__unwrapped.into());
-                }
-                let __wrapped = loop {
-                    let __child = __rt::Kid::at(cursor);
-                    if !__child.entry() {
-                        ctx.at = ::core::option::Option::Some(__child);
-                        break __child.index;
-                    }
-                    if !cursor.goto_next_sibling() {
-                        cursor.goto_parent();
-                        return ::core::result::Result::Err(__unwrapped.into());
-                    }
-                };
-            },
-            quote! {
-                cursor.goto_parent();
-                records.meet_children_but(cursor, __wrapped)?;
-            },
-        )
+    let content = if wraps_hidden {
+        quote!(let __content = ::sittir_core::arena::hydrate_wrapped::<#inner>(cursor, ctx, records, __rt::ReadError::Unadmitted { kind: __at.grammar, index: __at.index }.into());)
     } else {
-        (quote!(), quote!())
+        quote!(let __content = <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, records);)
     };
     let start = record_start(words);
     let end = record_end(&quote!(::core::option::Option::None), &quote!(::core::option::Option::None));
     Ok(quote! {
         const _: () = assert!(#wraps_hidden || <#inner as ::sittir_core::record::Stored>::STORED & ::sittir_core::record::stored::RECORD == 0, #message);
         #start
-        #hidden
-        let __content = <#inner as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, records);
-        #restore
+        #content
         records.cell(__draft, #shape, ::core::option::Option::Some(__content?))?;
         #end
     })
