@@ -1,5 +1,6 @@
 import type * as V from '../../types/src/vocabulary/index.ts';
 import type { TypeScriptMap } from '../src/portable/map.ts';
+import { TSKindId } from '../src/kinds.ts';
 
 type Element = NonNullable<V.BuildInput<TypeScriptMap, 'expression.collection.list'>['elements']>[number];
 
@@ -54,3 +55,10 @@ export const caseReadsNoVariable: [Extract<CaseStatementRead, { readonly $path: 
 
 export const bodilessModule: V.Read<TypeScriptMap, 'declaration.module.external'> = { $path: 'declaration.module.external', name: 'm' };
 export const emptyModule: V.BuildInput<TypeScriptMap, 'declaration.module'> = { $path: 'declaration.module', name: 'M', statements: [] };
+
+type ArgumentValue = V.BuildInput<TypeScriptMap, 'argument'>['value'];
+
+export const nullStructure: ArgumentValue = { $path: 'literal.null' };
+export const nullRead: V.Read<TypeScriptMap, 'argument'>['value'] = { $path: 'literal.null' };
+// @ts-expect-error a fixed word reads as its structure, never as a bare kind id
+export const nullKindId: V.Read<TypeScriptMap, 'argument'>['value'] = TSKindId.Null;

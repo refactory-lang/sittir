@@ -274,8 +274,8 @@ export interface PortableBuildPath {
 
 /**
  * A structure the portable build builds: its vocabulary path, the flags it sets, where the facts its container spells sat (`$at`, by fact
- * name), the value of a scalar or a fixed literal, and its slots by name. A slot holds a structure, a list of them, text (built through its grammar slot's default leaf), a kind id, a scalar, or a node, which is placed
- * as it is.
+ * name), the value of a scalar or a fixed literal, and its slots by name. A slot holds a structure, a list of them, text (built through its grammar slot's default leaf), a scalar, or a node, which is placed as it
+ * is.
  */
 export interface PortableStructure {
 	readonly $path: string;

@@ -215,9 +215,7 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('clause.bounds.removed.type', value);
+		return unnumbered('clause.bounds.removed.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -294,8 +292,7 @@ const clause_bounds_use$249_bounds$item = (value: clause_bounds_use$249_bounds$i
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [239, 483])) return value;
-		return unseated('clause.bounds.use.bounds', value);
+		return unnumbered('clause.bounds.use.bounds', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [239, 483])) return value;
@@ -2182,8 +2179,7 @@ const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) 
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 263])) return value;
-		return unseated('clause.import.alias.name', value);
+		return unnumbered('clause.import.alias.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125, 126, 127, 263, 480])) return value;
@@ -2215,8 +2211,7 @@ const clause_import_alias$228_rename = (value: clause_import_alias$228_rename$It
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('clause.import.alias.rename', value);
+		return unnumbered('clause.import.alias.rename', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -2269,8 +2264,7 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 226, 227, 228, 229, 263])) return value;
-		return unseated('clause.import.list.useClauses', value);
+		return unnumbered('clause.import.list.useClauses', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 480])) return value;
@@ -2308,8 +2302,7 @@ type clause_import_list_scoped$226_list$Item =
 	| RustMap['nodes']['clause.import.list'];
 const clause_import_list_scoped$226_list = (value: clause_import_list_scoped$226_list$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [227])) return value;
-		return unseated('clause.import.list.scoped.list', value);
+		return unnumbered('clause.import.list.scoped.list', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [227])) return value;
@@ -2345,8 +2338,7 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 263])) return value;
-		return unseated('clause.import.list.scoped.path', value);
+		return unnumbered('clause.import.list.scoped.path', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125, 126, 127, 263, 480])) return value;
@@ -2371,8 +2363,7 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 type clause_import_wildcard$229_useWildcardGroup$Item = Unmapped<'rust:use_wildcard_group'>;
 const clause_import_wildcard$229_useWildcardGroup = (value: clause_import_wildcard$229_useWildcardGroup$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [359])) return value;
-		return unseated('clause.import.wildcard.useWildcardGroup', value);
+		return unnumbered('clause.import.wildcard.useWildcardGroup', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [359])) return value;
@@ -4534,8 +4525,7 @@ type clause_macro_rule$181_left$Item =
 	| RustMap['nodes']['element.macro.token_tree.pattern.paren'];
 const clause_macro_rule$181_left = (value: clause_macro_rule$181_left$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [183, 405, 406, 407])) return value;
-		return unseated('clause.macro.rule.left', value);
+		return unnumbered('clause.macro.rule.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [183, 405, 406, 407])) return value;
@@ -4567,8 +4557,7 @@ type clause_macro_rule$181_right$Item =
 	| RustMap['nodes']['element.macro.token_tree.paren'];
 const clause_macro_rule$181_right = (value: clause_macro_rule$181_right$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [187, 408, 409, 410])) return value;
-		return unseated('clause.macro.rule.right', value);
+		return unnumbered('clause.macro.rule.right', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [187, 408, 409, 410])) return value;
@@ -4593,8 +4582,7 @@ type clause_where$211_wherePredicates$item$Item =
 	| RustMap['nodes']['clause.where.predicate'];
 const clause_where$211_wherePredicates$item = (value: clause_where$211_wherePredicates$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [212])) return value;
-		return unseated('clause.where.wherePredicates', value);
+		return unnumbered('clause.where.wherePredicates', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [212])) return value;
@@ -4730,14 +4718,7 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
-			)
-		)
-			return value;
-		return unseated('clause.where.predicate.bounds', value);
+		return unnumbered('clause.where.predicate.bounds', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -4906,8 +4887,7 @@ const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [217, 239, 240, 243, 246, 252, 253, 265, 341, 388, 389, 483])) return value;
-		return unseated('clause.where.predicate.left', value);
+		return unnumbered('clause.where.predicate.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -4964,8 +4944,7 @@ const declaration_constant$205_name = (value: declaration_constant$205_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.constant.name', value);
+		return unnumbered('declaration.constant.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -5100,9 +5079,7 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('declaration.constant.type', value);
+		return unnumbered('declaration.constant.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -5795,8 +5772,7 @@ const declaration_macro$416_name = (value: declaration_macro$416_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.macro.name', value);
+		return unnumbered('declaration.macro.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -5814,8 +5790,7 @@ type declaration_macro$416_rules$item$Item =
 	| RustMap['nodes']['clause.macro.rule'];
 const declaration_macro$416_rules$item = (value: declaration_macro$416_rules$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [181])) return value;
-		return unseated('declaration.macro.rules', value);
+		return unnumbered('declaration.macro.rules', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [181])) return value;
@@ -5833,8 +5808,7 @@ const declaration_macro$417_name = (value: declaration_macro$417_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.macro.name', value);
+		return unnumbered('declaration.macro.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -5852,8 +5826,7 @@ type declaration_macro$417_rules$item$Item =
 	| RustMap['nodes']['clause.macro.rule'];
 const declaration_macro$417_rules$item = (value: declaration_macro$417_rules$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [181])) return value;
-		return unseated('declaration.macro.rules', value);
+		return unnumbered('declaration.macro.rules', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [181])) return value;
@@ -5871,8 +5844,7 @@ const declaration_macro$418_name = (value: declaration_macro$418_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.macro.name', value);
+		return unnumbered('declaration.macro.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -5890,8 +5862,7 @@ type declaration_macro$418_rules$item$Item =
 	| RustMap['nodes']['clause.macro.rule'];
 const declaration_macro$418_rules$item = (value: declaration_macro$418_rules$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [181])) return value;
-		return unseated('declaration.macro.rules', value);
+		return unnumbered('declaration.macro.rules', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [181])) return value;
@@ -5909,8 +5880,7 @@ const declaration_macro_brace$418_name = (value: declaration_macro_brace$418_nam
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.macro.brace.name', value);
+		return unnumbered('declaration.macro.brace.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -5928,8 +5898,7 @@ type declaration_macro_brace$418_rules$item$Item =
 	| RustMap['nodes']['clause.macro.rule'];
 const declaration_macro_brace$418_rules$item = (value: declaration_macro_brace$418_rules$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [181])) return value;
-		return unseated('declaration.macro.brace.rules', value);
+		return unnumbered('declaration.macro.brace.rules', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [181])) return value;
@@ -5947,8 +5916,7 @@ const declaration_macro_bracket$417_name = (value: declaration_macro_bracket$417
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.macro.bracket.name', value);
+		return unnumbered('declaration.macro.bracket.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -5966,8 +5934,7 @@ type declaration_macro_bracket$417_rules$item$Item =
 	| RustMap['nodes']['clause.macro.rule'];
 const declaration_macro_bracket$417_rules$item = (value: declaration_macro_bracket$417_rules$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [181])) return value;
-		return unseated('declaration.macro.bracket.rules', value);
+		return unnumbered('declaration.macro.bracket.rules', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [181])) return value;
@@ -5985,8 +5952,7 @@ const declaration_macro_paren$416_name = (value: declaration_macro_paren$416_nam
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.macro.paren.name', value);
+		return unnumbered('declaration.macro.paren.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6004,8 +5970,7 @@ type declaration_macro_paren$416_rules$item$Item =
 	| RustMap['nodes']['clause.macro.rule'];
 const declaration_macro_paren$416_rules$item = (value: declaration_macro_paren$416_rules$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [181])) return value;
-		return unseated('declaration.macro.paren.rules', value);
+		return unnumbered('declaration.macro.paren.rules', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [181])) return value;
@@ -6023,8 +5988,7 @@ const declaration_member_enum_member$200_name = (value: declaration_member_enum_
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.member.enum_member.name', value);
+		return unnumbered('declaration.member.enum_member.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6666,8 +6630,7 @@ const declaration_module$384_name = (value: declaration_module$384_name$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.module.name', value);
+		return unnumbered('declaration.module.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6690,8 +6653,7 @@ const declaration_module$385_name = (value: declaration_module$385_name$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.module.name', value);
+		return unnumbered('declaration.module.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6995,18 +6957,7 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 422, 423, 424
-				]
-			)
-		)
-			return value;
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('declaration.module.statements', value);
+		return unnumbered('declaration.module.statements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -7319,8 +7270,7 @@ type declaration_module_foreign$395_extern$Item =
 	| RustMap['nodes']['modifier.extern'];
 const declaration_module_foreign$395_extern = (value: declaration_module_foreign$395_extern$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234])) return value;
-		return unseated('declaration.module.foreign.extern', value);
+		return unnumbered('declaration.module.foreign.extern', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234])) return value;
@@ -7333,8 +7283,7 @@ type declaration_module_foreign$396_extern$Item =
 	| RustMap['nodes']['modifier.extern'];
 const declaration_module_foreign$396_extern = (value: declaration_module_foreign$396_extern$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234])) return value;
-		return unseated('declaration.module.foreign.extern', value);
+		return unnumbered('declaration.module.foreign.extern', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234])) return value;
@@ -7633,18 +7582,7 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 422, 423, 424
-				]
-			)
-		)
-			return value;
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('declaration.module.foreign.statements', value);
+		return unnumbered('declaration.module.foreign.statements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -7957,8 +7895,7 @@ type declaration_parameter_receiver$231_lifetime$Item =
 	| RustMap['nodes']['identifier.lifetime'];
 const declaration_parameter_receiver$231_lifetime = (value: declaration_parameter_receiver$231_lifetime$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [239])) return value;
-		return unseated('declaration.parameter.receiver.lifetime', value);
+		return unnumbered('declaration.parameter.receiver.lifetime', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [239])) return value;
@@ -8088,9 +8025,7 @@ const declaration_parameter_receiver$438_type = (value: declaration_parameter_re
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('declaration.parameter.receiver.type', value);
+		return unnumbered('declaration.parameter.receiver.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -8549,14 +8484,7 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
-			)
-		)
-			return value;
-		return unseated('declaration.type_parameter.bounds', value);
+		return unnumbered('declaration.type_parameter.bounds', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -8748,9 +8676,7 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('declaration.type_parameter.default', value);
+		return unnumbered('declaration.type_parameter.default', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -8824,8 +8750,7 @@ const declaration_type_parameter$221_name = (value: declaration_type_parameter$2
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [483])) return value;
-		return unseated('declaration.type_parameter.name', value);
+		return unnumbered('declaration.type_parameter.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [483])) return value;
@@ -8968,14 +8893,7 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[127, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
-			)
-		)
-			return value;
-		return unseated('declaration.type_parameter.lifetime.bounds', value);
+		return unnumbered('declaration.type_parameter.lifetime.bounds', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -9050,8 +8968,7 @@ type declaration_type_parameter_lifetime$222_name$Item =
 	| RustMap['nodes']['identifier.lifetime'];
 const declaration_type_parameter_lifetime$222_name = (value: declaration_type_parameter_lifetime$222_name$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [239])) return value;
-		return unseated('declaration.type_parameter.lifetime.name', value);
+		return unnumbered('declaration.type_parameter.lifetime.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [239])) return value;
@@ -9233,8 +9150,7 @@ const declaration_type_parameter_value$220_name = (value: declaration_type_param
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.type_parameter.value.name', value);
+		return unnumbered('declaration.type_parameter.value.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -9369,9 +9285,7 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('declaration.type_parameter.value.type', value);
+		return unnumbered('declaration.type_parameter.value.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -9548,8 +9462,7 @@ const declaration_variable$206_name = (value: declaration_variable$206_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.variable.name', value);
+		return unnumbered('declaration.variable.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (typeof value === 'boolean') {
 		throw new Error('portable build: declaration.variable.name builds no boolean');
@@ -9779,9 +9692,7 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('declaration.variable.type', value);
+		return unnumbered('declaration.variable.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -10469,8 +10380,7 @@ type declaration_variable$223_alternative$Item =
 	| RustMap['nodes']['statement.block'];
 const declaration_variable$223_alternative = (value: declaration_variable$223_alternative$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [313])) return value;
-		return unseated('declaration.variable.alternative', value);
+		return unnumbered('declaration.variable.alternative', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [313])) return value;
@@ -10867,9 +10777,7 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('declaration.variable.type', value);
+		return unnumbered('declaration.variable.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -11555,8 +11463,7 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 type element_attributed$363_attributes$Item = PathInput<RustMap, 'attribute'> | RustMap['nodes']['attribute'];
 const element_attributed$363_attributes = (value: element_attributed$363_attributes$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('element.attributed.attributes', value);
+		return unnumbered('element.attributed.attributes', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [192])) return b.attributeItem(value);
@@ -12238,8 +12145,7 @@ const element_macro_token_binding$184_fragment = (value: element_macro_token_bin
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [186])) return value;
-		return unseated('element.macro.token_binding.fragment', value);
+		return unnumbered('element.macro.token_binding.fragment', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 186])) return value;
@@ -12252,8 +12158,7 @@ type element_macro_token_binding$184_name$Item =
 	| RustMap['nodes']['identifier.metavariable'];
 const element_macro_token_binding$184_name = (value: element_macro_token_binding$184_name$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [127])) return value;
-		return unseated('element.macro.token_binding.name', value);
+		return unnumbered('element.macro.token_binding.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [127])) return value;
@@ -12283,7 +12188,7 @@ const element_macro_token_repetition$188_operator = (value: element_macro_token_
 		}
 	}
 	if (typeof value === 'number') {
-		return unseated('element.macro.token_repetition.operator', value);
+		return unnumbered('element.macro.token_repetition.operator', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [8, 9, 10])) return value;
@@ -12298,8 +12203,7 @@ const element_macro_token_repetition$188_separator = (value: element_macro_token
 		return b.tokenRepetitionPatternText(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [132])) return value;
-		return unseated('element.macro.token_repetition.separator', value);
+		return unnumbered('element.macro.token_repetition.separator', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [132])) return value;
@@ -12808,7 +12712,10 @@ const element_macro_token_repetition_pattern$185_operator = (
 		}
 	}
 	if (typeof value === 'number') {
-		return unseated('element.macro.token_repetition.pattern.operator', value);
+		return unnumbered(
+			'element.macro.token_repetition.pattern.operator',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [8, 9, 10])) return value;
@@ -12825,8 +12732,10 @@ const element_macro_token_repetition_pattern$185_separator = (
 		return b.tokenRepetitionPatternText(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [132])) return value;
-		return unseated('element.macro.token_repetition.pattern.separator', value);
+		return unnumbered(
+			'element.macro.token_repetition.pattern.separator',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [132])) return value;
@@ -22642,8 +22551,7 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 type element_struct_field$284_attributes$Item = PathInput<RustMap, 'attribute'> | RustMap['nodes']['attribute'];
 const element_struct_field$284_attributes = (value: element_struct_field$284_attributes$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('element.struct.field.attributes', value);
+		return unnumbered('element.struct.field.attributes', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [192])) return b.attributeItem(value);
@@ -22674,8 +22582,7 @@ const element_struct_field$284_name = (value: element_struct_field$284_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('element.struct.field.name', value);
+		return unnumbered('element.struct.field.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -22703,8 +22610,7 @@ const element_struct_field$284_name = (value: element_struct_field$284_name$Item
 type element_struct_field$285_attributes$Item = PathInput<RustMap, 'attribute'> | RustMap['nodes']['attribute'];
 const element_struct_field$285_attributes = (value: element_struct_field$285_attributes$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [192])) return b.attributeItem(value);
-		return unseated('element.struct.field.attributes', value);
+		return unnumbered('element.struct.field.attributes', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [192])) return b.attributeItem(value);
@@ -23392,8 +23298,7 @@ const element_type_binding$251_name = (value: element_type_binding$251_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [483])) return value;
-		return unseated('element.type_binding.name', value);
+		return unnumbered('element.type_binding.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [483])) return value;
@@ -23528,9 +23433,7 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('element.type_binding.type', value);
+		return unnumbered('element.type_binding.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -23599,8 +23502,7 @@ type element_type_binding$251_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const element_type_binding$251_typeArguments$item = (value: element_type_binding$251_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [432])) return value;
-		return unseated('element.type_binding.typeArguments', value);
+		return unnumbered('element.type_binding.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [432])) return value;
@@ -60189,8 +60091,7 @@ type expression_call_macro$259_arguments$Item =
 	| RustMap['nodes']['element.macro.token_tree.delimited.paren'];
 const expression_call_macro$259_arguments = (value: expression_call_macro$259_arguments$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [260, 411, 412, 413])) return value;
-		return unseated('expression.call.macro.arguments', value);
+		return unnumbered('expression.call.macro.arguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [260, 411, 412, 413])) return value;
@@ -60223,8 +60124,7 @@ const expression_call_macro$259_function = (value: expression_call_macro$259_fun
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 263])) return value;
-		return unseated('expression.call.macro.function', value);
+		return unnumbered('expression.call.macro.function', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 263])) return value;
@@ -60982,9 +60882,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('expression.cast.conversion.type', value);
+		return unnumbered('expression.cast.conversion.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -62920,8 +62818,7 @@ type expression_collection_struct$282_fields$item$Item =
 	| RustMap['nodes']['element.struct.field'];
 const expression_collection_struct$282_fields$item = (value: expression_collection_struct$282_fields$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [284, 285, 286])) return value;
-		return unseated('expression.collection.struct.fields', value);
+		return unnumbered('expression.collection.struct.fields', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [284, 285, 286])) return value;
@@ -62955,8 +62852,7 @@ const expression_collection_struct$282_name = (value: expression_collection_stru
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [247, 264, 483])) return value;
-		return unseated('expression.collection.struct.name', value);
+		return unnumbered('expression.collection.struct.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [247, 264, 483])) return value;
@@ -63616,8 +63512,7 @@ const expression_instantiation$245_function = (value: expression_instantiation$2
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 263, 308])) return value;
-		return unseated('expression.instantiation.function', value);
+		return unnumbered('expression.instantiation.function', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 263, 308])) return value;
@@ -63643,8 +63538,7 @@ const expression_instantiation$245_typeArguments$item = (
 	value: expression_instantiation$245_typeArguments$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [432])) return value;
-		return unseated('expression.instantiation.typeArguments', value);
+		return unnumbered('expression.instantiation.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [432])) return value;
@@ -63667,8 +63561,7 @@ const expression_lambda$369_parameters = (value: expression_lambda$369_parameter
 		return b.closureParameters(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 475])) return b.closureParameters(value);
-		return unseated('expression.lambda.parameters', value);
+		return unnumbered('expression.lambda.parameters', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [233, 475])) return b.closureParameters(value);
@@ -63699,8 +63592,7 @@ const expression_lambda$369_parameters$item = (value: expression_lambda$369_para
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 475])) return value;
-		return unseated('expression.lambda.parameters', value);
+		return unnumbered('expression.lambda.parameters', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [233, 475])) return value;
@@ -63839,9 +63731,7 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('expression.lambda.returnType', value);
+		return unnumbered('expression.lambda.returnType', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -66362,8 +66252,7 @@ const expression_lambda$370_parameters = (value: expression_lambda$370_parameter
 		return b.closureParameters(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 475])) return b.closureParameters(value);
-		return unseated('expression.lambda.parameters', value);
+		return unnumbered('expression.lambda.parameters', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [233, 475])) return b.closureParameters(value);
@@ -66394,8 +66283,7 @@ const expression_lambda$370_parameters$item = (value: expression_lambda$370_para
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 475])) return value;
-		return unseated('expression.lambda.parameters', value);
+		return unnumbered('expression.lambda.parameters', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [233, 475])) return value;
@@ -82536,8 +82424,7 @@ const identifier_label$303_name = (value: identifier_label$303_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('identifier.label.name', value);
+		return unnumbered('identifier.label.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -82560,8 +82447,7 @@ const identifier_lifetime$239_name = (value: identifier_lifetime$239_name$Item) 
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('identifier.lifetime.name', value);
+		return unnumbered('identifier.lifetime.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -82590,8 +82476,7 @@ const identifier_qualified$263_name = (value: identifier_qualified$263_name$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('identifier.qualified.name', value);
+		return unnumbered('identifier.qualified.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125])) return value;
@@ -82641,8 +82526,7 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 237, 247, 263])) return value;
-		return unseated('identifier.qualified.qualifier', value);
+		return unnumbered('identifier.qualified.qualifier', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125, 126, 127, 237, 247, 263, 480])) return value;
@@ -82683,8 +82567,7 @@ const identifier_qualified$264_name = (value: identifier_qualified$264_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [483])) return value;
-		return unseated('identifier.qualified.name', value);
+		return unnumbered('identifier.qualified.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [483])) return value;
@@ -82734,8 +82617,7 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 247, 263])) return value;
-		return unseated('identifier.qualified.qualifier', value);
+		return unnumbered('identifier.qualified.qualifier', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125, 126, 127, 247, 263, 480])) return value;
@@ -82776,8 +82658,7 @@ const identifier_qualified$265_name = (value: identifier_qualified$265_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [483])) return value;
-		return unseated('identifier.qualified.name', value);
+		return unnumbered('identifier.qualified.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [483])) return value;
@@ -82827,8 +82708,7 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 237, 246, 247, 263])) return value;
-		return unseated('identifier.qualified.qualifier', value);
+		return unnumbered('identifier.qualified.qualifier', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125, 126, 127, 237, 246, 247, 263, 480])) return value;
@@ -82864,7 +82744,7 @@ const literal_character$145_content = (value: literal_character$145_content$Item
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.character.content', value);
+		return unnumbered('literal.character.content', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.character.content', value);
@@ -82877,7 +82757,7 @@ const literal_character$147_content = (value: literal_character$147_content$Item
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.character.content', value);
+		return unnumbered('literal.character.content', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.character.content', value);
@@ -82890,7 +82770,7 @@ const literal_character$148_content = (value: literal_character$148_content$Item
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.character.content', value);
+		return unnumbered('literal.character.content', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.character.content', value);
@@ -82903,7 +82783,7 @@ const literal_character$149_content = (value: literal_character$149_content$Item
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.character.content', value);
+		return unnumbered('literal.character.content', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.character.content', value);
@@ -82916,7 +82796,7 @@ const literal_character$150_content = (value: literal_character$150_content$Item
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.character.content', value);
+		return unnumbered('literal.character.content', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.character.content', value);
@@ -82943,7 +82823,7 @@ const literal_number_integer$141_suffix = (value: literal_number_integer$141_suf
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.number.integer.suffix', value);
+		return unnumbered('literal.number.integer.suffix', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.number.integer.suffix', value);
@@ -82970,7 +82850,7 @@ const literal_number_integer_binary$143_suffix = (value: literal_number_integer_
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.number.integer.binary.suffix', value);
+		return unnumbered('literal.number.integer.binary.suffix', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.number.integer.binary.suffix', value);
@@ -82997,7 +82877,7 @@ const literal_number_integer_hex$142_suffix = (value: literal_number_integer_hex
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.number.integer.hex.suffix', value);
+		return unnumbered('literal.number.integer.hex.suffix', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.number.integer.hex.suffix', value);
@@ -83024,7 +82904,7 @@ const literal_number_integer_octal$144_suffix = (value: literal_number_integer_o
 		return value;
 	}
 	if (typeof value === 'number') {
-		return unseated('literal.number.integer.octal.suffix', value);
+		return unnumbered('literal.number.integer.octal.suffix', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		return unseated('literal.number.integer.octal.suffix', value);
@@ -83097,8 +82977,7 @@ const literal_string$332_elements = (value: literal_string$332_elements$Item) =>
 		return b.stringContent(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
-		return unseated('literal.string.elements', value);
+		return unnumbered('literal.string.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
@@ -83141,8 +83020,7 @@ const literal_string_bytes$332_elements = (value: literal_string_bytes$332_eleme
 		return b.stringContent(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
-		return unseated('literal.string.bytes.elements', value);
+		return unnumbered('literal.string.bytes.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
@@ -83185,8 +83063,7 @@ const literal_string_c$332_elements = (value: literal_string_c$332_elements$Item
 		return b.stringContent(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
-		return unseated('literal.string.c.elements', value);
+		return unnumbered('literal.string.c.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
@@ -83227,8 +83104,7 @@ type modifier_extern$234_abi$Item =
 	| RustMap['nodes']['literal.string.c'];
 const modifier_extern$234_abi = (value: modifier_extern$234_abi$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [332])) return value;
-		return unseated('modifier.extern.abi', value);
+		return unnumbered('modifier.extern.abi', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [332])) return value;
@@ -83258,8 +83134,7 @@ const pattern_as$325_name = (value: pattern_as$325_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('pattern.as.name', value);
+		return unnumbered('pattern.as.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -83552,8 +83427,7 @@ const pattern_generic$315_name = (value: pattern_generic$315_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 263])) return value;
-		return unseated('pattern.generic.name', value);
+		return unnumbered('pattern.generic.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 263])) return value;
@@ -83575,8 +83449,7 @@ type pattern_generic$315_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const pattern_generic$315_typeArguments$item = (value: pattern_generic$315_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [432])) return value;
-		return unseated('pattern.generic.typeArguments', value);
+		return unnumbered('pattern.generic.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [432])) return value;
@@ -87309,8 +87182,7 @@ const pattern_struct$319_fields$item = (value: pattern_struct$319_fields$item$It
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [320, 414, 415])) return value;
-		return unseated('pattern.struct.fields', value);
+		return unnumbered('pattern.struct.fields', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [320, 321, 414, 415])) return value;
@@ -87338,8 +87210,7 @@ const pattern_struct$319_type = (value: pattern_struct$319_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [265, 483])) return value;
-		return unseated('pattern.struct.type', value);
+		return unnumbered('pattern.struct.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [265, 483])) return value;
@@ -87366,8 +87237,7 @@ const pattern_struct_field$414_name = (value: pattern_struct_field$414_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [481])) return value;
-		return unseated('pattern.struct.field.name', value);
+		return unnumbered('pattern.struct.field.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [481])) return value;
@@ -87390,8 +87260,7 @@ const pattern_struct_field$415_name = (value: pattern_struct_field$415_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [477])) return value;
-		return unseated('pattern.struct.field.name', value);
+		return unnumbered('pattern.struct.field.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [477])) return value;
@@ -87954,8 +87823,7 @@ const pattern_struct_tuple$318_type = (value: pattern_struct_tuple$318_type$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 247, 263])) return value;
-		return unseated('pattern.struct.tuple.type', value);
+		return unnumbered('pattern.struct.tuple.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 247, 263])) return value;
@@ -88274,8 +88142,7 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 type statement_block$313_label$Item = PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label'];
 const statement_block$313_label = (value: statement_block$313_label$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [303])) return value;
-		return unseated('statement.block.label', value);
+		return unnumbered('statement.block.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [303])) return value;
@@ -99863,8 +99730,7 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 type statement_break$304_label$Item = PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label'];
 const statement_break$304_label = (value: statement_break$304_label$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [303])) return value;
-		return unseated('statement.break.label', value);
+		return unnumbered('statement.break.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [303])) return value;
@@ -99875,8 +99741,7 @@ const statement_break$304_label = (value: statement_break$304_label$Item) => {
 type statement_continue$305_label$Item = PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label'];
 const statement_continue$305_label = (value: statement_continue$305_label$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [303])) return value;
-		return unseated('statement.continue.label', value);
+		return unnumbered('statement.continue.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [303])) return value;
@@ -99887,8 +99752,7 @@ const statement_continue$305_label = (value: statement_continue$305_label$Item) 
 type statement_if$287_alternative$Item = PathInput<RustMap, 'clause.else'> | RustMap['nodes']['clause.else'];
 const statement_if$287_alternative = (value: statement_if$287_alternative$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [291])) return value;
-		return unseated('statement.if.alternative', value);
+		return unnumbered('statement.if.alternative', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [291])) return value;
@@ -102393,8 +102257,7 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 127, 226, 227, 228, 229, 263])) return value;
-		return unseated('statement.import.argument', value);
+		return unnumbered('statement.import.argument', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 125, 126, 127, 226, 227, 228, 229, 263, 480])) return value;
@@ -102437,8 +102300,7 @@ const statement_import_package$204_alias = (value: statement_import_package$204_
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('statement.import.package.alias', value);
+		return unnumbered('statement.import.package.alias', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -102461,8 +102323,7 @@ const statement_import_package$204_name = (value: statement_import_package$204_n
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('statement.import.package.name', value);
+		return unnumbered('statement.import.package.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -102478,8 +102339,7 @@ const statement_import_package$204_name = (value: statement_import_package$204_n
 type statement_loop$298_label$Item = PathInput<RustMap, 'identifier.label'> | RustMap['nodes']['identifier.label'];
 const statement_loop$298_label = (value: statement_loop$298_label$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [303])) return value;
-		return unseated('statement.loop.label', value);
+		return unnumbered('statement.loop.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [303])) return value;
@@ -104318,8 +104178,7 @@ type statement_loop_for_each$299_label$Item =
 	| RustMap['nodes']['identifier.label'];
 const statement_loop_for_each$299_label = (value: statement_loop_for_each$299_label$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [303])) return value;
-		return unseated('statement.loop.for_each.label', value);
+		return unnumbered('statement.loop.for_each.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [303])) return value;
@@ -107675,8 +107534,7 @@ type statement_loop_while$297_label$Item =
 	| RustMap['nodes']['identifier.label'];
 const statement_loop_while$297_label = (value: statement_loop_while$297_label$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [303])) return value;
-		return unseated('statement.loop.while.label', value);
+		return unnumbered('statement.loop.while.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [303])) return value;
@@ -110251,9 +110109,7 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.array.element', value);
+		return unnumbered('type.array.element', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -111064,14 +110920,7 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
-			)
-		)
-			return value;
-		return unseated('type.bounded.left', value);
+		return unnumbered('type.bounded.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -111269,14 +111118,7 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[127, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
-			)
-		)
-			return value;
-		return unseated('type.bounded.right', value);
+		return unnumbered('type.bounded.right', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -111469,9 +111311,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 238, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.bracketed.type', value);
+		return unnumbered('type.bracketed.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -111561,8 +111401,7 @@ const type_dynamic$256_trait = (value: type_dynamic$256_trait$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [217, 242, 243, 246, 265, 483])) return value;
-		return unseated('type.dynamic.trait', value);
+		return unnumbered('type.dynamic.trait', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [217, 242, 243, 246, 265, 483])) return value;
@@ -111603,8 +111442,7 @@ const type_generic$246_type = (value: type_generic$246_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 265, 483])) return value;
-		return unseated('type.generic.type', value);
+		return unnumbered('type.generic.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 265, 483])) return value;
@@ -111626,8 +111464,7 @@ type type_generic$246_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const type_generic$246_typeArguments$item = (value: type_generic$246_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [432])) return value;
-		return unseated('type.generic.typeArguments', value);
+		return unnumbered('type.generic.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [432])) return value;
@@ -111648,8 +111485,7 @@ const type_generic_turbofish$247_type = (value: type_generic_turbofish$247_type$
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [263, 483])) return value;
-		return unseated('type.generic.turbofish.type', value);
+		return unnumbered('type.generic.turbofish.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [263, 483])) return value;
@@ -111671,8 +111507,7 @@ type type_generic_turbofish$247_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const type_generic_turbofish$247_typeArguments$item = (value: type_generic_turbofish$247_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [432])) return value;
-		return unseated('type.generic.turbofish.typeArguments', value);
+		return unnumbered('type.generic.turbofish.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [432])) return value;
@@ -111802,9 +111637,7 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.pointer.type', value);
+		return unnumbered('type.pointer.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -111990,9 +111823,7 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.pointer.type', value);
+		return unnumbered('type.pointer.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -112178,9 +112009,7 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.qualified.alias', value);
+		return unnumbered('type.qualified.alias', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -112366,9 +112195,7 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.qualified.type', value);
+		return unnumbered('type.qualified.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -112437,8 +112264,7 @@ type type_reference$252_lifetime$Item =
 	| RustMap['nodes']['identifier.lifetime'];
 const type_reference$252_lifetime = (value: type_reference$252_lifetime$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [239])) return value;
-		return unseated('type.reference.lifetime', value);
+		return unnumbered('type.reference.lifetime', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [239])) return value;
@@ -112568,9 +112394,7 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.reference.type', value);
+		return unnumbered('type.reference.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -112756,9 +112580,7 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [127, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
-			return value;
-		return unseated('type.tuple.types', value);
+		return unnumbered('type.tuple.types', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (

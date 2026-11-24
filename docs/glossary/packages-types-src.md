@@ -2174,7 +2174,7 @@ The node type the grammar map records for path `P`, or `never` when the grammar 
 
 ### `packages/types/src/vocabulary/map.ts::NodesOf`
 
-Maps each key of `Ids` to its node type, bound by `Bound` and parsed as `Parsed`.
+Maps each key of `Ids` to its node type, bound by `Bound` and parsed as `Parsed`. A kind with no bound node type, a fixed word, maps to `never`: no slot holds a bare kind id, so a fixed word reads and builds as its structure or its text.
 
 ### `packages/types/src/vocabulary/map.ts::TextInput`
 

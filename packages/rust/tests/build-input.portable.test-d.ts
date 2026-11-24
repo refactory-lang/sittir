@@ -1,5 +1,6 @@
 import type * as V from '../../types/src/vocabulary/index.ts';
 import type { RustMap } from '../src/portable/map.ts';
+import { TSKindId } from '../src/kinds.ts';
 
 type Binding = V.BuildInput<RustMap, 'element.macro.token_binding'>;
 type BindingRead = V.Read<RustMap, 'element.macro.token_binding'>;
@@ -78,3 +79,14 @@ export const fullAdd: Returned = { $path: 'expression.binary.arithmetic.add', le
 export const sharedTail: Returned = { $path: 'add', left: 'a', right: 'b' };
 // @ts-expect-error a slot takes a path's tail and its full path, and no suffix in between
 export const betweenTail: Returned = { $path: 'binary.arithmetic.add', left: 'a', right: 'b' };
+
+type LetType = V.BuildInput<RustMap, 'declaration.variable'>['type'];
+
+export const sizeText: LetType = 'usize';
+export const unitText: LetType = '()';
+// @ts-expect-error a fixed word builds from its text, never from a bare kind id
+export const sizeKindId: LetType = TSKindId.UsizeKeyword;
+// @ts-expect-error a fixed word builds from its text, never from a bare kind id
+export const unitKindId: LetType = TSKindId.UnitType;
+// @ts-expect-error a fixed word reads as its text, never as a bare kind id
+export const crateName: V.Read<RustMap, 'type.generic'>['name'] = TSKindId.Crate;

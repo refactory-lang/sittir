@@ -736,8 +736,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 	const choiceKinds = (path: string, slot: PortableSlotRoute, value: Primary): Statement[] =>
 		armChoice(path, slot, value, ({ arm }) => ret(num(arm.kind)), () => ret(id('undefined')));
 
-	const placedByKind = (owner: string, slot: PortableSlotRoute, skip: number, value: Expression, ids: boolean, refused = (): Statement => ret(call(id(uses('unseated')), str(`${owner}.${slot.name}`), value))): Statement[] => {
-		const tokens = new Set(slot.seats.flatMap((seat) => Object.values(seat.tokens ?? {})));
+	const placedByKind = (owner: string, slot: PortableSlotRoute, skip: number, value: Expression, refused = (): Statement => ret(call(id(uses('unseated')), str(`${owner}.${slot.name}`), value))): Statement[] => {
 		const groups = new Map<string, { readonly within: readonly PortableContainer[]; readonly kinds: Set<number> }>();
 		const seated = new Set<number>();
 		for (const seat of slot.seats) {
@@ -746,7 +745,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 			const key = JSON.stringify(within);
 			const group = groups.get(key) ?? groups.set(key, { within, kinds: new Set() }).get(key)!;
 			for (const kind of seat.kinds)
-				if (!seated.has(kind) && (!ids || !tokens.has(kind))) {
+				if (!seated.has(kind)) {
 					seated.add(kind);
 					group.kinds.add(kind);
 				}
@@ -795,14 +794,14 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 	];
 
 	const scalarBranches = (owner: string, slot: PortableSlotRoute, skip: number, value: Expression, admitted: readonly string[], at?: string): Statement[] => {
-		const refused = (scalar: string): Statement => ret(call(id(uses('unnumbered')), str(`${owner}.${slot.name}`), str(scalar)));
+		const refused = (scalar: string | Expression): Statement => ret(call(id(uses('unnumbered')), str(`${owner}.${slot.name}`), typeof scalar === 'string' ? str(scalar) : scalar));
 		const taken = (scalar: Scalar): Statement => {
 			const path = slot.takers?.[scalar];
 			if (path === undefined) return refused(scalar);
 			const by = takerFit(slot, scalar);
 			return (by === undefined ? undefined : placedArm(path, slot, by.fit, skip, obj([['$path', str(path)], ['$value', value]]))) ?? unbuilt(`${owner}.${slot.name}`, obj([['$path', str(path)]]));
 		};
-		return scalarCases(slot, value, admitted, taken, { bigint: () => refused('bigint'), number: () => placedByKind(owner, slot, skip, value, true) }, () => raise(str(`portable build: ${owner}.${slot.name} builds no boolean`)), at);
+		return scalarCases(slot, value, admitted, taken, { bigint: () => refused('bigint'), number: () => [refused(ternary(call(dot(id('Number'), 'isSafeInteger'), value), str('integer'), str('float')))] }, () => raise(str(`portable build: ${owner}.${slot.name} builds no boolean`)), at);
 	};
 
 	const slotFunction = (owner: string, arm: PortableBuildArm, slot: PortableSlotRoute, skip: number, seats = slot.seats): string => {
@@ -888,7 +887,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 		const text = stringBranch(owner, arm, at.exact, slot, skip, value, every, at.texted);
 		if (text !== undefined) statements.push(when(typeIs(value, 'string'), block(...text)));
 		statements.push(...scalarBranches(owner, slot, skip, value, at.exact.scalars));
-		statements.push(when(call(id(uses('isNode')), value), block(...placedByKind(owner, slot, skip, value, false))));
+		statements.push(when(call(id(uses('isNode')), value), block(...placedByKind(owner, slot, skip, value))));
 		const refused = () => unbuilt(`${owner}.${slot.name}`, value);
 		statements.push(
 			...structureCases(
@@ -921,7 +920,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 			when(binary(dot(listOf(value), 'length'), '!==', num(1)), none()),
 			constant('item', t.subscriptExpression({ object: listOf(value), index: num(0) })),
 			when(or([binary(item, '===', id('undefined')), binary(t.unaryExpression({ operator: 'typeof', argument: item }), '!==', str('object'))])!, none()),
-			when(call(id(uses('isNode')), item), block(...placedByKind(owner, slot, 0, item, false, none))),
+			when(call(id(uses('isNode')), item), block(...placedByKind(owner, slot, 0, item, none))),
 			...structureCases(
 				fitting,
 				item,
@@ -984,7 +983,7 @@ export function emitPortableModule(builders: B, input: PortableEmitInput<Portabl
 				const kind = takerFit(slot, scalar)?.fit.arm.kind;
 				return kind === undefined ? none() : ret(num(kind));
 			};
-			return scalarCases(slot, given, at.exact.scalars, taken, { bigint: none, number: () => [ret(given)] }, none, path);
+			return scalarCases(slot, given, at.exact.scalars, taken, { bigint: none, number: () => [none()] }, none, path);
 		};
 		statements.push(...scalarKinds(value));
 		statements.push(when(call(id(uses('isNode')), value), ret(dot(value, '$type'))));

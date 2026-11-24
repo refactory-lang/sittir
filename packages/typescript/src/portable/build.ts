@@ -757,8 +757,7 @@ const attribute_call$287_function = (value: attribute_call$287_function$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286])) return value;
-		return unseated('attribute.call.function', value);
+		return unnumbered('attribute.call.function', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286])) return value;
@@ -899,17 +898,7 @@ const attribute_call$287_typeArguments$item = (value: attribute_call$287_typeArg
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('attribute.call.typeArguments', value);
+		return unnumbered('attribute.call.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -1086,8 +1075,7 @@ const attribute_member$286_object = (value: attribute_member$286_object$Item) =>
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286])) return value;
-		return unseated('attribute.member.object', value);
+		return unnumbered('attribute.member.object', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 280, 286])) return value;
@@ -1119,8 +1107,7 @@ const attribute_member$286_property = (value: attribute_member$286_property$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [505])) return value;
-		return unseated('attribute.member.property', value);
+		return unnumbered('attribute.member.property', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [505])) return value;
@@ -1154,8 +1141,7 @@ const attribute_parenthesized$304_expression = (value: attribute_parenthesized$3
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287])) return value;
-		return unseated('attribute.parenthesized.expression', value);
+		return unnumbered('attribute.parenthesized.expression', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287])) return value;
@@ -3789,17 +3775,7 @@ const clause_default$374_type = (value: clause_default$374_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('clause.default.type', value);
+		return unnumbered('clause.default.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -4897,8 +4873,7 @@ type clause_export$193_exportSpecifiers$item$Item =
 	| TypeScriptMap['nodes']['clause.export.specifier.typeof'];
 const clause_export$193_exportSpecifiers$item = (value: clause_export$193_exportSpecifiers$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [194])) return value;
-		return unseated('clause.export.exportSpecifiers', value);
+		return unnumbered('clause.export.exportSpecifiers', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [194])) return value;
@@ -4939,8 +4914,7 @@ const clause_export_namespace$192_moduleExportName = (value: clause_export_names
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 426, 427])) return value;
-		return unseated('clause.export.namespace.moduleExportName', value);
+		return unnumbered('clause.export.namespace.moduleExportName', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 9, 273, 426, 427])) return value;
@@ -4983,8 +4957,7 @@ const clause_export_specifier$194_alias = (value: clause_export_specifier$194_al
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 426, 427])) return value;
-		return unseated('clause.export.specifier.alias', value);
+		return unnumbered('clause.export.specifier.alias', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 9, 273, 426, 427])) return value;
@@ -5027,8 +5000,7 @@ const clause_export_specifier$194_name = (value: clause_export_specifier$194_nam
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 426, 427])) return value;
-		return unseated('clause.export.specifier.name', value);
+		return unnumbered('clause.export.specifier.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 9, 273, 426, 427])) return value;
@@ -5050,8 +5022,7 @@ const clause_export_specifier$194_name = (value: clause_export_specifier$194_nam
 type clause_extends$310_types$Item = Unmapped<'typescript:extends_clause_single'>;
 const clause_extends$310_types = (value: clause_extends$310_types$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [311])) return value;
-		return unseated('clause.extends.types', value);
+		return unnumbered('clause.extends.types', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [311])) return value;
@@ -5080,8 +5051,7 @@ const clause_extends_type$321_types = (value: clause_extends_type$321_types$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 351, 510])) return value;
-		return unseated('clause.extends.type.types', value);
+		return unnumbered('clause.extends.type.types', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [319, 351, 510])) return value;
@@ -6145,17 +6115,7 @@ const clause_implements$312_types = (value: clause_implements$312_types$Item) =>
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('clause.implements.types', value);
+		return unnumbered('clause.implements.types', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -6320,7 +6280,7 @@ const clause_import_attribute$204_attributeKind = (value: clause_import_attribut
 		}
 	}
 	if (typeof value === 'number') {
-		return unseated('clause.import.attribute.attributeKind', value);
+		return unnumbered('clause.import.attribute.attributeKind', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [12, 13])) return value;
@@ -6333,8 +6293,7 @@ type clause_import_attribute$204_object$Item =
 	| TypeScriptMap['nodes']['expression.collection.object'];
 const clause_import_attribute$204_object = (value: clause_import_attribute$204_object$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [238])) return value;
-		return unseated('clause.import.attribute.object', value);
+		return unnumbered('clause.import.attribute.object', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [238])) return value;
@@ -6357,8 +6316,7 @@ const clause_import_namespace$201_name = (value: clause_import_namespace$201_nam
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('clause.import.namespace.name', value);
+		return unnumbered('clause.import.namespace.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6386,8 +6344,7 @@ const clause_import_require$309_name = (value: clause_import_require$309_name$It
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('clause.import.require.name', value);
+		return unnumbered('clause.import.require.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6405,8 +6362,7 @@ type clause_import_require$309_source$Item =
 	| TypeScriptMap['nodes']['literal.string'];
 const clause_import_require$309_source = (value: clause_import_require$309_source$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [273, 426, 427])) return value;
-		return unseated('clause.import.require.source', value);
+		return unnumbered('clause.import.require.source', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [273, 426, 427])) return value;
@@ -6435,8 +6391,7 @@ const clause_import_specifier$416_name = (value: clause_import_specifier$416_nam
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('clause.import.specifier.name', value);
+		return unnumbered('clause.import.specifier.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6468,8 +6423,7 @@ const clause_import_specifier$417_alias = (value: clause_import_specifier$417_al
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('clause.import.specifier.alias', value);
+		return unnumbered('clause.import.specifier.alias', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -6506,8 +6460,7 @@ const clause_import_specifier$417_name = (value: clause_import_specifier$417_nam
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 273, 426, 427])) return value;
-		return unseated('clause.import.specifier.name', value);
+		return unnumbered('clause.import.specifier.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 9, 273, 426, 427])) return value;
@@ -6650,17 +6603,7 @@ const clause_mapped_type$361_alias = (value: clause_mapped_type$361_alias$Item) 
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('clause.mapped_type.alias', value);
+		return unnumbered('clause.mapped_type.alias', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -6827,8 +6770,7 @@ const clause_mapped_type$361_name = (value: clause_mapped_type$361_name$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [510])) return value;
-		return unseated('clause.mapped_type.name', value);
+		return unnumbered('clause.mapped_type.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [510])) return value;
@@ -6965,17 +6907,7 @@ const clause_mapped_type$361_type = (value: clause_mapped_type$361_type$Item) =>
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('clause.mapped_type.type', value);
+		return unnumbered('clause.mapped_type.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -7176,10 +7108,7 @@ type declaration_ambient$313_body$Item =
 	| Unmapped<'typescript:using_declaration'>;
 const declaration_ambient$313_body = (value: declaration_ambient$313_body$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401]))
-			return value;
-		if (seated(value, [211])) return b.ambientDeclarationGlobal(value);
-		return unseated('declaration.ambient.body', value);
+		return unnumbered('declaration.ambient.body', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325, 401]))
@@ -7259,8 +7188,7 @@ const declaration_member_constructor$469_parameters$item = (
 	value: declaration_member_constructor$469_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.member.constructor.parameters', value);
+		return unnumbered('declaration.member.constructor.parameters', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
@@ -8237,8 +8165,10 @@ const declaration_member_constructor_private$469_parameters$item = (
 	value: declaration_member_constructor_private$469_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.member.constructor.private.parameters', value);
+		return unnumbered(
+			'declaration.member.constructor.private.parameters',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
@@ -9215,8 +9145,10 @@ const declaration_member_constructor_protected$469_parameters$item = (
 	value: declaration_member_constructor_protected$469_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.member.constructor.protected.parameters', value);
+		return unnumbered(
+			'declaration.member.constructor.protected.parameters',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
@@ -10193,8 +10125,10 @@ const declaration_member_constructor_public$469_parameters$item = (
 	value: declaration_member_constructor_public$469_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.member.constructor.public.parameters', value);
+		return unnumbered(
+			'declaration.member.constructor.public.parameters',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
@@ -13120,8 +13054,10 @@ const declaration_member_signature_construct$376_parameters$item = (
 	value: declaration_member_signature_construct$376_parameters$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [328, 329])) return value;
-		return unseated('declaration.member.signature.construct.parameters', value);
+		return unnumbered(
+			'declaration.member.signature.construct.parameters',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [328, 329])) return value;
@@ -13281,17 +13217,7 @@ const declaration_member_signature_construct$376_type = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.member.signature.construct.type', value);
+		return unnumbered('declaration.member.signature.construct.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -13450,8 +13376,10 @@ const declaration_member_signature_construct$376_typeParameters$item = (
 	value: declaration_member_signature_construct$376_typeParameters$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [373])) return value;
-		return unseated('declaration.member.signature.construct.typeParameters', value);
+		return unnumbered(
+			'declaration.member.signature.construct.typeParameters',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [373])) return value;
@@ -13585,17 +13513,10 @@ const declaration_member_signature_index$411_indexType = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.member.signature.index.indexType', value);
+		return unnumbered(
+			'declaration.member.signature.index.indexType',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -13762,8 +13683,7 @@ const declaration_member_signature_index$411_name = (value: declaration_member_s
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.member.signature.index.name', value);
+		return unnumbered('declaration.member.signature.index.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -13789,7 +13709,7 @@ const declaration_member_signature_index$411_sign = (value: declaration_member_s
 		}
 	}
 	if (typeof value === 'number') {
-		return unseated('declaration.member.signature.index.sign', value);
+		return unnumbered('declaration.member.signature.index.sign', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [97, 98])) return value;
@@ -13939,17 +13859,7 @@ const declaration_member_signature_index$411_type = (value: declaration_member_s
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.member.signature.index.type', value);
+		return unnumbered('declaration.member.signature.index.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -14108,8 +14018,10 @@ const declaration_member_signature_index_mapped$412_mappedTypeClause = (
 	value: declaration_member_signature_index_mapped$412_mappedTypeClause$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [361])) return value;
-		return unseated('declaration.member.signature.index.mapped.mappedTypeClause', value);
+		return unnumbered(
+			'declaration.member.signature.index.mapped.mappedTypeClause',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [361])) return value;
@@ -14132,7 +14044,10 @@ const declaration_member_signature_index_mapped$412_sign = (
 		}
 	}
 	if (typeof value === 'number') {
-		return unseated('declaration.member.signature.index.mapped.sign', value);
+		return unnumbered(
+			'declaration.member.signature.index.mapped.sign',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [97, 98])) return value;
@@ -14284,17 +14199,10 @@ const declaration_member_signature_index_mapped$412_type = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.member.signature.index.mapped.type', value);
+		return unnumbered(
+			'declaration.member.signature.index.mapped.type',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -15390,8 +15298,7 @@ const declaration_module$316_name = (value: declaration_module$316_name$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 244, 273, 426, 427])) return value;
-		return unseated('declaration.module.name', value);
+		return unnumbered('declaration.module.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 244, 273, 426, 427])) return value;
@@ -16354,8 +16261,7 @@ const declaration_module_external$315_name = (value: declaration_module_external
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 244, 273, 426, 427])) return value;
-		return unseated('declaration.module.external.name', value);
+		return unnumbered('declaration.module.external.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 244, 273, 426, 427])) return value;
@@ -17314,8 +17220,7 @@ const declaration_module_property$401_name = (value: declaration_module_property
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [505])) return value;
-		return unseated('declaration.module_property.name', value);
+		return unnumbered('declaration.module_property.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [505])) return value;
@@ -17452,17 +17357,7 @@ const declaration_module_property$401_type = (value: declaration_module_property
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.module_property.type', value);
+		return unnumbered('declaration.module_property.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -17638,8 +17533,7 @@ const declaration_parameter$328_decorators = (value: declaration_parameter$328_d
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.decorators', value);
+		return unnumbered('declaration.parameter.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -18342,9 +18236,7 @@ const declaration_parameter$328_name = (value: declaration_parameter$328_name$It
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.name', value);
+		return unnumbered('declaration.parameter.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [291, 292])) return value;
@@ -18503,17 +18395,7 @@ const declaration_parameter$328_type = (value: declaration_parameter$328_type$It
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.type', value);
+		return unnumbered('declaration.parameter.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -18689,8 +18571,7 @@ const declaration_parameter$329_decorators = (value: declaration_parameter$329_d
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.decorators', value);
+		return unnumbered('declaration.parameter.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -19398,9 +19279,7 @@ const declaration_parameter$329_name = (value: declaration_parameter$329_name$It
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.name', value);
+		return unnumbered('declaration.parameter.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [279, 291, 292])) return value;
@@ -19559,17 +19438,7 @@ const declaration_parameter$329_type = (value: declaration_parameter$329_type$It
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.type', value);
+		return unnumbered('declaration.parameter.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -19745,8 +19614,7 @@ const declaration_parameter_private$328_decorators = (value: declaration_paramet
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.private.decorators', value);
+		return unnumbered('declaration.parameter.private.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -20449,9 +20317,7 @@ const declaration_parameter_private$328_name = (value: declaration_parameter_pri
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.private.name', value);
+		return unnumbered('declaration.parameter.private.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [291, 292])) return value;
@@ -20610,17 +20476,7 @@ const declaration_parameter_private$328_type = (value: declaration_parameter_pri
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.private.type', value);
+		return unnumbered('declaration.parameter.private.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -20796,8 +20652,7 @@ const declaration_parameter_private$329_decorators = (value: declaration_paramet
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.private.decorators', value);
+		return unnumbered('declaration.parameter.private.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -21505,9 +21360,7 @@ const declaration_parameter_private$329_name = (value: declaration_parameter_pri
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.private.name', value);
+		return unnumbered('declaration.parameter.private.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [279, 291, 292])) return value;
@@ -21666,17 +21519,7 @@ const declaration_parameter_private$329_type = (value: declaration_parameter_pri
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.private.type', value);
+		return unnumbered('declaration.parameter.private.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -21852,8 +21695,7 @@ const declaration_parameter_protected$328_decorators = (value: declaration_param
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.protected.decorators', value);
+		return unnumbered('declaration.parameter.protected.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -22556,9 +22398,7 @@ const declaration_parameter_protected$328_name = (value: declaration_parameter_p
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.protected.name', value);
+		return unnumbered('declaration.parameter.protected.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [291, 292])) return value;
@@ -22717,17 +22557,7 @@ const declaration_parameter_protected$328_type = (value: declaration_parameter_p
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.protected.type', value);
+		return unnumbered('declaration.parameter.protected.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -22903,8 +22733,7 @@ const declaration_parameter_protected$329_decorators = (value: declaration_param
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.protected.decorators', value);
+		return unnumbered('declaration.parameter.protected.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -23612,9 +23441,7 @@ const declaration_parameter_protected$329_name = (value: declaration_parameter_p
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.protected.name', value);
+		return unnumbered('declaration.parameter.protected.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [279, 291, 292])) return value;
@@ -23773,17 +23600,7 @@ const declaration_parameter_protected$329_type = (value: declaration_parameter_p
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.protected.type', value);
+		return unnumbered('declaration.parameter.protected.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -23959,8 +23776,7 @@ const declaration_parameter_public$328_decorators = (value: declaration_paramete
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.public.decorators', value);
+		return unnumbered('declaration.parameter.public.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -24663,9 +24479,7 @@ const declaration_parameter_public$328_name = (value: declaration_parameter_publ
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.public.name', value);
+		return unnumbered('declaration.parameter.public.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [291, 292])) return value;
@@ -24824,17 +24638,7 @@ const declaration_parameter_public$328_type = (value: declaration_parameter_publ
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.public.type', value);
+		return unnumbered('declaration.parameter.public.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -25010,8 +24814,7 @@ const declaration_parameter_public$329_decorators = (value: declaration_paramete
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.public.decorators', value);
+		return unnumbered('declaration.parameter.public.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -25719,9 +25522,7 @@ const declaration_parameter_public$329_name = (value: declaration_parameter_publ
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('declaration.parameter.public.name', value);
+		return unnumbered('declaration.parameter.public.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [279, 291, 292])) return value;
@@ -25880,17 +25681,7 @@ const declaration_parameter_public$329_type = (value: declaration_parameter_publ
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.public.type', value);
+		return unnumbered('declaration.parameter.public.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -26066,8 +25857,7 @@ const declaration_parameter_receiver$473_decorators = (value: declaration_parame
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('declaration.parameter.receiver.decorators', value);
+		return unnumbered('declaration.parameter.receiver.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -26856,17 +26646,7 @@ const declaration_parameter_receiver$473_type = (value: declaration_parameter_re
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.parameter.receiver.type', value);
+		return unnumbered('declaration.parameter.receiver.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -27023,8 +26803,7 @@ type declaration_type_enum$322_members$item$Item =
 	| TypeScriptMap['nodes']['declaration.member.enum_member'];
 const declaration_type_enum$322_members$item = (value: declaration_type_enum$322_members$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [324, 388, 389])) return value;
-		return unseated('declaration.type.enum.members', value);
+		return unnumbered('declaration.type.enum.members', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [324, 388, 389])) return value;
@@ -27048,8 +26827,7 @@ const declaration_type_enum$322_name = (value: declaration_type_enum$322_name$It
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.type.enum.name', value);
+		return unnumbered('declaration.type.enum.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -27077,8 +26855,7 @@ const declaration_type_type_alias$325_name = (value: declaration_type_type_alias
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [510])) return value;
-		return unseated('declaration.type.type_alias.name', value);
+		return unnumbered('declaration.type.type_alias.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [510])) return value;
@@ -27098,8 +26875,7 @@ const declaration_type_type_alias$325_typeParameters$item = (
 	value: declaration_type_type_alias$325_typeParameters$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [373])) return value;
-		return unseated('declaration.type.type_alias.typeParameters', value);
+		return unnumbered('declaration.type.type_alias.typeParameters', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [373])) return value;
@@ -27231,17 +27007,7 @@ const declaration_type_type_alias$325_value = (value: declaration_type_type_alia
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('declaration.type.type_alias.value', value);
+		return unnumbered('declaration.type.type_alias.value', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -27414,8 +27180,7 @@ const declaration_variable$440_name = (value: declaration_variable$440_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.variable.name', value);
+		return unnumbered('declaration.variable.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -27558,17 +27323,7 @@ const declaration_variable$440_type = (value: declaration_variable$440_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.variable.type', value);
+		return unnumbered('declaration.variable.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -28384,8 +28139,7 @@ const declaration_variable$441_name = (value: declaration_variable$441_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('declaration.variable.name', value);
+		return unnumbered('declaration.variable.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -28528,17 +28282,7 @@ const declaration_variable$441_type = (value: declaration_variable$441_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.variable.type', value);
+		return unnumbered('declaration.variable.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -28699,8 +28443,7 @@ type declaration_variable_constant$208_declarators$Item =
 	| TypeScriptMap['nodes']['declaration.variable.pattern'];
 const declaration_variable_constant$208_declarators = (value: declaration_variable_constant$208_declarators$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 440, 441])) return value;
-		return unseated('declaration.variable.constant.declarators', value);
+		return unnumbered('declaration.variable.constant.declarators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [210, 440, 441])) return value;
@@ -28733,8 +28476,7 @@ type declaration_variable_constant$448_declarators$Item =
 	| TypeScriptMap['nodes']['declaration.variable.pattern'];
 const declaration_variable_constant$448_declarators = (value: declaration_variable_constant$448_declarators$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 440, 441])) return value;
-		return unseated('declaration.variable.constant.declarators', value);
+		return unnumbered('declaration.variable.constant.declarators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [210, 440, 441])) return value;
@@ -28767,8 +28509,7 @@ type declaration_variable_pattern$440_name$Item =
 	| TypeScriptMap['nodes']['pattern.object'];
 const declaration_variable_pattern$440_name = (value: declaration_variable_pattern$440_name$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [239, 243])) return value;
-		return unseated('declaration.variable.pattern.name', value);
+		return unnumbered('declaration.variable.pattern.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [239, 243])) return value;
@@ -28909,17 +28650,7 @@ const declaration_variable_pattern$440_type = (value: declaration_variable_patte
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('declaration.variable.pattern.type', value);
+		return unnumbered('declaration.variable.pattern.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -29725,8 +29456,10 @@ const declaration_variable_reassignable$208_declarators = (
 	value: declaration_variable_reassignable$208_declarators$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 440, 441])) return value;
-		return unseated('declaration.variable.reassignable.declarators', value);
+		return unnumbered(
+			'declaration.variable.reassignable.declarators',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [210, 440, 441])) return value;
@@ -29761,8 +29494,10 @@ const declaration_variable_reassignable$448_declarators = (
 	value: declaration_variable_reassignable$448_declarators$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 440, 441])) return value;
-		return unseated('declaration.variable.reassignable.declarators', value);
+		return unnumbered(
+			'declaration.variable.reassignable.declarators',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [210, 440, 441])) return value;
@@ -29797,8 +29532,10 @@ const declaration_variable_reassignable_function_scoped$207_declarators = (
 	value: declaration_variable_reassignable_function_scoped$207_declarators$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 440, 441])) return value;
-		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
+		return unnumbered(
+			'declaration.variable.reassignable.function_scoped.declarators',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [210, 440, 441])) return value;
@@ -29833,8 +29570,10 @@ const declaration_variable_reassignable_function_scoped$449_declarators = (
 	value: declaration_variable_reassignable_function_scoped$449_declarators$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [210, 440, 441])) return value;
-		return unseated('declaration.variable.reassignable.function_scoped.declarators', value);
+		return unnumbered(
+			'declaration.variable.reassignable.function_scoped.declarators',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [210, 440, 441])) return value;
@@ -30613,9 +30352,7 @@ const element_template_substitution$347_type = (value: element_template_substitu
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 510]))
-			return value;
-		return unseated('element.template.substitution.type', value);
+		return unnumbered('element.template.substitution.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -30702,8 +30439,7 @@ const element_tuple_member$340_name = (value: element_tuple_member$340_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 292])) return value;
-		return unseated('element.tuple.member.name', value);
+		return unnumbered('element.tuple.member.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 292])) return value;
@@ -30844,17 +30580,7 @@ const element_tuple_member$340_type = (value: element_tuple_member$340_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('element.tuple.member.type', value);
+		return unnumbered('element.tuple.member.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -31021,8 +30747,7 @@ const element_tuple_member_optional$341_name = (value: element_tuple_member_opti
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('element.tuple.member.optional.name', value);
+		return unnumbered('element.tuple.member.optional.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -31159,17 +30884,7 @@ const element_tuple_member_optional$341_type = (value: element_tuple_member_opti
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('element.tuple.member.optional.type', value);
+		return unnumbered('element.tuple.member.optional.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -31357,9 +31072,7 @@ const expression_assignment$262_left = (value: expression_assignment$262_left$It
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [234, 418, 419])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('expression.assignment.left', value);
+		return unnumbered('expression.assignment.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234, 418, 419])) return value;
@@ -32071,8 +31784,7 @@ const expression_assignment_compound_add$264_left = (value: expression_assignmen
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.add.left', value);
+		return unnumbered('expression.assignment.compound.add.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -32774,8 +32486,7 @@ const expression_assignment_compound_and$264_left = (value: expression_assignmen
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.and.left', value);
+		return unnumbered('expression.assignment.compound.and.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -33479,8 +33190,10 @@ const expression_assignment_compound_bitwise_and$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.bitwise_and.left', value);
+		return unnumbered(
+			'expression.assignment.compound.bitwise_and.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -34186,8 +33899,10 @@ const expression_assignment_compound_bitwise_or$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.bitwise_or.left', value);
+		return unnumbered(
+			'expression.assignment.compound.bitwise_or.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -34893,8 +34608,10 @@ const expression_assignment_compound_bitwise_xor$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.bitwise_xor.left', value);
+		return unnumbered(
+			'expression.assignment.compound.bitwise_xor.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -35600,8 +35317,10 @@ const expression_assignment_compound_coalesce$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.coalesce.left', value);
+		return unnumbered(
+			'expression.assignment.compound.coalesce.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -36305,8 +36024,7 @@ const expression_assignment_compound_divide$264_left = (value: expression_assign
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.divide.left', value);
+		return unnumbered('expression.assignment.compound.divide.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -37012,8 +36730,10 @@ const expression_assignment_compound_exponent$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.exponent.left', value);
+		return unnumbered(
+			'expression.assignment.compound.exponent.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -37717,8 +37437,7 @@ const expression_assignment_compound_modulo$264_left = (value: expression_assign
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.modulo.left', value);
+		return unnumbered('expression.assignment.compound.modulo.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -38424,8 +38143,10 @@ const expression_assignment_compound_multiply$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.multiply.left', value);
+		return unnumbered(
+			'expression.assignment.compound.multiply.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -39129,8 +38850,7 @@ const expression_assignment_compound_or$264_left = (value: expression_assignment
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.or.left', value);
+		return unnumbered('expression.assignment.compound.or.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -39834,8 +39554,10 @@ const expression_assignment_compound_shift_left$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.shift_left.left', value);
+		return unnumbered(
+			'expression.assignment.compound.shift_left.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -40541,8 +40263,10 @@ const expression_assignment_compound_shift_right$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.shift_right.left', value);
+		return unnumbered(
+			'expression.assignment.compound.shift_right.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -41248,8 +40972,10 @@ const expression_assignment_compound_shift_right_unsigned$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.shift_right_unsigned.left', value);
+		return unnumbered(
+			'expression.assignment.compound.shift_right_unsigned.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -41955,8 +41681,10 @@ const expression_assignment_compound_subtract$264_left = (
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
-		return unseated('expression.assignment.compound.subtract.left', value);
+		return unnumbered(
+			'expression.assignment.compound.subtract.left',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 234, 259, 260, 300, 418, 419])) return value;
@@ -77531,17 +77259,7 @@ const expression_call$423_typeArguments$item = (value: expression_call$423_typeA
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.call.typeArguments', value);
+		return unnumbered('expression.call.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -79758,17 +79476,7 @@ const expression_call$425_typeArguments$item = (value: expression_call$425_typeA
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.call.typeArguments', value);
+		return unnumbered('expression.call.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -80975,17 +80683,7 @@ const expression_call_construct$257_typeArguments$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.call.construct.typeArguments', value);
+		return unnumbered('expression.call.construct.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -81542,17 +81240,10 @@ const expression_call_construct_bare$257_typeArguments$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.call.construct.bare.typeArguments', value);
+		return unnumbered(
+			'expression.call.construct.bare.typeArguments',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -81709,8 +81400,7 @@ type expression_call_template$424_arguments$Item =
 	| TypeScriptMap['nodes']['literal.string.interpolated'];
 const expression_call_template$424_arguments = (value: expression_call_template$424_arguments$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [274])) return value;
-		return unseated('expression.call.template.arguments', value);
+		return unnumbered('expression.call.template.arguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [274])) return value;
@@ -82779,17 +82469,7 @@ const expression_cast_assertion$306_type = (value: expression_cast_assertion$306
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.cast.assertion.type', value);
+		return unnumbered('expression.cast.assertion.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -83712,17 +83392,10 @@ const expression_cast_assertion_angle_bracket$305_type = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeArguments(b.types(value));
-		return unseated('expression.cast.assertion.angle_bracket.type', value);
+		return unnumbered(
+			'expression.cast.assertion.angle_bracket.type',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -84000,17 +83673,10 @@ const expression_cast_assertion_angle_bracket$305_type$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.cast.assertion.angle_bracket.type', value);
+		return unnumbered(
+			'expression.cast.assertion.angle_bracket.type',
+			Number.isSafeInteger(value) ? 'integer' : 'float'
+		);
 	}
 	if (isNode(value)) {
 		if (
@@ -85572,17 +85238,7 @@ const expression_cast_satisfies$307_type = (value: expression_cast_satisfies$307
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.cast.satisfies.type', value);
+		return unnumbered('expression.cast.satisfies.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -86442,8 +86098,7 @@ const expression_collection_object$238_properties = (value: expression_collectio
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [267, 293, 294, 458, 459, 460, 506])) return value;
-		return unseated('expression.collection.object.properties', value);
+		return unnumbered('expression.collection.object.properties', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [267, 293, 294, 458, 459, 460, 506])) return value;
@@ -89203,17 +88858,7 @@ const expression_instantiation$308_typeArguments$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.instantiation.typeArguments', value);
+		return unnumbered('expression.instantiation.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -89672,8 +89317,7 @@ const expression_instantiation$357_function = (value: expression_instantiation$3
 		return unnumbered('expression.instantiation.function', 'bigint');
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 354, 355])) return value;
-		return unseated('expression.instantiation.function', value);
+		return unnumbered('expression.instantiation.function', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (typeof value === 'boolean') {
 		throw new Error('portable build: expression.instantiation.function builds no boolean');
@@ -90087,17 +89731,7 @@ const expression_instantiation$357_typeArguments$item = (
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('expression.instantiation.typeArguments', value);
+		return unnumbered('expression.instantiation.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -91671,17 +91305,7 @@ const expression_parenthesized$418_type = (value: expression_parenthesized$418_t
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return b.typeAnnotation(value);
-		return unseated('expression.parenthesized.type', value);
+		return unnumbered('expression.parenthesized.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -92133,8 +91757,7 @@ const expression_parenthesized$419_expression = (value: expression_parenthesized
 		return unnumbered('expression.parenthesized.expression', 'bigint');
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [272])) return value;
-		return unseated('expression.parenthesized.expression', value);
+		return unnumbered('expression.parenthesized.expression', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (typeof value === 'boolean') {
 		throw new Error('portable build: expression.parenthesized.expression builds no boolean');
@@ -92724,7 +92347,7 @@ const expression_parenthesized$419_expression$kind = (
 		return undefined;
 	}
 	if (typeof value === 'number') {
-		return value;
+		return undefined;
 	}
 	if (typeof value === 'boolean') {
 		return undefined;
@@ -102404,8 +102027,7 @@ const identifier_qualified$244_name = (value: identifier_qualified$244_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [505])) return value;
-		return unseated('identifier.qualified.name', value);
+		return unnumbered('identifier.qualified.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [505])) return value;
@@ -102443,8 +102065,7 @@ const identifier_qualified$244_qualifier = (value: identifier_qualified$244_qual
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 244])) return value;
-		return unseated('identifier.qualified.qualifier', value);
+		return unnumbered('identifier.qualified.qualifier', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 244])) return value;
@@ -102477,8 +102098,7 @@ const identifier_qualified$319_name = (value: identifier_qualified$319_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [510])) return value;
-		return unseated('identifier.qualified.name', value);
+		return unnumbered('identifier.qualified.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [510])) return value;
@@ -102516,8 +102136,7 @@ const identifier_qualified$319_qualifier = (value: identifier_qualified$319_qual
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 244])) return value;
-		return unseated('identifier.qualified.qualifier', value);
+		return unnumbered('identifier.qualified.qualifier', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 244])) return value;
@@ -102550,8 +102169,7 @@ const identifier_qualified$335_name = (value: identifier_qualified$335_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [109, 505])) return value;
-		return unseated('identifier.qualified.name', value);
+		return unnumbered('identifier.qualified.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [109, 505])) return value;
@@ -102588,8 +102206,7 @@ const identifier_qualified$335_qualifier = (value: identifier_qualified$335_qual
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [335, 336])) return value;
-		return unseated('identifier.qualified.qualifier', value);
+		return unnumbered('identifier.qualified.qualifier', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [197, 335, 336])) return value;
@@ -102633,7 +102250,7 @@ const identifier_qualified$335_qualifier$kind = (
 		}
 	}
 	if (typeof value === 'number') {
-		return value;
+		return undefined;
 	}
 	if (isNode(value)) return value.$type;
 	switch (value.$path) {
@@ -102661,8 +102278,7 @@ const identifier_qualified$354_name = (value: identifier_qualified$354_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [109, 505])) return value;
-		return unseated('identifier.qualified.name', value);
+		return unnumbered('identifier.qualified.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [109, 505])) return value;
@@ -102705,8 +102321,7 @@ const identifier_qualified$354_qualifier = (value: identifier_qualified$354_qual
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 354, 355, 356])) return value;
-		return unseated('identifier.qualified.qualifier', value);
+		return unnumbered('identifier.qualified.qualifier', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 279, 354, 355, 356])) return value;
@@ -102841,8 +102456,7 @@ const literal_regex$276_flags = (value: literal_regex$276_flags$Item) => {
 		return b.regexFlags(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [108])) return value;
-		return unseated('literal.regex.flags', value);
+		return unnumbered('literal.regex.flags', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [108])) return value;
@@ -102866,8 +102480,7 @@ const literal_regex$276_pattern = (value: literal_regex$276_pattern$Item) => {
 		return b.regexPattern(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [107])) return value;
-		return unseated('literal.regex.pattern', value);
+		return unnumbered('literal.regex.pattern', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [107])) return value;
@@ -102894,8 +102507,7 @@ const literal_string$426_elements = (value: literal_string$426_elements$Item) =>
 		return b.unescapedDoubleStringFragment(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [99, 101])) return value;
-		return unseated('literal.string.elements', value);
+		return unnumbered('literal.string.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [99, 101])) return value;
@@ -102926,8 +102538,7 @@ const literal_string$427_elements = (value: literal_string$427_elements$Item) =>
 		return b.unescapedSingleStringFragment(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [100, 101])) return value;
-		return unseated('literal.string.elements', value);
+		return unnumbered('literal.string.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [100, 101])) return value;
@@ -102961,8 +102572,7 @@ const literal_string_interpolated$274_elements = (value: literal_string_interpol
 		return b.templateChars(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [101, 176, 275])) return value;
-		return unseated('literal.string.interpolated.elements', value);
+		return unnumbered('literal.string.interpolated.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [101, 176, 275])) return value;
@@ -103019,9 +102629,7 @@ const pattern_assignment$240_left = (value: pattern_assignment$240_left$Item) =>
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('pattern.assignment.left', value);
+		return unnumbered('pattern.assignment.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [291, 292])) return value;
@@ -103739,9 +103347,7 @@ const pattern_list$243_elements = (value: pattern_list$243_elements$Item) => {
 		return b.lhsExpression(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [240, 291, 292])) return value;
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return b.lhsExpression(value);
-		return unseated('pattern.list.elements', value);
+		return unnumbered('pattern.list.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [240, 291, 292])) return value;
@@ -103804,8 +103410,7 @@ const pattern_object$239_properties = (value: pattern_object$239_properties$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [241, 292, 295, 507])) return value;
-		return unseated('pattern.object.properties', value);
+		return unnumbered('pattern.object.properties', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [241, 292, 295, 507])) return value;
@@ -103848,8 +103453,7 @@ const pattern_object_assignment$241_left = (value: pattern_object_assignment$241
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [239, 243, 507])) return value;
-		return unseated('pattern.object.assignment.left', value);
+		return unnumbered('pattern.object.assignment.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [239, 243, 507])) return value;
@@ -104544,8 +104148,7 @@ const pattern_rest$292_pattern = (value: pattern_rest$292_pattern$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return value;
-		return unseated('pattern.rest.pattern', value);
+		return unnumbered('pattern.rest.pattern', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 110, 239, 243, 259, 260, 300])) return value;
@@ -104591,8 +104194,7 @@ const statement_block$211_label = (value: statement_block$211_label$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.block.label', value);
+		return unnumbered('statement.block.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -105536,8 +105138,7 @@ const statement_break$222_label = (value: statement_break$222_label$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.break.label', value);
+		return unnumbered('statement.break.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -105560,8 +105161,7 @@ const statement_continue$223_label = (value: statement_continue$223_label$Item) 
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.continue.label', value);
+		return unnumbered('statement.continue.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -106227,8 +105827,7 @@ const statement_export$422_name = (value: statement_export$422_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('statement.export.name', value);
+		return unnumbered('statement.export.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -106284,8 +105883,7 @@ type statement_export$434_declaration$Item =
 	| Unmapped<'typescript:using_declaration'>;
 const statement_export$434_declaration = (value: statement_export$434_declaration$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325])) return value;
-		return unseated('statement.export.declaration', value);
+		return unnumbered('statement.export.declaration', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [196, 207, 208, 209, 246, 249, 251, 303, 313, 314, 315, 316, 318, 320, 322, 325])) return value;
@@ -106359,8 +105957,7 @@ const statement_export$434_decorators = (value: statement_export$434_decorators$
 		return b.decorator(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
-		return unseated('statement.export.decorators', value);
+		return unnumbered('statement.export.decorators', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 286, 287, 304])) return b.decorator(value);
@@ -106387,8 +105984,7 @@ type statement_if$213_alternative$Item =
 	| TypeScriptMap['nodes']['clause.else'];
 const statement_if$213_alternative = (value: statement_if$213_alternative$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [212])) return value;
-		return unseated('statement.if.alternative', value);
+		return unnumbered('statement.if.alternative', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [212])) return value;
@@ -106401,8 +105997,7 @@ type statement_if$213_condition$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_if$213_condition = (value: statement_if$213_condition$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 418, 419])) return value;
-		return unseated('statement.if.condition', value);
+		return unnumbered('statement.if.condition', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234, 418, 419])) return value;
@@ -107353,8 +106948,7 @@ const statement_import_alias$318_name = (value: statement_import_alias$318_name$
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1])) return value;
-		return unseated('statement.import.alias.name', value);
+		return unnumbered('statement.import.alias.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1])) return value;
@@ -107385,8 +106979,7 @@ const statement_import_alias$318_value = (value: statement_import_alias$318_valu
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 244])) return value;
-		return unseated('statement.import.alias.value', value);
+		return unnumbered('statement.import.alias.value', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 244])) return value;
@@ -108339,8 +107932,7 @@ const statement_labeled$228_label = (value: statement_labeled$228_label$Item) =>
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.labeled.label', value);
+		return unnumbered('statement.labeled.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -110338,8 +109930,7 @@ const statement_loop_counted$215_label = (value: statement_loop_counted$215_labe
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.loop.counted.label', value);
+		return unnumbered('statement.loop.counted.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -111273,8 +110864,7 @@ type statement_loop_do_while$219_condition$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_loop_do_while$219_condition = (value: statement_loop_do_while$219_condition$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 418, 419])) return value;
-		return unseated('statement.loop.do_while.condition', value);
+		return unnumbered('statement.loop.do_while.condition', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234, 418, 419])) return value;
@@ -111304,8 +110894,7 @@ const statement_loop_do_while$219_label = (value: statement_loop_do_while$219_la
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.loop.do_while.label', value);
+		return unnumbered('statement.loop.do_while.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -112241,8 +111830,7 @@ type statement_loop_for_each$216_header$Item =
 	| Unmapped<'typescript:for_header_var_kind'>;
 const statement_loop_for_each$216_header = (value: statement_loop_for_each$216_header$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [217, 444, 445, 446, 447])) return value;
-		return unseated('statement.loop.for_each.header', value);
+		return unnumbered('statement.loop.for_each.header', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [217, 444, 445, 446, 447])) return value;
@@ -112265,8 +111853,7 @@ const statement_loop_for_each$216_label = (value: statement_loop_for_each$216_la
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.loop.for_each.label', value);
+		return unnumbered('statement.loop.for_each.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -113200,8 +112787,7 @@ type statement_loop_while$218_condition$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_loop_while$218_condition = (value: statement_loop_while$218_condition$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 418, 419])) return value;
-		return unseated('statement.loop.while.condition', value);
+		return unnumbered('statement.loop.while.condition', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234, 418, 419])) return value;
@@ -113231,8 +112817,7 @@ const statement_loop_while$218_label = (value: statement_loop_while$218_label$It
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [508])) return value;
-		return unseated('statement.loop.while.label', value);
+		return unnumbered('statement.loop.while.label', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [508])) return value;
@@ -115736,8 +115321,7 @@ type statement_scope$221_object$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_scope$221_object = (value: statement_scope$221_object$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 418, 419])) return value;
-		return unseated('statement.scope.object', value);
+		return unnumbered('statement.scope.object', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234, 418, 419])) return value;
@@ -115761,8 +115345,7 @@ type statement_switch$214_cases$item$Item =
 	| TypeScriptMap['nodes']['clause.case.switch'];
 const statement_switch$214_cases$item = (value: statement_switch$214_cases$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [230, 231])) return value;
-		return unseated('statement.switch.cases', value);
+		return unnumbered('statement.switch.cases', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [230, 231])) return value;
@@ -115784,8 +115367,7 @@ type statement_switch$214_value$Item =
 	| TypeScriptMap['nodes']['expression.parenthesized'];
 const statement_switch$214_value = (value: statement_switch$214_value$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [234, 418, 419])) return value;
-		return unseated('statement.switch.value', value);
+		return unnumbered('statement.switch.value', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [234, 418, 419])) return value;
@@ -116558,9 +116140,7 @@ const type_array$378_type = (value: type_array$378_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 510]))
-			return value;
-		return unseated('type.array.type', value);
+		return unnumbered('type.array.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -116750,17 +116330,7 @@ const type_conditional$350_alternative = (value: type_conditional$350_alternativ
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.conditional.alternative', value);
+		return unnumbered('type.conditional.alternative', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -117036,17 +116606,7 @@ const type_conditional$350_consequence = (value: type_conditional$350_consequenc
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.conditional.consequence', value);
+		return unnumbered('type.conditional.consequence', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -117322,17 +116882,7 @@ const type_conditional$350_left = (value: type_conditional$350_left$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.conditional.left', value);
+		return unnumbered('type.conditional.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -117608,17 +117158,7 @@ const type_conditional$350_right = (value: type_conditional$350_right$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.conditional.right', value);
+		return unnumbered('type.conditional.right', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -117788,8 +117328,7 @@ const type_generic$351_name = (value: type_generic$351_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 510])) return value;
-		return unseated('type.generic.name', value);
+		return unnumbered('type.generic.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [319, 510])) return value;
@@ -117930,17 +117469,7 @@ const type_generic$351_typeArguments$item = (value: type_generic$351_typeArgumen
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.generic.typeArguments', value);
+		return unnumbered('type.generic.typeArguments', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -118207,8 +117736,7 @@ type type_import$356_source$Item =
 	  };
 const type_import$356_source = (value: type_import$356_source$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [235, 236, 273, 426, 427])) return b.arguments(value);
-		return unseated('type.import.source', value);
+		return unnumbered('type.import.source', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [235, 236, 273, 426, 427])) return b.arguments(value);
@@ -118333,9 +117861,7 @@ const type_index_query$359_type = (value: type_index_query$359_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 510]))
-			return value;
-		return unseated('type.index_query.type', value);
+		return unnumbered('type.index_query.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -118416,8 +117942,7 @@ const type_infer$349_name = (value: type_infer$349_name$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [510])) return value;
-		return unseated('type.infer.name', value);
+		return unnumbered('type.infer.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [510])) return value;
@@ -118554,17 +118079,7 @@ const type_infer$349_type = (value: type_infer$349_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.infer.type', value);
+		return unnumbered('type.infer.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -118840,17 +118355,7 @@ const type_intersection$382_left = (value: type_intersection$382_left$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.intersection.left', value);
+		return unnumbered('type.intersection.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -119126,17 +118631,7 @@ const type_intersection$382_right = (value: type_intersection$382_right$Item) =>
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.intersection.right', value);
+		return unnumbered('type.intersection.right', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -119569,17 +119064,7 @@ const type_lookup$360_indexType = (value: type_lookup$360_indexType$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.lookup.indexType', value);
+		return unnumbered('type.lookup.indexType', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -119840,9 +119325,7 @@ const type_lookup$360_type = (value: type_lookup$360_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 510]))
-			return value;
-		return unseated('type.lookup.type', value);
+		return unnumbered('type.lookup.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -120017,9 +119500,7 @@ const type_nullable$365_type = (value: type_nullable$365_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [319, 346, 348, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 381, 382, 510]))
-			return value;
-		return unseated('type.nullable.type', value);
+		return unnumbered('type.nullable.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -120098,7 +119579,7 @@ const type_object$369_closing = (value: type_object$369_closing$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		return unseated('type.object.closing', value);
+		return unnumbered('type.object.closing', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [6, 131])) return value;
@@ -120178,8 +119659,7 @@ type type_object$369_members$item$Item =
 	| TypeScriptMap['nodes']['statement.export.default'];
 const type_object$369_members$item = (value: type_object$369_members$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [191, 301, 370, 371, 376, 377, 411, 412, 420, 421, 422, 433, 434, 461, 462, 463])) return value;
-		return unseated('type.object.members', value);
+		return unnumbered('type.object.members', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [191, 301, 370, 371, 376, 377, 411, 412, 420, 421, 422, 433, 434, 461, 462, 463])) return value;
@@ -120298,7 +119778,7 @@ const type_object$369_opening = (value: type_object$369_opening$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		return unseated('type.object.opening', value);
+		return unnumbered('type.object.opening', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [5, 130])) return value;
@@ -120430,17 +119910,7 @@ const type_optional$342_type = (value: type_optional$342_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.optional.type', value);
+		return unnumbered('type.optional.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -120716,17 +120186,7 @@ const type_parenthesized$366_type = (value: type_parenthesized$366_type$Item) =>
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.parenthesized.type', value);
+		return unnumbered('type.parenthesized.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -120939,8 +120399,7 @@ const type_predicate$352_name = (value: type_predicate$352_name$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 367])) return value;
-		return unseated('type.predicate.name', value);
+		return unnumbered('type.predicate.name', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 40, 41, 42, 43, 44, 46, 78, 125, 126, 127, 279, 367])) return value;
@@ -121077,17 +120536,7 @@ const type_predicate$352_type = (value: type_predicate$352_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.predicate.type', value);
+		return unnumbered('type.predicate.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -121264,8 +120713,7 @@ const type_predicate_asserts$337_value = (value: type_predicate_asserts$337_valu
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 352])) return value;
-		return unseated('type.predicate.asserts.value', value);
+		return unnumbered('type.predicate.asserts.value', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 279, 352])) return value;
@@ -121314,8 +120762,7 @@ const type_query$358_expression = (value: type_query$358_expression$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 354, 355, 356, 357])) return value;
-		return unseated('type.query.expression', value);
+		return unnumbered('type.query.expression', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [1, 279, 354, 355, 356, 357])) return value;
@@ -121461,17 +120908,7 @@ const type_readonly$380_type = (value: type_readonly$380_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.readonly.type', value);
+		return unnumbered('type.readonly.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -121747,17 +121184,7 @@ const type_rest$343_type = (value: type_rest$343_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.rest.type', value);
+		return unnumbered('type.rest.type', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -121923,8 +121350,7 @@ const type_template$348_elements = (value: type_template$348_elements$Item) => {
 		return b.templateChars(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [176, 347])) return value;
-		return unseated('type.template.elements', value);
+		return unnumbered('type.template.elements', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (seated(value, [176, 347])) return value;
@@ -122077,17 +121503,7 @@ const type_tuple$379_tupleTypeMembers$item = (value: type_tuple$379_tupleTypeMem
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 340, 341, 342, 343, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369,
-					378, 379, 380, 381, 382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.tuple.tupleTypeMembers', value);
+		return unnumbered('type.tuple.tupleTypeMembers', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -122374,17 +121790,7 @@ const type_union$381_left = (value: type_union$381_left$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.union.left', value);
+		return unnumbered('type.union.left', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
@@ -122660,17 +122066,7 @@ const type_union$381_right = (value: type_union$381_right$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (
-			seated(
-				value,
-				[
-					319, 335, 336, 339, 345, 346, 348, 349, 350, 351, 358, 359, 360, 362, 365, 366, 367, 369, 378, 379, 380, 381,
-					382, 383, 510
-				]
-			)
-		)
-			return value;
-		return unseated('type.union.right', value);
+		return unnumbered('type.union.right', Number.isSafeInteger(value) ? 'integer' : 'float');
 	}
 	if (isNode(value)) {
 		if (
