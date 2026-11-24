@@ -73,7 +73,7 @@ export function decodeTree(handle: number): number {
 
 /** Whether `value` is a coordinate: a node past the read's depth, named by its tree and index. A native node never carries `$treeHandle` itself; its own coordinate is nested in `$_layout.at`. */
 export function isCoordinate(value: unknown): value is NodeCoordinate {
-	return value !== null && typeof value === 'object' && ('$treeHandle' in value || '$node' in value) && '$span' in value;
+	return value !== null && typeof value === 'object' && '$span' in value && ('$treeHandle' in value || '$node' in value);
 }
 
 /**

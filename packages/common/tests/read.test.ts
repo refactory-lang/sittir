@@ -33,6 +33,14 @@ describe('the JavaScript read', () => {
 		expect([decodeTree(handle), decodeIndex(handle)]).toEqual([5, 17]);
 	});
 
+	it('asks a value that is no coordinate one property question', () => {
+		const asked: PropertyKey[] = [];
+		const node = new Proxy({ $type: 1, $_layout: {} }, { has: (target, key) => (asked.push(key), Reflect.has(target, key)) });
+		expect(isCoordinate(node)).toBe(false);
+		expect(asked).toHaveLength(1);
+		expect([isCoordinate({ $treeHandle: 1, $span: {} }), isCoordinate({ $node: 1, $span: {} }), isCoordinate({ $treeHandle: 1 }), isCoordinate({ $span: {} })]).toEqual([true, true, false, false]);
+	});
+
 	it('takes a node for no coordinate: its own coordinate is nested in its layout', () => {
 		const { root } = rs.diagnostics.parseAndRead('fn f() {}');
 		expect(isCoordinate(root)).toBe(false);
