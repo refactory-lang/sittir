@@ -25,6 +25,11 @@ on:
       build-path:
         type: string
         required: true
+      rustflags:
+        description: RUSTFLAGS every tree's addons are built with; empty builds them with none
+        type: string
+        required: false
+        default: ''
       identity:
         description: The tree whose corpus renders, corpus edits and construction hashes every version must hold, entry by entry; where it differs from base a version may hold base's instead, and those entries are listed
         type: string
@@ -57,6 +62,12 @@ jobs:
       - uses: ./.github/actions/rust-toolchain
         with:
           components: llvm-tools
+      - name: Build every tree with the same RUSTFLAGS
+        if: inputs.rustflags != ''
+        shell: bash
+        env:
+          FLAGS: ${{ inputs.rustflags }}
+        run: echo "RUSTFLAGS=$FLAGS" >> "$GITHUB_ENV"
       - name: Test the build path placement
         run: node --test scripts/ci/paired-refs/build-path.test.mjs
       - name: Resolve the commits
