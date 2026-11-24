@@ -1741,7 +1741,10 @@ function valueBuilds(
 function withTakers(paths: Readonly<Record<string, PortableBuildPath>>, kindName: (kind: number) => string, diagnostics: PickDiagnostic[]): Record<string, PortableBuildPath> {
 	const takers = Object.entries(paths).flatMap(([path, built]) => [
 		...Object.entries(built.builds ?? {}).flatMap(([scalar, kind]) => built.arms.filter((arm) => arm.kind === kind && arm.scalar === scalar).map((arm) => ({ path, scalar, arm }))),
-		...built.arms.flatMap((arm) => (arm.literal?.value === undefined ? [] : [{ path, scalar: String(arm.literal.value), arm }]))
+		...built.arms.flatMap((arm) => {
+			const value = arm.literal?.value;
+			return value === undefined || !built.arms.every((other) => other.literal?.value === value) ? [] : [{ path, scalar: String(value), arm }];
+		})
 	]);
 	const kindsOf = new WeakMap<PortableSeat, ReadonlySet<number>>();
 	const sits = (arm: PortableBuildArm, seat: PortableSeat): boolean =>

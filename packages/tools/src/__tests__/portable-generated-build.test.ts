@@ -617,6 +617,27 @@ describe.each(GRAMMARS)('the generated portable build of %s, on a literal path',
 	});
 });
 
+type TakerTable = {
+	readonly build: {
+		readonly paths: Readonly<
+			Record<string, { readonly arms: readonly { readonly literal?: { readonly value?: boolean }; readonly slots: readonly { readonly takers?: Readonly<Record<string, string>> }[] }[] }>
+		>;
+	};
+};
+
+describe.each(GRAMMARS)("the build table of %s, on a slot's boolean takers", (grammar) => {
+	it('names for true and for false a path whose every arm is a literal arm that reads that value, never one that picks between the two', async () => {
+		const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as TakerTable;
+		const takers = new Set(Object.values(table.paths).flatMap((row) => row.arms.flatMap((arm) => arm.slots.flatMap((slot) => (['true', 'false'] as const).flatMap((value) => (slot.takers?.[value] === undefined ? [] : [`${value} ${slot.takers[value]}`]))))));
+		expect(takers.size).toBeGreaterThan(0);
+		const misread = [...takers].filter((taker) => {
+			const [value, path] = taker.split(' ') as [string, string];
+			return !table.paths[path]!.arms.every((arm) => String(arm.literal?.value) === value);
+		});
+		expect(misread).toEqual([]);
+	});
+});
+
 describe.each(GRAMMARS)('the portable builds of %s, given a bare boolean', (grammar) => {
 	it.each(STORAGES)('build it through the slot\'s boolean path as its structure builds, and refuse it where the slot holds no boolean path, in %s storage', async (nodeStorage) => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });

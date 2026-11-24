@@ -116,7 +116,7 @@ export interface PortableSeat {
  * `takers` names, for each scalar type, the path a bare number of that type builds through here: of the paths whose `builds` arm for that
  * type sits in one of the slot's seats, the one inside none of the others. A safe integer is an `integer`, any other number a `float`. In a
  * slot with takers a number is always a number, never a kind id. Its `true` and `false` name the path a bare boolean builds through, the
- * same way, from the paths whose literal arm reads that value.
+ * same way, from the paths whose every arm is a literal arm that reads that value.
  */
 export interface PortableSlotRoute {
 	readonly name: string;
