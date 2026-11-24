@@ -31,6 +31,7 @@ export interface PortableEmitInput<Table> {
 	readonly textChoices?: Readonly<Record<string, readonly string[]>>;
 	readonly ownTextClaims?: Readonly<Record<string, Readonly<Record<number, PortableOwnTextClaim>>>>;
 	readonly decided: Readonly<Record<string, Readonly<Record<string, string>>>>;
+	readonly tails?: Readonly<Record<string, Readonly<Record<string, Readonly<Record<string, string>>>>>>;
 }
 
 export type PortableEmitCode = 'portable-emit-unplaced-path' | 'portable-emit-unplaced-arm' | 'portable-emit-unfit-slot' | 'portable-emit-pinned-gap' | 'portable-emit-type' | 'portable-emit-tail-is-path';

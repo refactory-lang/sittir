@@ -387,6 +387,18 @@ What `mapFactsOf` returns: per path, each fact the path's arms spell and the tex
 
 Each path's forms, one `V.Form` per build arm, from the arm's pick tests: the members it requires present or absent, the members a kinds test narrows, and the list members it requires to hold at least one item, those whose every route in the arm is `nonEmpty` where the arm has no `owners`. A path with an arm that has no form is left unformed, so its read and input stay as the vocabulary declares them. It also returns the slots a kinds test names that have no exact set.
 
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::tailsOf`
+
+The tails of the paths one slot admits: for each admitted path, its shortest dot-suffix that no other admitted path ends with or is, when that is shorter than the path itself. A slot admitting one path has no tails, and a path that is another admitted path's suffix (`x` beside `a.x`) keeps only its full name, as `a.x` does. Rust's return `expression` gives `expression.binary.arithmetic.add` the tail `arithmetic.add`, since `expression.assignment.compound.add` also ends with `add`.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapTailsOf`
+
+Derives `MapTails` once, from the exact sets (`tailsOf` over each slot's paths), beside `mapDecidedOf`. A tail that is the full name of another path in the grammar fails generation with `portable-emit-tail-is-path`, on every path, so a `$path` that names a path always means that path.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::MapTails`
+
+Per path and slot, each admitted path that has a tail, with its tail. The map writes them as `tails`, which the input types read as another `$path` spelling of that path in that slot, and the build module writes each as another `case` label in the slot function. Nothing maps a tail at run time.
+
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitCode`
 
 The portable module emitter's diagnostic codes: a path in a slot's type with no arm that fits the slot's seats in any arm of the slot's owner (`portable-emit-unplaced-path`); a path the slot's type admits that one arm's seats don't place, though another arm of the owner does (`portable-emit-unplaced-arm`); a path the emitter can't compile whole, which the module leaves out (`portable-emit-unfit-slot`); a construct the pinned builders can't express (`portable-emit-pinned-gap`); a generated module that fails its type-check (`portable-emit-type`); and a slot's tail that is the full name of another path (`portable-emit-tail-is-path`).

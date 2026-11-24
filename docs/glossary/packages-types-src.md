@@ -2150,7 +2150,23 @@ The input type of the build for path `P` in grammar `G`: the input shape of that
 
 ### `packages/types/src/vocabulary/input.ts::PathInput`
 
-A path function's input: the path's build input, or its form without `$path`, with its named flags. A path's own `$path` is optional because the function already names the path.
+A path function's input: the path's build input, or its form without `$path`, with its named flags. A path's own `$path` is optional because the function already names the path. `S` adds the tails the input may spell `$path` with (`TailInput`): an arm function takes the tails every slot that seats it admits, and a root function takes none.
+
+### `packages/types/src/vocabulary/input.ts::TailInput`
+
+Path `P`'s input spelled with `$path` set to one of its tails `S` instead of its full name: what a slot that admits `P` under the tail `S` takes. A root build takes no tail, so `BuildInput` and `PathInput` without `S` never admit one.
+
+### `packages/types/src/vocabulary/input.ts::Tails`
+
+The tails member `M` of read type `R` admits, from the grammar map's `tails`: each admitted path keyed to its tail, or `{}` when the slot has none.
+
+### `packages/types/src/vocabulary/input.ts::Tailed`
+
+A read type's members as inputs with `$path` set to the spelling `S`; nothing when `S` is `never`.
+
+### `packages/types/src/vocabulary/input.ts::Members`
+
+A read type's members other than `$path`, each as its input; `Pathless` and `Tailed` add their own `$path` to it.
 
 ### `packages/types/src/vocabulary/map.ts::NodesAt`
 

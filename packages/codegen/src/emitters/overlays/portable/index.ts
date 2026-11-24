@@ -98,7 +98,8 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			holes: build.holes,
 			textChoices: build.textChoices,
 			ownTextClaims: ownTextClaimsOf(routes.readEntries, readTest, nodeMap),
-			decided: Object.fromEntries(typed.decided.map(([path, slotKinds]) => [path, Object.fromEntries(slotKinds)]))
+			decided: Object.fromEntries(typed.decided.map(([path, slotKinds]) => [path, Object.fromEntries(slotKinds)])),
+			tails: Object.fromEntries(typed.tails.map(([path, slotTails]) => [path, Object.fromEntries(slotTails.map(([slot, at]) => [slot, Object.fromEntries(at)]))]))
 		},
 		typed,
 		pickDiagnostics: [

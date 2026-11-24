@@ -214,10 +214,8 @@ Step 4 still owes the type-check times against the baseline. Built: decision 4 (
   - decisions 1, 4, 5 and 7;
   - python's getter takes no `parameters`, and its generated build writes `self`. The vocabulary edit to `accessors/declaration.ts` comes from Task 3. It lands here because the interpreted build table takes that slot's list arity from the vocabulary. The type tests gain "the getter's input has no `parameters`" for python and typescript;
   - decision 9's tails. Each slot's tails are computed beside its exact set, written as `$path` spellings on the map's input side and as `case` labels in the slot function, and checked by `portable-emit-tail-is-path`. The type and build tests gain:
-    - rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`, and the generated build gives `$y`;
-    - rust `statement.return.expression` accepts `'arithmetic.add'` and refuses `'add'` and `'binary.arithmetic.add'`;
-    - python `statement.return.expression` accepts `'add'`;
-    - a root build refuses a tail;
+    - the types: rust `declaration.function.name` accepts `{ $path: 'metavariable', $value: 'y' }`; rust `statement.return.expression` accepts `'arithmetic.add'` and refuses `'add'` and `'binary.arithmetic.add'`; python `statement.return.expression` accepts `'add'`; a root `PathInput` refuses a tail;
+    - the builds, in both storages: each tail builds as its full path builds, on rust `clause.let.value` (`metavariable` gives `$y`, `arithmetic.add`) and python `statement.return.expression` (`add`); rust `clause.let.value` refuses `'add'` and `'binary.arithmetic.add'`; a root build refuses a tail. The rust builds run on `clause.let.value` because rust's function `name` and return `expression` are not generated yet;
   - the five emit diagnostics;
   - the header comment through `$trivia.leading`;
   - number spelling (exponent forms included) through one shared value helper.

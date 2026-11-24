@@ -610,6 +610,40 @@ describe.each(STORAGES)("the generated portable build of python's getter, in %s 
 	});
 });
 
+describe("the generated portable build, on a slot's tails", () => {
+	const TAILED = [
+		['rust', 'clause.let', 'value', { $path: 'metavariable', $value: 'y' }, { $path: 'identifier.metavariable', $value: 'y' }],
+		['rust', 'clause.let', 'value', { $path: 'arithmetic.add', left: 'a', right: 'b' }, { $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }],
+		['python', 'statement.return', 'expression', { $path: 'add', left: 'a', right: 'b' }, { $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' }]
+	] as const;
+	const OWNERS: Readonly<Record<string, Readonly<Record<string, unknown>>>> = {
+		'clause.let': { pattern: 'x' },
+		'statement.return': {}
+	};
+
+	it.each(STORAGES)('builds each tail as its full path builds, in %s storage', async (nodeStorage) => {
+		for (const [grammar, owner, slot, tailed, full] of TAILED) {
+			using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });
+			const runtime = await portableRuntime(engine);
+			const run = functionAt(scopeBuilders(engine, (await generatedBuild(grammar)) as object), owner) as PathFunction;
+			const render = (node: unknown): string => engine.render(node as never).toString();
+			const structure = (value: object): PortableStructure => ({ $path: owner, ...OWNERS[owner], [slot]: value });
+			expect(render(run(structure(tailed))), `${grammar} ${tailed.$path}`).toBe(render(runtime.build(structure(full))));
+		}
+	});
+
+	it("refuses a suffix that is neither a path's tail nor its full path, and a root build of a tail", async () => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('rust')) as object);
+		const bound = functionAt(generated, 'clause.let') as PathFunction;
+		for (const $path of ['add', 'binary.arithmetic.add'])
+			expect(() => bound({ $path: 'clause.let', pattern: 'x', value: { $path, left: 'a', right: 'b' } } as never), $path).toThrow(/clause\.let\.value/);
+		expect(functionAt(generated, 'metavariable')).toBeUndefined();
+		expect(() => runtime.build({ $path: 'metavariable', $value: 'y' } as never)).toThrow();
+	});
+});
+
 type KindsTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly kind: number; readonly when: readonly object[] }[] }>> } };
 
 const KINDS_PICK_GRAMMARS = ['python', 'typescript'] as const;

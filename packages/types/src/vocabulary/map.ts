@@ -9,6 +9,7 @@ export interface GrammarMap {
 	readonly flags: object;
 	readonly facts: object;
 	readonly decided: object;
+	readonly tails: object;
 }
 
 export interface Contract<F extends object> extends GrammarMap {
@@ -19,6 +20,7 @@ export interface Contract<F extends object> extends GrammarMap {
 	readonly flags: {};
 	readonly facts: {};
 	readonly decided: {};
+	readonly tails: {};
 }
 
 export interface Paths<G extends GrammarMap> {}

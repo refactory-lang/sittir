@@ -101,3 +101,5 @@ export const bigintReturned: Returned = 10n;
 export const orReturned: Returned = { $path: 'expression.binary.bitwise.or', left: 'a', right: 'b' };
 // @ts-expect-error expression.binary has no arm in python's build table, so no build takes it
 export const familyReturned: Returned = { $path: 'expression.binary', left: 'a', right: 'b' };
+
+export const addTail: Returned = { $path: 'add', left: 'a', right: 'b' };

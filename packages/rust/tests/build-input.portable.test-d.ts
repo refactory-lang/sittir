@@ -62,3 +62,19 @@ export const letExclusiveRange: LetValue = exclusiveRangeRead;
 export const letRange: LetValue = rangeRead;
 export const bareRange: V.BuildInput<RustMap, 'expression.range'> = { $path: 'expression.range' };
 export const postfixRange: V.BuildInput<RustMap, 'expression.range'> = { $path: 'expression.range', start: 1 };
+
+type FunctionName = V.BuildInput<RustMap, 'declaration.function'>['name'];
+
+export const tailName: FunctionName = { $path: 'metavariable', $value: 'y' };
+export const fullName: FunctionName = { $path: 'identifier.metavariable', $value: 'y' };
+export const ownTailName: FunctionName = { $path: 'identifier', $value: 'y' };
+// @ts-expect-error a root build takes only the full path, never a tail
+export const rootTail: V.PathInput<RustMap, 'identifier.metavariable'> = { $path: 'metavariable', $value: 'y' };
+
+export const arithmeticTail: Returned = { $path: 'arithmetic.add', left: 'a', right: 'b' };
+export const compoundTail: Returned = { $path: 'compound.add', left: 'a', right: 'b' };
+export const fullAdd: Returned = { $path: 'expression.binary.arithmetic.add', left: 'a', right: 'b' };
+// @ts-expect-error add is the last segment of two admitted paths, so it names neither
+export const sharedTail: Returned = { $path: 'add', left: 'a', right: 'b' };
+// @ts-expect-error a slot takes a path's tail and its full path, and no suffix in between
+export const betweenTail: Returned = { $path: 'binary.arithmetic.add', left: 'a', right: 'b' };
