@@ -17,9 +17,10 @@ const CHANGED = new Set(['python 0 body', 'python 1 body', 'rust 2 items']);
 const SAMPLE = { pipelineMs: 2, parseMs: 1, renderMs: 1, editMs: 0.5, releaseMs: 0.1, wholeReadMs: 1.5 };
 const SECTION = { files: 1, sha256: 'a'.repeat(64) };
 const NAMINGS = [
-	[false, false, 'distinct name'],
-	[true, false, 'reused name'],
-	[false, true, 'many names']
+	[false, false, false, 'distinct name'],
+	[true, false, false, 'reused name'],
+	[false, true, false, 'many names'],
+	[false, false, true, 'commented']
 ];
 
 function measured(dir, held) {
@@ -46,12 +47,13 @@ function measured(dir, held) {
 				});
 			}
 			const samples = [2000, 8000].flatMap((n) =>
-				NAMINGS.flatMap(([reuse, many, naming]) => {
+				NAMINGS.flatMap(([reuse, many, commented, naming]) => {
 					const edited = held(version, 'construction', n, naming, round);
 					return Array.from({ length: 7 }, () => ({
 						n,
 						reuse,
 						many,
+						commented,
 						renderSha256: 'render',
 						editedSha256: edited,
 						pipelineMs: 1,
@@ -218,6 +220,23 @@ test('a construction case is keyed by its roots and its naming, so one naming ap
 		'master rounds 0, 1, 2, 3, 4: 1 apart from feature: construction, 2000 function roots, many names',
 		'master-arena rounds 0, 1, 2, 3, 4: 1 apart from feature: construction, 2000 function roots, many names'
 	]);
+});
+
+test('built roots that carry a comment are a construction case of their own, named apart from the uncommented ones', () => {
+	const held = (version, grammar, at, key) =>
+		version.startsWith('master') && grammar === 'construction' && at === 8000 && key === 'commented'
+			? 'third'
+			: outputOf(version, grammar, at, key);
+	const { status, summary } = summarize(held, 'feature');
+	assert.equal(status, 1);
+	assert.deepEqual(summary.mismatches, [
+		'master rounds 0, 1, 2, 3, 4: 1 apart from feature: construction, 8000 function roots, commented',
+		'master-arena rounds 0, 1, 2, 3, 4: 1 apart from feature: construction, 8000 function roots, commented'
+	]);
+	assert.deepEqual(
+		summary.construction.map((row) => [row.functionRoots, row.commented]),
+		[2000, 8000].flatMap((n) => [[n, false], [n, false], [n, false], [n, true]])
+	);
 });
 
 test('the parsed long list reports arena over object for each tree, and the feature over master in arena', () => {
