@@ -19,7 +19,7 @@ import type {
 } from '@sittir/types';
 import { decimalSpelling } from '../number.ts';
 import { hasKind } from './classify.ts';
-import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, readsEmptyWhenAbsent, seatSets, spells, takesTextValue, tokenKind, tokenText } from './facts.ts';
+import { builtSlots, buildsOnlyItem, isNumberSlots, leafSeatOf, readsEmptyWhenAbsent, seatSets, spells, takesTextValue, tokenKind } from './facts.ts';
 import { vocabularyPathFeatures } from './vocabulary-paths.ts';
 
 export interface PortableBuildContext {
@@ -150,8 +150,8 @@ const scalarOf = (structure: PortableStructure): number | bigint | undefined =>
 const integral = (value: number | bigint): boolean => typeof value === 'bigint' || Number.isSafeInteger(value);
 const isNumber = (value: unknown): value is number | bigint => typeof value === 'number' || typeof value === 'bigint';
 const numberScalar = (value: number | bigint): NonNullable<PortableBuildArm['scalar']> => (typeof value === 'bigint' ? 'bigint' : integral(value) ? 'integer' : 'float');
-const taken = (value: number | bigint, slot: PortableSlotRoute): PortableStructure | undefined => {
-	const path = slot.takers?.[numberScalar(value)];
+const taken = (value: number | bigint | boolean, slot: PortableSlotRoute): PortableStructure | undefined => {
+	const path = slot.takers?.[typeof value === 'boolean' ? (value ? 'true' : 'false') : numberScalar(value)];
 	return path === undefined ? undefined : { $path: path, $value: value };
 };
 
@@ -325,9 +325,9 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			return leaf === undefined ? value : leafOf(leaf, value);
 		};
 		const kindOf = (value: unknown, slot: PortableSlotRoute): number | undefined => {
-			if (slot.takers !== undefined && isNumber(value)) {
-				const number = taken(value, slot);
-				return number === undefined ? undefined : pick(number, slot.seats)?.arm.kind;
+			if (isNumber(value) || typeof value === 'boolean') {
+				const scalar = taken(value, slot);
+				return scalar === undefined ? undefined : pick(scalar, slot.seats)?.arm.kind;
 			}
 			if (isStructure(value)) return pick(value, slot.seats)?.arm.kind;
 			const placed = typeof value === 'string' ? (tokenKind(value, slot.seats) ?? textOf(value, slot.seats)) : value;
@@ -545,7 +545,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				const seat = leafSeatOf(value, seats) ?? seats[0]!;
 				return seated(textOf(value, [seat]), within(seat).slice(depth), false);
 			}
-			const kind = hasKind(value) ? value.$type : typeof value === 'number' ? value : undefined;
+			const kind = hasKind(value) ? value.$type : undefined;
 			const seat = seats.find((s) => kind !== undefined && s.kinds.includes(kind)) ?? seats[0]!;
 			return seated(value, within(seat).slice(depth), false);
 		};
@@ -557,19 +557,15 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		};
 		const described = (item: unknown): string =>
 			isStructure(item) ? item.$path : typeof item === 'string' ? `"${item}"` : hasKind(item) ? nameOf(item.$type) : typeof item;
-		const numbered = (item: unknown, slot: PortableSlotRoute, path: string): unknown => {
-			if (!isNumber(item)) return item;
-			const number = taken(item, slot);
-			if (number === undefined) throw new Error(`portable build: ${path}'s ${slot.name} builds no ${numberScalar(item)} number`);
-			return number;
+		const coerced = (item: unknown, slot: PortableSlotRoute, path: string): unknown => {
+			if (typeof item !== 'boolean' && !isNumber(item)) return item;
+			const scalar = taken(item, slot);
+			if (scalar === undefined) throw new Error(`portable build: ${path}'s ${slot.name} builds no ${typeof item === 'boolean' ? item : `${numberScalar(item)} number`}`);
+			return scalar;
 		};
 		const valueOf = (value: unknown, slot: PortableSlotRoute, path: string, delimiter?: number): Placed =>
-			placedOf(slot.takers === undefined ? value : Array.isArray(value) ? value.map((item) => numbered(item, slot, path)) : numbered(value, slot, path), slot, path, delimiter);
+			placedOf(Array.isArray(value) ? value.map((item) => coerced(item, slot, path)) : coerced(value, slot, path), slot, path, delimiter);
 		const placedOf = (value: unknown, slot: PortableSlotRoute, path: string, delimiter?: number): Placed => {
-			for (const item of listOf(value)) {
-				const text = typeof item === 'number' ? tokenText(item, slot.seats) : undefined;
-				if (text !== undefined) throw new Error(`portable build: ${path}'s ${slot.name} takes the token "${text}" as its text, not as kind id ${item}`);
-			}
 			if (slot.multiple) return { value: listOf(value).map((item) => unmounted(element(item, slot, slot.seats, 0), slot, path)) };
 			if (!Array.isArray(value)) return slot.seats.some((seat) => holdsOne(slot, seat)) && !seatsIn(slot.seats.filter((seat) => !holdsOne(slot, seat)), value) ? valueOf([value], slot, path, delimiter) : element(value, slot, slot.seats, 0);
 			const lists = slot.seats.filter((seat) => seat.many === true);

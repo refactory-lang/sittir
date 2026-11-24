@@ -10,7 +10,7 @@ import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { storageKeyOf } from '../../../compiler/model/node-map.ts';
 import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactReads, type ExactSet, type ExactSlots, type ValueRead } from './exact.ts';
-import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type MapDecided, type UnformedTest } from './grammar-map.ts';
+import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type MapDecided, type MapTails, type UnformedTest } from './grammar-map.ts';
 
 export interface PortableTypedInput {
 	readonly routes: GrammarRoutes;
@@ -46,6 +46,7 @@ export interface PortableTypedOutput {
 	readonly flags: readonly (readonly [path: string, flags: readonly string[]])[];
 	readonly facts: readonly (readonly [path: string, facts: readonly string[]])[];
 	readonly decided: MapDecided;
+	readonly tails: MapTails;
 }
 
 export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
@@ -456,5 +457,5 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	}
 	emit('', ...unmappedKindsBlock(VOCABULARY_INDEX, input.grammar, nodeMap, unmappedViews));
 	const grammarMap = emitGrammarMap(typedInput, exact);
-	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues, flags: grammarMap.flags, facts: grammarMap.facts, decided: grammarMap.decided };
+	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues, flags: grammarMap.flags, facts: grammarMap.facts, decided: grammarMap.decided, tails: grammarMap.tails };
 }

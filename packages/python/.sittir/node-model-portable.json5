@@ -5981,6 +5981,106 @@
           ]
         },
         {
+          "vocab": "declaration.member.property.getter",
+          "toplevel": false,
+          "within": [
+            "decorated_definition_class_declaration"
+          ],
+          "pins": [],
+          "test": [
+            {
+              "up": 1,
+              "via": [
+                {
+                  "slots": {
+                    "320": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "property",
+                "slots": {
+                  "184": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "361": 3
+                  }
+                },
+                {
+                  "slots": {
+                    "171": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "198": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "eq",
+                "text": "self",
+                "self": true
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "361": 3
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  198
+                ],
+                "slots": {
+                  "171": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "361": 3
+                  }
+                },
+                {
+                  "slots": {
+                    "171": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "198": 0
+                  },
+                  "anchor": "only"
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  1
+                ],
+                "self": true
+              }
+            }
+          ]
+        },
+        {
           "vocab": "declaration.member.property.setter",
           "toplevel": false,
           "within": [
@@ -6007,33 +6107,6 @@
                 "text": "setter",
                 "slots": {
                   "226": 1
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.member.property.getter",
-          "toplevel": false,
-          "within": [
-            "decorated_definition_class_declaration"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 1,
-              "via": [
-                {
-                  "slots": {
-                    "320": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "property",
-                "slots": {
-                  "184": 0
                 }
               }
             }
@@ -6184,6 +6257,17 @@
           ]
         },
         {
+          "name": "type",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
           "name": "typeParameters",
           "route": "slot",
           "slot": "type_parameters",
@@ -6202,17 +6286,6 @@
             {
               "owner": "method_declaration",
               "slot": "parameters"
-            }
-          ]
-        },
-        {
-          "name": "type",
-          "route": "slot",
-          "slot": "return_type",
-          "path": [
-            {
-              "owner": "method_declaration",
-              "slot": "return_type"
             }
           ]
         },

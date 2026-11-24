@@ -191,6 +191,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		const taken = new Set<number>();
 		for (const fact of facts) {
 			if (holding.some((held) => held.fact.name === fact.name)) continue;
+			if (fact.own !== undefined && !holds(fact.own, subjectsOf([node]))) continue;
 			const items = itemsIn(container, fact.items);
 			const index = items.findIndex(
 				(item, i) =>
