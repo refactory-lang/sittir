@@ -172,8 +172,23 @@ describe('the portable build table', () => {
 	});
 
 	it("builds a form through its holder's mount, the step saying how the mount takes its input and which of its slot's forms it enters", () => {
-		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).slots.filter((slot) => slot.name === 'right');
-		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' }, kinds: [rust.kinds.RangePatternWithLeftWithRight] });
+		const [given] = armOf('typescript', 'clause.import.names', typescript.kinds.ImportClause).slots.filter((slot) => slot.name === 'default' && slot.steps.length > 1);
+		expect(given!.steps[0]).toEqual({
+			key: 'content',
+			builder: 'importClause.defaultImport',
+			mounted: { call: 'child', key: 'content' },
+			kinds: [typescript.kinds.ImportClauseDefaultImport]
+		});
+		expect(tables.typescript.table.builders['importClause.defaultImport']).toBe('config');
+		const clause = armsOf('typescript', 'statement.export')
+			.flatMap((arm) => arm.slots)
+			.find((slot) => slot.name === 'exportClause' && slot.steps[0]?.builder === 'exportStatementDefaultFrom.clauseFrom');
+		expect(clause!.steps[0]).toEqual({
+			key: 'content',
+			builder: 'exportStatementDefaultFrom.clauseFrom',
+			mounted: { call: 'merge', key: 'content' },
+			kinds: [typescript.kinds.ExportStatementDefaultFromClauseFrom]
+		});
 	});
 
 	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {
@@ -204,7 +219,15 @@ describe('the portable build table', () => {
 		const negative = tables.python.table.paths['literal.number.negative']!;
 		expect(negative.root).toBe(false);
 		expect(negative.arms.map((arm) => [arm.kind, arm.builder, arm.holders])).toEqual([
-			[python.kinds.SimplePatternNegative, 'simplePattern.negative', [[python.kinds.SimplePattern, 'content']]],
+			[
+				python.kinds.SimplePatternNegative,
+				'simplePattern.negative',
+				[
+					[python.kinds.SimplePattern, 'content'],
+					[python.kinds.UnionPattern, 'left'],
+					[python.kinds.UnionPattern, 'right']
+				]
+			],
 			[python.kinds.SimplePatternNegative, 'keywordPattern.negative', [[python.kinds.KeywordPattern, 'pattern']]]
 		]);
 	});
@@ -238,8 +261,8 @@ describe('the portable build table', () => {
 		expect(traitForm!.when).toEqual([{ absent: ['extern'], required: ['trait'] }]);
 	});
 
-	it('drops an arm with a required grammar slot no slot, flag or preset fills, so the bare path builds nothing', () => {
-		expect(armsOf('rust', 'pattern.range')).toEqual([]);
+	it('drops an arm with a required grammar slot no slot, flag or preset fills, so a bare path builds only the forms with nothing to preset', () => {
+		expect(armsOf('rust', 'pattern.range').map((arm) => arm.kind)).toEqual([rust.kinds.RangePatternLowerBounded]);
 		expect(armsOf('rust', 'expression.binary')).toEqual([]);
 		expect(armsOf('rust', 'pattern.range.inclusive').length).toBeGreaterThan(0);
 	});

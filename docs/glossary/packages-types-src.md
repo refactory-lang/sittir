@@ -1536,6 +1536,10 @@ The builder of the form of a step's grammar slot that holds nothing (it reads no
 
 Stamped on an arm whose slot admits a value an earlier arm of the path also takes, spelled with different fixed text. A read of that arm keeps the parsed node, because a read may normalize a value's spelling but never the value.
 
+### `packages/types/src/portable-build.ts::PortableFlagStep::carriesNode`
+
+Marks a flag whose presence makes the node's source text part of its value. Python's `f"{a+b=}"` prints `a+b=` followed by the result, so respacing the expression changes the string. A read keeps such a node instead of a structure, and a build from a structure still sets the flag, since a new node has no source text to preserve.
+
 ### `packages/types/src/vocabulary/features/range-expressions/expression.ts::Legacy`
 
 The legacy form of the inclusive range expression: a sub-kind of `Expression.Range.Inclusive`, with the `$kind` `expression.range.inclusive.legacy`, claimed by the `r` pattern.

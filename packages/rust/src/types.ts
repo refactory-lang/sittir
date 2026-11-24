@@ -69,9 +69,8 @@ export type LeafStringMap = {
 	[TSKindId.Self]: 'self';
 	[TSKindId.Super]: 'super';
 	[TSKindId.Crate]: 'crate';
-	[TSKindId._RangeExpressionBare]: '..';
+	[TSKindId._RangeExpressionUnbounded]: '..';
 	[TSKindId.ImplItemUnsafeMarker]: 'unsafe';
-	[TSKindId.RangePatternWithLeftBare]: '..';
 	[TSKindId.WildcardPattern]: '_';
 	[TSKindId.OuterDocCommentMarker]: '*';
 	[TSKindId.InnerDocCommentMarker]: '!';
@@ -615,7 +614,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[479, '_let_chain'],
+	[478, '_let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -688,7 +687,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[359, 'use_wildcard_group'],
 	[360, 'token_tree_punctuation'],
 	[361, '_token_keywords'],
-	[362, '_range_expression_bare'],
+	[362, '_range_expression_unbounded'],
 	[363, 'attributed_element'],
 	[364, 'array_expression_list_elements'],
 	[365, 'tuple_expression_elements'],
@@ -716,10 +715,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[387, 'or_pattern_prefix'],
 	[388, 'pointer_type_const'],
 	[389, 'pointer_type_mut'],
-	[390, 'range_expression_binary'],
-	[391, 'range_expression_postfix'],
-	[392, 'range_expression_prefix'],
-	[393, 'range_expression_bare'],
+	[390, 'range_expression_bounded'],
+	[391, 'range_expression_lower_bounded'],
+	[392, 'range_expression_upper_bounded'],
+	[393, 'range_expression_unbounded'],
 	[394, 'expression_statement_with_semi'],
 	[395, 'foreign_mod_item_semi'],
 	[396, 'foreign_mod_item_body'],
@@ -745,71 +744,70 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[416, 'macro_definition_paren'],
 	[417, 'macro_definition_bracket'],
 	[418, 'macro_definition_brace'],
-	[419, 'range_pattern_prefix'],
-	[420, 'range_pattern_with_left_with_right'],
-	[421, 'range_pattern_with_left_bare'],
-	[422, 'range_pattern_with_left'],
-	[423, 'struct_item_brace'],
-	[424, 'struct_item_tuple'],
-	[425, 'struct_item_unit'],
-	[426, 'wildcard_pattern'],
-	[427, 'attributed_field_declaration'],
-	[428, 'attributed_enum_variant'],
-	[429, 'attributed_parameter'],
-	[430, 'attributed_type_parameter'],
-	[431, 'argument'],
-	[432, 'attributed_ordered_field'],
-	[433, 'type_argument'],
-	[434, 'match_block_arms'],
-	[435, 'array_expression_semi'],
-	[436, 'array_expression_list'],
-	[437, 'trait_interface_declaration_body'],
-	[438, 'extension_declaration_body'],
-	[439, 'receiver_parameter_declaration'],
-	[440, 'attributed_parameter_receiver'],
-	[441, 'parameters_elements_receiver'],
-	[442, 'parameters_elements_receiver_group'],
-	[443, 'source_file_repeat1'],
-	[444, 'token_repetition_pattern_repeat1'],
-	[445, 'token_repetition_repeat1'],
-	[446, 'declaration_list_repeat1'],
-	[447, 'function_modifiers_repeat1'],
-	[448, 'trait_bounds_repeat1'],
-	[449, 'shorthand_field_initializer_repeat1'],
-	[450, 'last_match_arm_repeat1'],
-	[451, 'string_literal_repeat1'],
-	[452, 'macro_rules_repeat1'],
-	[453, 'enum_variant_list_elements_repeat1'],
-	[454, 'field_declaration_list_elements_repeat1'],
-	[455, 'ordered_field_declaration_list_elements_repeat1'],
-	[456, 'where_predicates_repeat1'],
-	[457, 'type_parameters_elements_repeat1'],
-	[458, 'use_clauses_repeat1'],
-	[459, 'parameters_elements_repeat1'],
-	[460, 'lifetimes_repeat1'],
-	[461, 'types_repeat1'],
-	[462, 'use_bounds_elements_repeat1'],
-	[463, 'type_arguments_elements_repeat1'],
-	[464, 'arguments_elements_repeat1'],
-	[465, 'field_initializer_list_elements_repeat1'],
-	[466, '_closure_parameters_optional1_repeat1'],
-	[467, 'tuple_pattern_elements_repeat1'],
-	[468, 'patterns_repeat1'],
-	[469, 'struct_pattern_elements_repeat1'],
-	[470, '_array_expression_list_elements_repeat1'],
-	[471, '_tuple_expression_elements_repeat1'],
-	[472, 'delim_token_tree_paren_repeat1'],
-	[473, '_match_block_arms_repeat1'],
-	[474, '_declaration_list_trait_item_repeat1'],
-	[475, '_declaration_list_impl_item_body_repeat1'],
-	[476, 'closure_parameter'],
-	[477, 'crate_visibility_modifier'],
-	[478, 'field_identifier'],
-	[480, 'method_declaration'],
-	[481, 'self_module'],
-	[482, 'shorthand_field_identifier'],
-	[483, 'signature_method_declaration'],
-	[484, 'type_identifier'],
+	[419, 'range_pattern_upper_bounded'],
+	[420, 'range_pattern_bounded'],
+	[421, 'range_pattern_lower_bounded'],
+	[422, 'struct_item_brace'],
+	[423, 'struct_item_tuple'],
+	[424, 'struct_item_unit'],
+	[425, 'wildcard_pattern'],
+	[426, 'attributed_field_declaration'],
+	[427, 'attributed_enum_variant'],
+	[428, 'attributed_parameter'],
+	[429, 'attributed_type_parameter'],
+	[430, 'argument'],
+	[431, 'attributed_ordered_field'],
+	[432, 'type_argument'],
+	[433, 'match_block_arms'],
+	[434, 'array_expression_semi'],
+	[435, 'array_expression_list'],
+	[436, 'trait_interface_declaration_body'],
+	[437, 'extension_declaration_body'],
+	[438, 'receiver_parameter_declaration'],
+	[439, 'attributed_parameter_receiver'],
+	[440, 'parameters_elements_receiver'],
+	[441, 'parameters_elements_receiver_group'],
+	[442, 'source_file_repeat1'],
+	[443, 'token_repetition_pattern_repeat1'],
+	[444, 'token_repetition_repeat1'],
+	[445, 'declaration_list_repeat1'],
+	[446, 'function_modifiers_repeat1'],
+	[447, 'trait_bounds_repeat1'],
+	[448, 'shorthand_field_initializer_repeat1'],
+	[449, 'last_match_arm_repeat1'],
+	[450, 'string_literal_repeat1'],
+	[451, 'macro_rules_repeat1'],
+	[452, 'enum_variant_list_elements_repeat1'],
+	[453, 'field_declaration_list_elements_repeat1'],
+	[454, 'ordered_field_declaration_list_elements_repeat1'],
+	[455, 'where_predicates_repeat1'],
+	[456, 'type_parameters_elements_repeat1'],
+	[457, 'use_clauses_repeat1'],
+	[458, 'parameters_elements_repeat1'],
+	[459, 'lifetimes_repeat1'],
+	[460, 'types_repeat1'],
+	[461, 'use_bounds_elements_repeat1'],
+	[462, 'type_arguments_elements_repeat1'],
+	[463, 'arguments_elements_repeat1'],
+	[464, 'field_initializer_list_elements_repeat1'],
+	[465, '_closure_parameters_optional1_repeat1'],
+	[466, 'tuple_pattern_elements_repeat1'],
+	[467, 'patterns_repeat1'],
+	[468, 'struct_pattern_elements_repeat1'],
+	[469, '_array_expression_list_elements_repeat1'],
+	[470, '_tuple_expression_elements_repeat1'],
+	[471, 'delim_token_tree_paren_repeat1'],
+	[472, '_match_block_arms_repeat1'],
+	[473, '_declaration_list_trait_item_repeat1'],
+	[474, '_declaration_list_impl_item_body_repeat1'],
+	[475, 'closure_parameter'],
+	[476, 'crate_visibility_modifier'],
+	[477, 'field_identifier'],
+	[479, 'method_declaration'],
+	[480, 'self_module'],
+	[481, 'shorthand_field_identifier'],
+	[482, 'signature_method_declaration'],
+	[483, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1104,7 +1102,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[479, 'let_chain'],
+	[478, 'let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1177,7 +1175,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[359, 'use_wildcard_group'],
 	[360, 'token_tree_punctuation'],
 	[361, '_token_keywords'],
-	[362, '_range_expression_bare'],
+	[362, '_range_expression_unbounded'],
 	[363, 'attributed_element'],
 	[364, 'array_expression_list_elements'],
 	[365, 'tuple_expression_elements'],
@@ -1205,10 +1203,10 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[387, 'or_pattern_prefix'],
 	[388, 'pointer_type_const'],
 	[389, 'pointer_type_mut'],
-	[390, 'range_expression_binary'],
-	[391, 'range_expression_postfix'],
-	[392, 'range_expression_prefix'],
-	[393, 'range_expression_bare'],
+	[390, 'range_expression_bounded'],
+	[391, 'range_expression_lower_bounded'],
+	[392, 'range_expression_upper_bounded'],
+	[393, 'range_expression_unbounded'],
 	[394, 'expression_statement_with_semi'],
 	[395, 'foreign_mod_item_semi'],
 	[396, 'foreign_mod_item_body'],
@@ -1234,71 +1232,70 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[416, 'macro_definition_paren'],
 	[417, 'macro_definition_bracket'],
 	[418, 'macro_definition_brace'],
-	[419, 'range_pattern_prefix'],
-	[420, 'range_pattern_with_left_with_right'],
-	[421, 'range_pattern_with_left_bare'],
-	[422, 'range_pattern_with_left'],
-	[423, 'struct_item_brace'],
-	[424, 'struct_item_tuple'],
-	[425, 'struct_item_unit'],
-	[426, 'wildcard_pattern'],
-	[427, 'attributed_field_declaration'],
-	[428, 'attributed_enum_variant'],
-	[429, 'attributed_parameter'],
-	[430, 'attributed_type_parameter'],
-	[431, 'argument'],
-	[432, 'attributed_ordered_field'],
-	[433, 'type_argument'],
-	[434, 'match_block_arms'],
-	[435, 'array_expression_semi'],
-	[436, 'array_expression_list'],
-	[437, 'trait_interface_declaration_body'],
-	[438, 'extension_declaration_body'],
-	[439, 'receiver_parameter_declaration'],
-	[440, 'attributed_parameter_receiver'],
-	[441, 'parameters_elements_receiver'],
-	[442, 'parameters_elements_receiver_group'],
-	[443, 'source_file_repeat1'],
-	[444, 'token_repetition_pattern_repeat1'],
-	[445, 'token_repetition_repeat1'],
-	[446, 'declaration_list_repeat1'],
-	[447, 'function_modifiers_repeat1'],
-	[448, 'trait_bounds_repeat1'],
-	[449, 'shorthand_field_initializer_repeat1'],
-	[450, 'last_match_arm_repeat1'],
-	[451, 'string_literal_repeat1'],
-	[452, 'macro_rules_repeat1'],
-	[453, 'enum_variant_list_elements_repeat1'],
-	[454, 'field_declaration_list_elements_repeat1'],
-	[455, 'ordered_field_declaration_list_elements_repeat1'],
-	[456, 'where_predicates_repeat1'],
-	[457, 'type_parameters_elements_repeat1'],
-	[458, 'use_clauses_repeat1'],
-	[459, 'parameters_elements_repeat1'],
-	[460, 'lifetimes_repeat1'],
-	[461, 'types_repeat1'],
-	[462, 'use_bounds_elements_repeat1'],
-	[463, 'type_arguments_elements_repeat1'],
-	[464, 'arguments_elements_repeat1'],
-	[465, 'field_initializer_list_elements_repeat1'],
-	[466, '_closure_parameters_optional1_repeat1'],
-	[467, 'tuple_pattern_elements_repeat1'],
-	[468, 'patterns_repeat1'],
-	[469, 'struct_pattern_elements_repeat1'],
-	[470, '_array_expression_list_elements_repeat1'],
-	[471, '_tuple_expression_elements_repeat1'],
-	[472, 'delim_token_tree_paren_repeat1'],
-	[473, '_match_block_arms_repeat1'],
-	[474, '_declaration_list_trait_item_repeat1'],
-	[475, '_declaration_list_impl_item_body_repeat1'],
-	[476, 'closure_parameter'],
-	[477, 'crate_visibility_modifier'],
-	[478, 'field_identifier'],
-	[480, 'method_declaration'],
-	[481, 'self_module'],
-	[482, 'shorthand_field_identifier'],
-	[483, 'signature_method_declaration'],
-	[484, 'type_identifier'],
+	[419, 'range_pattern_upper_bounded'],
+	[420, 'range_pattern_bounded'],
+	[421, 'range_pattern_lower_bounded'],
+	[422, 'struct_item_brace'],
+	[423, 'struct_item_tuple'],
+	[424, 'struct_item_unit'],
+	[425, 'wildcard_pattern'],
+	[426, 'attributed_field_declaration'],
+	[427, 'attributed_enum_variant'],
+	[428, 'attributed_parameter'],
+	[429, 'attributed_type_parameter'],
+	[430, 'argument'],
+	[431, 'attributed_ordered_field'],
+	[432, 'type_argument'],
+	[433, 'match_block_arms'],
+	[434, 'array_expression_semi'],
+	[435, 'array_expression_list'],
+	[436, 'trait_interface_declaration_body'],
+	[437, 'extension_declaration_body'],
+	[438, 'receiver_parameter_declaration'],
+	[439, 'attributed_parameter_receiver'],
+	[440, 'parameters_elements_receiver'],
+	[441, 'parameters_elements_receiver_group'],
+	[442, 'source_file_repeat1'],
+	[443, 'token_repetition_pattern_repeat1'],
+	[444, 'token_repetition_repeat1'],
+	[445, 'declaration_list_repeat1'],
+	[446, 'function_modifiers_repeat1'],
+	[447, 'trait_bounds_repeat1'],
+	[448, 'shorthand_field_initializer_repeat1'],
+	[449, 'last_match_arm_repeat1'],
+	[450, 'string_literal_repeat1'],
+	[451, 'macro_rules_repeat1'],
+	[452, 'enum_variant_list_elements_repeat1'],
+	[453, 'field_declaration_list_elements_repeat1'],
+	[454, 'ordered_field_declaration_list_elements_repeat1'],
+	[455, 'where_predicates_repeat1'],
+	[456, 'type_parameters_elements_repeat1'],
+	[457, 'use_clauses_repeat1'],
+	[458, 'parameters_elements_repeat1'],
+	[459, 'lifetimes_repeat1'],
+	[460, 'types_repeat1'],
+	[461, 'use_bounds_elements_repeat1'],
+	[462, 'type_arguments_elements_repeat1'],
+	[463, 'arguments_elements_repeat1'],
+	[464, 'field_initializer_list_elements_repeat1'],
+	[465, '_closure_parameters_optional1_repeat1'],
+	[466, 'tuple_pattern_elements_repeat1'],
+	[467, 'patterns_repeat1'],
+	[468, 'struct_pattern_elements_repeat1'],
+	[469, '_array_expression_list_elements_repeat1'],
+	[470, '_tuple_expression_elements_repeat1'],
+	[471, 'delim_token_tree_paren_repeat1'],
+	[472, '_match_block_arms_repeat1'],
+	[473, '_declaration_list_trait_item_repeat1'],
+	[474, '_declaration_list_impl_item_body_repeat1'],
+	[475, 'closure_parameter'],
+	[476, 'crate_visibility_modifier'],
+	[477, 'field_identifier'],
+	[479, 'method_declaration'],
+	[480, 'self_module'],
+	[481, 'shorthand_field_identifier'],
+	[482, 'signature_method_declaration'],
+	[483, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2029,8 +2026,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TokenTreePunctuation;
 		case '_token_keywords':
 			return TSKindId.TokenKeywords;
-		case '_range_expression_bare':
-			return TSKindId._RangeExpressionBare;
+		case '_range_expression_unbounded':
+			return TSKindId._RangeExpressionUnbounded;
 		case 'attributed_element':
 			return TSKindId.AttributedElement;
 		case 'array_expression_list_elements':
@@ -2085,14 +2082,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PointerTypeConst;
 		case 'pointer_type_mut':
 			return TSKindId.PointerTypeMut;
-		case 'range_expression_binary':
-			return TSKindId.RangeExpressionBinary;
-		case 'range_expression_postfix':
-			return TSKindId.RangeExpressionPostfix;
-		case 'range_expression_prefix':
-			return TSKindId.RangeExpressionPrefix;
-		case 'range_expression_bare':
-			return TSKindId.RangeExpressionBare;
+		case 'range_expression_bounded':
+			return TSKindId.RangeExpressionBounded;
+		case 'range_expression_lower_bounded':
+			return TSKindId.RangeExpressionLowerBounded;
+		case 'range_expression_upper_bounded':
+			return TSKindId.RangeExpressionUpperBounded;
+		case 'range_expression_unbounded':
+			return TSKindId.RangeExpressionUnbounded;
 		case 'expression_statement_with_semi':
 			return TSKindId.ExpressionStatementWithSemi;
 		case 'foreign_mod_item_semi':
@@ -2143,14 +2140,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MacroDefinitionBracket;
 		case 'macro_definition_brace':
 			return TSKindId.MacroDefinitionBrace;
-		case 'range_pattern_prefix':
-			return TSKindId.RangePatternPrefix;
-		case 'range_pattern_with_left_with_right':
-			return TSKindId.RangePatternWithLeftWithRight;
-		case 'range_pattern_with_left_bare':
-			return TSKindId.RangePatternWithLeftBare;
-		case 'range_pattern_with_left':
-			return TSKindId.RangePatternWithLeft;
+		case 'range_pattern_upper_bounded':
+			return TSKindId.RangePatternUpperBounded;
+		case 'range_pattern_bounded':
+			return TSKindId.RangePatternBounded;
+		case 'range_pattern_lower_bounded':
+			return TSKindId.RangePatternLowerBounded;
 		case 'struct_item_brace':
 			return TSKindId.StructItemBrace;
 		case 'struct_item_tuple':
@@ -2792,10 +2787,10 @@ export enum NonDelimTokenKind {
 }
 
 export enum RangeExpressionKind {
-	RangeExpressionBinary = 'range_expression_binary',
-	RangeExpressionPostfix = 'range_expression_postfix',
-	RangeExpressionPrefix = 'range_expression_prefix',
-	RangeExpressionBare = 'range_expression_bare'
+	RangeExpressionBounded = 'range_expression_bounded',
+	RangeExpressionLowerBounded = 'range_expression_lower_bounded',
+	RangeExpressionUpperBounded = 'range_expression_upper_bounded',
+	RangeExpressionUnbounded = 'range_expression_unbounded'
 }
 
 export enum ReferenceExpressionKind {
@@ -2853,8 +2848,9 @@ export enum FieldPatternKind {
 }
 
 export enum RangePatternKind {
-	RangePatternWithLeft = 'range_pattern_with_left',
-	RangePatternPrefix = 'range_pattern_prefix'
+	RangePatternBounded = 'range_pattern_bounded',
+	RangePatternLowerBounded = 'range_pattern_lower_bounded',
+	RangePatternUpperBounded = 'range_pattern_upper_bounded'
 }
 
 export enum OrPatternKind {
@@ -9955,8 +9951,8 @@ export interface PointerTypeMut {
 	readonly type: () => Type;
 }
 
-export interface RangeExpressionBinary {
-	readonly $type: TSKindId.RangeExpressionBinary;
+export interface RangeExpressionBounded {
+	readonly $type: TSKindId.RangeExpressionBounded;
 	readonly _start: Expression;
 	readonly _operator: TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq;
 	readonly _end: Expression;
@@ -9975,17 +9971,17 @@ export interface RangeExpressionBinary {
 			| Expression;
 	};
 	readonly __slotHints__?: {
-		readonly start: SlotHint<NonNullable<T.RangeExpressionBinary.Config>['start']>;
-		readonly operator: SlotHint<NonNullable<T.RangeExpressionBinary.Config>['operator']>;
-		readonly end: SlotHint<NonNullable<T.RangeExpressionBinary.Config>['end']>;
+		readonly start: SlotHint<NonNullable<T.RangeExpressionBounded.Config>['start']>;
+		readonly operator: SlotHint<NonNullable<T.RangeExpressionBounded.Config>['operator']>;
+		readonly end: SlotHint<NonNullable<T.RangeExpressionBounded.Config>['end']>;
 	};
 	readonly start: () => Expression;
 	readonly operator: () => TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq;
 	readonly end: () => Expression;
 }
 
-export interface RangeExpressionPostfix {
-	readonly $type: TSKindId.RangeExpressionPostfix;
+export interface RangeExpressionLowerBounded {
+	readonly $type: TSKindId.RangeExpressionLowerBounded;
 	readonly _start: Expression;
 	readonly __slotNames__?: {
 		readonly _start: 'start';
@@ -10001,8 +9997,8 @@ export interface RangeExpressionPostfix {
 	readonly start: () => Expression;
 }
 
-export interface RangeExpressionPrefix {
-	readonly $type: TSKindId.RangeExpressionPrefix;
+export interface RangeExpressionUpperBounded {
+	readonly $type: TSKindId.RangeExpressionUpperBounded;
 	readonly _end: Expression;
 	readonly __slotNames__?: {
 		readonly _end: 'end';
@@ -10018,8 +10014,8 @@ export interface RangeExpressionPrefix {
 	readonly end: () => Expression;
 }
 
-export interface RangeExpressionBare {
-	readonly $type: TSKindId.RangeExpressionBare;
+export interface RangeExpressionUnbounded {
+	readonly $type: TSKindId.RangeExpressionUnbounded;
 }
 
 export interface ExpressionStatementWithSemi {
@@ -10552,10 +10548,10 @@ export interface MacroDefinitionBrace {
 	readonly macroRules: () => readonly MacroRule[] | undefined;
 }
 
-export interface RangePatternPrefix {
-	readonly $type: TSKindId.RangePatternPrefix;
+export interface RangePatternUpperBounded {
+	readonly $type: TSKindId.RangePatternUpperBounded;
 	readonly _operator: TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly _right:
+	readonly _end:
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10565,11 +10561,11 @@ export interface RangePatternPrefix {
 		| ScopedIdentifier;
 	readonly __slotNames__?: {
 		readonly _operator: 'operator';
-		readonly _right: 'right';
+		readonly _end: 'end';
 	};
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'..=' | '..', TSKindId.DotDotEq | TSKindId.DotDot>;
-		readonly right:
+		readonly end:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
 					| TSKindId.TrueKeyword
@@ -10585,11 +10581,11 @@ export interface RangePatternPrefix {
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
-		readonly operator: SlotHint<NonNullable<T.RangePatternPrefix.Config>['operator']>;
-		readonly right: SlotHint<NonNullable<T.RangePatternPrefix.Config>['right']>;
+		readonly operator: SlotHint<NonNullable<T.RangePatternUpperBounded.Config>['operator']>;
+		readonly end: SlotHint<NonNullable<T.RangePatternUpperBounded.Config>['end']>;
 	};
 	readonly operator: () => TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly right: () =>
+	readonly end: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10599,10 +10595,18 @@ export interface RangePatternPrefix {
 		| ScopedIdentifier;
 }
 
-export interface RangePatternWithLeftWithRight {
-	readonly $type: TSKindId.RangePatternWithLeftWithRight;
+export interface RangePatternBounded {
+	readonly $type: TSKindId.RangePatternBounded;
+	readonly _start:
+		| LiteralPattern
+		| TSKindId.SelfModule
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier;
 	readonly _operator: TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly _right:
+	readonly _end:
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10611,12 +10615,27 @@ export interface RangePatternWithLeftWithRight {
 		| Identifier
 		| ScopedIdentifier;
 	readonly __slotNames__?: {
+		readonly _start: 'start';
 		readonly _operator: 'operator';
-		readonly _right: 'right';
+		readonly _end: 'end';
 	};
 	readonly __inputHints__?: {
+		readonly start:
+			| KindEnum<
+					'true' | 'false' | 'self' | 'super' | 'crate',
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.SelfModule
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.Self
+			  >
+			| LiteralPattern
+			| Metavariable
+			| Identifier
+			| ScopedIdentifier;
 		readonly operator: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
-		readonly right:
+		readonly end:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
 					| TSKindId.TrueKeyword
@@ -10632,11 +10651,20 @@ export interface RangePatternWithLeftWithRight {
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
-		readonly operator: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['operator']>;
-		readonly right: SlotHint<NonNullable<T.RangePatternWithLeftWithRight.Config>['right']>;
+		readonly start: SlotHint<NonNullable<T.RangePatternBounded.Config>['start']>;
+		readonly operator: SlotHint<NonNullable<T.RangePatternBounded.Config>['operator']>;
+		readonly end: SlotHint<NonNullable<T.RangePatternBounded.Config>['end']>;
 	};
+	readonly start: () =>
+		| LiteralPattern
+		| TSKindId.SelfModule
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier;
 	readonly operator: () => TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot;
-	readonly right: () =>
+	readonly end: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10646,9 +10674,9 @@ export interface RangePatternWithLeftWithRight {
 		| ScopedIdentifier;
 }
 
-export interface RangePatternWithLeft {
-	readonly $type: TSKindId.RangePatternWithLeft;
-	readonly _left:
+export interface RangePatternLowerBounded {
+	readonly $type: TSKindId.RangePatternLowerBounded;
+	readonly _start:
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10656,13 +10684,11 @@ export interface RangePatternWithLeft {
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier;
-	readonly _content: RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 	readonly __slotNames__?: {
-		readonly _left: 'left';
-		readonly _content: 'content';
+		readonly _start: 'start';
 	};
 	readonly __inputHints__?: {
-		readonly left:
+		readonly start:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
 					| TSKindId.TrueKeyword
@@ -10676,15 +10702,21 @@ export interface RangePatternWithLeft {
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
-		readonly content:
-			| KindEnum<'..', TSKindId.RangePatternWithLeftBare | TSKindId.DotDot>
-			| RangePatternWithLeftWithRight;
 	};
 	readonly __slotHints__?: {
-		readonly left: SlotHint<NonNullable<T.RangePatternWithLeft.Config>['left']>;
-		readonly content: SlotHint<NonNullable<T.RangePatternWithLeft.Config>['content']>;
+		readonly start: SlotHint<
+			NonNullable<
+				| T.LiteralPattern
+				| TSKindId.SelfModule
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+			>
+		>;
 	};
-	readonly left: () =>
+	readonly start: () =>
 		| LiteralPattern
 		| TSKindId.SelfModule
 		| Metavariable
@@ -10692,7 +10724,6 @@ export interface RangePatternWithLeft {
 		| TSKindId.Crate
 		| Identifier
 		| ScopedIdentifier;
-	readonly content: () => RangePatternWithLeftWithRight | TSKindId.RangePatternWithLeftBare;
 }
 
 export interface StructItemBrace {
@@ -11886,7 +11917,6 @@ export type CharLiteralEmpty = Terminal<TSKindId.CharLiteralEmpty, string>;
 export type LineCommentExtraSlashes = Terminal<TSKindId.LineCommentExtraSlashes, string>;
 export type LineCommentRegular = Terminal<TSKindId.LineCommentRegular, string>;
 export type BlockCommentRegular = Terminal<TSKindId.BlockCommentRegular, string>;
-export type RangePatternWithLeftBare = TSKindId.RangePatternWithLeftBare;
 export type WildcardPattern = TSKindId.WildcardPattern;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
@@ -12036,10 +12066,10 @@ export type Expression =
 export type DelimTokenTree = DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
 
 export type RangeExpression =
-	| RangeExpressionBinary
-	| RangeExpressionPostfix
-	| RangeExpressionPrefix
-	| RangeExpressionBare;
+	| RangeExpressionBounded
+	| RangeExpressionLowerBounded
+	| RangeExpressionUpperBounded
+	| RangeExpressionUnbounded;
 
 export type ReferenceExpression =
 	| ReferenceExpressionRawConst
@@ -12075,7 +12105,7 @@ export type Pattern =
 
 export type FieldPattern = FieldPatternShorthand | FieldPatternNamed;
 
-export type RangePattern = RangePatternWithLeft | RangePatternPrefix;
+export type RangePattern = RangePatternBounded | RangePatternLowerBounded | RangePatternUpperBounded;
 
 export type OrPattern = OrPatternBinary | OrPatternPrefix;
 
@@ -12518,9 +12548,9 @@ export interface OptionsHintMap {
 	orPatternPrefix: OrPatternPrefix.Hints;
 	pointerTypeConst: PointerTypeConst.Hints;
 	pointerTypeMut: PointerTypeMut.Hints;
-	rangeExpressionBinary: RangeExpressionBinary.Hints;
-	rangeExpressionPostfix: RangeExpressionPostfix.Hints;
-	rangeExpressionPrefix: RangeExpressionPrefix.Hints;
+	rangeExpressionBounded: RangeExpressionBounded.Hints;
+	rangeExpressionLowerBounded: RangeExpressionLowerBounded.Hints;
+	rangeExpressionUpperBounded: RangeExpressionUpperBounded.Hints;
 	expressionStatementWithSemi: ExpressionStatementWithSemi.Hints;
 	foreignModItemSemi: ForeignModItemSemi.Hints;
 	foreignModItemBody: ForeignModItemBody.Hints;
@@ -12540,9 +12570,9 @@ export interface OptionsHintMap {
 	macroDefinitionParen: MacroDefinitionParen.Hints;
 	macroDefinitionBracket: MacroDefinitionBracket.Hints;
 	macroDefinitionBrace: MacroDefinitionBrace.Hints;
-	rangePatternPrefix: RangePatternPrefix.Hints;
-	rangePatternWithLeftWithRight: RangePatternWithLeftWithRight.Hints;
-	rangePatternWithLeft: RangePatternWithLeft.Hints;
+	rangePatternUpperBounded: RangePatternUpperBounded.Hints;
+	rangePatternBounded: RangePatternBounded.Hints;
+	rangePatternLowerBounded: RangePatternLowerBounded.Hints;
 	structItemBrace: StructItemBrace.Hints;
 	structItemTuple: StructItemTuple.Hints;
 	structItemUnit: StructItemUnit.Hints;
@@ -13647,9 +13677,9 @@ export namespace LetChain {
 				readonly matchExpression?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
 				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionBounded?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionLowerBounded?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionUpperBounded?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionBare?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionMut?: { readonly after?: LayoutKindId };
@@ -14384,8 +14414,9 @@ export namespace TuplePatternElements {
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
 				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
-				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
-				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
+				readonly rangePatternBounded?: { readonly after?: LayoutKindId };
+				readonly rangePatternLowerBounded?: { readonly after?: LayoutKindId };
+				readonly rangePatternUpperBounded?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
@@ -14422,8 +14453,9 @@ export namespace Patterns {
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
 				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
-				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
-				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
+				readonly rangePatternBounded?: { readonly after?: LayoutKindId };
+				readonly rangePatternLowerBounded?: { readonly after?: LayoutKindId };
+				readonly rangePatternUpperBounded?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
@@ -14522,9 +14554,9 @@ export namespace ArrayExpressionListElements {
 				readonly matchExpression?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
 				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionBounded?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionLowerBounded?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionUpperBounded?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionBare?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionMut?: { readonly after?: LayoutKindId };
@@ -14586,9 +14618,9 @@ export namespace TupleExpressionElements {
 				readonly matchExpression?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
 				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
-				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionBounded?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionLowerBounded?: { readonly after?: LayoutKindId };
+				readonly rangeExpressionUpperBounded?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionBare?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionMut?: { readonly after?: LayoutKindId };
@@ -14841,7 +14873,7 @@ export namespace PointerTypeMut {
 	}
 }
 
-export namespace RangeExpressionBinary {
+export namespace RangeExpressionBounded {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -14851,7 +14883,7 @@ export namespace RangeExpressionBinary {
 	}
 }
 
-export namespace RangeExpressionPostfix {
+export namespace RangeExpressionLowerBounded {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -14861,7 +14893,7 @@ export namespace RangeExpressionPostfix {
 	}
 }
 
-export namespace RangeExpressionPrefix {
+export namespace RangeExpressionUpperBounded {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -15223,7 +15255,7 @@ export namespace MacroDefinitionBrace {
 	}
 }
 
-export namespace RangePatternPrefix {
+export namespace RangePatternUpperBounded {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -15234,7 +15266,7 @@ export namespace RangePatternPrefix {
 	}
 }
 
-export namespace RangePatternWithLeftWithRight {
+export namespace RangePatternBounded {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -15246,7 +15278,7 @@ export namespace RangePatternWithLeftWithRight {
 	}
 }
 
-export namespace RangePatternWithLeft {
+export namespace RangePatternLowerBounded {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
@@ -18204,63 +18236,63 @@ export interface PointerTypeMutNs extends NodeNs<
 	readonly BuildArgs: PointerTypeMut.BuildArgs;
 	readonly LooseArgs: PointerTypeMut.LooseArgs;
 }
-export interface RangeExpressionBinaryNs extends NodeNs<
-	RangeExpressionBinary,
+export interface RangeExpressionBoundedNs extends NodeNs<
+	RangeExpressionBounded,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangeExpressionBinary.Bound,
+	RangeExpressionBounded.Bound,
 	never,
-	TSKindId.RangeExpressionBinary,
-	RangeExpressionBinary.Parsed,
+	TSKindId.RangeExpressionBounded,
+	RangeExpressionBounded.Parsed,
 	never
 > {
-	readonly BuildArgs: RangeExpressionBinary.BuildArgs;
-	readonly LooseArgs: RangeExpressionBinary.LooseArgs;
+	readonly BuildArgs: RangeExpressionBounded.BuildArgs;
+	readonly LooseArgs: RangeExpressionBounded.LooseArgs;
 }
-export interface RangeExpressionPostfixNs extends NodeNs<
-	RangeExpressionPostfix,
+export interface RangeExpressionLowerBoundedNs extends NodeNs<
+	RangeExpressionLowerBounded,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangeExpressionPostfix.Bound,
+	RangeExpressionLowerBounded.Bound,
 	'start',
-	TSKindId.RangeExpressionPostfix,
-	RangeExpressionPostfix.Parsed,
+	TSKindId.RangeExpressionLowerBounded,
+	RangeExpressionLowerBounded.Parsed,
 	never,
 	never
 > {
-	readonly BuildArgs: RangeExpressionPostfix.BuildArgs;
-	readonly LooseArgs: RangeExpressionPostfix.LooseArgs;
+	readonly BuildArgs: RangeExpressionLowerBounded.BuildArgs;
+	readonly LooseArgs: RangeExpressionLowerBounded.LooseArgs;
 }
-export interface RangeExpressionPrefixNs extends NodeNs<
-	RangeExpressionPrefix,
+export interface RangeExpressionUpperBoundedNs extends NodeNs<
+	RangeExpressionUpperBounded,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangeExpressionPrefix.Bound,
+	RangeExpressionUpperBounded.Bound,
 	'end',
-	TSKindId.RangeExpressionPrefix,
-	RangeExpressionPrefix.Parsed,
+	TSKindId.RangeExpressionUpperBounded,
+	RangeExpressionUpperBounded.Parsed,
 	never,
 	never
 > {
-	readonly BuildArgs: RangeExpressionPrefix.BuildArgs;
-	readonly LooseArgs: RangeExpressionPrefix.LooseArgs;
+	readonly BuildArgs: RangeExpressionUpperBounded.BuildArgs;
+	readonly LooseArgs: RangeExpressionUpperBounded.LooseArgs;
 }
-export interface RangeExpressionBareNs extends NodeNs<
-	RangeExpressionBare,
+export interface RangeExpressionUnboundedNs extends NodeNs<
+	RangeExpressionUnbounded,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangeExpressionBare.Bound,
+	RangeExpressionUnbounded.Bound,
 	never,
-	TSKindId.RangeExpressionBare,
-	RangeExpressionBare.Parsed,
+	TSKindId.RangeExpressionUnbounded,
+	RangeExpressionUnbounded.Parsed,
 	never
 > {
-	readonly BuildArgs: RangeExpressionBare.BuildArgs;
-	readonly LooseArgs: RangeExpressionBare.LooseArgs;
+	readonly BuildArgs: RangeExpressionUnbounded.BuildArgs;
+	readonly LooseArgs: RangeExpressionUnbounded.LooseArgs;
 }
 export interface ExpressionStatementWithSemiNs extends NodeNs<
 	ExpressionStatementWithSemi,
@@ -18586,47 +18618,47 @@ export interface MacroDefinitionBraceNs extends NodeNs<
 	readonly BuildArgs: MacroDefinitionBrace.BuildArgs;
 	readonly LooseArgs: MacroDefinitionBrace.LooseArgs;
 }
-export interface RangePatternPrefixNs extends NodeNs<
-	RangePatternPrefix,
+export interface RangePatternUpperBoundedNs extends NodeNs<
+	RangePatternUpperBounded,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangePatternPrefix.Bound,
+	RangePatternUpperBounded.Bound,
 	never,
-	TSKindId.RangePatternPrefix,
-	RangePatternPrefix.Parsed,
+	TSKindId.RangePatternUpperBounded,
+	RangePatternUpperBounded.Parsed,
 	never
 > {
-	readonly BuildArgs: RangePatternPrefix.BuildArgs;
-	readonly LooseArgs: RangePatternPrefix.LooseArgs;
+	readonly BuildArgs: RangePatternUpperBounded.BuildArgs;
+	readonly LooseArgs: RangePatternUpperBounded.LooseArgs;
 }
-export interface RangePatternWithLeftWithRightNs extends NodeNs<
-	RangePatternWithLeftWithRight,
+export interface RangePatternBoundedNs extends NodeNs<
+	RangePatternBounded,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangePatternWithLeftWithRight.Bound,
+	RangePatternBounded.Bound,
 	never,
-	TSKindId.RangePatternWithLeftWithRight,
-	RangePatternWithLeftWithRight.Parsed,
+	TSKindId.RangePatternBounded,
+	RangePatternBounded.Parsed,
 	never
 > {
-	readonly BuildArgs: RangePatternWithLeftWithRight.BuildArgs;
-	readonly LooseArgs: RangePatternWithLeftWithRight.LooseArgs;
+	readonly BuildArgs: RangePatternBounded.BuildArgs;
+	readonly LooseArgs: RangePatternBounded.LooseArgs;
 }
-export interface RangePatternWithLeftNs extends NodeNs<
-	RangePatternWithLeft,
+export interface RangePatternLowerBoundedNs extends NodeNs<
+	RangePatternLowerBounded,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
-	RangePatternWithLeft.Bound,
-	never,
-	TSKindId.RangePatternWithLeft,
-	RangePatternWithLeft.Parsed,
+	RangePatternLowerBounded.Bound,
+	'start',
+	TSKindId.RangePatternLowerBounded,
+	RangePatternLowerBounded.Parsed,
 	never
 > {
-	readonly BuildArgs: RangePatternWithLeft.BuildArgs;
-	readonly LooseArgs: RangePatternWithLeft.LooseArgs;
+	readonly BuildArgs: RangePatternLowerBounded.BuildArgs;
+	readonly LooseArgs: RangePatternLowerBounded.LooseArgs;
 }
 export interface StructItemBraceNs extends NodeNs<
 	StructItemBrace,
@@ -19034,11 +19066,6 @@ export interface ImplItemUnsafeMarkerNs extends KeywordNs<
 	'unsafe',
 	TSKindId.ImplItemUnsafeMarker
 > {}
-export interface RangePatternWithLeftBareNs extends KeywordNs<
-	TSKindId.RangePatternWithLeftBare,
-	'..',
-	TSKindId.RangePatternWithLeftBare
-> {}
 export interface WildcardPatternNs extends KeywordNs<TSKindId.WildcardPattern, '_', TSKindId.WildcardPattern> {}
 export interface OuterDocCommentMarkerNs extends KeywordNs<
 	TSKindId.OuterDocCommentMarker,
@@ -19301,10 +19328,10 @@ export interface NamespaceMap {
 	[TSKindId.OrPatternPrefix]: OrPatternPrefixNs;
 	[TSKindId.PointerTypeConst]: PointerTypeConstNs;
 	[TSKindId.PointerTypeMut]: PointerTypeMutNs;
-	[TSKindId.RangeExpressionBinary]: RangeExpressionBinaryNs;
-	[TSKindId.RangeExpressionPostfix]: RangeExpressionPostfixNs;
-	[TSKindId.RangeExpressionPrefix]: RangeExpressionPrefixNs;
-	[TSKindId.RangeExpressionBare]: RangeExpressionBareNs;
+	[TSKindId.RangeExpressionBounded]: RangeExpressionBoundedNs;
+	[TSKindId.RangeExpressionLowerBounded]: RangeExpressionLowerBoundedNs;
+	[TSKindId.RangeExpressionUpperBounded]: RangeExpressionUpperBoundedNs;
+	[TSKindId.RangeExpressionUnbounded]: RangeExpressionUnboundedNs;
 	[TSKindId.ExpressionStatementWithSemi]: ExpressionStatementWithSemiNs;
 	[TSKindId.ForeignModItemSemi]: ForeignModItemSemiNs;
 	[TSKindId.ForeignModItemBody]: ForeignModItemBodyNs;
@@ -19328,9 +19355,9 @@ export interface NamespaceMap {
 	[TSKindId.MacroDefinitionParen]: MacroDefinitionParenNs;
 	[TSKindId.MacroDefinitionBracket]: MacroDefinitionBracketNs;
 	[TSKindId.MacroDefinitionBrace]: MacroDefinitionBraceNs;
-	[TSKindId.RangePatternPrefix]: RangePatternPrefixNs;
-	[TSKindId.RangePatternWithLeftWithRight]: RangePatternWithLeftWithRightNs;
-	[TSKindId.RangePatternWithLeft]: RangePatternWithLeftNs;
+	[TSKindId.RangePatternUpperBounded]: RangePatternUpperBoundedNs;
+	[TSKindId.RangePatternBounded]: RangePatternBoundedNs;
+	[TSKindId.RangePatternLowerBounded]: RangePatternLowerBoundedNs;
 	[TSKindId.StructItemBrace]: StructItemBraceNs;
 	[TSKindId.StructItemTuple]: StructItemTupleNs;
 	[TSKindId.StructItemUnit]: StructItemUnitNs;
@@ -19370,7 +19397,6 @@ export interface NamespaceMap {
 	[TSKindId.Super]: SuperNs;
 	[TSKindId.Crate]: CrateNs;
 	[TSKindId.ImplItemUnsafeMarker]: ImplItemUnsafeMarkerNs;
-	[TSKindId.RangePatternWithLeftBare]: RangePatternWithLeftBareNs;
 	[TSKindId.WildcardPattern]: WildcardPatternNs;
 	[TSKindId.OuterDocCommentMarker]: OuterDocCommentMarkerNs;
 	[TSKindId.InnerDocCommentMarker]: InnerDocCommentMarkerNs;
@@ -19582,10 +19608,10 @@ export interface BoundByKindId {
 	[TSKindId.OrPatternPrefix]: OrPatternPrefix.Bound;
 	[TSKindId.PointerTypeConst]: PointerTypeConst.Bound;
 	[TSKindId.PointerTypeMut]: PointerTypeMut.Bound;
-	[TSKindId.RangeExpressionBinary]: RangeExpressionBinary.Bound;
-	[TSKindId.RangeExpressionPostfix]: RangeExpressionPostfix.Bound;
-	[TSKindId.RangeExpressionPrefix]: RangeExpressionPrefix.Bound;
-	[TSKindId.RangeExpressionBare]: RangeExpressionBare.Bound;
+	[TSKindId.RangeExpressionBounded]: RangeExpressionBounded.Bound;
+	[TSKindId.RangeExpressionLowerBounded]: RangeExpressionLowerBounded.Bound;
+	[TSKindId.RangeExpressionUpperBounded]: RangeExpressionUpperBounded.Bound;
+	[TSKindId.RangeExpressionUnbounded]: RangeExpressionUnbounded.Bound;
 	[TSKindId.ExpressionStatementWithSemi]: ExpressionStatementWithSemi.Bound;
 	[TSKindId.ForeignModItemSemi]: ForeignModItemSemi.Bound;
 	[TSKindId.ForeignModItemBody]: ForeignModItemBody.Bound;
@@ -19609,9 +19635,9 @@ export interface BoundByKindId {
 	[TSKindId.MacroDefinitionParen]: MacroDefinitionParen.Bound;
 	[TSKindId.MacroDefinitionBracket]: MacroDefinitionBracket.Bound;
 	[TSKindId.MacroDefinitionBrace]: MacroDefinitionBrace.Bound;
-	[TSKindId.RangePatternPrefix]: RangePatternPrefix.Bound;
-	[TSKindId.RangePatternWithLeftWithRight]: RangePatternWithLeftWithRight.Bound;
-	[TSKindId.RangePatternWithLeft]: RangePatternWithLeft.Bound;
+	[TSKindId.RangePatternUpperBounded]: RangePatternUpperBounded.Bound;
+	[TSKindId.RangePatternBounded]: RangePatternBounded.Bound;
+	[TSKindId.RangePatternLowerBounded]: RangePatternLowerBounded.Bound;
 	[TSKindId.StructItemBrace]: StructItemBrace.Bound;
 	[TSKindId.StructItemTuple]: StructItemTuple.Bound;
 	[TSKindId.StructItemUnit]: StructItemUnit.Bound;
@@ -19837,10 +19863,10 @@ export interface ParsedByKindId {
 	[TSKindId.OrPatternPrefix]: OrPatternPrefix.Parsed;
 	[TSKindId.PointerTypeConst]: PointerTypeConst.Parsed;
 	[TSKindId.PointerTypeMut]: PointerTypeMut.Parsed;
-	[TSKindId.RangeExpressionBinary]: RangeExpressionBinary.Parsed;
-	[TSKindId.RangeExpressionPostfix]: RangeExpressionPostfix.Parsed;
-	[TSKindId.RangeExpressionPrefix]: RangeExpressionPrefix.Parsed;
-	[TSKindId.RangeExpressionBare]: RangeExpressionBare.Parsed;
+	[TSKindId.RangeExpressionBounded]: RangeExpressionBounded.Parsed;
+	[TSKindId.RangeExpressionLowerBounded]: RangeExpressionLowerBounded.Parsed;
+	[TSKindId.RangeExpressionUpperBounded]: RangeExpressionUpperBounded.Parsed;
+	[TSKindId.RangeExpressionUnbounded]: RangeExpressionUnbounded.Parsed;
 	[TSKindId.ExpressionStatementWithSemi]: ExpressionStatementWithSemi.Parsed;
 	[TSKindId.ForeignModItemSemi]: ForeignModItemSemi.Parsed;
 	[TSKindId.ForeignModItemBody]: ForeignModItemBody.Parsed;
@@ -19864,9 +19890,9 @@ export interface ParsedByKindId {
 	[TSKindId.MacroDefinitionParen]: MacroDefinitionParen.Parsed;
 	[TSKindId.MacroDefinitionBracket]: MacroDefinitionBracket.Parsed;
 	[TSKindId.MacroDefinitionBrace]: MacroDefinitionBrace.Parsed;
-	[TSKindId.RangePatternPrefix]: RangePatternPrefix.Parsed;
-	[TSKindId.RangePatternWithLeftWithRight]: RangePatternWithLeftWithRight.Parsed;
-	[TSKindId.RangePatternWithLeft]: RangePatternWithLeft.Parsed;
+	[TSKindId.RangePatternUpperBounded]: RangePatternUpperBounded.Parsed;
+	[TSKindId.RangePatternBounded]: RangePatternBounded.Parsed;
+	[TSKindId.RangePatternLowerBounded]: RangePatternLowerBounded.Parsed;
 	[TSKindId.StructItemBrace]: StructItemBrace.Parsed;
 	[TSKindId.StructItemTuple]: StructItemTuple.Parsed;
 	[TSKindId.StructItemUnit]: StructItemUnit.Parsed;
@@ -19923,9 +19949,8 @@ export type FixedTextKindId =
 	| TSKindId.Self
 	| TSKindId.Super
 	| TSKindId.Crate
-	| TSKindId._RangeExpressionBare
+	| TSKindId._RangeExpressionUnbounded
 	| TSKindId.ImplItemUnsafeMarker
-	| TSKindId.RangePatternWithLeftBare
 	| TSKindId.WildcardPattern
 	| TSKindId.OuterDocCommentMarker
 	| TSKindId.InnerDocCommentMarker
@@ -20248,10 +20273,10 @@ export interface TypeKeyOf {
 	[TSKindId.OrPatternPrefix]: 'orPatternPrefix';
 	[TSKindId.PointerTypeConst]: 'pointerTypeConst';
 	[TSKindId.PointerTypeMut]: 'pointerTypeMut';
-	[TSKindId.RangeExpressionBinary]: 'rangeExpressionBinary';
-	[TSKindId.RangeExpressionPostfix]: 'rangeExpressionPostfix';
-	[TSKindId.RangeExpressionPrefix]: 'rangeExpressionPrefix';
-	[TSKindId.RangeExpressionBare]: 'rangeExpressionBare';
+	[TSKindId.RangeExpressionBounded]: 'rangeExpressionBounded';
+	[TSKindId.RangeExpressionLowerBounded]: 'rangeExpressionLowerBounded';
+	[TSKindId.RangeExpressionUpperBounded]: 'rangeExpressionUpperBounded';
+	[TSKindId.RangeExpressionUnbounded]: 'rangeExpressionUnbounded';
 	[TSKindId.ExpressionStatementWithSemi]: 'expressionStatementWithSemi';
 	[TSKindId.ForeignModItemSemi]: 'foreignModItemSemi';
 	[TSKindId.ForeignModItemBody]: 'foreignModItemBody';
@@ -20275,9 +20300,9 @@ export interface TypeKeyOf {
 	[TSKindId.MacroDefinitionParen]: 'macroDefinitionParen';
 	[TSKindId.MacroDefinitionBracket]: 'macroDefinitionBracket';
 	[TSKindId.MacroDefinitionBrace]: 'macroDefinitionBrace';
-	[TSKindId.RangePatternPrefix]: 'rangePatternPrefix';
-	[TSKindId.RangePatternWithLeftWithRight]: 'rangePatternWithLeftWithRight';
-	[TSKindId.RangePatternWithLeft]: 'rangePatternWithLeft';
+	[TSKindId.RangePatternUpperBounded]: 'rangePatternUpperBounded';
+	[TSKindId.RangePatternBounded]: 'rangePatternBounded';
+	[TSKindId.RangePatternLowerBounded]: 'rangePatternLowerBounded';
 	[TSKindId.StructItemBrace]: 'structItemBrace';
 	[TSKindId.StructItemTuple]: 'structItemTuple';
 	[TSKindId.StructItemUnit]: 'structItemUnit';
@@ -20317,7 +20342,6 @@ export interface TypeKeyOf {
 	[TSKindId.Super]: 'super';
 	[TSKindId.Crate]: 'crate';
 	[TSKindId.ImplItemUnsafeMarker]: 'implItemUnsafeMarker';
-	[TSKindId.RangePatternWithLeftBare]: 'rangePatternWithLeftBare';
 	[TSKindId.WildcardPattern]: 'wildcardPattern';
 	[TSKindId.OuterDocCommentMarker]: 'outerDocCommentMarker';
 	[TSKindId.InnerDocCommentMarker]: 'innerDocCommentMarker';
@@ -25956,15 +25980,15 @@ export namespace PointerTypeMut {
 	export type LooseArgs = [value: T.PointerTypeMut.Loose];
 	export type Kind = TSKindId.PointerTypeMut;
 }
-export namespace RangeExpressionBinary {
-	export type Config = ConfigFor<TSKindId.RangeExpressionBinary>;
-	export interface Bound extends BoundOf<T.RangeExpressionBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RangeExpressionBinary['$type'];
+export namespace RangeExpressionBounded {
+	export type Config = ConfigFor<TSKindId.RangeExpressionBounded>;
+	export interface Bound extends BoundOf<T.RangeExpressionBounded, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RangeExpressionBounded['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.RangeExpressionBinary, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RangeExpressionBinary['$type'];
+		extends ParsedOf<T.RangeExpressionBounded, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RangeExpressionBounded['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -25973,23 +25997,23 @@ export namespace RangeExpressionBinary {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.RangeExpressionBinary['$type']>;
+		readonly $snapshot: () => Snapshot<T.RangeExpressionBounded['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RangeExpressionBinary>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionBinary>;
-	export type BuildArgs = [config: ConfigOf<T.RangeExpressionBinary>];
-	export type LooseArgs = [config: T.RangeExpressionBinary.Loose];
-	export type Kind = TSKindId.RangeExpressionBinary;
+	export type Loose = LooseFor<TSKindId.RangeExpressionBounded>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionBounded>;
+	export type BuildArgs = [config: ConfigOf<T.RangeExpressionBounded>];
+	export type LooseArgs = [config: T.RangeExpressionBounded.Loose];
+	export type Kind = TSKindId.RangeExpressionBounded;
 }
-export namespace RangeExpressionPostfix {
-	export type Config = ConfigFor<TSKindId.RangeExpressionPostfix>;
-	export interface Bound extends BoundOf<T.RangeExpressionPostfix, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RangeExpressionPostfix['$type'];
+export namespace RangeExpressionLowerBounded {
+	export type Config = ConfigFor<TSKindId.RangeExpressionLowerBounded>;
+	export interface Bound extends BoundOf<T.RangeExpressionLowerBounded, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RangeExpressionLowerBounded['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.RangeExpressionPostfix, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RangeExpressionPostfix['$type'];
+		extends ParsedOf<T.RangeExpressionLowerBounded, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RangeExpressionLowerBounded['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -25998,23 +26022,23 @@ export namespace RangeExpressionPostfix {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.RangeExpressionPostfix['$type']>;
+		readonly $snapshot: () => Snapshot<T.RangeExpressionLowerBounded['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RangeExpressionPostfix>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionPostfix>;
+	export type Loose = LooseFor<TSKindId.RangeExpressionLowerBounded>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionLowerBounded>;
 	export type BuildArgs = [value: Admit<T.Expression>];
-	export type LooseArgs = [value: T.RangeExpressionPostfix.Loose];
-	export type Kind = TSKindId.RangeExpressionPostfix;
+	export type LooseArgs = [value: T.RangeExpressionLowerBounded.Loose];
+	export type Kind = TSKindId.RangeExpressionLowerBounded;
 }
-export namespace RangeExpressionPrefix {
-	export type Config = ConfigFor<TSKindId.RangeExpressionPrefix>;
-	export interface Bound extends BoundOf<T.RangeExpressionPrefix, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RangeExpressionPrefix['$type'];
+export namespace RangeExpressionUpperBounded {
+	export type Config = ConfigFor<TSKindId.RangeExpressionUpperBounded>;
+	export interface Bound extends BoundOf<T.RangeExpressionUpperBounded, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RangeExpressionUpperBounded['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.RangeExpressionPrefix, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RangeExpressionPrefix['$type'];
+		extends ParsedOf<T.RangeExpressionUpperBounded, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RangeExpressionUpperBounded['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -26023,23 +26047,23 @@ export namespace RangeExpressionPrefix {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.RangeExpressionPrefix['$type']>;
+		readonly $snapshot: () => Snapshot<T.RangeExpressionUpperBounded['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RangeExpressionPrefix>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionPrefix>;
+	export type Loose = LooseFor<TSKindId.RangeExpressionUpperBounded>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionUpperBounded>;
 	export type BuildArgs = [value: Admit<T.Expression>];
-	export type LooseArgs = [value: T.RangeExpressionPrefix.Loose];
-	export type Kind = TSKindId.RangeExpressionPrefix;
+	export type LooseArgs = [value: T.RangeExpressionUpperBounded.Loose];
+	export type Kind = TSKindId.RangeExpressionUpperBounded;
 }
-export namespace RangeExpressionBare {
-	export type Config = ConfigFor<TSKindId.RangeExpressionBare>;
-	export interface Bound extends BoundOf<T.RangeExpressionBare, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RangeExpressionBare['$type'];
+export namespace RangeExpressionUnbounded {
+	export type Config = ConfigFor<TSKindId.RangeExpressionUnbounded>;
+	export interface Bound extends BoundOf<T.RangeExpressionUnbounded, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RangeExpressionUnbounded['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.RangeExpressionBare, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RangeExpressionBare['$type'];
+		extends ParsedOf<T.RangeExpressionUnbounded, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RangeExpressionUnbounded['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -26048,13 +26072,13 @@ export namespace RangeExpressionBare {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.RangeExpressionBare['$type']>;
+		readonly $snapshot: () => Snapshot<T.RangeExpressionUnbounded['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RangeExpressionBare>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionBare>;
+	export type Loose = LooseFor<TSKindId.RangeExpressionUnbounded>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangeExpressionUnbounded>;
 	export type BuildArgs = [];
-	export type LooseArgs = [input?: T.RangeExpressionBare.Loose];
-	export type Kind = TSKindId.RangeExpressionBare;
+	export type LooseArgs = [input?: T.RangeExpressionUnbounded.Loose];
+	export type Kind = TSKindId.RangeExpressionUnbounded;
 }
 export namespace ExpressionStatementWithSemi {
 	export type Config = ConfigFor<TSKindId.ExpressionStatementWithSemi>;
@@ -26901,15 +26925,15 @@ export namespace MacroDefinitionBrace {
 	];
 	export type Kind = TSKindId.MacroDefinitionBrace;
 }
-export namespace RangePatternPrefix {
-	export type Config = ConfigFor<TSKindId.RangePatternPrefix>;
-	export interface Bound extends BoundOf<T.RangePatternPrefix, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RangePatternPrefix['$type'];
+export namespace RangePatternUpperBounded {
+	export type Config = ConfigFor<TSKindId.RangePatternUpperBounded>;
+	export interface Bound extends BoundOf<T.RangePatternUpperBounded, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RangePatternUpperBounded['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.RangePatternPrefix, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RangePatternPrefix['$type'];
+		extends ParsedOf<T.RangePatternUpperBounded, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RangePatternUpperBounded['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -26918,23 +26942,23 @@ export namespace RangePatternPrefix {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.RangePatternPrefix['$type']>;
+		readonly $snapshot: () => Snapshot<T.RangePatternUpperBounded['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RangePatternPrefix>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternPrefix>;
-	export type BuildArgs = [config: ConfigOf<T.RangePatternPrefix>];
-	export type LooseArgs = [config: T.RangePatternPrefix.Loose];
-	export type Kind = TSKindId.RangePatternPrefix;
+	export type Loose = LooseFor<TSKindId.RangePatternUpperBounded>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternUpperBounded>;
+	export type BuildArgs = [config: ConfigOf<T.RangePatternUpperBounded>];
+	export type LooseArgs = [config: T.RangePatternUpperBounded.Loose];
+	export type Kind = TSKindId.RangePatternUpperBounded;
 }
-export namespace RangePatternWithLeftWithRight {
-	export type Config = ConfigFor<TSKindId.RangePatternWithLeftWithRight>;
-	export interface Bound extends BoundOf<T.RangePatternWithLeftWithRight, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RangePatternWithLeftWithRight['$type'];
+export namespace RangePatternBounded {
+	export type Config = ConfigFor<TSKindId.RangePatternBounded>;
+	export interface Bound extends BoundOf<T.RangePatternBounded, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RangePatternBounded['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.RangePatternWithLeftWithRight, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RangePatternWithLeftWithRight['$type'];
+		extends ParsedOf<T.RangePatternBounded, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RangePatternBounded['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -26943,23 +26967,23 @@ export namespace RangePatternWithLeftWithRight {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.RangePatternWithLeftWithRight['$type']>;
+		readonly $snapshot: () => Snapshot<T.RangePatternBounded['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RangePatternWithLeftWithRight>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternWithLeftWithRight>;
-	export type BuildArgs = [config: ConfigOf<T.RangePatternWithLeftWithRight>];
-	export type LooseArgs = [config: T.RangePatternWithLeftWithRight.Loose];
-	export type Kind = TSKindId.RangePatternWithLeftWithRight;
+	export type Loose = LooseFor<TSKindId.RangePatternBounded>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternBounded>;
+	export type BuildArgs = [config: ConfigOf<T.RangePatternBounded>];
+	export type LooseArgs = [config: T.RangePatternBounded.Loose];
+	export type Kind = TSKindId.RangePatternBounded;
 }
-export namespace RangePatternWithLeft {
-	export type Config = ConfigFor<TSKindId.RangePatternWithLeft>;
-	export interface Bound extends BoundOf<T.RangePatternWithLeft, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.RangePatternWithLeft['$type'];
+export namespace RangePatternLowerBounded {
+	export type Config = ConfigFor<TSKindId.RangePatternLowerBounded>;
+	export interface Bound extends BoundOf<T.RangePatternLowerBounded, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.RangePatternLowerBounded['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.RangePatternWithLeft, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.RangePatternWithLeft['$type'];
+		extends ParsedOf<T.RangePatternLowerBounded, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.RangePatternLowerBounded['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
 			this,
@@ -26968,13 +26992,23 @@ export namespace RangePatternWithLeft {
 			KindMembers,
 			FixedTextKindId
 		>;
-		readonly $snapshot: () => Snapshot<T.RangePatternWithLeft['$type']>;
+		readonly $snapshot: () => Snapshot<T.RangePatternLowerBounded['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RangePatternWithLeft>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternWithLeft>;
-	export type BuildArgs = [config: ConfigOf<T.RangePatternWithLeft>];
-	export type LooseArgs = [config: T.RangePatternWithLeft.Loose];
-	export type Kind = TSKindId.RangePatternWithLeft;
+	export type Loose = LooseFor<TSKindId.RangePatternLowerBounded>;
+	export type LooseConfig = LooseConfigFor<TSKindId.RangePatternLowerBounded>;
+	export type BuildArgs = [
+		value: Admit<
+			| T.LiteralPattern
+			| TSKindId.SelfModule
+			| T.Metavariable
+			| TSKindId.Super
+			| TSKindId.Crate
+			| T.Identifier
+			| T.ScopedIdentifier
+		>
+	];
+	export type LooseArgs = [value: T.RangePatternLowerBounded.Loose];
+	export type Kind = TSKindId.RangePatternLowerBounded;
 }
 export namespace StructItemBrace {
 	export type Config = ConfigFor<TSKindId.StructItemBrace>;
@@ -27858,16 +27892,6 @@ export namespace ImplItemUnsafeMarker {
 	export type BuildArgs = ImplItemUnsafeMarkerNs['BuildArgs'];
 	export type LooseArgs = ImplItemUnsafeMarkerNs['LooseArgs'];
 	export type Kind = TSKindId.ImplItemUnsafeMarker;
-}
-export namespace RangePatternWithLeftBare {
-	export type Config = RangePatternWithLeftBareNs['Config'];
-	export type Bound = RangePatternWithLeftBareNs['Bound'];
-	export type Parsed = RangePatternWithLeftBareNs['Bound'];
-	export type Loose = RangePatternWithLeftBareNs['Loose'];
-	export type LooseConfig = RangePatternWithLeftBareNs['LooseConfig'];
-	export type BuildArgs = RangePatternWithLeftBareNs['BuildArgs'];
-	export type LooseArgs = RangePatternWithLeftBareNs['LooseArgs'];
-	export type Kind = TSKindId.RangePatternWithLeftBare;
 }
 export namespace WildcardPattern {
 	export type Config = WildcardPatternNs['Config'];

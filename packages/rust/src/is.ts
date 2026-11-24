@@ -149,19 +149,19 @@ export interface KindMembers {
 		| TSKindId.LoopExpression
 		| TSKindId.ForExpression
 		| TSKindId.ConstBlock
-		| TSKindId.RangeExpressionBinary
-		| TSKindId.RangeExpressionPostfix
-		| TSKindId.RangeExpressionPrefix
-		| TSKindId.RangeExpressionBare;
+		| TSKindId.RangeExpressionBounded
+		| TSKindId.RangeExpressionLowerBounded
+		| TSKindId.RangeExpressionUpperBounded
+		| TSKindId.RangeExpressionUnbounded;
 	[TSKindId.DelimTokenTree]:
 		| TSKindId.DelimTokenTreeParen
 		| TSKindId.DelimTokenTreeBracket
 		| TSKindId.DelimTokenTreeBrace;
 	[TSKindId.RangeExpression]:
-		| TSKindId.RangeExpressionBinary
-		| TSKindId.RangeExpressionPostfix
-		| TSKindId.RangeExpressionPrefix
-		| TSKindId.RangeExpressionBare;
+		| TSKindId.RangeExpressionBounded
+		| TSKindId.RangeExpressionLowerBounded
+		| TSKindId.RangeExpressionUpperBounded
+		| TSKindId.RangeExpressionUnbounded;
 	[TSKindId.ReferenceExpression]:
 		| TSKindId.ReferenceExpressionRawConst
 		| TSKindId.ReferenceExpressionRawMut
@@ -199,15 +199,19 @@ export interface KindMembers {
 		| TSKindId.ReferencePattern
 		| TSKindId.RemainingFieldPattern
 		| TSKindId.MutPattern
-		| TSKindId.RangePatternWithLeft
-		| TSKindId.RangePatternPrefix
+		| TSKindId.RangePatternBounded
+		| TSKindId.RangePatternLowerBounded
+		| TSKindId.RangePatternUpperBounded
 		| TSKindId.OrPatternBinary
 		| TSKindId.OrPatternPrefix
 		| TSKindId.ConstBlock
 		| TSKindId.MacroInvocation
 		| TSKindId.WildcardPattern;
 	[TSKindId.FieldPattern]: TSKindId.FieldPatternShorthand | TSKindId.FieldPatternNamed;
-	[TSKindId.RangePattern]: TSKindId.RangePatternWithLeft | TSKindId.RangePatternPrefix;
+	[TSKindId.RangePattern]:
+		| TSKindId.RangePatternBounded
+		| TSKindId.RangePatternLowerBounded
+		| TSKindId.RangePatternUpperBounded;
 	[TSKindId.OrPattern]: TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
 	[TSKindId.Literal]:
 		| TSKindId.StringLiteral
@@ -981,18 +985,18 @@ export interface IsGuards {
 	pointerTypeMut<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PointerTypeMut };
-	rangeExpressionBinary<T extends { readonly $type: number } | number>(
+	rangeExpressionBounded<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBinary };
-	rangeExpressionPostfix<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBounded };
+	rangeExpressionLowerBounded<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPostfix };
-	rangeExpressionPrefix<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionLowerBounded };
+	rangeExpressionUpperBounded<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPrefix };
-	rangeExpressionBare<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionUpperBounded };
+	rangeExpressionUnbounded<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBare };
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionUnbounded };
 	expressionStatementWithSemi<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExpressionStatementWithSemi };
@@ -1062,19 +1066,15 @@ export interface IsGuards {
 	macroDefinitionBrace<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.MacroDefinitionBrace };
-	rangePatternPrefix<T extends { readonly $type: number } | number>(
+	rangePatternUpperBounded<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternPrefix };
-	rangePatternWithLeftWithRight<T extends { readonly $type: number } | number>(
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternUpperBounded };
+	rangePatternBounded<T extends { readonly $type: number } | number>(
 		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeftWithRight };
-	readonly rangePatternWithLeft: {
-		<T extends { readonly $type: number } | number>(
-			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
-		withRight<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
-		bare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
-	};
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternBounded };
+	rangePatternLowerBounded<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternLowerBounded };
 	structItemBrace<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StructItemBrace };
@@ -1344,18 +1344,18 @@ export interface IsGuards {
 	};
 	readonly rangeExpression: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.RangeExpression]>;
-		binary<T extends { readonly $type: number } | number>(
+		bounded<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBinary };
-		postfix<T extends { readonly $type: number } | number>(
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBounded };
+		lowerBounded<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPostfix };
-		prefix<T extends { readonly $type: number } | number>(
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionLowerBounded };
+		upperBounded<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionPrefix };
-		bare<T extends { readonly $type: number } | number>(
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionUpperBounded };
+		unbounded<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionBare };
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangeExpressionUnbounded };
 	};
 	readonly referenceExpression: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.ReferenceExpression]>;
@@ -1411,16 +1411,15 @@ export interface IsGuards {
 	};
 	readonly rangePattern: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.RangePattern]>;
-		readonly withLeft: {
-			<T extends { readonly $type: number } | number>(
-				v: T
-			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternWithLeft };
-			withRight<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
-			bare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePatternWithLeft };
-		};
-		prefix<T extends { readonly $type: number } | number>(
+		bounded<T extends { readonly $type: number } | number>(
 			v: T
-		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternPrefix };
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternBounded };
+		lowerBounded<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternLowerBounded };
+		upperBounded<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RangePatternUpperBounded };
 	};
 	readonly orPattern: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.OrPattern]>;
@@ -1578,9 +1577,6 @@ export interface IsGuards {
 	blockCommentRegular<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockCommentRegular };
-	rangePatternWithLeftBare<T extends { readonly $type: number } | number>(
-		v: T
-	): v is NarrowTo<T, TSKindId.RangePatternWithLeftBare>;
 	wildcardPattern<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.WildcardPattern>;
 	floatLiteral<T extends { readonly $type: number } | number>(
 		v: T
@@ -1613,11 +1609,11 @@ export interface IsGuards {
 }
 
 const _supertype_statement_ids = new Set<number>([
-	179, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 208, 209, 377, 378,
+	179, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 422, 423, 424, 197, 198, 207, 208, 209, 377, 378,
 	214, 215, 223, 224, 204, 206
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
-	205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 208, 209, 377, 378, 214,
+	205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 422, 423, 424, 197, 198, 207, 208, 209, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 const _supertype_macroDefinition_ids = new Set<number>([416, 417, 418]);
@@ -1625,30 +1621,30 @@ const _supertype_tokenTreePattern_ids = new Set<number>([405, 406, 407]);
 const _supertype_tokenTree_ids = new Set<number>([408, 409, 410]);
 const _supertype_modItem_ids = new Set<number>([384, 385]);
 const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
-const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
+const _supertype_structItem_ids = new Set<number>([422, 423, 424]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	263, 484, 255, 252, 131, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
+	263, 483, 255, 252, 131, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
 	66, 67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
 	263, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 118,
-	119, 141, 142, 143, 144, 162, 1, 128, 245, 307, 308, 435, 436, 280, 259, 281, 304, 305, 306, 131, 369, 370, 279, 282,
+	119, 141, 142, 143, 144, 162, 1, 128, 245, 307, 308, 434, 435, 280, 259, 281, 304, 305, 306, 131, 369, 370, 279, 282,
 	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([411, 412, 413]);
 const _supertype_rangeExpression_ids = new Set<number>([390, 391, 392, 393]);
 const _supertype_referenceExpression_ids = new Set<number>([371, 372, 373, 374]);
-const _supertype_arrayExpression_ids = new Set<number>([435, 436]);
+const _supertype_arrayExpression_ids = new Set<number>([434, 435]);
 const _supertype_matchArm_ids = new Set<number>([397, 398]);
 const _supertype_closureExpression_ids = new Set<number>([369, 370]);
 const _supertype_pattern_ids = new Set<number>([
 	263, 332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162, 330, 1, 315, 316, 318, 319, 324, 317,
-	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
+	325, 326, 321, 322, 420, 421, 419, 386, 387, 300, 259, 425
 ]);
 const _supertype_fieldPattern_ids = new Set<number>([414, 415]);
-const _supertype_rangePattern_ids = new Set<number>([422, 419]);
+const _supertype_rangePattern_ids = new Set<number>([420, 421, 419]);
 const _supertype_orPattern_ids = new Set<number>([386, 387]);
 const _supertype_literal_ids = new Set<number>([
 	332, 333, 147, 148, 149, 150, 145, 146, 118, 119, 141, 142, 143, 144, 162
@@ -1663,11 +1659,11 @@ const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_declarationStatementTraitItem_ids = new Set<number>([
-	480, 483, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
+	479, 482, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 422, 423, 424, 197, 198, 207, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 const _supertype_declarationStatementImplItemBody_ids = new Set<number>([
-	480, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 209, 377, 378, 214,
+	479, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 422, 423, 424, 197, 198, 207, 209, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 
@@ -1810,10 +1806,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_DelimTokenTreeParen_guard = _g(TSKindId.DelimTokenTreeParen);
 	const _kind_DelimTokenTreeBracket_guard = _g(TSKindId.DelimTokenTreeBracket);
 	const _kind_DelimTokenTreeBrace_guard = _g(TSKindId.DelimTokenTreeBrace);
-	const _kind_RangeExpressionBinary_guard = _g(TSKindId.RangeExpressionBinary);
-	const _kind_RangeExpressionPostfix_guard = _g(TSKindId.RangeExpressionPostfix);
-	const _kind_RangeExpressionPrefix_guard = _g(TSKindId.RangeExpressionPrefix);
-	const _kind_RangeExpressionBare_guard = _g(TSKindId.RangeExpressionBare);
+	const _kind_RangeExpressionBounded_guard = _g(TSKindId.RangeExpressionBounded);
+	const _kind_RangeExpressionLowerBounded_guard = _g(TSKindId.RangeExpressionLowerBounded);
+	const _kind_RangeExpressionUpperBounded_guard = _g(TSKindId.RangeExpressionUpperBounded);
+	const _kind_RangeExpressionUnbounded_guard = _g(TSKindId.RangeExpressionUnbounded);
 	const _kind_ReferenceExpressionRawConst_guard = _g(TSKindId.ReferenceExpressionRawConst);
 	const _kind_ReferenceExpressionRawMut_guard = _g(TSKindId.ReferenceExpressionRawMut);
 	const _kind_ReferenceExpressionMut_guard = _g(TSKindId.ReferenceExpressionMut);
@@ -1826,10 +1822,9 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ClosureExpressionExpr_guard = _g(TSKindId.ClosureExpressionExpr);
 	const _kind_FieldPatternShorthand_guard = _g(TSKindId.FieldPatternShorthand);
 	const _kind_FieldPatternNamed_guard = _g(TSKindId.FieldPatternNamed);
-	const _kind_RangePatternWithLeftWithRight_guard = _g(TSKindId.RangePatternWithLeftWithRight);
-	const _kind_RangePatternWithLeft_guard = _g(TSKindId.RangePatternWithLeft);
-	const _kind_RangePatternWithLeftBare_guard = _mg(TSKindId.RangePatternWithLeftBare);
-	const _kind_RangePatternPrefix_guard = _g(TSKindId.RangePatternPrefix);
+	const _kind_RangePatternBounded_guard = _g(TSKindId.RangePatternBounded);
+	const _kind_RangePatternLowerBounded_guard = _g(TSKindId.RangePatternLowerBounded);
+	const _kind_RangePatternUpperBounded_guard = _g(TSKindId.RangePatternUpperBounded);
 	const _kind_OrPatternBinary_guard = _g(TSKindId.OrPatternBinary);
 	const _kind_OrPatternPrefix_guard = _g(TSKindId.OrPatternPrefix);
 	const _kind_IntegerLiteralDecimal_guard = _g(TSKindId.IntegerLiteralDecimal);
@@ -2046,10 +2041,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_DocComment_guard = _g(TSKindId.DocComment);
 	const _kind_BlockCommentContent_guard = _g(TSKindId.BlockCommentContent);
 	const _kind_ErrorSentinel_guard = _g(TSKindId.ErrorSentinel);
-	const _form_RangePatternWithLeft_guard = _vg(_g(TSKindId.RangePatternWithLeft), {
-		withRight: _at(_kind_RangePatternWithLeft_guard, 'content', _kind_RangePatternWithLeftWithRight_guard),
-		bare: _at(_kind_RangePatternWithLeft_guard, 'content', _kind_RangePatternWithLeftBare_guard)
-	});
 	const _form_LineComment_guard = _vg(_g(TSKindId.LineComment), {
 		extraSlashes: _at(_kind_LineComment_guard, 'content', _kind_LineCommentExtraSlashes_guard),
 		docOuter: _at(_kind_LineComment_guard, 'content', _kind_LineCommentDocOuter_guard),
@@ -2144,10 +2135,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		brace: _kind_DelimTokenTreeBrace_guard
 	});
 	const _supertype_rangeExpression_guard = _vg(_mg(266), {
-		binary: _kind_RangeExpressionBinary_guard,
-		postfix: _kind_RangeExpressionPostfix_guard,
-		prefix: _kind_RangeExpressionPrefix_guard,
-		bare: _kind_RangeExpressionBare_guard
+		bounded: _kind_RangeExpressionBounded_guard,
+		lowerBounded: _kind_RangeExpressionLowerBounded_guard,
+		upperBounded: _kind_RangeExpressionUpperBounded_guard,
+		unbounded: _kind_RangeExpressionUnbounded_guard
 	});
 	const _supertype_referenceExpression_guard = _vg(_mg(269), {
 		rawConst: _kind_ReferenceExpressionRawConst_guard,
@@ -2172,8 +2163,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		named: _kind_FieldPatternNamed_guard
 	});
 	const _supertype_rangePattern_guard = _vg(_mg(323), {
-		withLeft: _form_RangePatternWithLeft_guard,
-		prefix: _kind_RangePatternPrefix_guard
+		bounded: _kind_RangePatternBounded_guard,
+		lowerBounded: _kind_RangePatternLowerBounded_guard,
+		upperBounded: _kind_RangePatternUpperBounded_guard
 	});
 	const _supertype_orPattern_guard = _vg(_mg(327), {
 		binary: _kind_OrPatternBinary_guard,
@@ -2412,10 +2404,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		orPatternPrefix: _kind_OrPatternPrefix_guard,
 		pointerTypeConst: _kind_PointerTypeConst_guard,
 		pointerTypeMut: _kind_PointerTypeMut_guard,
-		rangeExpressionBinary: _kind_RangeExpressionBinary_guard,
-		rangeExpressionPostfix: _kind_RangeExpressionPostfix_guard,
-		rangeExpressionPrefix: _kind_RangeExpressionPrefix_guard,
-		rangeExpressionBare: _kind_RangeExpressionBare_guard,
+		rangeExpressionBounded: _kind_RangeExpressionBounded_guard,
+		rangeExpressionLowerBounded: _kind_RangeExpressionLowerBounded_guard,
+		rangeExpressionUpperBounded: _kind_RangeExpressionUpperBounded_guard,
+		rangeExpressionUnbounded: _kind_RangeExpressionUnbounded_guard,
 		expressionStatementWithSemi: _kind_ExpressionStatementWithSemi_guard,
 		foreignModItemSemi: _kind_ForeignModItemSemi_guard,
 		foreignModItemBody: _kind_ForeignModItemBody_guard,
@@ -2439,9 +2431,9 @@ export function guardsWith(test: KindTest): IsGuards {
 		macroDefinitionParen: _kind_MacroDefinitionParen_guard,
 		macroDefinitionBracket: _kind_MacroDefinitionBracket_guard,
 		macroDefinitionBrace: _kind_MacroDefinitionBrace_guard,
-		rangePatternPrefix: _kind_RangePatternPrefix_guard,
-		rangePatternWithLeftWithRight: _kind_RangePatternWithLeftWithRight_guard,
-		rangePatternWithLeft: _form_RangePatternWithLeft_guard,
+		rangePatternUpperBounded: _kind_RangePatternUpperBounded_guard,
+		rangePatternBounded: _kind_RangePatternBounded_guard,
+		rangePatternLowerBounded: _kind_RangePatternLowerBounded_guard,
 		structItemBrace: _kind_StructItemBrace_guard,
 		structItemTuple: _kind_StructItemTuple_guard,
 		structItemUnit: _kind_StructItemUnit_guard,
@@ -2523,7 +2515,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		lineCommentExtraSlashes: _kind_LineCommentExtraSlashes_guard,
 		lineCommentRegular: _kind_LineCommentRegular_guard,
 		blockCommentRegular: _kind_BlockCommentRegular_guard,
-		rangePatternWithLeftBare: _kind_RangePatternWithLeftBare_guard,
 		wildcardPattern: _kind_WildcardPattern_guard,
 		floatLiteral: _kind_FloatLiteral_guard,
 		stringContent: _kind_StringContent_guard,

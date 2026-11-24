@@ -202,7 +202,7 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('clause.bounds.removed.type', value);
 	}
@@ -212,7 +212,7 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -226,8 +226,10 @@ const clause_bounds_removed$218_type = (value: clause_bounds_removed$218_type$It
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('clause.bounds.removed.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.bounds.removed.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -265,11 +267,11 @@ const clause_bounds_use$249_bounds$item = (value: clause_bounds_use$249_bounds$i
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [239, 484])) return value;
+		if (seated(value, [239, 483])) return value;
 		return unseated('clause.bounds.use.bounds', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [239, 484])) return value;
+		if (seated(value, [239, 483])) return value;
 		return unseated('clause.bounds.use.bounds', value);
 	}
 	switch (value.$path) {
@@ -676,7 +678,7 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -688,7 +690,7 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -941,9 +943,9 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -1023,8 +1025,10 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('clause.else.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -1066,13 +1070,13 @@ const clause_else$291_statements = (value: clause_else$291_statements$Item) => {
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.else.statements', value);
 		case 'literal.string.c':
-			return unbuilt('clause.else.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('clause.else.statements', value);
 		case 'literal.string.raw':
@@ -1353,7 +1357,7 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -1432,9 +1436,9 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -1511,8 +1515,10 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.else.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -1554,13 +1560,13 @@ const clause_else$291_trailingExpression = (value: clause_else$291_trailingExpre
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.else.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('clause.else.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.else.trailingExpression', value);
 		case 'literal.string.raw':
@@ -1614,7 +1620,7 @@ const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) 
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -1627,14 +1633,16 @@ const clause_import_alias$228_name = (value: clause_import_alias$228_name$Item) 
 		return unseated('clause.import.alias.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 129, 130, 131, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 263, 480])) return value;
 		return unseated('clause.import.alias.name', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('clause.import.alias.name', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.import.alias.name', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case undefined:
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
@@ -1691,7 +1699,7 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -1704,7 +1712,7 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 		return unseated('clause.import.list.useClauses', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 129, 130, 131, 226, 227, 228, 229, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 226, 227, 228, 229, 263, 480])) return value;
 		return unseated('clause.import.list.useClauses', value);
 	}
 	switch (value.$path) {
@@ -1718,8 +1726,10 @@ const clause_import_list$227_useClauses$item = (value: clause_import_list$227_us
 			return clause_import_wildcard$229(value);
 		case 'identifier':
 			return unbuilt('clause.import.list.useClauses', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.import.list.useClauses', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		default:
@@ -1757,7 +1767,7 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -1770,14 +1780,16 @@ const clause_import_list_scoped$226_path = (value: clause_import_list_scoped$226
 		return unseated('clause.import.list.scoped.path', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 129, 130, 131, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 263, 480])) return value;
 		return unseated('clause.import.list.scoped.path', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('clause.import.list.scoped.path', value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.import.list.scoped.path', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case undefined:
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
@@ -1878,7 +1890,7 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -1896,7 +1908,7 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -1951,13 +1963,13 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('clause.let.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.pattern', value);
 		case 'literal.string.raw':
@@ -1974,13 +1986,14 @@ const clause_let$288_pattern = (value: clause_let$288_pattern$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('clause.let.pattern', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('clause.let.pattern', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('clause.let.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -2202,7 +2215,7 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -2281,9 +2294,9 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -2360,8 +2373,10 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.let.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -2403,13 +2418,13 @@ const clause_let$288_value = (value: clause_let$288_value$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.let.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.value', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.value', value);
 		case 'literal.string.raw':
@@ -2655,7 +2670,7 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
-					373, 374, 390, 391, 392, 393, 435, 436
+					373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -2738,9 +2753,9 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -2817,8 +2832,10 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.let.chain.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -2860,13 +2877,13 @@ const clause_let_chain$289_left = (value: clause_let_chain$289_left$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.chain.left', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.chain.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.chain.left', value);
 		case 'literal.string.raw':
@@ -3110,7 +3127,7 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 292, 297, 298, 299, 300, 301,
 					304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -3191,9 +3208,9 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -3270,8 +3287,10 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.let.chain.rights', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -3313,13 +3332,13 @@ const clause_let_chain$289_rights = (value: clause_let_chain$289_rights$Item) =>
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('clause.let.chain.rights', value);
 		case 'literal.string.c':
-			return unbuilt('clause.let.chain.rights', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('clause.let.chain.rights', value);
 		case 'literal.string.raw':
@@ -3540,7 +3559,7 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 		if (
 			seated(
 				value,
-				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -3552,7 +3571,7 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 217, 218, 236, 239, 240, 242, 243,
-					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -3570,8 +3589,10 @@ const clause_where_predicate$212_bounds$item = (value: clause_where_predicate$21
 			return unbuilt('clause.where.predicate.bounds', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('clause.where.predicate.bounds', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -3688,7 +3709,7 @@ const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [217, 239, 240, 243, 246, 252, 253, 265, 341, 388, 389, 484])) return value;
+		if (seated(value, [217, 239, 240, 243, 246, 252, 253, 265, 341, 388, 389, 483])) return value;
 		return unseated('clause.where.predicate.left', value);
 	}
 	if (isNode(value)) {
@@ -3697,7 +3718,7 @@ const clause_where_predicate$212_left = (value: clause_where_predicate$212_left$
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 217, 239, 240, 243, 246, 252, 253, 265,
-					341, 388, 389, 484
+					341, 388, 389, 483
 				]
 			)
 		)
@@ -3861,7 +3882,7 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.constant.type', value);
 	}
@@ -3871,7 +3892,7 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -3885,8 +3906,10 @@ const declaration_constant$205_type = (value: declaration_constant$205_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.constant.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.constant.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -4117,7 +4140,7 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -4196,9 +4219,9 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -4275,8 +4298,10 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.constant.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -4318,13 +4343,13 @@ const declaration_constant$205_value = (value: declaration_constant$205_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.constant.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.constant.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.constant.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.constant.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.constant.value', value);
 		case 'literal.string.raw':
@@ -4818,7 +4843,7 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -4897,9 +4922,9 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -4976,8 +5001,10 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.member.enum_member.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -5019,13 +5046,13 @@ const declaration_member_enum_member$200_value = (value: declaration_member_enum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.member.enum_member.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.member.enum_member.value', value);
 		case 'literal.string.raw':
@@ -5314,7 +5341,7 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 				value,
 				[
 					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
+					395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -5328,7 +5355,7 @@ const declaration_module$385_statements$item = (value: declaration_module$385_st
 				value,
 				[
 					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
+					385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -5768,7 +5795,7 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 				value,
 				[
 					180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384, 385,
-					395, 396, 416, 417, 418, 423, 424, 425
+					395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -5782,7 +5809,7 @@ const declaration_module_foreign$396_statements$item = (value: declaration_modul
 				value,
 				[
 					178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378, 384,
-					385, 395, 396, 416, 417, 418, 423, 424, 425
+					385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -6004,7 +6031,7 @@ const declaration_parameter_receiver$231_lifetime = (value: declaration_paramete
 	}
 	return identifier_lifetime$239(value);
 };
-type declaration_parameter_receiver$439_type$Item =
+type declaration_parameter_receiver$438_type$Item =
 	| '!'
 	| '()'
 	| 'bool'
@@ -6066,7 +6093,7 @@ type declaration_parameter_receiver$439_type$Item =
 	| RustMap['nodes']['type.reference']
 	| BuildInput<RustMap, 'type.tuple'>
 	| RustMap['nodes']['type.tuple'];
-const declaration_parameter_receiver$439_type = (value: declaration_parameter_receiver$439_type$Item) => {
+const declaration_parameter_receiver$438_type = (value: declaration_parameter_receiver$438_type$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '!':
@@ -6113,7 +6140,7 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.parameter.receiver.type', value);
 	}
@@ -6123,7 +6150,7 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -6137,8 +6164,10 @@ const declaration_parameter_receiver$439_type = (value: declaration_parameter_re
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.parameter.receiver.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.parameter.receiver.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -6245,7 +6274,7 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -6263,7 +6292,7 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -6318,13 +6347,13 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.parameter.variadic.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.parameter.variadic.pattern', value);
 		case 'literal.string.raw':
@@ -6341,13 +6370,14 @@ const declaration_parameter_variadic$232_pattern = (value: declaration_parameter
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('declaration.parameter.variadic.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -6480,7 +6510,7 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 		if (
 			seated(
 				value,
-				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -6492,7 +6522,7 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 217, 218, 236, 239, 240, 242, 243,
-					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -6510,8 +6540,10 @@ const declaration_type_parameter$221_bounds$item = (value: declaration_type_para
 			return unbuilt('declaration.type_parameter.bounds', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.bounds', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -6646,7 +6678,7 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.type_parameter.default', value);
 	}
@@ -6656,7 +6688,7 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -6670,8 +6702,10 @@ const declaration_type_parameter$221_default = (value: declaration_type_paramete
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.type_parameter.default', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.default', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -6707,11 +6741,11 @@ const declaration_type_parameter$221_name = (value: declaration_type_parameter$2
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('declaration.type_parameter.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('declaration.type_parameter.name', value);
 	}
 	switch (value.$path) {
@@ -6839,7 +6873,7 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 		if (
 			seated(
 				value,
-				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 217, 218, 236, 239, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -6851,7 +6885,7 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 217, 218, 236, 239, 240, 242, 243,
-					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -6869,8 +6903,10 @@ const declaration_type_parameter_lifetime$222_bounds$item = (
 			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.lifetime.bounds', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -7019,13 +7055,13 @@ const declaration_type_parameter_value$220_default = (value: declaration_type_pa
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.type_parameter.value.default', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.type_parameter.value.default', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.type_parameter.value.default', value);
 		case 'literal.string.raw':
@@ -7169,7 +7205,7 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.type_parameter.value.type', value);
 	}
@@ -7179,7 +7215,7 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -7193,8 +7229,10 @@ const declaration_type_parameter_value$220_type = (value: declaration_type_param
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.type_parameter.value.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.type_parameter.value.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -7486,7 +7524,7 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.variable.type', value);
 	}
@@ -7496,7 +7534,7 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -7510,8 +7548,10 @@ const declaration_variable$206_type = (value: declaration_variable$206_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.variable.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -7742,7 +7782,7 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -7821,9 +7861,9 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -7900,8 +7940,10 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -7943,13 +7985,13 @@ const declaration_variable$206_value = (value: declaration_variable$206_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.raw':
@@ -8081,7 +8123,7 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -8099,7 +8141,7 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -8154,13 +8196,13 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.name', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.variable.name', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.variable.name', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.variable.name', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.variable.name', value);
 		case 'literal.string.raw':
@@ -8177,13 +8219,14 @@ const declaration_variable$223_name = (value: declaration_variable$223_name$Item
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('declaration.variable.name', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('declaration.variable.name', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('declaration.variable.name', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -8309,7 +8352,7 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('declaration.variable.type', value);
 	}
@@ -8319,7 +8362,7 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -8333,8 +8376,10 @@ const declaration_variable$223_type = (value: declaration_variable$223_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('declaration.variable.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -8565,7 +8610,7 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -8644,9 +8689,9 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -8723,8 +8768,10 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('declaration.variable.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -8766,13 +8813,13 @@ const declaration_variable$223_value = (value: declaration_variable$223_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.c':
-			return unbuilt('declaration.variable.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('declaration.variable.value', value);
 		case 'literal.string.raw':
@@ -9026,7 +9073,7 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -9105,9 +9152,9 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -9184,8 +9231,10 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('element.attributed.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -9227,13 +9276,13 @@ const element_attributed$363_value = (value: element_attributed$363_value$Item) 
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('element.attributed.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('element.attributed.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.attributed.value', value);
 		case 'literal.string.c':
-			return unbuilt('element.attributed.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('element.attributed.value', value);
 		case 'literal.string.raw':
@@ -9347,8 +9396,10 @@ const element_macro_token_binding$184_name = (value: element_macro_token_binding
 		return unseated('element.macro.token_binding.name', value);
 	}
 	switch (value.$path) {
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_binding.name', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		default:
 			return unbuilt('element.macro.token_binding.name', value);
 	}
@@ -9776,8 +9827,10 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_repetition.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		case 'literal.boolean.true':
@@ -9817,13 +9870,13 @@ const element_macro_token_repetition$188_tokens = (value: element_macro_token_re
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_repetition.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_repetition.tokens', value);
 		case 'literal.string.raw':
@@ -10265,8 +10318,10 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		case 'literal.boolean.true':
@@ -10306,13 +10361,13 @@ const element_macro_token_repetition_pattern$185_tokenPatterns = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_repetition.pattern.tokenPatterns', value);
 		case 'literal.string.raw':
@@ -10705,8 +10760,10 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.boolean.true':
@@ -10746,13 +10803,13 @@ const element_macro_token_tree$408_tokens = (value: element_macro_token_tree$408
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.raw':
@@ -11145,8 +11202,10 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.boolean.true':
@@ -11186,13 +11245,13 @@ const element_macro_token_tree$409_tokens = (value: element_macro_token_tree$409
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.raw':
@@ -11585,8 +11644,10 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.boolean.true':
@@ -11626,13 +11687,13 @@ const element_macro_token_tree$410_tokens = (value: element_macro_token_tree$410
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.tokens', value);
 		case 'literal.string.raw':
@@ -12025,8 +12086,10 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		case 'literal.boolean.true':
@@ -12066,13 +12129,13 @@ const element_macro_token_tree_brace$410_tokens = (value: element_macro_token_tr
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.brace.tokens', value);
 		case 'literal.string.raw':
@@ -12465,8 +12528,10 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		case 'literal.boolean.true':
@@ -12506,13 +12571,13 @@ const element_macro_token_tree_bracket$409_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.bracket.tokens', value);
 		case 'literal.string.raw':
@@ -12941,13 +13006,13 @@ const element_macro_token_tree_delimited$411_tokens = (value: element_macro_toke
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.raw':
@@ -13376,13 +13441,13 @@ const element_macro_token_tree_delimited$412_tokens = (value: element_macro_toke
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.raw':
@@ -13811,13 +13876,13 @@ const element_macro_token_tree_delimited$413_tokens = (value: element_macro_toke
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.tokens', value);
 		case 'literal.string.raw':
@@ -14248,13 +14313,13 @@ const element_macro_token_tree_delimited_brace$413_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.brace.tokens', value);
 		case 'literal.string.raw':
@@ -14685,13 +14750,13 @@ const element_macro_token_tree_delimited_bracket$412_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.bracket.tokens', value);
 		case 'literal.string.raw':
@@ -15122,13 +15187,13 @@ const element_macro_token_tree_delimited_paren$411_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.delimited.paren.tokens', value);
 		case 'literal.string.raw':
@@ -15521,8 +15586,10 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 			return element_macro_token_tree_paren$408(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		case 'literal.boolean.true':
@@ -15562,13 +15629,13 @@ const element_macro_token_tree_paren$408_tokens = (value: element_macro_token_tr
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.paren.tokens', value);
 		case 'literal.string.raw':
@@ -15965,8 +16032,10 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.boolean.true':
@@ -16006,13 +16075,13 @@ const element_macro_token_tree_pattern$405_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.raw':
@@ -16409,8 +16478,10 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.boolean.true':
@@ -16450,13 +16521,13 @@ const element_macro_token_tree_pattern$406_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.raw':
@@ -16853,8 +16924,10 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.boolean.true':
@@ -16894,13 +16967,13 @@ const element_macro_token_tree_pattern$407_tokens = (value: element_macro_token_
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.tokens', value);
 		case 'literal.string.raw':
@@ -17299,8 +17372,10 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		case 'literal.boolean.true':
@@ -17340,13 +17415,13 @@ const element_macro_token_tree_pattern_brace$407_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.brace.tokens', value);
 		case 'literal.string.raw':
@@ -17745,8 +17820,10 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		case 'literal.boolean.true':
@@ -17786,13 +17863,13 @@ const element_macro_token_tree_pattern_bracket$406_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.bracket.tokens', value);
 		case 'literal.string.raw':
@@ -18191,8 +18268,10 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 			return element_macro_token_tree_pattern_paren$405(value);
 		case 'identifier':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'literal.boolean.false':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 		case 'literal.boolean.true':
@@ -18232,13 +18311,13 @@ const element_macro_token_tree_pattern_paren$405_tokens = (
 		case 'literal.number.integer.octal':
 			return b.nonSpecialToken(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 		case 'literal.string.c':
-			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
+			return b.nonSpecialToken(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('element.macro.token_tree.pattern.paren.tokens', value);
 		case 'literal.string.raw':
@@ -18452,7 +18531,7 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -18531,9 +18610,9 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -18610,8 +18689,10 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('element.struct.base.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -18653,13 +18734,13 @@ const element_struct_base$286_value = (value: element_struct_base$286_value$Item
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('element.struct.base.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('element.struct.base.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.struct.base.value', value);
 		case 'literal.string.c':
-			return unbuilt('element.struct.base.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('element.struct.base.value', value);
 		case 'literal.string.raw':
@@ -18786,7 +18867,7 @@ const element_struct_field$285_name = (value: element_struct_field$285_name$Item
 		return unnumbered('element.struct.field.name', 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [141, 142, 143, 144, 331, 478])) return value;
+		if (seated(value, [141, 142, 143, 144, 331, 477])) return value;
 		return unseated('element.struct.field.name', value);
 	}
 	switch (value.$path) {
@@ -19009,7 +19090,7 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -19088,9 +19169,9 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -19167,8 +19248,10 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('element.struct.field.value', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -19210,13 +19293,13 @@ const element_struct_field$285_value = (value: element_struct_field$285_value$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('element.struct.field.value', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('element.struct.field.value', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('element.struct.field.value', value);
 		case 'literal.string.c':
-			return unbuilt('element.struct.field.value', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('element.struct.field.value', value);
 		case 'literal.string.raw':
@@ -19263,11 +19346,11 @@ const element_type_binding$251_name = (value: element_type_binding$251_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('element.type_binding.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('element.type_binding.name', value);
 	}
 	switch (value.$path) {
@@ -19386,7 +19469,7 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('element.type_binding.type', value);
 	}
@@ -19396,7 +19479,7 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -19410,8 +19493,10 @@ const element_type_binding$251_type = (value: element_type_binding$251_type$Item
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('element.type_binding.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('element.type_binding.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -19442,11 +19527,11 @@ type element_type_binding$251_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const element_type_binding$251_typeArguments$item = (value: element_type_binding$251_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('element.type_binding.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('element.type_binding.typeArguments', value);
 	}
 	return unbuilt('element.type_binding.typeArguments', value);
@@ -19656,7 +19741,7 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -19735,9 +19820,9 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -19814,8 +19899,10 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -19857,13 +19944,13 @@ const expression_assignment$271_left = (value: expression_assignment$271_left$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.left', value);
 		case 'literal.string.raw':
@@ -20105,7 +20192,7 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -20184,9 +20271,9 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -20263,8 +20350,10 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -20306,13 +20395,13 @@ const expression_assignment$271_right = (value: expression_assignment$271_right$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.right', value);
 		case 'literal.string.raw':
@@ -20554,7 +20643,7 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -20633,9 +20722,9 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -20712,8 +20801,10 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.add.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -20755,13 +20846,13 @@ const expression_assignment_compound_add$272_left = (value: expression_assignmen
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.add.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.add.left', value);
 		case 'literal.string.raw':
@@ -21003,7 +21094,7 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -21082,9 +21173,9 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -21161,8 +21252,10 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.add.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -21204,13 +21297,13 @@ const expression_assignment_compound_add$272_right = (value: expression_assignme
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.add.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.add.right', value);
 		case 'literal.string.raw':
@@ -21454,7 +21547,7 @@ const expression_assignment_compound_bitwise_and$272_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -21533,9 +21626,9 @@ const expression_assignment_compound_bitwise_and$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -21612,8 +21705,10 @@ const expression_assignment_compound_bitwise_and$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -21655,13 +21750,13 @@ const expression_assignment_compound_bitwise_and$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.left', value);
 		case 'literal.string.raw':
@@ -21905,7 +22000,7 @@ const expression_assignment_compound_bitwise_and$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -21984,9 +22079,9 @@ const expression_assignment_compound_bitwise_and$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -22063,8 +22158,10 @@ const expression_assignment_compound_bitwise_and$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -22106,13 +22203,13 @@ const expression_assignment_compound_bitwise_and$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_and.right', value);
 		case 'literal.string.raw':
@@ -22356,7 +22453,7 @@ const expression_assignment_compound_bitwise_or$272_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -22435,9 +22532,9 @@ const expression_assignment_compound_bitwise_or$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -22514,8 +22611,10 @@ const expression_assignment_compound_bitwise_or$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -22557,13 +22656,13 @@ const expression_assignment_compound_bitwise_or$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.left', value);
 		case 'literal.string.raw':
@@ -22807,7 +22906,7 @@ const expression_assignment_compound_bitwise_or$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -22886,9 +22985,9 @@ const expression_assignment_compound_bitwise_or$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -22965,8 +23064,10 @@ const expression_assignment_compound_bitwise_or$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -23008,13 +23109,13 @@ const expression_assignment_compound_bitwise_or$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_or.right', value);
 		case 'literal.string.raw':
@@ -23258,7 +23359,7 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -23337,9 +23438,9 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -23416,8 +23517,10 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -23459,13 +23562,13 @@ const expression_assignment_compound_bitwise_xor$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.left', value);
 		case 'literal.string.raw':
@@ -23709,7 +23812,7 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -23788,9 +23891,9 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -23867,8 +23970,10 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -23910,13 +24015,13 @@ const expression_assignment_compound_bitwise_xor$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.bitwise_xor.right', value);
 		case 'literal.string.raw':
@@ -24158,7 +24263,7 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -24237,9 +24342,9 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -24316,8 +24421,10 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -24359,13 +24466,13 @@ const expression_assignment_compound_divide$272_left = (value: expression_assign
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.divide.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.divide.left', value);
 		case 'literal.string.raw':
@@ -24609,7 +24716,7 @@ const expression_assignment_compound_divide$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -24688,9 +24795,9 @@ const expression_assignment_compound_divide$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -24767,8 +24874,10 @@ const expression_assignment_compound_divide$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -24810,13 +24919,13 @@ const expression_assignment_compound_divide$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.divide.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.divide.right', value);
 		case 'literal.string.raw':
@@ -25058,7 +25167,7 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -25137,9 +25246,9 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -25216,8 +25325,10 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -25259,13 +25370,13 @@ const expression_assignment_compound_modulo$272_left = (value: expression_assign
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.modulo.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.modulo.left', value);
 		case 'literal.string.raw':
@@ -25509,7 +25620,7 @@ const expression_assignment_compound_modulo$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -25588,9 +25699,9 @@ const expression_assignment_compound_modulo$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -25667,8 +25778,10 @@ const expression_assignment_compound_modulo$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -25710,13 +25823,13 @@ const expression_assignment_compound_modulo$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.modulo.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.modulo.right', value);
 		case 'literal.string.raw':
@@ -25960,7 +26073,7 @@ const expression_assignment_compound_multiply$272_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -26039,9 +26152,9 @@ const expression_assignment_compound_multiply$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -26118,8 +26231,10 @@ const expression_assignment_compound_multiply$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -26161,13 +26276,13 @@ const expression_assignment_compound_multiply$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.multiply.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.multiply.left', value);
 		case 'literal.string.raw':
@@ -26411,7 +26526,7 @@ const expression_assignment_compound_multiply$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -26490,9 +26605,9 @@ const expression_assignment_compound_multiply$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -26569,8 +26684,10 @@ const expression_assignment_compound_multiply$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -26612,13 +26729,13 @@ const expression_assignment_compound_multiply$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.multiply.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.multiply.right', value);
 		case 'literal.string.raw':
@@ -26862,7 +26979,7 @@ const expression_assignment_compound_shift_left$272_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -26941,9 +27058,9 @@ const expression_assignment_compound_shift_left$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -27020,8 +27137,10 @@ const expression_assignment_compound_shift_left$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -27063,13 +27182,13 @@ const expression_assignment_compound_shift_left$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_left.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_left.left', value);
 		case 'literal.string.raw':
@@ -27313,7 +27432,7 @@ const expression_assignment_compound_shift_left$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -27392,9 +27511,9 @@ const expression_assignment_compound_shift_left$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -27471,8 +27590,10 @@ const expression_assignment_compound_shift_left$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -27514,13 +27635,13 @@ const expression_assignment_compound_shift_left$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_left.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_left.right', value);
 		case 'literal.string.raw':
@@ -27764,7 +27885,7 @@ const expression_assignment_compound_shift_right$272_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -27843,9 +27964,9 @@ const expression_assignment_compound_shift_right$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -27922,8 +28043,10 @@ const expression_assignment_compound_shift_right$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -27965,13 +28088,13 @@ const expression_assignment_compound_shift_right$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_right.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_right.left', value);
 		case 'literal.string.raw':
@@ -28215,7 +28338,7 @@ const expression_assignment_compound_shift_right$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -28294,9 +28417,9 @@ const expression_assignment_compound_shift_right$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -28373,8 +28496,10 @@ const expression_assignment_compound_shift_right$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -28416,13 +28541,13 @@ const expression_assignment_compound_shift_right$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.shift_right.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.shift_right.right', value);
 		case 'literal.string.raw':
@@ -28666,7 +28791,7 @@ const expression_assignment_compound_subtract$272_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -28745,9 +28870,9 @@ const expression_assignment_compound_subtract$272_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -28824,8 +28949,10 @@ const expression_assignment_compound_subtract$272_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -28867,13 +28994,13 @@ const expression_assignment_compound_subtract$272_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.subtract.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.subtract.left', value);
 		case 'literal.string.raw':
@@ -29117,7 +29244,7 @@ const expression_assignment_compound_subtract$272_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -29196,9 +29323,9 @@ const expression_assignment_compound_subtract$272_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -29275,8 +29402,10 @@ const expression_assignment_compound_subtract$272_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -29318,13 +29447,13 @@ const expression_assignment_compound_subtract$272_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.assignment.compound.subtract.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.assignment.compound.subtract.right', value);
 		case 'literal.string.raw':
@@ -29566,7 +29695,7 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -29645,9 +29774,9 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -29724,8 +29853,10 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.await.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -29767,13 +29898,13 @@ const expression_await$307_expression = (value: expression_await$307_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.await.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.await.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.await.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.await.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.await.expression', value);
 		case 'literal.string.raw':
@@ -30015,7 +30146,7 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -30094,9 +30225,9 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -30173,8 +30304,10 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -30216,13 +30349,13 @@ const expression_binary_arithmetic_add$270_left = (value: expression_binary_arit
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.add.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.add.left', value);
 		case 'literal.string.raw':
@@ -30464,7 +30597,7 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -30543,9 +30676,9 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -30622,8 +30755,10 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -30665,13 +30800,13 @@ const expression_binary_arithmetic_add$270_right = (value: expression_binary_ari
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.add.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.add.right', value);
 		case 'literal.string.raw':
@@ -30913,7 +31048,7 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -30992,9 +31127,9 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -31071,8 +31206,10 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -31114,13 +31251,13 @@ const expression_binary_arithmetic_divide$270_left = (value: expression_binary_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.divide.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.divide.left', value);
 		case 'literal.string.raw':
@@ -31362,7 +31499,7 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -31441,9 +31578,9 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -31520,8 +31657,10 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -31563,13 +31702,13 @@ const expression_binary_arithmetic_divide$270_right = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.divide.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.divide.right', value);
 		case 'literal.string.raw':
@@ -31811,7 +31950,7 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -31890,9 +32029,9 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -31969,8 +32108,10 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -32012,13 +32153,13 @@ const expression_binary_arithmetic_modulo$270_left = (value: expression_binary_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.modulo.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.left', value);
 		case 'literal.string.raw':
@@ -32260,7 +32401,7 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -32339,9 +32480,9 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -32418,8 +32559,10 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -32461,13 +32604,13 @@ const expression_binary_arithmetic_modulo$270_right = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.modulo.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.modulo.right', value);
 		case 'literal.string.raw':
@@ -32709,7 +32852,7 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -32788,9 +32931,9 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -32867,8 +33010,10 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -32910,13 +33055,13 @@ const expression_binary_arithmetic_multiply$270_left = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.multiply.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.left', value);
 		case 'literal.string.raw':
@@ -33160,7 +33305,7 @@ const expression_binary_arithmetic_multiply$270_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -33239,9 +33384,9 @@ const expression_binary_arithmetic_multiply$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -33318,8 +33463,10 @@ const expression_binary_arithmetic_multiply$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -33361,13 +33508,13 @@ const expression_binary_arithmetic_multiply$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.multiply.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.multiply.right', value);
 		case 'literal.string.raw':
@@ -33609,7 +33756,7 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -33688,9 +33835,9 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -33767,8 +33914,10 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -33810,13 +33959,13 @@ const expression_binary_arithmetic_subtract$270_left = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.subtract.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.left', value);
 		case 'literal.string.raw':
@@ -34060,7 +34209,7 @@ const expression_binary_arithmetic_subtract$270_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -34139,9 +34288,9 @@ const expression_binary_arithmetic_subtract$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -34218,8 +34367,10 @@ const expression_binary_arithmetic_subtract$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -34261,13 +34412,13 @@ const expression_binary_arithmetic_subtract$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.arithmetic.subtract.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.arithmetic.subtract.right', value);
 		case 'literal.string.raw':
@@ -34509,7 +34660,7 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -34588,9 +34739,9 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -34667,8 +34818,10 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -34710,13 +34863,13 @@ const expression_binary_bitwise_and$270_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.and.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.and.left', value);
 		case 'literal.string.raw':
@@ -34958,7 +35111,7 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -35037,9 +35190,9 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -35116,8 +35269,10 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -35159,13 +35314,13 @@ const expression_binary_bitwise_and$270_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.and.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.and.right', value);
 		case 'literal.string.raw':
@@ -35407,7 +35562,7 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -35486,9 +35641,9 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -35565,8 +35720,10 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -35608,13 +35765,13 @@ const expression_binary_bitwise_or$270_left = (value: expression_binary_bitwise_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.or.left', value);
 		case 'literal.string.raw':
@@ -35856,7 +36013,7 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -35935,9 +36092,9 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -36014,8 +36171,10 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -36057,13 +36216,13 @@ const expression_binary_bitwise_or$270_right = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.or.right', value);
 		case 'literal.string.raw':
@@ -36305,7 +36464,7 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -36384,9 +36543,9 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -36463,8 +36622,10 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -36506,13 +36667,13 @@ const expression_binary_bitwise_xor$270_left = (value: expression_binary_bitwise
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.xor.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.xor.left', value);
 		case 'literal.string.raw':
@@ -36754,7 +36915,7 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -36833,9 +36994,9 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -36912,8 +37073,10 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -36955,13 +37118,13 @@ const expression_binary_bitwise_xor$270_right = (value: expression_binary_bitwis
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.bitwise.xor.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.bitwise.xor.right', value);
 		case 'literal.string.raw':
@@ -37203,7 +37366,7 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -37282,9 +37445,9 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -37361,8 +37524,10 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -37404,13 +37569,13 @@ const expression_binary_comparison_equal$270_left = (value: expression_binary_co
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.equal.left', value);
 		case 'literal.string.raw':
@@ -37652,7 +37817,7 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -37731,9 +37896,9 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -37810,8 +37975,10 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -37853,13 +38020,13 @@ const expression_binary_comparison_equal$270_right = (value: expression_binary_c
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.equal.right', value);
 		case 'literal.string.raw':
@@ -38101,7 +38268,7 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -38180,9 +38347,9 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -38259,8 +38426,10 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -38302,13 +38471,13 @@ const expression_binary_comparison_greater$270_left = (value: expression_binary_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater.left', value);
 		case 'literal.string.raw':
@@ -38550,7 +38719,7 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -38629,9 +38798,9 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -38708,8 +38877,10 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -38751,13 +38922,13 @@ const expression_binary_comparison_greater$270_right = (value: expression_binary
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater.right', value);
 		case 'literal.string.raw':
@@ -39001,7 +39172,7 @@ const expression_binary_comparison_greater_equal$270_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -39080,9 +39251,9 @@ const expression_binary_comparison_greater_equal$270_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -39159,8 +39330,10 @@ const expression_binary_comparison_greater_equal$270_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -39202,13 +39375,13 @@ const expression_binary_comparison_greater_equal$270_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater_equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.left', value);
 		case 'literal.string.raw':
@@ -39452,7 +39625,7 @@ const expression_binary_comparison_greater_equal$270_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -39531,9 +39704,9 @@ const expression_binary_comparison_greater_equal$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -39610,8 +39783,10 @@ const expression_binary_comparison_greater_equal$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -39653,13 +39828,13 @@ const expression_binary_comparison_greater_equal$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.greater_equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.greater_equal.right', value);
 		case 'literal.string.raw':
@@ -39901,7 +40076,7 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -39980,9 +40155,9 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -40059,8 +40234,10 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -40102,13 +40279,13 @@ const expression_binary_comparison_less$270_left = (value: expression_binary_com
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less.left', value);
 		case 'literal.string.raw':
@@ -40350,7 +40527,7 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -40429,9 +40606,9 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -40508,8 +40685,10 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -40551,13 +40730,13 @@ const expression_binary_comparison_less$270_right = (value: expression_binary_co
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less.right', value);
 		case 'literal.string.raw':
@@ -40801,7 +40980,7 @@ const expression_binary_comparison_less_equal$270_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -40880,9 +41059,9 @@ const expression_binary_comparison_less_equal$270_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -40959,8 +41138,10 @@ const expression_binary_comparison_less_equal$270_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -41002,13 +41183,13 @@ const expression_binary_comparison_less_equal$270_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less_equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less_equal.left', value);
 		case 'literal.string.raw':
@@ -41252,7 +41433,7 @@ const expression_binary_comparison_less_equal$270_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -41331,9 +41512,9 @@ const expression_binary_comparison_less_equal$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -41410,8 +41591,10 @@ const expression_binary_comparison_less_equal$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -41453,13 +41636,13 @@ const expression_binary_comparison_less_equal$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.less_equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.less_equal.right', value);
 		case 'literal.string.raw':
@@ -41703,7 +41886,7 @@ const expression_binary_comparison_not_equal$270_left = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -41782,9 +41965,9 @@ const expression_binary_comparison_not_equal$270_left = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -41861,8 +42044,10 @@ const expression_binary_comparison_not_equal$270_left = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -41904,13 +42089,13 @@ const expression_binary_comparison_not_equal$270_left = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.not_equal.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.not_equal.left', value);
 		case 'literal.string.raw':
@@ -42154,7 +42339,7 @@ const expression_binary_comparison_not_equal$270_right = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -42233,9 +42418,9 @@ const expression_binary_comparison_not_equal$270_right = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -42312,8 +42497,10 @@ const expression_binary_comparison_not_equal$270_right = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -42355,13 +42542,13 @@ const expression_binary_comparison_not_equal$270_right = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.comparison.not_equal.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.comparison.not_equal.right', value);
 		case 'literal.string.raw':
@@ -42603,7 +42790,7 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -42682,9 +42869,9 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -42761,8 +42948,10 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.and.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -42804,13 +42993,13 @@ const expression_binary_logical_and$270_left = (value: expression_binary_logical
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.and.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.and.left', value);
 		case 'literal.string.raw':
@@ -43052,7 +43241,7 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -43131,9 +43320,9 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -43210,8 +43399,10 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.and.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -43253,13 +43444,13 @@ const expression_binary_logical_and$270_right = (value: expression_binary_logica
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.and.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.and.right', value);
 		case 'literal.string.raw':
@@ -43501,7 +43692,7 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -43580,9 +43771,9 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -43659,8 +43850,10 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.or.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -43702,13 +43895,13 @@ const expression_binary_logical_or$270_left = (value: expression_binary_logical_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.or.left', value);
 		case 'literal.string.raw':
@@ -43950,7 +44143,7 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -44029,9 +44222,9 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -44108,8 +44301,10 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.logical.or.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -44151,13 +44346,13 @@ const expression_binary_logical_or$270_right = (value: expression_binary_logical
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.logical.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.logical.or.right', value);
 		case 'literal.string.raw':
@@ -44399,7 +44594,7 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -44478,9 +44673,9 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -44557,8 +44752,10 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.left.count', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -44600,13 +44797,13 @@ const expression_binary_shift_left$270_count = (value: expression_binary_shift_l
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.left.count', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.left.count', value);
 		case 'literal.string.raw':
@@ -44848,7 +45045,7 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -44927,9 +45124,9 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -45006,8 +45203,10 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.left.operand', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -45049,13 +45248,13 @@ const expression_binary_shift_left$270_operand = (value: expression_binary_shift
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.left.operand', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.left.operand', value);
 		case 'literal.string.raw':
@@ -45297,7 +45496,7 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -45376,9 +45575,9 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -45455,8 +45654,10 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.right.count', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -45498,13 +45699,13 @@ const expression_binary_shift_right$270_count = (value: expression_binary_shift_
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.right.count', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.right.count', value);
 		case 'literal.string.raw':
@@ -45746,7 +45947,7 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -45825,9 +46026,9 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -45904,8 +46105,10 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.binary.shift.right.operand', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -45947,13 +46150,13 @@ const expression_binary_shift_right$270_operand = (value: expression_binary_shif
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'literal.string.c':
-			return unbuilt('expression.binary.shift.right.operand', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.binary.shift.right.operand', value);
 		case 'literal.string.raw':
@@ -46251,7 +46454,7 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -46330,9 +46533,9 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -46409,8 +46612,10 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.cast.conversion.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -46452,13 +46657,13 @@ const expression_cast_conversion$273_expression = (value: expression_cast_conver
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.cast.conversion.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.cast.conversion.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.cast.conversion.expression', value);
 		case 'literal.string.raw':
@@ -46604,7 +46809,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('expression.cast.conversion.type', value);
 	}
@@ -46614,7 +46819,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -46628,8 +46833,10 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('expression.cast.conversion.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.cast.conversion.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -46655,7 +46862,7 @@ const expression_cast_conversion$273_type = (value: expression_cast_conversion$2
 			return unbuilt('expression.cast.conversion.type', value);
 	}
 };
-type expression_collection_list$436_elements$item$Item =
+type expression_collection_list$435_elements$item$Item =
 	| '()'
 	| 'false'
 	| 'self'
@@ -46836,7 +47043,7 @@ type expression_collection_list$436_elements$item$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| RustMap['nodes']['statement.return'];
-const expression_collection_list$436_elements$item = (value: expression_collection_list$436_elements$item$Item) => {
+const expression_collection_list$435_elements$item = (value: expression_collection_list$435_elements$item$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '()':
@@ -46862,7 +47069,7 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 363, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -46943,9 +47150,9 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -47022,8 +47229,10 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.list.elements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -47065,13 +47274,13 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.list.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.list.elements', value);
 		case 'literal.string.raw':
@@ -47108,7 +47317,7 @@ const expression_collection_list$436_elements$item = (value: expression_collecti
 			return unbuilt('expression.collection.list.elements', value);
 	}
 };
-type expression_collection_list_repeat$435_element$Item =
+type expression_collection_list_repeat$434_element$Item =
 	| '()'
 	| 'false'
 	| 'self'
@@ -47287,7 +47496,7 @@ type expression_collection_list_repeat$435_element$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| RustMap['nodes']['statement.return'];
-const expression_collection_list_repeat$435_element = (value: expression_collection_list_repeat$435_element$Item) => {
+const expression_collection_list_repeat$434_element = (value: expression_collection_list_repeat$434_element$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '()':
@@ -47313,7 +47522,7 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -47392,9 +47601,9 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -47471,8 +47680,10 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.list.repeat.element', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -47514,13 +47725,13 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.list.repeat.element', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.list.repeat.element', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.list.repeat.element', value);
 		case 'literal.string.raw':
@@ -47557,7 +47768,7 @@ const expression_collection_list_repeat$435_element = (value: expression_collect
 			return unbuilt('expression.collection.list.repeat.element', value);
 	}
 };
-type expression_collection_list_repeat$435_length$Item =
+type expression_collection_list_repeat$434_length$Item =
 	| '()'
 	| 'false'
 	| 'self'
@@ -47736,7 +47947,7 @@ type expression_collection_list_repeat$435_length$Item =
 	| RustMap['nodes']['statement.match']
 	| BuildInput<RustMap, 'statement.return'>
 	| RustMap['nodes']['statement.return'];
-const expression_collection_list_repeat$435_length = (value: expression_collection_list_repeat$435_length$Item) => {
+const expression_collection_list_repeat$434_length = (value: expression_collection_list_repeat$434_length$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case '()':
@@ -47762,7 +47973,7 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -47841,9 +48052,9 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -47920,8 +48131,10 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.list.repeat.length', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -47963,13 +48176,13 @@ const expression_collection_list_repeat$435_length = (value: expression_collecti
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.list.repeat.length', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.list.repeat.length', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.list.repeat.length', value);
 		case 'literal.string.raw':
@@ -48044,11 +48257,11 @@ const expression_collection_struct$282_name = (value: expression_collection_stru
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [247, 264, 484])) return value;
+		if (seated(value, [247, 264, 483])) return value;
 		return unseated('expression.collection.struct.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [247, 264, 484])) return value;
+		if (seated(value, [247, 264, 483])) return value;
 		return unseated('expression.collection.struct.name', value);
 	}
 	switch (value.$path) {
@@ -48269,7 +48482,7 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 363, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -48350,9 +48563,9 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -48429,8 +48642,10 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.collection.tuple.elements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -48472,13 +48687,13 @@ const expression_collection_tuple$280_elements$item = (value: expression_collect
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.collection.tuple.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.collection.tuple.elements', value);
 		case 'literal.string.raw':
@@ -48554,11 +48769,11 @@ const expression_instantiation$245_typeArguments$item = (
 	value: expression_instantiation$245_typeArguments$item$Item
 ) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('expression.instantiation.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('expression.instantiation.typeArguments', value);
 	}
 	return unbuilt('expression.instantiation.typeArguments', value);
@@ -48576,11 +48791,11 @@ const expression_lambda$369_parameters = (value: expression_lambda$369_parameter
 		return b.closureParameters(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -48604,11 +48819,11 @@ const expression_lambda$369_parameters$item = (value: expression_lambda$369_para
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -48729,7 +48944,7 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('expression.lambda.returnType', value);
 	}
@@ -48739,7 +48954,7 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -48753,8 +48968,10 @@ const expression_lambda$369_returnType = (value: expression_lambda$369_returnTyp
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('expression.lambda.returnType', value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.returnType', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -49174,7 +49391,7 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -49186,7 +49403,7 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -49439,9 +49656,9 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -49521,8 +49738,10 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -49564,13 +49783,13 @@ const expression_lambda$369_statements = (value: expression_lambda$369_statement
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.raw':
@@ -49836,7 +50055,7 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -49915,9 +50134,9 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -49994,8 +50213,10 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -50037,13 +50258,13 @@ const expression_lambda$369_trailingExpression = (value: expression_lambda$369_t
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.raw':
@@ -50286,7 +50507,7 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 					1, 118, 119, 128, 131, 136, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266,
 					267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301,
 					304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373,
-					374, 390, 391, 392, 393, 435, 436
+					374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -50365,9 +50586,9 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -50444,8 +50665,10 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.body', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -50487,13 +50710,13 @@ const expression_lambda$370_body = (value: expression_lambda$370_body$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.lambda.body', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.body', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.body', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.body', value);
 		case 'literal.string.raw':
@@ -50541,11 +50764,11 @@ const expression_lambda$370_parameters = (value: expression_lambda$370_parameter
 		return b.closureParameters(b.identifier(value));
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return b.closureParameters(value);
+		if (seated(value, [233, 475])) return b.closureParameters(value);
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -50569,11 +50792,11 @@ const expression_lambda$370_parameters$item = (value: expression_lambda$370_para
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [233, 476])) return value;
+		if (seated(value, [233, 475])) return value;
 		return unseated('expression.lambda.parameters', value);
 	}
 	switch (value.$path) {
@@ -50979,7 +51202,7 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -50991,7 +51214,7 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -51244,9 +51467,9 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -51326,8 +51549,10 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -51369,13 +51594,13 @@ const expression_lambda$370_statements = (value: expression_lambda$370_statement
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.statements', value);
 		case 'literal.string.raw':
@@ -51641,7 +51866,7 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -51720,9 +51945,9 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -51799,8 +52024,10 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.lambda.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -51842,13 +52069,13 @@ const expression_lambda$370_trailingExpression = (value: expression_lambda$370_t
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.lambda.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.lambda.trailingExpression', value);
 		case 'literal.string.raw':
@@ -52090,7 +52317,7 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -52169,9 +52396,9 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -52248,8 +52475,10 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.member.object', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -52291,13 +52520,13 @@ const expression_member$308_object = (value: expression_member$308_object$Item) 
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.member.object', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.member.object', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.member.object', value);
 		case 'literal.string.c':
-			return unbuilt('expression.member.object', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.member.object', value);
 		case 'literal.string.raw':
@@ -52359,7 +52588,7 @@ const expression_member$308_property = (value: expression_member$308_property$It
 		return unnumbered('expression.member.property', 'float');
 	}
 	if (isNode(value)) {
-		if (seated(value, [141, 142, 143, 144, 331, 478])) return value;
+		if (seated(value, [141, 142, 143, 144, 331, 477])) return value;
 		return unseated('expression.member.property', value);
 	}
 	switch (value.$path) {
@@ -52582,7 +52811,7 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -52661,9 +52890,9 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -52740,8 +52969,10 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.parenthesized.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -52783,13 +53014,13 @@ const expression_parenthesized$279_expression = (value: expression_parenthesized
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.parenthesized.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.parenthesized.expression', value);
 		case 'literal.string.raw':
@@ -53031,7 +53262,7 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -53110,9 +53341,9 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -53189,8 +53420,10 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.propagate.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -53232,13 +53465,13 @@ const expression_propagate$268_argument = (value: expression_propagate$268_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.propagate.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.propagate.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.propagate.argument', value);
 		case 'literal.string.raw':
@@ -53480,7 +53713,7 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -53559,9 +53792,9 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -53638,8 +53871,10 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -53681,13 +53916,13 @@ const expression_range$391_start = (value: expression_range$391_start$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.start', value);
 		case 'literal.string.raw':
@@ -53929,7 +54164,7 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -54008,9 +54243,9 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -54087,8 +54322,10 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -54130,13 +54367,13 @@ const expression_range$392_end = (value: expression_range$392_end$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.end', value);
 		case 'literal.string.raw':
@@ -54378,7 +54615,7 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -54457,9 +54694,9 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -54536,8 +54773,10 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -54579,13 +54818,13 @@ const expression_range_exclusive$390_end = (value: expression_range_exclusive$39
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.raw':
@@ -54827,7 +55066,7 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -54906,9 +55145,9 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -54985,8 +55224,10 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -55028,13 +55269,13 @@ const expression_range_exclusive$390_start = (value: expression_range_exclusive$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.raw':
@@ -55276,7 +55517,7 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -55355,9 +55596,9 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -55434,8 +55675,10 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -55477,13 +55720,13 @@ const expression_range_exclusive$391_start = (value: expression_range_exclusive$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.start', value);
 		case 'literal.string.raw':
@@ -55725,7 +55968,7 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -55804,9 +56047,9 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -55883,8 +56126,10 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.exclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -55926,13 +56171,13 @@ const expression_range_exclusive$392_end = (value: expression_range_exclusive$39
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.exclusive.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.exclusive.end', value);
 		case 'literal.string.raw':
@@ -56174,7 +56419,7 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -56253,9 +56498,9 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -56332,8 +56577,10 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -56375,13 +56622,13 @@ const expression_range_inclusive$390_end = (value: expression_range_inclusive$39
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.end', value);
 		case 'literal.string.raw':
@@ -56623,7 +56870,7 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -56702,9 +56949,9 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -56781,8 +57028,10 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -56824,13 +57073,13 @@ const expression_range_inclusive$390_start = (value: expression_range_inclusive$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.start', value);
 		case 'literal.string.raw':
@@ -57072,7 +57321,7 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -57151,9 +57400,9 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -57230,8 +57479,10 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -57273,13 +57524,13 @@ const expression_range_inclusive_legacy$390_end = (value: expression_range_inclu
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.legacy.end', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.legacy.end', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.legacy.end', value);
 		case 'literal.string.raw':
@@ -57521,7 +57772,7 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -57600,9 +57851,9 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -57679,8 +57930,10 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -57722,13 +57975,13 @@ const expression_range_inclusive_legacy$390_start = (value: expression_range_inc
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.range.inclusive.legacy.start', value);
 		case 'literal.string.c':
-			return unbuilt('expression.range.inclusive.legacy.start', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.range.inclusive.legacy.start', value);
 		case 'literal.string.raw':
@@ -57970,7 +58223,7 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -58049,9 +58302,9 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -58128,8 +58381,10 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -58171,13 +58426,13 @@ const expression_reference$371_argument = (value: expression_reference$371_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -58419,7 +58674,7 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -58498,9 +58753,9 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -58577,8 +58832,10 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -58620,13 +58877,13 @@ const expression_reference$372_argument = (value: expression_reference$372_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -58868,7 +59125,7 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -58947,9 +59204,9 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -59026,8 +59283,10 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -59069,13 +59328,13 @@ const expression_reference$373_argument = (value: expression_reference$373_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -59317,7 +59576,7 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -59396,9 +59655,9 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -59475,8 +59734,10 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.reference.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -59518,13 +59779,13 @@ const expression_reference$374_argument = (value: expression_reference$374_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.reference.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.reference.argument', value);
 		case 'literal.string.raw':
@@ -59766,7 +60027,7 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -59845,9 +60106,9 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -59924,8 +60185,10 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.subscript.index', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -59967,13 +60230,13 @@ const expression_subscript$306_index = (value: expression_subscript$306_index$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.subscript.index', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.subscript.index', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.subscript.index', value);
 		case 'literal.string.c':
-			return unbuilt('expression.subscript.index', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.subscript.index', value);
 		case 'literal.string.raw':
@@ -60215,7 +60478,7 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -60294,9 +60557,9 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -60373,8 +60636,10 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.subscript.object', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -60416,13 +60681,13 @@ const expression_subscript$306_object = (value: expression_subscript$306_object$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.subscript.object', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.subscript.object', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.subscript.object', value);
 		case 'literal.string.c':
-			return unbuilt('expression.subscript.object', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.subscript.object', value);
 		case 'literal.string.raw':
@@ -60664,7 +60929,7 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -60743,9 +61008,9 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -60822,8 +61087,10 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.unary.deref.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -60865,13 +61132,13 @@ const expression_unary_deref$267_argument = (value: expression_unary_deref$267_a
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.unary.deref.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.unary.deref.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.unary.deref.argument', value);
 		case 'literal.string.raw':
@@ -61113,7 +61380,7 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -61192,9 +61459,9 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -61271,8 +61538,10 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.unary.negation.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -61314,13 +61583,13 @@ const expression_unary_negation$267_argument = (value: expression_unary_negation
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.unary.negation.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.unary.negation.argument', value);
 		case 'literal.string.raw':
@@ -61562,7 +61831,7 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -61641,9 +61910,9 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -61720,8 +61989,10 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.unary.not.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -61763,13 +62034,13 @@ const expression_unary_not$267_argument = (value: expression_unary_not$267_argum
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'literal.string.c':
-			return unbuilt('expression.unary.not.argument', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.unary.not.argument', value);
 		case 'literal.string.raw':
@@ -62011,7 +62282,7 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -62090,9 +62361,9 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -62169,8 +62440,10 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('expression.yield.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -62212,13 +62485,13 @@ const expression_yield$275_expression = (value: expression_yield$275_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('expression.yield.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('expression.yield.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('expression.yield.expression', value);
 		case 'literal.string.c':
-			return unbuilt('expression.yield.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('expression.yield.expression', value);
 		case 'literal.string.raw':
@@ -62356,7 +62629,7 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -62369,14 +62642,16 @@ const identifier_qualified$263_qualifier = (value: identifier_qualified$263_qual
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 129, 130, 131, 237, 247, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 237, 247, 263, 480])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('identifier.qualified.qualifier', value);
-		case 'identifier.metavariable':
-			return unbuilt('identifier.qualified.qualifier', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'type.bracketed':
@@ -62400,11 +62675,11 @@ const identifier_qualified$264_name = (value: identifier_qualified$264_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -62437,7 +62712,7 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -62450,14 +62725,16 @@ const identifier_qualified$264_qualifier = (value: identifier_qualified$264_qual
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 129, 130, 131, 247, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 247, 263, 480])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('identifier.qualified.qualifier', value);
-		case 'identifier.metavariable':
-			return unbuilt('identifier.qualified.qualifier', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'type.bracketed':
@@ -62481,11 +62758,11 @@ const identifier_qualified$265_name = (value: identifier_qualified$265_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [484])) return value;
+		if (seated(value, [483])) return value;
 		return unseated('identifier.qualified.name', value);
 	}
 	switch (value.$path) {
@@ -62518,7 +62795,7 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -62531,14 +62808,16 @@ const identifier_qualified$265_qualifier = (value: identifier_qualified$265_qual
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 129, 130, 131, 237, 246, 247, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 237, 246, 247, 263, 480])) return value;
 		return unseated('identifier.qualified.qualifier', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
 			return unbuilt('identifier.qualified.qualifier', value);
-		case 'identifier.metavariable':
-			return unbuilt('identifier.qualified.qualifier', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'type.bracketed':
@@ -62766,6 +63045,126 @@ const literal_number_negative$330_value = (value: literal_number_negative$330_va
 			return unbuilt('literal.number.negative.value', value);
 	}
 };
+type literal_string$332_elements$Item =
+	| Text<RustMap, 'literal.string.text'>
+	| BuildInput<RustMap, 'literal.string.escape'>
+	| RustMap['nodes']['literal.string.escape']
+	| BuildInput<RustMap, 'literal.string.text'>
+	| RustMap['nodes']['literal.string.text'];
+const literal_string$332_elements = (value: literal_string$332_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^"\\]+))$/u.test(value)) return b.stringContent(value);
+		return b.stringContent(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$151(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$154(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$153(value);
+			return literal_string_escape$152(value);
+		case 'literal.string.text':
+			return literal_string_text$157(value);
+		default:
+			return unbuilt('literal.string.elements', value);
+	}
+};
+type literal_string_bytes$332_elements$Item =
+	| Text<RustMap, 'literal.string.text'>
+	| BuildInput<RustMap, 'literal.string.escape'>
+	| RustMap['nodes']['literal.string.escape']
+	| BuildInput<RustMap, 'literal.string.text'>
+	| RustMap['nodes']['literal.string.text'];
+const literal_string_bytes$332_elements = (value: literal_string_bytes$332_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^"\\]+))$/u.test(value)) return b.stringContent(value);
+		return b.stringContent(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.bytes.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.bytes.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$151(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$154(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$153(value);
+			return literal_string_escape$152(value);
+		case 'literal.string.text':
+			return literal_string_text$157(value);
+		default:
+			return unbuilt('literal.string.bytes.elements', value);
+	}
+};
+type literal_string_c$332_elements$Item =
+	| Text<RustMap, 'literal.string.text'>
+	| BuildInput<RustMap, 'literal.string.escape'>
+	| RustMap['nodes']['literal.string.escape']
+	| BuildInput<RustMap, 'literal.string.text'>
+	| RustMap['nodes']['literal.string.text'];
+const literal_string_c$332_elements = (value: literal_string_c$332_elements$Item) => {
+	if (typeof value === 'string') {
+		if (/^(?:(?:[^"\\]+))$/u.test(value)) return b.stringContent(value);
+		return b.stringContent(value);
+	}
+	if (typeof value === 'number') {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.c.elements', value);
+	}
+	if (isNode(value)) {
+		if (seated(value, [151, 152, 153, 154, 157, 335])) return value;
+		return unseated('literal.string.c.elements', value);
+	}
+	switch (value.$path) {
+		case 'literal.string.escape':
+			if ((typeof value.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(value.$value)) && value.$value !== undefined)
+				return literal_string_escape$151(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$154(value);
+			if (
+				(typeof value.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(value.$value)) &&
+				value.$value !== undefined
+			)
+				return literal_string_escape$153(value);
+			return literal_string_escape$152(value);
+		case 'literal.string.text':
+			return literal_string_text$157(value);
+		default:
+			return unbuilt('literal.string.c.elements', value);
+	}
+};
 type modifier_extern$234_abi$Item =
 	| BuildInput<RustMap, 'literal.string'>
 	| RustMap['nodes']['literal.string']
@@ -62784,11 +63183,11 @@ const modifier_extern$234_abi = (value: modifier_extern$234_abi$Item) => {
 	}
 	switch (value.$path) {
 		case 'literal.string':
-			return unbuilt('modifier.extern.abi', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('modifier.extern.abi', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.c':
-			return unbuilt('modifier.extern.abi', value);
+			return literal_string_c$332(value);
 		default:
 			return unbuilt('modifier.extern.abi', value);
 	}
@@ -62898,7 +63297,7 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -62916,7 +63315,7 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -62971,13 +63370,13 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.as.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.as.pattern', value);
 		case 'literal.string.raw':
@@ -62994,13 +63393,14 @@ const pattern_as$325_pattern = (value: pattern_as$325_pattern$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.as.pattern', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.as.pattern', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.as.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63051,11 +63451,11 @@ type pattern_generic$315_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const pattern_generic$315_typeArguments$item = (value: pattern_generic$315_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('pattern.generic.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('pattern.generic.typeArguments', value);
 	}
 	return unbuilt('pattern.generic.typeArguments', value);
@@ -63141,7 +63541,7 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63159,7 +63559,7 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -63214,13 +63614,13 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.list.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.list.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.list.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.list.elements', value);
 		case 'literal.string.raw':
@@ -63237,13 +63637,14 @@ const pattern_list$317_elements$item = (value: pattern_list$317_elements$item$It
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.list.elements', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.list.elements', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.list.elements', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63341,7 +63742,7 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63359,7 +63760,7 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -63414,13 +63815,13 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.mutable.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.mutable.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.mutable.pattern', value);
 		case 'literal.string.raw':
@@ -63437,13 +63838,14 @@ const pattern_mutable$322_pattern = (value: pattern_mutable$322_pattern$Item) =>
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.mutable.pattern', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.mutable.pattern', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.mutable.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63541,7 +63943,7 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63559,7 +63961,7 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -63614,13 +64016,13 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.or.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.or.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.or.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.or.left', value);
 		case 'literal.string.raw':
@@ -63637,13 +64039,14 @@ const pattern_or$386_left = (value: pattern_or$386_left$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.or.left', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.or.left', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.or.left', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63741,7 +64144,7 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63759,7 +64162,7 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -63814,13 +64217,13 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.raw':
@@ -63837,13 +64240,14 @@ const pattern_or$386_right = (value: pattern_or$386_right$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.or.right', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.or.right', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -63941,7 +64345,7 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -63959,7 +64363,7 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -64014,13 +64418,13 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.or.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.or.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.or.right', value);
 		case 'literal.string.raw':
@@ -64037,13 +64441,14 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.or.right', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.or.right', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.or.right', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -64060,7 +64465,7 @@ const pattern_or$387_right = (value: pattern_or$387_right$Item) => {
 			return unbuilt('pattern.or.right', value);
 	}
 };
-type pattern_range_exclusive$419_right$Item =
+type pattern_range$421_start$Item =
 	| 'crate'
 	| 'false'
 	| 'self'
@@ -64106,13 +64511,13 @@ type pattern_range_exclusive$419_right$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| RustMap['nodes']['literal.string.raw'];
-const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_right$Item) => {
+const pattern_range$421_start = (value: pattern_range$421_start$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -64132,24 +64537,26 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 				value,
 				[
 					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
-					333, 334, 336, 367, 481
+					333, 334, 336, 367, 480
 				]
 			)
 		)
 			return value;
-		return unseated('pattern.range.exclusive.right', value);
+		return unseated('pattern.range.start', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return unbuilt('pattern.range.exclusive.right', value);
-		case 'identifier.metavariable':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return literal_character$145(value);
@@ -64173,7 +64580,7 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 				value.content !== undefined
 			)
 				return literal_character$148(value);
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
 		case 'literal.number.float':
 			return literal_number_float$162(value);
 		case 'literal.number.integer':
@@ -64187,22 +64594,22 @@ const pattern_range_exclusive$419_right = (value: pattern_range_exclusive$419_ri
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
 		case 'literal.string.raw':
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
 		default:
-			return unbuilt('pattern.range.exclusive.right', value);
+			return unbuilt('pattern.range.start', value);
 	}
 };
-type pattern_range_inclusive$419_right$Item =
+type pattern_range_exclusive$419_end$Item =
 	| 'crate'
 	| 'false'
 	| 'self'
@@ -64248,13 +64655,13 @@ type pattern_range_inclusive$419_right$Item =
 	| RustMap['nodes']['literal.string.c.raw']
 	| BuildInput<RustMap, 'literal.string.raw'>
 	| RustMap['nodes']['literal.string.raw'];
-const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_right$Item) => {
+const pattern_range_exclusive$419_end = (value: pattern_range_exclusive$419_end$Item) => {
 	if (typeof value === 'string') {
 		switch (value) {
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -64274,24 +64681,26 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 				value,
 				[
 					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
-					333, 334, 336, 367, 481
+					333, 334, 336, 367, 480
 				]
 			)
 		)
 			return value;
-		return unseated('pattern.range.inclusive.right', value);
+		return unseated('pattern.range.exclusive.end', value);
 	}
 	switch (value.$path) {
 		case 'identifier':
-			return unbuilt('pattern.range.inclusive.right', value);
-		case 'identifier.metavariable':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.boolean.true':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.character':
 			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
 				return literal_character$145(value);
@@ -64315,7 +64724,7 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 				value.content !== undefined
 			)
 				return literal_character$148(value);
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.number.float':
 			return literal_number_float$162(value);
 		case 'literal.number.integer':
@@ -64329,19 +64738,1171 @@ const pattern_range_inclusive$419_right = (value: pattern_range_inclusive$419_ri
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		case 'literal.string.raw':
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
 		default:
-			return unbuilt('pattern.range.inclusive.right', value);
+			return unbuilt('pattern.range.exclusive.end', value);
+	}
+};
+type pattern_range_exclusive$420_end$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_exclusive$420_end = (value: pattern_range_exclusive$420_end$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.exclusive.end', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.exclusive.end', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.exclusive.end', value);
+		default:
+			return unbuilt('pattern.range.exclusive.end', value);
+	}
+};
+type pattern_range_exclusive$420_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_exclusive$420_start = (value: pattern_range_exclusive$420_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.exclusive.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		default:
+			return unbuilt('pattern.range.exclusive.start', value);
+	}
+};
+type pattern_range_exclusive$421_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_exclusive$421_start = (value: pattern_range_exclusive$421_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.exclusive.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.exclusive.start', value);
+		default:
+			return unbuilt('pattern.range.exclusive.start', value);
+	}
+};
+type pattern_range_inclusive$419_end$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive$419_end = (value: pattern_range_inclusive$419_end$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.end', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		default:
+			return unbuilt('pattern.range.inclusive.end', value);
+	}
+};
+type pattern_range_inclusive$420_end$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive$420_end = (value: pattern_range_inclusive$420_end$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.end', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.end', value);
+		default:
+			return unbuilt('pattern.range.inclusive.end', value);
+	}
+};
+type pattern_range_inclusive$420_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive$420_start = (value: pattern_range_inclusive$420_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.start', value);
+		default:
+			return unbuilt('pattern.range.inclusive.start', value);
+	}
+};
+type pattern_range_inclusive_legacy$420_end$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive_legacy$420_end = (value: pattern_range_inclusive_legacy$420_end$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.legacy.end', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+		default:
+			return unbuilt('pattern.range.inclusive.legacy.end', value);
+	}
+};
+type pattern_range_inclusive_legacy$420_start$Item =
+	| 'crate'
+	| 'false'
+	| 'self'
+	| 'super'
+	| 'true'
+	| Text<RustMap, 'identifier'>
+	| Text<RustMap, 'literal.character'>
+	| Text<RustMap, 'literal.number.float'>
+	| number
+	| BuildInput<RustMap, 'identifier'>
+	| RustMap['nodes']['identifier']
+	| BuildInput<RustMap, 'identifier.metavariable'>
+	| RustMap['nodes']['identifier.metavariable']
+	| BuildInput<RustMap, 'identifier.qualified'>
+	| RustMap['nodes']['identifier.qualified']
+	| BuildInput<RustMap, 'literal.boolean.false'>
+	| RustMap['nodes']['literal.boolean.false']
+	| BuildInput<RustMap, 'literal.boolean.true'>
+	| RustMap['nodes']['literal.boolean.true']
+	| BuildInput<RustMap, 'literal.character'>
+	| RustMap['nodes']['literal.character']
+	| BuildInput<RustMap, 'literal.number.float'>
+	| RustMap['nodes']['literal.number.float']
+	| BuildInput<RustMap, 'literal.number.integer'>
+	| RustMap['nodes']['literal.number.integer']
+	| BuildInput<RustMap, 'literal.number.integer.binary'>
+	| RustMap['nodes']['literal.number.integer.binary']
+	| BuildInput<RustMap, 'literal.number.integer.hex'>
+	| RustMap['nodes']['literal.number.integer.hex']
+	| BuildInput<RustMap, 'literal.number.integer.octal'>
+	| RustMap['nodes']['literal.number.integer.octal']
+	| BuildInput<RustMap, 'literal.number.negative'>
+	| RustMap['nodes']['literal.number.negative']
+	| BuildInput<RustMap, 'literal.string'>
+	| RustMap['nodes']['literal.string']
+	| BuildInput<RustMap, 'literal.string.bytes'>
+	| RustMap['nodes']['literal.string.bytes']
+	| BuildInput<RustMap, 'literal.string.bytes.raw'>
+	| RustMap['nodes']['literal.string.bytes.raw']
+	| BuildInput<RustMap, 'literal.string.c'>
+	| RustMap['nodes']['literal.string.c']
+	| BuildInput<RustMap, 'literal.string.c.raw'>
+	| RustMap['nodes']['literal.string.c.raw']
+	| BuildInput<RustMap, 'literal.string.raw'>
+	| RustMap['nodes']['literal.string.raw'];
+const pattern_range_inclusive_legacy$420_start = (value: pattern_range_inclusive_legacy$420_start$Item) => {
+	if (typeof value === 'string') {
+		switch (value) {
+			case 'crate':
+				return 130;
+			case 'self':
+				return 480;
+			case 'super':
+				return 129;
+			default:
+				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
+				return b.identifier(value);
+		}
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$141({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$162({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (
+			seated(
+				value,
+				[
+					1, 118, 119, 129, 130, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330, 331, 332,
+					333, 334, 336, 367, 480
+				]
+			)
+		)
+			return value;
+		return unseated('pattern.range.inclusive.legacy.start', value);
+	}
+	switch (value.$path) {
+		case 'identifier':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
+		case 'identifier.qualified':
+			return identifier_qualified$263(value);
+		case 'literal.boolean.false':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.boolean.true':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.character':
+			if ((typeof value.content !== 'string' || /^(?:(?:[^\\']))$/u.test(value.content)) && value.content !== undefined)
+				return literal_character$145(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:x[0-9a-fA-F]{2}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$150(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:[^xu]))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$147(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u\{[0-9a-fA-F]+\}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$149(value);
+			if (
+				(typeof value.content !== 'string' || /^(?:\\(?:u[0-9a-fA-F]{4}))$/u.test(value.content)) &&
+				value.content !== undefined
+			)
+				return literal_character$148(value);
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.number.float':
+			return literal_number_float$162(value);
+		case 'literal.number.integer':
+			return literal_number_integer$141(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$143(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$142(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$144(value);
+		case 'literal.number.negative':
+			return literal_number_negative$330(value);
+		case 'literal.string':
+			return literal_string$332(value);
+		case 'literal.string.bytes':
+			return literal_string_bytes$332(value);
+		case 'literal.string.bytes.raw':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.string.c':
+			return literal_string_c$332(value);
+		case 'literal.string.c.raw':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		case 'literal.string.raw':
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
+		default:
+			return unbuilt('pattern.range.inclusive.legacy.start', value);
 	}
 };
 type pattern_reference$324_pattern$Item =
@@ -64425,7 +65986,7 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64443,7 +66004,7 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -64498,13 +66059,13 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.reference.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.reference.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.reference.pattern', value);
 		case 'literal.string.raw':
@@ -64521,13 +66082,14 @@ const pattern_reference$324_pattern = (value: pattern_reference$324_pattern$Item
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.reference.pattern', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.reference.pattern', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.reference.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -64625,7 +66187,7 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64643,7 +66205,7 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -64698,13 +66260,13 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.reference.value.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.reference.value.pattern', value);
 		case 'literal.string.raw':
@@ -64721,13 +66283,14 @@ const pattern_reference_value$326_pattern = (value: pattern_reference_value$326_
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.reference.value.pattern', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.reference.value.pattern', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.reference.value.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -64786,11 +66349,11 @@ const pattern_struct$319_type = (value: pattern_struct$319_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [265, 484])) return value;
+		if (seated(value, [265, 483])) return value;
 		return unseated('pattern.struct.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [265, 484])) return value;
+		if (seated(value, [265, 483])) return value;
 		return unseated('pattern.struct.type', value);
 	}
 	switch (value.$path) {
@@ -64813,11 +66376,11 @@ const pattern_struct_field$414_name = (value: pattern_struct_field$414_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [482])) return value;
+		if (seated(value, [481])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [482])) return value;
+		if (seated(value, [481])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	switch (value.$path) {
@@ -64837,11 +66400,11 @@ const pattern_struct_field$415_name = (value: pattern_struct_field$415_name$Item
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [478])) return value;
+		if (seated(value, [477])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [478])) return value;
+		if (seated(value, [477])) return value;
 		return unseated('pattern.struct.field.name', value);
 	}
 	switch (value.$path) {
@@ -64932,7 +66495,7 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -64950,7 +66513,7 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -65005,13 +66568,13 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.struct.field.pattern', value);
 		case 'literal.string.raw':
@@ -65028,13 +66591,14 @@ const pattern_struct_field$415_pattern = (value: pattern_struct_field$415_patter
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.struct.field.pattern', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.struct.field.pattern', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.struct.field.pattern', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -65132,7 +66696,7 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -65150,7 +66714,7 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -65205,13 +66769,13 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.struct.tuple.fields', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.struct.tuple.fields', value);
 		case 'literal.string.raw':
@@ -65228,13 +66792,14 @@ const pattern_struct_tuple$318_fields$item = (value: pattern_struct_tuple$318_fi
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.struct.tuple.fields', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.struct.tuple.fields', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.struct.tuple.fields', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -65366,7 +66931,7 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -65385,7 +66950,7 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 301, 314, 315, 316, 317,
 					318, 319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 369, 370, 386, 387, 419,
-					422, 426
+					420, 421, 425
 				]
 			)
 		)
@@ -65465,13 +67030,13 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.string.c':
-			return unbuilt('pattern.tuple.elements', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('pattern.tuple.elements', value);
 		case 'literal.string.raw':
@@ -65488,13 +67053,14 @@ const pattern_tuple$316_elements$item = (value: pattern_tuple$316_elements$item$
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('pattern.tuple.elements', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('pattern.tuple.elements', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('pattern.tuple.elements', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -65917,7 +67483,7 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -65929,7 +67495,7 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -66182,9 +67748,9 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -66264,8 +67830,10 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -66307,13 +67875,13 @@ const statement_block$313_statements = (value: statement_block$313_statements$It
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.statements', value);
 		case 'literal.string.raw':
@@ -66579,7 +68147,7 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -66658,9 +68226,9 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -66737,8 +68305,10 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -66780,13 +68350,13 @@ const statement_block$313_trailingExpression = (value: statement_block$313_trail
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.trailingExpression', value);
 		case 'literal.string.raw':
@@ -67217,7 +68787,7 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -67229,7 +68799,7 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -67482,9 +69052,9 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -67564,8 +69134,10 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.async.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -67607,13 +69179,13 @@ const statement_block_async$310_statements = (value: statement_block_async$310_s
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.async.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.async.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.async.statements', value);
 		case 'literal.string.raw':
@@ -67879,7 +69451,7 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -67958,9 +69530,9 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -68037,8 +69609,10 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.async.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -68080,13 +69654,13 @@ const statement_block_async$310_trailingExpression = (value: statement_block_asy
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.async.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.async.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.async.trailingExpression', value);
 		case 'literal.string.raw':
@@ -68517,7 +70091,7 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -68529,7 +70103,7 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -68782,9 +70356,9 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -68864,8 +70438,10 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.const.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -68907,13 +70483,13 @@ const statement_block_const$300_statements = (value: statement_block_const$300_s
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.const.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.const.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.const.statements', value);
 		case 'literal.string.raw':
@@ -69179,7 +70755,7 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -69258,9 +70834,9 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -69337,8 +70913,10 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.const.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -69380,13 +70958,13 @@ const statement_block_const$300_trailingExpression = (value: statement_block_con
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.const.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.const.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.const.trailingExpression', value);
 		case 'literal.string.raw':
@@ -69817,7 +71395,7 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -69829,7 +71407,7 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -70082,9 +71660,9 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -70164,8 +71742,10 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.generator.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -70207,13 +71787,13 @@ const statement_block_generator$311_statements = (value: statement_block_generat
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.generator.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.generator.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.generator.statements', value);
 		case 'literal.string.raw':
@@ -70481,7 +72061,7 @@ const statement_block_generator$311_trailingExpression = (
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -70560,9 +72140,9 @@ const statement_block_generator$311_trailingExpression = (
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -70639,8 +72219,10 @@ const statement_block_generator$311_trailingExpression = (
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -70682,13 +72264,13 @@ const statement_block_generator$311_trailingExpression = (
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.generator.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.generator.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.generator.trailingExpression', value);
 		case 'literal.string.raw':
@@ -71119,7 +72701,7 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -71131,7 +72713,7 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -71384,9 +72966,9 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -71466,8 +73048,10 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.try.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -71509,13 +73093,13 @@ const statement_block_try$312_statements = (value: statement_block_try$312_state
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.try.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.try.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.try.statements', value);
 		case 'literal.string.raw':
@@ -71781,7 +73365,7 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -71860,9 +73444,9 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -71939,8 +73523,10 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.try.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -71982,13 +73568,13 @@ const statement_block_try$312_trailingExpression = (value: statement_block_try$3
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.try.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.try.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.try.trailingExpression', value);
 		case 'literal.string.raw':
@@ -72419,7 +74005,7 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -72431,7 +74017,7 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -72684,9 +74270,9 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -72766,8 +74352,10 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.unsafe.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -72809,13 +74397,13 @@ const statement_block_unsafe$309_statements = (value: statement_block_unsafe$309
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.unsafe.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.unsafe.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.unsafe.statements', value);
 		case 'literal.string.raw':
@@ -73081,7 +74669,7 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -73160,9 +74748,9 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -73239,8 +74827,10 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -73282,13 +74872,13 @@ const statement_block_unsafe$309_trailingExpression = (value: statement_block_un
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.block.unsafe.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.block.unsafe.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.block.unsafe.trailingExpression', value);
 		case 'literal.string.raw':
@@ -73530,7 +75120,7 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -73609,9 +75199,9 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -73688,8 +75278,10 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.break.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -73731,13 +75323,13 @@ const statement_break$304_expression = (value: statement_break$304_expression$It
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.break.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.break.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.break.expression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.break.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.break.expression', value);
 		case 'literal.string.raw':
@@ -74019,7 +75611,7 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
-					373, 374, 390, 391, 392, 393, 435, 436
+					373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -74102,9 +75694,9 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -74181,8 +75773,10 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.if.condition', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -74224,13 +75818,13 @@ const statement_if$287_condition = (value: statement_if$287_condition$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.if.condition', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.if.condition', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.if.condition', value);
 		case 'literal.string.c':
-			return unbuilt('statement.if.condition', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.if.condition', value);
 		case 'literal.string.raw':
@@ -74661,7 +76255,7 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -74673,7 +76267,7 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -74926,9 +76520,9 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -75008,8 +76602,10 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.if.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -75051,13 +76647,13 @@ const statement_if$287_statements = (value: statement_if$287_statements$Item) =>
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.if.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.if.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.if.statements', value);
 		case 'literal.string.raw':
@@ -75323,7 +76919,7 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -75402,9 +76998,9 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -75481,8 +77077,10 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.if.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -75524,13 +77122,13 @@ const statement_if$287_trailingExpression = (value: statement_if$287_trailingExp
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.if.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.if.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.if.trailingExpression', value);
 		case 'literal.string.raw':
@@ -75592,7 +77190,7 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 			case 'crate':
 				return 130;
 			case 'self':
-				return 481;
+				return 480;
 			case 'super':
 				return 129;
 			default:
@@ -75605,7 +77203,7 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 		return unseated('statement.import.argument', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 129, 130, 131, 226, 227, 228, 229, 263, 481])) return value;
+		if (seated(value, [1, 129, 130, 131, 226, 227, 228, 229, 263, 480])) return value;
 		return unseated('statement.import.argument', value);
 	}
 	switch (value.$path) {
@@ -75619,8 +77217,10 @@ const statement_import$224_argument = (value: statement_import$224_argument$Item
 			return clause_import_wildcard$229(value);
 		case 'identifier':
 			return unbuilt('statement.import.argument', value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.import.argument', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		default:
@@ -76081,7 +77681,7 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -76093,7 +77693,7 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -76346,9 +77946,9 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -76428,8 +78028,10 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -76471,13 +78073,13 @@ const statement_loop$298_statements = (value: statement_loop$298_statements$Item
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.statements', value);
 		case 'literal.string.raw':
@@ -76743,7 +78345,7 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -76822,9 +78424,9 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -76901,8 +78503,10 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -76944,13 +78548,13 @@ const statement_loop$298_trailingExpression = (value: statement_loop$298_trailin
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.trailingExpression', value);
 		case 'literal.string.raw':
@@ -77082,7 +78686,7 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			case '..':
 				return 321;
 			case '_':
-				return 426;
+				return 425;
 			default:
 				if (/^(?:(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
 				return b.identifier(value);
@@ -77100,7 +78704,7 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 				value,
 				[
 					1, 118, 119, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 314, 315, 316, 317, 318,
-					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 422, 426
+					319, 321, 322, 323, 324, 325, 326, 327, 329, 330, 331, 332, 333, 334, 336, 367, 386, 387, 419, 420, 421, 425
 				]
 			)
 		)
@@ -77155,13 +78759,13 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 		case 'literal.number.negative':
 			return literal_number_negative$330(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.left', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.left', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.left', value);
 		case 'literal.string.raw':
@@ -77178,13 +78782,14 @@ const statement_loop_for_each$299_left = (value: statement_loop_for_each$299_lef
 			if (value.right !== undefined && value.left === undefined) return pattern_or$387(value);
 			return pattern_or$386(value);
 		case 'pattern.range.exclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_exclusive$419(value);
-			return unbuilt('statement.loop.for_each.left', value);
+			if (value.start !== undefined && value.end === undefined) return pattern_range_exclusive$421(value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_exclusive$419(value);
+			return pattern_range_exclusive$420(value);
 		case 'pattern.range.inclusive':
-			if (value.right !== undefined && value.left === undefined) return pattern_range_inclusive$419(value);
-			return unbuilt('statement.loop.for_each.left', value);
+			if (value.end !== undefined && value.start === undefined) return pattern_range_inclusive$419(value);
+			return pattern_range_inclusive$420(value);
 		case 'pattern.range.inclusive.legacy':
-			return unbuilt('statement.loop.for_each.left', value);
+			return pattern_range_inclusive_legacy$420(value);
 		case 'pattern.reference':
 			return pattern_reference$324(value);
 		case 'pattern.reference.value':
@@ -77406,7 +79011,7 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -77485,9 +79090,9 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -77564,8 +79169,10 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.for_each.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -77607,13 +79214,13 @@ const statement_loop_for_each$299_right = (value: statement_loop_for_each$299_ri
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.right', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.right', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.right', value);
 		case 'literal.string.raw':
@@ -78044,7 +79651,7 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -78056,7 +79663,7 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -78309,9 +79916,9 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -78391,8 +79998,10 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.for_each.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -78434,13 +80043,13 @@ const statement_loop_for_each$299_statements = (value: statement_loop_for_each$2
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.statements', value);
 		case 'literal.string.raw':
@@ -78706,7 +80315,7 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -78785,9 +80394,9 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -78864,8 +80473,10 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -78907,13 +80518,13 @@ const statement_loop_for_each$299_trailingExpression = (value: statement_loop_fo
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.for_each.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.for_each.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.for_each.trailingExpression', value);
 		case 'literal.string.raw':
@@ -79159,7 +80770,7 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 288, 289, 292, 297, 298, 299, 300,
 					301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372,
-					373, 374, 390, 391, 392, 393, 435, 436
+					373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -79242,9 +80853,9 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -79321,8 +80932,10 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.while.condition', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -79364,13 +80977,13 @@ const statement_loop_while$297_condition = (value: statement_loop_while$297_cond
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.while.condition', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.while.condition', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.while.condition', value);
 		case 'literal.string.raw':
@@ -79815,7 +81428,7 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 				value,
 				[
 					177, 178, 180, 193, 194, 196, 197, 198, 204, 205, 206, 207, 208, 209, 213, 214, 215, 223, 224, 259, 377, 378,
-					384, 385, 395, 396, 416, 417, 418, 423, 424, 425
+					384, 385, 395, 396, 416, 417, 418, 422, 423, 424
 				]
 			)
 		)
@@ -79827,7 +81440,7 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 				[
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 263, 266, 267, 268,
 					269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 301, 304, 305, 306, 307, 308, 328, 331, 332,
-					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 435, 436
+					333, 334, 336, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -80080,9 +81693,9 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 		case 'expression.cast.conversion':
 			return b.expressionStatement.withSemi(expression_cast_conversion$273(value));
 		case 'expression.collection.list':
-			return b.expressionStatement.withSemi(expression_collection_list$436(value));
+			return b.expressionStatement.withSemi(expression_collection_list$435(value));
 		case 'expression.collection.list.repeat':
-			return b.expressionStatement.withSemi(expression_collection_list_repeat$435(value));
+			return b.expressionStatement.withSemi(expression_collection_list_repeat$434(value));
 		case 'expression.collection.struct':
 			return b.expressionStatement.withSemi(expression_collection_struct$282(value));
 		case 'expression.collection.tuple':
@@ -80162,8 +81775,10 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 			return b.expressionStatement.withSemi(expression_yield$275(value));
 		case 'identifier':
 			return b.expressionStatement.withSemi(identifier$1(value));
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.while.statements', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return b.expressionStatement.withSemi(identifier_metavariable$131(value));
+		}
 		case 'identifier.qualified':
 			return b.expressionStatement.withSemi(identifier_qualified$263(value));
 		case 'literal.boolean.false':
@@ -80205,13 +81820,13 @@ const statement_loop_while$297_statements = (value: statement_loop_while$297_sta
 		case 'literal.number.integer.octal':
 			return b.expressionStatement.withSemi(literal_number_integer_octal$144(value));
 		case 'literal.string':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_string$332(value));
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_string_bytes$332(value));
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.while.statements', value);
+			return b.expressionStatement.withSemi(literal_string_c$332(value));
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.while.statements', value);
 		case 'literal.string.raw':
@@ -80477,7 +82092,7 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -80556,9 +82171,9 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -80635,8 +82250,10 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -80678,13 +82295,13 @@ const statement_loop_while$297_trailingExpression = (value: statement_loop_while
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.loop.while.trailingExpression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.loop.while.trailingExpression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.loop.while.trailingExpression', value);
 		case 'literal.string.raw':
@@ -80926,7 +82543,7 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -81005,9 +82622,9 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -81084,8 +82701,10 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('statement.return.expression', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -81127,13 +82746,13 @@ const statement_return$274_expression = (value: statement_return$274_expression$
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('statement.return.expression', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('statement.return.expression', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.string.c':
-			return unbuilt('statement.return.expression', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('statement.return.expression', value);
 		case 'literal.string.raw':
@@ -81279,7 +82898,7 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.array.element', value);
 	}
@@ -81289,7 +82908,7 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -81303,8 +82922,10 @@ const type_array$240_element = (value: type_array$240_element$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.array.element', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.array.element', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -81535,7 +83156,7 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 					1, 118, 119, 128, 131, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263, 266, 267,
 					268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 301, 304,
 					305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 367, 369, 370, 371, 372, 373, 374,
-					390, 391, 392, 393, 435, 436
+					390, 391, 392, 393, 434, 435
 				]
 			)
 		)
@@ -81614,9 +83235,9 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 		case 'expression.cast.conversion':
 			return expression_cast_conversion$273(value);
 		case 'expression.collection.list':
-			return expression_collection_list$436(value);
+			return expression_collection_list$435(value);
 		case 'expression.collection.list.repeat':
-			return expression_collection_list_repeat$435(value);
+			return expression_collection_list_repeat$434(value);
 		case 'expression.collection.struct':
 			return expression_collection_struct$282(value);
 		case 'expression.collection.tuple':
@@ -81693,8 +83314,10 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 			return expression_yield$275(value);
 		case 'identifier':
 			return identifier$1(value);
-		case 'identifier.metavariable':
-			return unbuilt('type.array.length', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$263(value);
 		case 'literal.boolean.false':
@@ -81736,13 +83359,13 @@ const type_array$240_length = (value: type_array$240_length$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$144(value);
 		case 'literal.string':
-			return unbuilt('type.array.length', value);
+			return literal_string$332(value);
 		case 'literal.string.bytes':
-			return unbuilt('type.array.length', value);
+			return literal_string_bytes$332(value);
 		case 'literal.string.bytes.raw':
 			return unbuilt('type.array.length', value);
 		case 'literal.string.c':
-			return unbuilt('type.array.length', value);
+			return literal_string_c$332(value);
 		case 'literal.string.c.raw':
 			return unbuilt('type.array.length', value);
 		case 'literal.string.raw':
@@ -81895,7 +83518,7 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 		if (
 			seated(
 				value,
-				[131, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -81907,7 +83530,7 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 239, 240, 242, 243, 244,
-					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -81925,8 +83548,10 @@ const type_bounded$248_left = (value: type_bounded$248_left$Item) => {
 			return unbuilt('type.bounded.left', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('type.bounded.left', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82068,7 +83693,7 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 		if (
 			seated(
 				value,
-				[131, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]
+				[131, 218, 236, 239, 240, 242, 243, 246, 248, 249, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]
 			)
 		)
 			return value;
@@ -82080,7 +83705,7 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 239, 240, 242, 243, 244,
-					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82098,8 +83723,10 @@ const type_bounded$248_right = (value: type_bounded$248_right$Item) => {
 			return unbuilt('type.bounded.right', value);
 		case 'identifier.lifetime':
 			return identifier_lifetime$239(value);
-		case 'identifier.metavariable':
-			return unbuilt('type.bounded.right', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82236,7 +83863,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 238, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 238, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.bracketed.type', value);
 	}
@@ -82246,7 +83873,7 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 238, 240, 242, 243, 244,
-					246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82260,8 +83887,10 @@ const type_bracketed$237_type = (value: type_bracketed$237_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.bracketed.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.bracketed.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82309,11 +83938,11 @@ const type_dynamic$256_trait = (value: type_dynamic$256_trait$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [217, 242, 243, 246, 265, 484])) return value;
+		if (seated(value, [217, 242, 243, 246, 265, 483])) return value;
 		return unseated('type.dynamic.trait', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [217, 242, 243, 246, 265, 484])) return value;
+		if (seated(value, [217, 242, 243, 246, 265, 483])) return value;
 		return unseated('type.dynamic.trait', value);
 	}
 	switch (value.$path) {
@@ -82345,11 +83974,11 @@ const type_generic$246_type = (value: type_generic$246_type$Item) => {
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [1, 265, 484])) return value;
+		if (seated(value, [1, 265, 483])) return value;
 		return unseated('type.generic.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [1, 265, 484])) return value;
+		if (seated(value, [1, 265, 483])) return value;
 		return unseated('type.generic.type', value);
 	}
 	switch (value.$path) {
@@ -82367,11 +83996,11 @@ type type_generic$246_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const type_generic$246_typeArguments$item = (value: type_generic$246_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.typeArguments', value);
 	}
 	return unbuilt('type.generic.typeArguments', value);
@@ -82388,11 +84017,11 @@ const type_generic_turbofish$247_type = (value: type_generic_turbofish$247_type$
 		return b.identifier(value);
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [263, 484])) return value;
+		if (seated(value, [263, 483])) return value;
 		return unseated('type.generic.turbofish.type', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [263, 484])) return value;
+		if (seated(value, [263, 483])) return value;
 		return unseated('type.generic.turbofish.type', value);
 	}
 	switch (value.$path) {
@@ -82410,11 +84039,11 @@ type type_generic_turbofish$247_typeArguments$item$Item =
 	| RustMap['nodes']['element.type_argument'];
 const type_generic_turbofish$247_typeArguments$item = (value: type_generic_turbofish$247_typeArguments$item$Item) => {
 	if (typeof value === 'number') {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.turbofish.typeArguments', value);
 	}
 	if (isNode(value)) {
-		if (seated(value, [433])) return value;
+		if (seated(value, [432])) return value;
 		return unseated('type.generic.turbofish.typeArguments', value);
 	}
 	return unbuilt('type.generic.turbofish.typeArguments', value);
@@ -82528,7 +84157,7 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.pointer.type', value);
 	}
@@ -82538,7 +84167,7 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82552,8 +84181,10 @@ const type_pointer$388_type = (value: type_pointer$388_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.pointer.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.pointer.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82688,7 +84319,7 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.pointer.type', value);
 	}
@@ -82698,7 +84329,7 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82712,8 +84343,10 @@ const type_pointer$389_type = (value: type_pointer$389_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.pointer.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.pointer.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -82848,7 +84481,7 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.qualified.alias', value);
 	}
@@ -82858,7 +84491,7 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -82872,8 +84505,10 @@ const type_qualified$238_alias = (value: type_qualified$238_alias$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.qualified.alias', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.qualified.alias', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83008,7 +84643,7 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.qualified.type', value);
 	}
@@ -83018,7 +84653,7 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83032,8 +84667,10 @@ const type_qualified$238_type = (value: type_qualified$238_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.qualified.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.qualified.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83182,7 +84819,7 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.reference.type', value);
 	}
@@ -83192,7 +84829,7 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83206,8 +84843,10 @@ const type_reference$252_type = (value: type_reference$252_type$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.reference.type', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.reference.type', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83342,7 +84981,7 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 		}
 	}
 	if (typeof value === 'number') {
-		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 484]))
+		if (seated(value, [131, 218, 236, 240, 242, 243, 246, 248, 252, 253, 255, 256, 259, 265, 341, 388, 389, 483]))
 			return value;
 		return unseated('type.tuple.types', value);
 	}
@@ -83352,7 +84991,7 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 				value,
 				[
 					59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 131, 218, 236, 240, 242, 243, 244, 246,
-					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 484
+					248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 483
 				]
 			)
 		)
@@ -83366,8 +85005,10 @@ const type_tuple$243_types$item = (value: type_tuple$243_types$item$Item) => {
 			return expression_call_macro$259(value);
 		case 'identifier':
 			return unbuilt('type.tuple.types', value);
-		case 'identifier.metavariable':
-			return unbuilt('type.tuple.types', value);
+		case 'identifier.metavariable': {
+			if (value.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+			return identifier_metavariable$131(value);
+		}
 		case 'identifier.qualified':
 			return identifier_qualified$265(value);
 		case 'type.abstract':
@@ -83522,6 +85163,12 @@ const clause_where_predicate$212 = (
 			...nonEmpty('clause.where.predicate.bounds', (input.bounds ?? []).map(clause_where_predicate$212_bounds$item))
 		)
 	});
+};
+const comment_block$340 = (input: PathInput<RustMap, 'comment.block'>): ReturnType<typeof b.blockComment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
+	const text = input.$value;
+	return b.blockComment(text === '' ? undefined : b.blockCommentRegular(text));
 };
 const declaration_constant$205 = (
 	input: PathInput<RustMap, 'declaration.constant'>
@@ -83719,7 +85366,7 @@ const declaration_parameter_receiver$231 = (
 		mutable: (input.$flags ?? []).includes('mutable')
 	});
 };
-const declaration_parameter_receiver$439 = (
+const declaration_parameter_receiver$438 = (
 	input: PathInput<RustMap, 'declaration.parameter.receiver'>
 ): ReturnType<typeof b.receiverParameterDeclaration> => {
 	const unroutedSlot = unroutedIn(input, ['attributes', 'type']);
@@ -83729,7 +85376,7 @@ const declaration_parameter_receiver$439 = (
 		type:
 			input.type === undefined
 				? missing('declaration.parameter.receiver.type')
-				: declaration_parameter_receiver$439_type(input.type),
+				: declaration_parameter_receiver$438_type(input.type),
 		mutable: (input.$flags ?? []).includes('mutable')
 	});
 };
@@ -84497,7 +86144,7 @@ const expression_cast_conversion$273 = (
 		type: expression_cast_conversion$273_type(input.type)
 	});
 };
-const expression_collection_list$436 = (
+const expression_collection_list$435 = (
 	input: PathInput<RustMap, 'expression.collection.list'>
 ): ReturnType<typeof b.arrayExpressionList> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
@@ -84508,19 +86155,19 @@ const expression_collection_list$436 = (
 		elements$first === undefined
 			? undefined
 			: b.arrayExpressionListElements(
-					expression_collection_list$436_elements$item(elements$first),
-					...elements$rest.map(expression_collection_list$436_elements$item)
+					expression_collection_list$435_elements$item(elements$first),
+					...elements$rest.map(expression_collection_list$435_elements$item)
 				)
 	);
 };
-const expression_collection_list_repeat$435 = (
+const expression_collection_list_repeat$434 = (
 	input: PathInput<RustMap, 'expression.collection.list.repeat'>
 ): ReturnType<typeof b.arrayExpressionSemi> => {
 	const unroutedSlot = unroutedIn(input, ['element', 'length']);
 	if (unroutedSlot !== undefined) return unrouted('expression.collection.list.repeat', unroutedSlot);
 	return b.arrayExpressionSemi({
-		element: expression_collection_list_repeat$435_element(input.element),
-		length: expression_collection_list_repeat$435_length(input.length)
+		element: expression_collection_list_repeat$434_element(input.element),
+		length: expression_collection_list_repeat$434_length(input.length)
 	});
 };
 const expression_collection_struct$282 = (
@@ -84680,35 +86327,35 @@ const expression_propagate$268 = (
 };
 const expression_range$391 = (
 	input: PathInput<RustMap, 'expression.range'>
-): ReturnType<typeof b.rangeExpressionPostfix> => {
+): ReturnType<typeof b.rangeExpressionLowerBounded> => {
 	const unroutedSlot = unroutedIn(input, ['start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range', unroutedSlot);
-	return b.rangeExpressionPostfix(
+	return b.rangeExpressionLowerBounded(
 		input.start === undefined ? missing('expression.range.start') : expression_range$391_start(input.start)
 	);
 };
 const expression_range$392 = (
 	input: PathInput<RustMap, 'expression.range'>
-): ReturnType<typeof b.rangeExpressionPrefix> => {
+): ReturnType<typeof b.rangeExpressionUpperBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range', unroutedSlot);
-	return b.rangeExpressionPrefix(
+	return b.rangeExpressionUpperBounded(
 		input.end === undefined ? missing('expression.range.end') : expression_range$392_end(input.end)
 	);
 };
 const expression_range$393 = (
 	input: PathInput<RustMap, 'expression.range'>
-): ReturnType<typeof b.rangeExpressionBare> => {
+): ReturnType<typeof b.rangeExpressionUnbounded> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('expression.range', unroutedSlot);
-	return b.rangeExpressionBare();
+	return b.rangeExpressionUnbounded();
 };
 const expression_range_exclusive$390 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionBinary> => {
+): ReturnType<typeof b.rangeExpressionBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end', 'start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionBinary({
+	return b.rangeExpressionBounded({
 		start:
 			input.start === undefined
 				? missing('expression.range.exclusive.start')
@@ -84722,10 +86369,10 @@ const expression_range_exclusive$390 = (
 };
 const expression_range_exclusive$391 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionPostfix> => {
+): ReturnType<typeof b.rangeExpressionLowerBounded> => {
 	const unroutedSlot = unroutedIn(input, ['start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionPostfix(
+	return b.rangeExpressionLowerBounded(
 		input.start === undefined
 			? missing('expression.range.exclusive.start')
 			: expression_range_exclusive$391_start(input.start)
@@ -84733,26 +86380,26 @@ const expression_range_exclusive$391 = (
 };
 const expression_range_exclusive$392 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionPrefix> => {
+): ReturnType<typeof b.rangeExpressionUpperBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionPrefix(
+	return b.rangeExpressionUpperBounded(
 		input.end === undefined ? missing('expression.range.exclusive.end') : expression_range_exclusive$392_end(input.end)
 	);
 };
 const expression_range_exclusive$393 = (
 	input: PathInput<RustMap, 'expression.range.exclusive'>
-): ReturnType<typeof b.rangeExpressionBare> => {
+): ReturnType<typeof b.rangeExpressionUnbounded> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.exclusive', unroutedSlot);
-	return b.rangeExpressionBare();
+	return b.rangeExpressionUnbounded();
 };
 const expression_range_inclusive$390 = (
 	input: PathInput<RustMap, 'expression.range.inclusive'>
-): ReturnType<typeof b.rangeExpressionBinary> => {
+): ReturnType<typeof b.rangeExpressionBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end', 'start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.inclusive', unroutedSlot);
-	return b.rangeExpressionBinary({
+	return b.rangeExpressionBounded({
 		start:
 			input.start === undefined
 				? missing('expression.range.inclusive.start')
@@ -84766,10 +86413,10 @@ const expression_range_inclusive$390 = (
 };
 const expression_range_inclusive_legacy$390 = (
 	input: PathInput<RustMap, 'expression.range.inclusive.legacy'>
-): ReturnType<typeof b.rangeExpressionBinary> => {
+): ReturnType<typeof b.rangeExpressionBounded> => {
 	const unroutedSlot = unroutedIn(input, ['end', 'start']);
 	if (unroutedSlot !== undefined) return unrouted('expression.range.inclusive.legacy', unroutedSlot);
-	return b.rangeExpressionBinary({
+	return b.rangeExpressionBounded({
 		start:
 			input.start === undefined
 				? missing('expression.range.inclusive.legacy.start')
@@ -84870,6 +86517,14 @@ const identifier_lifetime$239 = (input: PathInput<RustMap, 'identifier.lifetime'
 	const unroutedSlot = unroutedIn(input, ['name']);
 	if (unroutedSlot !== undefined) return unrouted('identifier.lifetime', unroutedSlot);
 	return b.lifetime(identifier_lifetime$239_name(input.name));
+};
+const identifier_metavariable$131 = (
+	input: PathInput<RustMap, 'identifier.metavariable'>
+): ReturnType<typeof b.metavariable> => {
+	const unroutedSlot = unroutedIn(input, ['attributes']);
+	if (unroutedSlot !== undefined) return unrouted('identifier.metavariable', unroutedSlot);
+	const text = input.$value;
+	return b.metavariable(text);
 };
 const identifier_qualified$263 = (
 	input: PathInput<RustMap, 'identifier.qualified'>
@@ -85006,10 +86661,82 @@ const literal_number_negative$330 = (
 	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
 	return b.negativeLiteral(literal_number_negative$330_value(input.value));
 };
+const literal_string$332 = (input: PathInput<RustMap, 'literal.string'>): ReturnType<typeof b.stringLiteral> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
+	return b.stringLiteral({
+		elements: (input.elements ?? []).map(literal_string$332_elements),
+		stringOpen: b.stringOpen('"')
+	});
+};
+const literal_string_bytes$332 = (
+	input: PathInput<RustMap, 'literal.string.bytes'>
+): ReturnType<typeof b.stringLiteral> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.bytes', unroutedSlot);
+	return b.stringLiteral({
+		elements: (input.elements ?? []).map(literal_string_bytes$332_elements),
+		stringOpen: b.stringOpen('b"')
+	});
+};
+const literal_string_c$332 = (input: PathInput<RustMap, 'literal.string.c'>): ReturnType<typeof b.stringLiteral> => {
+	const unroutedSlot = unroutedIn(input, ['elements']);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.c', unroutedSlot);
+	return b.stringLiteral({
+		elements: (input.elements ?? []).map(literal_string_c$332_elements),
+		stringOpen: b.stringOpen('c"')
+	});
+};
+const literal_string_escape$151 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceSimple> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceSimple(text);
+};
+const literal_string_escape$152 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeFixed> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceUnicodeFixed(text);
+};
+const literal_string_escape$153 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeBraced> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceUnicodeBraced(text);
+};
+const literal_string_escape$154 = (
+	input: PathInput<RustMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceHex> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequenceHex(text);
+};
+const literal_string_text$157 = (
+	input: PathInput<RustMap, 'literal.string.text'>
+): ReturnType<typeof b.stringContent> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.text', unroutedSlot);
+	return b.stringContent(typeof input === 'string' ? input : input.$value);
+};
 const modifier_extern$234 = (input: PathInput<RustMap, 'modifier.extern'>): ReturnType<typeof b.externModifier> => {
 	const unroutedSlot = unroutedIn(input, ['abi']);
 	if (unroutedSlot !== undefined) return unrouted('modifier.extern', unroutedSlot);
 	return b.externModifier(input.abi === undefined ? undefined : modifier_extern$234_abi(input.abi));
+};
+const modifier_visibility_public$381$235 = (
+	input: PathInput<RustMap, 'modifier.visibility.public'>
+): ReturnType<typeof b.visibilityModifier.pub> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('modifier.visibility.public', unroutedSlot);
+	return b.visibilityModifier.pub();
 };
 const pattern_as$325 = (input: PathInput<RustMap, 'pattern.as'>): ReturnType<typeof b.capturedPattern> => {
 	const unroutedSlot = unroutedIn(input, ['name', 'pattern']);
@@ -85060,30 +86787,89 @@ const pattern_or$387 = (input: PathInput<RustMap, 'pattern.or'>): ReturnType<typ
 	if (unroutedSlot !== undefined) return unrouted('pattern.or', unroutedSlot);
 	return b.orPatternPrefix(pattern_or$387_right(input.right));
 };
+const pattern_range$421 = (
+	input: PathInput<RustMap, 'pattern.range'>
+): ReturnType<typeof b.rangePatternLowerBounded> => {
+	const unroutedSlot = unroutedIn(input, ['start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range', unroutedSlot);
+	return b.rangePatternLowerBounded(
+		input.start === undefined ? missing('pattern.range.start') : pattern_range$421_start(input.start)
+	);
+};
 const pattern_range_exclusive$419 = (
 	input: PathInput<RustMap, 'pattern.range.exclusive'>
-): ReturnType<typeof b.rangePatternPrefix> => {
-	const unroutedSlot = unroutedIn(input, ['right']);
+): ReturnType<typeof b.rangePatternUpperBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
-	return b.rangePatternPrefix({
-		right:
-			input.right === undefined
-				? missing('pattern.range.exclusive.right')
-				: pattern_range_exclusive$419_right(input.right),
+	return b.rangePatternUpperBounded({
+		end: input.end === undefined ? missing('pattern.range.exclusive.end') : pattern_range_exclusive$419_end(input.end),
 		operator: 101
 	});
 };
+const pattern_range_exclusive$420 = (
+	input: PathInput<RustMap, 'pattern.range.exclusive'>
+): ReturnType<typeof b.rangePatternBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end', 'start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
+	return b.rangePatternBounded({
+		start:
+			input.start === undefined
+				? missing('pattern.range.exclusive.start')
+				: pattern_range_exclusive$420_start(input.start),
+		end: input.end === undefined ? missing('pattern.range.exclusive.end') : pattern_range_exclusive$420_end(input.end),
+		operator: 101
+	});
+};
+const pattern_range_exclusive$421 = (
+	input: PathInput<RustMap, 'pattern.range.exclusive'>
+): ReturnType<typeof b.rangePatternLowerBounded> => {
+	const unroutedSlot = unroutedIn(input, ['start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range.exclusive', unroutedSlot);
+	return b.rangePatternLowerBounded(
+		input.start === undefined
+			? missing('pattern.range.exclusive.start')
+			: pattern_range_exclusive$421_start(input.start)
+	);
+};
 const pattern_range_inclusive$419 = (
 	input: PathInput<RustMap, 'pattern.range.inclusive'>
-): ReturnType<typeof b.rangePatternPrefix> => {
-	const unroutedSlot = unroutedIn(input, ['right']);
+): ReturnType<typeof b.rangePatternUpperBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end']);
 	if (unroutedSlot !== undefined) return unrouted('pattern.range.inclusive', unroutedSlot);
-	return b.rangePatternPrefix({
-		right:
-			input.right === undefined
-				? missing('pattern.range.inclusive.right')
-				: pattern_range_inclusive$419_right(input.right),
+	return b.rangePatternUpperBounded({
+		end: input.end === undefined ? missing('pattern.range.inclusive.end') : pattern_range_inclusive$419_end(input.end),
 		operator: 137
+	});
+};
+const pattern_range_inclusive$420 = (
+	input: PathInput<RustMap, 'pattern.range.inclusive'>
+): ReturnType<typeof b.rangePatternBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end', 'start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range.inclusive', unroutedSlot);
+	return b.rangePatternBounded({
+		start:
+			input.start === undefined
+				? missing('pattern.range.inclusive.start')
+				: pattern_range_inclusive$420_start(input.start),
+		end: input.end === undefined ? missing('pattern.range.inclusive.end') : pattern_range_inclusive$420_end(input.end),
+		operator: 137
+	});
+};
+const pattern_range_inclusive_legacy$420 = (
+	input: PathInput<RustMap, 'pattern.range.inclusive.legacy'>
+): ReturnType<typeof b.rangePatternBounded> => {
+	const unroutedSlot = unroutedIn(input, ['end', 'start']);
+	if (unroutedSlot !== undefined) return unrouted('pattern.range.inclusive.legacy', unroutedSlot);
+	return b.rangePatternBounded({
+		start:
+			input.start === undefined
+				? missing('pattern.range.inclusive.legacy.start')
+				: pattern_range_inclusive_legacy$420_start(input.start),
+		end:
+			input.end === undefined
+				? missing('pattern.range.inclusive.legacy.end')
+				: pattern_range_inclusive_legacy$420_end(input.end),
+		operator: 49
 	});
 };
 const pattern_reference$324 = (input: PathInput<RustMap, 'pattern.reference'>): ReturnType<typeof b.refPattern> => {
@@ -85490,6 +87276,9 @@ const clause_where = (input: PathInput<RustMap, 'clause.where'>) => {
 const clause_where_predicate = (input: PathInput<RustMap, 'clause.where.predicate'>) => {
 	return clause_where_predicate$212(input);
 };
+const comment_block = (input: PathInput<RustMap, 'comment.block'>) => {
+	return comment_block$340(input);
+};
 const declaration_constant = (input: PathInput<RustMap, 'declaration.constant'>) => {
 	return declaration_constant$205(input);
 };
@@ -85532,7 +87321,7 @@ const declaration_module_foreign = (input: PathInput<RustMap, 'declaration.modul
 const declaration_parameter_receiver = (input: PathInput<RustMap, 'declaration.parameter.receiver'>) => {
 	if (input.type !== undefined && input.lifetime === undefined) {
 		if (input.attributes !== undefined) return unrouted('declaration.parameter.receiver', 'attributes');
-		return declaration_parameter_receiver$439(input);
+		return declaration_parameter_receiver$438(input);
 	}
 	if (input.attributes !== undefined) return unrouted('declaration.parameter.receiver', 'attributes');
 	return declaration_parameter_receiver$231(input);
@@ -86378,10 +88167,10 @@ const expression_cast_conversion = (input: PathInput<RustMap, 'expression.cast.c
 	return expression_cast_conversion$273(input);
 };
 const expression_collection_list = (input: PathInput<RustMap, 'expression.collection.list'>) => {
-	return expression_collection_list$436(input);
+	return expression_collection_list$435(input);
 };
 const expression_collection_list_repeat = (input: PathInput<RustMap, 'expression.collection.list.repeat'>) => {
-	return expression_collection_list_repeat$435(input);
+	return expression_collection_list_repeat$434(input);
 };
 const expression_collection_struct = (input: PathInput<RustMap, 'expression.collection.struct'>) => {
 	return expression_collection_struct$282(input);
@@ -86484,6 +88273,10 @@ const identifier_label = (input: PathInput<RustMap, 'identifier.label'>) => {
 const identifier_lifetime = (input: PathInput<RustMap, 'identifier.lifetime'>) => {
 	return identifier_lifetime$239(input);
 };
+const identifier_metavariable = (input: PathInput<RustMap, 'identifier.metavariable'>) => {
+	if (input.attributes !== undefined) return unrouted('identifier.metavariable', 'attributes');
+	return identifier_metavariable$131(input);
+};
 const literal_number_float = (input: PathInput<RustMap, 'literal.number.float'>) => {
 	return literal_number_float$162(input);
 };
@@ -86502,8 +88295,35 @@ const literal_number_integer_octal = (input: PathInput<RustMap, 'literal.number.
 const literal_number_negative = (input: PathInput<RustMap, 'literal.number.negative'>) => {
 	return literal_number_negative$330(input);
 };
+const literal_string = (input: PathInput<RustMap, 'literal.string'>) => {
+	return literal_string$332(input);
+};
+const literal_string_bytes = (input: PathInput<RustMap, 'literal.string.bytes'>) => {
+	return literal_string_bytes$332(input);
+};
+const literal_string_c = (input: PathInput<RustMap, 'literal.string.c'>) => {
+	return literal_string_c$332(input);
+};
+const literal_string_escape = (input: PathInput<RustMap, 'literal.string.escape'>) => {
+	if ((typeof input.$value !== 'string' || /^(?:(?:[^xu]))$/u.test(input.$value)) && input.$value !== undefined)
+		return literal_string_escape$151(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:x[0-9a-fA-F]{2}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$154(input);
+	if (
+		(typeof input.$value !== 'string' || /^(?:(?:u\{[0-9a-fA-F]+\}))$/u.test(input.$value)) &&
+		input.$value !== undefined
+	)
+		return literal_string_escape$153(input);
+	return literal_string_escape$152(input);
+};
 const modifier_extern = (input: PathInput<RustMap, 'modifier.extern'>) => {
 	return modifier_extern$234(input);
+};
+const modifier_visibility_public = (input: PathInput<RustMap, 'modifier.visibility.public'>) => {
+	return modifier_visibility_public$381$235(input);
 };
 const pattern_as = (input: PathInput<RustMap, 'pattern.as'>) => {
 	return pattern_as$325(input);
@@ -86520,6 +88340,21 @@ const pattern_mutable = (input: PathInput<RustMap, 'pattern.mutable'>) => {
 const pattern_or = (input: PathInput<RustMap, 'pattern.or'>) => {
 	if (input.right !== undefined && input.left === undefined) return pattern_or$387(input);
 	return pattern_or$386(input);
+};
+const pattern_range = (input: PathInput<RustMap, 'pattern.range'>) => {
+	return pattern_range$421(input);
+};
+const pattern_range_exclusive = (input: PathInput<RustMap, 'pattern.range.exclusive'>) => {
+	if (input.start !== undefined && input.end === undefined) return pattern_range_exclusive$421(input);
+	if (input.end !== undefined && input.start === undefined) return pattern_range_exclusive$419(input);
+	return pattern_range_exclusive$420(input);
+};
+const pattern_range_inclusive = (input: PathInput<RustMap, 'pattern.range.inclusive'>) => {
+	if (input.end !== undefined && input.start === undefined) return pattern_range_inclusive$419(input);
+	return pattern_range_inclusive$420(input);
+};
+const pattern_range_inclusive_legacy = (input: PathInput<RustMap, 'pattern.range.inclusive.legacy'>) => {
+	return pattern_range_inclusive_legacy$420(input);
 };
 const pattern_reference = (input: PathInput<RustMap, 'pattern.reference'>) => {
 	return pattern_reference$324(input);
@@ -86629,6 +88464,7 @@ export const portableBuild = {
 		macro: { rule: clause_macro_rule },
 		where: Object.assign(clause_where, { predicate: clause_where_predicate })
 	},
+	comment: { block: comment_block },
 	declaration: {
 		constant: declaration_constant,
 		macro: Object.assign(declaration_macro, {
@@ -86732,7 +88568,7 @@ export const portableBuild = {
 		unary: { deref: expression_unary_deref, negation: expression_unary_negation, not: expression_unary_not },
 		yield: expression_yield
 	},
-	identifier: { label: identifier_label, lifetime: identifier_lifetime },
+	identifier: { label: identifier_label, lifetime: identifier_lifetime, metavariable: identifier_metavariable },
 	literal: {
 		number: {
 			float: literal_number_float,
@@ -86742,15 +88578,24 @@ export const portableBuild = {
 				octal: literal_number_integer_octal
 			}),
 			negative: literal_number_negative
-		}
+		},
+		string: Object.assign(literal_string, {
+			bytes: literal_string_bytes,
+			c: literal_string_c,
+			escape: literal_string_escape
+		})
 	},
-	modifier: { extern: modifier_extern },
+	modifier: { extern: modifier_extern, visibility: { public: modifier_visibility_public } },
 	pattern: {
 		as: pattern_as,
 		generic: pattern_generic,
 		list: pattern_list,
 		mutable: pattern_mutable,
 		or: pattern_or,
+		range: Object.assign(pattern_range, {
+			exclusive: pattern_range_exclusive,
+			inclusive: Object.assign(pattern_range_inclusive, { legacy: pattern_range_inclusive_legacy })
+		}),
 		reference: Object.assign(pattern_reference, { value: pattern_reference_value }),
 		struct: Object.assign(pattern_struct, { field: pattern_struct_field, tuple: pattern_struct_tuple }),
 		tuple: pattern_tuple

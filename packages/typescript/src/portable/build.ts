@@ -76805,6 +76805,91 @@ const identifier_qualified$354_qualifier = (value: identifier_qualified$354_qual
 			return unbuilt('identifier.qualified.qualifier', value);
 	}
 };
+type literal_number_negative$403$362_value$Item =
+	| Text<TypeScriptMap, 'literal.number.integer'>
+	| bigint
+	| number
+	| BuildInput<TypeScriptMap, 'literal.number.float'>
+	| TypeScriptMap['nodes']['literal.number.float']
+	| BuildInput<TypeScriptMap, 'literal.number.float.leading_point'>
+	| TypeScriptMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<TypeScriptMap, 'literal.number.float.scientific'>
+	| TypeScriptMap['nodes']['literal.number.float.scientific']
+	| BuildInput<TypeScriptMap, 'literal.number.integer'>
+	| TypeScriptMap['nodes']['literal.number.integer']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big'>
+	| TypeScriptMap['nodes']['literal.number.integer.big']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.big.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.binary'>
+	| TypeScriptMap['nodes']['literal.number.integer.binary']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.hex'>
+	| TypeScriptMap['nodes']['literal.number.integer.hex']
+	| BuildInput<TypeScriptMap, 'literal.number.integer.octal'>
+	| TypeScriptMap['nodes']['literal.number.integer.octal']
+	| {
+			readonly $path: 'literal.number';
+			readonly $value: number | bigint;
+	  };
+const literal_number_negative$403$362_value = (value: literal_number_negative$403$362_value$Item) => {
+	if (typeof value === 'string') {
+		return untexted('literal.number.negative.value', value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number$151({ $path: 'literal.number', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number$145({ $path: 'literal.number', $value: value });
+		}
+		return literal_number$141({ $path: 'literal.number', $value: value });
+	}
+	if (isNode(value)) {
+		if (seated(value, [140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 277, 404])) return value;
+		return unseated('literal.number.negative.value', value);
+	}
+	switch (value.$path) {
+		case 'literal.number.float':
+			return literal_number_float$141(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$142(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$143(value);
+		case 'literal.number.integer':
+			return literal_number_integer$145(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$151(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$149(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$148(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$150(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$146(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$140(value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$147(value);
+		case 'literal.number':
+			if (typeof value.$value === 'bigint') {
+				return literal_number$151({ $path: 'literal.number', $value: value.$value });
+			}
+			if (typeof value.$value === 'number') {
+				if (Number.isSafeInteger(value.$value)) {
+					return literal_number$145({ $path: 'literal.number', $value: value.$value });
+				}
+				return literal_number$141({ $path: 'literal.number', $value: value.$value });
+			}
+			return unbuilt('literal.number.negative.value', value);
+		default:
+			return unbuilt('literal.number.negative.value', value);
+	}
+};
 type literal_regex$276_flags$Item =
 	| Text<TypeScriptMap, 'literal.regex.flags'>
 	| BuildInput<TypeScriptMap, 'literal.regex.flags'>
@@ -76875,7 +76960,7 @@ const literal_string$426_elements = (value: literal_string$426_elements$Item) =>
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			return literal_string_escape$101(value);
 		case 'literal.string.text':
 			return literal_string_text$99(value);
 		default:
@@ -76903,7 +76988,7 @@ const literal_string$427_elements = (value: literal_string$427_elements$Item) =>
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			return literal_string_escape$101(value);
 		case 'literal.string.text':
 			return literal_string_text$100(value);
 		default:
@@ -76936,7 +77021,7 @@ const literal_string_interpolated$274_elements = (value: literal_string_interpol
 		case 'expression.interpolation':
 			return expression_interpolation$275(value);
 		case 'literal.string.escape':
-			return unbuilt('literal.string.interpolated.elements', value);
+			return literal_string_escape$101(value);
 		case 'literal.string.text':
 			return literal_string_text$176(value);
 		default:
@@ -92540,10 +92625,30 @@ const clause_mapped_type$361 = (
 		alias: input.alias === undefined ? undefined : clause_mapped_type$361_alias(input.alias)
 	});
 };
+const comment_block$139 = (input: PathInput<TypeScriptMap, 'comment.block'>): ReturnType<typeof b.commentBlock> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block', unroutedSlot);
+	const text = input.$value;
+	return b.commentBlock(text);
+};
+const comment_block_doc$139 = (
+	input: PathInput<TypeScriptMap, 'comment.block.doc'>
+): ReturnType<typeof b.commentBlock> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.block.doc', unroutedSlot);
+	const text = input.$value;
+	return b.commentBlock(text);
+};
 const comment_html$178 = (input: PathInput<TypeScriptMap, 'comment.html'>): ReturnType<typeof b.htmlComment> => {
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.html', unroutedSlot);
 	return b.htmlComment(typeof input === 'string' ? input : input.$value);
+};
+const comment_line$138 = (input: PathInput<TypeScriptMap, 'comment.line'>): ReturnType<typeof b.commentLine> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
+	const text = input.$value;
+	return b.commentLine(text);
 };
 const declaration_ambient$313 = (
 	input: PathInput<TypeScriptMap, 'declaration.ambient'>
@@ -94209,6 +94314,7 @@ const literal_number$141 = (
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number', input.$value);
+	if (parts.exponent === undefined) return b.numberFloatPoint({ integer: parts.integer, fraction: parts.fraction });
 	return b.numberFloatPoint({
 		integer: parts.integer,
 		fraction: parts.fraction,
@@ -94241,6 +94347,7 @@ const literal_number_float$141 = (
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float', input.$value);
+	if (parts.exponent === undefined) return b.numberFloatPoint({ integer: parts.integer, fraction: parts.fraction });
 	return b.numberFloatPoint({
 		integer: parts.integer,
 		fraction: parts.fraction,
@@ -94260,6 +94367,7 @@ const literal_number_float_leading_point$142 = (
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float.leading_point', input.$value);
+	if (parts.exponent === undefined) return b.numberFloatLeadingPoint({ fraction: parts.fraction });
 	return b.numberFloatLeadingPoint({
 		fraction: parts.fraction,
 		exponentSign: parts.exponentSign,
@@ -94344,6 +94452,13 @@ const literal_number_integer_octal$147 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.numberOctal(value) : b.numberOctal(value);
 };
+const literal_number_negative$403$362 = (
+	input: PathInput<TypeScriptMap, 'literal.number.negative'>
+): ReturnType<typeof b.literalType.negativeNumber> => {
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
+	return b.literalType.negativeNumber(literal_number_negative$403$362_value(input.value));
+};
 const literal_regex$276 = (input: PathInput<TypeScriptMap, 'literal.regex'>): ReturnType<typeof b.regex> => {
 	const unroutedSlot = unroutedIn(input, ['flags', 'pattern']);
 	if (unroutedSlot !== undefined) return unrouted('literal.regex', unroutedSlot);
@@ -94375,6 +94490,14 @@ const literal_string$427 = (input: PathInput<TypeScriptMap, 'literal.string'>): 
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
 	return b.stringSingle(...(input.elements ?? []).map(literal_string$427_elements));
+};
+const literal_string_escape$101 = (
+	input: PathInput<TypeScriptMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequence> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = input.$value;
+	return b.escapeSequence(text);
 };
 const literal_string_interpolated$274 = (
 	input: PathInput<TypeScriptMap, 'literal.string.interpolated'>
@@ -94893,8 +95016,17 @@ const clause_import_specifier = (input: PathInput<TypeScriptMap, 'clause.import.
 const clause_mapped_type = (input: PathInput<TypeScriptMap, 'clause.mapped_type'>) => {
 	return clause_mapped_type$361(input);
 };
+const comment_block = (input: PathInput<TypeScriptMap, 'comment.block'>) => {
+	return comment_block$139(input);
+};
+const comment_block_doc = (input: PathInput<TypeScriptMap, 'comment.block.doc'>) => {
+	return comment_block_doc$139(input);
+};
 const comment_html = (input: PathInput<TypeScriptMap, 'comment.html'>) => {
 	return comment_html$178(input);
+};
+const comment_line = (input: PathInput<TypeScriptMap, 'comment.line'>) => {
+	return comment_line$138(input);
 };
 const declaration_ambient = (input: PathInput<TypeScriptMap, 'declaration.ambient'>) => {
 	return declaration_ambient$313(input);
@@ -95308,6 +95440,9 @@ const literal_number_integer_hex = (input: PathInput<TypeScriptMap, 'literal.num
 const literal_number_integer_octal = (input: PathInput<TypeScriptMap, 'literal.number.integer.octal'>) => {
 	return literal_number_integer_octal$147(input);
 };
+const literal_number_negative = (input: PathInput<TypeScriptMap, 'literal.number.negative'>) => {
+	return literal_number_negative$403$362(input);
+};
 const literal_regex = (input: PathInput<TypeScriptMap, 'literal.regex'>) => {
 	return literal_regex$276(input);
 };
@@ -95321,6 +95456,9 @@ const literal_string = (input: PathInput<TypeScriptMap, 'literal.string'>) => {
 	if ((input.elements ?? []).every((item) => typeof item !== 'string' || /^(?:(?:[^"\\\r\n]+))$/u.test(item)))
 		return literal_string$426(input);
 	return literal_string$427(input);
+};
+const literal_string_escape = (input: PathInput<TypeScriptMap, 'literal.string.escape'>) => {
+	return literal_string_escape$101(input);
 };
 const literal_string_interpolated = (input: PathInput<TypeScriptMap, 'literal.string.interpolated'>) => {
 	return literal_string_interpolated$274(input);
@@ -95471,7 +95609,7 @@ export const portableBuild = {
 		},
 		mapped_type: clause_mapped_type
 	},
-	comment: { html: comment_html },
+	comment: { block: Object.assign(comment_block, { doc: comment_block_doc }), html: comment_html, line: comment_line },
 	declaration: {
 		ambient: declaration_ambient,
 		member: {
@@ -95601,10 +95739,15 @@ export const portableBuild = {
 				binary: literal_number_integer_binary,
 				hex: literal_number_integer_hex,
 				octal: literal_number_integer_octal
-			})
+			}),
+			negative: literal_number_negative
 		}),
 		regex: Object.assign(literal_regex, { flags: literal_regex_flags, pattern: literal_regex_pattern }),
-		string: Object.assign(literal_string, { interpolated: literal_string_interpolated, text: literal_string_text })
+		string: Object.assign(literal_string, {
+			escape: literal_string_escape,
+			interpolated: literal_string_interpolated,
+			text: literal_string_text
+		})
 	},
 	pattern: {
 		assignment: pattern_assignment,

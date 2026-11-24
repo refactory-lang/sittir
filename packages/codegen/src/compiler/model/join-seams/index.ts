@@ -101,6 +101,12 @@ export function unreachedJoinSeams(
 	return [...joins.seamIds].filter(([, ids]) => !held(ids)).map(([seam]) => seam);
 }
 
+export function joinsOutsideLists(joins: JoinFacts, lists: ReadonlySet<RuleId> | undefined): JoinFacts {
+	if (lists === undefined) return joins;
+	const outside = (ids: ReadonlySet<RuleId>): ReadonlySet<RuleId> => new Set([...ids].filter((id) => !lists.has(id)));
+	return { ...joins, joinsNext: outside(joins.joinsNext), joinsPrevious: outside(joins.joinsPrevious) };
+}
+
 export function joinArmOf(joins: JoinFacts, ids: Iterable<RuleId | undefined>): JoinArm {
 	let previous = false;
 	let next = false;

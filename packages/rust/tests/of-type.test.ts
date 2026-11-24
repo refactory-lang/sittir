@@ -13,7 +13,7 @@ describe('ofType and is.* share one membership test', () => {
 		['a supertype', engine.kinds.Expression, engine.is.expression],
 		['a supertype of literals', engine.kinds.Literal, engine.is.literal],
 		['a polymorph', engine.kinds.RangeExpression, engine.is.rangeExpression],
-		['an arm', engine.kinds.RangeExpressionPostfix, engine.is.rangeExpressionPostfix],
+		['an arm', engine.kinds.RangeExpressionLowerBounded, engine.is.rangeExpressionLowerBounded],
 		['an alias display kind', engine.kinds.FieldIdentifier, engine.is.fieldIdentifier],
 		['a concrete kind', engine.kinds.LetDeclaration, engine.is.letDeclaration]
 	];
@@ -33,13 +33,13 @@ describe('ofType and is.* share one membership test', () => {
 		const types = new Set([...root.$query().$descendants.ofType(engine.kinds.Expression as never)].map(typeOf));
 		expect(types.has(engine.kinds.Expression)).toBe(false);
 		expect(types).toContain(engine.kinds.CallExpression);
-		expect(types).toContain(engine.kinds.RangeExpressionBinary);
+		expect(types).toContain(engine.kinds.RangeExpressionBounded);
 	});
 
 	it('chained ofType steps intersect their memberships', () => {
 		const root = engine.parse(SOURCE, { depth: 1 });
 		const types = [...root.$query().$descendants.ofType(engine.kinds.Expression as never).ofType(engine.kinds.RangeExpression as never)].map(typeOf);
-		expect(types).toEqual([engine.kinds.RangeExpressionBinary, engine.kinds.RangeExpressionPostfix, engine.kinds.RangeExpressionPrefix]);
+		expect(types).toEqual([engine.kinds.RangeExpressionBounded, engine.kinds.RangeExpressionLowerBounded, engine.kinds.RangeExpressionUpperBounded]);
 	});
 });
 
@@ -49,13 +49,13 @@ describe('ofType over a polymorph', () => {
 	it('selects every arm node by the parent kind', () => {
 		const root = engine.parse(RANGES, { depth: 1 });
 		const kinds = [...root.$query().$descendants.ofType(engine.kinds.RangeExpression as never)].map((node) => (node as { readonly $type: number }).$type);
-		expect(kinds).toEqual([engine.kinds.RangeExpressionBinary, engine.kinds.RangeExpressionPostfix, engine.kinds.RangeExpressionPrefix]);
+		expect(kinds).toEqual([engine.kinds.RangeExpressionBounded, engine.kinds.RangeExpressionLowerBounded, engine.kinds.RangeExpressionUpperBounded]);
 	});
 
 	it('selects only that arm by an arm kind', () => {
 		const root = engine.parse(RANGES, { depth: 1 });
-		const kinds = [...root.$query().$descendants.ofType(engine.kinds.RangeExpressionPostfix as never)].map((node) => (node as { readonly $type: number }).$type);
-		expect(kinds).toEqual([engine.kinds.RangeExpressionPostfix]);
+		const kinds = [...root.$query().$descendants.ofType(engine.kinds.RangeExpressionLowerBounded as never)].map((node) => (node as { readonly $type: number }).$type);
+		expect(kinds).toEqual([engine.kinds.RangeExpressionLowerBounded]);
 	});
 });
 

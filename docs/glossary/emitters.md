@@ -206,7 +206,7 @@ by kind and slot (interiorSlotGuards); the raw builder tests a slot value agains
 
 ```text
 // `as const` narrows the literal type to the specific TSKindId member
-// (e.g. `TSKindId.RangeExpressionBinary`), keeping `$type` discriminable
+// (e.g. `TSKindId.RangeExpressionBounded`), keeping `$type` discriminable
 // for kind-narrowing in consumers — `is.functionItem(node)` etc. all
 // match against the const-enum value, not the widened `number` type.
 // Factory output remains structurally compatible with `AnyUntypedNode`
@@ -9406,7 +9406,7 @@ The grammar's `descriptor.ts`, the language descriptor. A namespace cannot merge
 
 Every id a kind's values are stored under, by kind, gathered from every
 literal component before the literal list dedupes by kind and text. A
-hidden fixed-text kind (rust's `_range_expression_bare`) is spliced out of
+hidden fixed-text kind (rust's `_range_expression_unbounded`) is spliced out of
 the parse tree, so its values arrive under the token that spells it (`..`);
 the fixed literal's own decoder accepts these ids beside its own
 (`collectFixedLiterals`).
@@ -11327,7 +11327,7 @@ A separated list's `$with` setters for its options, one per `listOptionKeys` key
 
 ### `packages/codegen/src/emitters/wrap.ts::namedUnitKindIds`
 
-The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind catalog's `anon` and `hidden` stamps (named and visible, as node-types lists them): an empty statement's `;`, `true`, `self`, not a `$` or `{`, and not a hidden unit such as a layout member (`_space`) or rust's `_range_expression_bare`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
+The unit kinds (`unitKindIds`) the parser names in its tree, read from the kind catalog's `anon` and `hidden` stamps (named and visible, as node-types lists them): an empty statement's `;`, `true`, `self`, not a `$` or `{`, and not a hidden unit such as a layout member (`_space`) or rust's `_range_expression_unbounded`. Emitted as `TriviaFacts.namedUnits`: inside an inner gap such a stored unit owns sides and an anonymous token does not, as the parsed rule counts only named children.
 
 ### `packages/codegen/src/emitters/wrap.ts::unitKindIdsWhere`
 

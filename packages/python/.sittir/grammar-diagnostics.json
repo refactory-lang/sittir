@@ -608,22 +608,6 @@
   {
     "scope": "grammar",
     "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.or.left: literal.number.negative has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "pattern.or.right: literal.number.negative has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
     "code": "portable-emit-unplaced-arm",
     "severity": "warning",
     "canProceed": true,
@@ -660,14 +644,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "clause.resource.item: arm 169 builds value through more than one form"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "comment.line: arm 73 builds its text through a content slot"
   },
   {
     "scope": "grammar",
@@ -979,7 +955,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw: arm 253 builds its text through a content slot"
+    "message": "literal.string.bytes.raw: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",
@@ -987,15 +963,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.bytes.raw.multiline: arm 253 builds its text through a content slot"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "python",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.string.escape: arm 109 builds its text through a content slot"
+    "message": "literal.string.bytes.raw.multiline: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",
@@ -1075,7 +1043,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.raw: arm 253 builds its text through a content slot"
+    "message": "literal.string.raw: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",
@@ -1083,7 +1051,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.string.raw.multiline: arm 253 builds its text through a content slot"
+    "message": "literal.string.raw.multiline: arm 253's content slot is a list or has more than one seat"
   },
   {
     "scope": "grammar",

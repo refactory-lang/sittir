@@ -44,9 +44,9 @@ const FAMILIES: Readonly<Record<Grammar, readonly (readonly [kind: string, path:
 	rust: [
 		['binary_expression', 'expression.binary', 18, 18],
 		['compound_assignment_expr', 'expression.assignment.compound', 10, 10],
-		['range_expression_binary', 'expression.range', 3, 3],
-		['range_pattern_prefix', 'pattern.range', 2, 2],
-		['range_pattern_with_left', 'pattern.range', 4, 3],
+		['range_expression_bounded', 'expression.range', 3, 3],
+		['range_pattern_bounded', 'pattern.range', 3, 3],
+		['range_pattern_upper_bounded', 'pattern.range', 2, 2],
 		['unary_expression', 'expression.unary', 3, 3]
 	],
 	typescript: [

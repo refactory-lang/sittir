@@ -3338,6 +3338,9 @@ The catalog kinds of a list's separator token arms (`AssembledList.separatorToke
  * unchanged; the arms of every separator gap are that supertype's members
  * less `indent`/`dedent` (`whitespaceKindsOf`), the arms of a flank all of them
  * (`layoutKindsOf`).
+ * A list whose content admits no extras gets no choice. Its rule id and its
+ * slot's source rule ids are stamped as `noExtrasLists`, which the seam pass
+ * and the render's join facts read.
  * Assemble and the factory surface never see the injected choices. The
  * declared defaults are not validated here: `seamRenderRules`, the pass
  * that follows the seam-stamping dry run, validates them once over every
@@ -3543,7 +3546,8 @@ itself a nested seq contributes its edge member: the seam then goes inside
 the group, first for a `_before`, last for an `_after`, so an optional
 clause such as `optional(seq('=', value))` carries `eq_before` and renders
 it only when the clause does. The default arm is still the parent
-boundary's stamp.
+boundary's stamp. A boundary `admitsNoSeam` answers yes for gets no seam,
+on the members or on their choice arms.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::edgeMember`
 
@@ -6318,6 +6322,18 @@ Which arms of one required choice hold a slot, and whether each arm requires it.
 
 Whether a render rule has a seam at the first or last edge of its arms.
 
+### `packages/codegen/src/compiler/model/render-rules.ts::admitsNoSeam`
+
+The seam pass's one question about a boundary: the right member starts immediate, or either member is, or ends at that side in, a list that admits no extras. A boundary answering yes gets no seam and so no option addresses it, because a space there would be content or a parse error. A nested group counts by its edge member, a choice counts if any arm does.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::edgeChoicesOf`
+
+The choices a seam on this side of a rule would sit beside: walking through wrappers and each group's edge member, every choice reached, including one nested in another's arm. A repeated rule ends the walk, since it is a list rather than a choice of arms.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::mixedSeamChoices`
+
+The kind and side of every seam boundary whose neighbour is a choice with some arms holding a list that admits no extras and some not. `admitsNoSeam` answers such a choice for all its arms, so the other arm would lose its seam and could fuse with its neighbour's tokens, and neither answer is right for both. No grammar has this shape, and a test over every grammar fails if one gains it. Normalized rules hold no blank arm, because an optional is a multiplicity on the member, so every arm of a choice counts.
+
 ### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorValueClassOf`
 
 The value class a slot's low-level accessor belongs to: `boolean` for a boolean slot, `flags` for a bitflag slot, `list` for a multiple slot, `choice` for a kind enum or text enum, and `single` otherwise.
@@ -6493,3 +6509,7 @@ The names of the symbols a rule references through seqs and choices, skipping se
 ### `packages/codegen/src/compiler/model/choice-partition.ts::slotChoiceTextFailuresOf`
 
 The `slotChoiceTextFailure` of every slot-claimed choice, by owner kind. Assemble stamps the result on the node map and does not record it as a compile diagnostic, so a grammar with such a choice still compiles and its model can be read. `emitStages` halts on the stamp, unless the run's `allowDiagnostics` names `slot-choice-text-lost`. No `expectDiagnostics` entry can floor it.
+
+### `packages/codegen/src/compiler/model/join-seams/index.ts::joinsOutsideLists`
+
+The join facts a render reads: `joinsNext` and `joinsPrevious` without the rule ids of the lists that admit no extras. A space inside such a list is content, so the join guard must not write one there even when two items' characters would lex as one token. Python's `f"a {{{b}"` holds `{{` then `{b}`, and a separating space would change the string's value. The pairs, kinds and seam ids are unchanged, and the facts come back as given when no lists are stamped. The unreached-seam check keeps reading the full facts, since a seam inside such a list is still held by its rule.

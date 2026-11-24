@@ -208,10 +208,10 @@ export const buildOrPatternBinary = dispatched(() => backend().buildOrPatternBin
 export const buildOrPatternPrefix = dispatched(() => backend().buildOrPatternPrefix);
 export const buildPointerTypeConst = dispatched(() => backend().buildPointerTypeConst);
 export const buildPointerTypeMut = dispatched(() => backend().buildPointerTypeMut);
-export const buildRangeExpressionBinary = dispatched(() => backend().buildRangeExpressionBinary);
-export const buildRangeExpressionPostfix = dispatched(() => backend().buildRangeExpressionPostfix);
-export const buildRangeExpressionPrefix = dispatched(() => backend().buildRangeExpressionPrefix);
-export const buildRangeExpressionBare = dispatched(() => backend().buildRangeExpressionBare);
+export const buildRangeExpressionBounded = dispatched(() => backend().buildRangeExpressionBounded);
+export const buildRangeExpressionLowerBounded = dispatched(() => backend().buildRangeExpressionLowerBounded);
+export const buildRangeExpressionUpperBounded = dispatched(() => backend().buildRangeExpressionUpperBounded);
+export const buildRangeExpressionUnbounded = dispatched(() => backend().buildRangeExpressionUnbounded);
 export const buildExpressionStatementWithSemi = dispatched(() => backend().buildExpressionStatementWithSemi);
 export const buildForeignModItemSemi = dispatched(() => backend().buildForeignModItemSemi);
 export const buildForeignModItemBody = dispatched(() => backend().buildForeignModItemBody);
@@ -238,10 +238,9 @@ export const buildFieldPatternNamed = dispatched(() => backend().buildFieldPatte
 export const buildMacroDefinitionParen = dispatched(() => backend().buildMacroDefinitionParen);
 export const buildMacroDefinitionBracket = dispatched(() => backend().buildMacroDefinitionBracket);
 export const buildMacroDefinitionBrace = dispatched(() => backend().buildMacroDefinitionBrace);
-export const buildRangePatternPrefix = dispatched(() => backend().buildRangePatternPrefix);
-export const buildRangePatternWithLeftWithRight = dispatched(() => backend().buildRangePatternWithLeftWithRight);
-export const buildRangePatternWithLeftBare = O.buildRangePatternWithLeftBare;
-export const buildRangePatternWithLeft = dispatched(() => backend().buildRangePatternWithLeft);
+export const buildRangePatternUpperBounded = dispatched(() => backend().buildRangePatternUpperBounded);
+export const buildRangePatternBounded = dispatched(() => backend().buildRangePatternBounded);
+export const buildRangePatternLowerBounded = dispatched(() => backend().buildRangePatternLowerBounded);
 export const buildStructItemBrace = dispatched(() => backend().buildStructItemBrace);
 export const buildStructItemTuple = dispatched(() => backend().buildStructItemTuple);
 export const buildStructItemUnit = dispatched(() => backend().buildStructItemUnit);
@@ -487,10 +486,10 @@ export const _factoryMap = {
 	or_pattern_prefix: buildOrPatternPrefix,
 	pointer_type_const: buildPointerTypeConst,
 	pointer_type_mut: buildPointerTypeMut,
-	range_expression_binary: buildRangeExpressionBinary,
-	range_expression_postfix: buildRangeExpressionPostfix,
-	range_expression_prefix: buildRangeExpressionPrefix,
-	range_expression_bare: buildRangeExpressionBare,
+	range_expression_bounded: buildRangeExpressionBounded,
+	range_expression_lower_bounded: buildRangeExpressionLowerBounded,
+	range_expression_upper_bounded: buildRangeExpressionUpperBounded,
+	range_expression_unbounded: buildRangeExpressionUnbounded,
 	expression_statement_with_semi: buildExpressionStatementWithSemi,
 	foreign_mod_item_semi: buildForeignModItemSemi,
 	foreign_mod_item_body: buildForeignModItemBody,
@@ -517,10 +516,9 @@ export const _factoryMap = {
 	macro_definition_paren: buildMacroDefinitionParen,
 	macro_definition_bracket: buildMacroDefinitionBracket,
 	macro_definition_brace: buildMacroDefinitionBrace,
-	range_pattern_prefix: buildRangePatternPrefix,
-	range_pattern_with_left_with_right: buildRangePatternWithLeftWithRight,
-	range_pattern_with_left_bare: buildRangePatternWithLeftBare,
-	range_pattern_with_left: buildRangePatternWithLeft,
+	range_pattern_upper_bounded: buildRangePatternUpperBounded,
+	range_pattern_bounded: buildRangePatternBounded,
+	range_pattern_lower_bounded: buildRangePatternLowerBounded,
 	struct_item_brace: buildStructItemBrace,
 	struct_item_tuple: buildStructItemTuple,
 	struct_item_unit: buildStructItemUnit,

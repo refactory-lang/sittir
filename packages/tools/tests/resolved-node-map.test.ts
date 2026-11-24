@@ -37,8 +37,8 @@ describe.each([
 			};
 
 			expect(shapeOf('self')).toEqual([true, 'constant']);
-			expect(shapeOf('range_expression_bare')).toEqual([true, 'nullary']);
-			expect(shapeOf('range_expression_prefix')).toEqual([false, 'direct']);
+			expect(shapeOf('range_expression_unbounded')).toEqual([true, 'nullary']);
+			expect(shapeOf('range_expression_upper_bounded')).toEqual([false, 'direct']);
 		},
 		grammarCompilationTimeout
 	);

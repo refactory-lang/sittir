@@ -1056,7 +1056,7 @@ const clause_case_match$161_pattern = (value: clause_case_match$161_pattern$Item
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('clause.case.match.pattern', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -46197,6 +46197,82 @@ const literal_number_float_scientific$103_imaginary = (value: literal_number_flo
 	}
 	throw new Error('literal.number.float.scientific.imaginary takes no structure');
 };
+type literal_number_negative$296$189_value$Item =
+	| Text<PythonMap, 'literal.number.integer'>
+	| Text<PythonMap, 'literal.number.integer.imaginary'>
+	| bigint
+	| number
+	| BuildInput<PythonMap, 'literal.number.float'>
+	| PythonMap['nodes']['literal.number.float']
+	| BuildInput<PythonMap, 'literal.number.float.leading_point'>
+	| PythonMap['nodes']['literal.number.float.leading_point']
+	| BuildInput<PythonMap, 'literal.number.float.scientific'>
+	| PythonMap['nodes']['literal.number.float.scientific']
+	| BuildInput<PythonMap, 'literal.number.integer'>
+	| PythonMap['nodes']['literal.number.integer']
+	| BuildInput<PythonMap, 'literal.number.integer.big'>
+	| PythonMap['nodes']['literal.number.integer.big']
+	| BuildInput<PythonMap, 'literal.number.integer.big.binary'>
+	| PythonMap['nodes']['literal.number.integer.big.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.big.hex'>
+	| PythonMap['nodes']['literal.number.integer.big.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.big.octal'>
+	| PythonMap['nodes']['literal.number.integer.big.octal']
+	| BuildInput<PythonMap, 'literal.number.integer.binary'>
+	| PythonMap['nodes']['literal.number.integer.binary']
+	| BuildInput<PythonMap, 'literal.number.integer.hex'>
+	| PythonMap['nodes']['literal.number.integer.hex']
+	| BuildInput<PythonMap, 'literal.number.integer.imaginary'>
+	| PythonMap['nodes']['literal.number.integer.imaginary']
+	| BuildInput<PythonMap, 'literal.number.integer.octal'>
+	| PythonMap['nodes']['literal.number.integer.octal'];
+const literal_number_negative$296$189_value = (value: literal_number_negative$296$189_value$Item) => {
+	if (typeof value === 'string') {
+		return untexted('literal.number.negative.value', value);
+	}
+	if (typeof value === 'bigint') {
+		return literal_number_integer_big$98({ $path: 'literal.number.integer.big', $value: value });
+	}
+	if (typeof value === 'number') {
+		if (Number.isSafeInteger(value)) {
+			return literal_number_integer$100({ $path: 'literal.number.integer', $value: value });
+		}
+		return literal_number_float$101({ $path: 'literal.number.float', $value: value });
+	}
+	if (isNode(value)) {
+		if (seated(value, [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 260, 261, 291, 292, 293, 294, 295]))
+			return value;
+		return unseated('literal.number.negative.value', value);
+	}
+	switch (value.$path) {
+		case 'literal.number.float':
+			return literal_number_float$101(value);
+		case 'literal.number.float.leading_point':
+			return literal_number_float_leading_point$102(value);
+		case 'literal.number.float.scientific':
+			return literal_number_float_scientific$103(value);
+		case 'literal.number.integer':
+			return literal_number_integer$100(value);
+		case 'literal.number.integer.big':
+			return literal_number_integer_big$98(value);
+		case 'literal.number.integer.big.binary':
+			return literal_number_integer_big_binary$94(value);
+		case 'literal.number.integer.big.hex':
+			return literal_number_integer_big_hex$90(value);
+		case 'literal.number.integer.big.octal':
+			return literal_number_integer_big_octal$92(value);
+		case 'literal.number.integer.binary':
+			return literal_number_integer_binary$95(value);
+		case 'literal.number.integer.hex':
+			return literal_number_integer_hex$91(value);
+		case 'literal.number.integer.imaginary':
+			return unbuilt('literal.number.negative.value', value);
+		case 'literal.number.integer.octal':
+			return literal_number_integer_octal$93(value);
+		default:
+			return unbuilt('literal.number.negative.value', value);
+	}
+};
 type literal_string$253_elements$Item =
 	| '\\'
 	| Text<PythonMap, 'literal.string.escape'>
@@ -46226,7 +46302,49 @@ const literal_string$253_elements = (value: literal_string$253_elements$Item) =>
 	}
 	switch (value.$path) {
 		case 'literal.string.escape':
-			return unbuilt('literal.string.elements', value);
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:['"abfrntv\\]))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$109(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:x[a-fA-F0-9]{2}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$106(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:\r?\n))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$108(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:N\{[^}]+\}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$110(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:[0-9]{1,3}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$107(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:u[a-fA-F0-9]{4}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$104(value));
+			if (
+				(typeof (typeof value === 'string' ? value : value.$value) !== 'string' ||
+					/^(?:(?:U[a-fA-F0-9]{8}))$/u.test(typeof value === 'string' ? value : value.$value)) &&
+				(typeof value === 'string' ? value : value.$value) !== undefined
+			)
+				return b.stringContent(literal_string_escape$105(value));
+			return b.stringContent(literal_string_escape$126(value));
 		case 'literal.string.text':
 			return b.stringContent(literal_string_text$125(value));
 		default:
@@ -46509,7 +46627,7 @@ const pattern_as$190_pattern = (value: pattern_as$190_pattern$Item) => {
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.as.pattern', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -47283,7 +47401,7 @@ const pattern_list$284_elements$item = (value: pattern_list$284_elements$item$It
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.list.elements', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -47530,7 +47648,7 @@ const pattern_or$191_left = (value: pattern_or$191_left$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.number.negative':
-			return unbuilt('pattern.or.left', value);
+			return literal_number_negative$296$189(value);
 		case 'literal.string':
 			return literal_string$253(value);
 		case 'literal.string.bytes':
@@ -47749,7 +47867,7 @@ const pattern_or$191_right = (value: pattern_or$191_right$Item) => {
 		case 'literal.number.integer.octal':
 			return literal_number_integer_octal$93(value);
 		case 'literal.number.negative':
-			return unbuilt('pattern.or.right', value);
+			return literal_number_negative$296$189(value);
 		case 'literal.string':
 			return literal_string$253(value);
 		case 'literal.string.bytes':
@@ -48119,7 +48237,7 @@ const pattern_struct$196_fields$item = (value: pattern_struct$196_fields$item$It
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.struct.fields', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -48846,7 +48964,7 @@ const pattern_tuple$283_elements$item = (value: pattern_tuple$283_elements$item$
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.tuple.elements', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -49316,7 +49434,7 @@ const pattern_tuple_bare$280_elements = (value: pattern_tuple_bare$280_elements$
 		case 'literal.number.integer.octal':
 			return b.casePattern(b.simplePattern(literal_number_integer_octal$93(value)));
 		case 'literal.number.negative':
-			return unbuilt('pattern.tuple.bare.elements', value);
+			return b.casePattern(literal_number_negative$296$189(value));
 		case 'literal.string':
 			return b.casePattern(b.simplePattern(literal_string$253(value)));
 		case 'literal.string.bytes':
@@ -59095,6 +59213,12 @@ const clause_resource$307 = (input: PathInput<PythonMap, 'clause.resource'>): Re
 		b.withClauseWithItems(...nonEmpty('clause.resource.items', (input.items ?? []).map(clause_resource$307_items$item)))
 	);
 };
+const comment_line$73 = (input: PathInput<PythonMap, 'comment.line'>): ReturnType<typeof b.comment> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('comment.line', unroutedSlot);
+	const text = input.$value;
+	return b.comment(text);
+};
 const declaration_function$170 = (
 	input: PathInput<PythonMap, 'declaration.function'>
 ): ReturnType<typeof b.functionDefinition> => {
@@ -60389,6 +60513,12 @@ const literal_number_float$101 = (
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float', input.$value);
+	if (parts.exponent === undefined)
+		return b.floatPoint({
+			imaginary: input.imaginary === undefined ? undefined : literal_number_float$101_imaginary(input.imaginary),
+			integer: parts.integer,
+			fraction: parts.fraction
+		});
 	return b.floatPoint({
 		imaginary: input.imaginary === undefined ? undefined : literal_number_float$101_imaginary(input.imaginary),
 		integer: parts.integer,
@@ -60409,6 +60539,13 @@ const literal_number_float_leading_point$102 = (
 		false
 	);
 	if (parts === undefined) return unspelled('literal.number.float.leading_point', input.$value);
+	if (parts.exponent === undefined)
+		return b.floatLeadingPoint({
+			imaginary:
+				input.imaginary === undefined ? undefined : literal_number_float_leading_point$102_imaginary(input.imaginary),
+			integer: parts.integer,
+			fraction: parts.fraction
+		});
 	return b.floatLeadingPoint({
 		imaginary:
 			input.imaginary === undefined ? undefined : literal_number_float_leading_point$102_imaginary(input.imaginary),
@@ -60498,6 +60635,13 @@ const literal_number_integer_octal$93 = (
 	const value = input.$value;
 	return typeof value === 'bigint' ? b.integerOctalPlain(value) : b.integerOctalPlain(value);
 };
+const literal_number_negative$296$189 = (
+	input: PathInput<PythonMap, 'literal.number.negative'>
+): ReturnType<typeof b.simplePattern.negative> => {
+	const unroutedSlot = unroutedIn(input, ['value']);
+	if (unroutedSlot !== undefined) return unrouted('literal.number.negative', unroutedSlot);
+	return b.simplePattern.negative(literal_number_negative$296$189_value(input.value));
+};
 const literal_string$253 = (input: PathInput<PythonMap, 'literal.string'>): ReturnType<typeof b.string> => {
 	const unroutedSlot = unroutedIn(input, ['elements']);
 	if (unroutedSlot !== undefined) return unrouted('literal.string', unroutedSlot);
@@ -60514,6 +60658,69 @@ const literal_string_concatenated$252 = (
 			(input.strings ?? []).map(literal_string_concatenated$252_strings)
 		)
 	);
+};
+const literal_string_escape$104 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeFixed> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceUnicodeFixed(text);
+};
+const literal_string_escape$105 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceUnicodeWide> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceUnicodeWide(text);
+};
+const literal_string_escape$106 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceHex> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceHex(text);
+};
+const literal_string_escape$107 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceOctal> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceOctal(text);
+};
+const literal_string_escape$108 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceLineBreak> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceLineBreak(text);
+};
+const literal_string_escape$109 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceSimple> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceSimple(text);
+};
+const literal_string_escape$110 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeSequenceNamed> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	const text = typeof input === 'string' ? input : input.$value;
+	return b.escapeSequenceNamed(text);
+};
+const literal_string_escape$126 = (
+	input: PathInput<PythonMap, 'literal.string.escape'>
+): ReturnType<typeof b.escapeInterpolation> => {
+	const unroutedSlot = unroutedIn(input, []);
+	if (unroutedSlot !== undefined) return unrouted('literal.string.escape', unroutedSlot);
+	return b.escapeInterpolation(typeof input === 'string' ? input : input.$value);
 };
 const literal_string_text$125 = (
 	input: PathInput<PythonMap, 'literal.string.text'>
@@ -60980,6 +61187,9 @@ const clause_resource = (input: PathInput<PythonMap, 'clause.resource'>) => {
 		return clause_resource$306(input);
 	return clause_resource$307(input);
 };
+const comment_line = (input: PathInput<PythonMap, 'comment.line'>) => {
+	return comment_line$73(input);
+};
 const declaration_function = (input: PathInput<PythonMap, 'declaration.function'>) => {
 	if (input.decorators !== undefined) return unrouted('declaration.function', 'decorators');
 	return declaration_function$170(input);
@@ -61348,6 +61558,51 @@ const literal_string = (input: PathInput<PythonMap, 'literal.string'>) => {
 const literal_string_concatenated = (input: PathInput<PythonMap, 'literal.string.concatenated'>) => {
 	return literal_string_concatenated$252(input);
 };
+const literal_string_escape = (input: PathInput<PythonMap, 'literal.string.escape'>) => {
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:['"abfrntv\\]))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$109(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:x[a-fA-F0-9]{2}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$106(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:\r?\n))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$108(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:N\{[^}]+\}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$110(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:[0-9]{1,3}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$107(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:u[a-fA-F0-9]{4}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$104(input);
+	if (
+		(typeof (typeof input === 'string' ? input : input.$value) !== 'string' ||
+			/^(?:(?:U[a-fA-F0-9]{8}))$/u.test(typeof input === 'string' ? input : input.$value)) &&
+		(typeof input === 'string' ? input : input.$value) !== undefined
+	)
+		return literal_string_escape$105(input);
+	return literal_string_escape$126(input);
+};
 const literal_string_text = (input: PathInput<PythonMap, 'literal.string.text'>) => {
 	return literal_string_text$125(input);
 };
@@ -61443,6 +61698,7 @@ export const portableBuild = {
 		},
 		resource: clause_resource
 	},
+	comment: { line: comment_line },
 	declaration: {
 		function: declaration_function,
 		member: { property: { getter: declaration_member_property_getter, setter: declaration_member_property_setter } },
@@ -61546,7 +61802,11 @@ export const portableBuild = {
 				octal: literal_number_integer_octal
 			})
 		},
-		string: Object.assign(literal_string, { concatenated: literal_string_concatenated, text: literal_string_text })
+		string: Object.assign(literal_string, {
+			concatenated: literal_string_concatenated,
+			escape: literal_string_escape,
+			text: literal_string_text
+		})
 	},
 	pattern: {
 		as: pattern_as,

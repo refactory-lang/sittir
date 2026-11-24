@@ -1293,6 +1293,10 @@ The text of a portable value, or undefined when the value has none.
 
 Whether a read lands at or under a path's row: at or under the path itself (`portablePathHasFacts`), or at or under one of the row's `targets`, what the aliases the language holds at or beneath the path reach. `readsAs` asks it of a row its kinds do not decide, and `emitPortableSurface` asks it when stamping `exact`, so the guard and the stamp read an alias one way.
 
+### `packages/common/src/portable/facts.ts::readableFlags`
+
+The flags a read can state on an arm's structure: those the arm builds (`builtFlags`), minus any whose step `carriesNode`. A node where one of those holds is kept whole, because its source text is part of its value. The read and the exact read types both take the set from here, so a kept node is always admitted at its seat.
+
 ### `packages/common/src/portable/read.ts::PortableCarry`
 
 What a read carries past the structure: unclaimed, a scalar or text, or a set of flags.

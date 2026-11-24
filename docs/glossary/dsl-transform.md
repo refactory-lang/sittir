@@ -498,7 +498,8 @@ Applies a path-keyed patch set. A `narrow` entry is queued, with its path, for t
 
 Apply a patch set's `variant()` entries. Arms of one choice that the entries give the same name are first made one arm, a choice of those arms in their order, at the first one's place (`gatheredVariantArms`): a name is one kind, so java's `update_expression` names its `x++` and `x--` arms `postfix` and gets one `update_expression_postfix` whose operator is an enum slot, rather than a second mint overwriting the first. The other entries on that choice, and any key inside an arm that moved, are re-addressed to the arms' new places; the merged entry is the default when any of its arms was. Then try the whole-arm hoist
 (`tryHoistSiblingVariants`) first, resolve every entry it did not consume per
-arm, then register the parent for flattening when it ended as a pure choice of
+arm, give an unnamed arm's inner variants that arm's sequence
+(`hoistWithinArms`), then register the parent for flattening when it ended as a pure choice of
 its own variants. An absent variant only exists in the hoisted form, so when
 the set declares one (`variant(name, { absent: true })`) and the hoist does
 not happen, this throws rather than drop the declaration; `SITTIR_DEBUG=1`
@@ -526,7 +527,7 @@ Before anything applies, `admittedVariantEntries` refuses an entry with a blank 
 
 The analysis half of the whole-arm hoist: peels precedence, requires a top-level seq with every arm `variant()` at one choice position addressed the same way, and pairs each arm no `variant()` names with the enrich lift that already carries it (`enrichLiftArmOf`). Enrich mints; `variant()` labels. An unnamed arm enrich did not lift has no name to take, so the plan bails and the parent keeps its per-arm form: minting a name here would be too late for tree-sitter's rule map.
 
-A choice under `optional()` (arm paths `N/0/M`) has one more arm, the absent case, which takes the variant declared with `{ absent: true }` at path `N` or else `ABSENT_VARIANT_NAME`; its body is the scaffolding alone. At most one absent variant may be declared, and only on an optional. Returns the plan `tryHoistSiblingVariants` builds from, or `null` with the reason handed to `onBail`.
+A choice under `optional()` (arm paths `N/0/M`) has one more arm, the absent case, which takes the variant declared with `{ absent: true }` at path `N` or else `ABSENT_VARIANT_NAME`; its body is the scaffolding alone. At most one absent variant may be declared, and only on an optional. With `spliceSequences`, an arm that is a sequence places its members directly in the body rather than as one nested sequence, so an operator choice in the arm stays a slot of the variant. Returns the plan `tryHoistSiblingVariants` builds from, or `null` with the reason handed to `onBail`.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::hoistChoiceOf`
 
@@ -961,8 +962,7 @@ Records an alias `(from, to)` in every layer: the alias rewrites `(from)` segmen
 The annotation a minted body carries: `hoisted` (a group whose slots seat on
 the parent) unless the body lexes as one token (`lexesAsOneToken`), in which
 case the mint is a leaf subtype and carries none. It applies to `alias()` and
-`variant()` mints alike: a literal arm (rust `range_pattern_with_left_bare`)
-or a token-bodied arm (rust `line_comment_content`) has nothing to seat.
+`variant()` mints alike: a literal arm or a token-bodied arm (rust `line_comment_content`) has nothing to seat.
 
 ### `packages/codegen/src/dsl/transform/transform.ts::registerAliasedVariant`
 
@@ -1788,6 +1788,18 @@ Which dot-only entry a patch value is, if any.
 ### `packages/codegen/src/dsl/transform/transform.ts::refuseOffDotEntry`
 
 A dot-only entry at another path is refused (`edit-entry-invalid`, through `wire/wire.ts::wireRefuse`). It walks no path, so the rule stays as it is.
+
+### `packages/codegen/src/dsl/transform/transform.ts::entriesInUnnamedArms`
+
+The `variant()` entries of a patch set addressed `N/S/M` inside arm `N` of a top-level choice, for each arm no `variant()` in any of the rule's patch sets names. These are the entries `hoistWithinArms` tries. An arm with a variant of its own keeps its nesting, wherever in the rule's patch sets that variant is written.
+
+### `packages/codegen/src/dsl/transform/transform.ts::hoistWithinArms`
+
+Gives the inner variants of each unnamed arm that arm's sequence. It runs the whole-arm hoist (`tryHoistSiblingVariants`) over the arm's body with the arm's index dropped from each path, splicing a sequence arm's members so each form holds its slots directly, then puts the hoisted variants in the choice where the arm stood. An arm enrich lifted takes a blank body, so the orphan prune (`util/reachable-rules.ts::pruneOrphanedRules`) removes it. Returns the rebuilt rule and the entries it consumed, or `null` when no arm hoisted.
+
+### `packages/codegen/src/dsl/transform/transform.ts::withoutVariantOf`
+
+A copy of a rule with every `variantOf` annotation naming `owner` removed. A lift folded into its arms' variants no longer exists, so nothing inside those variants may still name it.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::reconstructPrec`
 

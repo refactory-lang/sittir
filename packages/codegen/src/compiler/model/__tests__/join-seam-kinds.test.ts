@@ -17,6 +17,6 @@ describe('the kinds whose last token can join what is written after them', () =>
 
 	it('rust: a range pattern open on the right ends in a `..` that joins a following `=`', () => {
 		const kinds = kindsJoiningNext('rust');
-		for (const kind of ['range_pattern_with_left_bare', 'range_pattern_with_left', '..']) expect(kinds.has(kind), kind).toBe(true);
+		for (const kind of ['range_pattern_lower_bounded', '..']) expect(kinds.has(kind), kind).toBe(true);
 	});
 });

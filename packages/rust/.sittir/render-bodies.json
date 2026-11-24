@@ -5665,16 +5665,10 @@
 			"field": "qualified_type_after"
 		}
 	],
-	"range_expression_bare": [
-		{
-			"kind": "text",
-			"text": ".."
-		}
-	],
-	"range_expression_binary": [
+	"range_expression_bounded": [
 		{
 			"kind": "seam",
-			"field": "range_expression_binary_before"
+			"field": "range_expression_bounded_before"
 		},
 		{
 			"kind": "slot",
@@ -5706,13 +5700,13 @@
 		},
 		{
 			"kind": "seam",
-			"field": "range_expression_binary_after"
+			"field": "range_expression_bounded_after"
 		}
 	],
-	"range_expression_postfix": [
+	"range_expression_lower_bounded": [
 		{
 			"kind": "seam",
-			"field": "range_expression_postfix_before"
+			"field": "range_expression_lower_bounded_before"
 		},
 		{
 			"kind": "slot",
@@ -5732,13 +5726,19 @@
 		},
 		{
 			"kind": "seam",
-			"field": "range_expression_postfix_after"
+			"field": "range_expression_lower_bounded_after"
 		}
 	],
-	"range_expression_prefix": [
+	"range_expression_unbounded": [
+		{
+			"kind": "text",
+			"text": ".."
+		}
+	],
+	"range_expression_upper_bounded": [
 		{
 			"kind": "seam",
-			"field": "range_expression_prefix_before"
+			"field": "range_expression_upper_bounded_before"
 		},
 		{
 			"kind": "text",
@@ -5762,39 +5762,51 @@
 		},
 		{
 			"kind": "seam",
-			"field": "range_expression_prefix_after"
+			"field": "range_expression_upper_bounded_after"
 		}
 	],
-	"range_pattern_prefix": [
+	"range_pattern_bounded": [
 		{
 			"kind": "seam",
-			"field": "range_pattern_prefix_before"
+			"field": "range_pattern_bounded_before"
 		},
 		{
 			"kind": "slot",
-			"name": "operator"
+			"name": "start"
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "operator",
+			"join": {
+				"previous": false,
+				"next": true
+			}
+		},
+		{
+			"kind": "slot",
+			"name": "end"
 		},
 		{
 			"kind": "seam",
-			"field": "range_pattern_prefix_after"
+			"field": "range_pattern_bounded_after"
 		}
 	],
-	"range_pattern_with_left": [
+	"range_pattern_lower_bounded": [
 		{
 			"kind": "seam",
-			"field": "range_pattern_with_left_before"
+			"field": "range_pattern_lower_bounded_before"
 		},
 		{
 			"kind": "slot",
-			"name": "left"
+			"name": "start"
 		},
 		{
-			"kind": "slot",
-			"name": "content",
+			"kind": "seam",
+			"field": "dot_dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "..",
 			"join": {
 				"previous": false,
 				"next": true
@@ -5802,13 +5814,13 @@
 		},
 		{
 			"kind": "seam",
-			"field": "range_pattern_with_left_after"
+			"field": "range_pattern_lower_bounded_after"
 		}
 	],
-	"range_pattern_with_left_with_right": [
+	"range_pattern_upper_bounded": [
 		{
 			"kind": "seam",
-			"field": "range_pattern_with_left_with_right_before"
+			"field": "range_pattern_upper_bounded_before"
 		},
 		{
 			"kind": "slot",
@@ -5816,11 +5828,11 @@
 		},
 		{
 			"kind": "slot",
-			"name": "right"
+			"name": "end"
 		},
 		{
 			"kind": "seam",
-			"field": "range_pattern_with_left_with_right_after"
+			"field": "range_pattern_upper_bounded_after"
 		}
 	],
 	"raw_string_literal": [

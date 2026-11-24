@@ -35,7 +35,7 @@ import {
 } from './shared.ts';
 import { builderTables } from './overlays/build-table.ts';
 import { collectPolymorphWires } from './overlays/polymorphs.ts';
-import { unreachedJoinSeams, type JoinFacts } from '../compiler/model/join-seams/index.ts';
+import { joinsOutsideLists, unreachedJoinSeams, type JoinFacts } from '../compiler/model/join-seams/index.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -156,7 +156,8 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	});
 
 	const addressTables = addressTablesFor(nodeMap, kindEntries, sitePreferences, optionsBlock);
-	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, joins, diagnostics });
+	const renderJoins = joinsOutsideLists(joins, renderRules.noExtrasLists);
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap, renderRules, kindEntries, joins: renderJoins, diagnostics });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
@@ -170,7 +171,7 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 						renderAs,
 						sites: sitePreferences,
 						addresses: addressTables,
-						joins
+						joins: renderJoins
 					})
 				})
 			: undefined;

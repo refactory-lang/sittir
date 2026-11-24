@@ -5,7 +5,7 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { builtFlags, containerSlots, isNumberSlots, leafSeatOf, setsOn, textBuilt, tokenText } from './facts.ts';
+import { containerSlots, isNumberSlots, leafSeatOf, readableFlags, setsOn, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
@@ -362,11 +362,11 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			if (arms.every((arm) => (readRoutesOf(arm).length === 0 && arm.seated !== undefined) || textBuilt(table, arm))) return textAt(textOf(node));
 		}
 		const readArms = scalar === undefined ? arms : [scalar.arm];
-		const buildable = new Set(readArms.flatMap(builtFlags));
+		const readable = new Set(readArms.flatMap(readableFlags));
 		const spelled = placed.flatMap(({ fact }) => fact.flag ?? []);
-		const unbuilt = [...new Set([...flagsOf(kind).filter((flag) => flagHolds(node, flag)), ...spelled])].filter((flag) => !buildable.has(flag));
-		if (unbuilt.length > 0) return kept(node, { reason: 'flags', flags: unbuilt }, carried);
-		const flags = [...new Set([...[...buildable].filter((flag) => flagHolds(node, flag) || spelled.includes(flag)), ...(containerSet.get(node) ?? [])])];
+		const unreadable = [...new Set([...flagsOf(kind).filter((flag) => flagHolds(node, flag)), ...spelled])].filter((flag) => !readable.has(flag));
+		if (unreadable.length > 0) return kept(node, { reason: 'flags', flags: unreadable }, carried);
+		const flags = [...new Set([...[...readable].filter((flag) => flagHolds(node, flag) || spelled.includes(flag)), ...(containerSet.get(node) ?? [])])];
 		Object.assign(touch(node), { path, flags });
 		const at = Object.fromEntries(placed.map(({ fact, index, spelling }) => [fact.name, spelling === undefined ? { index } : { index, spelling }]));
 		const structure: Record<string, unknown> = { $path: path, ...(flags.length === 0 ? {} : { $flags: flags }), ...(placed.length === 0 ? {} : { $at: at }), ...(scalar === undefined ? {} : { $value: scalar.value }) };

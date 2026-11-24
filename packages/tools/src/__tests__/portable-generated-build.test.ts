@@ -12,7 +12,7 @@ const STORAGES = ['object', 'arena'] as const;
 
 const INTERPRETER_REFUSES: Readonly<Record<string, readonly string[]>> = { python: ['declaration.member.property.getter', 'declaration.member.method.static'] };
 
-const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 494, rust: 776, typescript: 681 };
+const UNGENERATED_CEILINGS: Readonly<Record<(typeof GRAMMARS)[number], number>> = { python: 438, rust: 615, typescript: 664 };
 
 const NOT_GENERATED = /: (\S+) is not generated$/;
 
@@ -467,6 +467,101 @@ describe('the generated portable build, through a builder that takes options', (
 		['python', '[x for x in a, b,]\n', 'clause.comprehension.for', 'for x in a, b,']
 	] as const)('%s: %j builds as the interpreter does, its options from their preference or its flags', async (grammar, source, path, rendered) => {
 		expect(await bothBuilds(grammar, await readAt(grammar, source, path))).toEqual([rendered, rendered]);
+	});
+});
+
+describe('the generated portable build, through a preset that builds a leaf from its text', () => {
+	it.each([
+		['rust', 'fn f() { "x"; }\n', 'literal.string', '"x"'],
+		['rust', 'fn f() { ""; }\n', 'literal.string', '""'],
+		['rust', 'fn f() { "a\\x41\\u{41}b"; }\n', 'literal.string', '"a\\x41\\u{41}b"'],
+		['rust', 'fn f() { b"x"; }\n', 'literal.string.bytes', 'b"x"'],
+		['rust', 'fn f() { c"x"; }\n', 'literal.string.c', 'c"x"']
+	] as const)('%s: %j builds as the interpreter does', async (grammar, source, path, rendered) => {
+		expect(await bothBuilds(grammar, await readAt(grammar, source, path))).toEqual([rendered, rendered]);
+	});
+});
+
+describe.each(STORAGES)('python: a negative number in an or-pattern, in %s storage', (nodeStorage) => {
+	it.each([
+		['3 | -3', '3 | -3'],
+		['-3 | 3', '-3 | 3'],
+		['-3.5 | 1', '-3.5 | 1'],
+		['1 | -2 | 3', '1 | -2 | 3'],
+		['(3 | -3)', '3 | -3'],
+		['[3 | -3]', '3 | -3'],
+		['A(x=3 | -3)', '3 | -3']
+	] as const)('case %s: builds through the negative pattern builder and reads back the same, in both builds', async (pattern, rendered) => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('python')) as object);
+		const structure = [...structuresIn(runtime.read(engine.parse(`match x:\n    case ${pattern}:\n        pass\n`)))].find((candidate) => candidate.$path === 'pattern.or')!;
+		for (const built of [runtime.build(structure), (functionAt(generated, 'pattern.or') as PathFunction)(structure)]) {
+			expect(engine.render(built as never).toString()).toBe(rendered);
+			expect(runtime.read(built as never)).toEqual(structure);
+		}
+	});
+});
+
+describe.each(STORAGES)('rust: a range pattern read through either claim of its path, in %s storage', (nodeStorage) => {
+	it.each(['d..', '1..', 'd..e', '1..2', '..d', 'd..=e', '..=d', 'd...e'])('%s builds back as it reads', async (pattern) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const structure = [...structuresIn(runtime.read(engine.parse(`fn f() { match x { ${pattern} => a, } }\n`)))].find((candidate) => candidate.$path.startsWith('pattern.range'))!;
+		const built = runtime.build(structure);
+		expect(engine.render(built as never).toString()).toBe(pattern);
+		expect(runtime.read(built as never)).toEqual(structure);
+	});
+
+	it.each([
+		['d..', { start: 'd' }],
+		['..d', { end: 'd' }],
+		['d..e', { start: 'd', end: 'e' }],
+		['d..=e', { start: 'd', end: 'e' }],
+		['..=d', { end: 'd' }],
+		['d...e', { start: 'd', end: 'e' }]
+	] as const)('%s reads its bounds as start and end', async (pattern, bounds) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const { $path: path, ...slots } = [...structuresIn(runtime.read(engine.parse(`fn f() { match x { ${pattern} => a, } }\n`)))].find((candidate) => candidate.$path.startsWith('pattern.range'))!;
+		expect(path).toMatch(/^pattern\.range\./);
+		expect(slots).toEqual(bounds);
+	});
+});
+
+describe.each(STORAGES)('rust: an enum variant whose path names its body, in %s storage', (nodeStorage) => {
+	const ENUM_MEMBER = 'declaration.member.enum_member';
+	it.each([
+		['pub A', 'public', { name: 'A' }, 'pub A,'],
+		['pub(crate) A', 'public.internal', { name: 'A' }, 'pub(crate) A,'],
+		['crate A', 'public.internal', { name: 'A' }, 'pub(crate) A,'],
+		['pub(self) A', 'private', { name: 'A' }, 'pub(self) A,'],
+		['pub(super) A', 'public.parent', { name: 'A' }, 'pub(super) A,'],
+		['pub A = 1', 'public', { name: 'A', value: { $path: 'literal.number.integer', $value: 1 } }, 'pub A = 1,'],
+		['pub A()', 'tuple.public', { name: 'A', fields: [] }, 'pub A(),'],
+		['pub A {}', 'struct.public', { name: 'A', fields: [] }, 'pub A {},'],
+		['pub(crate) A()', 'tuple.public.internal', { name: 'A', fields: [] }, 'pub(crate) A(),'],
+		['pub(self) A {}', 'struct.private', { name: 'A', fields: [] }, 'pub(self) A {},']
+	] as const)('%s reads only what its path holds and builds back', async (variant, path, slots, rendered) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const read = runtime.read(engine.parse(`enum E { ${variant} }\n`));
+		expect([...structuresIn(read)].find((candidate) => candidate.$path.startsWith(ENUM_MEMBER))).toEqual({ $path: `${ENUM_MEMBER}.${path}`, ...slots });
+		expect(engine.render(runtime.build(read as PortableStructure) as never).toString().replace(/\s+/g, ' ').trim()).toBe(`enum E { ${rendered} }`);
+	});
+
+	it.each(['pub(in a) A', 'pub(in a) A()', 'pub(in a) A {}'])('%s builds back with its scope', async (variant) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const read = runtime.read(engine.parse(`enum E { ${variant} }\n`));
+		expect(engine.render(runtime.build(read as PortableStructure) as never).toString().replace(/\s+/g, ' ').trim()).toBe(`enum E { ${variant}, }`);
+	});
+
+	it.each(['public', 'private', 'public.internal', 'public.parent'])('%s refuses a body in its input, as the plain path does', async (path) => {
+		using engine = await createEngine(await languageByName('rust'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const field = { $path: 'declaration.member.field', name: 'x', type: 'u8' };
+		expect(() => runtime.build({ $path: `${ENUM_MEMBER}.${path}`, name: 'A', fields: [field] } as never)).toThrow('enum_variant has no slot fields');
 	});
 });
 
