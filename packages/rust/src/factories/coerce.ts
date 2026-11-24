@@ -4263,42 +4263,41 @@ export function coerceToFunctionModifiers(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildFunctionModifiers(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
-			.map(
-				(_e: _LooseFieldInput) =>
-					_keywordOf(_e, [
+		...(listStorage(
+			_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems],
+			(_e: _LooseFieldInput) =>
+				_keywordOf(_e, [
+					['async', TSKindId.AsyncKeyword] as const,
+					['default', TSKindId.DefaultKeyword] as const,
+					['const', TSKindId.ConstKeyword] as const,
+					['unsafe', TSKindId.UnsafeKeyword] as const
+				]) ??
+				coerceMixedEnumStorage(
+					_resolveKindEnum(
+						_e,
+						[TSKindId.AsyncKeyword, TSKindId.DefaultKeyword, TSKindId.ConstKeyword, TSKindId.UnsafeKeyword],
+						() =>
+							_resolveOneBranch<
+								| TSKindId.AsyncKeyword
+								| TSKindId.DefaultKeyword
+								| TSKindId.ConstKeyword
+								| TSKindId.UnsafeKeyword
+								| T.ExternModifier
+							>(_e, 'extern_modifier', [
+								TSKindId.AsyncKeyword,
+								TSKindId.DefaultKeyword,
+								TSKindId.ConstKeyword,
+								TSKindId.UnsafeKeyword
+							])
+					),
+					[
 						['async', TSKindId.AsyncKeyword] as const,
 						['default', TSKindId.DefaultKeyword] as const,
 						['const', TSKindId.ConstKeyword] as const,
 						['unsafe', TSKindId.UnsafeKeyword] as const
-					]) ??
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							_e,
-							[TSKindId.AsyncKeyword, TSKindId.DefaultKeyword, TSKindId.ConstKeyword, TSKindId.UnsafeKeyword],
-							() =>
-								_resolveOneBranch<
-									| TSKindId.AsyncKeyword
-									| TSKindId.DefaultKeyword
-									| TSKindId.ConstKeyword
-									| TSKindId.UnsafeKeyword
-									| T.ExternModifier
-								>(_e, 'extern_modifier', [
-									TSKindId.AsyncKeyword,
-									TSKindId.DefaultKeyword,
-									TSKindId.ConstKeyword,
-									TSKindId.UnsafeKeyword
-								])
-						),
-						[
-							['async', TSKindId.AsyncKeyword] as const,
-							['default', TSKindId.DefaultKeyword] as const,
-							['const', TSKindId.ConstKeyword] as const,
-							['unsafe', TSKindId.UnsafeKeyword] as const
-						]
-					)
-			)
-			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildFunctionModifiers>)
+					]
+				)
+		) as unknown as Parameters<typeof F.buildFunctionModifiers>)
 	);
 }
 
@@ -8082,37 +8081,36 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 			_rest,
 			undefined,
 			(els) =>
-				(els == null ? [] : Array.isArray(els) ? els : [els])
-					.map(
-						(_e: _LooseFieldInput) =>
-							_keywordOf(_e, [
+				listStorage(
+					els == null ? [] : Array.isArray(els) ? els : [els],
+					(_e: _LooseFieldInput) =>
+						_keywordOf(_e, [
+							['self', TSKindId.SelfModule] as const,
+							['super', TSKindId.Super] as const,
+							['crate', TSKindId.Crate] as const
+						]) ??
+						coerceMixedEnumStorage(
+							_resolveKindEnum(_e, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
+								_resolveOne<
+									| TSKindId.SelfModule
+									| T.Metavariable
+									| TSKindId.Super
+									| TSKindId.Crate
+									| T.Identifier
+									| T.ScopedIdentifier
+									| T.UseAsClause
+									| T.UseList
+									| T.ScopedUseList
+									| T.UseWildcard
+								>(_e, _K8, _K25)
+							),
+							[
 								['self', TSKindId.SelfModule] as const,
 								['super', TSKindId.Super] as const,
 								['crate', TSKindId.Crate] as const
-							]) ??
-							coerceMixedEnumStorage(
-								_resolveKindEnum(_e, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
-									_resolveOne<
-										| TSKindId.SelfModule
-										| T.Metavariable
-										| TSKindId.Super
-										| TSKindId.Crate
-										| T.Identifier
-										| T.ScopedIdentifier
-										| T.UseAsClause
-										| T.UseList
-										| T.ScopedUseList
-										| T.UseWildcard
-									>(_e, _K8, _K25)
-								),
-								[
-									['self', TSKindId.SelfModule] as const,
-									['super', TSKindId.Super] as const,
-									['crate', TSKindId.Crate] as const
-								]
-							)
-					)
-					.filter((_e) => _e !== undefined),
+							]
+						)
+				),
 			[
 				'self_module',
 				'super',

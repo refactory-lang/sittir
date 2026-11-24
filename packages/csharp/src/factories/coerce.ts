@@ -4017,25 +4017,24 @@ export function resolveConversionOperatorDeclaration_operator(
 export function resolveConversionOperatorDeclaration_elements(
 	value: T.ConversionOperatorDeclaration.LooseConfig['elements']
 ): Admit<T.ConversionOperatorDeclaration['_elements']> {
-	return (value == null ? [] : Array.isArray(value) ? value : [value])
-		.map(
-			(_e: _LooseFieldInput) =>
-				_keywordOf(_e, [
-					['operator', TSKindId.OperatorKeyword] as const,
-					['checked', TSKindId.CheckedKeyword] as const
-				]) ??
-				coerceMixedEnumStorage(
-					_resolveKindEnum(_e, [TSKindId.OperatorKeyword, TSKindId.CheckedKeyword], () =>
-						_resolveOneBranch<T.ExplicitInterfaceSpecifier | TSKindId.OperatorKeyword | TSKindId.CheckedKeyword>(
-							_e,
-							'explicit_interface_specifier',
-							[TSKindId.OperatorKeyword, TSKindId.CheckedKeyword]
-						)
-					),
-					[['operator', TSKindId.OperatorKeyword] as const, ['checked', TSKindId.CheckedKeyword] as const]
-				)
-		)
-		.filter((_e) => _e !== undefined) as Admit<T.ConversionOperatorDeclaration['_elements']>;
+	return listStorage(
+		value == null ? [] : Array.isArray(value) ? value : [value],
+		(_e: _LooseFieldInput) =>
+			_keywordOf(_e, [
+				['operator', TSKindId.OperatorKeyword] as const,
+				['checked', TSKindId.CheckedKeyword] as const
+			]) ??
+			coerceMixedEnumStorage(
+				_resolveKindEnum(_e, [TSKindId.OperatorKeyword, TSKindId.CheckedKeyword], () =>
+					_resolveOneBranch<T.ExplicitInterfaceSpecifier | TSKindId.OperatorKeyword | TSKindId.CheckedKeyword>(
+						_e,
+						'explicit_interface_specifier',
+						[TSKindId.OperatorKeyword, TSKindId.CheckedKeyword]
+					)
+				),
+				[['operator', TSKindId.OperatorKeyword] as const, ['checked', TSKindId.CheckedKeyword] as const]
+			)
+	) as Admit<T.ConversionOperatorDeclaration['_elements']>;
 }
 
 export function resolveConversionOperatorDeclaration_type(
@@ -8267,18 +8266,17 @@ export function coerceToParenthesizedVariableDesignation(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildParenthesizedVariableDesignation(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
-			.map(
-				(_e: _LooseFieldInput) =>
-					_keywordOf(_e, [['_', TSKindId.Discard] as const]) ??
-					coerceMixedEnumStorage(
-						_resolveKindEnum(_e, [TSKindId.Discard], () =>
-							_resolveOne<TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier>(_e, _K18, _K33)
-						),
-						[['_', TSKindId.Discard] as const]
-					)
-			)
-			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildParenthesizedVariableDesignation>)
+		...(listStorage(
+			_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems],
+			(_e: _LooseFieldInput) =>
+				_keywordOf(_e, [['_', TSKindId.Discard] as const]) ??
+				coerceMixedEnumStorage(
+					_resolveKindEnum(_e, [TSKindId.Discard], () =>
+						_resolveOne<TSKindId.Discard | T.ParenthesizedVariableDesignation | T.Identifier>(_e, _K18, _K33)
+					),
+					[['_', TSKindId.Discard] as const]
+				)
+		) as unknown as Parameters<typeof F.buildParenthesizedVariableDesignation>)
 	);
 }
 
@@ -13654,42 +13652,41 @@ export function coerceToCallingConventionArm(
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildCallingConventionArm(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
-			.map(
-				(_e: _LooseFieldInput) =>
-					_keywordOf(_e, [
+		...(listStorage(
+			_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems],
+			(_e: _LooseFieldInput) =>
+				_keywordOf(_e, [
+					['Cdecl', TSKindId.CdeclKeyword] as const,
+					['Stdcall', TSKindId.StdcallKeyword] as const,
+					['Thiscall', TSKindId.ThiscallKeyword] as const,
+					['Fastcall', TSKindId.FastcallKeyword] as const
+				]) ??
+				coerceMixedEnumStorage(
+					_resolveKindEnum(
+						_e,
+						[TSKindId.CdeclKeyword, TSKindId.StdcallKeyword, TSKindId.ThiscallKeyword, TSKindId.FastcallKeyword],
+						() =>
+							_resolveOneBranch<
+								| TSKindId.CdeclKeyword
+								| TSKindId.StdcallKeyword
+								| TSKindId.ThiscallKeyword
+								| TSKindId.FastcallKeyword
+								| T.Identifier
+							>(
+								_e,
+								'identifier',
+								[TSKindId.CdeclKeyword, TSKindId.StdcallKeyword, TSKindId.ThiscallKeyword, TSKindId.FastcallKeyword],
+								true
+							)
+					),
+					[
 						['Cdecl', TSKindId.CdeclKeyword] as const,
 						['Stdcall', TSKindId.StdcallKeyword] as const,
 						['Thiscall', TSKindId.ThiscallKeyword] as const,
 						['Fastcall', TSKindId.FastcallKeyword] as const
-					]) ??
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							_e,
-							[TSKindId.CdeclKeyword, TSKindId.StdcallKeyword, TSKindId.ThiscallKeyword, TSKindId.FastcallKeyword],
-							() =>
-								_resolveOneBranch<
-									| TSKindId.CdeclKeyword
-									| TSKindId.StdcallKeyword
-									| TSKindId.ThiscallKeyword
-									| TSKindId.FastcallKeyword
-									| T.Identifier
-								>(
-									_e,
-									'identifier',
-									[TSKindId.CdeclKeyword, TSKindId.StdcallKeyword, TSKindId.ThiscallKeyword, TSKindId.FastcallKeyword],
-									true
-								)
-						),
-						[
-							['Cdecl', TSKindId.CdeclKeyword] as const,
-							['Stdcall', TSKindId.StdcallKeyword] as const,
-							['Thiscall', TSKindId.ThiscallKeyword] as const,
-							['Fastcall', TSKindId.FastcallKeyword] as const
-						]
-					)
-			)
-			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildCallingConventionArm>)
+					]
+				)
+		) as unknown as Parameters<typeof F.buildCallingConventionArm>)
 	);
 }
 

@@ -1057,7 +1057,7 @@ function resolveFieldCall(
 		return `_keywordOr(${prop}, ${keywords}, () => ${resolved})`;
 	}
 	const element = storedFieldCall('_e', field, storageInfo, false, nodeMap, intern, elementTypeOverride, kindEntries);
-	return `(${prop} == null ? [] : Array.isArray(${prop}) ? ${prop} : [${prop}]).map((_e: _LooseFieldInput) => _keywordOf(_e, ${keywords}) ?? ${element}).filter((_e) => _e !== undefined)`;
+	return `listStorage(${prop} == null ? [] : Array.isArray(${prop}) ? ${prop} : [${prop}], (_e: _LooseFieldInput) => _keywordOf(_e, ${keywords}) ?? ${element})`;
 }
 
 function takesNumber(kinds: readonly string[], nodeMap: NodeMap): boolean {

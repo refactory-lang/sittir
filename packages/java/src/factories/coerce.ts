@@ -4351,10 +4351,64 @@ export function coerceToModifiers(...input: T.Modifiers.LooseArgs): ReturnType<t
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildModifiers(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
-			.map(
-				(_e: _LooseFieldInput) =>
-					_keywordOf(_e, [
+		...(listStorage(
+			_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems],
+			(_e: _LooseFieldInput) =>
+				_keywordOf(_e, [
+					['public', TSKindId.PublicKeyword] as const,
+					['protected', TSKindId.ProtectedKeyword] as const,
+					['private', TSKindId.PrivateKeyword] as const,
+					['abstract', TSKindId.AbstractKeyword] as const,
+					['static', TSKindId.StaticKeyword] as const,
+					['final', TSKindId.FinalKeyword] as const,
+					['strictfp', TSKindId.StrictfpKeyword] as const,
+					['default', TSKindId.DefaultKeyword] as const,
+					['synchronized', TSKindId.SynchronizedKeyword] as const,
+					['native', TSKindId.NativeKeyword] as const,
+					['transient', TSKindId.TransientKeyword] as const,
+					['volatile', TSKindId.VolatileKeyword] as const,
+					['sealed', TSKindId.SealedKeyword] as const
+				]) ??
+				coerceMixedEnumStorage(
+					_resolveKindEnum(
+						_e,
+						[
+							TSKindId.PublicKeyword,
+							TSKindId.ProtectedKeyword,
+							TSKindId.PrivateKeyword,
+							TSKindId.AbstractKeyword,
+							TSKindId.StaticKeyword,
+							TSKindId.FinalKeyword,
+							TSKindId.StrictfpKeyword,
+							TSKindId.DefaultKeyword,
+							TSKindId.SynchronizedKeyword,
+							TSKindId.NativeKeyword,
+							TSKindId.TransientKeyword,
+							TSKindId.VolatileKeyword,
+							TSKindId.SealedKeyword,
+							TSKindId.NonDashsealed
+						],
+						() =>
+							_resolveOne<
+								| T.MarkerAnnotation
+								| T.Annotation
+								| TSKindId.PublicKeyword
+								| TSKindId.ProtectedKeyword
+								| TSKindId.PrivateKeyword
+								| TSKindId.AbstractKeyword
+								| TSKindId.StaticKeyword
+								| TSKindId.FinalKeyword
+								| TSKindId.StrictfpKeyword
+								| TSKindId.DefaultKeyword
+								| TSKindId.SynchronizedKeyword
+								| TSKindId.NativeKeyword
+								| TSKindId.TransientKeyword
+								| TSKindId.VolatileKeyword
+								| TSKindId.SealedKeyword
+								| TSKindId.NonDashsealed
+							>(_e, _K0, _super_annotation)
+					),
+					[
 						['public', TSKindId.PublicKeyword] as const,
 						['protected', TSKindId.ProtectedKeyword] as const,
 						['private', TSKindId.PrivateKeyword] as const,
@@ -4367,66 +4421,11 @@ export function coerceToModifiers(...input: T.Modifiers.LooseArgs): ReturnType<t
 						['native', TSKindId.NativeKeyword] as const,
 						['transient', TSKindId.TransientKeyword] as const,
 						['volatile', TSKindId.VolatileKeyword] as const,
-						['sealed', TSKindId.SealedKeyword] as const
-					]) ??
-					coerceMixedEnumStorage(
-						_resolveKindEnum(
-							_e,
-							[
-								TSKindId.PublicKeyword,
-								TSKindId.ProtectedKeyword,
-								TSKindId.PrivateKeyword,
-								TSKindId.AbstractKeyword,
-								TSKindId.StaticKeyword,
-								TSKindId.FinalKeyword,
-								TSKindId.StrictfpKeyword,
-								TSKindId.DefaultKeyword,
-								TSKindId.SynchronizedKeyword,
-								TSKindId.NativeKeyword,
-								TSKindId.TransientKeyword,
-								TSKindId.VolatileKeyword,
-								TSKindId.SealedKeyword,
-								TSKindId.NonDashsealed
-							],
-							() =>
-								_resolveOne<
-									| T.MarkerAnnotation
-									| T.Annotation
-									| TSKindId.PublicKeyword
-									| TSKindId.ProtectedKeyword
-									| TSKindId.PrivateKeyword
-									| TSKindId.AbstractKeyword
-									| TSKindId.StaticKeyword
-									| TSKindId.FinalKeyword
-									| TSKindId.StrictfpKeyword
-									| TSKindId.DefaultKeyword
-									| TSKindId.SynchronizedKeyword
-									| TSKindId.NativeKeyword
-									| TSKindId.TransientKeyword
-									| TSKindId.VolatileKeyword
-									| TSKindId.SealedKeyword
-									| TSKindId.NonDashsealed
-								>(_e, _K0, _super_annotation)
-						),
-						[
-							['public', TSKindId.PublicKeyword] as const,
-							['protected', TSKindId.ProtectedKeyword] as const,
-							['private', TSKindId.PrivateKeyword] as const,
-							['abstract', TSKindId.AbstractKeyword] as const,
-							['static', TSKindId.StaticKeyword] as const,
-							['final', TSKindId.FinalKeyword] as const,
-							['strictfp', TSKindId.StrictfpKeyword] as const,
-							['default', TSKindId.DefaultKeyword] as const,
-							['synchronized', TSKindId.SynchronizedKeyword] as const,
-							['native', TSKindId.NativeKeyword] as const,
-							['transient', TSKindId.TransientKeyword] as const,
-							['volatile', TSKindId.VolatileKeyword] as const,
-							['sealed', TSKindId.SealedKeyword] as const,
-							['non-sealed', TSKindId.NonDashsealed] as const
-						]
-					)
-			)
-			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildModifiers>)
+						['sealed', TSKindId.SealedKeyword] as const,
+						['non-sealed', TSKindId.NonDashsealed] as const
+					]
+				)
+		) as unknown as Parameters<typeof F.buildModifiers>)
 	);
 }
 
