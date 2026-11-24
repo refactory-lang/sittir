@@ -7,6 +7,12 @@ export interface PortableEmitSlot {
 	readonly optional: boolean;
 }
 
+export interface PortableOwnTextClaim {
+	readonly kind: string;
+	readonly fixed?: string;
+	readonly pattern?: string;
+}
+
 export interface PortableEmitInput<Table> {
 	readonly grammar: string;
 	readonly map: string;
@@ -23,6 +29,7 @@ export interface PortableEmitInput<Table> {
 	readonly facts: Readonly<Record<string, readonly string[]>>;
 	readonly holes: readonly (readonly [holder: number, key: string])[];
 	readonly textChoices?: Readonly<Record<string, readonly string[]>>;
+	readonly ownTextClaims?: Readonly<Record<string, Readonly<Record<number, PortableOwnTextClaim>>>>;
 	readonly decided: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }
 

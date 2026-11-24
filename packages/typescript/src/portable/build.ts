@@ -92637,6 +92637,8 @@ const comment_block_doc$139 = (
 	const unroutedSlot = unroutedIn(input, []);
 	if (unroutedSlot !== undefined) return unrouted('comment.block.doc', unroutedSlot);
 	const text = input.$value;
+	if (!new RegExp('^/\\*\\*', 'u').test('/*' + text + '*/'))
+		throw new Error('portable build: the comment_block built for comment.block.doc does not read as comment.block.doc');
 	return b.commentBlock(text);
 };
 const comment_html$178 = (input: PathInput<TypeScriptMap, 'comment.html'>): ReturnType<typeof b.htmlComment> => {

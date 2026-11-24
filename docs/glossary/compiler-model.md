@@ -3868,7 +3868,13 @@ The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
  *  An unseparated repeat is glued when the rule or anything beneath its
  *  content is tokenized or immediate, or names a lexical kind
  *  (`isLexicalSymbol`: string and template fragments, python string
- *  content). */
+ *  content). With `plainTokens` false, a `token(...)` that is not immediate
+ *  does not count: extras can't split such a token, but they can sit
+ *  between two of them. `collectGaps` writes no gap choice for a repeat
+ *  this answers true for with `plainTokens` true, and stamps it in
+ *  `noExtrasLists` only when the rule is itself tokenized, the grammar's
+ *  extras admit no space (regex's class atoms), or it also answers true
+ *  with `plainTokens` false. */
 ```
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::isLexicalSymbol`
@@ -3892,7 +3898,7 @@ never a rule's shape.
 
 Every leaf of the rule is tokenized, immediate or a lexical kind; a choice or
 supertype is lexical when all its members are. A bare literal or pattern is
-not: keywords in a repeat stay separable.
+not: keywords in a repeat stay separable. With `plainTokens` false, a tokenized leaf that is not immediate does not count either.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::armOf`
 

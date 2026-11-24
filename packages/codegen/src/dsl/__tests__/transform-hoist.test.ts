@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { transform } from '../transform/transform.ts';
+import { transform, withDirectVariants } from '../transform/transform.ts';
 import { variant } from '../primitives/variant.ts';
 import { withWireContext } from '../wire/wire.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
@@ -89,6 +89,18 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			);
 			expect((result as any).members.map((m: any) => m.name)).toEqual(['range_outer', 'range_upper']);
 			expect(texts(ctx.deposits.get('range_outer'))).toEqual(['S', 'range_inner', 'range_bare']);
+		});
+
+		it('keeps the nesting when an inline label names the arm', () => {
+			const { ctx, result } = withWireContext('range', () => {
+				const g = globalThis as any;
+				const outer = g.seq({ type: 'SYMBOL', name: 'S' }, g.choice(g.seq({ type: 'STRING', value: '..=' }, { type: 'SYMBOL', name: 'E' }), { type: 'STRING', value: '..' }));
+				const upper = g.seq({ type: 'STRING', value: '..' }, { type: 'SYMBOL', name: 'E' });
+				return withDirectVariants(g.choice(variant('outer', outer), variant('upper', upper)), { '0/1/0': variant('inner'), '0/1/1': variant('bare') });
+			});
+			expect((result as any).members.map((m: any) => m.name)).toEqual(['range_outer', 'range_upper']);
+			expect(texts(ctx.deposits.get('range_outer'))).toEqual(['S', 'range_inner', 'range_bare']);
+			expect(texts(ctx.deposits.get('range_upper'))).toEqual(['..', 'E']);
 		});
 	});
 

@@ -6,6 +6,8 @@ import { aliasContentSlot, comparesOwnText, heldSteps, listItems, slotAnchor, ty
 import type { NodeMap } from '../../../compiler/types.ts';
 import { nodeSlotNumbers } from '../../render-module.ts';
 import { keywordPresenceValue } from '../../shared.ts';
+import { interiorTextForm } from '../../interior.ts';
+import type { PortableOwnTextClaim } from './emit-input.ts';
 
 export type SlotSubjectOf = (kind: string, slot: string) => SlotSubject | undefined;
 
@@ -169,6 +171,32 @@ export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSu
 	if (refused.length > 0) throw emitShapeFailure({ code: 'portable-read-untestable', ownerKind: entry.kind, message: `cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`, details: { vocab: entry.vocab } });
 	const unique = new Map((conditions as PortableCondition[]).map((condition) => [JSON.stringify(condition), condition]));
 	return [...unique.values()];
+}
+
+const plansOwnText = (plan: QueryPlan<QuerySubject>): boolean => {
+	if (plan.op === 'eq' || plan.op === 'match') return 'self' in plan;
+	return plan.op === 'not' ? plansOwnText(plan.of) : plan.op === 'and' || plan.op === 'or' ? plan.of.some(plansOwnText) : false;
+};
+
+export function ownTextClaimsOf(
+	readEntries: ReadonlyMap<string, readonly ReadEntry[]>,
+	readTest: (entry: ReadEntry) => readonly PortableCondition[],
+	nodeMap: NodeMap
+): Readonly<Record<string, Readonly<Record<number, PortableOwnTextClaim>>>> {
+	const claims: Record<string, Record<number, PortableOwnTextClaim>> = {};
+	for (const [kind, entries] of readEntries) {
+		const node = nodeMap.nodes.get(kind);
+		if (node?.kindId === undefined) continue;
+		for (const path of new Set(entries.map((entry) => entry.vocab))) {
+			const tests = entries.filter((entry) => entry.vocab === path).map(readTest);
+			if (!tests.some((test) => test.some((condition) => condition.up === 0 && condition.via.length === 0 && plansOwnText(condition.plan)))) continue;
+			const sole = tests.length === 1 && tests[0]!.length === 1 ? tests[0]![0]! : undefined;
+			const form = node.slots.flatMap((slot) => interiorTextForm(node, slot.name) ?? [])[0];
+			const enforced = sole?.plan.op === 'match' && sole.up === 0 && sole.via.length === 0 && 'self' in sole.plan && form !== undefined;
+			(claims[path] ??= {})[node.kindId] = { kind, ...(enforced ? { fixed: form.fixed, pattern: sole.plan.pattern } : {}) };
+		}
+	}
+	return claims;
 }
 
 export type PortableFactRecord = Omit<PortableFact, 'container'> & { readonly container: string };

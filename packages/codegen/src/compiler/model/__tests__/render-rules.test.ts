@@ -33,7 +33,7 @@ const kindEntries = [
 function nodeMapOf(
 	rules: Record<string, RenderRule>,
 	slots: Record<string, string>,
-	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]> } = {}
+	opts: { whitespace?: boolean; externals?: string[]; supertypes?: Record<string, string[]>; slotKinds?: Record<string, string[]>; extrasRun?: RegExp } = {}
 ): NodeMap {
 	const nodes = new Map<string, unknown>();
 	const stub = (kind: string) => ({ kind, display: stampDisplay(kind, undefined, [], 'phantom'), endTerminals: [] });
@@ -63,6 +63,7 @@ function nodeMapOf(
 		normalizedRules: rules,
 		slotByRuleId,
 		externals: (opts.externals ?? []).map((name) => ({ type: 'SYMBOL' as const, name })),
+		nodelessExtrasRun: opts.extrasRun,
 		lineEndings: FIXTURE_LINE_ENDINGS
 	} as unknown as NodeMap;
 }
@@ -671,6 +672,25 @@ describe('seamRenderRules', () => {
 
 		it('keeps the default space beside a list whose gaps may hold extras', () => {
 			expect(seamDefaults(quoted({}))).toEqual({ dquote_after: 'space', dquote_before: 'space' });
+		});
+
+		describe('a repeat of plain tokens', () => {
+			const rules = { item: seq(str('fn'), sym('name', { id: 'r8', multiplicity: 'nonEmptyArray', fieldName: 'names' }), str(';')), name: sym('x', { tokenized: true }) };
+			const spacedWith = (extrasRun: RegExp) => {
+				const nodeMap = nodeMapOf(rules, { r8: 'names' }, { extrasRun });
+				const config = { nodeMap, kindEntries };
+				const spaced = spaceRenderRules(config);
+				const sites = spacingSitesOf(seamRenderRules(spaced, config), nodeMap);
+				return { stamped: [...spaced.noExtrasLists!], seams: sites.filter((site) => site.spacing.at === 'seam').map((site) => site.address).sort() };
+			};
+
+			it('keeps its seams where the extras hold a space', () => {
+				expect(spacedWith(/\s/)).toEqual({ stamped: [], seams: ['fn_after', 'semi_before'] });
+			});
+
+			it('admits no extras where a space is content', () => {
+				expect(spacedWith(/\r?\n/)).toEqual({ stamped: ['r8'], seams: [] });
+			});
 		});
 
 		describe('a seam side that is a choice', () => {

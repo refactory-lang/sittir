@@ -12,7 +12,7 @@ import { flagPlansOf, slotFlagsOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
 import { familyCoverageOf } from './covered.ts';
 import type { Body } from '../../render-body.ts';
-import { portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
+import { ownTextClaimsOf, portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
 import { grammarMapName, scalarInputsOf, VOCABULARY_MODULE, type ScalarInput } from './grammar-map.ts';
@@ -97,6 +97,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			facts: Object.fromEntries(typed.facts),
 			holes: build.holes,
 			textChoices: build.textChoices,
+			ownTextClaims: ownTextClaimsOf(routes.readEntries, readTest, nodeMap),
 			decided: Object.fromEntries(typed.decided.map(([path, slotKinds]) => [path, Object.fromEntries(slotKinds)]))
 		},
 		typed,
