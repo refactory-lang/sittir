@@ -93,7 +93,7 @@ export function emitPortableProjection(builders: B, input: PortableProjectInput,
 			case 'eq':
 				return self ? binary(call(id('textOf'), (reached as { readonly one: Primary }).one), '===', str(plan.text)) : call(dot(call(id('texts'), subjectsOf(reached, plan)), 'includes'), str(plan.text));
 			case 'match':
-				return call(dot(call(id('texts'), subjectsOf(reached, plan)), 'some'), lambda(call(dot(t.regex({ pattern: plan.pattern, flags: 'u' }), 'test'), id('text')), 'text'));
+				return call(dot(call(id('texts'), subjectsOf(reached, plan)), 'some'), lambda(call(dot(t.regex({ pattern: plan.pattern.replace(/(?<!\\)((?:\\\\)*)\//g, '$1\\/'), flags: 'u' }), 'test'), id('text')), 'text'));
 			case 'present':
 				return binary(dot(call(id('texts'), subjectsOf(reached, plan)), 'length'), '>', num(0));
 			case 'count':
