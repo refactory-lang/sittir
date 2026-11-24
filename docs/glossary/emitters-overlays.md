@@ -455,6 +455,14 @@ A structure whose path builds from a scalar (`builds`) takes its arm by its `$va
 
 A slot whose route is `nonEmpty` builds its items through `nonEmpty`, which refuses an empty list as `<path>.<slot> requires at least one element`. An arm whose builder takes options calls it with the slot values alone, so each option takes its preference default, except where the arm itself fills an option key (python's comprehension `for` sets `trailingComma` from its flag), which goes to the options argument, as the interpreter splits a frame by its builder's option keys. A flag that sets a delimiter on the arm's own list builder passes `{ delimiter }` before the elements when set (python's bare tuple `a, b,`); a flag that sets one on a list inside a slot is still refused. A list through a container that may be left out is left out when its first item is `undefined`, except on an `emptyContainer` route, where only an absent slot leaves the container out and `[]` builds it empty. A list slot that also seats a text outside its list container (python's wildcard import `*`) is left out, since its items are all built inside the container. Slots whose routes share their first step build that step's container once, holding each of them, as the interpreter's frames do: rust's `unsafe { a; b }` builds one `block` with its `statements` and `trailingExpression`. Inside it, a route with one step left is a list when its own seat holds many. An arm that fills a step directly and also builds through it fills one slot twice and is left out.
 
+### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::PinnedGap`
+
+A construct the pinned builders can't express: a pinned builder refused what the emitter gave it. It is an `Unfit`, so the path it sits in is not generated, and the root reports it as `portable-emit-pinned-gap` instead of an unfit slot. There is no string or parsed-snippet fallback; the fix lands in `@sittir/typescript` and a later commit bumps the pin.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::pinnedGapsOf`
+
+The pinned builders as the emitter calls them: every builder, at any depth, rethrows its own refusal as a `PinnedGap` naming the construct (`b.arrowFunction.callSignature`) and the pinned sha. An `Unfit` passes through unchanged.
+
 ### `packages/codegen/src/emitters/overlays/portable/covered.ts::FamilyCoverage`
 
 A kind that reads as a family path that builds none of the kind, with that path covered: every case its slots allow reads as one of the path's refinements, so no read of the kind returns the family path itself. It names the kind's test-less read entry of the path, the refinement paths among the kind's readable entries, how many cases were read, and each case that two entries neither of which refines the other both take.

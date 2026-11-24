@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { format as oxfmtFormat } from 'oxfmt';
 import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 
@@ -27,7 +27,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, NODE_MODEL_FILE, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_TABLE_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, NODE_MODEL_FILE, REPO_ROOT, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_TABLE_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -36,6 +36,7 @@ import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
 import { compareOrdinal } from './emitters/shared.ts';
 import { PORTABLE_TYPED_FILE, PORTABLE_TYPED_TSCONFIG, portableTsconfigText, type PortableTypedOutput } from './emitters/overlays/portable/typed.ts';
+import { tsrsDiagnostics } from './typecheck.ts';
 export interface CodegenOptions {
 	grammar: string;
 	outputDir: string;
@@ -81,6 +82,19 @@ export async function writePortableTyped(sittirDir: string, typed: PortableTyped
 		await writeFile(tsconfig, portableTsconfigText);
 		await writeFile(map, typed.map);
 	}
+}
+
+export const PORTABLE_BUILD_TSCONFIG = 'tsconfig.portable-build.json';
+
+const portableBuildTsconfigText = `${JSON.stringify({ extends: '../../../tsconfig.json', compilerOptions: { noEmit: true, types: ['node'] }, include: [`../src/${PORTABLE_BUILD_FILE}`] }, null, '\t')}\n`;
+
+export async function portableBuildTypeDiagnostics(grammar: string, sittirDir: string): Promise<GrammarDiagnostic[]> {
+	const tsconfig = join(sittirDir, PORTABLE_BUILD_TSCONFIG);
+	const module = join(dirname(sittirDir), 'src', PORTABLE_BUILD_FILE);
+	await writeFile(tsconfig, portableBuildTsconfigText);
+	return tsrsDiagnostics(tsconfig, REPO_ROOT)
+		.filter((d) => d.file !== undefined && resolve(REPO_ROOT, d.file) === module)
+		.map((d): GrammarDiagnostic => ({ scope: 'grammar', grammar, code: 'portable-emit-type', severity: 'warning', canProceed: true, message: `${PORTABLE_BUILD_FILE}:${d.line}: ${d.code} ${d.message}` }));
 }
 
 export async function runTreeSitterGenerate(pkg: GrammarPackage): Promise<void> {
@@ -283,11 +297,6 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		allowDiagnostics
 	);
 
-	if (result.emitDiagnostics.length > 0) {
-		writeDiagnostics(result.emitDiagnostics, formatGrammarDiagnostics);
-		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...result.emitDiagnostics], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));
-	}
-
 	const outDir = outputDir;
 	const sittirDir = sittirDirOf({ dir: dirname(outDir) });
 
@@ -374,6 +383,12 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	if (result.portableBuild === undefined) rmSync(join(outDir, PORTABLE_BUILD_FILE), { force: true });
 	else await writeFile(join(outDir, PORTABLE_BUILD_FILE), result.portableBuild);
 	await writePortableTyped(sittirDir, result.portableTyped);
+	if (result.portableBuild === undefined) rmSync(join(sittirDir, PORTABLE_BUILD_TSCONFIG), { force: true });
+	const emitDiagnostics = [...result.emitDiagnostics, ...(result.portableBuild === undefined ? [] : await portableBuildTypeDiagnostics(grammar, sittirDir))];
+	if (emitDiagnostics.length > 0) {
+		writeDiagnostics(emitDiagnostics, formatGrammarDiagnostics);
+		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...emitDiagnostics], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));
+	}
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);

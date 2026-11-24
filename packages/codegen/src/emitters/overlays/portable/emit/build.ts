@@ -1,4 +1,5 @@
 import { loadPinnedBuild } from '../../../../bootstrap/pinned.ts';
+import { readPin } from '../../../../bootstrap/bootstrap.ts';
 import type {
 	PortableBuildArm,
 	PortableBuildPath,
@@ -33,6 +34,29 @@ type TypeNode = string | Built<B['genericType']> | Built<B['literalType']> | Bui
 
 class Unfit extends Error {}
 
+export class PinnedGap extends Unfit {}
+
+export const pinnedGapsOf = <T extends object>(builders: T, pin: string): T => {
+	const wrap = (value: object, name: string): object =>
+		new Proxy(value, {
+			get: (target, key, receiver) => {
+				const held: unknown = Reflect.get(target, key, receiver);
+				const fixed = Object.getOwnPropertyDescriptor(target, key);
+				if (typeof key !== 'string' || typeof held !== 'function' || (fixed !== undefined && !fixed.configurable && !fixed.writable)) return held;
+				return wrap(held, `${name}.${key}`);
+			},
+			apply: (target, self, args) => {
+				try {
+					return Reflect.apply(target as (...args: unknown[]) => unknown, self, args);
+				} catch (error) {
+					if (error instanceof Unfit) throw error;
+					throw new PinnedGap(`the pinned builders (${pin}) can't express ${name}: ${error instanceof Error ? error.message : String(error)}`);
+				}
+			}
+		});
+	return wrap(builders, 'b') as T;
+};
+
 const identifierOf = (path: string): string => path.replace(/\./g, '_');
 
 const holdsList = (route: PortableSlotRoute): boolean => route.multiple || route.seats.some((seat) => seat.many === true);
@@ -58,7 +82,8 @@ interface Trie {
 	readonly children: Map<string, Trie>;
 }
 
-export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildTable>): { readonly program: Built<B['program']>; readonly diagnostics: readonly PortableEmitDiagnostic[] } {
+export function emitPortableModule(builders: B, input: PortableEmitInput<PortableBuildTable>, pin: string): { readonly program: Built<B['program']>; readonly diagnostics: readonly PortableEmitDiagnostic[] } {
+	const t = pinnedGapsOf(builders, pin);
 	const { table } = input;
 	const found: (readonly [diagnostic: PortableEmitDiagnostic, scope: string | undefined])[] = [];
 	const fail = (message: string): never => {
@@ -573,7 +598,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 	const ownTextClaims = input.ownTextClaims ?? {};
 	const textKinds = new Set(input.textKinds);
 	const textTyped = (path: string): boolean => textPaths.has(path) || textInputs.has(path) || textKinds.has(path);
-	const failed = new Map<string, string>();
+	const failed = new Map<string, Unfit>();
 	let slotFunctions = new Map<string, readonly Statement[]>();
 	let armFunctions = new Map<string, Statement>();
 	let grew = false;
@@ -893,14 +918,14 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const name = `${armFunctionName(owner, arm)}_${slot.name}$kind`;
 		if (slotFunctions.has(name)) return uses(name);
 		const known = failed.get(name);
-		if (known !== undefined) return fail(known);
+		if (known !== undefined) throw known;
 		slotFunctions.set(name, []);
 		try {
 			return uses(tracked(name, () => kindFunctionOf(name, owner, arm, slot)));
 		} catch (error) {
 			slotFunctions.delete(name);
 			if (error instanceof Unfit) {
-				failed.set(name, error.message);
+				failed.set(name, error);
 				grew = true;
 			}
 			throw error;
@@ -1253,7 +1278,7 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		} catch (error) {
 			if (!(error instanceof Unfit)) throw error;
 			armFunctions.delete(name);
-			failed.set(name, error.message);
+			failed.set(name, error);
 			grew = true;
 			return undefined;
 		}
@@ -1306,12 +1331,12 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 				});
 			} catch (error) {
 				if (!(error instanceof Unfit)) throw error;
-				failed.set(path, error.message);
+				failed.set(path, error);
 				generated = false;
 			}
 			if (!generated) {
-				const reason = failed.get(path) ?? arms.map((arm) => failed.get(armFunctionName(path, arm))).find((message) => message !== undefined) ?? 'no arm builds it at the root';
-				found.push([{ code: 'portable-emit-unfit-slot', path, message: reason }, undefined]);
+				const reason = failed.get(path) ?? arms.map((arm) => failed.get(armFunctionName(path, arm))).find((error) => error !== undefined);
+				found.push([{ code: reason instanceof PinnedGap ? 'portable-emit-pinned-gap' : 'portable-emit-unfit-slot', path, message: reason?.message ?? 'no arm builds it at the root' }, undefined]);
 				continue;
 			}
 			pathFunctions.push(constant(identifierOf(path), arrow('input', type, block(...statements))));
@@ -1392,6 +1417,6 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 export async function emitPortableBuildInProcess(input: PortableEmitInput<PortableBuildTable>): Promise<PortableEmitOutput> {
 	const pinned = await loadPinnedBuild();
 	using engine = await pinned.common.createEngine(pinned.typescript.default);
-	const { program, diagnostics } = emitPortableModule(engine.build, input);
+	const { program, diagnostics } = emitPortableModule(engine.build, input, readPin());
 	return { text: String(engine.render(program)), diagnostics };
 }
