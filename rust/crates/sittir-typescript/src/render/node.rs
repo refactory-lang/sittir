@@ -480,7 +480,7 @@ pub enum AnyNode {
     #[kind(kind::FOR_INITIALIZER_USING_KIND)]
     ForInitializerUsingKind(ForInitializerUsingKindNode),
     #[kind(kind::_FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE)]
-    FormalParametersSetAccessorSignature(FormalParametersSetAccessorSignatureNode),
+    FormalParametersSetAccessorSignature(Box<FormalParametersSetAccessorSignatureNode>),
     #[kind(kind::_FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE)]
     FormalParametersElementsSetAccessorSignature(FormalParametersElementsSetAccessorSignatureNode),
     #[kind(kind::_SETTER_PARAMETER)]
@@ -21950,6 +21950,48 @@ impl ::sittir_core::render::Render for ForHeaderLhsOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
+pub enum FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot {
+    #[kind(kind::COMMA)]
+    Comma,
+    #[node(blank)]
+    Blank,
+}
+
+impl ::sittir_core::prepare::Prepare for FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
+        match self {
+            FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot::Comma => Ok(()),
+            FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot::Blank => Ok(()),
+        }
+    }
+    fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(cursor, ctx))
+    }
+    fn reads_record(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> bool {
+        <Self as ::sittir_core::read::ReadNode>::router(grammar, display).is_some()
+    }
+}
+
+impl ::sittir_core::view::KindOf for FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::Comma => [::sittir_core::types::KindId(15)].iter().any(|k| kinds.contains(k)),
+            Self::Blank => false,
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        match self {
+            FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot::Comma => render_comma(w),
+            FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot::Blank => Ok(()),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp, view = SetterParameterPatternNodeSlotRecord)]
 pub enum SetterParameterPatternNodeSlot {
     #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
@@ -38289,7 +38331,7 @@ impl ::sittir_core::render::Render for EmptyMemberNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_BODY_MEMBER_METHOD, words = 43, built_words = 5, fields = ClassBodyMemberMethodFields, prepare = ClassBodyMemberMethodPrepare, view = ClassBodyMemberMethodNodeRecord, prepare_fn = prepare_class_body_member_method)]
+#[node(kind = kind::CLASS_BODY_MEMBER_METHOD, words = 44, built_words = 5, fields = ClassBodyMemberMethodFields, prepare = ClassBodyMemberMethodPrepare, view = ClassBodyMemberMethodNodeRecord, prepare_fn = prepare_class_body_member_method)]
 pub struct ClassBodyMemberMethodNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38300,10 +38342,10 @@ pub struct ClassBodyMemberMethodNode {
     #[slot(field = field::DECORATOR, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
     pub decorator: Vec<::sittir_core::SlotValue<DecoratorNode>>,
     #[wire(key = "_method_definition")]
-    #[slot(word = 3, width = 39, inline = 39, forms = 8, built = 3)]
+    #[slot(word = 3, width = 40, inline = 40, forms = 8, built = 3)]
     pub method_definition: ::sittir_core::SlotValue<MethodDefinitionClassBodyMemberMethodNode>,
     #[wire(key = "_terminator")]
-    #[slot(field = field::TERMINATOR, word = 42, width = 1, forms = 18, built = 4, defaulted)]
+    #[slot(field = field::TERMINATOR, word = 43, width = 1, forms = 18, built = 4, defaulted)]
     pub terminator: Option<::sittir_core::SlotValue<DoStatementTerminatorNodeSlot>>,
     #[wire(key = "_decorator_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_CLASS_BODY_MEMBER_METHOD_DECORATOR_SEPARATOR_SPACE)]
@@ -38382,7 +38424,7 @@ fn prepare_class_body_member_method<N: ClassBodyMemberMethodPrepare + ?Sized>(no
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_BODY_MEMBER_METHOD_SIG, words = 38, built_words = 4, fields = ClassBodyMemberMethodSigFields, prepare = ClassBodyMemberMethodSigPrepare, view = ClassBodyMemberMethodSigNodeRecord, prepare_fn = prepare_class_body_member_method_sig)]
+#[node(kind = kind::CLASS_BODY_MEMBER_METHOD_SIG, words = 39, built_words = 4, fields = ClassBodyMemberMethodSigFields, prepare = ClassBodyMemberMethodSigPrepare, view = ClassBodyMemberMethodSigNodeRecord, prepare_fn = prepare_class_body_member_method_sig)]
 pub struct ClassBodyMemberMethodSigNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38390,10 +38432,10 @@ pub struct ClassBodyMemberMethodSigNode {
     #[height]
     height: u16,
     #[wire(key = "_method_signature")]
-    #[slot(word = 2, width = 35, inline = 35, forms = 8, built = 2)]
+    #[slot(word = 2, width = 36, inline = 36, forms = 8, built = 2)]
     pub method_signature: ::sittir_core::SlotValue<MethodSignatureNode>,
     #[wire(key = "_terminator")]
-    #[slot(field = field::TERMINATOR, word = 37, width = 1, forms = 2, built = 3, defaulted)]
+    #[slot(field = field::TERMINATOR, word = 38, width = 1, forms = 2, built = 3, defaulted)]
     pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberMethodSigTerminatorNodeSlot>>,
 }
 
@@ -38465,7 +38507,7 @@ fn prepare_class_body_member_method_sig<N: ClassBodyMemberMethodSigPrepare + ?Si
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_BODY_MEMBER_DECLARATION, words = 38, built_words = 4, fields = ClassBodyMemberDeclarationFields, prepare = ClassBodyMemberDeclarationPrepare, view = ClassBodyMemberDeclarationNodeRecord, prepare_fn = prepare_class_body_member_declaration)]
+#[node(kind = kind::CLASS_BODY_MEMBER_DECLARATION, words = 39, built_words = 4, fields = ClassBodyMemberDeclarationFields, prepare = ClassBodyMemberDeclarationPrepare, view = ClassBodyMemberDeclarationNodeRecord, prepare_fn = prepare_class_body_member_declaration)]
 pub struct ClassBodyMemberDeclarationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -38473,10 +38515,10 @@ pub struct ClassBodyMemberDeclarationNode {
     #[height]
     height: u16,
     #[wire(key = "_member")]
-    #[slot(field = field::MEMBER, word = 2, width = 35, inline = 35, forms = 8, built = 2)]
+    #[slot(field = field::MEMBER, word = 2, width = 36, inline = 36, forms = 8, built = 2)]
     pub member: ::sittir_core::SlotValue<ClassBodyMemberDeclarationMemberNodeSlot>,
     #[wire(key = "_terminator")]
-    #[slot(field = field::TERMINATOR, word = 37, width = 1, forms = 2, built = 3, defaulted)]
+    #[slot(field = field::TERMINATOR, word = 38, width = 1, forms = 2, built = 3, defaulted)]
     pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberDeclarationTerminatorNodeSlot>>,
 }
 
@@ -41758,7 +41800,7 @@ impl ::sittir_core::render::Render for FormalParametersGetAccessorSignatureNode 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE, layout = [kind::LPAREN, kind::RPAREN], words = 16, built_words = 3, fields = FormalParametersSetAccessorSignatureFields, prepare = FormalParametersSetAccessorSignaturePrepare, view = FormalParametersSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_set_accessor_signature)]
+#[node(kind = kind::_FORMAL_PARAMETERS_SET_ACCESSOR_SIGNATURE, layout = [kind::LPAREN, kind::RPAREN], words = 17, built_words = 3, fields = FormalParametersSetAccessorSignatureFields, prepare = FormalParametersSetAccessorSignaturePrepare, view = FormalParametersSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_set_accessor_signature)]
 pub struct FormalParametersSetAccessorSignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -41766,7 +41808,7 @@ pub struct FormalParametersSetAccessorSignatureNode {
     #[height]
     height: u16,
     #[wire(key = "_elements")]
-    #[slot(field = field::ELEMENTS, word = 2, width = 14, inline = 14, forms = 8, built = 2)]
+    #[slot(field = field::ELEMENTS, word = 2, width = 15, inline = 15, forms = 8, built = 2)]
     pub elements: ::sittir_core::SlotValue<FormalParametersElementsSetAccessorSignatureNode>,
 }
 
@@ -41835,7 +41877,7 @@ fn prepare_formal_parameters_set_accessor_signature<N: FormalParametersSetAccess
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE, words = 14, built_words = 3, fields = FormalParametersElementsSetAccessorSignatureFields, prepare = FormalParametersElementsSetAccessorSignaturePrepare, view = FormalParametersElementsSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_elements_set_accessor_signature)]
+#[node(kind = kind::_FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE, words = 15, built_words = 4, fields = FormalParametersElementsSetAccessorSignatureFields, prepare = FormalParametersElementsSetAccessorSignaturePrepare, view = FormalParametersElementsSetAccessorSignatureNodeRecord, prepare_fn = prepare_formal_parameters_elements_set_accessor_signature)]
 pub struct FormalParametersElementsSetAccessorSignatureNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -41845,6 +41887,9 @@ pub struct FormalParametersElementsSetAccessorSignatureNode {
     #[wire(key = "_item")]
     #[slot(field = field::ITEM, word = 2, width = 12, inline = 12, forms = 8, built = 2)]
     pub item: ::sittir_core::SlotValue<SetterParameterNode>,
+    #[wire(key = "_trailing_comma")]
+    #[slot(field = field::TRAILING_COMMA, word = 14, width = 1, forms = 18, built = 3, defaulted)]
+    pub trailing_comma: Option<::sittir_core::SlotValue<FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for FormalParametersElementsSetAccessorSignatureNode {
@@ -41907,7 +41952,9 @@ impl ::sittir_core::prepare::Prepare for FormalParametersElementsSetAccessorSign
 fn prepare_formal_parameters_elements_set_accessor_signature<N: FormalParametersElementsSetAccessorSignaturePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
+    ::sittir_core::prepare::UnitSlot::fill_unit(&mut parts.trailing_comma, overlay, ctx.options.site_arm(options::SITE__FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE_TRAILING_COMMA).arm);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.item, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.trailing_comma, overlay, ctx)?;
     Ok(())
 }
 
@@ -42226,7 +42273,7 @@ fn prepare_method_definition_getter<N: MethodDefinitionGetterPrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_DEFINITION_SETTER, layout = [kind::SET_KEYWORD], words = 39, built_words = 7, fields = MethodDefinitionSetterFields, prepare = MethodDefinitionSetterPrepare, view = MethodDefinitionSetterNodeRecord, prepare_fn = prepare_method_definition_setter)]
+#[node(kind = kind::METHOD_DEFINITION_SETTER, layout = [kind::SET_KEYWORD], words = 40, built_words = 7, fields = MethodDefinitionSetterFields, prepare = MethodDefinitionSetterPrepare, view = MethodDefinitionSetterNodeRecord, prepare_fn = prepare_method_definition_setter)]
 pub struct MethodDefinitionSetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -42246,10 +42293,10 @@ pub struct MethodDefinitionSetterNode {
     #[slot(field = field::NAME, word = 4, width = 15, inline = 14, forms = 9, built = 4)]
     pub name: ::sittir_core::SlotValue<PairKeyNodeSlot>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 19, width = 16, inline = 16, forms = 8, built = 5)]
+    #[slot(field = field::PARAMETERS, word = 19, width = 17, inline = 17, forms = 8, built = 5)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersSetAccessorSignatureNode>,
     #[wire(key = "_body")]
-    #[slot(field = field::BODY, word = 35, width = 4, inline = 4, forms = 8, built = 6)]
+    #[slot(field = field::BODY, word = 36, width = 4, inline = 4, forms = 8, built = 6)]
     pub body: ::sittir_core::SlotValue<StatementBlockNode>,
 }
 
@@ -42526,7 +42573,7 @@ fn prepare_method_signature_getter<N: MethodSignatureGetterPrepare + ?Sized>(nod
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::METHOD_SIGNATURE_SETTER, layout = [kind::SET_KEYWORD], words = 35, built_words = 6, fields = MethodSignatureSetterFields, prepare = MethodSignatureSetterPrepare, view = MethodSignatureSetterNodeRecord, prepare_fn = prepare_method_signature_setter)]
+#[node(kind = kind::METHOD_SIGNATURE_SETTER, layout = [kind::SET_KEYWORD], words = 36, built_words = 6, fields = MethodSignatureSetterFields, prepare = MethodSignatureSetterPrepare, view = MethodSignatureSetterNodeRecord, prepare_fn = prepare_method_signature_setter)]
 pub struct MethodSignatureSetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -42546,7 +42593,7 @@ pub struct MethodSignatureSetterNode {
     #[slot(field = field::NAME, word = 4, width = 15, inline = 14, forms = 9, built = 4)]
     pub name: ::sittir_core::SlotValue<PairKeyNodeSlot>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 19, width = 16, inline = 16, forms = 8, built = 5)]
+    #[slot(field = field::PARAMETERS, word = 19, width = 17, inline = 17, forms = 8, built = 5)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersSetAccessorSignatureNode>,
 }
 
@@ -42810,7 +42857,7 @@ fn prepare_abstract_method_signature_getter<N: AbstractMethodSignatureGetterPrep
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_SETTER, layout = [kind::ABSTRACT_KEYWORD, kind::SET_KEYWORD], words = 35, built_words = 6, fields = AbstractMethodSignatureSetterFields, prepare = AbstractMethodSignatureSetterPrepare, view = AbstractMethodSignatureSetterNodeRecord, prepare_fn = prepare_abstract_method_signature_setter)]
+#[node(kind = kind::ABSTRACT_METHOD_SIGNATURE_SETTER, layout = [kind::ABSTRACT_KEYWORD, kind::SET_KEYWORD], words = 36, built_words = 6, fields = AbstractMethodSignatureSetterFields, prepare = AbstractMethodSignatureSetterPrepare, view = AbstractMethodSignatureSetterNodeRecord, prepare_fn = prepare_abstract_method_signature_setter)]
 pub struct AbstractMethodSignatureSetterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -42827,7 +42874,7 @@ pub struct AbstractMethodSignatureSetterNode {
     #[slot(field = field::NAME, word = 4, width = 15, inline = 14, forms = 9, built = 4)]
     pub name: ::sittir_core::SlotValue<PairKeyNodeSlot>,
     #[wire(key = "_parameters")]
-    #[slot(field = field::PARAMETERS, word = 19, width = 16, inline = 16, forms = 8, built = 5)]
+    #[slot(field = field::PARAMETERS, word = 19, width = 17, inline = 17, forms = 8, built = 5)]
     pub parameters: ::sittir_core::SlotValue<FormalParametersSetAccessorSignatureNode>,
 }
 
@@ -55557,7 +55604,10 @@ fn render_formal_parameters_set_accessor_signature<N: FormalParametersSetAccesso
 
 fn render_formal_parameters_elements_set_accessor_signature<N: FormalParametersElementsSetAccessorSignatureFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = node.item();
+    let trailing_comma = View::new(node.trailing_comma(), "{}");
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_item", ::sittir_core::types::ItemIndex(0), w, |w| item.render(w))?;
+    if trailing_comma.kind_in(&*w, &[::sittir_core::types::KindId(15)]) { w.site_at(options::SITE__FORMAL_PARAMETERS_ELEMENTS_SET_ACCESSOR_SIGNATURE_COMMA_BEFORE); }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_trailing_comma", ::sittir_core::types::ItemIndex(0), w, |w| trailing_comma.render(w))?;
     Ok(())
 }
 
@@ -59478,7 +59528,7 @@ const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverGro
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverNode>() <= 256, "FormalParametersElementsReceiverNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsSetAccessorSignatureNode>() <= 256, "FormalParametersElementsSetAccessorSignatureNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<FormalParametersNode>() <= 256, "FormalParametersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<FormalParametersSetAccessorSignatureNode>() <= 256, "FormalParametersSetAccessorSignatureNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<FormalParametersSetAccessorSignatureNode>() > 256, "FormalParametersSetAccessorSignatureNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<FunctionDeclarationNode>() > 256, "FunctionDeclarationNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<FunctionExpressionNode>() > 256, "FunctionExpressionNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<FunctionSignatureNode>() > 256, "FunctionSignatureNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
@@ -59645,7 +59695,7 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldExpressionDelegateNode>() <= 256, "YieldExpressionDelegateNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_nodes!(TriviaNode; AnyNode, ExportStatementNode, DeclarationNode, ImportSpecifierNode, StatementNode, VariableDeclaratorNode, ForHeaderNode, ParenthesizedExpressionNode, ExpressionNode, PrimaryExpressionNode, CallExpressionNode, BinaryExpressionNode, UpdateExpressionNode, StringNode, NumberNode, MetaPropertyNode, PatternNode, MethodSignatureNode, TypeNode, PrimaryTypeNode, ClassBodyMemberNode, EnumBodyElementNode, NumberBigintNode, ExportStatementDefaultNode, MethodDefinitionClassBodyMemberMethodNode, NamespaceExportModuleExportNameNodeSlot, ExportSpecifierTypeKeywordNodeSlot, ImportStatementFromClauseNodeSlot, ImportStatementTerminatorNodeSlot, ImportClauseContentNodeSlot, ImportAttributeAttributeKindNodeSlot, ExpressionStatementExpressionNodeSlot, LexicalDeclarationKindNodeSlot, UsingDeclarationKindNodeSlot, StatementBlockTerminatorNodeSlot, ForStatementInitializerNodeSlot, ForStatementConditionNodeSlot, DoStatementTerminatorNodeSlot, SwitchBodyCasesNodeSlot, YieldExpressionExpressionNodeSlot, ObjectPropertiesNodeSlot, ObjectPatternPropertiesNodeSlot, ObjectAssignmentPatternLeftNodeSlot, ArrayElementsNodeSlot, ArrayPatternElementsNodeSlot, NestedIdentifierQualifierNodeSlot, ClassHeritageContentNodeSlot, FunctionExpressionReturnTypeNodeSlot, ArrowFunctionBodyNodeSlot, ArrowFunctionContentNodeSlot, MemberExpressionObjectNodeSlot, MemberExpressionOperatorNodeSlot, MemberExpressionPropertyNodeSlot, SubscriptExpressionObjectNodeSlot, LhsExpressionContentNodeSlot, AssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionOperatorNodeSlot, UnaryExpressionOperatorNodeSlot, TemplateStringElementsNodeSlot, DecoratorExpressionNodeSlot, DecoratorMemberExpressionObjectNodeSlot, DecoratorCallExpressionFunctionNodeSlot, FormalParametersElementsNodeSlot, PairKeyNodeSlot, FunctionSignatureTerminatorNodeSlot, DecoratorParenthesizedExpressionExpressionNodeSlot, AsExpressionTypeNodeSlot, AmbientDeclarationContentNodeSlot, ModuleNameNodeSlot, ExtendsTypeClauseTypeNodeSlot, OptionalParameterNameNodeSlot, TypeQueryMemberExpressionInTypeAnnotationObjectNodeSlot, TypeQueryCallExpressionInTypeAnnotationFunctionNodeSlot, AssertsValueNodeSlot, TupleParameterNameNodeSlot, TemplateTypeTypeNodeSlot, TemplateLiteralTypeElementsNodeSlot, GenericTypeNameNodeSlot, TypePredicateNameNodeSlot, TypeQueryMemberExpressionObjectNodeSlot, TypeQueryMemberExpressionOperatorNodeSlot, TypeQuerySubscriptExpressionIndexNodeSlot, TypeQueryInstantiationExpressionFunctionNodeSlot, TypeQueryExpressionNodeSlot, LiteralTypeContentNodeSlot, ObjectTypeOpeningNodeSlot, ObjectTypeClosingNodeSlot, ConstraintOperatorNodeSlot, FunctionTypeReturnTypeNodeSlot, FormalParametersElementsItemNodeSlot, TupleTypeMembersItemNodeSlot, ImportClauseGroupContentNodeSlot, CatchClauseGroupParameterNodeSlot, ObjectTypeContentItemNodeSlot, BinaryExpressionInLeftNodeSlot, BinaryExpressionDefaultOperatorNodeSlot, ClassBodyMemberMethodSigTerminatorNodeSlot, ClassBodyMemberDeclarationMemberNodeSlot, ClassBodyMemberDeclarationTerminatorNodeSlot, IndexSignatureColonSignNodeSlot, IndexSignatureColonTypeNodeSlot, CallExpressionTemplateCallFunctionNodeSlot, StringDoubleElementsNodeSlot, StringSingleElementsNodeSlot, UpdateExpressionPostfixOperatorNodeSlot, ExportStatementDefaultFromContentNodeSlot, ExportStatementDefaultDeclarationContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwContentNodeSlot, ForHeaderLhsLeftNodeSlot, ForHeaderLhsOperatorNodeSlot, SetterParameterPatternNodeSlot, PublicFieldDefinitionPlainOptionalityNodeSlot, ProgramNode, HashBangLineNode, NamespaceExportNode, ExportClauseNode, ExportSpecifierNode, ImportNode, ImportStatementNode, ImportClauseNode, NamespaceImportNode, NamedImportsNode, ImportAttributeNode, ExpressionStatementNode, VariableDeclarationNode, LexicalDeclarationNode, UsingDeclarationNode, StatementBlockNode, ElseClauseNode, IfStatementNode, SwitchStatementNode, ForStatementNode, ForInStatementNode, WhileStatementNode, DoStatementNode, TryStatementNode, WithStatementNode, BreakStatementNode, ContinueStatementNode, DebuggerStatementNode, ReturnStatementNode, ThrowStatementNode, EmptyStatementNode, LabeledStatementNode, SwitchBodyNode, SwitchCaseNode, SwitchDefaultNode, CatchClauseNode, FinallyClauseNode, YieldExpressionNode, ObjectNode, ObjectPatternNode, AssignmentPatternNode, ObjectAssignmentPatternNode, ArrayNode, ArrayPatternNode, NestedIdentifierNode, ClassNode, ClassDeclarationNode, ClassHeritageNode, FunctionExpressionNode, FunctionDeclarationNode, GeneratorFunctionNode, GeneratorFunctionDeclarationNode, ArrowFunctionNode, OptionalChainNode, NewExpressionNode, AwaitExpressionNode, MemberExpressionNode, SubscriptExpressionNode, LhsExpressionNode, AssignmentExpressionNode, AugmentedAssignmentExpressionNode, SpreadElementNode, TernaryExpressionNode, UnaryExpressionNode, SequenceExpressionNode, UnescapedDoubleStringFragmentNode, UnescapedSingleStringFragmentNode, EscapeSequenceNode, TemplateStringNode, TemplateSubstitutionNode, RegexNode, RegexPatternNode, RegexFlagsNode, IdentifierNode, PrivatePropertyIdentifierNode, ThisNode, SuperNode, TrueNode, FalseNode, NullNode, UndefinedNode, ArgumentsNode, DecoratorNode, DecoratorMemberExpressionNode, DecoratorCallExpressionNode, ClassBodyNode, FormalParametersNode, ClassStaticBlockNode, RestPatternNode, PairNode, PairPatternNode, ComputedPropertyNameNode, NonNullExpressionNode, FunctionSignatureNode, DecoratorParenthesizedExpressionNode, TypeAssertionNode, AsExpressionNode, SatisfiesExpressionNode, InstantiationExpressionNode, ImportRequireClauseNode, ExtendsClauseNode, ExtendsClauseSingleNode, ImplementsClauseNode, AmbientDeclarationNode, AbstractClassDeclarationNode, ModuleNode, InternalModuleNode, ImportAliasNode, NestedTypeIdentifierNode, InterfaceDeclarationNode, ExtendsTypeClauseNode, EnumDeclarationNode, EnumBodyNode, EnumAssignmentNode, TypeAliasDeclarationNode, AccessibilityModifierEnum, OverrideModifierNode, RequiredParameterNode, OptionalParameterNode, OmittingTypeAnnotationNode, AddingTypeAnnotationNode, OptingTypeAnnotationNode, TypeAnnotationNode, TypeQueryMemberExpressionInTypeAnnotationNode, TypeQueryCallExpressionInTypeAnnotationNode, AssertsNode, AssertsAnnotationNode, TupleParameterNode, OptionalTupleParameterNode, OptionalTypeNode, RestTypeNode, ConstructorTypeNode, TemplateTypeNode, TemplateLiteralTypeNode, InferTypeNode, ConditionalTypeNode, GenericTypeNode, TypePredicateNode, TypePredicateAnnotationNode, TypeQueryMemberExpressionNode, TypeQuerySubscriptExpressionNode, TypeQueryCallExpressionNode, TypeQueryInstantiationExpressionNode, TypeQueryNode, IndexTypeQueryNode, LookupTypeNode, MappedTypeClauseNode, LiteralTypeNode, ExistentialTypeNode, FlowMaybeTypeNode, ParenthesizedTypeNode, PredefinedTypeEnum, TypeArgumentsNode, ObjectTypeNode, CallSignatureNode, PropertySignatureNode, TypeParametersNode, TypeParameterNode, DefaultTypeNode, ConstraintNode, ConstructSignatureNode, ArrayTypeNode, TupleTypeNode, ReadonlyTypeNode, UnionTypeNode, IntersectionTypeNode, FunctionTypeNode, ExportSpecifiersNode, ImportSpecifiersNode, FormalParametersElementsNode, EnumBodyElementNameNode, EnumBodyElementsNode, TypesNode, TypeParametersElementsNode, TupleTypeMembersNode, ImportClauseGroupNode, UsingDeclarationArmNode, CatchClauseGroupNode, GetAccessorSignatureNode, AmbientDeclarationGlobalNode, AmbientDeclarationModuleNode, ObjectTypeContentNode, CommentLineNode, CommentBlockNode, LiteralTypeNegativeNumberNode, NumberHexNode, NumberFloatPointNode, NumberFloatLeadingPointNode, NumberFloatScientificNode, NumberLegacyOctalNode, NumberDecimalNode, NumberBinaryNode, NumberOctalNode, NumberBigintHexNode, NumberBigintBinaryNode, NumberBigintOctalNode, NumberBigintDecimalNode, BinaryExpressionInNode, BinaryExpressionDefaultNode, EmptyMemberNode, ClassBodyMemberMethodNode, ClassBodyMemberMethodSigNode, ClassBodyMemberDeclarationNode, IndexSignatureColonNode, IndexSignatureMappedTypeClauseNode, ImportStatementClauseFromNode, YieldExpressionDelegateNode, OptionalChainMarkerNode, ImportSpecifierNameNode, ImportSpecifierAsNode, ParenthesizedExpressionTypedNode, ParenthesizedExpressionSequenceNode, ExportStatementEqualsExportNode, ExportStatementNamespaceExportNode, CallExpressionCallNode, CallExpressionTemplateCallNode, CallExpressionMemberNode, StringDoubleNode, StringSingleNode, UpdateExpressionPostfixNode, UpdateExpressionPrefixNode, ArrowFunctionParameterNode, ClassHeritageExtendsClauseNode, ImportClauseDefaultImportNode, ExportStatementDefaultFromNode, ExportStatementDefaultDeclarationNode, ExportStatementDefaultFromStarFromNode, ExportStatementDefaultFromNsFromNode, ExportStatementDefaultFromClauseFromNode, ExportStatementDefaultDeclarationDefaultKwNode, ExportStatementDefaultDeclarationDefaultKwValueNode, VariableDeclaratorPlainNode, VariableDeclaratorDefiniteNode, MetaPropertyNewTargetNode, MetaPropertyImportMetaNode, ForHeaderLhsNode, ForHeaderVarKindNode, ForHeaderLetConstKindNode, ForHeaderUsingKindNode, ForInitializerLetConstKindNode, ForInitializerVarKindNode, ForInitializerUsingKindNode, FormalParametersGetAccessorSignatureNode, FormalParametersSetAccessorSignatureNode, FormalParametersElementsSetAccessorSignatureNode, SetterParameterNode, MethodDefinitionPlainNode, MethodDefinitionGetterNode, MethodDefinitionSetterNode, MethodSignaturePlainNode, MethodSignatureGetterNode, MethodSignatureSetterNode, AbstractMethodSignaturePlainNode, AbstractMethodSignatureGetterNode, AbstractMethodSignatureSetterNode, PublicFieldDefinitionPlainNode, PublicFieldDefinitionAccessorNode, HtmlCommentNode, JsxTextNode, TemplateCharsNode, AutomaticSemicolonNode, FunctionSignatureAutomaticSemicolonNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ConstructorDeclarationNode, ReceiverParameterDeclarationNode, FormalParametersElementsReceiverNode, FormalParametersElementsReceiverGroupNode, TernaryQmarkNode, ErrorRecoveryNode, StatementIdentifierNode, ShorthandPropertyIdentifierNode, ShorthandPropertyIdentifierPatternNode, PropertyIdentifierNode, TypeIdentifierNode, ThisTypeNode, StarNode, AsKeywordNode, DefaultKeywordNode, LbraceNode, RbraceNode, TypeKeywordNode, TypeofKeywordNode, ImportKeywordNode, SemiNode, WithKeywordNode, AssertKeywordNode, VarKeywordNode, LetKeywordNode, ConstKeywordNode, UsingKeywordNode, ElseKeywordNode, IfKeywordNode, SwitchKeywordNode, ForKeywordNode, LparenNode, RparenNode, AwaitKeywordNode, WhileKeywordNode, DoKeywordNode, TryKeywordNode, BreakKeywordNode, ContinueKeywordNode, DebuggerKeywordNode, ReturnKeywordNode, ThrowKeywordNode, ColonNode, CaseKeywordNode, CatchKeywordNode, FinallyKeywordNode, YieldKeywordNode, EqNode, LbrackNode, RbrackNode, DotNode, ClassKeywordNode, AsyncKeywordNode, FunctionKeywordNode, EqGtNode, QmarkDotNode, NewKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, CaretEqNode, AmpEqNode, PipeEqNode, GtGtEqNode, GtGtGtEqNode, LtLtEqNode, StarStarEqNode, AmpAmpEqNode, PipePipeEqNode, QmarkQmarkEqNode, DotDotDotNode, QmarkNode, BangNode, TildeNode, DashNode, PlusNode, VoidKeywordNode, DeleteKeywordNode, BquoteNode, DollarLbraceNode, SlashNode, ThisKeywordNode, SuperKeywordNode, TrueKeywordNode, FalseKeywordNode, NullKeywordNode, AtNode, StaticKeywordNode, SatisfiesKeywordNode, RequireKeywordNode, ExtendsKeywordNode, ImplementsKeywordNode, DeclareKeywordNode, AbstractKeywordNode, ModuleKeywordNode, NamespaceKeywordNode, InterfaceKeywordNode, EnumKeywordNode, PublicKeywordNode, PrivateKeywordNode, ProtectedKeywordNode, OverrideKeywordNode, ReadonlyKeywordNode, DashQmarkColonNode, PlusQmarkColonNode, QmarkColonNode, AssertsKeywordNode, InferKeywordNode, IsKeywordNode, KeyofKeywordNode, InKeywordNode, AnyKeywordNode, NumberKeywordNode, BooleanKeywordNode, StringKeywordNode, SymbolKeywordNode, UniqueNode, UnknownKeywordNode, NeverKeywordNode, ObjectKeywordNode, LtNode, GtNode, LbracePipeNode, PipeRbraceNode, PipeNode, AmpNode, CommaNode, GlobalKeywordNode, AmpAmpNode, PipePipeNode, GtGtNode, GtGtGtNode, LtLtNode, CaretNode, PercentNode, StarStarNode, LtEqNode, EqEqNode, EqEqEqNode, BangEqNode, BangEqEqNode, GtEqNode, QmarkQmarkNode, InstanceofKeywordNode, FromKeywordNode, ExportKeywordNode, DquoteNode, SquoteNode, PlusPlusNode, DashDashNode, TargetKeywordNode, MetaKeywordNode, OfKeywordNode, GetKeywordNode, SetKeywordNode, AccessorKeywordNode, ConstructorKeywordNode, TriviaNode);
+::sittir_core::grammar_nodes!(TriviaNode; AnyNode, ExportStatementNode, DeclarationNode, ImportSpecifierNode, StatementNode, VariableDeclaratorNode, ForHeaderNode, ParenthesizedExpressionNode, ExpressionNode, PrimaryExpressionNode, CallExpressionNode, BinaryExpressionNode, UpdateExpressionNode, StringNode, NumberNode, MetaPropertyNode, PatternNode, MethodSignatureNode, TypeNode, PrimaryTypeNode, ClassBodyMemberNode, EnumBodyElementNode, NumberBigintNode, ExportStatementDefaultNode, MethodDefinitionClassBodyMemberMethodNode, NamespaceExportModuleExportNameNodeSlot, ExportSpecifierTypeKeywordNodeSlot, ImportStatementFromClauseNodeSlot, ImportStatementTerminatorNodeSlot, ImportClauseContentNodeSlot, ImportAttributeAttributeKindNodeSlot, ExpressionStatementExpressionNodeSlot, LexicalDeclarationKindNodeSlot, UsingDeclarationKindNodeSlot, StatementBlockTerminatorNodeSlot, ForStatementInitializerNodeSlot, ForStatementConditionNodeSlot, DoStatementTerminatorNodeSlot, SwitchBodyCasesNodeSlot, YieldExpressionExpressionNodeSlot, ObjectPropertiesNodeSlot, ObjectPatternPropertiesNodeSlot, ObjectAssignmentPatternLeftNodeSlot, ArrayElementsNodeSlot, ArrayPatternElementsNodeSlot, NestedIdentifierQualifierNodeSlot, ClassHeritageContentNodeSlot, FunctionExpressionReturnTypeNodeSlot, ArrowFunctionBodyNodeSlot, ArrowFunctionContentNodeSlot, MemberExpressionObjectNodeSlot, MemberExpressionOperatorNodeSlot, MemberExpressionPropertyNodeSlot, SubscriptExpressionObjectNodeSlot, LhsExpressionContentNodeSlot, AssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionLeftNodeSlot, AugmentedAssignmentExpressionOperatorNodeSlot, UnaryExpressionOperatorNodeSlot, TemplateStringElementsNodeSlot, DecoratorExpressionNodeSlot, DecoratorMemberExpressionObjectNodeSlot, DecoratorCallExpressionFunctionNodeSlot, FormalParametersElementsNodeSlot, PairKeyNodeSlot, FunctionSignatureTerminatorNodeSlot, DecoratorParenthesizedExpressionExpressionNodeSlot, AsExpressionTypeNodeSlot, AmbientDeclarationContentNodeSlot, ModuleNameNodeSlot, ExtendsTypeClauseTypeNodeSlot, OptionalParameterNameNodeSlot, TypeQueryMemberExpressionInTypeAnnotationObjectNodeSlot, TypeQueryCallExpressionInTypeAnnotationFunctionNodeSlot, AssertsValueNodeSlot, TupleParameterNameNodeSlot, TemplateTypeTypeNodeSlot, TemplateLiteralTypeElementsNodeSlot, GenericTypeNameNodeSlot, TypePredicateNameNodeSlot, TypeQueryMemberExpressionObjectNodeSlot, TypeQueryMemberExpressionOperatorNodeSlot, TypeQuerySubscriptExpressionIndexNodeSlot, TypeQueryInstantiationExpressionFunctionNodeSlot, TypeQueryExpressionNodeSlot, LiteralTypeContentNodeSlot, ObjectTypeOpeningNodeSlot, ObjectTypeClosingNodeSlot, ConstraintOperatorNodeSlot, FunctionTypeReturnTypeNodeSlot, FormalParametersElementsItemNodeSlot, TupleTypeMembersItemNodeSlot, ImportClauseGroupContentNodeSlot, CatchClauseGroupParameterNodeSlot, ObjectTypeContentItemNodeSlot, BinaryExpressionInLeftNodeSlot, BinaryExpressionDefaultOperatorNodeSlot, ClassBodyMemberMethodSigTerminatorNodeSlot, ClassBodyMemberDeclarationMemberNodeSlot, ClassBodyMemberDeclarationTerminatorNodeSlot, IndexSignatureColonSignNodeSlot, IndexSignatureColonTypeNodeSlot, CallExpressionTemplateCallFunctionNodeSlot, StringDoubleElementsNodeSlot, StringSingleElementsNodeSlot, UpdateExpressionPostfixOperatorNodeSlot, ExportStatementDefaultFromContentNodeSlot, ExportStatementDefaultDeclarationContentNodeSlot, ExportStatementDefaultDeclarationDefaultKwContentNodeSlot, ForHeaderLhsLeftNodeSlot, ForHeaderLhsOperatorNodeSlot, FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot, SetterParameterPatternNodeSlot, PublicFieldDefinitionPlainOptionalityNodeSlot, ProgramNode, HashBangLineNode, NamespaceExportNode, ExportClauseNode, ExportSpecifierNode, ImportNode, ImportStatementNode, ImportClauseNode, NamespaceImportNode, NamedImportsNode, ImportAttributeNode, ExpressionStatementNode, VariableDeclarationNode, LexicalDeclarationNode, UsingDeclarationNode, StatementBlockNode, ElseClauseNode, IfStatementNode, SwitchStatementNode, ForStatementNode, ForInStatementNode, WhileStatementNode, DoStatementNode, TryStatementNode, WithStatementNode, BreakStatementNode, ContinueStatementNode, DebuggerStatementNode, ReturnStatementNode, ThrowStatementNode, EmptyStatementNode, LabeledStatementNode, SwitchBodyNode, SwitchCaseNode, SwitchDefaultNode, CatchClauseNode, FinallyClauseNode, YieldExpressionNode, ObjectNode, ObjectPatternNode, AssignmentPatternNode, ObjectAssignmentPatternNode, ArrayNode, ArrayPatternNode, NestedIdentifierNode, ClassNode, ClassDeclarationNode, ClassHeritageNode, FunctionExpressionNode, FunctionDeclarationNode, GeneratorFunctionNode, GeneratorFunctionDeclarationNode, ArrowFunctionNode, OptionalChainNode, NewExpressionNode, AwaitExpressionNode, MemberExpressionNode, SubscriptExpressionNode, LhsExpressionNode, AssignmentExpressionNode, AugmentedAssignmentExpressionNode, SpreadElementNode, TernaryExpressionNode, UnaryExpressionNode, SequenceExpressionNode, UnescapedDoubleStringFragmentNode, UnescapedSingleStringFragmentNode, EscapeSequenceNode, TemplateStringNode, TemplateSubstitutionNode, RegexNode, RegexPatternNode, RegexFlagsNode, IdentifierNode, PrivatePropertyIdentifierNode, ThisNode, SuperNode, TrueNode, FalseNode, NullNode, UndefinedNode, ArgumentsNode, DecoratorNode, DecoratorMemberExpressionNode, DecoratorCallExpressionNode, ClassBodyNode, FormalParametersNode, ClassStaticBlockNode, RestPatternNode, PairNode, PairPatternNode, ComputedPropertyNameNode, NonNullExpressionNode, FunctionSignatureNode, DecoratorParenthesizedExpressionNode, TypeAssertionNode, AsExpressionNode, SatisfiesExpressionNode, InstantiationExpressionNode, ImportRequireClauseNode, ExtendsClauseNode, ExtendsClauseSingleNode, ImplementsClauseNode, AmbientDeclarationNode, AbstractClassDeclarationNode, ModuleNode, InternalModuleNode, ImportAliasNode, NestedTypeIdentifierNode, InterfaceDeclarationNode, ExtendsTypeClauseNode, EnumDeclarationNode, EnumBodyNode, EnumAssignmentNode, TypeAliasDeclarationNode, AccessibilityModifierEnum, OverrideModifierNode, RequiredParameterNode, OptionalParameterNode, OmittingTypeAnnotationNode, AddingTypeAnnotationNode, OptingTypeAnnotationNode, TypeAnnotationNode, TypeQueryMemberExpressionInTypeAnnotationNode, TypeQueryCallExpressionInTypeAnnotationNode, AssertsNode, AssertsAnnotationNode, TupleParameterNode, OptionalTupleParameterNode, OptionalTypeNode, RestTypeNode, ConstructorTypeNode, TemplateTypeNode, TemplateLiteralTypeNode, InferTypeNode, ConditionalTypeNode, GenericTypeNode, TypePredicateNode, TypePredicateAnnotationNode, TypeQueryMemberExpressionNode, TypeQuerySubscriptExpressionNode, TypeQueryCallExpressionNode, TypeQueryInstantiationExpressionNode, TypeQueryNode, IndexTypeQueryNode, LookupTypeNode, MappedTypeClauseNode, LiteralTypeNode, ExistentialTypeNode, FlowMaybeTypeNode, ParenthesizedTypeNode, PredefinedTypeEnum, TypeArgumentsNode, ObjectTypeNode, CallSignatureNode, PropertySignatureNode, TypeParametersNode, TypeParameterNode, DefaultTypeNode, ConstraintNode, ConstructSignatureNode, ArrayTypeNode, TupleTypeNode, ReadonlyTypeNode, UnionTypeNode, IntersectionTypeNode, FunctionTypeNode, ExportSpecifiersNode, ImportSpecifiersNode, FormalParametersElementsNode, EnumBodyElementNameNode, EnumBodyElementsNode, TypesNode, TypeParametersElementsNode, TupleTypeMembersNode, ImportClauseGroupNode, UsingDeclarationArmNode, CatchClauseGroupNode, GetAccessorSignatureNode, AmbientDeclarationGlobalNode, AmbientDeclarationModuleNode, ObjectTypeContentNode, CommentLineNode, CommentBlockNode, LiteralTypeNegativeNumberNode, NumberHexNode, NumberFloatPointNode, NumberFloatLeadingPointNode, NumberFloatScientificNode, NumberLegacyOctalNode, NumberDecimalNode, NumberBinaryNode, NumberOctalNode, NumberBigintHexNode, NumberBigintBinaryNode, NumberBigintOctalNode, NumberBigintDecimalNode, BinaryExpressionInNode, BinaryExpressionDefaultNode, EmptyMemberNode, ClassBodyMemberMethodNode, ClassBodyMemberMethodSigNode, ClassBodyMemberDeclarationNode, IndexSignatureColonNode, IndexSignatureMappedTypeClauseNode, ImportStatementClauseFromNode, YieldExpressionDelegateNode, OptionalChainMarkerNode, ImportSpecifierNameNode, ImportSpecifierAsNode, ParenthesizedExpressionTypedNode, ParenthesizedExpressionSequenceNode, ExportStatementEqualsExportNode, ExportStatementNamespaceExportNode, CallExpressionCallNode, CallExpressionTemplateCallNode, CallExpressionMemberNode, StringDoubleNode, StringSingleNode, UpdateExpressionPostfixNode, UpdateExpressionPrefixNode, ArrowFunctionParameterNode, ClassHeritageExtendsClauseNode, ImportClauseDefaultImportNode, ExportStatementDefaultFromNode, ExportStatementDefaultDeclarationNode, ExportStatementDefaultFromStarFromNode, ExportStatementDefaultFromNsFromNode, ExportStatementDefaultFromClauseFromNode, ExportStatementDefaultDeclarationDefaultKwNode, ExportStatementDefaultDeclarationDefaultKwValueNode, VariableDeclaratorPlainNode, VariableDeclaratorDefiniteNode, MetaPropertyNewTargetNode, MetaPropertyImportMetaNode, ForHeaderLhsNode, ForHeaderVarKindNode, ForHeaderLetConstKindNode, ForHeaderUsingKindNode, ForInitializerLetConstKindNode, ForInitializerVarKindNode, ForInitializerUsingKindNode, FormalParametersGetAccessorSignatureNode, FormalParametersSetAccessorSignatureNode, FormalParametersElementsSetAccessorSignatureNode, SetterParameterNode, MethodDefinitionPlainNode, MethodDefinitionGetterNode, MethodDefinitionSetterNode, MethodSignaturePlainNode, MethodSignatureGetterNode, MethodSignatureSetterNode, AbstractMethodSignaturePlainNode, AbstractMethodSignatureGetterNode, AbstractMethodSignatureSetterNode, PublicFieldDefinitionPlainNode, PublicFieldDefinitionAccessorNode, HtmlCommentNode, JsxTextNode, TemplateCharsNode, AutomaticSemicolonNode, FunctionSignatureAutomaticSemicolonNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ConstructorDeclarationNode, ReceiverParameterDeclarationNode, FormalParametersElementsReceiverNode, FormalParametersElementsReceiverGroupNode, TernaryQmarkNode, ErrorRecoveryNode, StatementIdentifierNode, ShorthandPropertyIdentifierNode, ShorthandPropertyIdentifierPatternNode, PropertyIdentifierNode, TypeIdentifierNode, ThisTypeNode, StarNode, AsKeywordNode, DefaultKeywordNode, LbraceNode, RbraceNode, TypeKeywordNode, TypeofKeywordNode, ImportKeywordNode, SemiNode, WithKeywordNode, AssertKeywordNode, VarKeywordNode, LetKeywordNode, ConstKeywordNode, UsingKeywordNode, ElseKeywordNode, IfKeywordNode, SwitchKeywordNode, ForKeywordNode, LparenNode, RparenNode, AwaitKeywordNode, WhileKeywordNode, DoKeywordNode, TryKeywordNode, BreakKeywordNode, ContinueKeywordNode, DebuggerKeywordNode, ReturnKeywordNode, ThrowKeywordNode, ColonNode, CaseKeywordNode, CatchKeywordNode, FinallyKeywordNode, YieldKeywordNode, EqNode, LbrackNode, RbrackNode, DotNode, ClassKeywordNode, AsyncKeywordNode, FunctionKeywordNode, EqGtNode, QmarkDotNode, NewKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, CaretEqNode, AmpEqNode, PipeEqNode, GtGtEqNode, GtGtGtEqNode, LtLtEqNode, StarStarEqNode, AmpAmpEqNode, PipePipeEqNode, QmarkQmarkEqNode, DotDotDotNode, QmarkNode, BangNode, TildeNode, DashNode, PlusNode, VoidKeywordNode, DeleteKeywordNode, BquoteNode, DollarLbraceNode, SlashNode, ThisKeywordNode, SuperKeywordNode, TrueKeywordNode, FalseKeywordNode, NullKeywordNode, AtNode, StaticKeywordNode, SatisfiesKeywordNode, RequireKeywordNode, ExtendsKeywordNode, ImplementsKeywordNode, DeclareKeywordNode, AbstractKeywordNode, ModuleKeywordNode, NamespaceKeywordNode, InterfaceKeywordNode, EnumKeywordNode, PublicKeywordNode, PrivateKeywordNode, ProtectedKeywordNode, OverrideKeywordNode, ReadonlyKeywordNode, DashQmarkColonNode, PlusQmarkColonNode, QmarkColonNode, AssertsKeywordNode, InferKeywordNode, IsKeywordNode, KeyofKeywordNode, InKeywordNode, AnyKeywordNode, NumberKeywordNode, BooleanKeywordNode, StringKeywordNode, SymbolKeywordNode, UniqueNode, UnknownKeywordNode, NeverKeywordNode, ObjectKeywordNode, LtNode, GtNode, LbracePipeNode, PipeRbraceNode, PipeNode, AmpNode, CommaNode, GlobalKeywordNode, AmpAmpNode, PipePipeNode, GtGtNode, GtGtGtNode, LtLtNode, CaretNode, PercentNode, StarStarNode, LtEqNode, EqEqNode, EqEqEqNode, BangEqNode, BangEqEqNode, GtEqNode, QmarkQmarkNode, InstanceofKeywordNode, FromKeywordNode, ExportKeywordNode, DquoteNode, SquoteNode, PlusPlusNode, DashDashNode, TargetKeywordNode, MetaKeywordNode, OfKeywordNode, GetKeywordNode, SetKeywordNode, AccessorKeywordNode, ConstructorKeywordNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AbstractClassDeclarationNode>() == 336, "AbstractClassDeclarationNode is not the 336 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -59655,7 +59705,7 @@ const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureGetterNode>(
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AbstractMethodSignaturePlainNode>() == 432, "AbstractMethodSignaturePlainNode is not the 432 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureSetterNode>() == 472, "AbstractMethodSignatureSetterNode is not the 472 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AbstractMethodSignatureSetterNode>() == 512, "AbstractMethodSignatureSetterNode is not the 512 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AccessibilityModifierEnum>() == 1, "AccessibilityModifierEnum is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60049,13 +60099,15 @@ const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverGro
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FormalParametersElementsReceiverNode>() == 120, "FormalParametersElementsReceiverNode is not the 120 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<FormalParametersElementsSetAccessorSignatureNode>() == 208, "FormalParametersElementsSetAccessorSignatureNode is not the 208 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<FormalParametersElementsSetAccessorSignatureNode>() == 248, "FormalParametersElementsSetAccessorSignatureNode is not the 248 bytes the byte rule in boxed-payloads.ts sizes it");
+#[cfg(target_pointer_width = "64")]
+const _: () = assert!(::core::mem::size_of::<FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot>() == 1, "FormalParametersElementsSetAccessorSignatureTrailingCommaNodeSlot is not the 1 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FormalParametersGetAccessorSignatureNode>() == 0, "FormalParametersGetAccessorSignatureNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FormalParametersNode>() == 56, "FormalParametersNode is not the 56 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<FormalParametersSetAccessorSignatureNode>() == 224, "FormalParametersSetAccessorSignatureNode is not the 224 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<FormalParametersSetAccessorSignatureNode>() == 264, "FormalParametersSetAccessorSignatureNode is not the 264 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<FromKeywordNode>() == 0, "FromKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60251,7 +60303,7 @@ const _: () = assert!(::core::mem::size_of::<MethodDefinitionGetterNode>() == 39
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MethodDefinitionPlainNode>() == 512, "MethodDefinitionPlainNode is not the 512 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodDefinitionSetterNode>() == 552, "MethodDefinitionSetterNode is not the 552 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodDefinitionSetterNode>() == 592, "MethodDefinitionSetterNode is not the 592 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MethodSignatureGetterNode>() == 312, "MethodSignatureGetterNode is not the 312 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
@@ -60259,7 +60311,7 @@ const _: () = assert!(::core::mem::size_of::<MethodSignatureNode>() == 16, "Meth
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<MethodSignaturePlainNode>() == 432, "MethodSignaturePlainNode is not the 432 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<MethodSignatureSetterNode>() == 472, "MethodSignatureSetterNode is not the 472 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<MethodSignatureSetterNode>() == 512, "MethodSignatureSetterNode is not the 512 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<ModuleKeywordNode>() == 0, "ModuleKeywordNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

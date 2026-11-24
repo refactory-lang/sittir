@@ -23716,7 +23716,7 @@ export function buildClassBodyMemberMethod(
 		const record = arena.record(TSKindId.ClassBodyMemberMethod as const);
 		storeList(arena, record, 2, 2, _decorator);
 		storeCell(arena, record, 3, 3, _method_definition);
-		storeCell(arena, record, 4, 42, _terminator);
+		storeCell(arena, record, 4, 43, _terminator);
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethod.Bound;
 	});
@@ -23749,7 +23749,7 @@ function buildClassBodyMemberMethod$patch(
 		const record = arena.copy(source, TSKindId.ClassBodyMemberMethod as const);
 		patchList(arena, record, 2, 2, _decorator);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'methodDefinition', _method_definition));
-		patchCell(arena, record, 4, 42, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 4, 43, carriedSlot(source, 'terminator', _terminator));
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethod.Bound;
 	});
@@ -23893,7 +23893,7 @@ export function buildClassBodyMemberMethodSig(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ClassBodyMemberMethodSig as const);
 		storeCell(arena, record, 2, 2, _method_signature);
-		storeCell(arena, record, 3, 37, _terminator);
+		storeCell(arena, record, 3, 38, _terminator);
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethodSig.Bound;
 	});
@@ -23920,7 +23920,7 @@ function buildClassBodyMemberMethodSig$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ClassBodyMemberMethodSig as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'methodSignature', _method_signature));
-		patchCell(arena, record, 3, 37, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 3, 38, carriedSlot(source, 'terminator', _terminator));
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberMethodSig.Bound;
 	});
@@ -24007,7 +24007,7 @@ export function buildClassBodyMemberDeclaration(
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.ClassBodyMemberDeclaration as const);
 		storeCell(arena, record, 2, 2, _member);
-		storeCell(arena, record, 3, 37, _terminator);
+		storeCell(arena, record, 3, 38, _terminator);
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberDeclaration.Bound;
 	});
@@ -24031,7 +24031,7 @@ function buildClassBodyMemberDeclaration$patch(
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.ClassBodyMemberDeclaration as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'member', _member));
-		patchCell(arena, record, 3, 37, carriedSlot(source, 'terminator', _terminator));
+		patchCell(arena, record, 3, 38, carriedSlot(source, 'terminator', _terminator));
 		const node = arena.view(record);
 		return node as unknown as T.ClassBodyMemberDeclaration.Bound;
 	});
@@ -29236,7 +29236,8 @@ function withFormalParametersSetAccessorSignature(node: object, setter: string, 
 }
 
 export function buildFormalParametersElementsSetAccessorSignature<V extends Admit<T.SetterParameter>>(
-	value: V & RefuseUndeclared<V>
+	value: V & RefuseUndeclared<V>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
 export function buildFormalParametersElementsSetAccessorSignature<
 	DecoratorsSlot extends T.SetterParameter.Config['decorators'],
@@ -29246,38 +29247,48 @@ export function buildFormalParametersElementsSetAccessorSignature<
 	config: RefusingConfig<T.SetterParameter.Config, { decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }>
 ): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
 export function buildFormalParametersElementsSetAccessorSignature(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+	if (args[0] === undefined) {
 		return _buildFormalParametersElementsSetAccessorSignature(
-			args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0]
+			args[0] as unknown as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0],
+			args[1] as never
 		);
 	}
 	const prebuilt =
-		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.SetterParameter as const);
 	return prebuilt
 		? _buildFormalParametersElementsSetAccessorSignature(
-				args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0]
+				args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0],
+				args[1] as never
 			)
 		: _buildFormalParametersElementsSetAccessorSignature(
-				(buildSetterParameter as (...a: unknown[]) => unknown)(...args) as Parameters<
+				(buildSetterParameter as (...a: unknown[]) => unknown)(args[0]) as Parameters<
 					typeof _buildFormalParametersElementsSetAccessorSignature
-				>[0]
+				>[0],
+				args[1] as never
 			);
 }
 function _buildFormalParametersElementsSetAccessorSignature(
-	value: Admit<T.SetterParameter>
+	value: Admit<T.SetterParameter>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): T.FormalParametersElementsSetAccessorSignature.Bound {
 	const _item = value;
+	const _trailing_comma = coerceKindEnumStorage<
+		NonNullable<T.FormalParametersElementsSetAccessorSignature['_trailing_comma']>
+	>(blankArmStored(options?.trailingComma), [[',', TSKindId.Comma] as const]);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, '_formal_parameters_elements_set_accessor_signature', { item: _item });
+		admitChildren(handle, '_formal_parameters_elements_set_accessor_signature', {
+			item: _item,
+			trailingComma: _trailing_comma
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FormalParametersElementsSetAccessorSignature as const, { _item });
+	handle?.verifyStored?.(TSKindId.FormalParametersElementsSetAccessorSignature as const, { _item, _trailing_comma });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.FormalParametersElementsSetAccessorSignature as const);
 		storeCell(arena, record, 2, 2, _item);
+		storeCell(arena, record, 3, 14, _trailing_comma);
 		const node = arena.view(record);
 		return node as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
 	});
@@ -29285,20 +29296,80 @@ function _buildFormalParametersElementsSetAccessorSignature(
 
 function _buildFormalParametersElementsSetAccessorSignature$patch(
 	source: object,
-	value: Admit<T.SetterParameter>
+	value: Admit<T.SetterParameter>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): T.FormalParametersElementsSetAccessorSignature.Bound {
 	const _item = value;
+	const _trailing_comma = coerceKindEnumStorage<
+		NonNullable<T.FormalParametersElementsSetAccessorSignature['_trailing_comma']>
+	>(blankArmStored(options?.trailingComma), [[',', TSKindId.Comma] as const]);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, '_formal_parameters_elements_set_accessor_signature', { item: _item });
+		admitChildren(handle, '_formal_parameters_elements_set_accessor_signature', {
+			item: _item,
+			trailingComma: _trailing_comma
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FormalParametersElementsSetAccessorSignature as const, { _item });
+	handle?.verifyStored?.(TSKindId.FormalParametersElementsSetAccessorSignature as const, { _item, _trailing_comma });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.FormalParametersElementsSetAccessorSignature as const);
 		patchCell(arena, record, 2, 2, carriedSlot(source, 'item', _item));
+		patchCell(arena, record, 3, 14, carriedSlot(source, 'trailingComma', _trailing_comma));
 		const node = arena.view(record);
 		return node as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
 	});
+}
+function _buildFormalParametersElementsSetAccessorSignature$set(
+	source: object,
+	...[slot, input]:
+		| ['item', Admit<T.SetterParameter>]
+		| ['trailingComma', T.FormalParametersElementsSetAccessorSignature.Options]
+): T.FormalParametersElementsSetAccessorSignature.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'item':
+				return _buildFormalParametersElementsSetAccessorSignature$patch(
+					source,
+					input,
+					inputs.options as T.FormalParametersElementsSetAccessorSignature.Options
+				);
+			case 'trailingComma':
+				return _buildFormalParametersElementsSetAccessorSignature$patch(
+					source,
+					inputs.config['item'] as Admit<T.SetterParameter>,
+					{ ...(inputs.options as T.FormalParametersElementsSetAccessorSignature.Options), ...input }
+				);
+		}
+	}
+	switch (slot) {
+		case 'item': {
+			const value = input;
+			const _item = value;
+			return setSlot(
+				source,
+				TSKindId.FormalParametersElementsSetAccessorSignature as const,
+				'_formal_parameters_elements_set_accessor_signature',
+				0,
+				'item',
+				_item
+			) as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
+		}
+		case 'trailingComma': {
+			const options = input;
+			const _trailing_comma = coerceKindEnumStorage<
+				NonNullable<T.FormalParametersElementsSetAccessorSignature['_trailing_comma']>
+			>(blankArmStored(options?.trailingComma), [[',', TSKindId.Comma] as const]);
+			return setSlot(
+				source,
+				TSKindId.FormalParametersElementsSetAccessorSignature as const,
+				'_formal_parameters_elements_set_accessor_signature',
+				1,
+				'trailingComma',
+				_trailing_comma
+			) as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
+		}
+	}
 }
 function withFormalParametersElementsSetAccessorSignature(
 	node: object,
@@ -29309,7 +29380,13 @@ function withFormalParametersElementsSetAccessorSignature(
 	switch (setter) {
 		case 'item':
 			return applySetter(args, (value: Admit<T.SetterParameter>) =>
-				rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature$patch(node, value))
+				rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature$set(node, 'item', value))
+			);
+		case 'trailingComma':
+			return applySetter(args, (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () =>
+					_buildFormalParametersElementsSetAccessorSignature$set(node, 'trailingComma', { trailingComma: spelling })
+				)
 			);
 	}
 	throw new Error(`_formal_parameters_elements_set_accessor_signature has no $with.${setter}`);
@@ -30365,7 +30442,7 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const _body = orDefault(config.body, () => buildStatementBlock());
@@ -30395,7 +30472,7 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		if (_override) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _name);
 		storeCell(arena, record, 5, 19, _parameters);
-		storeCell(arena, record, 6, 35, _body);
+		storeCell(arena, record, 6, 36, _body);
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionSetter.Bound;
 	});
@@ -30417,7 +30494,7 @@ function buildMethodDefinitionSetter$patch(
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const _body = orDefault(config.body, () => buildStatementBlock());
@@ -30447,7 +30524,7 @@ function buildMethodDefinitionSetter$patch(
 		patchFlag(record, 2, 2, _override);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'name', _name));
 		patchCell(arena, record, 5, 19, carriedSlot(source, 'parameters', _parameters));
-		patchCell(arena, record, 6, 35, carriedSlot(source, 'body', _body));
+		patchCell(arena, record, 6, 36, carriedSlot(source, 'body', _body));
 		const node = arena.view(record);
 		return node as unknown as T.MethodDefinitionSetter.Bound;
 	});
@@ -30540,7 +30617,7 @@ function buildMethodDefinitionSetter$set(
 			const config = input;
 			const _parameters = wrapHoisted(
 				config.parameters,
-				(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+				(v: never) => buildFormalParametersSetAccessorSignature(v),
 				TSKindId.FormalParametersSetAccessorSignature
 			);
 			return setSlot(
@@ -30616,20 +30693,11 @@ function withMethodDefinitionSetter(node: object, setter: string, args: readonly
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -31354,7 +31422,7 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const handle = currentHandle();
@@ -31402,7 +31470,7 @@ function buildMethodSignatureSetter$patch(
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const handle = currentHandle();
@@ -31514,7 +31582,7 @@ function buildMethodSignatureSetter$set(
 			const config = input;
 			const _parameters = wrapHoisted(
 				config.parameters,
-				(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+				(v: never) => buildFormalParametersSetAccessorSignature(v),
 				TSKindId.FormalParametersSetAccessorSignature
 			);
 			return setSlot(
@@ -31578,20 +31646,11 @@ function withMethodSignatureSetter(node: object, setter: string, args: readonly 
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -32256,7 +32315,7 @@ export function buildAbstractMethodSignatureSetter(
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const handle = currentHandle();
@@ -32305,7 +32364,7 @@ function buildAbstractMethodSignatureSetter$patch(
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const handle = currentHandle();
@@ -32405,7 +32464,7 @@ function buildAbstractMethodSignatureSetter$set(
 			const config = input;
 			const _parameters = wrapHoisted(
 				config.parameters,
-				(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+				(v: never) => buildFormalParametersSetAccessorSignature(v),
 				TSKindId.FormalParametersSetAccessorSignature
 			);
 			return setSlot(
@@ -32469,20 +32528,11 @@ function withAbstractMethodSignatureSetter(node: object, setter: string, args: r
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);
@@ -35760,7 +35810,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		449: 3,
 		450: 4,
 		453: 3,
-		454: 3,
+		454: 4,
 		455: 7,
 		458: 9,
 		459: 7,
@@ -36622,16 +36672,16 @@ export const builtViews: BuiltViews = Object.freeze({
 		],
 		408: [
 			[2, 2, 1, 1, 0, 3],
-			[3, 3, 39, 8, 39, 0],
-			[42, 4, 1, 18, 0, 0]
+			[3, 3, 40, 8, 40, 0],
+			[43, 4, 1, 18, 0, 0]
 		],
 		409: [
-			[2, 2, 35, 8, 35, 0],
-			[37, 3, 1, 2, 0, 0]
+			[2, 2, 36, 8, 36, 0],
+			[38, 3, 1, 2, 0, 0]
 		],
 		410: [
-			[2, 2, 35, 8, 35, 0],
-			[37, 3, 1, 2, 0, 0]
+			[2, 2, 36, 8, 36, 0],
+			[38, 3, 1, 2, 0, 0]
 		],
 		411: [
 			[3, 3, 1, 2, 0, 0],
@@ -36772,8 +36822,11 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 1, 1, 0, 3]
 		],
-		453: [[2, 2, 14, 8, 14, 0]],
-		454: [[2, 2, 12, 8, 12, 0]],
+		453: [[2, 2, 15, 8, 15, 0]],
+		454: [
+			[2, 2, 12, 8, 12, 0],
+			[14, 3, 1, 18, 0, 0]
+		],
 		455: [
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 2, 0, 0],
@@ -36809,8 +36862,8 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
-			[19, 5, 16, 8, 16, 0],
-			[35, 6, 4, 8, 4, 0]
+			[19, 5, 17, 8, 17, 0],
+			[36, 6, 4, 8, 4, 0]
 		],
 		461: [
 			[3, 3, 1, 2, 0, 0],
@@ -36837,7 +36890,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 0],
 			[2, 1],
 			[4, 4, 15, 9, 14, 0],
-			[19, 5, 16, 8, 16, 0]
+			[19, 5, 17, 8, 17, 0]
 		],
 		464: [
 			[3, 3, 1, 2, 0, 0],
@@ -36859,7 +36912,7 @@ export const builtViews: BuiltViews = Object.freeze({
 			[3, 3, 1, 2, 0, 0],
 			[2, 0],
 			[4, 4, 15, 9, 14, 0],
-			[19, 5, 16, 8, 16, 0]
+			[19, 5, 17, 8, 17, 0]
 		],
 		467: [
 			[3, 3, 1, 1, 0, 3],

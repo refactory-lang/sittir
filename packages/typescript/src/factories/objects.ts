@@ -19924,7 +19924,8 @@ function buildFormalParametersSetAccessorSignature$with$elements(this: Received<
 }
 
 export function buildFormalParametersElementsSetAccessorSignature<V extends Admit<T.SetterParameter>>(
-	value: V & RefuseUndeclared<V>
+	value: V & RefuseUndeclared<V>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
 export function buildFormalParametersElementsSetAccessorSignature<
 	DecoratorsSlot extends T.SetterParameter.Config['decorators'],
@@ -19934,39 +19935,50 @@ export function buildFormalParametersElementsSetAccessorSignature<
 	config: RefusingConfig<T.SetterParameter.Config, { decorators: DecoratorsSlot; pattern: PatternSlot; type: TypeSlot }>
 ): ReturnType<typeof _buildFormalParametersElementsSetAccessorSignature>;
 export function buildFormalParametersElementsSetAccessorSignature(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+	if (args[0] === undefined) {
 		return _buildFormalParametersElementsSetAccessorSignature(
-			args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0]
+			args[0] as unknown as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0],
+			args[1] as never
 		);
 	}
 	const prebuilt =
-		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
 		(args[0] as { $type?: unknown }).$type === (TSKindId.SetterParameter as const);
 	return prebuilt
 		? _buildFormalParametersElementsSetAccessorSignature(
-				args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0]
+				args[0] as Parameters<typeof _buildFormalParametersElementsSetAccessorSignature>[0],
+				args[1] as never
 			)
 		: _buildFormalParametersElementsSetAccessorSignature(
-				(buildSetterParameter as (...a: unknown[]) => unknown)(...args) as Parameters<
+				(buildSetterParameter as (...a: unknown[]) => unknown)(args[0]) as Parameters<
 					typeof _buildFormalParametersElementsSetAccessorSignature
-				>[0]
+				>[0],
+				args[1] as never
 			);
 }
 function _buildFormalParametersElementsSetAccessorSignature(
-	value: Admit<T.SetterParameter>
+	value: Admit<T.SetterParameter>,
+	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): T.FormalParametersElementsSetAccessorSignature.Bound {
 	const _item = value;
+	const _trailing_comma = coerceKindEnumStorage<
+		NonNullable<T.FormalParametersElementsSetAccessorSignature['_trailing_comma']>
+	>(blankArmStored(options?.trailingComma), [[',', TSKindId.Comma] as const]);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, '_formal_parameters_elements_set_accessor_signature', { item: _item });
+		admitChildren(handle, '_formal_parameters_elements_set_accessor_signature', {
+			item: _item,
+			trailingComma: _trailing_comma
+		});
 	const node = {
 		$type: TSKindId.FormalParametersElementsSetAccessorSignature as const,
 		_item,
+		_trailing_comma,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		item: () => hydrateStoredSlot(node, '_item'),
+		trailingComma: () => blankArmRead(_trailing_comma),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -19974,9 +19986,15 @@ function _buildFormalParametersElementsSetAccessorSignature(
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
+		[INPUT]: value,
+		[OPTIONS]: options,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = { item: buildFormalParametersElementsSetAccessorSignature$with$item, [RECEIVER]: node };
+	node.$with = {
+		item: buildFormalParametersElementsSetAccessorSignature$with$item,
+		trailingComma: buildFormalParametersElementsSetAccessorSignature$with$trailingComma,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.FormalParametersElementsSetAccessorSignature.Bound;
 }
@@ -19987,10 +20005,18 @@ function buildFormalParametersElementsSetAccessorSignature$with(
 	args: readonly unknown[]
 ): unknown {
 	const handle = node[HANDLE];
+	const value = node[INPUT] as Admit<T.SetterParameter>;
+	const options = node[OPTIONS] as T.FormalParametersElementsSetAccessorSignature.Options;
 	switch (setter) {
 		case 'item':
 			return applySetter(args, (value: Admit<T.SetterParameter>) =>
-				rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature(value))
+				rebuilt(node, handle, () => _buildFormalParametersElementsSetAccessorSignature(value, options))
+			);
+		case 'trailingComma':
+			return applySetter(args, (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () =>
+					_buildFormalParametersElementsSetAccessorSignature(value, { ...options, trailingComma: spelling })
+				)
 			);
 	}
 	throw new Error(`_formal_parameters_elements_set_accessor_signature has no $with.${setter}`);
@@ -20000,6 +20026,16 @@ function buildFormalParametersElementsSetAccessorSignature$with$item(
 	...args: unknown[]
 ): unknown {
 	return buildFormalParametersElementsSetAccessorSignature$with(receiverOf(this, '$with.item'), 'item', args);
+}
+function buildFormalParametersElementsSetAccessorSignature$with$trailingComma(
+	this: Received<Held>,
+	...args: unknown[]
+): unknown {
+	return buildFormalParametersElementsSetAccessorSignature$with(
+		receiverOf(this, '$with.trailingComma'),
+		'trailingComma',
+		args
+	);
 }
 
 export function buildSetterParameter<
@@ -20604,7 +20640,7 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const _body = orDefault(config.body, () => buildStatementBlock());
@@ -20633,11 +20669,7 @@ export function buildMethodDefinitionSetter(config: T.MethodDefinitionSetter.Con
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
 		parameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
-				false
-			),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -20711,20 +20743,11 @@ function buildMethodDefinitionSetter$with(node: Held, setter: string, args: read
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 		case 'body':
 			return applySetter(args, (value: Admit<T.StatementBlock>) =>
@@ -21161,7 +21184,7 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const handle = currentHandle();
@@ -21187,11 +21210,7 @@ export function buildMethodSignatureSetter(config: T.MethodSignatureSetter.Confi
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
 		parameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
-				false
-			),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -21263,20 +21282,11 @@ function buildMethodSignatureSetter$with(node: Held, setter: string, args: reado
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 	}
 	throw new Error(`method_signature_setter has no $with.${setter}`);
@@ -21692,7 +21702,7 @@ export function buildAbstractMethodSignatureSetter(
 	);
 	const _parameters = wrapHoisted(
 		config.parameters,
-		(v: never) => buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+		(v: never) => buildFormalParametersSetAccessorSignature(v),
 		TSKindId.FormalParametersSetAccessorSignature
 	);
 	const handle = currentHandle();
@@ -21715,11 +21725,7 @@ export function buildAbstractMethodSignatureSetter(
 		override: () => _override,
 		name: () => hydrateStoredSlot(node, '_name'),
 		parameters: () =>
-			hoistRead(
-				hydrateStoredSlot(node, '_parameters'),
-				[storedHop('elements', '_elements', false), storedHop('item', '_item', false)],
-				false
-			),
+			hoistRead(hydrateStoredSlot(node, '_parameters'), [storedHop('elements', '_elements', false)], false),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -21788,20 +21794,11 @@ function buildAbstractMethodSignatureSetter$with(node: Held, setter: string, arg
 					args.map((v) =>
 						wrapHoisted(
 							v,
-							(v: never) =>
-								buildFormalParametersSetAccessorSignature(buildFormalParametersElementsSetAccessorSignature(v)),
+							(v: never) => buildFormalParametersSetAccessorSignature(v),
 							TSKindId.FormalParametersSetAccessorSignature
 						)
 					),
-				TSKindId.FormalParametersSetAccessorSignature,
-				(args: readonly never[]) =>
-					args.map((v) =>
-						wrapHoisted(
-							v,
-							(v: never) => buildFormalParametersElementsSetAccessorSignature(v),
-							TSKindId.FormalParametersElementsSetAccessorSignature
-						)
-					)
+				TSKindId.FormalParametersSetAccessorSignature
 			);
 	}
 	throw new Error(`abstract_method_signature_setter has no $with.${setter}`);

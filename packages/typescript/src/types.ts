@@ -10190,13 +10190,25 @@ export interface FormalParametersSetAccessorSignature {
 export interface FormalParametersElementsSetAccessorSignature {
 	readonly $type: TSKindId.FormalParametersElementsSetAccessorSignature;
 	readonly _item: SetterParameter;
+	readonly _trailing_comma?: TSKindId.Comma | 0;
 	readonly __slotNames__?: {
 		readonly _item: 'item';
+		readonly _trailing_comma: 'trailingComma';
+	};
+	readonly __inputHints__?: {
+		readonly trailing_comma?: KindEnum<',', TSKindId.Comma>;
 	};
 	readonly __slotHints__?: {
 		readonly item: SlotHint<T.SetterParameter>;
+		readonly trailingComma: SlotHint<
+			NonNullable<T.FormalParametersElementsSetAccessorSignature.Options>['trailingComma'],
+			true
+		>;
 	};
 	readonly item: () => SetterParameter;
+	readonly trailingComma: () =>
+		| NonNullable<T.FormalParametersElementsSetAccessorSignature.Options>['trailingComma']
+		| undefined;
 }
 
 export interface SetterParameter {
@@ -10453,7 +10465,7 @@ export interface MethodDefinitionSetter {
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
 		readonly override?: BaseBooleanKeyword<'override'>;
-		readonly parameters: SetterParameter;
+		readonly parameters: FormalParametersElementsSetAccessorSignature;
 	};
 	readonly __wrapperHints__?: {
 		readonly parameters: FormalParametersSetAccessorSignature;
@@ -10489,7 +10501,7 @@ export interface MethodDefinitionSetter {
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly parameters: () => SetterParameter;
+	readonly parameters: () => FormalParametersElementsSetAccessorSignature;
 	readonly body: () => StatementBlock;
 }
 
@@ -10663,7 +10675,7 @@ export interface MethodSignatureSetter {
 		>;
 		readonly static?: BaseBooleanKeyword<'static'>;
 		readonly override?: BaseBooleanKeyword<'override'>;
-		readonly parameters: SetterParameter;
+		readonly parameters: FormalParametersElementsSetAccessorSignature;
 	};
 	readonly __wrapperHints__?: {
 		readonly parameters: FormalParametersSetAccessorSignature;
@@ -10697,7 +10709,7 @@ export interface MethodSignatureSetter {
 	readonly static: () => boolean;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly parameters: () => SetterParameter;
+	readonly parameters: () => FormalParametersElementsSetAccessorSignature;
 }
 
 export interface AbstractMethodSignaturePlain {
@@ -10850,7 +10862,7 @@ export interface AbstractMethodSignatureSetter {
 			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
 		>;
 		readonly override?: BaseBooleanKeyword<'override'>;
-		readonly parameters: SetterParameter;
+		readonly parameters: FormalParametersElementsSetAccessorSignature;
 	};
 	readonly __wrapperHints__?: {
 		readonly parameters: FormalParametersSetAccessorSignature;
@@ -10882,7 +10894,7 @@ export interface AbstractMethodSignatureSetter {
 		| undefined;
 	readonly override: () => boolean;
 	readonly name: () => PropertyIdentifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
-	readonly parameters: () => SetterParameter;
+	readonly parameters: () => FormalParametersElementsSetAccessorSignature;
 }
 
 export interface PublicFieldDefinitionPlain {
@@ -14072,6 +14084,7 @@ export namespace FormalParametersElements {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
+			readonly comma?: { readonly before?: LayoutKindId };
 			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
@@ -14082,6 +14095,7 @@ export namespace FormalParametersElements {
 				};
 				readonly start?: LayoutKindId;
 			};
+			readonly trailingComma?: TSKindId.Comma | null;
 		};
 	}
 }
@@ -26436,7 +26450,8 @@ export namespace FormalParametersSetAccessorSignature {
 	export type Kind = TSKindId.FormalParametersSetAccessorSignature;
 }
 export namespace FormalParametersElementsSetAccessorSignature {
-	export type Config = ConfigFor<TSKindId.FormalParametersElementsSetAccessorSignature>;
+	export type Config = OmitEach<ConfigFor<TSKindId.FormalParametersElementsSetAccessorSignature>, 'trailingComma'>;
+	export type Options = { readonly trailingComma?: TSKindId.Comma | null };
 	export interface Bound
 		extends BoundOf<T.FormalParametersElementsSetAccessorSignature, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.FormalParametersElementsSetAccessorSignature['$type'];
@@ -26459,10 +26474,18 @@ export namespace FormalParametersElementsSetAccessorSignature {
 		>;
 		readonly $snapshot: () => Snapshot<T.FormalParametersElementsSetAccessorSignature['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.FormalParametersElementsSetAccessorSignature>;
-	export type LooseConfig = LooseConfigFor<TSKindId.FormalParametersElementsSetAccessorSignature>;
-	export type BuildArgs = [value: Admit<T.SetterParameter>] | [config: T.SetterParameter.Config];
-	export type LooseArgs = [value: T.FormalParametersElementsSetAccessorSignature.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.FormalParametersElementsSetAccessorSignature>, 'trailingComma'>;
+	export type LooseConfig = OmitEach<
+		LooseConfigFor<TSKindId.FormalParametersElementsSetAccessorSignature>,
+		'trailingComma'
+	>;
+	export type BuildArgs =
+		| [value: Admit<T.SetterParameter>, options?: T.FormalParametersElementsSetAccessorSignature.Options]
+		| [config: T.SetterParameter.Config];
+	export type LooseArgs = [
+		value: T.FormalParametersElementsSetAccessorSignature.Loose,
+		options?: T.FormalParametersElementsSetAccessorSignature.Options
+	];
 	export type Kind = TSKindId.FormalParametersElementsSetAccessorSignature;
 }
 export namespace SetterParameter {

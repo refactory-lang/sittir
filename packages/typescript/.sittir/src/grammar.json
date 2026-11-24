@@ -17553,7 +17553,23 @@
           "type": "BLANK"
         },
         {
-          "type": "BLANK"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "trailing_comma",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_trailing_comma"
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ],
       "annotations": {
@@ -17686,6 +17702,10 @@
       "metadata": {
         "aliasSource": "visible-group"
       }
+    },
+    "_kw_trailing_comma": {
+      "type": "STRING",
+      "value": ","
     },
     "_kw_accessor_kind_star": {
       "type": "STRING",
@@ -20717,6 +20737,7 @@
     "_kw_const",
     "_kind",
     "__for_header_operator",
+    "_kw_trailing_comma",
     "_kw_accessor_kind_star",
     "_kw_optional",
     "_kw_accessor_kind_get",

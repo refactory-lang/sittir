@@ -856,23 +856,23 @@ export const records = {
 		right: { word: 7, width: 4, forms: 3, built: 4 }
 	},
 	ClassBodyMemberMethodNode: {
-		words: 43,
+		words: 44,
 		builtWords: 5,
 		decorator: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		method_definition: { word: 3, width: 39, inline: 39, forms: 8, built: 3 },
-		terminator: { word: 42, width: 1, forms: 18, built: 4 }
+		method_definition: { word: 3, width: 40, inline: 40, forms: 8, built: 3 },
+		terminator: { word: 43, width: 1, forms: 18, built: 4 }
 	},
 	ClassBodyMemberMethodSigNode: {
-		words: 38,
+		words: 39,
 		builtWords: 4,
-		method_signature: { word: 2, width: 35, inline: 35, forms: 8, built: 2 },
-		terminator: { word: 37, width: 1, forms: 2, built: 3 }
+		method_signature: { word: 2, width: 36, inline: 36, forms: 8, built: 2 },
+		terminator: { word: 38, width: 1, forms: 2, built: 3 }
 	},
 	ClassBodyMemberDeclarationNode: {
-		words: 38,
+		words: 39,
 		builtWords: 4,
-		member: { word: 2, width: 35, inline: 35, forms: 8, built: 2 },
-		terminator: { word: 37, width: 1, forms: 2, built: 3 }
+		member: { word: 2, width: 36, inline: 36, forms: 8, built: 2 },
+		terminator: { word: 38, width: 1, forms: 2, built: 3 }
 	},
 	IndexSignatureColonNode: {
 		words: 14,
@@ -1086,14 +1086,15 @@ export const records = {
 		declarators: { word: 3, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	FormalParametersSetAccessorSignatureNode: {
-		words: 16,
+		words: 17,
 		builtWords: 3,
-		elements: { word: 2, width: 14, inline: 14, forms: 8, built: 2 }
+		elements: { word: 2, width: 15, inline: 15, forms: 8, built: 2 }
 	},
 	FormalParametersElementsSetAccessorSignatureNode: {
-		words: 14,
-		builtWords: 3,
-		item: { word: 2, width: 12, inline: 12, forms: 8, built: 2 }
+		words: 15,
+		builtWords: 4,
+		item: { word: 2, width: 12, inline: 12, forms: 8, built: 2 },
+		trailing_comma: { word: 14, width: 1, forms: 18, built: 3 }
 	},
 	SetterParameterNode: {
 		words: 12,
@@ -1132,14 +1133,14 @@ export const records = {
 		body: { word: 22, width: 4, inline: 4, forms: 8, built: 6 }
 	},
 	MethodDefinitionSetterNode: {
-		words: 39,
+		words: 40,
 		builtWords: 7,
 		accessibility_modifier: { word: 3, width: 1, forms: 2, built: 3 },
 		static_: { word: 2, bit: 0 },
 		override_: { word: 2, bit: 1 },
 		name: { word: 4, width: 15, inline: 14, forms: 9, built: 4 },
-		parameters: { word: 19, width: 16, inline: 16, forms: 8, built: 5 },
-		body: { word: 35, width: 4, inline: 4, forms: 8, built: 6 }
+		parameters: { word: 19, width: 17, inline: 17, forms: 8, built: 5 },
+		body: { word: 36, width: 4, inline: 4, forms: 8, built: 6 }
 	},
 	MethodSignaturePlainNode: {
 		words: 30,
@@ -1166,13 +1167,13 @@ export const records = {
 		type_: { word: 19, width: 3, forms: 1, built: 5 }
 	},
 	MethodSignatureSetterNode: {
-		words: 35,
+		words: 36,
 		builtWords: 6,
 		accessibility_modifier: { word: 3, width: 1, forms: 2, built: 3 },
 		static_: { word: 2, bit: 0 },
 		override_: { word: 2, bit: 1 },
 		name: { word: 4, width: 15, inline: 14, forms: 9, built: 4 },
-		parameters: { word: 19, width: 16, inline: 16, forms: 8, built: 5 }
+		parameters: { word: 19, width: 17, inline: 17, forms: 8, built: 5 }
 	},
 	AbstractMethodSignaturePlainNode: {
 		words: 30,
@@ -1195,12 +1196,12 @@ export const records = {
 		type_: { word: 19, width: 3, forms: 1, built: 5 }
 	},
 	AbstractMethodSignatureSetterNode: {
-		words: 35,
+		words: 36,
 		builtWords: 6,
 		accessibility_modifier: { word: 3, width: 1, forms: 2, built: 3 },
 		override_: { word: 2, bit: 0 },
 		name: { word: 4, width: 15, inline: 14, forms: 9, built: 4 },
-		parameters: { word: 19, width: 16, inline: 16, forms: 8, built: 5 }
+		parameters: { word: 19, width: 17, inline: 17, forms: 8, built: 5 }
 	},
 	PublicFieldDefinitionPlainNode: {
 		words: 28,

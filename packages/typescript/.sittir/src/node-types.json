@@ -4015,6 +4015,16 @@
             "named": true
           }
         ]
+      },
+      "trailing_comma": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          }
+        ]
       }
     }
   },
