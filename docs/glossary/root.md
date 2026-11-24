@@ -705,6 +705,14 @@ One gated compile for the preflight, with the generated top layer's fixpoint che
 
 Writes the typed portable module and its tsconfig into a `.sittir` directory. When the source is undefined it removes both files instead.
 
+### `packages/codegen/src/run-codegen.ts::portableBuildTypeDiagnostics`
+
+Type-checks a grammar's written portable build module with tsrs, through its own tsconfig in `.sittir` (`PORTABLE_BUILD_TSCONFIG`, which includes only the module), and returns one `portable-emit-type` warning per error in the module, by line. Errors in the files it imports are left to the workspace type-check. Generation writes these rows beside the emitter's own into `grammar-diagnostics.json`, after the module is on disk.
+
+### `packages/codegen/src/run-codegen.ts::PORTABLE_BUILD_TSCONFIG`
+
+The tsconfig in a grammar's `.sittir` directory that type-checks only its portable build module (`portableBuildTypeDiagnostics`). Generation writes it and removes it when the grammar emits no build module.
+
 ### `packages/codegen/src/index.ts::module`
 
 ```text

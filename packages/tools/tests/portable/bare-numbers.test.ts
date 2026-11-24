@@ -3,8 +3,10 @@ import { portableRuntime, scopeBuilders } from '@sittir/common/engine';
 import { describe, expect, it } from 'vitest';
 import { TSKindId as PythonKindId } from '../../../python/src/kinds.ts';
 import { portableBuild as pythonBuild } from '../../../python/src/portable/build.ts';
+import { portableBuild as rustBuild } from '../../../rust/src/portable/build.ts';
 import { TSKindId as RustKindId } from '../../../rust/src/kinds.ts';
 import { TSKindId as TypeScriptKindId } from '../../../typescript/src/kinds.ts';
+import { portableBuild as typescriptBuild } from '../../../typescript/src/portable/build.ts';
 import { languageByName } from '../../src/languages.ts';
 
 const generated: Readonly<Record<string, { readonly statement: { readonly return: (input: never) => unknown } }>> = { python: pythonBuild };
@@ -35,5 +37,24 @@ describe('a bare number in a slot that builds numbers is a number', () => {
 		using engine = await createEngine(await languageByName('rust'), { api: 'strict' });
 		const runtime = await portableRuntime(engine);
 		expect(() => runtime.build({ $path: 'statement.return', expression: 10n } as never)).toThrow(/^portable build: statement\.return's expression builds no bigint number$/);
+	});
+});
+
+describe('a bare number in a slot with no number taker', () => {
+	const builds: Readonly<Record<string, object>> = { python: pythonBuild, rust: rustBuild, typescript: typescriptBuild };
+	it.each([
+		['python', 'declaration.function', PythonKindId.Identifier],
+		['python', 'declaration.function', 1.5],
+		['rust', 'declaration.module', RustKindId.Identifier],
+		['typescript', 'declaration.module', TypeScriptKindId.Identifier]
+	] as const)('%s %s refuses %s as its name', async (grammar, path, value) => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict' });
+		const runtime = await portableRuntime(engine);
+		const structure = { $path: path, name: value };
+		const scalar = Number.isSafeInteger(value) ? 'integer' : 'float';
+		expect(() => runtime.build(structure as never)).toThrow(`portable build: ${path}'s name builds no ${scalar} number`);
+		const [namespace, kind] = path.split('.') as [string, string];
+		const scoped = scopeBuilders(engine, builds[grammar]!) as Record<string, Record<string, (input: never) => unknown>>;
+		expect(() => scoped[namespace]![kind]!(structure as never)).toThrow(`${path}.name builds no ${scalar} number`);
 	});
 });

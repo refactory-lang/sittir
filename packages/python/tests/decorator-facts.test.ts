@@ -36,6 +36,24 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 		expect(String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as never) as never))).toBe(source);
 	});
 
+	it("reads a getter's lone self as no parameters, and builds the self back", () => {
+		const source = classOf('@property', 'def x(self):', '    return 1');
+		const member = memberOf(source);
+		expect(member).toMatchObject({ $path: 'declaration.member.property.getter', name: 'x' });
+		expect(member.parameters).toBeUndefined();
+		expect(inClass(member)).toBe(source);
+		expect(inClass({ $path: 'declaration.member.property.getter', name: 'x', statements: ['pass'] })).toBe(classOf('@property', 'def x(self):', '    pass'));
+	});
+
+	it.each([
+		[classOf('@property', 'def x(a):', '    return 1'), ['a']],
+		[classOf('@property', 'def x(self, b):', '    return 1'), ['self', 'b']]
+	])('reads %j, whose parameters are not a lone self, as a method that keeps them and its decorator', (source, parameters) => {
+		const member = memberOf(source);
+		expect(member).toMatchObject({ $path: 'declaration.member.method', parameters, decorators: ['property'] });
+		expect(String(runtime.engine.render(runtime.build(runtime.read(runtime.engine.parse(source)) as never) as never))).toBe(source);
+	});
+
 	it("reads a getter's return annotation as the property's type", () => {
 		expect(memberOf(classOf('@property', 'def x(self) -> int:', '    return 1'))).toMatchObject({ type: 'int' });
 	});
@@ -74,7 +92,7 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 	});
 
 	it('builds fresh facts outermost, descriptor decorators above @override as PEP 698 orders them', () => {
-		const getter = { $path: 'declaration.member.property.getter', $flags: ['override'], name: 'x', parameters: ['self'], statements: ['pass'] };
+		const getter = { $path: 'declaration.member.property.getter', $flags: ['override'], name: 'x', statements: ['pass'] };
 		expect(inClass(getter)).toBe(classOf('@property', '@override', 'def x(self):', '    pass'));
 		expect(inClass({ ...getter, decorators: [cache] })).toBe(classOf('@property', '@override', '@functools.cache', 'def x(self):', '    pass'));
 		expect(inClass({ $path: 'declaration.member.method', $flags: ['static'], name: 'f', parameters: [], statements: ['pass'] })).toBe(classOf('@staticmethod', 'def f():', '    pass'));
@@ -94,7 +112,7 @@ describe.each(STORAGES)('a decorator that states a fact is that fact, in %s', (n
 	});
 
 	it('refuses a getter built on its own, since only its container spells it', () => {
-		expect(() => runtime.build({ $path: 'declaration.member.property.getter', name: 'x', parameters: ['self'], statements: ['pass'] } as never)).toThrow(
+		expect(() => runtime.build({ $path: 'declaration.member.property.getter', name: 'x', statements: ['pass'] } as never)).toThrow(
 			/declaration\.member\.property\.getter's getter is spelled in its container's decorators, which a structure built on its own has none of/
 		);
 	});

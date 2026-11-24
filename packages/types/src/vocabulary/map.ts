@@ -9,6 +9,7 @@ export interface GrammarMap {
 	readonly flags: object;
 	readonly facts: object;
 	readonly decided: object;
+	readonly tails: object;
 }
 
 export interface Contract<F extends object> extends GrammarMap {
@@ -19,6 +20,7 @@ export interface Contract<F extends object> extends GrammarMap {
 	readonly flags: {};
 	readonly facts: {};
 	readonly decided: {};
+	readonly tails: {};
 }
 
 export interface Paths<G extends GrammarMap> {}
@@ -54,7 +56,7 @@ type Override<G extends GrammarMap, P extends string, M extends string, D> = [P]
 		: D
 	: D;
 
-type NodeOf<I, Bound, Parsed> = I extends keyof Bound ? Bound[I] | (I extends keyof Parsed ? Parsed[I] : never) : I;
+type NodeOf<I, Bound, Parsed> = I extends keyof Bound ? Bound[I] | (I extends keyof Parsed ? Parsed[I] : never) : never;
 
 export type NodesOf<Ids, Bound, Parsed> = { readonly [P in keyof Ids]: NodeOf<Ids[P], Bound, Parsed> };
 

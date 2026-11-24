@@ -5362,6 +5362,30 @@ const table: PortableTable = {
 				slot: 'decorators',
 				items: { slots: { '320': 0 } },
 				test: { op: 'eq', text: 'property', slots: { '184': 0 } },
+				own: {
+					op: 'and',
+					of: [
+						{
+							op: 'child',
+							slots: { '361': 3 },
+							of: {
+								op: 'child',
+								slots: { '171': 0 },
+								of: { op: 'child', slots: { '198': 0 }, anchor: 'only', of: { op: 'eq', text: 'self', self: true } }
+							}
+						},
+						{ op: 'child', slots: { '361': 3 }, of: { op: 'is', types: [198], slots: { '171': 0 } } },
+						{
+							op: 'child',
+							slots: { '361': 3 },
+							of: {
+								op: 'child',
+								slots: { '171': 0 },
+								of: { op: 'child', slots: { '198': 0 }, anchor: 'only', of: { op: 'is', types: [1], self: true } }
+							}
+						}
+					]
+				},
 				spelled: { slots: { '184': 0 } }
 			},
 			{

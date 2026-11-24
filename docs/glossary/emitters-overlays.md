@@ -349,7 +349,7 @@ Per path in the portable map, the sorted unique flags of its build arms, in code
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapInputsOf`
 
-Per path in the portable map, the input shapes that path accepts, sorted by codepoint. A text-built path always accepts a bare `string`, and a number path accepts its scalars (`scalarInputsOf`), so a slot whose type holds it admits a bare number. A path whose scalar build is shared with another path's build also accepts `{ readonly $path; readonly $value }` for the owning path.
+Per path in the portable map, the input shapes that path accepts, sorted by codepoint. A text-built path always accepts a bare `string`, and a number or boolean path accepts its scalars (`scalarInputsOf`), so a slot whose type holds it admits a bare number or that bare boolean. A path whose scalar build is shared with another path's build also accepts `{ readonly $path; readonly $value }` for the owning path.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapNeverOf`
 
@@ -365,7 +365,7 @@ Per path, the slots whose structure without `$path` is read as one decided path,
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::ScalarInput`
 
-The TypeScript type a number path's scalar takes in the map's inputs: `number` for an integer or a float, `bigint` for a bigint.
+The TypeScript type a path's bare scalar takes in the map's inputs: `number` for an integer or a float, `bigint` for a bigint, and `true` or `false` for the value a literal arm reads.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapDecidedOf`
 
@@ -373,7 +373,7 @@ Derives `MapDecided` once, from the exact sets: for each path and slot, the slot
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::scalarInputsOf`
 
-Per path the build table builds from a scalar (`builds`), the sorted TypeScript types of those scalars (`ScalarInput`). The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number, and the generated slot function's parameter takes the same types.
+Per path the build table builds from a scalar, the sorted TypeScript types of those scalars (`ScalarInput`): the types of the numbers its `builds` arms take, and, for a path whose every arm is a literal arm that reads a value, `true` or `false` for each. The map's inputs admit them at the path, so a slot whose type holds a number path admits a bare number and one that holds a boolean path admits that bare boolean, and the generated slot function's parameter takes the same types.
 
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFactsOf`
 
@@ -386,6 +386,18 @@ What `mapFactsOf` returns: per path, each fact the path's arms spell and the tex
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFormsOf`
 
 Each path's forms, one `V.Form` per build arm, from the arm's pick tests: the members it requires present or absent, the members a kinds test narrows, and the list members it requires to hold at least one item, those whose every route in the arm is `nonEmpty` where the arm has no `owners`. A path with an arm that has no form is left unformed, so its read and input stay as the vocabulary declares them. It also returns the slots a kinds test names that have no exact set.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::tailsOf`
+
+The tails of the paths one slot admits: for each admitted path, its shortest dot-suffix that no other admitted path ends with or is, when that is shorter than the path itself. A slot admitting one path has no tails, and a path that is another admitted path's suffix (`x` beside `a.x`) keeps only its full name, as `a.x` does. Rust's return `expression` gives `expression.binary.arithmetic.add` the tail `arithmetic.add`, since `expression.assignment.compound.add` also ends with `add`.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapTailsOf`
+
+Derives `MapTails` once, from the exact sets (`tailsOf` over each slot's paths), beside `mapDecidedOf`. A tail that is the full name of another path in the grammar fails generation with `portable-emit-tail-is-path`, on every path, so a `$path` that names a path always means that path.
+
+### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::MapTails`
+
+Per path and slot, each admitted path that has a tail, with its tail. The map writes them as `tails`, which the input types read as another `$path` spelling of that path in that slot, and the build module writes each as another `case` label in the slot function. Nothing maps a tail at run time.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitCode`
 
@@ -405,7 +417,7 @@ The emitted module's text and its diagnostics.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableEmitSlot`
 
-One slot of one path as its generated slot function types the value: the paths it takes, the token texts it takes, the unclaimed kinds it holds, whether it takes bare text, the scalar types a bare number in it may have (the scalar inputs of its number paths), and whether it is optional.
+One slot of one path as its generated slot function types the value: the paths it takes, the token texts it takes, the unclaimed kinds it holds, whether it takes bare text, the bare scalars it takes (the scalar inputs of its paths: the types of a number, and `true` or `false` where a path's literal arms read that value), and whether it is optional.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableOwnTextClaim`
 
@@ -442,6 +454,14 @@ An arm picked by the kinds a slot builds (typescript's `(a, b)` against `(a)`) t
 A structure whose path builds from a scalar (`builds`) takes its arm by its `$value`, in a slot as at the root: a bigint the bigint arm or else the integer arm, a safe integer the integer arm, any other number the float arm, each among the scalar arms the slot's seats fit. A float arm refuses a bigint. A path the vocabulary declares a text kind (go's `type.primitive.boolean`, claimed through `type_identifier`) gets no structure case, since its input is only its text; the slot's item type keeps its text and its node types.
 
 A slot whose route is `nonEmpty` builds its items through `nonEmpty`, which refuses an empty list as `<path>.<slot> requires at least one element`. An arm whose builder takes options calls it with the slot values alone, so each option takes its preference default, except where the arm itself fills an option key (python's comprehension `for` sets `trailingComma` from its flag), which goes to the options argument, as the interpreter splits a frame by its builder's option keys. A flag that sets a delimiter on the arm's own list builder passes `{ delimiter }` before the elements when set (python's bare tuple `a, b,`); a flag that sets one on a list inside a slot is still refused. A list through a container that may be left out is left out when its first item is `undefined`, except on an `emptyContainer` route, where only an absent slot leaves the container out and `[]` builds it empty. A list slot that also seats a text outside its list container (python's wildcard import `*`) is left out, since its items are all built inside the container. Slots whose routes share their first step build that step's container once, holding each of them, as the interpreter's frames do: rust's `unsafe { a; b }` builds one `block` with its `statements` and `trailingExpression`. Inside it, a route with one step left is a list when its own seat holds many. An arm that fills a step directly and also builds through it fills one slot twice and is left out.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::PinnedGap`
+
+A construct the pinned builders can't express: a pinned builder refused what the emitter gave it. It is an `Unfit`, so the path it sits in is not generated, and the root reports it as `portable-emit-pinned-gap` instead of an unfit slot. There is no string or parsed-snippet fallback; the fix lands in `@sittir/typescript` and a later commit bumps the pin.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/build.ts::pinnedGapsOf`
+
+The pinned builders as the emitter calls them: every builder, at any depth, rethrows its own refusal as a `PinnedGap` naming the construct (`b.arrowFunction.callSignature`) and the pinned sha. An `Unfit` passes through unchanged.
 
 ### `packages/codegen/src/emitters/overlays/portable/covered.ts::FamilyCoverage`
 
