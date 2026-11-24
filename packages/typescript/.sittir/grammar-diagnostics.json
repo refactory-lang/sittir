@@ -4950,7 +4950,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type.interface: a preset at body.opening that is not one keyword or text"
+    "message": "declaration.type.interface: a preset at body.opening below a holder with no builder"
   },
   {
     "scope": "grammar",

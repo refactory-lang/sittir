@@ -572,6 +572,23 @@ describe('guaranteedBy', () => {
 		expect(guaranteedBy(input.model, base).present([{ owner: 'pair_opt', slot: 'a' }])).toBeUndefined();
 	});
 
+	it('routes no member through a slot whose whole node the entry pins to a lone text, while an entry that only finds the node there keeps it', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('method', node('method', [slot('name', ['identifier']), slot('parameters', ['list_of'])]));
+		const input = {
+			...(await grammar('(method) @declaration.function\n((method parameters: (list_of . (identifier) @_self .)) @declaration.function.plain (#eq? @_self "self"))')),
+			model
+		};
+		const entries = resolveRoutes(input).readEntries.get('method') ?? [];
+		const pinned = entries.find((entry) => entry.vocab === 'declaration.function.plain')!;
+		const base = entries.find((entry) => entry.vocab === 'declaration.function')!;
+		const parameters = [{ owner: 'method', slot: 'parameters' }];
+		expect(guaranteedBy(input.model, pinned).told(parameters)).toBe(true);
+		expect(pinned.slots.map((slot) => slot.name)).not.toContain('parameters');
+		expect(guaranteedBy(input.model, base).told(parameters)).toBe(false);
+		expect(base.slots.map((slot) => slot.name)).toContain('parameters');
+	});
+
 	it("keys a negated slot of an alias envelope by its path through the envelope's content, on the refinement and on the entry it refines", async () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('call_storage', node('call_storage', [slot('callee', ['identifier']), slot('args', ['identifier'], { required: false })]));

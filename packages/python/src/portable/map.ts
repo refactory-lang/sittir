@@ -3812,18 +3812,6 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'literal.string.unicode'>
 				| T.String.Parsed;
 			readonly name: V.Read<PythonMap, 'identifier'>;
-			readonly parameters:
-				| V.Read<PythonMap, 'declaration.parameter.defaulted'>
-				| V.Read<PythonMap, 'declaration.parameter.typed'>
-				| V.Read<PythonMap, 'declaration.parameter.typed_default'>
-				| V.Read<PythonMap, 'identifier'>
-				| V.Read<PythonMap, 'pattern.rest'>
-				| V.Read<PythonMap, 'pattern.rest.map'>
-				| V.Read<PythonMap, 'pattern.tuple'>
-				| '*'
-				| '/'
-				| T.DefaultParameter.Parsed
-				| T.TypedDefaultParameter.Parsed;
 			readonly statements:
 				| V.Read<PythonMap, 'declaration.constant'>
 				| V.Read<PythonMap, 'declaration.function'>
@@ -4103,7 +4091,7 @@ export interface PythonMap extends V.GrammarMap {
 				| V.Read<PythonMap, 'declaration.type_parameter'>
 				| V.Read<PythonMap, 'declaration.type_parameter.parameters'>
 				| V.Read<PythonMap, 'declaration.type_parameter.variadic'>;
-			readonly $forms: V.Form<'name' | 'parameters'>;
+			readonly $forms: V.Form<'name'>;
 		};
 		readonly 'declaration.member.property.setter': {
 			readonly doc:

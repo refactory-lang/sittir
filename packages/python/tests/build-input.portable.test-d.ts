@@ -8,6 +8,7 @@ type Getter = V.BuildInput<PythonMap, 'declaration.member.property.getter'>;
 
 export type GetterFlagsAdmitAsync = Expect<'async' extends NonNullable<Getter['$flags']>[number] ? true : false>;
 export type GetterFlagsAdmitOverride = Expect<'override' extends NonNullable<Getter['$flags']>[number] ? true : false>;
+export type GetterTakesNoParameters = Expect<'parameters' extends keyof Getter ? false : true>;
 
 declare const statement: T.ImportStatement.Bound;
 declare const foreign: TS.StatementBlock.Bound;

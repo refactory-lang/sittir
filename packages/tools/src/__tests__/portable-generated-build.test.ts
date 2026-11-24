@@ -597,6 +597,19 @@ describe.each(GRAMMARS)('the generated portable build of %s', (grammar) => {
 	}, 600_000);
 });
 
+describe.each(STORAGES)("the generated portable build of python's getter, in %s storage", (nodeStorage) => {
+	it('builds a getter read from @property over a lone self byte-equal through the root function, which writes the decorator and the self itself', async () => {
+		using engine = await createEngine(await languageByName('python'), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const generated = scopeBuilders(engine, (await generatedBuild('python')) as object);
+		const render = (node: unknown): string => engine.render(node as never).toString();
+		const read = (runtime.read(engine.parse('class A:\n    @property\n    def x(self):\n        return 1\n')) as { readonly statements: readonly { readonly members: readonly PortableStructure[] }[] }).statements[0]!.members[0]!;
+		expect(read.$path).toBe('declaration.member.property.getter');
+		expect('parameters' in read).toBe(false);
+		expect(render((functionAt(generated, read.$path) as PathFunction)(read))).toBe('@property\ndef x(self):\n    return 1\n');
+	});
+});
+
 type KindsTable = { readonly build: { readonly paths: Readonly<Record<string, { readonly arms: readonly { readonly kind: number; readonly when: readonly object[] }[] }>> } };
 
 const KINDS_PICK_GRAMMARS = ['python', 'typescript'] as const;

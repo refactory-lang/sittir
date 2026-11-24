@@ -8931,65 +8931,6 @@ const declaration_member_property_getter$361_name = (value: declaration_member_p
 			return unbuilt('declaration.member.property.getter.name', value);
 	}
 };
-type declaration_member_property_getter$361_parameters$item$Item =
-	| '*'
-	| '/'
-	| Text<PythonMap, 'identifier'>
-	| BuildInput<PythonMap, 'declaration.parameter.defaulted'>
-	| PythonMap['nodes']['declaration.parameter.defaulted']
-	| BuildInput<PythonMap, 'declaration.parameter.typed'>
-	| PythonMap['nodes']['declaration.parameter.typed']
-	| BuildInput<PythonMap, 'declaration.parameter.typed_default'>
-	| PythonMap['nodes']['declaration.parameter.typed_default']
-	| BuildInput<PythonMap, 'identifier'>
-	| PythonMap['nodes']['identifier']
-	| BuildInput<PythonMap, 'pattern.rest'>
-	| PythonMap['nodes']['pattern.rest']
-	| BuildInput<PythonMap, 'pattern.rest.map'>
-	| PythonMap['nodes']['pattern.rest.map']
-	| BuildInput<PythonMap, 'pattern.tuple'>
-	| PythonMap['nodes']['pattern.tuple'];
-const declaration_member_property_getter$361_parameters$item = (
-	value: declaration_member_property_getter$361_parameters$item$Item
-) => {
-	if (typeof value === 'string') {
-		switch (value) {
-			case '*':
-				return 264;
-			case '/':
-				return 263;
-			default:
-				if (/^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u.test(value)) return b.identifier(value);
-				return b.identifier(value);
-		}
-	}
-	if (typeof value === 'number') {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230])) return value;
-		return unseated('declaration.member.property.getter.parameters', value);
-	}
-	if (isNode(value)) {
-		if (seated(value, [1, 200, 202, 204, 205, 206, 207, 230, 263, 264])) return value;
-		return unseated('declaration.member.property.getter.parameters', value);
-	}
-	switch (value.$path) {
-		case 'declaration.parameter.defaulted':
-			return declaration_parameter_defaulted$204(value);
-		case 'declaration.parameter.typed':
-			return declaration_parameter_typed$230(value);
-		case 'declaration.parameter.typed_default':
-			return declaration_parameter_typed_default$205(value);
-		case 'identifier':
-			return identifier$1(value);
-		case 'pattern.rest':
-			return pattern_rest$206(value);
-		case 'pattern.rest.map':
-			return pattern_rest_map$207(value);
-		case 'pattern.tuple':
-			return pattern_tuple$202(value);
-		default:
-			return unbuilt('declaration.member.property.getter.parameters', value);
-	}
-};
 type declaration_member_property_getter$361_statements$item$Item =
 	| 'break'
 	| 'continue'
@@ -59354,22 +59295,12 @@ const declaration_member_constructor$316 = (
 const declaration_member_property_getter$361 = (
 	input: PathInput<PythonMap, 'declaration.member.property.getter'>
 ): ReturnType<typeof b.methodDeclaration> => {
-	const unroutedSlot = unroutedIn(input, [
-		'decorators',
-		'doc',
-		'name',
-		'parameters',
-		'statements',
-		'type',
-		'typeParameters'
-	]);
+	const unroutedSlot = unroutedIn(input, ['decorators', 'doc', 'name', 'statements', 'type', 'typeParameters']);
 	if (unroutedSlot !== undefined) return unrouted('declaration.member.property.getter', unroutedSlot);
 	if (input.$at?.override !== undefined && !(input.$flags ?? []).includes('override'))
 		return unset('declaration.member.property.getter', 'override');
 	const typeParameters$first = (input.typeParameters ?? [])[0];
 	const typeParameters$rest = (input.typeParameters ?? []).slice(1);
-	const parameters$first = (input.parameters ?? [])[0];
-	const parameters$rest = (input.parameters ?? []).slice(1);
 	const statements$first = (input.statements ?? [])[0];
 	const statements$rest = (input.statements ?? []).slice(1);
 	if (input.doc === undefined)
@@ -59384,15 +59315,6 @@ const declaration_member_property_getter$361 = (
 								...typeParameters$rest.map(declaration_member_property_getter$361_typeParameters$item)
 							)
 						),
-			parameters:
-				parameters$first === undefined
-					? b.parameters()
-					: b.parameters(
-							b.parametersElements(
-								declaration_member_property_getter$361_parameters$item(parameters$first),
-								...parameters$rest.map(declaration_member_property_getter$361_parameters$item)
-							)
-						),
 			returnType: input.type === undefined ? undefined : declaration_member_property_getter$361_type(input.type),
 			body:
 				statements$first === undefined
@@ -59403,6 +59325,7 @@ const declaration_member_property_getter$361 = (
 								...statements$rest.map(declaration_member_property_getter$361_statements$item)
 							)
 						),
+			parameters: b.parameters(b.parametersElements(b.identifier('self'))),
 			async: (input.$flags ?? []).includes('async')
 		});
 	if ((input.statements ?? []).length === 0)
@@ -59417,20 +59340,12 @@ const declaration_member_property_getter$361 = (
 								...typeParameters$rest.map(declaration_member_property_getter$361_typeParameters$item)
 							)
 						),
-			parameters:
-				parameters$first === undefined
-					? b.parameters()
-					: b.parameters(
-							b.parametersElements(
-								declaration_member_property_getter$361_parameters$item(parameters$first),
-								...parameters$rest.map(declaration_member_property_getter$361_parameters$item)
-							)
-						),
 			returnType: input.type === undefined ? undefined : declaration_member_property_getter$361_type(input.type),
 			body:
 				input.doc === undefined
 					? missing('declaration.member.property.getter.doc')
 					: declaration_member_property_getter$361_doc(input.doc),
+			parameters: b.parameters(b.parametersElements(b.identifier('self'))),
 			async: (input.$flags ?? []).includes('async')
 		});
 	throw new Error('declaration.member.property.getter: no form of arm 361 takes the slots it states together');

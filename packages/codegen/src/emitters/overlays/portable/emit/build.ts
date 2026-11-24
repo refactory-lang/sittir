@@ -1142,9 +1142,19 @@ export function emitPortableModule(t: B, input: PortableEmitInput<PortableBuildT
 		const entries = [...lead, ...slotEntries(path, arm, filled, input)];
 		for (const preset of arm.presets) {
 			const leaf = preset.text !== undefined && preset.builder !== undefined && shapeOf(preset.builder) === 'text' ? preset.builder : undefined;
-			if (preset.steps.length !== 1 || (preset.builder !== undefined && leaf === undefined) || preset.among !== undefined || (preset.kind === undefined && preset.text === undefined))
-				return fail(`a preset at ${preset.steps.map((step) => step.key).join('.')} that is not one keyword or text`);
-			entries.push([preset.steps[0]!.key, leaf !== undefined ? call(builderRef(leaf), str(preset.text!)) : preset.kind === undefined ? str(preset.text!) : preset.presence === true ? t.true : num(preset.kind)]);
+			const where = preset.steps.map((step) => step.key).join('.');
+			if ((preset.builder !== undefined && leaf === undefined) || preset.among !== undefined || (preset.kind === undefined && preset.text === undefined))
+				return fail(`a preset at ${where} that is not one keyword or text`);
+			const value = leaf !== undefined ? call(builderRef(leaf), str(preset.text!)) : preset.kind === undefined ? str(preset.text!) : preset.presence === true ? t.true : num(preset.kind);
+			if (preset.steps.length === 1) {
+				entries.push([preset.steps[0]!.key, value]);
+				continue;
+			}
+			if (leaf === undefined || preset.steps.slice(0, -1).some((step) => step.builder === undefined)) return fail(`a preset at ${where} below a holder with no builder`);
+			const within = preset.steps.slice(0, -1).map((step, i): PortableContainer => ({ builder: step.builder!, key: preset.steps[i + 1]!.key, ...(preset.steps[i + 1]!.optional === true ? { optional: true } : {}) }));
+			const inner = within.at(-1)!;
+			const listed = shapeOf(inner.builder!) === 'spread' || shapeOf(inner.builder!) === 'elements';
+			entries.push([preset.steps[0]!.key, listed ? wrapOne(within.slice(0, -1), call(builderRef(inner.builder!), value)) : wrapOne(within, value)]);
 		}
 		const delimiters: (readonly [flag: string, bits: number])[] = [];
 		for (const [flag, step] of Object.entries(arm.flags)) {

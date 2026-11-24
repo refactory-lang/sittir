@@ -1040,6 +1040,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return placed === undefined ? [] : [{ ...placed, name: route.name }];
 		});
 		const tested = new Set<string>();
+		const spelledPaths = entry.claim.predicates.flatMap((predicate) => {
+			const [value, ...more] = predicate.arguments;
+			if (predicate.operator !== 'eq' || value === undefined || more.length > 0 || !('text' in value)) return [];
+			const path = held(kind, predicate.subject ?? { up: 0, down: [] });
+			return path === undefined ? [] : [JSON.stringify(path)];
+		});
 		const claimed = [
 			...delimiterPresets(kind, entry),
 			...entry.pins.flatMap((pin) => {
@@ -1052,6 +1058,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				if (path === undefined) return [];
 				if ('text' in child) return placedText(path, child.text) ?? [];
 				if ('kinds' in child) {
+					if (spelledPaths.includes(JSON.stringify(path))) return [];
 					const filler = fillingSlot(guaranteed, routed, path);
 					if (filler !== undefined) return (tested.add(filler), []);
 					if (forms > 1 && builtThrough(guaranteed, routed, path)) return [];

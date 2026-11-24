@@ -802,6 +802,7 @@ export interface Guaranteed {
 	readonly present: (path: readonly SlotStep[]) => readonly string[] | undefined;
 	readonly pinned: (path: readonly SlotStep[]) => string | undefined;
 	readonly absent: (path: readonly SlotStep[]) => boolean;
+	readonly told: (path: readonly SlotStep[]) => boolean;
 }
 
 const pathKey = (path: readonly SlotStep[]): string => path.map((step) => `${step.owner} ${step.slot} ${step.anchor ?? ''}`).join(' > ');
@@ -819,21 +820,23 @@ export function guaranteedBy(
 ): Guaranteed {
 	const one = new Map<string, Set<string>>();
 	const many = new Set<string>();
-	const walk = (child: ChildTest, holder: string, path: readonly SlotStep[], i: number): void => {
-		const selector = child.subject.down[i];
+	const reach = (down: readonly SlotSelector[], holder: string, path: readonly SlotStep[], i: number, visit: (key: string, selector: SlotSelector, final: boolean) => void): void => {
+		const selector = down[i];
 		const held = selector === undefined ? undefined : heldSteps(model, holder, selector);
 		const last = held?.at(-1);
 		if (selector === undefined || held === undefined || last === undefined) return;
 		const at = [...path, ...heldPath(held, slotAnchor(model, last.holder, selector))];
-		const key = pathKey(at);
-		const final = i === child.subject.down.length - 1;
-		if (!('excludes' in child)) {
-			const kinds = one.get(key) ?? one.set(key, new Set<string>()).get(key)!;
-			for (const kind of final && 'kinds' in child ? child.kinds : selector.kind === null ? [] : [selector.kind]) kinds.add(kind);
-		} else if (final) many.add(key);
-		for (const next of heldInto(model, holder, selector)?.next ?? []) walk(child, next.kind, at, i + 1);
+		visit(pathKey(at), selector, i === down.length - 1);
+		for (const next of heldInto(model, holder, selector)?.next ?? []) reach(down, next.kind, at, i + 1, visit);
 	};
-	for (const child of entry.children) if (child.subject.up === 0) walk(child, entry.kind, [], 0);
+	for (const child of entry.children)
+		if (child.subject.up === 0)
+			reach(child.subject.down, entry.kind, [], 0, (key, selector, final) => {
+				if (!('excludes' in child)) {
+					const kinds = one.get(key) ?? one.set(key, new Set<string>()).get(key)!;
+					for (const kind of final && 'kinds' in child ? child.kinds : selector.kind === null ? [] : [selector.kind]) kinds.add(kind);
+				} else if (final) many.add(key);
+			});
 	const heldSlot = (slot: string): readonly (readonly [string, ModelSlot])[] => {
 		const held = heldSteps(model, entry.kind, { field: slot, kind: null, after: null, anchor: null });
 		return held === undefined ? [] : [[pathKey(heldPath(held, null)), held.at(-1)!.slot]];
@@ -846,17 +849,35 @@ export function guaranteedBy(
 		return held === undefined ? [] : [[pathKey(heldPath(held, null)), argument.text] as const];
 	});
 	const pinned = new Map([...(entry.pins ?? []).flatMap((pin) => heldSlot(pin.slot).map(([key]) => [key, pin.text] as const)), ...spelled]);
+	for (const predicate of entry.claim?.predicates ?? []) {
+		const [argument, ...more] = predicate.arguments;
+		const down = predicate.subject?.down ?? [];
+		if (predicate.operator !== 'eq' || predicate.capture?.startsWith('_') !== true || predicate.subject?.up !== 0 || down.length < 2 || argument === undefined || more.length > 0 || !('text' in argument)) continue;
+		reach(down, entry.kind, [], 0, (key, _, final) => void (final && pinned.set(key, argument.text)));
+	}
 	const absent = new Set((entry.absent ?? []).flatMap((slot) => heldSlot(slot).map(([key]) => key)));
 	for (const [key, slot] of (entry.present ?? []).flatMap(heldSlot)) if (!one.has(key)) one.set(key, new Set(slot.kinds));
+	const present = (path: readonly SlotStep[]): readonly string[] | undefined => {
+		const kinds = one.get(pathKey(path));
+		return kinds === undefined ? undefined : concreteKinds(model, [...kinds]);
+	};
+	const told = (path: readonly SlotStep[]): boolean => {
+		const kinds = present(path);
+		if (kinds === undefined || kinds.length !== 1) return false;
+		const slots = shownSlots(model, kinds[0]!);
+		if (pinned.has(pathKey(path))) return slots.length === 0;
+		return slots.length > 0 && slots.every((slot) => {
+			const held = heldSteps(model, kinds[0]!, { field: slot.name, kind: null, after: null, anchor: null });
+			return held !== undefined && (told([...path, ...heldPath(held, null)]) || told([...path, ...heldPath(held, 'only')]));
+		});
+	};
 	return {
 		pinned: (path) => pinned.get(pathKey(path)),
 		absent: (path) => absent.has(pathKey(path)),
 		holds: (path = []) => path.every((step, i) => step.anchor !== 'only' || one.has(pathKey(path.slice(0, i + 1)))),
 		many: (path) => many.has(pathKey(path)),
-		present: (path) => {
-			const kinds = one.get(pathKey(path));
-			return kinds === undefined ? undefined : concreteKinds(model, [...kinds]);
-		}
+		present,
+		told
 	};
 }
 
@@ -1070,6 +1091,7 @@ function slotsOf(
 		}
 		if (!captured && pin !== undefined && !slot.multiple && narrowed !== undefined && narrowed.kinds.length === 0 && narrowed.terminals.length === 0) continue;
 		const tested = captured ? rest : (narrowed ?? rest);
+		if (!captured && guaranteed.told(pathTo(slot))) continue;
 		if (toldByRead(input.model, tested, told.get(slot.name) ?? new Set<string>())) {
 			unrouted(slot, 'is told by the read');
 			continue;
