@@ -5463,19 +5463,43 @@
 		},
 		{
 			"kind": "slot",
-			"name": "ordering",
+			"name": "orderings",
 			"join": {
 				"previous": false,
 				"next": true
 			}
 		},
 		{
+			"kind": "seam",
+			"field": "order_by_clause_after"
+		}
+	],
+	"ordering": [
+		{
+			"kind": "seam",
+			"field": "ordering_before"
+		},
+		{
 			"kind": "slot",
-			"name": "operator"
+			"name": "expression"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "direction",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "direction"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
-			"field": "order_by_clause_after"
+			"field": "ordering_after"
 		}
 	],
 	"parameter": [

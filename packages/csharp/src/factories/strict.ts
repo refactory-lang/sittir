@@ -269,6 +269,7 @@ export {
 	buildQueryBodyGroup,
 	buildAnonymousObjectMemberDeclaratorArm,
 	buildRefReadonly,
+	buildOrdering,
 	buildSwitchStatementParenthesized,
 	buildSwitchStatementTuple,
 	buildTypeParameterConstraintClass,

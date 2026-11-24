@@ -4429,13 +4429,23 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 
 	describe('order_by_clause', () => {
 		it('factory produces correct type', () => {
-			const node = ir.orderByClause({});
+			const node = ir.orderByClause({
+				$type: TSKindId.Ordering,
+				expression: TSKindId.BaseKeyword as never,
+				direction: TSKindId.AscendingKeyword
+			} as never);
 			expect(node.$type).toBe(TSKindId.OrderByClause);
 			expectBuiltNode(node);
 		});
-		it('render does not throw on minimal config', () => {
-			const node = ir.orderByClause({});
-			expect(() => node.$render!()).not.toThrow();
+		it('render produces non-empty string', () => {
+			const node = ir.orderByClause({
+				$type: TSKindId.Ordering,
+				expression: TSKindId.BaseKeyword as never,
+				direction: TSKindId.AscendingKeyword
+			} as never);
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
+			expect(rendered).toContain('base');
 		});
 	});
 
@@ -6487,6 +6497,19 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('ref_readonly', () => {
 		it('is the kind id', () => {
 			expect(ir.refReadonly).toBe(TSKindId.RefReadonly);
+		});
+	});
+
+	describe('ordering', () => {
+		it('factory produces correct type', () => {
+			const node = ir.ordering({ expression: TSKindId.BaseKeyword as never });
+			expect(node.$type).toBe(TSKindId.Ordering);
+			expectBuiltNode(node);
+		});
+		it('render produces non-empty string', () => {
+			const node = ir.ordering({ expression: TSKindId.BaseKeyword as never });
+			const rendered = node.$render!();
+			expect(rendered.length).toBeGreaterThan(0);
 		});
 	});
 

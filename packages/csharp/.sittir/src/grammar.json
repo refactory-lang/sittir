@@ -8906,79 +8906,36 @@
           "value": "orderby"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "ordering",
-              "content": {
+          "type": "FIELD",
+          "name": "orderings",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
                 "type": "SYMBOL",
-                "name": "_ordering"
+                "name": "ordering"
               },
-              "metadata": {
-                "fieldSource": "enriched"
-              }
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": ","
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "ordering",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_ordering"
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
                     },
-                    "metadata": {
-                      "fieldSource": "enriched"
+                    {
+                      "type": "SYMBOL",
+                      "name": "ordering"
                     }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "_ordering": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "expression"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "ascending",
-                  "annotations": {
-                    "variantOf": "order_by_clause"
-                  }
-                },
-                {
-                  "type": "STRING",
-                  "value": "descending",
-                  "annotations": {
-                    "variantOf": "order_by_clause"
-                  }
+                  ]
                 }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -16487,6 +16444,50 @@
         {
           "type": "STRING",
           "value": "readonly"
+        }
+      ]
+    },
+    "ordering": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "expression",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "direction",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "ascending"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "descending"
+                  }
+                ]
+              },
+              "metadata": {
+                "fieldSource": "override"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },

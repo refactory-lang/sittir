@@ -6,6 +6,7 @@ import { TSKindId } from '../kinds.js';
 import type {
 	Admit,
 	ListOptions,
+	ConfigOf,
 	NonEmptyArray,
 	NumericConfig,
 	NumericLiteral,
@@ -33,7 +34,6 @@ import {
 	isNodeOfKind,
 	admitHoles,
 	admitSplicedEnvelope,
-	coerceBitflagStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -16249,108 +16249,47 @@ function withLetClause(node: object, setter: string, args: readonly unknown[]): 
 	throw new Error(`let_clause has no $with.${setter}`);
 }
 
-export function buildOrderByClause(): T.EmptyOrderByClause;
-export function buildOrderByClause<OrderingsSlot extends T.OrderByClause.Config['orderings']>(
-	config?: RefusingConfig<Partial<T.OrderByClause.Config>, { orderings: OrderingsSlot }>
+export function buildOrderByClause<A extends NonEmptyArray<Admit<T.Ordering>>>(
+	...children: A & RefuseUndeclared<A>
 ): T.OrderByClause.Bound;
-export function buildOrderByClause(config: Partial<T.OrderByClause.Config> = {}): T.OrderByClause.Bound {
-	currentHandle()?.admit(TSKindId.OrderByClause, [config]);
-	const _ordering = listStorage<NonNullable<T.OrderByClause['_ordering']>>(config.orderings ?? [], kindIdStorage);
-	const _operator = coerceBitflagStorage(config.operators ?? [], ['ascending', 'descending']);
+export function buildOrderByClause(...children: NonEmptyArray<Admit<T.Ordering>>): T.OrderByClause.Bound {
+	currentHandle()?.admit(TSKindId.OrderByClause, children);
+	const _orderings = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'order_by_clause', { orderings: _ordering, operators: _operator });
+	if (handle !== undefined) admitChildren(handle, 'order_by_clause', { orderings: _orderings });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.OrderByClause as const, { _ordering, _operator });
+	handle?.verifyStored?.(TSKindId.OrderByClause as const, { _orderings });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.OrderByClause as const);
-		storeList(arena, record, 2, 2, _ordering);
-		storeList(arena, record, 3, 3, _operator);
+		storeList(arena, record, 2, 2, _orderings);
 		const node = arena.view(record);
 		return node as unknown as T.OrderByClause.Bound;
 	});
 }
 
-function buildOrderByClause$patch(source: object, config: Partial<T.OrderByClause.Config> = {}): T.OrderByClause.Bound {
-	currentHandle()?.admit(TSKindId.OrderByClause, [config]);
-	const _ordering = listStorage<NonNullable<T.OrderByClause['_ordering']>>(config.orderings ?? [], kindIdStorage);
-	const _operator = coerceBitflagStorage(config.operators ?? [], ['ascending', 'descending']);
+function buildOrderByClause$patch(
+	source: object,
+	...children: NonEmptyArray<Admit<T.Ordering>>
+): T.OrderByClause.Bound {
+	currentHandle()?.admit(TSKindId.OrderByClause, children);
+	const _orderings = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'order_by_clause', { orderings: _ordering, operators: _operator });
+	if (handle !== undefined) admitChildren(handle, 'order_by_clause', { orderings: _orderings });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.OrderByClause as const, { _ordering, _operator });
+	handle?.verifyStored?.(TSKindId.OrderByClause as const, { _orderings });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.OrderByClause as const);
-		patchList(arena, record, 2, 2, _ordering);
-		patchList(arena, record, 3, 3, _operator);
+		patchList(arena, record, 2, 2, _orderings);
 		const node = arena.view(record);
 		return node as unknown as T.OrderByClause.Bound;
 	});
-}
-function buildOrderByClause$set(
-	source: object,
-	...[slot, input]: ['orderings', Partial<T.OrderByClause.Config>] | ['operators', Partial<T.OrderByClause.Config>]
-): T.OrderByClause.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'orderings':
-			case 'operators':
-				return buildOrderByClause$patch(source, { ...(inputs.config as T.OrderByClause.Config), ...input });
-		}
-	}
-	switch (slot) {
-		case 'orderings': {
-			const config = input;
-			const _ordering = listStorage<NonNullable<T.OrderByClause['_ordering']>>(config.orderings ?? [], kindIdStorage);
-			return setSlot(
-				source,
-				TSKindId.OrderByClause as const,
-				'order_by_clause',
-				0,
-				'orderings',
-				_ordering
-			) as unknown as T.OrderByClause.Bound;
-		}
-		case 'operators': {
-			const config = input;
-			const _operator = coerceBitflagStorage(config.operators ?? [], ['ascending', 'descending']);
-			return setSlot(
-				source,
-				TSKindId.OrderByClause as const,
-				'order_by_clause',
-				1,
-				'operators',
-				_operator
-			) as unknown as T.OrderByClause.Bound;
-		}
-	}
 }
 function withOrderByClause(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
 		case 'orderings':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.OrderByClause.Config>['orderings']>, readonly unknown[]>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () =>
-						buildOrderByClause$set(node, 'orderings', { orderings: restItems('orderings', values) })
-					)
-			);
-		case 'operators':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.OrderByClause.Config>['operators']>, readonly unknown[]>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () =>
-						buildOrderByClause$set(node, 'operators', { operators: restItems('operators', values) })
-					)
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Ordering>>) =>
+				rebuilt(node, handle, () => buildOrderByClause$patch(node, ...restItems('orderings', vs)))
 			);
 	}
 	throw new Error(`order_by_clause has no $with.${setter}`);
@@ -30746,6 +30685,119 @@ function withAnonymousObjectMemberDeclaratorArm(node: object, setter: string, ar
 
 export const buildRefReadonly: TSKindId.RefReadonly = TSKindId.RefReadonly;
 
+export function buildOrdering<ExpressionSlot extends ConfigOf<T.Ordering>['expression']>(
+	config: RefusingConfig<ConfigOf<T.Ordering>, { expression: ExpressionSlot }>
+): T.Ordering.Bound;
+export function buildOrdering(config: ConfigOf<T.Ordering>): T.Ordering.Bound {
+	currentHandle()?.admit(TSKindId.Ordering, [config]);
+	const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+	const _direction = kindIdStorage<NonNullable<T.Ordering['_direction']>>(config.direction);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordering', { expression: _expression, direction: _direction });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Ordering as const, { _expression, _direction });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Ordering as const);
+		storeCell(arena, record, 2, 2, _expression);
+		storeCell(arena, record, 3, 6, _direction);
+		const node = arena.view(record);
+		return node as unknown as T.Ordering.Bound;
+	});
+}
+
+function buildOrdering$patch(source: object, config: ConfigOf<T.Ordering>): T.Ordering.Bound {
+	currentHandle()?.admit(TSKindId.Ordering, [config]);
+	const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+	const _direction = kindIdStorage<NonNullable<T.Ordering['_direction']>>(config.direction);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordering', { expression: _expression, direction: _direction });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Ordering as const, { _expression, _direction });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.Ordering as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'expression', _expression));
+		patchCell(arena, record, 3, 6, carriedSlot(source, 'direction', _direction));
+		const node = arena.view(record);
+		return node as unknown as T.Ordering.Bound;
+	});
+}
+function buildOrdering$set(
+	source: object,
+	...[slot, input]: ['expression', Partial<ConfigOf<T.Ordering>>]
+): T.Ordering.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'expression':
+				return buildOrdering$patch(source, { ...(inputs.config as ConfigOf<T.Ordering>), ...input });
+		}
+	}
+	switch (slot) {
+		case 'expression': {
+			const config = input;
+			const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+			return setSlot(
+				source,
+				TSKindId.Ordering as const,
+				'ordering',
+				0,
+				'expression',
+				_expression
+			) as unknown as T.Ordering.Bound;
+		}
+	}
+}
+function withOrdering(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.Ordering>>['expression']>) =>
+				rebuilt(node, handle, () => buildOrdering$set(node, 'expression', { expression: value }))
+			);
+	}
+	throw new Error(`ordering has no $with.${setter}`);
+}
+
+export function buildOrderingAscending<ExpressionSlot extends T.Ordering.Ascending.Config['expression']>(
+	config: RefusingConfig<T.Ordering.Ascending.Config, { expression: ExpressionSlot }>
+): T.Ordering.Ascending.Bound;
+export function buildOrderingAscending(config: T.Ordering.Ascending.Config): T.Ordering.Ascending.Bound {
+	currentHandle()?.admit(TSKindId.Ordering, [config], ['expression']);
+	const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+	const _direction = TSKindId.AscendingKeyword as const;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordering', { expression: _expression, direction: _direction });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Ordering as const, { _expression, _direction });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Ordering as const);
+		storeCell(arena, record, 2, 2, _expression);
+		storeCell(arena, record, 3, 6, _direction);
+		const node = arena.view(record);
+		return node as unknown as T.Ordering.Ascending.Bound;
+	});
+}
+
+export function buildOrderingDescending<ExpressionSlot extends T.Ordering.Descending.Config['expression']>(
+	config: RefusingConfig<T.Ordering.Descending.Config, { expression: ExpressionSlot }>
+): T.Ordering.Descending.Bound;
+export function buildOrderingDescending(config: T.Ordering.Descending.Config): T.Ordering.Descending.Bound {
+	currentHandle()?.admit(TSKindId.Ordering, [config], ['expression']);
+	const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+	const _direction = TSKindId.DescendingKeyword as const;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordering', { expression: _expression, direction: _direction });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Ordering as const, { _expression, _direction });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.Ordering as const);
+		storeCell(arena, record, 2, 2, _expression);
+		storeCell(arena, record, 3, 6, _direction);
+		const node = arena.view(record);
+		return node as unknown as T.Ordering.Descending.Bound;
+	});
+}
+
 export function buildSwitchStatementParenthesized<
 	ValueSlot extends T.SwitchStatementParenthesized.Config['value'],
 	BodySlot extends T.SwitchStatementParenthesized.Config['body']
@@ -33026,6 +33078,7 @@ export type FluentKindMap = {
 	query_body_group: T.QueryBodyGroup.Bound;
 	anonymous_object_member_declarator_arm: T.AnonymousObjectMemberDeclaratorArm.Bound;
 	ref_readonly: T.RefReadonly;
+	ordering: T.Ordering.Bound;
 	switch_statement_parenthesized: T.SwitchStatementParenthesized.Bound;
 	switch_statement_tuple: T.SwitchStatementTuple.Bound;
 	type_parameter_constraint_class: T.TypeParameterConstraintClass;
@@ -33330,6 +33383,7 @@ export const _factoryMap = {
 	query_body_group: buildQueryBodyGroup,
 	anonymous_object_member_declarator_arm: buildAnonymousObjectMemberDeclaratorArm,
 	ref_readonly: buildRefReadonly,
+	ordering: buildOrdering,
 	switch_statement_parenthesized: buildSwitchStatementParenthesized,
 	switch_statement_tuple: buildSwitchStatementTuple,
 	type_parameter_constraint_class: buildTypeParameterConstraintClass,
@@ -33373,7 +33427,7 @@ export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	withs: Object.freeze({
-		170: withVerbatimStringLiteral,
+		168: withVerbatimStringLiteral,
 		198: withShebangDirective,
 		202: withRealLiteralArm1,
 		203: withRealLiteralArm2,
@@ -33502,116 +33556,117 @@ export const builtViews: BuiltViews = Object.freeze({
 		415: withJoinIntoClause,
 		416: withLetClause,
 		417: withOrderByClause,
-		419: withWhereClause,
-		421: withGroupClause,
-		422: withSelectClause,
-		423: withConditionalExpression,
-		424: withConditionalAccessExpression,
-		425: withAsExpression,
-		426: withIsExpression,
-		427: withIsPatternExpression,
-		428: withCastExpression,
-		429: withCheckedExpression,
-		430: withInvocationExpression,
-		431: withSwitchExpression,
-		433: withSwitchExpressionArm,
-		434: withWhenClause,
-		435: withAwaitExpression,
-		436: withThrowExpression,
-		437: withElementAccessExpression,
-		438: withInterpolatedStringExpression,
-		442: withInterpolation,
-		443: withInterpolationAlignmentClause,
-		445: withMemberAccessExpression,
-		446: withMemberBindingExpression,
-		447: withObjectCreationExpression,
-		448: withParenthesizedExpression,
-		449: withParenthesizedLvalueExpression,
-		450: withLambdaExpression,
-		453: withArrayCreationExpression,
-		454: withAnonymousMethodExpression,
-		455: withAnonymousObjectCreationExpression,
-		457: withImplicitArrayCreationExpression,
-		458: withImplicitObjectCreationExpression,
-		459: withImplicitStackallocExpression,
-		460: withCollectionExpression,
-		461: withCollectionElement,
-		462: withExpressionElement,
-		463: withSpreadElement,
-		464: withInitializerExpression,
-		465: withDeclarationExpression,
-		466: withDefaultExpression,
-		467: withWithExpression,
-		469: withWithInitializer,
-		470: withSizeofExpression,
-		471: withTypeofExpression,
-		472: withMakerefExpression,
-		473: withRefExpression,
-		474: withReftypeExpression,
-		475: withRefvalueExpression,
-		476: withStackallocExpression,
-		477: withRangeExpression,
-		478: withTupleExpression,
-		480: withCharacterLiteral,
-		483: withStringLiteral,
-		485: withRawStringLiteral,
-		487: withIdentifier,
-		489: withPreprocIf,
-		490: withPreprocElse,
-		491: withPreprocElif,
-		492: withPreprocIfInTopLevel,
-		493: withPreprocElseInTopLevel,
-		494: withPreprocElifInTopLevel,
-		495: withPreprocIfInExpression,
-		496: withPreprocElseInExpression,
-		497: withPreprocElifInExpression,
-		498: withPreprocIfInEnumMemberDeclaration,
-		499: withPreprocElseInEnumMemberDeclaration,
-		500: withPreprocElifInEnumMemberDeclaration,
-		501: withPreprocIfInAttributeList,
-		502: withPreprocElseInAttributeList,
-		503: withPreprocElifInAttributeList,
-		505: withPreprocParenthesizedExpression,
-		506: withUnaryExpression,
-		507: withPreprocBinaryExpression,
-		508: withPreprocRegion,
-		509: withPreprocEndregion,
-		510: withPreprocLine,
-		511: withPreprocPragma,
-		512: withPreprocNullable,
-		513: withPreprocError,
-		514: withPreprocWarning,
-		515: withPreprocDefine,
-		516: withPreprocUndef,
-		517: withAttributes,
-		518: withEnumMemberDeclarationListElements,
-		519: withTuplePatternElementName,
-		521: withArguments,
-		522: withForStatementConditionsInitializer,
-		523: withSwitchSectionArm1,
-		524: withSwitchSectionArm2,
-		525: withListPatternElements,
-		526: withRecursivePatternArm1,
-		527: withRecursivePatternArm2,
-		528: withRecursivePatternArm3,
-		529: withRecursivePatternArm4,
-		530: withSubpatterns,
-		531: withSwitchExpressionArms,
-		532: withAnonymousObjectMemberDeclarators,
-		533: withCollectionElements,
-		534: withExpressions,
-		535: withWithInitializers,
-		536: withPreprocLineArm1,
-		537: withPreprocLineArm2,
-		538: withPreprocPragmaArm1,
-		539: withPreprocPragmaArm2,
-		540: withAttributeArgumentArm,
-		541: withPropertyDeclarationArm,
-		542: withCallingConventionArm,
-		543: withForeachStatementInitializerArm,
-		544: withSubpatternArm,
-		545: withQueryBodyGroup,
-		546: withAnonymousObjectMemberDeclaratorArm,
+		418: withWhereClause,
+		420: withGroupClause,
+		421: withSelectClause,
+		422: withConditionalExpression,
+		423: withConditionalAccessExpression,
+		424: withAsExpression,
+		425: withIsExpression,
+		426: withIsPatternExpression,
+		427: withCastExpression,
+		428: withCheckedExpression,
+		429: withInvocationExpression,
+		430: withSwitchExpression,
+		432: withSwitchExpressionArm,
+		433: withWhenClause,
+		434: withAwaitExpression,
+		435: withThrowExpression,
+		436: withElementAccessExpression,
+		437: withInterpolatedStringExpression,
+		441: withInterpolation,
+		442: withInterpolationAlignmentClause,
+		444: withMemberAccessExpression,
+		445: withMemberBindingExpression,
+		446: withObjectCreationExpression,
+		447: withParenthesizedExpression,
+		448: withParenthesizedLvalueExpression,
+		449: withLambdaExpression,
+		452: withArrayCreationExpression,
+		453: withAnonymousMethodExpression,
+		454: withAnonymousObjectCreationExpression,
+		456: withImplicitArrayCreationExpression,
+		457: withImplicitObjectCreationExpression,
+		458: withImplicitStackallocExpression,
+		459: withCollectionExpression,
+		460: withCollectionElement,
+		461: withExpressionElement,
+		462: withSpreadElement,
+		463: withInitializerExpression,
+		464: withDeclarationExpression,
+		465: withDefaultExpression,
+		466: withWithExpression,
+		468: withWithInitializer,
+		469: withSizeofExpression,
+		470: withTypeofExpression,
+		471: withMakerefExpression,
+		472: withRefExpression,
+		473: withReftypeExpression,
+		474: withRefvalueExpression,
+		475: withStackallocExpression,
+		476: withRangeExpression,
+		477: withTupleExpression,
+		479: withCharacterLiteral,
+		482: withStringLiteral,
+		484: withRawStringLiteral,
+		486: withIdentifier,
+		488: withPreprocIf,
+		489: withPreprocElse,
+		490: withPreprocElif,
+		491: withPreprocIfInTopLevel,
+		492: withPreprocElseInTopLevel,
+		493: withPreprocElifInTopLevel,
+		494: withPreprocIfInExpression,
+		495: withPreprocElseInExpression,
+		496: withPreprocElifInExpression,
+		497: withPreprocIfInEnumMemberDeclaration,
+		498: withPreprocElseInEnumMemberDeclaration,
+		499: withPreprocElifInEnumMemberDeclaration,
+		500: withPreprocIfInAttributeList,
+		501: withPreprocElseInAttributeList,
+		502: withPreprocElifInAttributeList,
+		504: withPreprocParenthesizedExpression,
+		505: withUnaryExpression,
+		506: withPreprocBinaryExpression,
+		507: withPreprocRegion,
+		508: withPreprocEndregion,
+		509: withPreprocLine,
+		510: withPreprocPragma,
+		511: withPreprocNullable,
+		512: withPreprocError,
+		513: withPreprocWarning,
+		514: withPreprocDefine,
+		515: withPreprocUndef,
+		516: withAttributes,
+		517: withEnumMemberDeclarationListElements,
+		518: withTuplePatternElementName,
+		520: withArguments,
+		521: withForStatementConditionsInitializer,
+		522: withSwitchSectionArm1,
+		523: withSwitchSectionArm2,
+		524: withListPatternElements,
+		525: withRecursivePatternArm1,
+		526: withRecursivePatternArm2,
+		527: withRecursivePatternArm3,
+		528: withRecursivePatternArm4,
+		529: withSubpatterns,
+		530: withSwitchExpressionArms,
+		531: withAnonymousObjectMemberDeclarators,
+		532: withCollectionElements,
+		533: withExpressions,
+		534: withWithInitializers,
+		535: withPreprocLineArm1,
+		536: withPreprocLineArm2,
+		537: withPreprocPragmaArm1,
+		538: withPreprocPragmaArm2,
+		539: withAttributeArgumentArm,
+		540: withPropertyDeclarationArm,
+		541: withCallingConventionArm,
+		542: withForeachStatementInitializerArm,
+		543: withSubpatternArm,
+		544: withQueryBodyGroup,
+		545: withAnonymousObjectMemberDeclaratorArm,
+		547: withOrdering,
 		548: withSwitchStatementParenthesized,
 		549: withSwitchStatementTuple,
 		554: withTypeParameterConstraintDefault,
@@ -33626,7 +33681,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		616: withImplicitParameter
 	}),
 	words: Object.freeze({
-		170: 5,
+		168: 5,
 		198: 4,
 		202: 9,
 		203: 8,
@@ -33754,11 +33809,12 @@ export const builtViews: BuiltViews = Object.freeze({
 		412: 8,
 		415: 3,
 		416: 4,
-		417: 4,
-		419: 3,
-		421: 4,
-		422: 3,
-		423: 5,
+		417: 3,
+		418: 3,
+		420: 4,
+		421: 3,
+		422: 5,
+		423: 4,
 		424: 4,
 		425: 4,
 		426: 4,
@@ -33766,105 +33822,105 @@ export const builtViews: BuiltViews = Object.freeze({
 		428: 4,
 		429: 4,
 		430: 4,
-		431: 4,
-		433: 5,
+		432: 5,
+		433: 3,
 		434: 3,
 		435: 3,
-		436: 3,
-		437: 4,
-		438: 10,
-		442: 7,
-		443: 3,
-		445: 5,
-		446: 3,
-		447: 5,
+		436: 4,
+		437: 10,
+		441: 7,
+		442: 3,
+		444: 5,
+		445: 3,
+		446: 5,
+		447: 3,
 		448: 3,
-		449: 3,
-		450: 7,
-		453: 4,
-		454: 5,
-		455: 3,
+		449: 7,
+		452: 4,
+		453: 5,
+		454: 3,
+		456: 4,
 		457: 4,
-		458: 4,
+		458: 3,
 		459: 3,
 		460: 3,
 		461: 3,
 		462: 3,
 		463: 3,
-		464: 3,
-		465: 4,
-		466: 3,
-		467: 4,
-		469: 4,
+		464: 4,
+		465: 3,
+		466: 4,
+		468: 4,
+		469: 3,
 		470: 3,
 		471: 3,
 		472: 3,
 		473: 3,
-		474: 3,
+		474: 4,
 		475: 4,
 		476: 4,
-		477: 4,
-		478: 3,
-		480: 3,
-		483: 4,
-		485: 6,
-		487: 3,
-		489: 6,
-		490: 3,
+		477: 3,
+		479: 3,
+		482: 4,
+		484: 6,
+		486: 3,
+		488: 6,
+		489: 3,
+		490: 6,
 		491: 6,
-		492: 6,
-		493: 3,
+		492: 3,
+		493: 6,
 		494: 6,
-		495: 6,
-		496: 3,
+		495: 3,
+		496: 6,
 		497: 6,
-		498: 6,
-		499: 3,
+		498: 3,
+		499: 6,
 		500: 6,
-		501: 6,
-		502: 3,
-		503: 6,
+		501: 3,
+		502: 6,
+		504: 3,
 		505: 3,
-		506: 3,
-		507: 5,
+		506: 5,
+		507: 4,
 		508: 4,
 		509: 4,
 		510: 4,
-		511: 4,
-		512: 5,
+		511: 5,
+		512: 4,
 		513: 4,
 		514: 4,
 		515: 4,
-		516: 4,
+		516: 3,
 		517: 3,
 		518: 3,
-		519: 3,
+		520: 3,
 		521: 3,
-		522: 3,
-		523: 4,
+		522: 4,
+		523: 3,
 		524: 3,
-		525: 3,
-		526: 4,
-		527: 5,
+		525: 4,
+		526: 5,
+		527: 4,
 		528: 4,
-		529: 4,
+		529: 3,
 		530: 3,
 		531: 3,
 		532: 3,
 		533: 3,
 		534: 3,
-		535: 3,
-		536: 4,
-		537: 8,
-		538: 4,
-		539: 5,
+		535: 4,
+		536: 8,
+		537: 4,
+		538: 5,
+		539: 4,
 		540: 4,
-		541: 4,
-		542: 3,
+		541: 3,
+		542: 4,
 		543: 4,
-		544: 4,
-		545: 5,
-		546: 4,
+		544: 5,
+		545: 4,
+		547: 4,
 		548: 4,
 		549: 4,
 		554: 3,
@@ -33879,7 +33935,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		616: 3
 	}),
 	cells: Object.freeze({
-		170: 2,
+		168: 2,
 		198: 2,
 		202: 2,
 		203: 2,
@@ -34008,7 +34064,8 @@ export const builtViews: BuiltViews = Object.freeze({
 		415: 2,
 		416: 2,
 		417: 2,
-		419: 2,
+		418: 2,
+		420: 2,
 		421: 2,
 		422: 2,
 		423: 2,
@@ -34019,24 +34076,24 @@ export const builtViews: BuiltViews = Object.freeze({
 		428: 2,
 		429: 2,
 		430: 2,
-		431: 2,
+		432: 2,
 		433: 2,
 		434: 2,
 		435: 2,
 		436: 2,
 		437: 2,
-		438: 2,
+		441: 2,
 		442: 2,
-		443: 2,
+		444: 2,
 		445: 2,
 		446: 2,
 		447: 2,
 		448: 2,
-		449: 2,
-		450: 3,
-		453: 2,
-		454: 3,
-		455: 2,
+		449: 3,
+		452: 2,
+		453: 3,
+		454: 2,
+		456: 2,
 		457: 2,
 		458: 2,
 		459: 2,
@@ -34047,7 +34104,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		464: 2,
 		465: 2,
 		466: 2,
-		467: 2,
+		468: 2,
 		469: 2,
 		470: 2,
 		471: 2,
@@ -34057,11 +34114,11 @@ export const builtViews: BuiltViews = Object.freeze({
 		475: 2,
 		476: 2,
 		477: 2,
-		478: 2,
-		480: 2,
-		483: 2,
-		485: 2,
-		487: 2,
+		479: 2,
+		482: 2,
+		484: 2,
+		486: 2,
+		488: 2,
 		489: 2,
 		490: 2,
 		491: 2,
@@ -34076,7 +34133,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		500: 2,
 		501: 2,
 		502: 2,
-		503: 2,
+		504: 2,
 		505: 2,
 		506: 2,
 		507: 2,
@@ -34091,7 +34148,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		516: 2,
 		517: 2,
 		518: 2,
-		519: 2,
+		520: 2,
 		521: 2,
 		522: 2,
 		523: 2,
@@ -34117,7 +34174,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		543: 2,
 		544: 2,
 		545: 2,
-		546: 2,
+		547: 2,
 		548: 2,
 		549: 2,
 		554: 2,
@@ -34132,7 +34189,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		616: 2
 	}),
 	places: Object.freeze({
-		170: [
+		168: [
 			[2, 2, 2, 4, 0, 0],
 			[4, 3, 2, 4, 0, 0]
 		],
@@ -34630,24 +34687,25 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 4, 3, 0, 0]
 		],
-		417: [
-			[2, 2, 1, 3, 0, 4],
-			[3, 3, 1, 2, 0, 1]
-		],
-		419: [[2, 2, 4, 3, 0, 0]],
-		421: [
+		417: [[2, 2, 1, 1, 0, 3]],
+		418: [[2, 2, 4, 3, 0, 0]],
+		420: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		422: [[2, 2, 4, 3, 0, 0]],
-		423: [
+		421: [[2, 2, 4, 3, 0, 0]],
+		422: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0],
 			[10, 4, 4, 3, 0, 0]
 		],
-		424: [
+		423: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 14, 8, 14, 0]
+		],
+		424: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 4, 3, 0, 0]
 		],
 		425: [
 			[2, 2, 4, 3, 0, 0],
@@ -34662,34 +34720,30 @@ export const builtViews: BuiltViews = Object.freeze({
 			[6, 3, 4, 3, 0, 0]
 		],
 		428: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 4, 3, 0, 0]
-		],
-		429: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 4, 3, 0, 0]
+		],
+		429: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 8, 3, 0]
 		],
 		430: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		431: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 8, 3, 0]
-		],
-		433: [
+		432: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 6, 8, 6, 0],
 			[12, 4, 4, 3, 0, 0]
 		],
+		433: [[2, 2, 4, 3, 0, 0]],
 		434: [[2, 2, 4, 3, 0, 0]],
 		435: [[2, 2, 4, 3, 0, 0]],
-		436: [[2, 2, 4, 3, 0, 0]],
-		437: [
+		436: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 5, 8, 5, 0]
 		],
-		438: [
+		437: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 1, 1, 0, 3],
 			[4, 4, 1, 1, 0, 3],
@@ -34699,28 +34753,28 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 8, 3, 1, 0, 0],
 			[17, 9, 3, 1, 0, 0]
 		],
-		442: [
+		441: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 4, 3, 0, 0],
 			[9, 4, 6, 8, 6, 0],
 			[15, 5, 3, 1, 0, 0],
 			[18, 6, 3, 1, 0, 0]
 		],
-		443: [[2, 2, 4, 3, 0, 0]],
-		445: [
+		442: [[2, 2, 4, 3, 0, 0]],
+		444: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0],
 			[7, 4, 12, 8, 12, 0]
 		],
-		446: [[2, 2, 12, 8, 12, 0]],
-		447: [
+		445: [[2, 2, 12, 8, 12, 0]],
+		446: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0],
 			[9, 4, 5, 8, 5, 0]
 		],
+		447: [[2, 2, 4, 3, 0, 0]],
 		448: [[2, 2, 4, 3, 0, 0]],
-		449: [[2, 2, 4, 3, 0, 0]],
-		450: [
+		449: [
 			[3, 3, 1, 1, 0, 3],
 			[2, 0],
 			[2, 1],
@@ -34728,166 +34782,170 @@ export const builtViews: BuiltViews = Object.freeze({
 			[8, 5, 6, 8, 6, 0],
 			[14, 6, 4, 3, 0, 0]
 		],
-		453: [
+		452: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		454: [
+		453: [
 			[2, 0],
 			[2, 1],
 			[3, 3, 3, 8, 3, 0],
 			[6, 4, 3, 8, 3, 0]
 		],
-		455: [[2, 2, 3, 8, 3, 0]],
-		457: [
+		454: [[2, 2, 3, 8, 3, 0]],
+		456: [
 			[2, 2, 1, 2, 0, 1],
 			[3, 3, 5, 8, 5, 0]
 		],
-		458: [
+		457: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		459: [[2, 2, 5, 8, 5, 0]],
-		460: [[2, 2, 3, 8, 3, 0]],
-		461: [[2, 2, 6, 8, 6, 0]],
+		458: [[2, 2, 5, 8, 5, 0]],
+		459: [[2, 2, 3, 8, 3, 0]],
+		460: [[2, 2, 6, 8, 6, 0]],
+		461: [[2, 2, 4, 3, 0, 0]],
 		462: [[2, 2, 4, 3, 0, 0]],
-		463: [[2, 2, 4, 3, 0, 0]],
-		464: [[2, 2, 3, 8, 3, 0]],
-		465: [
+		463: [[2, 2, 3, 8, 3, 0]],
+		464: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 6, 8, 6, 0]
 		],
-		466: [[2, 2, 4, 3, 0, 0]],
-		467: [
+		465: [[2, 2, 4, 3, 0, 0]],
+		466: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 8, 3, 0]
 		],
-		469: [
+		468: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 4, 3, 0, 0]
 		],
+		469: [[2, 2, 4, 3, 0, 0]],
 		470: [[2, 2, 4, 3, 0, 0]],
 		471: [[2, 2, 4, 3, 0, 0]],
 		472: [[2, 2, 4, 3, 0, 0]],
 		473: [[2, 2, 4, 3, 0, 0]],
-		474: [[2, 2, 4, 3, 0, 0]],
-		475: [
+		474: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		476: [
+		475: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		477: [
+		476: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 4, 3, 0, 0]
 		],
-		478: [[2, 2, 1, 1, 0, 3]],
-		480: [[2, 2, 3, 1, 0, 0]],
-		483: [
+		477: [[2, 2, 1, 1, 0, 3]],
+		479: [[2, 2, 3, 1, 0, 0]],
+		482: [
 			[2, 2, 1, 1, 0, 3],
 			[3, 3, 3, 1, 0, 0]
 		],
-		485: [
+		484: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0],
 			[8, 4, 3, 1, 0, 0],
 			[11, 5, 3, 1, 0, 0]
 		],
-		487: [[2, 2, 4, 3, 0, 0]],
-		489: [
+		486: [[2, 2, 4, 3, 0, 0]],
+		488: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 1, 1, 0, 3],
 			[10, 5, 3, 1, 0, 0]
 		],
-		490: [[2, 2, 1, 1, 0, 3]],
+		489: [[2, 2, 1, 1, 0, 3]],
+		490: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 3, 1, 0, 0],
+			[9, 4, 1, 1, 0, 3],
+			[10, 5, 3, 1, 0, 0]
+		],
 		491: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
-			[9, 4, 1, 1, 0, 3],
+			[9, 4, 1, 3, 0, 4],
 			[10, 5, 3, 1, 0, 0]
 		],
-		492: [
+		492: [[2, 2, 1, 3, 0, 4]],
+		493: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 1, 3, 0, 4],
 			[10, 5, 3, 1, 0, 0]
 		],
-		493: [[2, 2, 1, 3, 0, 4]],
 		494: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
-			[9, 4, 1, 3, 0, 4],
-			[10, 5, 3, 1, 0, 0]
+			[9, 4, 4, 3, 0, 0],
+			[13, 5, 3, 1, 0, 0]
 		],
-		495: [
+		495: [[2, 2, 4, 3, 0, 0]],
+		496: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 4, 3, 0, 0],
 			[13, 5, 3, 1, 0, 0]
 		],
-		496: [[2, 2, 4, 3, 0, 0]],
 		497: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
-			[9, 4, 4, 3, 0, 0],
-			[13, 5, 3, 1, 0, 0]
+			[9, 4, 13, 8, 13, 0],
+			[22, 5, 3, 1, 0, 0]
 		],
-		498: [
+		498: [[2, 2, 13, 8, 13, 0]],
+		499: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 13, 8, 13, 0],
 			[22, 5, 3, 1, 0, 0]
 		],
-		499: [[2, 2, 13, 8, 13, 0]],
 		500: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
-			[9, 4, 13, 8, 13, 0],
-			[22, 5, 3, 1, 0, 0]
+			[9, 4, 8, 8, 8, 0],
+			[17, 5, 3, 1, 0, 0]
 		],
-		501: [
+		501: [[2, 2, 8, 8, 8, 0]],
+		502: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 3, 1, 0, 0],
 			[9, 4, 8, 8, 8, 0],
 			[17, 5, 3, 1, 0, 0]
 		],
-		502: [[2, 2, 8, 8, 8, 0]],
-		503: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 3, 1, 0, 0],
-			[9, 4, 8, 8, 8, 0],
-			[17, 5, 3, 1, 0, 0]
-		],
+		504: [[2, 2, 4, 3, 0, 0]],
 		505: [[2, 2, 4, 3, 0, 0]],
-		506: [[2, 2, 4, 3, 0, 0]],
-		507: [
+		506: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 1, 2, 0, 0],
 			[7, 4, 4, 3, 0, 0]
+		],
+		507: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
 		],
 		508: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0]
 		],
 		509: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
-		],
-		510: [
 			[2, 2, 24, 10, 23, 0],
 			[26, 3, 3, 1, 0, 0]
 		],
-		511: [
+		510: [
 			[2, 2, 20, 8, 20, 0],
 			[22, 3, 3, 1, 0, 0]
 		],
-		512: [
+		511: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 1, 2, 0, 0],
 			[4, 4, 3, 1, 0, 0]
+		],
+		512: [
+			[2, 2, 3, 1, 0, 0],
+			[5, 3, 3, 1, 0, 0]
 		],
 		513: [
 			[2, 2, 3, 1, 0, 0],
@@ -34902,78 +34960,74 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 3, 3, 1, 0, 0]
 		],
 		516: [
-			[2, 2, 3, 1, 0, 0],
-			[5, 3, 3, 1, 0, 0]
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
 		],
 		517: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		518: [
+		518: [[2, 2, 6, 8, 6, 0]],
+		520: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		519: [[2, 2, 6, 8, 6, 0]],
-		521: [
-			[2, 2, 1, 1, 0, 3],
-			['side', true, false]
-		],
-		522: [[2, 2, 1, 3, 0, 4]],
-		523: [
+		521: [[2, 2, 1, 3, 0, 4]],
+		522: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 6, 8, 6, 0]
 		],
-		524: [[2, 2, 4, 3, 0, 0]],
-		525: [
+		523: [[2, 2, 4, 3, 0, 0]],
+		524: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		526: [
+		525: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		527: [
+		526: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 10, 8, 10, 0],
 			[16, 4, 9, 8, 9, 0]
 		],
-		528: [
+		527: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 5, 8, 5, 0]
 		],
-		529: [
+		528: [
 			[2, 2, 10, 8, 10, 0],
 			[12, 3, 9, 8, 9, 0]
+		],
+		529: [
+			[2, 2, 1, 1, 0, 3],
+			['side', true, false]
 		],
 		530: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		531: [
-			[2, 2, 1, 1, 0, 3],
+			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
 		532: [
-			[2, 2, 1, 3, 0, 4],
+			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
 		533: [
-			[2, 2, 1, 1, 0, 3],
-			['side', true, false]
-		],
-		534: [
 			[2, 2, 1, 3, 0, 4],
 			['side', true, false]
 		],
-		535: [
+		534: [
 			[2, 2, 1, 1, 0, 3],
 			['side', true, false]
 		],
-		536: [
+		535: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 6, 8, 6, 0]
 		],
-		537: [
+		536: [
 			[2, 2, 3, 1, 0, 0],
 			[5, 3, 3, 1, 0, 0],
 			[8, 4, 3, 1, 0, 0],
@@ -34981,40 +35035,44 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 6, 3, 1, 0, 0],
 			[17, 7, 6, 8, 6, 0]
 		],
-		538: [
+		537: [
 			[2, 2, 1, 2, 0, 0],
 			[3, 3, 1, 1, 0, 3]
 		],
-		539: [
+		538: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 6, 8, 6, 0],
 			[14, 4, 6, 8, 6, 0]
 		],
-		540: [
+		539: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 1, 2, 0, 0]
 		],
-		541: [
+		540: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		542: [[2, 2, 1, 3, 0, 4]],
+		541: [[2, 2, 1, 3, 0, 4]],
+		542: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 6, 8, 6, 0]
+		],
 		543: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 6, 8, 6, 0]
 		],
 		544: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
-		],
-		545: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 1, 1, 0, 3],
 			[9, 4, 3, 1, 0, 0]
 		],
-		546: [
+		545: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 4, 3, 0, 0]
+		],
+		547: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 1, 2, 0, 0]
 		],
 		548: [
 			[2, 2, 4, 3, 0, 0],
@@ -35054,10 +35112,10 @@ export const builtViews: BuiltViews = Object.freeze({
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifierToken,
-		166: leafCharacterLiteralContent,
-		168: leafStringLiteralContent,
-		169: leafStringLiteralEncoding,
-		171: leafRawStringLiteralText,
+		164: leafCharacterLiteralContent,
+		166: leafStringLiteralContent,
+		167: leafStringLiteralEncoding,
+		169: leafRawStringLiteralText,
 		178: leafPreprocIfText2,
 		182: leafPreprocArg,
 		199: leafIntegerLiteralArm1,
@@ -35079,7 +35137,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		241: leafRawStringEnd,
 		242: leafRawStringContent,
 		262: leafAttributeTargetSpecifier,
-		444: leafInterpolationFormatClause,
+		443: leafInterpolationFormatClause,
 		550: leafTypeParameterConstraintClass,
 		559: leafTypeArgumentListUnbound
 	})

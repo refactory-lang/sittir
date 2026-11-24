@@ -77,7 +77,6 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 	'goto_statement',
 	'initializer_expression',
 	'list_pattern',
-	'order_by_clause',
 	'parameter_list',
 	'parenthesized_variable_designation',
 	'positional_pattern_clause',
@@ -87,11 +86,3 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 	'throw_statement',
 	'yield_statement'
 ]);
-
-// Bitflag enums — ordered-unique literal sets per bitflag field
-/** Bitflag set for `order_by_clause.operator`. */
-export enum Operators {
-	None = 0,
-	Ascending = 1 << 0,
-	Descending = 1 << 1
-}

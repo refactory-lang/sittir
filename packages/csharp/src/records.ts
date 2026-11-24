@@ -674,12 +674,7 @@ export const records = {
 		identifier: { word: 2, width: 6, inline: 6, forms: 8, built: 2 },
 		expression: { word: 8, width: 4, forms: 3, built: 3 }
 	},
-	OrderByClauseNode: {
-		words: 4,
-		builtWords: 4,
-		ordering: { word: 2, width: 1, run: 4, forms: 3, built: 2 },
-		operator: { word: 3, width: 1, run: 1, forms: 2, built: 3 }
-	},
+	OrderByClauseNode: { words: 3, builtWords: 3, orderings: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	WhereClauseNode: { words: 6, builtWords: 3, expression: { word: 2, width: 4, forms: 3, built: 2 } },
 	GroupClauseNode: {
 		words: 10,
@@ -1289,6 +1284,12 @@ export const records = {
 		builtWords: 4,
 		name: { word: 2, width: 6, inline: 6, forms: 8, built: 2 },
 		value: { word: 8, width: 4, forms: 3, built: 3 }
+	},
+	OrderingNode: {
+		words: 7,
+		builtWords: 4,
+		expression: { word: 2, width: 4, forms: 3, built: 2 },
+		direction: { word: 6, width: 1, forms: 2, built: 3 }
 	},
 	SwitchStatementParenthesizedNode: {
 		words: 9,

@@ -1,7 +1,7 @@
 {
 	"parser": {
-		"source": "c4af4395d21323d64855bb99d58b2fb502d84595542f72c3c5c112eb70dd8e48",
-		"wasm": "1bec35914d6f03f5af4d634d3d65e3252f7236bcfc825b6f635a2618a70f2cc2"
+		"source": "d50a0bcc5d8ba7fe9a22062e4ff3154394cbe396632356f1043654d0c957366b",
+		"wasm": "05ed59dcd20ff90bd56f21c12bfad776e8f478b48aaf3ce6e52121464918092b"
 	},
 	"inputs": "9c57488498f3e695e5b9a99469c514d1b7cdc51d7e22109232ed7dbd8ce06f46",
 	"seams": [
@@ -237,7 +237,6 @@
 		"_join_body",
 		"_join_header",
 		"_operator_declaration_operator",
-		"_ordering",
 		"_parameter_optional1",
 		"_pointer_base_type",
 		"_positional_pattern_clause_optional1",
@@ -289,6 +288,7 @@
 		"object_creation_expression",
 		"or_pattern",
 		"order_by_clause",
+		"ordering",
 		"parameter",
 		"pattern",
 		"pointer_type",

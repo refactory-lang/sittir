@@ -12769,10 +12769,7 @@ export function wrapOrderByClause(data: T.OrderByClause, tree: TreeHandle): T.Or
 		...data,
 		$type: TSKindId.OrderByClause as const,
 		orderings() {
-			return hydrateSlots<T.Expression>(this, '_ordering', tree);
-		},
-		operators() {
-			return this._operator;
+			return hydrateSlots<T.Ordering>(this, '_orderings', tree);
 		},
 		$with: undefined as unknown as object,
 		$render: () => renderText(handle, node),
@@ -12789,12 +12786,8 @@ export function wrapOrderByClause(data: T.OrderByClause, tree: TreeHandle): T.Or
 		[READ_TREE]: tree,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		orderings: wrapOrderByClause$with$orderings,
-		operators: wrapOrderByClause$with$operators,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$with = { orderings: wrapOrderByClause$with$orderings, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.OrderByClause.Parsed;
 }
 function wrapOrderByClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
@@ -12803,24 +12796,12 @@ function wrapOrderByClause$with(node: Held, setter: string, args: readonly unkno
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
 		case 'orderings':
-			return applySetter(args, (...v: NonNullable<T.OrderByClause['_ordering']>[number][]) =>
+			return applySetter(args, (...v: NonEmptyArray<NonNullable<T.OrderByClause['_orderings']>[number]>) =>
 				rebuilt(node, handle, () =>
 					wrapOrderByClause(
 						{
 							...$edited(data),
-							_ordering: admitSlot(handle, 'order_by_clause', 'orderings', restItems('orderings', v))
-						},
-						tree
-					)
-				)
-			);
-		case 'operators':
-			return applySetter(args, (...v: NonNullable<T.OrderByClause['_operator']>[number][]) =>
-				rebuilt(node, handle, () =>
-					wrapOrderByClause(
-						{
-							...$edited(data),
-							_operator: admitSlot(handle, 'order_by_clause', 'operators', restItems('operators', v))
+							_orderings: admitSlot(handle, 'order_by_clause', 'orderings', restItems('orderings', v))
 						},
 						tree
 					)
@@ -12831,9 +12812,6 @@ function wrapOrderByClause$with(node: Held, setter: string, args: readonly unkno
 }
 function wrapOrderByClause$with$orderings(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapOrderByClause$with(receiverOf(this, '$with.orderings'), 'orderings', args);
-}
-function wrapOrderByClause$with$operators(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapOrderByClause$with(receiverOf(this, '$with.operators'), 'operators', args);
 }
 
 export function wrapWhereClause(data: T.WhereClause, tree: TreeHandle): T.WhereClause.Parsed {
@@ -23296,6 +23274,54 @@ function wrapAnonymousObjectMemberDeclaratorArm$name$native(this: object) {
 	return hydrateSlot<T.Identifier>(this, '_name', tree);
 }
 
+export function wrapOrdering(data: T.Ordering, tree: TreeHandle): T.Ordering.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.Ordering as const,
+		expression() {
+			return hydrateSlot<T.Expression>(this, '_expression', tree);
+		},
+		direction() {
+			return this._direction;
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { expression: wrapOrdering$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.Ordering.Parsed;
+}
+function wrapOrdering$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.Ordering;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (v: NonNullable<T.Ordering['_expression']>) =>
+				rebuilt(node, handle, () =>
+					wrapOrdering({ ...$edited(data), _expression: admitSlot(handle, 'ordering', 'expression', v) }, tree)
+				)
+			);
+	}
+	throw new Error(`ordering has no $with.${setter}`);
+}
+function wrapOrdering$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapOrdering$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+
 export function wrapSwitchStatementParenthesized(
 	data: T.SwitchStatementParenthesized,
 	tree: TreeHandle
@@ -30443,10 +30469,7 @@ function viewLetClause(data: RecordPosition, tree: TreeHandle): T.LetClause.Pars
 }
 
 function viewOrderByClause$orderings(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
-}
-function viewOrderByClause$operators(this: RecordHandle) {
-	return childItems(this, 3, 1, 1, 2, 0, 3);
+	return viewSlots<T.Ordering>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewOrderByClause(data: RecordPosition, tree: TreeHandle): T.OrderByClause.Parsed {
 	const node = {
@@ -30457,7 +30480,6 @@ function viewOrderByClause(data: RecordPosition, tree: TreeHandle): T.OrderByCla
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		orderings: viewOrderByClause$orderings,
-		operators: viewOrderByClause$operators,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -30468,8 +30490,8 @@ function viewOrderByClause(data: RecordPosition, tree: TreeHandle): T.OrderByCla
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { orderings: $with$orderings, operators: $with$operators, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner, [RECEIVER]: node };
+	node.$with = { orderings: $with$orderings, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.OrderByClause.Parsed;
 }
 
@@ -35551,6 +35573,37 @@ function viewAnonymousObjectMemberDeclaratorArm(
 	return node as unknown as T.AnonymousObjectMemberDeclaratorArm.Parsed;
 }
 
+function viewOrdering$expression(this: RecordHandle) {
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
+}
+function viewOrdering$direction(this: RecordHandle) {
+	return childSlot(this, 6, 1, 2, 0, 3);
+}
+function viewOrdering(data: RecordPosition, tree: TreeHandle): T.Ordering.Parsed {
+	const node = {
+		$type: TSKindId.Ordering as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		expression: viewOrdering$expression,
+		direction: viewOrdering$direction,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { expression: $with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.Ordering.Parsed;
+}
+
 function viewSwitchStatementParenthesized$value(this: RecordHandle) {
 	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
@@ -36407,9 +36460,6 @@ function $with$nonLvalueExpression(this: Received<RecordPosition>, ...args: unkn
 function $with$operator(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.operator'), _wrap, 'operator', args);
 }
-function $with$operators(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.operators'), _wrap, 'operators', args);
-}
 function $with$orderings(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.orderings'), _wrap, 'orderings', args);
 }
@@ -36929,6 +36979,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.QueryBodyGroup]: (d, t) => wrapQueryBodyGroup(d as unknown as T.QueryBodyGroup, t),
 	[TSKindId.AnonymousObjectMemberDeclaratorArm]: (d, t) =>
 		wrapAnonymousObjectMemberDeclaratorArm(d as unknown as T.AnonymousObjectMemberDeclaratorArm, t),
+	[TSKindId.Ordering]: (d, t) => wrapOrdering(d as unknown as T.Ordering, t),
 	[TSKindId.SwitchStatementParenthesized]: (d, t) =>
 		wrapSwitchStatementParenthesized(d as unknown as T.SwitchStatementParenthesized, t),
 	[TSKindId.SwitchStatementTuple]: (d, t) => wrapSwitchStatementTuple(d as unknown as T.SwitchStatementTuple, t),
@@ -37220,6 +37271,7 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.SubpatternArm]: viewSubpatternArm,
 	[TSKindId.QueryBodyGroup]: viewQueryBodyGroup,
 	[TSKindId.AnonymousObjectMemberDeclaratorArm]: viewAnonymousObjectMemberDeclaratorArm,
+	[TSKindId.Ordering]: viewOrdering,
 	[TSKindId.SwitchStatementParenthesized]: viewSwitchStatementParenthesized,
 	[TSKindId.SwitchStatementTuple]: viewSwitchStatementTuple,
 	[TSKindId.TypeParameterConstraintDefault]: viewTypeParameterConstraintDefault,

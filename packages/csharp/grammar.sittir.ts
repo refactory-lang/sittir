@@ -1,7 +1,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import { alias, enrich, field, preference, variant, vocabulary, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, enrich, field, preference, refine, variant, vocabulary, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
 const flag = (word: string) => optional(field(word, word));
 const staticAsync = () => choice(seq(flag('static'), flag('async')), seq(flag('async'), flag('static')));
@@ -66,6 +66,7 @@ export default grammar(enrich(base), wire({
 			{ '2/0': variant('alias') }
 		],
 		_lambda_expression_init: { '.': ($) => seq(field('attribute_lists', repeat($._attribute_list)), staticAsync(), optional(field('type', $.type)), field('parameters', $._lambda_parameters)) },
+		order_by_clause: { '.': ($) => seq('orderby', field('orderings', seq($.ordering, repeat(seq(',', $.ordering))))) },
 		anonymous_method_expression: { '.': ($) => seq(staticAsync(), 'delegate', optional(field('parameters', $.parameter_list)), field('block', $.block)) },
 		parameter: {
 			1: ($) => {
@@ -75,6 +76,12 @@ export default grammar(enrich(base), wire({
 		}
 	},
 	rules: {
-		ref_readonly: vocabulary(() => seq('ref', 'readonly'))
+		ref_readonly: vocabulary(() => seq('ref', 'readonly')),
+		ordering: vocabulary(($) =>
+			refine(seq(field('expression', $.expression), optional(field('direction', choice('ascending', 'descending')))), {
+				ascending: { 'direction:': 'ascending' },
+				descending: { 'direction:': 'descending' }
+			})
+		)
 	}
 }));

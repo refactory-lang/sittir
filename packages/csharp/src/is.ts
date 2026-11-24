@@ -1194,6 +1194,9 @@ export interface IsGuards {
 	anonymousObjectMemberDeclaratorArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AnonymousObjectMemberDeclaratorArm };
+	ordering<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Ordering };
 	switchStatementParenthesized<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SwitchStatementParenthesized };
@@ -1750,36 +1753,36 @@ const _supertype_recordBase_ids = new Set<number>([561, 562]);
 const _supertype_declarationListBody_ids = new Set<number>([557, 558]);
 const _supertype_typeParameterConstraint_ids = new Set<number>([550, 551, 552, 553, 554]);
 const _supertype_declaration_ids = new Set<number>([
-	266, 268, 555, 556, 276, 294, 298, 299, 300, 278, 295, 297, 303, 274, 263, 290, 291, 305, 255, 489
+	266, 268, 555, 556, 276, 294, 298, 299, 300, 278, 295, 297, 303, 274, 263, 290, 291, 305, 255, 488
 ]);
 const _supertype_typeArgumentList_ids = new Set<number>([559, 560]);
 const _supertype_type_ids = new Set<number>([
-	329, 330, 323, 325, 487, 326, 333, 334, 336, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
+	329, 330, 323, 325, 486, 326, 333, 334, 336, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93,
 	344, 340, 342
 ]);
 const _supertype_statement_ids = new Set<number>([
 	314, 347, 348, 349, 350, 351, 352, 353, 354, 356, 357, 358, 548, 549, 362, 363, 368, 369, 370, 372, 373, 374, 375,
-	376, 377, 492
+	376, 377, 491
 ]);
 const _supertype_switchStatement_ids = new Set<number>([548, 549]);
 const _supertype_pattern_ids = new Set<number>([381, 396, 113, 388, 385, 393, 380, 384, 392, 395, 394, 387, 386]);
 const _supertype_expression_ids = new Set<number>([
-	69, 404, 438, 423, 424, 164, 480, 199, 200, 201, 202, 203, 204, 205, 172, 173, 483, 170, 485, 403, 430, 405, 406, 435,
-	447, 448, 426, 427, 425, 428, 429, 460, 431, 436, 466, 450, 467, 470, 471, 472, 473, 474, 475, 476, 477, 453, 454,
-	455, 457, 458, 459, 464, 408, 495, 615, 64, 445, 478, 487, 326, 437, 407, 449
+	69, 404, 437, 422, 423, 162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484, 403, 429, 405, 406, 434,
+	446, 447, 425, 426, 424, 427, 428, 459, 430, 435, 465, 449, 466, 469, 470, 471, 472, 473, 474, 475, 476, 452, 453,
+	454, 456, 457, 458, 463, 408, 494, 615, 64, 444, 477, 486, 326, 436, 407, 448
 ]);
 const _supertype_nonLvalueExpression_ids = new Set<number>([
-	69, 404, 438, 423, 424, 164, 480, 199, 200, 201, 202, 203, 204, 205, 172, 173, 483, 170, 485, 403, 430, 405, 406, 435,
-	447, 448, 426, 427, 425, 428, 429, 460, 431, 436, 466, 450, 467, 470, 471, 472, 473, 474, 475, 476, 477, 453, 454,
-	455, 457, 458, 459, 464, 408, 495
+	69, 404, 437, 422, 423, 162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484, 403, 429, 405, 406, 434,
+	446, 447, 425, 426, 424, 427, 428, 459, 430, 435, 465, 449, 466, 469, 470, 471, 472, 473, 474, 475, 476, 452, 453,
+	454, 456, 457, 458, 463, 408, 494
 ]);
-const _supertype_lvalueExpression_ids = new Set<number>([615, 64, 445, 478, 487, 326, 437, 407, 449]);
-const _supertype_literal_ids = new Set<number>([164, 480, 199, 200, 201, 202, 203, 204, 205, 172, 173, 483, 170, 485]);
+const _supertype_lvalueExpression_ids = new Set<number>([615, 64, 444, 477, 486, 326, 436, 407, 448]);
+const _supertype_literal_ids = new Set<number>([162, 479, 199, 200, 201, 202, 203, 204, 205, 170, 171, 482, 168, 484]);
 const _supertype_integerLiteral_ids = new Set<number>([199, 200, 201]);
 const _supertype_realLiteral_ids = new Set<number>([202, 203, 204, 205]);
 const _supertype_escapeSequence_ids = new Set<number>([206, 207, 208, 209]);
 const _supertype_comment_ids = new Set<number>([210, 211]);
-const _supertype_tuplePatternElement_ids = new Set<number>([519, 113, 312]);
+const _supertype_tuplePatternElement_ids = new Set<number>([518, 113, 312]);
 const _supertype_layout_ids = new Set<number>([243, 244, 245, 246, 247, 248, 249, 250]);
 
 const _members = new Map<number, ReadonlySet<number>>([
@@ -1804,11 +1807,11 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.TuplePatternElement, _supertype_tuplePatternElement_ids],
 	[TSKindId.Modifier, new Set<number>([30, 31, 32, 2, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48])],
 	[TSKindId.PredefinedType, new Set<number>([76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93])],
-	[TSKindId.BooleanLiteral, new Set<number>([172, 173])],
+	[TSKindId.BooleanLiteral, new Set<number>([170, 171])],
 	[
 		TSKindId.ReservedIdentifier,
 		new Set<number>([
-			3, 145, 148, 146, 140, 33, 137, 174, 147, 141, 138, 142, 175, 139, 144, 66, 149, 176, 72, 107, 54, 102
+			3, 172, 146, 173, 140, 33, 137, 174, 145, 141, 138, 142, 175, 139, 144, 66, 147, 176, 72, 107, 54, 102
 		])
 	]
 ]);
@@ -2134,6 +2137,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_WithInitializers_guard = _g(TSKindId.WithInitializers);
 	const _kind_QueryBodyGroup_guard = _g(TSKindId.QueryBodyGroup);
 	const _kind_AnonymousObjectMemberDeclaratorArm_guard = _g(TSKindId.AnonymousObjectMemberDeclaratorArm);
+	const _kind_Ordering_guard = _g(TSKindId.Ordering);
 	const _kind_TypeParameterConstraintDefault_guard = _g(TSKindId.TypeParameterConstraintDefault);
 	const _kind_ImplicitParameter_guard = _g(TSKindId.ImplicitParameter);
 	const _kind_AttributeTargetSpecifier_guard = _g(TSKindId.AttributeTargetSpecifier);
@@ -2338,18 +2342,18 @@ export function guardsWith(test: KindTest): IsGuards {
 		list: _kind_ListPattern_guard,
 		type: _kind_TypePattern_guard
 	});
-	const _supertype_integerLiteral_guard = _vg(_mg(481), {
+	const _supertype_integerLiteral_guard = _vg(_mg(480), {
 		arm1: _kind_IntegerLiteralArm1_guard,
 		arm2: _kind_IntegerLiteralArm2_guard,
 		arm3: _kind_IntegerLiteralArm3_guard
 	});
-	const _supertype_realLiteral_guard = _vg(_mg(482), {
+	const _supertype_realLiteral_guard = _vg(_mg(481), {
 		arm1: _kind_RealLiteralArm1_guard,
 		arm2: _kind_RealLiteralArm2_guard,
 		arm3: _kind_RealLiteralArm3_guard,
 		arm4: _kind_RealLiteralArm4_guard
 	});
-	const _supertype_escapeSequence_guard = _vg(_mg(484), {
+	const _supertype_escapeSequence_guard = _vg(_mg(483), {
 		arm1: _kind_EscapeSequenceArm1_guard,
 		arm2: _kind_EscapeSequenceArm2_guard,
 		arm3: _kind_EscapeSequenceArm3_guard,
@@ -2359,7 +2363,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm1: _kind_CommentArm1_guard,
 		arm2: _kind_CommentArm2_guard
 	});
-	const _supertype_tuplePatternElement_guard = _vg(_mg(520), {
+	const _supertype_tuplePatternElement_guard = _vg(_mg(519), {
 		name: _kind_TuplePatternElementName_guard,
 		discard: _kind_Discard_guard,
 		tuplePattern: _kind_TuplePattern_guard
@@ -2639,6 +2643,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		subpatternArm: _kind_SubpatternArm_guard,
 		queryBodyGroup: _kind_QueryBodyGroup_guard,
 		anonymousObjectMemberDeclaratorArm: _kind_AnonymousObjectMemberDeclaratorArm_guard,
+		ordering: _kind_Ordering_guard,
 		switchStatementParenthesized: _kind_SwitchStatementParenthesized_guard,
 		switchStatementTuple: _kind_SwitchStatementTuple_guard,
 		typeParameterConstraintDefault: _kind_TypeParameterConstraintDefault_guard,
@@ -2666,7 +2671,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		expression: _mg(399),
 		nonLvalueExpression: _mg(400),
 		lvalueExpression: _mg(401),
-		literal: _mg(479),
+		literal: _mg(478),
 		integerLiteral: _supertype_integerLiteral_guard,
 		realLiteral: _supertype_realLiteral_guard,
 		escapeSequence: _supertype_escapeSequence_guard,

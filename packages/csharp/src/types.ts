@@ -10,7 +10,6 @@ import type {
 	Terminal,
 	NonEmptyArray,
 	BooleanKeyword as BaseBooleanKeyword,
-	Bitflag,
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
@@ -48,7 +47,6 @@ export { TSKindId } from './kinds.js';
 import type * as T from './types.js';
 import type { KindMembers } from './is.js';
 import type { PortableQueryIds } from '@sittir/common/portable';
-import { Operators } from './consts.js';
 
 export type LeafScalarMap = {
 	[TSKindId.TrueKeyword]: true;
@@ -238,8 +236,6 @@ export type LeafStringMap = {
 	[TSKindId.IntoKeyword]: 'into';
 	[TSKindId.LetKeyword]: 'let';
 	[TSKindId.OrderbyKeyword]: 'orderby';
-	[TSKindId.AscendingKeyword]: 'ascending';
-	[TSKindId.DescendingKeyword]: 'descending';
 	[TSKindId.GroupKeyword]: 'group';
 	[TSKindId.ByKeyword]: 'by';
 	[TSKindId.SelectKeyword]: 'select';
@@ -258,6 +254,8 @@ export type LeafStringMap = {
 	[TSKindId.ReftypeKeyword]: '__reftype';
 	[TSKindId.RefvalueKeyword]: '__refvalue';
 	[TSKindId.Squote]: "'";
+	[TSKindId.AscendingKeyword]: 'ascending';
+	[TSKindId.DescendingKeyword]: 'descending';
 	[TSKindId.NotnullKeyword]: 'notnull';
 	[TSKindId.UnmanagedKeyword]: 'unmanaged';
 	[TSKindId.PreprocIfText1]: '#if';
@@ -497,35 +495,35 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[142, 'let_keyword'],
 	[143, 'eq'],
 	[144, 'orderby_keyword'],
-	[145, 'ascending_keyword'],
-	[146, 'descending_keyword'],
-	[147, 'group_keyword'],
-	[148, 'by_keyword'],
-	[149, 'select_keyword'],
-	[150, 'as_keyword'],
-	[151, 'is_keyword'],
-	[152, 'switch_keyword'],
-	[153, 'await_keyword'],
-	[154, 'interpolation_format_clause_text'],
-	[155, 'dash_gt'],
-	[156, 'stackalloc_keyword'],
-	[157, 'dot_dot'],
-	[158, 'with_keyword'],
-	[159, 'sizeof_keyword'],
-	[160, 'typeof_keyword'],
-	[161, '__makeref_keyword'],
-	[162, '__reftype_keyword'],
-	[163, '__refvalue_keyword'],
-	[164, 'null_literal'],
-	[165, 'squote'],
-	[166, 'character_literal_content'],
-	[167, 'dquote'],
-	[168, 'string_literal_content'],
-	[169, 'string_literal_encoding'],
-	[170, 'verbatim_string_literal'],
-	[171, 'raw_string_literal_text'],
-	[172, 'true_keyword'],
-	[173, 'false_keyword'],
+	[145, 'group_keyword'],
+	[146, 'by_keyword'],
+	[147, 'select_keyword'],
+	[148, 'as_keyword'],
+	[149, 'is_keyword'],
+	[150, 'switch_keyword'],
+	[151, 'await_keyword'],
+	[152, 'interpolation_format_clause_text'],
+	[153, 'dash_gt'],
+	[154, 'stackalloc_keyword'],
+	[155, 'dot_dot'],
+	[156, 'with_keyword'],
+	[157, 'sizeof_keyword'],
+	[158, 'typeof_keyword'],
+	[159, '__makeref_keyword'],
+	[160, '__reftype_keyword'],
+	[161, '__refvalue_keyword'],
+	[162, 'null_literal'],
+	[163, 'squote'],
+	[164, 'character_literal_content'],
+	[165, 'dquote'],
+	[166, 'string_literal_content'],
+	[167, 'string_literal_encoding'],
+	[168, 'verbatim_string_literal'],
+	[169, 'raw_string_literal_text'],
+	[170, 'true_keyword'],
+	[171, 'false_keyword'],
+	[172, 'ascending_keyword'],
+	[173, 'descending_keyword'],
 	[174, 'global_keyword'],
 	[175, 'notnull_keyword'],
 	[176, 'unmanaged_keyword'],
@@ -771,136 +769,136 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[415, 'join_into_clause'],
 	[416, 'let_clause'],
 	[417, 'order_by_clause'],
-	[418, '_ordering'],
-	[419, 'where_clause'],
-	[420, '_select_or_group_clause'],
-	[421, 'group_clause'],
-	[422, 'select_clause'],
-	[423, 'conditional_expression'],
-	[424, 'conditional_access_expression'],
-	[425, 'as_expression'],
-	[426, 'is_expression'],
-	[427, 'is_pattern_expression'],
-	[428, 'cast_expression'],
-	[429, 'checked_expression'],
-	[430, 'invocation_expression'],
-	[431, 'switch_expression'],
-	[432, '_switch_expression_body'],
-	[433, 'switch_expression_arm'],
-	[434, 'when_clause'],
-	[435, 'await_expression'],
-	[436, 'throw_expression'],
-	[437, 'element_access_expression'],
-	[438, 'interpolated_string_expression'],
-	[439, '_interpolated_string_content'],
-	[440, '_interpolated_verbatim_string_content'],
-	[441, '_interpolated_raw_string_content'],
-	[442, 'interpolation'],
-	[443, 'interpolation_alignment_clause'],
-	[444, 'interpolation_format_clause'],
-	[445, 'member_access_expression'],
-	[446, 'member_binding_expression'],
-	[447, 'object_creation_expression'],
-	[448, 'parenthesized_expression'],
-	[449, 'parenthesized_lvalue_expression'],
-	[450, 'lambda_expression'],
-	[451, '_lambda_expression_init'],
-	[452, '_lambda_parameters'],
-	[453, 'array_creation_expression'],
-	[454, 'anonymous_method_expression'],
-	[455, 'anonymous_object_creation_expression'],
-	[456, '_anonymous_object_member_declarator'],
-	[457, 'implicit_array_creation_expression'],
-	[458, 'implicit_object_creation_expression'],
-	[459, 'implicit_stackalloc_expression'],
-	[460, 'collection_expression'],
-	[461, 'collection_element'],
-	[462, 'expression_element'],
-	[463, 'spread_element'],
-	[464, 'initializer_expression'],
-	[465, 'declaration_expression'],
-	[466, 'default_expression'],
-	[467, 'with_expression'],
-	[468, '_with_body'],
-	[469, 'with_initializer'],
-	[470, 'sizeof_expression'],
-	[471, 'typeof_expression'],
-	[472, 'makeref_expression'],
-	[473, 'ref_expression'],
-	[474, 'reftype_expression'],
-	[475, 'refvalue_expression'],
-	[476, 'stackalloc_expression'],
-	[477, 'range_expression'],
-	[478, 'tuple_expression'],
-	[479, 'literal'],
-	[480, 'character_literal'],
-	[481, 'integer_literal'],
-	[482, 'real_literal'],
-	[483, 'string_literal'],
-	[484, 'escape_sequence'],
-	[485, 'raw_string_literal'],
-	[486, 'boolean_literal'],
-	[487, 'identifier'],
-	[488, '_reserved_identifier'],
-	[489, 'preproc_if'],
-	[490, 'preproc_else'],
-	[491, 'preproc_elif'],
-	[492, 'preproc_if_in_top_level'],
-	[493, 'preproc_else_in_top_level'],
-	[494, 'preproc_elif_in_top_level'],
-	[495, 'preproc_if_in_expression'],
-	[496, 'preproc_else_in_expression'],
-	[497, 'preproc_elif_in_expression'],
-	[498, 'preproc_if_in_enum_member_declaration'],
-	[499, 'preproc_else_in_enum_member_declaration'],
-	[500, 'preproc_elif_in_enum_member_declaration'],
-	[501, 'preproc_if_in_attribute_list'],
-	[502, 'preproc_else_in_attribute_list'],
-	[503, 'preproc_elif_in_attribute_list'],
-	[504, '_preproc_expression'],
-	[505, 'preproc_parenthesized_expression'],
-	[506, 'unary_expression'],
-	[507, 'preproc_binary_expression'],
-	[508, 'preproc_region'],
-	[509, 'preproc_endregion'],
-	[510, 'preproc_line'],
-	[511, 'preproc_pragma'],
-	[512, 'preproc_nullable'],
-	[513, 'preproc_error'],
-	[514, 'preproc_warning'],
-	[515, 'preproc_define'],
-	[516, 'preproc_undef'],
-	[517, 'attributes'],
-	[518, 'enum_member_declaration_list_elements'],
-	[519, 'tuple_pattern_element_name'],
-	[520, '_tuple_pattern_element'],
-	[521, 'arguments'],
-	[522, 'for_statement_conditions_initializer'],
-	[523, 'switch_section_arm1'],
-	[524, 'switch_section_arm2'],
-	[525, 'list_pattern_elements'],
-	[526, 'recursive_pattern_arm1'],
-	[527, 'recursive_pattern_arm2'],
-	[528, 'recursive_pattern_arm3'],
-	[529, 'recursive_pattern_arm4'],
-	[530, 'subpatterns'],
-	[531, 'switch_expression_arms'],
-	[532, 'anonymous_object_member_declarators'],
-	[533, 'collection_elements'],
-	[534, 'expressions'],
-	[535, 'with_initializers'],
-	[536, 'preproc_line_arm1'],
-	[537, 'preproc_line_arm2'],
-	[538, 'preproc_pragma_arm1'],
-	[539, 'preproc_pragma_arm2'],
-	[540, 'attribute_argument_arm'],
-	[541, 'property_declaration_arm'],
-	[542, 'calling_convention_arm'],
-	[543, 'foreach_statement_initializer_arm'],
-	[544, 'subpattern_arm'],
-	[545, 'query_body_group'],
-	[546, 'anonymous_object_member_declarator_arm'],
-	[547, 'ref_readonly'],
+	[418, 'where_clause'],
+	[419, '_select_or_group_clause'],
+	[420, 'group_clause'],
+	[421, 'select_clause'],
+	[422, 'conditional_expression'],
+	[423, 'conditional_access_expression'],
+	[424, 'as_expression'],
+	[425, 'is_expression'],
+	[426, 'is_pattern_expression'],
+	[427, 'cast_expression'],
+	[428, 'checked_expression'],
+	[429, 'invocation_expression'],
+	[430, 'switch_expression'],
+	[431, '_switch_expression_body'],
+	[432, 'switch_expression_arm'],
+	[433, 'when_clause'],
+	[434, 'await_expression'],
+	[435, 'throw_expression'],
+	[436, 'element_access_expression'],
+	[437, 'interpolated_string_expression'],
+	[438, '_interpolated_string_content'],
+	[439, '_interpolated_verbatim_string_content'],
+	[440, '_interpolated_raw_string_content'],
+	[441, 'interpolation'],
+	[442, 'interpolation_alignment_clause'],
+	[443, 'interpolation_format_clause'],
+	[444, 'member_access_expression'],
+	[445, 'member_binding_expression'],
+	[446, 'object_creation_expression'],
+	[447, 'parenthesized_expression'],
+	[448, 'parenthesized_lvalue_expression'],
+	[449, 'lambda_expression'],
+	[450, '_lambda_expression_init'],
+	[451, '_lambda_parameters'],
+	[452, 'array_creation_expression'],
+	[453, 'anonymous_method_expression'],
+	[454, 'anonymous_object_creation_expression'],
+	[455, '_anonymous_object_member_declarator'],
+	[456, 'implicit_array_creation_expression'],
+	[457, 'implicit_object_creation_expression'],
+	[458, 'implicit_stackalloc_expression'],
+	[459, 'collection_expression'],
+	[460, 'collection_element'],
+	[461, 'expression_element'],
+	[462, 'spread_element'],
+	[463, 'initializer_expression'],
+	[464, 'declaration_expression'],
+	[465, 'default_expression'],
+	[466, 'with_expression'],
+	[467, '_with_body'],
+	[468, 'with_initializer'],
+	[469, 'sizeof_expression'],
+	[470, 'typeof_expression'],
+	[471, 'makeref_expression'],
+	[472, 'ref_expression'],
+	[473, 'reftype_expression'],
+	[474, 'refvalue_expression'],
+	[475, 'stackalloc_expression'],
+	[476, 'range_expression'],
+	[477, 'tuple_expression'],
+	[478, 'literal'],
+	[479, 'character_literal'],
+	[480, 'integer_literal'],
+	[481, 'real_literal'],
+	[482, 'string_literal'],
+	[483, 'escape_sequence'],
+	[484, 'raw_string_literal'],
+	[485, 'boolean_literal'],
+	[486, 'identifier'],
+	[487, '_reserved_identifier'],
+	[488, 'preproc_if'],
+	[489, 'preproc_else'],
+	[490, 'preproc_elif'],
+	[491, 'preproc_if_in_top_level'],
+	[492, 'preproc_else_in_top_level'],
+	[493, 'preproc_elif_in_top_level'],
+	[494, 'preproc_if_in_expression'],
+	[495, 'preproc_else_in_expression'],
+	[496, 'preproc_elif_in_expression'],
+	[497, 'preproc_if_in_enum_member_declaration'],
+	[498, 'preproc_else_in_enum_member_declaration'],
+	[499, 'preproc_elif_in_enum_member_declaration'],
+	[500, 'preproc_if_in_attribute_list'],
+	[501, 'preproc_else_in_attribute_list'],
+	[502, 'preproc_elif_in_attribute_list'],
+	[503, '_preproc_expression'],
+	[504, 'preproc_parenthesized_expression'],
+	[505, 'unary_expression'],
+	[506, 'preproc_binary_expression'],
+	[507, 'preproc_region'],
+	[508, 'preproc_endregion'],
+	[509, 'preproc_line'],
+	[510, 'preproc_pragma'],
+	[511, 'preproc_nullable'],
+	[512, 'preproc_error'],
+	[513, 'preproc_warning'],
+	[514, 'preproc_define'],
+	[515, 'preproc_undef'],
+	[516, 'attributes'],
+	[517, 'enum_member_declaration_list_elements'],
+	[518, 'tuple_pattern_element_name'],
+	[519, '_tuple_pattern_element'],
+	[520, 'arguments'],
+	[521, 'for_statement_conditions_initializer'],
+	[522, 'switch_section_arm1'],
+	[523, 'switch_section_arm2'],
+	[524, 'list_pattern_elements'],
+	[525, 'recursive_pattern_arm1'],
+	[526, 'recursive_pattern_arm2'],
+	[527, 'recursive_pattern_arm3'],
+	[528, 'recursive_pattern_arm4'],
+	[529, 'subpatterns'],
+	[530, 'switch_expression_arms'],
+	[531, 'anonymous_object_member_declarators'],
+	[532, 'collection_elements'],
+	[533, 'expressions'],
+	[534, 'with_initializers'],
+	[535, 'preproc_line_arm1'],
+	[536, 'preproc_line_arm2'],
+	[537, 'preproc_pragma_arm1'],
+	[538, 'preproc_pragma_arm2'],
+	[539, 'attribute_argument_arm'],
+	[540, 'property_declaration_arm'],
+	[541, 'calling_convention_arm'],
+	[542, 'foreach_statement_initializer_arm'],
+	[543, 'subpattern_arm'],
+	[544, 'query_body_group'],
+	[545, 'anonymous_object_member_declarator_arm'],
+	[546, 'ref_readonly'],
+	[547, 'ordering'],
 	[548, 'switch_statement_parenthesized'],
 	[549, 'switch_statement_tuple'],
 	[550, 'type_parameter_constraint_class'],
@@ -1120,35 +1118,35 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[142, 'let'],
 	[143, '='],
 	[144, 'orderby'],
-	[145, 'ascending'],
-	[146, 'descending'],
-	[147, 'group'],
-	[148, 'by'],
-	[149, 'select'],
-	[150, 'as'],
-	[151, 'is'],
-	[152, 'switch'],
-	[153, 'await'],
-	[154, 'interpolation_format_clause_text'],
-	[155, '->'],
-	[156, 'stackalloc'],
-	[157, '..'],
-	[158, 'with'],
-	[159, 'sizeof'],
-	[160, 'typeof'],
-	[161, '__makeref'],
-	[162, '__reftype'],
-	[163, '__refvalue'],
-	[164, 'null_literal'],
-	[165, "'"],
-	[166, 'character_literal_content'],
-	[167, '"'],
-	[168, 'string_literal_content'],
-	[169, 'string_literal_encoding'],
-	[170, 'verbatim_string_literal'],
-	[171, 'raw_string_literal_text'],
-	[172, 'true'],
-	[173, 'false'],
+	[145, 'group'],
+	[146, 'by'],
+	[147, 'select'],
+	[148, 'as'],
+	[149, 'is'],
+	[150, 'switch'],
+	[151, 'await'],
+	[152, 'interpolation_format_clause_text'],
+	[153, '->'],
+	[154, 'stackalloc'],
+	[155, '..'],
+	[156, 'with'],
+	[157, 'sizeof'],
+	[158, 'typeof'],
+	[159, '__makeref'],
+	[160, '__reftype'],
+	[161, '__refvalue'],
+	[162, 'null_literal'],
+	[163, "'"],
+	[164, 'character_literal_content'],
+	[165, '"'],
+	[166, 'string_literal_content'],
+	[167, 'string_literal_encoding'],
+	[168, 'verbatim_string_literal'],
+	[169, 'raw_string_literal_text'],
+	[170, 'true'],
+	[171, 'false'],
+	[172, 'ascending'],
+	[173, 'descending'],
 	[174, 'global'],
 	[175, 'notnull'],
 	[176, 'unmanaged'],
@@ -1394,136 +1392,136 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[415, 'join_into_clause'],
 	[416, 'let_clause'],
 	[417, 'order_by_clause'],
-	[418, '_ordering'],
-	[419, 'where_clause'],
-	[420, '_select_or_group_clause'],
-	[421, 'group_clause'],
-	[422, 'select_clause'],
-	[423, 'conditional_expression'],
-	[424, 'conditional_access_expression'],
-	[425, 'as_expression'],
-	[426, 'is_expression'],
-	[427, 'is_pattern_expression'],
-	[428, 'cast_expression'],
-	[429, 'checked_expression'],
-	[430, 'invocation_expression'],
-	[431, 'switch_expression'],
-	[432, '_switch_expression_body'],
-	[433, 'switch_expression_arm'],
-	[434, 'when_clause'],
-	[435, 'await_expression'],
-	[436, 'throw_expression'],
-	[437, 'element_access_expression'],
-	[438, 'interpolated_string_expression'],
-	[439, '_interpolated_string_content'],
-	[440, '_interpolated_verbatim_string_content'],
-	[441, '_interpolated_raw_string_content'],
-	[442, 'interpolation'],
-	[443, 'interpolation_alignment_clause'],
-	[444, 'interpolation_format_clause'],
-	[445, 'member_access_expression'],
-	[446, 'member_binding_expression'],
-	[447, 'object_creation_expression'],
-	[448, 'parenthesized_expression'],
-	[449, 'parenthesized_lvalue_expression'],
-	[450, 'lambda_expression'],
-	[451, '_lambda_expression_init'],
-	[452, '_lambda_parameters'],
-	[453, 'array_creation_expression'],
-	[454, 'anonymous_method_expression'],
-	[455, 'anonymous_object_creation_expression'],
-	[456, '_anonymous_object_member_declarator'],
-	[457, 'implicit_array_creation_expression'],
-	[458, 'implicit_object_creation_expression'],
-	[459, 'implicit_stackalloc_expression'],
-	[460, 'collection_expression'],
-	[461, 'collection_element'],
-	[462, 'expression_element'],
-	[463, 'spread_element'],
-	[464, 'initializer_expression'],
-	[465, 'declaration_expression'],
-	[466, 'default_expression'],
-	[467, 'with_expression'],
-	[468, '_with_body'],
-	[469, 'with_initializer'],
-	[470, 'sizeof_expression'],
-	[471, 'typeof_expression'],
-	[472, 'makeref_expression'],
-	[473, 'ref_expression'],
-	[474, 'reftype_expression'],
-	[475, 'refvalue_expression'],
-	[476, 'stackalloc_expression'],
-	[477, 'range_expression'],
-	[478, 'tuple_expression'],
-	[479, 'literal'],
-	[480, 'character_literal'],
-	[481, 'integer_literal'],
-	[482, 'real_literal'],
-	[483, 'string_literal'],
-	[484, 'escape_sequence'],
-	[485, 'raw_string_literal'],
-	[486, 'boolean_literal'],
-	[487, 'identifier'],
-	[488, '_reserved_identifier'],
-	[489, 'preproc_if'],
-	[490, 'preproc_else'],
-	[491, 'preproc_elif'],
-	[492, 'preproc_if_in_top_level'],
-	[493, 'preproc_else_in_top_level'],
-	[494, 'preproc_elif_in_top_level'],
-	[495, 'preproc_if_in_expression'],
-	[496, 'preproc_else_in_expression'],
-	[497, 'preproc_elif_in_expression'],
-	[498, 'preproc_if_in_enum_member_declaration'],
-	[499, 'preproc_else_in_enum_member_declaration'],
-	[500, 'preproc_elif_in_enum_member_declaration'],
-	[501, 'preproc_if_in_attribute_list'],
-	[502, 'preproc_else_in_attribute_list'],
-	[503, 'preproc_elif_in_attribute_list'],
-	[504, '_preproc_expression'],
-	[505, 'preproc_parenthesized_expression'],
-	[506, 'unary_expression'],
-	[507, 'preproc_binary_expression'],
-	[508, 'preproc_region'],
-	[509, 'preproc_endregion'],
-	[510, 'preproc_line'],
-	[511, 'preproc_pragma'],
-	[512, 'preproc_nullable'],
-	[513, 'preproc_error'],
-	[514, 'preproc_warning'],
-	[515, 'preproc_define'],
-	[516, 'preproc_undef'],
-	[517, 'attributes'],
-	[518, 'enum_member_declaration_list_elements'],
-	[519, 'tuple_pattern_element_name'],
-	[520, '_tuple_pattern_element'],
-	[521, 'arguments'],
-	[522, 'for_statement_conditions_initializer'],
-	[523, 'switch_section_arm1'],
-	[524, 'switch_section_arm2'],
-	[525, 'list_pattern_elements'],
-	[526, 'recursive_pattern_arm1'],
-	[527, 'recursive_pattern_arm2'],
-	[528, 'recursive_pattern_arm3'],
-	[529, 'recursive_pattern_arm4'],
-	[530, 'subpatterns'],
-	[531, 'switch_expression_arms'],
-	[532, 'anonymous_object_member_declarators'],
-	[533, 'collection_elements'],
-	[534, 'expressions'],
-	[535, 'with_initializers'],
-	[536, 'preproc_line_arm1'],
-	[537, 'preproc_line_arm2'],
-	[538, 'preproc_pragma_arm1'],
-	[539, 'preproc_pragma_arm2'],
-	[540, 'attribute_argument_arm'],
-	[541, 'property_declaration_arm'],
-	[542, 'calling_convention_arm'],
-	[543, 'foreach_statement_initializer_arm'],
-	[544, 'subpattern_arm'],
-	[545, 'query_body_group'],
-	[546, 'anonymous_object_member_declarator_arm'],
-	[547, 'ref_readonly'],
+	[418, 'where_clause'],
+	[419, '_select_or_group_clause'],
+	[420, 'group_clause'],
+	[421, 'select_clause'],
+	[422, 'conditional_expression'],
+	[423, 'conditional_access_expression'],
+	[424, 'as_expression'],
+	[425, 'is_expression'],
+	[426, 'is_pattern_expression'],
+	[427, 'cast_expression'],
+	[428, 'checked_expression'],
+	[429, 'invocation_expression'],
+	[430, 'switch_expression'],
+	[431, '_switch_expression_body'],
+	[432, 'switch_expression_arm'],
+	[433, 'when_clause'],
+	[434, 'await_expression'],
+	[435, 'throw_expression'],
+	[436, 'element_access_expression'],
+	[437, 'interpolated_string_expression'],
+	[438, '_interpolated_string_content'],
+	[439, '_interpolated_verbatim_string_content'],
+	[440, '_interpolated_raw_string_content'],
+	[441, 'interpolation'],
+	[442, 'interpolation_alignment_clause'],
+	[443, 'interpolation_format_clause'],
+	[444, 'member_access_expression'],
+	[445, 'member_binding_expression'],
+	[446, 'object_creation_expression'],
+	[447, 'parenthesized_expression'],
+	[448, 'parenthesized_lvalue_expression'],
+	[449, 'lambda_expression'],
+	[450, '_lambda_expression_init'],
+	[451, '_lambda_parameters'],
+	[452, 'array_creation_expression'],
+	[453, 'anonymous_method_expression'],
+	[454, 'anonymous_object_creation_expression'],
+	[455, '_anonymous_object_member_declarator'],
+	[456, 'implicit_array_creation_expression'],
+	[457, 'implicit_object_creation_expression'],
+	[458, 'implicit_stackalloc_expression'],
+	[459, 'collection_expression'],
+	[460, 'collection_element'],
+	[461, 'expression_element'],
+	[462, 'spread_element'],
+	[463, 'initializer_expression'],
+	[464, 'declaration_expression'],
+	[465, 'default_expression'],
+	[466, 'with_expression'],
+	[467, '_with_body'],
+	[468, 'with_initializer'],
+	[469, 'sizeof_expression'],
+	[470, 'typeof_expression'],
+	[471, 'makeref_expression'],
+	[472, 'ref_expression'],
+	[473, 'reftype_expression'],
+	[474, 'refvalue_expression'],
+	[475, 'stackalloc_expression'],
+	[476, 'range_expression'],
+	[477, 'tuple_expression'],
+	[478, 'literal'],
+	[479, 'character_literal'],
+	[480, 'integer_literal'],
+	[481, 'real_literal'],
+	[482, 'string_literal'],
+	[483, 'escape_sequence'],
+	[484, 'raw_string_literal'],
+	[485, 'boolean_literal'],
+	[486, 'identifier'],
+	[487, '_reserved_identifier'],
+	[488, 'preproc_if'],
+	[489, 'preproc_else'],
+	[490, 'preproc_elif'],
+	[491, 'preproc_if_in_top_level'],
+	[492, 'preproc_else_in_top_level'],
+	[493, 'preproc_elif_in_top_level'],
+	[494, 'preproc_if_in_expression'],
+	[495, 'preproc_else_in_expression'],
+	[496, 'preproc_elif_in_expression'],
+	[497, 'preproc_if_in_enum_member_declaration'],
+	[498, 'preproc_else_in_enum_member_declaration'],
+	[499, 'preproc_elif_in_enum_member_declaration'],
+	[500, 'preproc_if_in_attribute_list'],
+	[501, 'preproc_else_in_attribute_list'],
+	[502, 'preproc_elif_in_attribute_list'],
+	[503, '_preproc_expression'],
+	[504, 'preproc_parenthesized_expression'],
+	[505, 'unary_expression'],
+	[506, 'preproc_binary_expression'],
+	[507, 'preproc_region'],
+	[508, 'preproc_endregion'],
+	[509, 'preproc_line'],
+	[510, 'preproc_pragma'],
+	[511, 'preproc_nullable'],
+	[512, 'preproc_error'],
+	[513, 'preproc_warning'],
+	[514, 'preproc_define'],
+	[515, 'preproc_undef'],
+	[516, 'attributes'],
+	[517, 'enum_member_declaration_list_elements'],
+	[518, 'tuple_pattern_element_name'],
+	[519, '_tuple_pattern_element'],
+	[520, 'arguments'],
+	[521, 'for_statement_conditions_initializer'],
+	[522, 'switch_section_arm1'],
+	[523, 'switch_section_arm2'],
+	[524, 'list_pattern_elements'],
+	[525, 'recursive_pattern_arm1'],
+	[526, 'recursive_pattern_arm2'],
+	[527, 'recursive_pattern_arm3'],
+	[528, 'recursive_pattern_arm4'],
+	[529, 'subpatterns'],
+	[530, 'switch_expression_arms'],
+	[531, 'anonymous_object_member_declarators'],
+	[532, 'collection_elements'],
+	[533, 'expressions'],
+	[534, 'with_initializers'],
+	[535, 'preproc_line_arm1'],
+	[536, 'preproc_line_arm2'],
+	[537, 'preproc_pragma_arm1'],
+	[538, 'preproc_pragma_arm2'],
+	[539, 'attribute_argument_arm'],
+	[540, 'property_declaration_arm'],
+	[541, 'calling_convention_arm'],
+	[542, 'foreach_statement_initializer_arm'],
+	[543, 'subpattern_arm'],
+	[544, 'query_body_group'],
+	[545, 'anonymous_object_member_declarator_arm'],
+	[546, 'ref_readonly'],
+	[547, 'ordering'],
 	[548, 'switch_statement_parenthesized'],
 	[549, 'switch_statement_tuple'],
 	[550, 'type_parameter_constraint_class'],
@@ -1890,10 +1888,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Eq;
 		case 'orderby_keyword':
 			return TSKindId.OrderbyKeyword;
-		case 'ascending_keyword':
-			return TSKindId.AscendingKeyword;
-		case 'descending_keyword':
-			return TSKindId.DescendingKeyword;
 		case 'group_keyword':
 			return TSKindId.GroupKeyword;
 		case 'by_keyword':
@@ -1948,6 +1942,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TrueKeyword;
 		case 'false_keyword':
 			return TSKindId.FalseKeyword;
+		case 'ascending_keyword':
+			return TSKindId.AscendingKeyword;
+		case 'descending_keyword':
+			return TSKindId.DescendingKeyword;
 		case 'global_keyword':
 			return TSKindId.GlobalKeyword;
 		case 'notnull_keyword':
@@ -2436,8 +2434,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LetClause;
 		case 'order_by_clause':
 			return TSKindId.OrderByClause;
-		case '_ordering':
-			return TSKindId._Ordering;
 		case 'where_clause':
 			return TSKindId.WhereClause;
 		case '_select_or_group_clause':
@@ -2696,6 +2692,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.AnonymousObjectMemberDeclaratorArm;
 		case 'ref_readonly':
 			return TSKindId.RefReadonly;
+		case 'ordering':
+			return TSKindId.Ordering;
 		case 'switch_statement_parenthesized':
 			return TSKindId.SwitchStatementParenthesized;
 		case 'switch_statement_tuple':
@@ -3120,10 +3118,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Eq;
 		case 'orderby':
 			return TSKindId.OrderbyKeyword;
-		case 'ascending':
-			return TSKindId.AscendingKeyword;
-		case 'descending':
-			return TSKindId.DescendingKeyword;
 		case 'group':
 			return TSKindId.GroupKeyword;
 		case 'by':
@@ -3164,6 +3158,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TrueKeyword;
 		case 'false':
 			return TSKindId.FalseKeyword;
+		case 'ascending':
+			return TSKindId.AscendingKeyword;
+		case 'descending':
+			return TSKindId.DescendingKeyword;
 		case 'global':
 			return TSKindId.GlobalKeyword;
 		case 'notnull':
@@ -12325,40 +12323,14 @@ export interface LetClause {
 
 export interface OrderByClause {
 	readonly $type: TSKindId.OrderByClause;
-	readonly _ordering: readonly Expression[];
-	readonly _operator?: number;
+	readonly _orderings: NonEmptyArray<Ordering>;
 	readonly __slotNames__?: {
-		readonly _ordering: 'orderings';
-		readonly _operator: 'operators';
-	};
-	readonly __inputHints__?: {
-		readonly ordering?: readonly (
-			| KindEnum<
-					'base' | 'null' | 'true' | 'false' | 'this',
-					| TSKindId.BaseKeyword
-					| TSKindId.NullLiteral
-					| TSKindId.TrueKeyword
-					| TSKindId.FalseKeyword
-					| TSKindId.ThisKeyword
-			  >
-			| Expression
-		)[];
-		readonly operator?: Bitflag<Operators, number>;
+		readonly _orderings: 'orderings';
 	};
 	readonly __slotHints__?: {
-		readonly orderings: SlotHint<
-			Extract<NonNullable<NonNullable<T.OrderByClause.Config>['orderings']>, readonly unknown[]>[number][],
-			true,
-			true
-		>;
-		readonly operators: SlotHint<
-			Extract<NonNullable<NonNullable<T.OrderByClause.Config>['operators']>, readonly unknown[]>[number][],
-			true,
-			true
-		>;
+		readonly orderings: SlotHint<NonEmptyArray<T.Ordering>, false, true>;
 	};
-	readonly orderings: () => readonly Expression[];
-	readonly operators: () => number | undefined;
+	readonly orderings: () => NonEmptyArray<Ordering>;
 }
 
 export interface WhereClause {
@@ -17012,6 +16984,34 @@ export interface AnonymousObjectMemberDeclaratorArm {
 	readonly value: () => Expression;
 }
 
+export interface Ordering {
+	readonly $type: TSKindId.Ordering;
+	readonly _expression: Expression;
+	readonly _direction?: TSKindId.AscendingKeyword | TSKindId.DescendingKeyword;
+	readonly __slotNames__?: {
+		readonly _expression: 'expression';
+		readonly _direction: 'direction';
+	};
+	readonly __inputHints__?: {
+		readonly expression:
+			| KindEnum<
+					'base' | 'null' | 'true' | 'false' | 'this',
+					| TSKindId.BaseKeyword
+					| TSKindId.NullLiteral
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.ThisKeyword
+			  >
+			| Expression;
+		readonly direction?: KindEnum<'ascending' | 'descending', TSKindId.AscendingKeyword | TSKindId.DescendingKeyword>;
+	};
+	readonly __slotHints__?: {
+		readonly expression: SlotHint<NonNullable<ConfigOf<T.Ordering>>['expression']>;
+	};
+	readonly expression: () => Expression;
+	readonly direction: () => TSKindId.AscendingKeyword | TSKindId.DescendingKeyword | undefined;
+}
+
 export interface SwitchStatementParenthesized {
 	readonly $type: TSKindId.SwitchStatementParenthesized;
 	readonly _value: Expression;
@@ -18586,6 +18586,7 @@ export interface OptionsHintMap {
 	subpatternArm: SubpatternArm.Hints;
 	queryBodyGroup: QueryBodyGroup.Hints;
 	anonymousObjectMemberDeclaratorArm: AnonymousObjectMemberDeclaratorArm.Hints;
+	ordering: Ordering.Hints;
 	switchStatementParenthesized: SwitchStatementParenthesized.Hints;
 	switchStatementTuple: SwitchStatementTuple.Hints;
 	enumDeclarationWithBody: EnumDeclarationWithBody.Hints;
@@ -20404,60 +20405,15 @@ export namespace OrderByClause {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
-			readonly ascendingKeyword?: { readonly before?: LayoutKindId };
 			readonly before?: LayoutKindId;
-			readonly descendingKeyword?: { readonly before?: LayoutKindId };
-			readonly operator?: { readonly separator?: WhitespaceKindId };
 			readonly orderbyKeyword?: { readonly after?: LayoutKindId };
-			readonly ordering?: {
-				readonly anonymousMethodExpression?: { readonly after?: LayoutKindId };
-				readonly anonymousObjectCreationExpression?: { readonly after?: LayoutKindId };
-				readonly arrayCreationExpression?: { readonly after?: LayoutKindId };
-				readonly asExpression?: { readonly after?: LayoutKindId };
-				readonly assignmentExpression?: { readonly after?: LayoutKindId };
-				readonly awaitExpression?: { readonly after?: LayoutKindId };
-				readonly binaryExpression?: { readonly after?: LayoutKindId };
-				readonly castExpression?: { readonly after?: LayoutKindId };
-				readonly characterLiteral?: { readonly after?: LayoutKindId };
-				readonly checkedExpression?: { readonly after?: LayoutKindId };
-				readonly collectionExpression?: { readonly after?: LayoutKindId };
-				readonly conditionalAccessExpression?: { readonly after?: LayoutKindId };
-				readonly conditionalExpression?: { readonly after?: LayoutKindId };
-				readonly defaultExpression?: { readonly after?: LayoutKindId };
-				readonly elementAccessExpression?: { readonly after?: LayoutKindId };
-				readonly genericName?: { readonly after?: LayoutKindId };
-				readonly implicitArrayCreationExpression?: { readonly after?: LayoutKindId };
-				readonly implicitObjectCreationExpression?: { readonly after?: LayoutKindId };
-				readonly implicitStackallocExpression?: { readonly after?: LayoutKindId };
-				readonly initializerExpression?: { readonly after?: LayoutKindId };
-				readonly invocationExpression?: { readonly after?: LayoutKindId };
-				readonly isExpression?: { readonly after?: LayoutKindId };
-				readonly isPatternExpression?: { readonly after?: LayoutKindId };
-				readonly lambdaExpression?: { readonly after?: LayoutKindId };
-				readonly makerefExpression?: { readonly after?: LayoutKindId };
-				readonly memberAccessExpression?: { readonly after?: LayoutKindId };
-				readonly nullLiteral?: { readonly after?: LayoutKindId };
-				readonly objectCreationExpression?: { readonly after?: LayoutKindId };
-				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
-				readonly parenthesizedLvalueExpression?: { readonly after?: LayoutKindId };
-				readonly pointerIndirectionExpression?: { readonly after?: LayoutKindId };
-				readonly postfixUnaryExpression?: { readonly after?: LayoutKindId };
-				readonly prefixUnaryExpression?: { readonly after?: LayoutKindId };
-				readonly preprocIfInExpression?: { readonly after?: LayoutKindId };
-				readonly queryExpression?: { readonly after?: LayoutKindId };
-				readonly rangeExpression?: { readonly after?: LayoutKindId };
-				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
-				readonly refExpression?: { readonly after?: LayoutKindId };
-				readonly reftypeExpression?: { readonly after?: LayoutKindId };
-				readonly refvalueExpression?: { readonly after?: LayoutKindId };
-				readonly separator?: WhitespaceKindId;
-				readonly sizeofExpression?: { readonly after?: LayoutKindId };
-				readonly stackallocExpression?: { readonly after?: LayoutKindId };
-				readonly switchExpression?: { readonly after?: LayoutKindId };
-				readonly throwExpression?: { readonly after?: LayoutKindId };
-				readonly tupleExpression?: { readonly after?: LayoutKindId };
-				readonly typeofExpression?: { readonly after?: LayoutKindId };
-				readonly withExpression?: { readonly after?: LayoutKindId };
+			readonly orderings?: {
+				readonly end?: LayoutKindId;
+				readonly ordering?: { readonly after?: LayoutKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly start?: LayoutKindId;
 			};
 		};
 	}
@@ -21938,6 +21894,17 @@ export namespace AnonymousObjectMemberDeclaratorArm {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace Ordering {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly ascendingKeyword?: { readonly before?: LayoutKindId };
+			readonly before?: LayoutKindId;
+			readonly descendingKeyword?: { readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -23852,7 +23819,7 @@ export interface OrderByClauseNs extends NodeNs<
 	never,
 	TSKindId.OrderByClause,
 	OrderByClause.Parsed,
-	EmptyOrderByClause
+	never
 > {
 	readonly BuildArgs: OrderByClause.BuildArgs;
 	readonly LooseArgs: OrderByClause.LooseArgs;
@@ -25510,6 +25477,20 @@ export interface AnonymousObjectMemberDeclaratorArmNs extends NodeNs<
 	readonly BuildArgs: AnonymousObjectMemberDeclaratorArm.BuildArgs;
 	readonly LooseArgs: AnonymousObjectMemberDeclaratorArm.LooseArgs;
 }
+export interface OrderingNs extends NodeNs<
+	Ordering,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	Ordering.Bound,
+	never,
+	TSKindId.Ordering,
+	Ordering.Parsed,
+	never
+> {
+	readonly BuildArgs: Ordering.BuildArgs;
+	readonly LooseArgs: Ordering.LooseArgs;
+}
 export interface SwitchStatementParenthesizedNs extends NodeNs<
 	SwitchStatementParenthesized,
 	LeafScalarMap,
@@ -26125,6 +26106,7 @@ export interface NamespaceMap {
 	[TSKindId.SubpatternArm]: SubpatternArmNs;
 	[TSKindId.QueryBodyGroup]: QueryBodyGroupNs;
 	[TSKindId.AnonymousObjectMemberDeclaratorArm]: AnonymousObjectMemberDeclaratorArmNs;
+	[TSKindId.Ordering]: OrderingNs;
 	[TSKindId.SwitchStatementParenthesized]: SwitchStatementParenthesizedNs;
 	[TSKindId.SwitchStatementTuple]: SwitchStatementTupleNs;
 	[TSKindId.TypeParameterConstraintDefault]: TypeParameterConstraintDefaultNs;
@@ -26431,6 +26413,7 @@ export interface BoundByKindId {
 	[TSKindId.SubpatternArm]: SubpatternArm.Bound;
 	[TSKindId.QueryBodyGroup]: QueryBodyGroup.Bound;
 	[TSKindId.AnonymousObjectMemberDeclaratorArm]: AnonymousObjectMemberDeclaratorArm.Bound;
+	[TSKindId.Ordering]: Ordering.Bound;
 	[TSKindId.SwitchStatementParenthesized]: SwitchStatementParenthesized.Bound;
 	[TSKindId.SwitchStatementTuple]: SwitchStatementTuple.Bound;
 	[TSKindId.TypeParameterConstraintDefault]: TypeParameterConstraintDefault.Bound;
@@ -26714,6 +26697,7 @@ export interface ParsedByKindId {
 	[TSKindId.SubpatternArm]: SubpatternArm.Parsed;
 	[TSKindId.QueryBodyGroup]: QueryBodyGroup.Parsed;
 	[TSKindId.AnonymousObjectMemberDeclaratorArm]: AnonymousObjectMemberDeclaratorArm.Parsed;
+	[TSKindId.Ordering]: Ordering.Parsed;
 	[TSKindId.SwitchStatementParenthesized]: SwitchStatementParenthesized.Parsed;
 	[TSKindId.SwitchStatementTuple]: SwitchStatementTuple.Parsed;
 	[TSKindId.TypeParameterConstraintDefault]: TypeParameterConstraintDefault.Parsed;
@@ -26935,8 +26919,6 @@ export type FixedTextKindId =
 	| TSKindId.IntoKeyword
 	| TSKindId.LetKeyword
 	| TSKindId.OrderbyKeyword
-	| TSKindId.AscendingKeyword
-	| TSKindId.DescendingKeyword
 	| TSKindId.GroupKeyword
 	| TSKindId.ByKeyword
 	| TSKindId.SelectKeyword
@@ -26955,6 +26937,8 @@ export type FixedTextKindId =
 	| TSKindId.ReftypeKeyword
 	| TSKindId.RefvalueKeyword
 	| TSKindId.Squote
+	| TSKindId.AscendingKeyword
+	| TSKindId.DescendingKeyword
 	| TSKindId.NotnullKeyword
 	| TSKindId.UnmanagedKeyword
 	| TSKindId.PreprocIfText1
@@ -27224,6 +27208,7 @@ export interface TypeKeyOf {
 	[TSKindId.SubpatternArm]: 'subpatternArm';
 	[TSKindId.QueryBodyGroup]: 'queryBodyGroup';
 	[TSKindId.AnonymousObjectMemberDeclaratorArm]: 'anonymousObjectMemberDeclaratorArm';
+	[TSKindId.Ordering]: 'ordering';
 	[TSKindId.SwitchStatementParenthesized]: 'switchStatementParenthesized';
 	[TSKindId.SwitchStatementTuple]: 'switchStatementTuple';
 	[TSKindId.TypeParameterConstraintDefault]: 'typeParameterConstraintDefault';
@@ -30727,9 +30712,22 @@ export namespace OrderByClause {
 	}
 	export type Loose = LooseFor<TSKindId.OrderByClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OrderByClause>;
-	export type BuildArgs = [config?: Partial<ConfigOf<T.OrderByClause>>];
-	export type LooseArgs = [config?: T.OrderByClause.Loose];
+	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Ordering>>];
+	export type LooseArgs =
+		| [
+				...children: NonEmptyArray<
+					T.OrderByClause.Loose | LooseValue<T.Ordering, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				>
+		  ]
+		| [children: Readonly<NonEmptyArray<LooseValue<T.Ordering, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.OrderByClause;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'orderings'>,
+			KeyRefusesEmpty<LooseConfig, 'orderings'>,
+			SetterRefusesEmpty<Bound, 'orderings'>
+		]
+	>;
 }
 export namespace WhereClause {
 	export type Config = ConfigFor<TSKindId.WhereClause>;
@@ -34351,6 +34349,73 @@ export namespace AnonymousObjectMemberDeclaratorArm {
 	export type LooseArgs = [config: T.AnonymousObjectMemberDeclaratorArm.Loose];
 	export type Kind = TSKindId.AnonymousObjectMemberDeclaratorArm;
 }
+export namespace Ordering {
+	export namespace Ascending {
+		export type Config = Omit<ConfigFor<TSKindId.Ordering>, 'direction'>;
+		export interface Bound extends BoundOf<T.Ordering, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.Ordering['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.Ordering, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.Ordering['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.Ordering['$type']>;
+		}
+		export type BuildArgs = [config: T.Ordering.Ascending.Config];
+		export type LooseArgs = [config: T.Ordering.Ascending.Config];
+	}
+	export namespace Descending {
+		export type Config = Omit<ConfigFor<TSKindId.Ordering>, 'direction'>;
+		export interface Bound extends BoundOf<T.Ordering, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.Ordering['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.Ordering, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.Ordering['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.Ordering['$type']>;
+		}
+		export type BuildArgs = [config: T.Ordering.Descending.Config];
+		export type LooseArgs = [config: T.Ordering.Descending.Config];
+	}
+	/** No default form: every form field is required. */
+	export type Config = ConfigFor<TSKindId.Ordering>;
+	export interface Bound extends BoundOf<T.Ordering, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.Ordering['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.Ordering, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.Ordering['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.Ordering['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.Ordering>;
+	export type LooseConfig = LooseConfigFor<TSKindId.Ordering>;
+	export type BuildArgs = [config: ConfigOf<T.Ordering>];
+	export type LooseArgs = [config: T.Ordering.Loose];
+	export type Kind = TSKindId.Ordering;
+}
 export namespace SwitchStatementParenthesized {
 	export type Config = ConfigFor<TSKindId.SwitchStatementParenthesized>;
 	export interface Bound extends BoundOf<T.SwitchStatementParenthesized, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -35473,9 +35538,6 @@ export interface CsharpTypeMap extends GrammarTypeMap {
 				readonly node: ParenthesizedVariableDesignation.Parsed;
 				readonly empty: EmptyParenthesizedVariableDesignation.Parsed;
 		  }
-		| { readonly node: OrderByClause; readonly empty: EmptyOrderByClause }
-		| { readonly node: OrderByClause.Bound; readonly empty: EmptyOrderByClause }
-		| { readonly node: OrderByClause.Parsed; readonly empty: EmptyOrderByClause.Parsed }
 		| { readonly node: AnonymousObjectCreationExpression; readonly empty: EmptyAnonymousObjectCreationExpression }
 		| { readonly node: AnonymousObjectCreationExpression.Bound; readonly empty: EmptyAnonymousObjectCreationExpression }
 		| {
@@ -35670,14 +35732,6 @@ export namespace EmptyParenthesizedVariableDesignation {
 	export type Parsed = ParenthesizedVariableDesignation.Parsed & {
 		readonly $trivia: TriviaSetterOf<EmptyParenthesizedVariableDesignation.Parsed> &
 			InnerTrivia<EmptyParenthesizedVariableDesignation.Parsed>;
-	};
-}
-export interface EmptyOrderByClause extends OrderByClause.Bound {
-	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
-}
-export namespace EmptyOrderByClause {
-	export type Parsed = OrderByClause.Parsed & {
-		readonly $trivia: TriviaSetterOf<EmptyOrderByClause.Parsed> & InnerTrivia<EmptyOrderByClause.Parsed>;
 	};
 }
 export interface EmptyAnonymousObjectCreationExpression extends AnonymousObjectCreationExpression.Bound {

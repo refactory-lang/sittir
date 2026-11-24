@@ -269,6 +269,7 @@ export {
 	coerceToQueryBodyGroup as buildQueryBodyGroup,
 	coerceToAnonymousObjectMemberDeclaratorArm as buildAnonymousObjectMemberDeclaratorArm,
 	coerceToRefReadonly as buildRefReadonly,
+	coerceToOrdering as buildOrdering,
 	coerceToSwitchStatementParenthesized as buildSwitchStatementParenthesized,
 	coerceToSwitchStatementTuple as buildSwitchStatementTuple,
 	coerceToTypeParameterConstraintClass as buildTypeParameterConstraintClass,

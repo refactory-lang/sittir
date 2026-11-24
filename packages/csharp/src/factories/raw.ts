@@ -284,6 +284,9 @@ export const buildAnonymousObjectMemberDeclaratorArm = dispatched(
 	() => backend().buildAnonymousObjectMemberDeclaratorArm
 );
 export const buildRefReadonly = O.buildRefReadonly;
+export const buildOrdering = dispatched(() => backend().buildOrdering);
+export const buildOrderingAscending = dispatched(() => backend().buildOrderingAscending);
+export const buildOrderingDescending = dispatched(() => backend().buildOrderingDescending);
 export const buildSwitchStatementParenthesized = dispatched(() => backend().buildSwitchStatementParenthesized);
 export const buildSwitchStatementTuple = dispatched(() => backend().buildSwitchStatementTuple);
 export const buildTypeParameterConstraintClass = dispatched(() => backend().buildTypeParameterConstraintClass);
@@ -587,6 +590,7 @@ export const _factoryMap = {
 	query_body_group: buildQueryBodyGroup,
 	anonymous_object_member_declarator_arm: buildAnonymousObjectMemberDeclaratorArm,
 	ref_readonly: buildRefReadonly,
+	ordering: buildOrdering,
 	switch_statement_parenthesized: buildSwitchStatementParenthesized,
 	switch_statement_tuple: buildSwitchStatementTuple,
 	type_parameter_constraint_class: buildTypeParameterConstraintClass,

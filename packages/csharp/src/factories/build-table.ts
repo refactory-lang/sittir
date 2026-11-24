@@ -10,6 +10,10 @@ import type * as StrictTable from './strict.js';
 export type AnyTable = typeof LooseTable | typeof StrictTable;
 
 export interface Routes<Table extends AnyTable> {
+	readonly ordering: Table['buildOrdering'] & {
+		readonly ascending: typeof F.buildOrderingAscending;
+		readonly descending: typeof F.buildOrderingDescending;
+	};
 	readonly checkedStatement$checked: <const V extends OmitEach<ArgsOf<Table['buildCheckedStatement']>[0], 'operator'>>(
 		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildCheckedStatement']>[0], 'operator'>>,
 		options?: OptionsArg<Table['buildCheckedStatement']>
@@ -5970,6 +5974,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly expressions: Table['buildExpressions'];
 	readonly withInitializers: Table['buildWithInitializers'];
 	readonly anonymousObjectMemberDeclaratorArm: Table['buildAnonymousObjectMemberDeclaratorArm'];
+	readonly ordering: Routes<Table>['ordering'];
 	readonly switchStatementParenthesized: Table['buildSwitchStatementParenthesized'];
 	readonly switchStatementTuple: Table['buildSwitchStatementTuple'];
 	readonly typeParameterConstraintDefault: Routes<Table>['typeParameterConstraintDefault'];
@@ -6118,6 +6123,12 @@ export interface Ir<Table extends AnyTable> {
 
 export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const $at = <K extends keyof Table>(key: K): Table[K] => $table[key];
+	const ordering: Routes<Table>['ordering'] = Object.freeze(
+		Object.assign(delegate($at('buildOrdering')), {
+			ascending: F.buildOrderingAscending,
+			descending: F.buildOrderingDescending
+		} as const)
+	);
 	const checkedStatement$checked: Routes<Table>['checkedStatement$checked'] = K.checkedStatement$checked(
 		$at('buildCheckedStatement'),
 		TSKindId.CheckedKeyword
@@ -9162,6 +9173,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		expressions: $at('buildExpressions'),
 		withInitializers: $at('buildWithInitializers'),
 		anonymousObjectMemberDeclaratorArm: $at('buildAnonymousObjectMemberDeclaratorArm'),
+		ordering: ordering,
 		switchStatementParenthesized: $at('buildSwitchStatementParenthesized'),
 		switchStatementTuple: $at('buildSwitchStatementTuple'),
 		typeParameterConstraintDefault: typeParameterConstraintDefault,

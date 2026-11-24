@@ -6,6 +6,7 @@ import { TSKindId } from '../kinds.js';
 import type {
 	Admit,
 	ListOptions,
+	ConfigOf,
 	NonEmptyArray,
 	NumericConfig,
 	NumericLiteral,
@@ -60,7 +61,6 @@ import {
 	isNodeOfKind,
 	admitHoles,
 	admitSplicedEnvelope,
-	coerceBitflagStorage,
 	kindIdStorage,
 	listStorage,
 	numberText,
@@ -11055,24 +11055,20 @@ function buildLetClause$with$expression(this: Received<Held>, ...args: unknown[]
 	return buildLetClause$with(receiverOf(this, '$with.expression'), 'expression', args);
 }
 
-export function buildOrderByClause(): T.EmptyOrderByClause;
-export function buildOrderByClause<OrderingsSlot extends T.OrderByClause.Config['orderings']>(
-	config?: RefusingConfig<Partial<T.OrderByClause.Config>, { orderings: OrderingsSlot }>
+export function buildOrderByClause<A extends NonEmptyArray<Admit<T.Ordering>>>(
+	...children: A & RefuseUndeclared<A>
 ): T.OrderByClause.Bound;
-export function buildOrderByClause(config: Partial<T.OrderByClause.Config> = {}): T.OrderByClause.Bound {
-	currentHandle()?.admit(TSKindId.OrderByClause, [config]);
-	const _ordering = listStorage<NonNullable<T.OrderByClause['_ordering']>>(config.orderings ?? [], kindIdStorage);
-	const _operator = coerceBitflagStorage(config.operators ?? [], ['ascending', 'descending']);
+export function buildOrderByClause(...children: NonEmptyArray<Admit<T.Ordering>>): T.OrderByClause.Bound {
+	currentHandle()?.admit(TSKindId.OrderByClause, children);
+	const _orderings = children;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'order_by_clause', { orderings: _ordering, operators: _operator });
+	if (handle !== undefined) admitChildren(handle, 'order_by_clause', { orderings: _orderings });
 	const node = {
 		$type: TSKindId.OrderByClause as const,
-		_ordering,
-		_operator,
+		_orderings,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		orderings: () => hydrateStoredSlots(node, '_ordering'),
-		operators: () => _operator,
+		orderings: () => hydrateStoredSlots(node, '_orderings'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -11080,48 +11076,25 @@ export function buildOrderByClause(config: Partial<T.OrderByClause.Config> = {})
 		$engine: handle && (() => handle.current),
 		[SOURCE]: Source.Factory,
 		[HANDLE]: handle,
-		[INPUT]: config,
 		[Symbol.dispose]: releaseNothing
 	};
-	node.$with = {
-		orderings: buildOrderByClause$with$orderings,
-		operators: buildOrderByClause$with$operators,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, inner: objectInner, [RECEIVER]: node };
+	node.$with = { orderings: buildOrderByClause$with$orderings, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
 	return node as unknown as T.OrderByClause.Bound;
 }
 
 function buildOrderByClause$with(node: Held, setter: string, args: readonly unknown[]): unknown {
 	const handle = node[HANDLE];
-	const config = node[INPUT] as T.OrderByClause.Config;
 	switch (setter) {
 		case 'orderings':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.OrderByClause.Config>['orderings']>, readonly unknown[]>[number][]
-					>
-				) => rebuilt(node, handle, () => buildOrderByClause({ ...config, orderings: restItems('orderings', values) }))
-			);
-		case 'operators':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.OrderByClause.Config>['operators']>, readonly unknown[]>[number][]
-					>
-				) => rebuilt(node, handle, () => buildOrderByClause({ ...config, operators: restItems('operators', values) }))
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Ordering>>) =>
+				rebuilt(node, handle, () => buildOrderByClause(...restItems('orderings', vs)))
 			);
 	}
 	throw new Error(`order_by_clause has no $with.${setter}`);
 }
 function buildOrderByClause$with$orderings(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildOrderByClause$with(receiverOf(this, '$with.orderings'), 'orderings', args);
-}
-function buildOrderByClause$with$operators(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildOrderByClause$with(receiverOf(this, '$with.operators'), 'operators', args);
 }
 
 export function buildWhereClause<V extends Admit<T.Expression>>(value: V & RefuseUndeclared<V>): T.WhereClause.Bound;
@@ -21370,6 +21343,147 @@ function buildAnonymousObjectMemberDeclaratorArm$with$value(this: Received<Held>
 
 export const buildRefReadonly: TSKindId.RefReadonly = TSKindId.RefReadonly;
 
+export function buildOrdering<ExpressionSlot extends ConfigOf<T.Ordering>['expression']>(
+	config: RefusingConfig<ConfigOf<T.Ordering>, { expression: ExpressionSlot }>
+): T.Ordering.Bound;
+export function buildOrdering(config: ConfigOf<T.Ordering>): T.Ordering.Bound {
+	currentHandle()?.admit(TSKindId.Ordering, [config]);
+	const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+	const _direction = kindIdStorage<NonNullable<T.Ordering['_direction']>>(config.direction);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordering', { expression: _expression, direction: _direction });
+	const node = {
+		$type: TSKindId.Ordering as const,
+		_expression,
+		_direction,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		expression: () => hydrateStoredSlot(node, '_expression'),
+		direction: () => _direction,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { expression: buildOrdering$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.Ordering.Bound;
+}
+
+function buildOrdering$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as ConfigOf<T.Ordering>;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<ConfigOf<T.Ordering>>['expression']>) =>
+				rebuilt(node, handle, () => buildOrdering({ ...config, expression: value }))
+			);
+	}
+	throw new Error(`ordering has no $with.${setter}`);
+}
+function buildOrdering$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOrdering$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+
+export function buildOrderingAscending<ExpressionSlot extends T.Ordering.Ascending.Config['expression']>(
+	config: RefusingConfig<T.Ordering.Ascending.Config, { expression: ExpressionSlot }>
+): T.Ordering.Ascending.Bound;
+export function buildOrderingAscending(config: T.Ordering.Ascending.Config): T.Ordering.Ascending.Bound {
+	currentHandle()?.admit(TSKindId.Ordering, [config], ['expression']);
+	const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+	const _direction = TSKindId.AscendingKeyword as const;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordering', { expression: _expression, direction: _direction });
+	const node = {
+		$type: TSKindId.Ordering as const,
+		_expression,
+		_direction,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		expression: () => hydrateStoredSlot(node, '_expression'),
+		direction: () => _direction,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { expression: buildOrderingAscending$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.Ordering.Ascending.Bound;
+}
+
+function buildOrderingAscending$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Ordering.Ascending.Config;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Ordering.Ascending.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildOrderingAscending({ ...config, expression: value }))
+			);
+	}
+	throw new Error(`ordering has no $with.${setter}`);
+}
+function buildOrderingAscending$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOrderingAscending$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+
+export function buildOrderingDescending<ExpressionSlot extends T.Ordering.Descending.Config['expression']>(
+	config: RefusingConfig<T.Ordering.Descending.Config, { expression: ExpressionSlot }>
+): T.Ordering.Descending.Bound;
+export function buildOrderingDescending(config: T.Ordering.Descending.Config): T.Ordering.Descending.Bound {
+	currentHandle()?.admit(TSKindId.Ordering, [config], ['expression']);
+	const _expression = kindIdStorage<NonNullable<T.Ordering['_expression']>>(config.expression);
+	const _direction = TSKindId.DescendingKeyword as const;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'ordering', { expression: _expression, direction: _direction });
+	const node = {
+		$type: TSKindId.Ordering as const,
+		_expression,
+		_direction,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		expression: () => hydrateStoredSlot(node, '_expression'),
+		direction: () => _direction,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { expression: buildOrderingDescending$with$expression, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.Ordering.Descending.Bound;
+}
+
+function buildOrderingDescending$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.Ordering.Descending.Config;
+	switch (setter) {
+		case 'expression':
+			return applySetter(args, (value: Admit<NonNullable<T.Ordering.Descending.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildOrderingDescending({ ...config, expression: value }))
+			);
+	}
+	throw new Error(`ordering has no $with.${setter}`);
+}
+function buildOrderingDescending$with$expression(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildOrderingDescending$with(receiverOf(this, '$with.expression'), 'expression', args);
+}
+
 export function buildSwitchStatementParenthesized<
 	ValueSlot extends T.SwitchStatementParenthesized.Config['value'],
 	BodySlot extends T.SwitchStatementParenthesized.Config['body']
@@ -23072,6 +23186,7 @@ export type FluentKindMap = {
 	query_body_group: T.QueryBodyGroup.Bound;
 	anonymous_object_member_declarator_arm: T.AnonymousObjectMemberDeclaratorArm.Bound;
 	ref_readonly: T.RefReadonly;
+	ordering: T.Ordering.Bound;
 	switch_statement_parenthesized: T.SwitchStatementParenthesized.Bound;
 	switch_statement_tuple: T.SwitchStatementTuple.Bound;
 	type_parameter_constraint_class: T.TypeParameterConstraintClass;
@@ -23376,6 +23491,7 @@ export const _factoryMap = {
 	query_body_group: buildQueryBodyGroup,
 	anonymous_object_member_declarator_arm: buildAnonymousObjectMemberDeclaratorArm,
 	ref_readonly: buildRefReadonly,
+	ordering: buildOrdering,
 	switch_statement_parenthesized: buildSwitchStatementParenthesized,
 	switch_statement_tuple: buildSwitchStatementTuple,
 	type_parameter_constraint_class: buildTypeParameterConstraintClass,
