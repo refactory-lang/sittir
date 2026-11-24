@@ -1466,3 +1466,103 @@ Checks one object node: its row (`checkRow`) when its `$type` has one, then each
 ### `packages/common/src/verify-structure.ts::verifyBuilt`
 
 Walks one slot value. An array is walked item by item. An object is verified only when its source stamp is `Source.Factory` (`sourceOf`); a read node, a coordinate or an object already in `seen` is skipped, and a non-object passes.
+
+### `packages/common/src/portable/project.ts::Node`
+
+What a generated projection reads a node as: anything with a numeric `$type`, the kind id it switches on. Its slots are read through `slotOf` and `stored`, so the projection works the same over the object and arena storages.
+
+### `packages/common/src/portable/project.ts::Other`
+
+The read a generated projection hands a node to when it doesn't project it (a kind outside its paths, or a path that needs a feature it didn't emit), with the node's container when it has one.
+
+### `packages/common/src/portable/project.ts::Found`
+
+What a generated seat resolver returns: the value it reached for a slot, whether that value holds many items (`many`), and `fitted: false` when no seat fit and the slot's value is kept as it was.
+
+### `packages/common/src/portable/project.ts::Placed`
+
+A fact a generated projection placed on a node: the fact's name, the container slot its item sits in and the item's index there, the item's spelling when the fact spells one, and the path or flag the fact gives the node.
+
+### `packages/common/src/portable/project.ts::isNode`
+
+Whether a value is a node: a non-null object with a numeric `$type`.
+
+### `packages/common/src/portable/project.ts::kindOf`
+
+A value's kind id: a number is itself (a fixed token a slot holds as its kind id), a node is its `$type`, anything else has none.
+
+### `packages/common/src/portable/project.ts::present`
+
+Whether a slot's value is there: not `undefined`, not `null`, and not an empty list.
+
+### `packages/common/src/portable/project.ts::slotOf`
+
+A node's slot by its key, through `slotReader`, so it reads the same over either storage; a reader that is a function is called on the node. A value that isn't a node has no slots.
+
+### `packages/common/src/portable/project.ts::storedTrue`
+
+A node's stored slot by its accessor and storage key (`storedSlotRead`), as stored. A keyword slot reads `true` when its keyword is there, which a flag plan tests. A value that isn't a node reads nothing.
+
+### `packages/common/src/portable/project.ts::stored`
+
+A node's stored slot as a list of its items: a list without its `null` holes, one value as a list of one, an absent slot as the empty list. A query plan's subject reads its items through it.
+
+### `packages/common/src/portable/project.ts::textOf`
+
+A value's text: a string is itself, a node is its source text (`sourceTextOf`), anything else has none.
+
+### `packages/common/src/portable/project.ts::texts`
+
+The texts of a list of items (`textOf`), leaving out items that have none.
+
+### `packages/common/src/portable/project.ts::one`
+
+The text of a list of exactly one text, else none. A fact's spelling reads through it, so an item that spells two texts records no spelling.
+
+### `packages/common/src/portable/project.ts::only`
+
+A list of exactly one item as itself, any other list as the empty list: the `only` anchor of a query step.
+
+### `packages/common/src/portable/project.ts::step`
+
+One step of a slot route's walk: reads the slot from a node, or from each node of a list, flattening what the list's nodes reach. When the step names kinds, it keeps only the items of those kinds, and a single value of another kind reaches nothing.
+
+### `packages/common/src/portable/project.ts::seated`
+
+A seat resolver's result for a value that fits a seat, with whether the seat holds many. When the value and its holder are both nodes it records the holder, so `readValue` can give the item its container, as today's read gives an item the node that encloses it.
+
+### `packages/common/src/portable/project.ts::joined`
+
+Joins a seat resolver's results for the items of a list: their values flattened into one list, holding many if any part does.
+
+### `packages/common/src/portable/project.ts::pick`
+
+Chooses a slot's value among its routes' results: leaving out routes that reached nothing or `null`, the first whose value fit a seat, else the first that reached anything.
+
+### `packages/common/src/portable/project.ts::readValue`
+
+Reads a slot's value item by item, or as one item, with the reader the slot was emitted with. Each node item is read with the holder `seated` recorded for it as its container.
+
+### `packages/common/src/portable/project.ts::place`
+
+Places one fact a container holds for a node, as the fact rows say: unless the fact is already placed, the first item of the container slot the fact's test accepts (the test skips items another fact took) is taken, and the fact is recorded with that item's index, its spelling, and the path or flag the fact gives.
+
+### `packages/common/src/portable/project.ts::placedPath`
+
+The path the first placed fact that gives one gives the node. It decides the node's path ahead of its read entries.
+
+### `packages/common/src/portable/project.ts::atOf`
+
+A node's `$at` from its placed facts: each fact's name to its item's index, with the spelling when the fact recorded one.
+
+### `packages/common/src/portable/project.ts::untaken`
+
+A container slot's items less those a placed fact took from that slot, so a held slot doesn't also read an item a fact placed. A slot no fact took from, or a single value, is unchanged.
+
+### `packages/common/src/portable/project.ts::integerOf`
+
+An integer literal's `$value` from its parsed value: a `bigint` when the arm's scalar is bigint or the value is past `Number.MAX_SAFE_INTEGER`, else a number. A text that didn't parse has none.
+
+### `packages/common/src/portable/project.ts::floatOf`
+
+A float literal's `$value`: its text with `_` digit separators removed, read as a number when it is plain decimal digits with an optional point and exponent and the result is finite, else none.

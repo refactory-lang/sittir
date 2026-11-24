@@ -526,3 +526,21 @@ Each kind whose readable entries hold a test-less one whose path builds none of 
 ### `packages/codegen/src/emitters/overlays/portable/spelled-facts.ts::portableSpellingOf`
 
 One spelling of a fact a container spells, from the read entry whose tests on the container name it: the item those tests reach (its own text, or the slots they test, each a text or a nested item), and a hole for each slot a capture fills. Every spelling also carries its text, rendered in the same codegen run from the render bodies of the item's kinds (`EmittedTemplates.bodies`): each body's text parts and placed slots in order, its seams written as nothing, and split where a hole's slot sits (`['', '.setter']` for `@x.setter`; one part for a spelling with no holes). That text is the spelling the reader records at the fact, so a build can tell `@override` from `@typing.override`, and the grammar map types `$at` from it. Word characters are checked for meeting only between parts no hole separates. A slot the item states that its kind's body never places, a body part that spells no one text (a gate, a space, a token seam), or two parts whose word characters would meet once its seams are written as nothing refuses the spelling, naming the kind.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::PortableProjectInput`
+
+What the projection emitter reads for one grammar: the paths whose kinds it projects; each kind's name by kind id (what `K.<name>` writes); the build table (each path's arms, slot routes and seats); the read rows (query slots, facts, flag plans); each kind's readable entries in order, each with `refinedBy`, the indices of the entries that refine it; and the module specifiers the generated file imports its kind ids and run-time helpers from. The caller computes `refinedBy` with common's `readableEntries` and `portablePathHasFacts`, so the generated classification picks the entry today's read picks.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::PortableProjectOutput`
+
+The rendered projection module and the features it did not emit, one line each (a preset, a route that requires another slot, a number read from slots, a content arm, a refined seat, a `same` fact, a delimiter plan). A kind whose path needs one of them still reads through the `other` read it is given.
+
+### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::emitPortableProjection`
+
+Writes a grammar's projection, through the pinned builders: a default-exported `projection(other)` that returns `project(node, container?)`, which reads a node of a projected kind as today's portable read does and hands every other node to `other`. Inside it, one `read<Kind>` per projected kind places the kind's facts, tests its readable entries and picks the path (a placed fact's path first, else the first holding entry no holding entry refines), then switches on the path to assemble `$path`, `$flags`, `$at` and each slot. A flag the arm can't read (its plan holds, or a placed fact names it) sends the node to `other`.
+
+What would repeat is written once and shared: kind sets are `KINDS<n>` constants, seat resolvers (`seats<n>`) and route functions (`route<n>`) are named by what they read rather than by kind, path and slot, a slot's fixed tokens share one item reader (`items<n>`), and a slot with none reads its items through `project` itself. Within `read<Kind>` the node's kind is known, so its slot reads take that kind's slot with no kind test, each once (`slot<n>`).
+
+### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::emitPortableProjectionInProcess`
+
+Runs `emitPortableProjection` in this process: loads the pinned build, makes an engine on its typescript grammar, emits with the engine's builders and the pin, and renders the program to text.
