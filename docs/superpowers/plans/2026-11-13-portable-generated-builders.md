@@ -221,6 +221,8 @@ Built: decision 4 (335ff4d3a), decision 5 (5e24a3738), decision 7's optional `$p
 
 The spec's "A kind id has no meaning on the portable surface", as approved: a literal union for paths, no nominal brand, and the kind-id gap closed. No code before Task 4 is in a PR.
 
+**Status:** done on `feat/portable-no-kind-id` (6bf2ad1ad), stacked on Task 4's branch. The generated slot functions that place a bare number as a kind id, counted at Task 4's head as `if (seated(value, …)) return value` inside a number branch: python 94, rust 111, typescript 134, and 0 in each after. Measured with the old `NodeOf` fallback, no build slot that admits no number admitted a fixed word's kind id in any grammar; the fallback reached reads only (python `statement.import.from`'s `argument`, rust `type.generic`'s `name`, typescript `argument`'s `value`), so those read pins are the type tests that fail without the change, and the build pins hold before and after. Rust `type.unit` is a text path, read and built as `'()'`. Validation +0 −0, native baseline 26818, conformance 4, 3 and 5.
+
 **Files:**
 - Modify: `packages/types/src/vocabulary/map.ts` (`NodeOf`), `packages/types/src/portable-build.ts` (`PortableStructure`'s JSDoc)
 - Modify: `packages/common/src/portable/build.ts`, `packages/codegen/src/emitters/overlays/portable/emit/build.ts`
@@ -232,16 +234,16 @@ What the census checked, so the task needs no new probe:
 - No table data reaches the kind-id branch of the interpreter's `element()`: a spelled fact's items are structures, and no item slot holds a number (python's 8 facts and 12 spellings; rust and typescript have none). Presets write their kind ids into the builder config directly.
 - Before this task, the generated slot functions that place a bare number as a kind id: python 52, rust 63, typescript 34.
 
-- [ ] **Step 1: The failing tests.**
+- [x] **Step 1: The failing tests.**
   - Types: a fixed word's bare kind id is refused where a slot holds its path and admits no number (a slot that admits `number` admits every numeric enum member, so a number slot is pinned at run time instead); its structure is admitted (`{ $path: 'literal.null' }`); a text path admits its text (rust `type.primitive.integral.size` as `'usize'`).
   - Run time: a bare number in a slot with no number taker is refused, by the interpreter and the generated slot function alike, with the same refusal.
   - Emit: a slot with no takers writes the refusal for a number, never `seated(value, …)`.
-- [ ] **Step 2: Implement.**
+- [x] **Step 2: Implement.**
   - `NodeOf`'s fallback is `never`.
   - The interpreter's `element()` refuses a number instead of placing it as a kind id.
   - The emitter's no-taker number branch calls `unnumbered`, and `placedByKind` keeps only nodes.
   - `PortableStructure`'s JSDoc drops "a kind id".
-- [ ] **Step 3: Regenerate,** run the three-way verification, and commit.
+- [x] **Step 3: Regenerate,** run the three-way verification, and commit.
 
 ### Task 5: The projection emitter
 
