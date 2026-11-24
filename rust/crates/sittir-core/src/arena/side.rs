@@ -382,12 +382,23 @@ struct Fields<'a> {
     arena: &'a dyn ArenaRead,
     at: Address,
     offset: u32,
+    /// The written words of the record's chunk, from the record on.
+    written: &'a [u32],
 }
 
 impl<'a> Fields<'a> {
+    fn of(arena: &'a dyn ArenaRead, at: Address) -> Self {
+        let written = arena.chunk(at.chunk()).and_then(|words| words.get(at.word() as usize..)).unwrap_or_default();
+        Self { arena, at, offset: 0, written }
+    }
+
     fn take(&mut self, n: u32) -> Result<&'a [u32], ArenaError> {
-        let end = self.offset.checked_add(n).ok_or(ArenaError::OutOfBounds { chunk: self.at.chunk(), word: self.at.word().saturating_add(self.offset), len: n })?;
-        let words = &self.arena.words(self.at, end)?[self.offset as usize..];
+        let past = || ArenaError::OutOfBounds { chunk: self.at.chunk(), word: self.at.word().saturating_add(self.offset), len: n };
+        let end = self.offset.checked_add(n).ok_or_else(past)?;
+        let Some(words) = self.written.get(self.offset as usize..end as usize) else {
+            self.arena.words(self.at, end)?;
+            return Err(past());
+        };
         self.offset = end;
         Ok(words)
     }
@@ -558,6 +569,11 @@ impl SideRecord {
         Self::read_parts(arena, at, false, false).map(|(record, found)| (record, found.run))
     }
 
+    /// `read_facts` into `self`, which is empty, where the record is kept.
+    pub(super) fn read_facts_into(&mut self, arena: &dyn ArenaRead, at: Address) -> Result<Option<RunAt>, ArenaError> {
+        self.read_into(arena, at, false, false).map(|found| found.run)
+    }
+
     /// The spans the side record at `at` holds (`SideRecord::spans`); none
     /// at `Address::NONE`.
     pub(super) fn spans_at(arena: &dyn ArenaRead, at: Address) -> Result<Vec<std::ops::Range<Address>>, ArenaError> {
@@ -571,16 +587,26 @@ impl SideRecord {
     }
 
     fn read_parts(arena: &dyn ArenaRead, at: Address, slots: bool, entries: bool) -> Result<(SideRecord, ListsAt), ArenaError> {
+        let mut record = SideRecord::default();
+        let found = record.read_into(arena, at, slots, entries)?;
+        Ok((record, found))
+    }
+
+    /// Reads the side record at `at` into `self`, which is empty.
+    fn read_into(&mut self, arena: &dyn ArenaRead, at: Address, slots: bool, entries: bool) -> Result<ListsAt, ArenaError> {
         if at == Address::NONE {
-            return Ok((SideRecord::default(), ListsAt::default()));
+            return Ok(ListsAt::default());
         }
-        let mut fields = Fields { arena, at, offset: 0 };
+        let record = self;
+        let mut fields = Fields::of(arena, at);
         let [flags] = fields.array()?;
         if flags & !mask::ALL != 0 || flags == 0 {
             return Err(malformed("side record mask", flags));
         }
         let has = |bit: u32| flags & bit != 0;
-        let mut record = SideRecord { changed: ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) }, content: has(mask::CONTENT), held_by_error: has(mask::HELD_BY_ERROR), ..SideRecord::default() };
+        record.changed = ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) };
+        record.content = has(mask::CONTENT);
+        record.held_by_error = has(mask::HELD_BY_ERROR);
         if has(mask::AT) {
             let [kind, start, end]: [u32; field::AT_WORDS as usize] = fields.array()?;
             if start > end {
@@ -689,7 +715,7 @@ impl SideRecord {
             fields.take(len)?;
             found.starts = Some(StartsAt { record: at, start, end: fields.offset });
         }
-        Ok((record, found))
+        Ok(found)
     }
 }
 

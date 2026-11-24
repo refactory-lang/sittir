@@ -183,6 +183,32 @@ fn a_wide_list_of_leaves_and_calls_renders_in_linear_run_decodes() {
     assert!(large <= small + small / 10, "run entries decoded per hundred grow with the list: {small} at 400 items, {large} at 6400");
 }
 
+/// An arena that counts the lookups of its word chunks.
+struct CountedChunks<'a>(&'a dyn ArenaRead, std::cell::Cell<u32>);
+
+impl ArenaRead for CountedChunks<'_> {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        self.1.set(self.1.get() + 1);
+        self.0.chunk(n)
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        self.0.string_chunk(n)
+    }
+}
+
+#[test]
+fn a_side_record_reads_its_fields_from_one_lookup_of_its_chunk() {
+    let mut engine = Engine::new(sittir_rust::RustGrammar, sittir_rust::render::options::defaults()).expect("an engine");
+    let root = engine.parse_records::<sittir_rust::render::node::AnyNode>("fn f() {}\n").expect("a parse").root.expect("a root");
+    let built = engine.written().built();
+    let side = Address(built.words(root, 2).expect("a header")[1]);
+    let counted = CountedChunks(&*built, std::cell::Cell::new(0));
+    let record = SideRecord::read(&counted, side).expect("a side record");
+    assert!(!record.run.is_empty(), "the root's side record holds a run");
+    assert!(counted.1.get() <= 2, "{} chunk lookups: one for the fields and one for the run's entries", counted.1.get());
+}
+
 type RustNode = sittir_rust::render::AnyNode;
 type RustStore = sittir_core::trivia_store::TriviaStore<<sittir_rust::RustGrammar as EngineGrammar>::Trivia>;
 

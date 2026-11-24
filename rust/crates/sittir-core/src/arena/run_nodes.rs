@@ -432,10 +432,19 @@ impl<'a> Walk<'a> {
         if let Some(&read) = self.table.sides.get(&at) {
             return Ok(read);
         }
-        let (side, run) = SideRecord::read_facts(self.arena, super::side_of(self.arena, at)?)?;
-        self.table.read.push(Read { side, run });
-        self.table.sides.insert(at, self.table.read.len() - 1);
-        Ok(self.table.read.len() - 1)
+        let from = super::side_of(self.arena, at)?;
+        let read = self.table.read.len();
+        self.table.read.push(Read { side: SideRecord::default(), run: None });
+        let held = &mut self.table.read[read];
+        match held.side.read_facts_into(self.arena, from) {
+            Ok(run) => held.run = run,
+            Err(refused) => {
+                self.table.read.pop();
+                return Err(refused);
+            }
+        }
+        self.table.sides.insert(at, read);
+        Ok(read)
     }
 
     /// The facts of the side record of the record at `at`: every field but
