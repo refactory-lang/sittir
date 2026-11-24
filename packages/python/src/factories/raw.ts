@@ -177,7 +177,6 @@ export const buildEscapeSequenceLineBreak = dispatched(() => backend().buildEsca
 export const buildEscapeSequenceSimple = dispatched(() => backend().buildEscapeSequenceSimple);
 export const buildEscapeSequenceNamed = dispatched(() => backend().buildEscapeSequenceNamed);
 export const buildLineContinuationNewline = dispatched(() => backend().buildLineContinuationNewline);
-export const buildLineContinuationNul = O.buildLineContinuationNul;
 export const buildSimplePatternNegative = dispatched(() => backend().buildSimplePatternNegative);
 export const buildExceptClauseExceptionList = dispatched(() => backend().buildExceptClauseExceptionList);
 export const buildExceptClauseException = dispatched(() => backend().buildExceptClauseException);
@@ -392,7 +391,6 @@ export const _factoryMap = {
 	escape_sequence_simple: buildEscapeSequenceSimple,
 	escape_sequence_named: buildEscapeSequenceNamed,
 	line_continuation_newline: buildLineContinuationNewline,
-	line_continuation_nul: buildLineContinuationNul,
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,

@@ -1,7 +1,7 @@
 import { portableRuntime, type PortableCarry } from '@sittir/common/engine';
 import { classifierOf } from '@sittir/common/portable';
 import type { AnyUntypedNode, PortableStructure } from '@sittir/types';
-import { createStrictNativeEngine, loadCorpusEntries, loadDelimiterSpellings, loadLanguageForGrammar, loadNodeModel, treeParser, type CorpusEntry } from './common.ts';
+import { createStrictNativeEngine, loadCorpusEntries, loadDelimiterSpellings, loadFlagTokens, loadLanguageForGrammar, loadNodeModel, treeParser, type CorpusEntry } from './common.ts';
 import { loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
 
 export type PortableRoundTripStage = 'read' | 'build' | 'render' | 'reparse' | 'ast';
@@ -31,6 +31,7 @@ export interface PortableRoundTripResult {
 	readonly pass: number;
 	readonly astMatchPass: number;
 	readonly spellingNormalized: number;
+	readonly flagReordered: number;
 	readonly carried: readonly PortableRoundTripCarried[];
 	readonly erred: readonly PortableRoundTripCarried[];
 	readonly armless: readonly PortableRoundTripArmless[];
@@ -54,7 +55,9 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 	let pass = 0;
 	let astMatchPass = 0;
 	let spellingNormalized = 0;
+	let flagReordered = 0;
 	const delimiters = await loadDelimiterSpellings(grammar);
+	const flags = await loadFlagTokens(grammar);
 	const errors: PortableRoundTripFailure[] = [];
 	const astMismatches: PortableRoundTripFailure[] = [];
 	const carried: PortableRoundTripCarried[] = [];
@@ -85,7 +88,7 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 		}
 		using tree = parser.parse(source);
 		try {
-			const tolerance = { listSeparators, tolerated: [], delimiters, normalized: [] as string[] };
+			const tolerance = { listSeparators, tolerated: [], delimiters, flags, normalized: [] as string[], reordered: [] as string[] };
 			const outcome = renderReparse(built, root, root, tree.root, true, ctx, tolerance);
 			if (outcome.status === 'excluded') errors.push({ entry: name, stage: 'reparse', message: outcome.reason, rendered: outcome.rendered });
 			else if (outcome.status === 'failed') errors.push({ entry: name, stage: 'reparse', message: outcome.message, rendered: outcome.rendered });
@@ -94,6 +97,7 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 				if (outcome.astDiff === null) {
 					astMatchPass++;
 					if (tolerance.normalized.length > 0) spellingNormalized++;
+					if (tolerance.reordered.length > 0) flagReordered++;
 				}
 				else astMismatches.push({ entry: name, stage: 'ast', message: outcome.astDiff, rendered: outcome.rendered });
 			}
@@ -101,5 +105,5 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 			errors.push({ entry: name, stage: 'render', message: messageOf(error) });
 		}
 	}
-	return { total: entries.length, pass, astMatchPass, spellingNormalized, carried, erred, armless, errors, astMismatches };
+	return { total: entries.length, pass, astMatchPass, spellingNormalized, flagReordered, carried, erred, armless, errors, astMismatches };
 }

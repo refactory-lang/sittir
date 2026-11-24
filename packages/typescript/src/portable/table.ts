@@ -4684,6 +4684,20 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134,
+									presence: true
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -4708,20 +4722,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134,
 									presence: true
 								}
 							]
@@ -5054,6 +5054,20 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134,
+									presence: true
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -5078,20 +5092,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134,
 									presence: true
 								}
 							]
@@ -5424,6 +5424,20 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134,
+									presence: true
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -5448,20 +5462,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134,
 									presence: true
 								}
 							]
@@ -5794,6 +5794,20 @@ export const build: PortableBuildTable = {
 								}
 							]
 						},
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 134,
+									presence: true
+								}
+							]
+						},
 						override: {
 							presets: [
 								{
@@ -5818,20 +5832,6 @@ export const build: PortableBuildTable = {
 										}
 									],
 									kind: 38,
-									presence: true
-								}
-							]
-						},
-						abstract: {
-							presets: [
-								{
-									steps: [
-										{
-											key: 'abstract',
-											optional: true
-										}
-									],
-									kind: 134,
 									presence: true
 								}
 							]
@@ -27018,101 +27018,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.binary': {
-			root: true,
-			arms: [
-				{
-					kind: 405,
-					builder: 'binaryExpressionIn',
-					slots: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [405, 'left'],
-									kinds: [
-										1, 109, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 235, 236, 237, 238,
-										242, 245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277,
-										278, 279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 405, 406, 418, 419, 423, 424, 425, 426,
-										427, 428, 429, 442, 443
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 443,
-										'new.target': 442,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							list: false,
-							seats: [
-								{
-									at: [405, 'right'],
-									kinds: [
-										1, 110, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 234, 235, 236, 237, 238, 242,
-										245, 248, 250, 252, 256, 257, 258, 259, 260, 262, 264, 268, 269, 270, 271, 273, 274, 276, 277, 278,
-										279, 280, 281, 282, 283, 300, 305, 306, 307, 308, 404, 405, 406, 418, 419, 423, 424, 425, 426, 427,
-										428, 429, 442, 443
-									],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'import.meta': 443,
-										'new.target': 442,
-										super: 280,
-										this: 279
-									},
-									pattern: {
-										source:
-											'^(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\x09-\\x0D\\x20\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
-										flags: 'u'
-									}
-								}
-							],
-							takers: {
-								integer: 'literal.number',
-								float: 'literal.number',
-								bigint: 'literal.number'
-							}
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'expression.binary.arithmetic.add': {
 			root: true,

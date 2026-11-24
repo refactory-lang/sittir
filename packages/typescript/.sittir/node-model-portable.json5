@@ -12237,6 +12237,18 @@
           "flag": true
         },
         {
+          "name": "abstract",
+          "route": "slot",
+          "slot": "abstract",
+          "path": [
+            {
+              "owner": "public_field_definition_plain",
+              "slot": "abstract"
+            }
+          ],
+          "flag": true
+        },
+        {
           "name": "override",
           "route": "slot",
           "slot": "override",
@@ -12256,18 +12268,6 @@
             {
               "owner": "public_field_definition_plain",
               "slot": "readonly"
-            }
-          ],
-          "flag": true
-        },
-        {
-          "name": "abstract",
-          "route": "slot",
-          "slot": "abstract",
-          "path": [
-            {
-              "owner": "public_field_definition_plain",
-              "slot": "abstract"
             }
           ],
           "flag": true

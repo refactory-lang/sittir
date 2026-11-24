@@ -132,7 +132,6 @@ export interface SubBuilderRowKind {
 	'integerOctal.plain': TSKindId.IntegerOctalPlain;
 	lineContinuation: TSKindId.LineContinuationNewline;
 	'lineContinuation.newline': TSKindId.LineContinuationNewline;
-	'lineContinuation.nul': TSKindId.LineContinuationNul;
 	'parameter.default': TSKindId.DefaultParameter;
 	'parameter.dictionarySplat': TSKindId.DictionarySplatPattern;
 	'parameter.identifier': TSKindId.Identifier;

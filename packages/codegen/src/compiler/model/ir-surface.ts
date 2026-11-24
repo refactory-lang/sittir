@@ -9,6 +9,7 @@ import {
 	AssembledEnum,
 	AssembledList,
 	AssembledPattern,
+	AssembledPunctuation,
 	AssembledSupertype,
 	FACTORY_NAME_RESERVED,
 	isBuilderTextLeaf,
@@ -70,6 +71,7 @@ export interface FlattenedVariantRoute {
 	readonly nestedParentKey?: string;
 	readonly default?: true;
 	readonly leaf?: true;
+	readonly unbuildable?: true;
 }
 
 export interface FlattenedVariantParent {
@@ -148,7 +150,7 @@ function deriveFlattenedVariantParents(
 			const child = nodeMap.nodes.get(childKind);
 			if (ref.variantOf !== kind || ref.variant === undefined || child === undefined) return null;
 			const nestedParentKey = keyByParent.get(childKind);
-			const facts = ref.default ? { default: true as const } : {};
+			const facts = { ...(ref.default ? { default: true as const } : {}), ...(child instanceof AssembledPunctuation && child.unbuildable ? { unbuildable: true as const } : {}) };
 			if (nestedParentKey !== undefined) {
 				routes.push({ name: lowerCamelCase(ref.variant), child, nestedParentKey, ...facts });
 			} else if (child.rawFactoryName !== undefined) {
@@ -603,7 +605,7 @@ function ownerRoutesOf(nodeMap: NodeMap, flattened: readonly FlattenedVariantPar
 		if (isSoleContainer(containers, route.parent.kind, child.kind)) offer(contained, child, route);
 	};
 	for (const parent of flattened) {
-		for (const route of parent.variants.filter((variant) => !isBlankVariantName(variant.name))) offer(declared, route.child, { parent: parent.node, name: route.name });
+		for (const route of parent.variants.filter((variant) => !isBlankVariantName(variant.name) && variant.unbuildable !== true)) offer(declared, route.child, { parent: parent.node, name: route.name });
 	}
 	for (const set of armRoutes.byKind.values()) {
 		for (const route of hostRoutesOf(set, armRoutes.kindEntries, nodeMap)) {

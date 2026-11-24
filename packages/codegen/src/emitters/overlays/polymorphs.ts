@@ -1234,6 +1234,7 @@ export function emitPolymorphsOverlay(config: {
 		for (const route of parent.variants) {
 			const { name, child, nestedParentKey } = route;
 			if (route.leaf === true) {
+				if (route.unbuildable === true) continue;
 				const id = kindDiscriminantExpr(child.kind, nodeMap, wires.kindEntries);
 				members.push({ key: name, ref: { value: id, type: `typeof ${id}` } });
 				continue;

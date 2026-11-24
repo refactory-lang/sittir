@@ -2384,6 +2384,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule> {
 
 export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 	readonly modelType = 'punctuation' as const;
+	readonly unbuildable: boolean;
 	readonly resolvedKind?: string;
 	readonly resolvedKindId?: number;
 
@@ -2393,6 +2394,8 @@ export class AssembledPunctuation extends AssembledLeaf<StringRule> {
 		opts: KindFacts & { hidden?: boolean }
 	) {
 		super(kind, rule, { ...opts, hidden: opts.hidden ?? true });
+		this.unbuildable = rule.value.includes('\0');
+		if (this.unbuildable) this.factoryName = undefined;
 		if (rule.resolvedKindId !== undefined) {
 			this.resolvedKindId = rule.resolvedKindId;
 			this.resolvedKind = findKindEntryById({ entries: opts.kindEntries, id: rule.resolvedKindId })?.kind;

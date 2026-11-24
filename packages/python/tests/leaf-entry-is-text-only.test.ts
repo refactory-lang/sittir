@@ -43,6 +43,6 @@ describe('a kind with no content reached through a parent', () => {
 		expect(ir.simpleStatement.pass).toBe(ir.passStatement);
 		expect(ir.simpleStatement.break).toBe(ir.breakStatement);
 		expect(ir.parameter.keywordSeparator).toBe(ir.keywordSeparator);
-		expect(typeof ir.lineContinuation.nul).toBe('number');
+		expect(typeof ir.lineContinuation.newline).toBe('function');
 	});
 });
