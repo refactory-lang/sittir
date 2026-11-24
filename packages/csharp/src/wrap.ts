@@ -358,16 +358,16 @@ export function wrapUsingDirective(data: T.UsingDirective, tree: TreeHandle): T.
 		global() {
 			return this._global;
 		},
-		elements() {
-			return this._elements;
+		static() {
+			return this._static;
 		},
-		usingDirectiveArm() {
-			return hydrateSlot<T.UsingDirectiveArm | undefined>(this, '_using_directive_arm', tree);
+		unsafe() {
+			return this._unsafe;
 		},
-		name() {
-			return hydrateSlot<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName | undefined>(
+		content() {
+			return hydrateSlot<T.UsingDirectiveAlias | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>(
 				this,
-				'_name',
+				'_content',
 				tree
 			);
 		},
@@ -388,9 +388,9 @@ export function wrapUsingDirective(data: T.UsingDirective, tree: TreeHandle): T.
 	};
 	node.$with = {
 		global: wrapUsingDirective$with$global,
-		elements: wrapUsingDirective$with$elements,
-		usingDirectiveArm: wrapUsingDirective$with$usingDirectiveArm,
-		name: wrapUsingDirective$with$name,
+		static: wrapUsingDirective$with$static,
+		unsafe: wrapUsingDirective$with$unsafe,
+		content: wrapUsingDirective$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -407,54 +407,22 @@ function wrapUsingDirective$with(node: Held, setter: string, args: readonly unkn
 					wrapUsingDirective({ ...$edited(data), _global: admitSlot(handle, 'using_directive', 'global', v) }, tree)
 				)
 			);
-		case 'elements':
-			return applySetter(args, (...v: NonNullable<T.UsingDirective['_elements']>[number][]) =>
+		case 'static':
+			return applySetter(args, (v: NonNullable<T.UsingDirective['_static']>) =>
 				rebuilt(node, handle, () =>
-					wrapUsingDirective(
-						{
-							...$edited(data),
-							_using_directive_arm: undefined,
-							_elements: admitSlot(handle, 'using_directive', 'elements', restItems('elements', v))
-						},
-						tree
-					)
+					wrapUsingDirective({ ...$edited(data), _static: admitSlot(handle, 'using_directive', 'static', v) }, tree)
 				)
 			);
-		case 'usingDirectiveArm':
-			return applySetter(args, (v: NonNullable<T.UsingDirective['_using_directive_arm']>) =>
+		case 'unsafe':
+			return applySetter(args, (v: NonNullable<T.UsingDirective['_unsafe']>) =>
 				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapUsingDirective(
-								{
-									...$edited(data),
-									_using_directive_arm: admitSlot(handle, 'using_directive', 'usingDirectiveArm', v)
-								},
-								tree
-							)
-						: wrapUsingDirective(
-								{
-									...$edited(data),
-									_elements: [],
-									_name: undefined,
-									_using_directive_arm: admitSlot(handle, 'using_directive', 'usingDirectiveArm', v)
-								},
-								tree
-							)
+					wrapUsingDirective({ ...$edited(data), _unsafe: admitSlot(handle, 'using_directive', 'unsafe', v) }, tree)
 				)
 			);
-		case 'name':
-			return applySetter(args, (v: NonNullable<T.UsingDirective['_name']>) =>
+		case 'content':
+			return applySetter(args, (v: NonNullable<T.UsingDirective['_content']>) =>
 				rebuilt(node, handle, () =>
-					v === undefined
-						? wrapUsingDirective({ ...$edited(data), _name: admitSlot(handle, 'using_directive', 'name', v) }, tree)
-						: wrapUsingDirective(
-								{
-									...$edited(data),
-									_using_directive_arm: undefined,
-									_name: admitSlot(handle, 'using_directive', 'name', v)
-								},
-								tree
-							)
+					wrapUsingDirective({ ...$edited(data), _content: admitSlot(handle, 'using_directive', 'content', v) }, tree)
 				)
 			);
 	}
@@ -463,14 +431,14 @@ function wrapUsingDirective$with(node: Held, setter: string, args: readonly unkn
 function wrapUsingDirective$with$global(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapUsingDirective$with(receiverOf(this, '$with.global'), 'global', args);
 }
-function wrapUsingDirective$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDirective$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapUsingDirective$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDirective$with(receiverOf(this, '$with.static'), 'static', args);
 }
-function wrapUsingDirective$with$usingDirectiveArm(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDirective$with(receiverOf(this, '$with.usingDirectiveArm'), 'usingDirectiveArm', args);
+function wrapUsingDirective$with$unsafe(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDirective$with(receiverOf(this, '$with.unsafe'), 'unsafe', args);
 }
-function wrapUsingDirective$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDirective$with(receiverOf(this, '$with.name'), 'name', args);
+function wrapUsingDirective$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDirective$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function wrapGlobalAttribute(data: T.GlobalAttribute, tree: TreeHandle): T.GlobalAttribute.Parsed {
@@ -5616,8 +5584,14 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 		attributeLists() {
 			return hydrateSlots<T.AttributeList | T.PreprocIfInAttributeList>(this, '_attribute_lists', tree);
 		},
-		elements() {
-			return this._elements;
+		this() {
+			return this._this;
+		},
+		scoped() {
+			return this._scoped;
+		},
+		mode() {
+			return this._mode;
 		},
 		type() {
 			return hydrateSlot<T.Type | undefined>(this, '_type', tree);
@@ -5677,7 +5651,9 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle): T.Parameter.
 	};
 	node.$with = {
 		attributeLists: wrapParameter$with$attributeLists,
-		elements: wrapParameter$with$elements,
+		this: wrapParameter$with$this,
+		scoped: wrapParameter$with$scoped,
+		mode: wrapParameter$with$mode,
 		type: wrapParameter$with$type,
 		name: wrapParameter$with$name,
 		expression: wrapParameter$with$expression,
@@ -5703,13 +5679,22 @@ function wrapParameter$with(node: Held, setter: string, args: readonly unknown[]
 					)
 				)
 			);
-		case 'elements':
-			return applySetter(args, (...v: NonNullable<T.Parameter['_elements']>[number][]) =>
+		case 'this':
+			return applySetter(args, (v: NonNullable<T.Parameter['_this']>) =>
 				rebuilt(node, handle, () =>
-					wrapParameter(
-						{ ...$edited(data), _elements: admitSlot(handle, 'parameter', 'elements', restItems('elements', v)) },
-						tree
-					)
+					wrapParameter({ ...$edited(data), _this: admitSlot(handle, 'parameter', 'this', v) }, tree)
+				)
+			);
+		case 'scoped':
+			return applySetter(args, (v: NonNullable<T.Parameter['_scoped']>) =>
+				rebuilt(node, handle, () =>
+					wrapParameter({ ...$edited(data), _scoped: admitSlot(handle, 'parameter', 'scoped', v) }, tree)
+				)
+			);
+		case 'mode':
+			return applySetter(args, (v: NonNullable<T.Parameter['_mode']>) =>
+				rebuilt(node, handle, () =>
+					wrapParameter({ ...$edited(data), _mode: admitSlot(handle, 'parameter', 'mode', v) }, tree)
 				)
 			);
 		case 'type':
@@ -5751,8 +5736,14 @@ function wrapParameter$with(node: Held, setter: string, args: readonly unknown[]
 function wrapParameter$with$attributeLists(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapParameter$with(receiverOf(this, '$with.attributeLists'), 'attributeLists', args);
 }
-function wrapParameter$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapParameter$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapParameter$with$this(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParameter$with(receiverOf(this, '$with.this'), 'this', args);
+}
+function wrapParameter$with$scoped(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParameter$with(receiverOf(this, '$with.scoped'), 'scoped', args);
+}
+function wrapParameter$with$mode(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapParameter$with(receiverOf(this, '$with.mode'), 'mode', args);
 }
 function wrapParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapParameter$with(receiverOf(this, '$with.type'), 'type', args);
@@ -15006,8 +14997,11 @@ export function wrapLambdaExpression(data: T.LambdaExpression, tree: TreeHandle)
 		attributeLists() {
 			return hydrateSlots<T.AttributeList | T.PreprocIfInAttributeList>(this, '_attribute_lists', tree);
 		},
-		elements() {
-			return this._elements;
+		static() {
+			return this._static;
+		},
+		async() {
+			return this._async;
 		},
 		type() {
 			return hydrateSlot<T.Type | undefined>(this, '_type', tree);
@@ -15035,7 +15029,8 @@ export function wrapLambdaExpression(data: T.LambdaExpression, tree: TreeHandle)
 	};
 	node.$with = {
 		attributeLists: wrapLambdaExpression$with$attributeLists,
-		elements: wrapLambdaExpression$with$elements,
+		static: wrapLambdaExpression$with$static,
+		async: wrapLambdaExpression$with$async,
 		type: wrapLambdaExpression$with$type,
 		parameters: wrapLambdaExpression$with$parameters,
 		body: wrapLambdaExpression$with$body,
@@ -15061,16 +15056,16 @@ function wrapLambdaExpression$with(node: Held, setter: string, args: readonly un
 					)
 				)
 			);
-		case 'elements':
-			return applySetter(args, (...v: NonNullable<T.LambdaExpression['_elements']>[number][]) =>
+		case 'static':
+			return applySetter(args, (v: NonNullable<T.LambdaExpression['_static']>) =>
 				rebuilt(node, handle, () =>
-					wrapLambdaExpression(
-						{
-							...$edited(data),
-							_elements: admitSlot(handle, 'lambda_expression', 'elements', restItems('elements', v))
-						},
-						tree
-					)
+					wrapLambdaExpression({ ...$edited(data), _static: admitSlot(handle, 'lambda_expression', 'static', v) }, tree)
+				)
+			);
+		case 'async':
+			return applySetter(args, (v: NonNullable<T.LambdaExpression['_async']>) =>
+				rebuilt(node, handle, () =>
+					wrapLambdaExpression({ ...$edited(data), _async: admitSlot(handle, 'lambda_expression', 'async', v) }, tree)
 				)
 			);
 		case 'type':
@@ -15100,8 +15095,11 @@ function wrapLambdaExpression$with(node: Held, setter: string, args: readonly un
 function wrapLambdaExpression$with$attributeLists(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapLambdaExpression$with(receiverOf(this, '$with.attributeLists'), 'attributeLists', args);
 }
-function wrapLambdaExpression$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapLambdaExpression$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapLambdaExpression$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapLambdaExpression$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function wrapLambdaExpression$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapLambdaExpression$with(receiverOf(this, '$with.async'), 'async', args);
 }
 function wrapLambdaExpression$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapLambdaExpression$with(receiverOf(this, '$with.type'), 'type', args);
@@ -15203,8 +15201,11 @@ export function wrapAnonymousMethodExpression(
 	const node = {
 		...data,
 		$type: TSKindId.AnonymousMethodExpression as const,
-		elements() {
-			return this._elements;
+		static() {
+			return this._static;
+		},
+		async() {
+			return this._async;
 		},
 		parameters() {
 			return hydrateSlot<T.ParameterList | undefined>(this, '_parameters', tree);
@@ -15236,7 +15237,8 @@ export function wrapAnonymousMethodExpression(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		elements: wrapAnonymousMethodExpression$with$elements,
+		static: wrapAnonymousMethodExpression$with$static,
+		async: wrapAnonymousMethodExpression$with$async,
 		parameters: wrapAnonymousMethodExpression$with$parameters,
 		block: wrapAnonymousMethodExpression$with$block,
 		[RECEIVER]: node
@@ -15249,14 +15251,20 @@ function wrapAnonymousMethodExpression$with(node: Held, setter: string, args: re
 	const data = node[INPUT] as T.AnonymousMethodExpression;
 	const tree = node[READ_TREE] as TreeHandle;
 	switch (setter) {
-		case 'elements':
-			return applySetter(args, (...v: NonNullable<T.AnonymousMethodExpression['_elements']>[number][]) =>
+		case 'static':
+			return applySetter(args, (v: NonNullable<T.AnonymousMethodExpression['_static']>) =>
 				rebuilt(node, handle, () =>
 					wrapAnonymousMethodExpression(
-						{
-							...$edited(data),
-							_elements: admitSlot(handle, 'anonymous_method_expression', 'elements', restItems('elements', v))
-						},
+						{ ...$edited(data), _static: admitSlot(handle, 'anonymous_method_expression', 'static', v) },
+						tree
+					)
+				)
+			);
+		case 'async':
+			return applySetter(args, (v: NonNullable<T.AnonymousMethodExpression['_async']>) =>
+				rebuilt(node, handle, () =>
+					wrapAnonymousMethodExpression(
+						{ ...$edited(data), _async: admitSlot(handle, 'anonymous_method_expression', 'async', v) },
 						tree
 					)
 				)
@@ -15301,8 +15309,11 @@ function wrapAnonymousMethodExpression$with(node: Held, setter: string, args: re
 	}
 	throw new Error(`anonymous_method_expression has no $with.${setter}`);
 }
-function wrapAnonymousMethodExpression$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapAnonymousMethodExpression$with(receiverOf(this, '$with.elements'), 'elements', args);
+function wrapAnonymousMethodExpression$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAnonymousMethodExpression$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function wrapAnonymousMethodExpression$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapAnonymousMethodExpression$with(receiverOf(this, '$with.async'), 'async', args);
 }
 function wrapAnonymousMethodExpression$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
 	return wrapAnonymousMethodExpression$with(receiverOf(this, '$with.parameters'), 'parameters', args);
@@ -22527,138 +22538,6 @@ function wrapPreprocPragmaArm2$with$checksum(this: Received<Held>, ...args: unkn
 	return wrapPreprocPragmaArm2$with(receiverOf(this, '$with.checksum'), 'checksum', args);
 }
 
-export function wrapUsingDirectiveArm(data: T.UsingDirectiveArm, tree: TreeHandle): T.UsingDirectiveArm.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.UsingDirectiveArm as const,
-		unsafe() {
-			return this._unsafe;
-		},
-		name() {
-			return hoistRead(
-				hydrateSlot<T.Identifier>(this, '_name', tree),
-				[
-					function (this: object) {
-						return hydrateSlot<
-							| T.IdentifierToken
-							| TSKindId.AliasKeyword
-							| TSKindId.AscendingKeyword
-							| TSKindId.ByKeyword
-							| TSKindId.DescendingKeyword
-							| TSKindId.EqualsKeyword
-							| TSKindId.FileKeyword
-							| TSKindId.FromKeyword
-							| TSKindId.GlobalKeyword
-							| TSKindId.GroupKeyword
-							| TSKindId.IntoKeyword
-							| TSKindId.JoinKeyword
-							| TSKindId.LetKeyword
-							| TSKindId.NotnullKeyword
-							| TSKindId.OnKeyword
-							| TSKindId.OrderbyKeyword
-							| TSKindId.ScopedKeyword
-							| TSKindId.SelectKeyword
-							| TSKindId.UnmanagedKeyword
-							| TSKindId.VarKeyword
-							| TSKindId.WhenKeyword
-							| TSKindId.WhereKeyword
-							| TSKindId.YieldKeyword
-						>(this, '_content', tree);
-					}
-				],
-				false
-			);
-		},
-		type() {
-			return hydrateSlot<T.Type>(this, '_type', tree);
-		},
-		$with: undefined as unknown as object,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current),
-		[TREE]: treeTokenOf(data) ?? null,
-		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
-		[HANDLE]: handle,
-		[INPUT]: data,
-		[READ_TREE]: tree,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		unsafe: wrapUsingDirectiveArm$with$unsafe,
-		name: wrapUsingDirectiveArm$with$name,
-		type: wrapUsingDirectiveArm$with$type,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.UsingDirectiveArm.Parsed;
-}
-function wrapUsingDirectiveArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const data = node[INPUT] as T.UsingDirectiveArm;
-	const tree = node[READ_TREE] as TreeHandle;
-	switch (setter) {
-		case 'unsafe':
-			return applySetter(args, (v: NonNullable<T.UsingDirectiveArm['_unsafe']>) =>
-				rebuilt(node, handle, () =>
-					wrapUsingDirectiveArm(
-						{ ...$edited(data), _unsafe: admitSlot(handle, 'using_directive_arm', 'unsafe', v) },
-						tree
-					)
-				)
-			);
-		case 'name':
-			return hoistedWith(
-				node,
-				'name',
-				'_name',
-				'content',
-				false,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (v: NonNullable<T.UsingDirectiveArm['_name']>) =>
-						rebuilt(node, handle, () =>
-							wrapUsingDirectiveArm(
-								{ ...$edited(data), _name: admitSlot(handle, 'using_directive_arm', 'name', v) },
-								tree
-							)
-						)
-					),
-				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildIdentifier(v), TSKindId.Identifier)),
-				TSKindId.Identifier
-			);
-		case 'type':
-			return applySetter(args, (v: NonNullable<T.UsingDirectiveArm['_type']>) =>
-				rebuilt(node, handle, () =>
-					wrapUsingDirectiveArm({ ...$edited(data), _type: admitSlot(handle, 'using_directive_arm', 'type', v) }, tree)
-				)
-			);
-	}
-	throw new Error(`using_directive_arm has no $with.${setter}`);
-}
-function wrapUsingDirectiveArm$with$unsafe(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDirectiveArm$with(receiverOf(this, '$with.unsafe'), 'unsafe', args);
-}
-function wrapUsingDirectiveArm$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDirectiveArm$with(receiverOf(this, '$with.name'), 'name', args);
-}
-function wrapUsingDirectiveArm$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	return wrapUsingDirectiveArm$with(receiverOf(this, '$with.type'), 'type', args);
-}
-
-function wrapUsingDirectiveArm$name$native(this: object) {
-	const tree = (this as Held)[READ_TREE]!;
-	return hydrateSlot<T.Identifier>(this, '_name', tree);
-}
-
 export function wrapAttributeArgumentArm(
 	data: T.AttributeArgumentArm,
 	tree: TreeHandle
@@ -24359,6 +24238,121 @@ function wrapRecordBasePrimaryConstructor$with$names(this: Received<Held>, ...ar
 	return wrapRecordBasePrimaryConstructor$with(receiverOf(this, '$with.names'), 'names', args);
 }
 
+export function wrapUsingDirectiveAlias(data: T.UsingDirectiveAlias, tree: TreeHandle): T.UsingDirectiveAlias.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.UsingDirectiveAlias as const,
+		name() {
+			return hoistRead(
+				hydrateSlot<T.Identifier>(this, '_name', tree),
+				[
+					function (this: object) {
+						return hydrateSlot<
+							| T.IdentifierToken
+							| TSKindId.AliasKeyword
+							| TSKindId.AscendingKeyword
+							| TSKindId.ByKeyword
+							| TSKindId.DescendingKeyword
+							| TSKindId.EqualsKeyword
+							| TSKindId.FileKeyword
+							| TSKindId.FromKeyword
+							| TSKindId.GlobalKeyword
+							| TSKindId.GroupKeyword
+							| TSKindId.IntoKeyword
+							| TSKindId.JoinKeyword
+							| TSKindId.LetKeyword
+							| TSKindId.NotnullKeyword
+							| TSKindId.OnKeyword
+							| TSKindId.OrderbyKeyword
+							| TSKindId.ScopedKeyword
+							| TSKindId.SelectKeyword
+							| TSKindId.UnmanagedKeyword
+							| TSKindId.VarKeyword
+							| TSKindId.WhenKeyword
+							| TSKindId.WhereKeyword
+							| TSKindId.YieldKeyword
+						>(this, '_content', tree);
+					}
+				],
+				false
+			);
+		},
+		type() {
+			return hydrateSlot<T.Type>(this, '_type', tree);
+		},
+		$with: undefined as unknown as object,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current),
+		[TREE]: treeTokenOf(data) ?? null,
+		[SOURCE]: treeTokenOf(data) === undefined ? Source.Factory : Source.Ts,
+		[HANDLE]: handle,
+		[INPUT]: data,
+		[READ_TREE]: tree,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { name: wrapUsingDirectiveAlias$with$name, type: wrapUsingDirectiveAlias$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDirectiveAlias.Parsed;
+}
+function wrapUsingDirectiveAlias$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const data = node[INPUT] as T.UsingDirectiveAlias;
+	const tree = node[READ_TREE] as TreeHandle;
+	switch (setter) {
+		case 'name':
+			return hoistedWith(
+				node,
+				'name',
+				'_name',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (v: NonNullable<T.UsingDirectiveAlias['_name']>) =>
+						rebuilt(node, handle, () =>
+							wrapUsingDirectiveAlias(
+								{ ...$edited(data), _name: admitSlot(handle, 'using_directive_alias', 'name', v) },
+								tree
+							)
+						)
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => RAW.buildIdentifier(v), TSKindId.Identifier)),
+				TSKindId.Identifier
+			);
+		case 'type':
+			return applySetter(args, (v: NonNullable<T.UsingDirectiveAlias['_type']>) =>
+				rebuilt(node, handle, () =>
+					wrapUsingDirectiveAlias(
+						{ ...$edited(data), _type: admitSlot(handle, 'using_directive_alias', 'type', v) },
+						tree
+					)
+				)
+			);
+	}
+	throw new Error(`using_directive_alias has no $with.${setter}`);
+}
+function wrapUsingDirectiveAlias$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDirectiveAlias$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function wrapUsingDirectiveAlias$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return wrapUsingDirectiveAlias$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
+function wrapUsingDirectiveAlias$name$native(this: object) {
+	const tree = (this as Held)[READ_TREE]!;
+	return hydrateSlot<T.Identifier>(this, '_name', tree);
+}
+
 export function wrapElementBindingExpression(
 	data: T.ElementBindingExpression,
 	tree: TreeHandle
@@ -24644,20 +24638,20 @@ function viewExternAliasDirective(data: RecordPosition, tree: TreeHandle): T.Ext
 function viewUsingDirective$global(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
-function viewUsingDirective$elements(this: RecordHandle) {
-	return childItems(this, 3, 1, 1, 2, 0, 3);
+function viewUsingDirective$static(this: RecordHandle) {
+	return recordFlag(this, 2, 1);
 }
-function viewUsingDirective$usingDirectiveArm(this: RecordHandle) {
-	return viewSlot<T.UsingDirectiveArm | undefined>(this, 4, 13, 8, 13, 4);
+function viewUsingDirective$unsafe(this: RecordHandle) {
+	return recordFlag(this, 2, 2);
 }
-function viewUsingDirective$name(this: RecordHandle) {
-	return viewSlot<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName | undefined>(
+function viewUsingDirective$content(this: RecordHandle) {
+	return viewSlot<T.UsingDirectiveAlias | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>(
 		this,
-		17,
+		3,
 		3,
 		1,
 		0,
-		5
+		3
 	);
 }
 function viewUsingDirective(data: RecordPosition, tree: TreeHandle): T.UsingDirective.Parsed {
@@ -24669,9 +24663,9 @@ function viewUsingDirective(data: RecordPosition, tree: TreeHandle): T.UsingDire
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		global: viewUsingDirective$global,
-		elements: viewUsingDirective$elements,
-		usingDirectiveArm: viewUsingDirective$usingDirectiveArm,
-		name: viewUsingDirective$name,
+		static: viewUsingDirective$static,
+		unsafe: viewUsingDirective$unsafe,
+		content: viewUsingDirective$content,
 		$with: undefined as unknown as object,
 		$render: handleRender,
 		toString: handleToString,
@@ -24684,9 +24678,9 @@ function viewUsingDirective(data: RecordPosition, tree: TreeHandle): T.UsingDire
 	};
 	node.$with = {
 		global: $with$global,
-		elements: $with$elements,
-		usingDirectiveArm: $with$usingDirectiveArm,
-		name: $with$name,
+		static: $with$static,
+		unsafe: $with$unsafe,
+		content: $with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
@@ -26887,17 +26881,23 @@ function viewParameterList(data: RecordPosition, tree: TreeHandle): T.ParameterL
 }
 
 function viewParameter$attributeLists(this: RecordHandle) {
-	return viewSlots<T.AttributeList | T.PreprocIfInAttributeList>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.AttributeList | T.PreprocIfInAttributeList>(this, 3, 1, 3, 1, 0, 3);
 }
-function viewParameter$elements(this: RecordHandle) {
-	return childItems(this, 3, 1, 1, 2, 0, 3);
+function viewParameter$this(this: RecordHandle) {
+	return recordFlag(this, 2, 0);
+}
+function viewParameter$scoped(this: RecordHandle) {
+	return recordFlag(this, 2, 1);
+}
+function viewParameter$mode(this: RecordHandle) {
+	return childSlot(this, 4, 1, 2, 0, 4);
 }
 function viewParameter$type(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 4, 4, 3, 0, 4);
+	return viewSlot<T.Type | undefined>(this, 5, 4, 3, 0, 5);
 }
 function viewParameter$name(this: RecordHandle) {
 	return hoistRead(
-		viewSlot<T.Identifier>(this, 8, 6, 8, 6, 5),
+		viewSlot<T.Identifier>(this, 9, 6, 8, 6, 6),
 		[
 			function (this: RecordHandle) {
 				return viewSlot<
@@ -26931,10 +26931,10 @@ function viewParameter$name(this: RecordHandle) {
 	);
 }
 function viewParameter$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 14, 4, 3, 0, 6);
+	return viewSlot<T.Expression | undefined>(this, 15, 4, 3, 0, 7);
 }
 function viewParameter$name$native(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 8, 6, 8, 6, 5);
+	return viewSlot<T.Identifier>(this, 9, 6, 8, 6, 6);
 }
 function viewParameter(data: RecordPosition, tree: TreeHandle): T.Parameter.Parsed {
 	const node = {
@@ -26945,7 +26945,9 @@ function viewParameter(data: RecordPosition, tree: TreeHandle): T.Parameter.Pars
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		attributeLists: viewParameter$attributeLists,
-		elements: viewParameter$elements,
+		this: viewParameter$this,
+		scoped: viewParameter$scoped,
+		mode: viewParameter$mode,
 		type: viewParameter$type,
 		name: viewParameter$name,
 		expression: viewParameter$expression,
@@ -26961,7 +26963,9 @@ function viewParameter(data: RecordPosition, tree: TreeHandle): T.Parameter.Pars
 	};
 	node.$with = {
 		attributeLists: $with$attributeLists,
-		elements: $with$elements,
+		this: $with$this,
+		scoped: $with$scoped,
+		mode: $with$mode,
 		type: $with$type,
 		name: $with$name,
 		expression: $with$expression,
@@ -31363,10 +31367,13 @@ function viewParenthesizedLvalueExpression(
 }
 
 function viewLambdaExpression$attributeLists(this: RecordHandle) {
-	return viewSlots<T.AttributeList | T.PreprocIfInAttributeList>(this, 2, 1, 3, 1, 0, 2);
+	return viewSlots<T.AttributeList | T.PreprocIfInAttributeList>(this, 3, 1, 3, 1, 0, 3);
 }
-function viewLambdaExpression$elements(this: RecordHandle) {
-	return childItems(this, 3, 1, 1, 2, 0, 3);
+function viewLambdaExpression$static(this: RecordHandle) {
+	return recordFlag(this, 2, 0);
+}
+function viewLambdaExpression$async(this: RecordHandle) {
+	return recordFlag(this, 2, 1);
 }
 function viewLambdaExpression$type(this: RecordHandle) {
 	return viewSlot<T.Type | undefined>(this, 4, 4, 3, 0, 4);
@@ -31386,7 +31393,8 @@ function viewLambdaExpression(data: RecordPosition, tree: TreeHandle): T.LambdaE
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
 		attributeLists: viewLambdaExpression$attributeLists,
-		elements: viewLambdaExpression$elements,
+		static: viewLambdaExpression$static,
+		async: viewLambdaExpression$async,
 		type: viewLambdaExpression$type,
 		parameters: viewLambdaExpression$parameters,
 		body: viewLambdaExpression$body,
@@ -31402,7 +31410,8 @@ function viewLambdaExpression(data: RecordPosition, tree: TreeHandle): T.LambdaE
 	};
 	node.$with = {
 		attributeLists: $with$attributeLists,
-		elements: $with$elements,
+		static: $with$static,
+		async: $with$async,
 		type: $with$type,
 		parameters: $with$parameters,
 		body: $with$body,
@@ -31443,8 +31452,11 @@ function viewArrayCreationExpression(data: RecordPosition, tree: TreeHandle): T.
 	return node as unknown as T.ArrayCreationExpression.Parsed;
 }
 
-function viewAnonymousMethodExpression$elements(this: RecordHandle) {
-	return childItems(this, 2, 1, 1, 2, 0, 2);
+function viewAnonymousMethodExpression$static(this: RecordHandle) {
+	return recordFlag(this, 2, 0);
+}
+function viewAnonymousMethodExpression$async(this: RecordHandle) {
+	return recordFlag(this, 2, 1);
 }
 function viewAnonymousMethodExpression$parameters(this: RecordHandle) {
 	return viewSlot<T.ParameterList | undefined>(this, 3, 3, 8, 3, 3);
@@ -31471,7 +31483,8 @@ function viewAnonymousMethodExpression(data: RecordPosition, tree: TreeHandle): 
 		$words: positionWords(data),
 		$cache: undefined as Record<number, unknown> | undefined,
 		$_layout: data.$_layout,
-		elements: viewAnonymousMethodExpression$elements,
+		static: viewAnonymousMethodExpression$static,
+		async: viewAnonymousMethodExpression$async,
 		parameters: viewAnonymousMethodExpression$parameters,
 		block: viewAnonymousMethodExpression$block,
 		$with: undefined as unknown as object,
@@ -31484,7 +31497,13 @@ function viewAnonymousMethodExpression(data: RecordPosition, tree: TreeHandle): 
 		$engine: handleEngine,
 		[Symbol.dispose]: handleDispose
 	};
-	node.$with = { elements: $with$elements, parameters: $with$parameters, block: $with$block, [RECEIVER]: node };
+	node.$with = {
+		static: $with$static,
+		async: $with$async,
+		parameters: $with$parameters,
+		block: $with$block,
+		[RECEIVER]: node
+	};
 	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
 	return node as unknown as T.AnonymousMethodExpression.Parsed;
 }
@@ -35151,76 +35170,6 @@ function viewPreprocPragmaArm2(data: RecordPosition, tree: TreeHandle): T.Prepro
 	return node as unknown as T.PreprocPragmaArm2.Parsed;
 }
 
-function viewUsingDirectiveArm$unsafe(this: RecordHandle) {
-	return recordFlag(this, 2, 0);
-}
-function viewUsingDirectiveArm$name(this: RecordHandle) {
-	return hoistRead(
-		viewSlot<T.Identifier>(this, 3, 6, 8, 6, 3),
-		[
-			function (this: RecordHandle) {
-				return viewSlot<
-					| T.IdentifierToken
-					| TSKindId.AliasKeyword
-					| TSKindId.AscendingKeyword
-					| TSKindId.ByKeyword
-					| TSKindId.DescendingKeyword
-					| TSKindId.EqualsKeyword
-					| TSKindId.FileKeyword
-					| TSKindId.FromKeyword
-					| TSKindId.GlobalKeyword
-					| TSKindId.GroupKeyword
-					| TSKindId.IntoKeyword
-					| TSKindId.JoinKeyword
-					| TSKindId.LetKeyword
-					| TSKindId.NotnullKeyword
-					| TSKindId.OnKeyword
-					| TSKindId.OrderbyKeyword
-					| TSKindId.ScopedKeyword
-					| TSKindId.SelectKeyword
-					| TSKindId.UnmanagedKeyword
-					| TSKindId.VarKeyword
-					| TSKindId.WhenKeyword
-					| TSKindId.WhereKeyword
-					| TSKindId.YieldKeyword
-				>(this, 2, 4, 3, 0, 2);
-			}
-		],
-		false
-	);
-}
-function viewUsingDirectiveArm$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 9, 4, 3, 0, 4);
-}
-function viewUsingDirectiveArm$name$native(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 3, 6, 8, 6, 3);
-}
-function viewUsingDirectiveArm(data: RecordPosition, tree: TreeHandle): T.UsingDirectiveArm.Parsed {
-	const node = {
-		$type: TSKindId.UsingDirectiveArm as const,
-		$tree: tree,
-		$at: data.$at,
-		$words: positionWords(data),
-		$cache: undefined as Record<number, unknown> | undefined,
-		$_layout: data.$_layout,
-		unsafe: viewUsingDirectiveArm$unsafe,
-		name: viewUsingDirectiveArm$name,
-		type: viewUsingDirectiveArm$type,
-		$with: undefined as unknown as object,
-		$render: handleRender,
-		toString: handleToString,
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$query: data.$_layout === undefined ? undefined : handleQuery,
-		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
-		$engine: handleEngine,
-		[Symbol.dispose]: handleDispose
-	};
-	node.$with = { unsafe: $with$unsafe, name: $with$name, type: $with$type, [RECEIVER]: node };
-	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
-	return node as unknown as T.UsingDirectiveArm.Parsed;
-}
-
 function viewAttributeArgumentArm$name(this: RecordHandle) {
 	return hoistRead(
 		viewSlot<T.Identifier>(this, 2, 6, 8, 6, 2),
@@ -36028,6 +35977,72 @@ function viewRecordBasePrimaryConstructor(
 	return node as unknown as T.RecordBasePrimaryConstructor.Parsed;
 }
 
+function viewUsingDirectiveAlias$name(this: RecordHandle) {
+	return hoistRead(
+		viewSlot<T.Identifier>(this, 2, 6, 8, 6, 2),
+		[
+			function (this: RecordHandle) {
+				return viewSlot<
+					| T.IdentifierToken
+					| TSKindId.AliasKeyword
+					| TSKindId.AscendingKeyword
+					| TSKindId.ByKeyword
+					| TSKindId.DescendingKeyword
+					| TSKindId.EqualsKeyword
+					| TSKindId.FileKeyword
+					| TSKindId.FromKeyword
+					| TSKindId.GlobalKeyword
+					| TSKindId.GroupKeyword
+					| TSKindId.IntoKeyword
+					| TSKindId.JoinKeyword
+					| TSKindId.LetKeyword
+					| TSKindId.NotnullKeyword
+					| TSKindId.OnKeyword
+					| TSKindId.OrderbyKeyword
+					| TSKindId.ScopedKeyword
+					| TSKindId.SelectKeyword
+					| TSKindId.UnmanagedKeyword
+					| TSKindId.VarKeyword
+					| TSKindId.WhenKeyword
+					| TSKindId.WhereKeyword
+					| TSKindId.YieldKeyword
+				>(this, 2, 4, 3, 0, 2);
+			}
+		],
+		false
+	);
+}
+function viewUsingDirectiveAlias$type(this: RecordHandle) {
+	return viewSlot<T.Type>(this, 8, 4, 3, 0, 3);
+}
+function viewUsingDirectiveAlias$name$native(this: RecordHandle) {
+	return viewSlot<T.Identifier>(this, 2, 6, 8, 6, 2);
+}
+function viewUsingDirectiveAlias(data: RecordPosition, tree: TreeHandle): T.UsingDirectiveAlias.Parsed {
+	const node = {
+		$type: TSKindId.UsingDirectiveAlias as const,
+		$tree: tree,
+		$at: data.$at,
+		$words: positionWords(data),
+		$cache: undefined as Record<number, unknown> | undefined,
+		$_layout: data.$_layout,
+		name: viewUsingDirectiveAlias$name,
+		type: viewUsingDirectiveAlias$type,
+		$with: undefined as unknown as object,
+		$render: handleRender,
+		toString: handleToString,
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$query: data.$_layout === undefined ? undefined : handleQuery,
+		$snapshot: data.$_layout === undefined ? undefined : handleSnapshot,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
+	};
+	node.$with = { name: $with$name, type: $with$type, [RECEIVER]: node };
+	node.$trivia = { leading: $trivia$leading, trailing: $trivia$trailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDirectiveAlias.Parsed;
+}
+
 function viewElementBindingExpression$arguments(this: RecordHandle) {
 	return hoistRead(viewSlot<T.Arguments>(this, 2, 3, 8, 3, 2), [listElementsHop(undefined, 'items')], true);
 }
@@ -36146,6 +36161,9 @@ function $with$argumentList(this: Received<RecordPosition>, ...args: unknown[]):
 }
 function $with$arguments(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.arguments'), _wrap, 'arguments', args);
+}
+function $with$async(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.async'), _wrap, 'async', args);
 }
 function $with$attributeArgumentArm(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.attributeArgumentArm'), _wrap, 'attributeArgumentArm', args);
@@ -36368,6 +36386,9 @@ function $with$lvalueExpression(this: Received<RecordPosition>, ...args: unknown
 function $with$marker(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.marker'), _wrap, 'marker', args);
 }
+function $with$mode(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.mode'), _wrap, 'mode', args);
+}
 function $with$modifier(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.modifier'), _wrap, 'modifier', args);
 }
@@ -36461,6 +36482,9 @@ function $with$returns(this: Received<RecordPosition>, ...args: unknown[]): unkn
 function $with$right(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.right'), _wrap, 'right', args);
 }
+function $with$scoped(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.scoped'), _wrap, 'scoped', args);
+}
 function $with$selectOrGroupClause(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.selectOrGroupClause'), _wrap, 'selectOrGroupClause', args);
 }
@@ -36484,6 +36508,9 @@ function $with$statement(this: Received<RecordPosition>, ...args: unknown[]): un
 }
 function $with$statements(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.statements'), _wrap, 'statements', args);
+}
+function $with$static(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.static'), _wrap, 'static', args);
 }
 function $with$stringLiteral(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.stringLiteral'), _wrap, 'stringLiteral', args);
@@ -36511,6 +36538,9 @@ function $with$switchSections(this: Received<RecordPosition>, ...args: unknown[]
 }
 function $with$target(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.target'), _wrap, 'target', args);
+}
+function $with$this(this: Received<RecordPosition>, ...args: unknown[]): unknown {
+	return rowWith(receiverOf(this, '$with.this'), _wrap, 'this', args);
 }
 function $with$topLevelItems(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.topLevelItems'), _wrap, 'topLevelItems', args);
@@ -36549,9 +36579,6 @@ function $with$updates(this: Received<RecordPosition>, ...args: unknown[]): unkn
 }
 function $with$using(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.using'), _wrap, 'using', args);
-}
-function $with$usingDirectiveArm(this: Received<RecordPosition>, ...args: unknown[]): unknown {
-	return rowWith(receiverOf(this, '$with.usingDirectiveArm'), _wrap, 'usingDirectiveArm', args);
 }
 function $with$usingVariableDeclarators(this: Received<RecordPosition>, ...args: unknown[]): unknown {
 	return rowWith(receiverOf(this, '$with.usingVariableDeclarators'), _wrap, 'usingVariableDeclarators', args);
@@ -36893,7 +36920,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.PreprocLineArm2]: (d, t) => wrapPreprocLineArm2(d as unknown as T.PreprocLineArm2, t),
 	[TSKindId.PreprocPragmaArm1]: (d, t) => wrapPreprocPragmaArm1(d as unknown as T.PreprocPragmaArm1, t),
 	[TSKindId.PreprocPragmaArm2]: (d, t) => wrapPreprocPragmaArm2(d as unknown as T.PreprocPragmaArm2, t),
-	[TSKindId.UsingDirectiveArm]: (d, t) => wrapUsingDirectiveArm(d as unknown as T.UsingDirectiveArm, t),
 	[TSKindId.AttributeArgumentArm]: (d, t) => wrapAttributeArgumentArm(d as unknown as T.AttributeArgumentArm, t),
 	[TSKindId.PropertyDeclarationArm]: (d, t) => wrapPropertyDeclarationArm(d as unknown as T.PropertyDeclarationArm, t),
 	[TSKindId.CallingConventionArm]: (d, t) => wrapCallingConventionArm(d as unknown as T.CallingConventionArm, t),
@@ -36918,6 +36944,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.RecordBaseNames]: (d, t) => wrapRecordBaseNames(d as unknown as T.RecordBaseNames, t),
 	[TSKindId.RecordBasePrimaryConstructor]: (d, t) =>
 		wrapRecordBasePrimaryConstructor(d as unknown as T.RecordBasePrimaryConstructor, t),
+	[TSKindId.UsingDirectiveAlias]: (d, t) => wrapUsingDirectiveAlias(d as unknown as T.UsingDirectiveAlias, t),
 	[TSKindId.ElementBindingExpression]: (d, t) =>
 		wrapElementBindingExpression(d as unknown as T.ElementBindingExpression, t),
 	[TSKindId.ImplicitParameter]: (d, t) => wrapImplicitParameter(d as unknown as T.ImplicitParameter, t),
@@ -37186,7 +37213,6 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.PreprocLineArm2]: viewPreprocLineArm2,
 	[TSKindId.PreprocPragmaArm1]: viewPreprocPragmaArm1,
 	[TSKindId.PreprocPragmaArm2]: viewPreprocPragmaArm2,
-	[TSKindId.UsingDirectiveArm]: viewUsingDirectiveArm,
 	[TSKindId.AttributeArgumentArm]: viewAttributeArgumentArm,
 	[TSKindId.PropertyDeclarationArm]: viewPropertyDeclarationArm,
 	[TSKindId.CallingConventionArm]: viewCallingConventionArm,
@@ -37203,6 +37229,7 @@ const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => obj
 	[TSKindId.TypeArgumentListBound]: viewTypeArgumentListBound,
 	[TSKindId.RecordBaseNames]: viewRecordBaseNames,
 	[TSKindId.RecordBasePrimaryConstructor]: viewRecordBasePrimaryConstructor,
+	[TSKindId.UsingDirectiveAlias]: viewUsingDirectiveAlias,
 	[TSKindId.ElementBindingExpression]: viewElementBindingExpression,
 	[TSKindId.ImplicitParameter]: viewImplicitParameter
 };
@@ -37799,13 +37826,6 @@ export const nativeSlots: NativeSlots = Object.freeze({
 				: wrapCollectionElements$items$native.call(this);
 		}
 	}),
-	[TSKindId.UsingDirectiveArm]: Object.freeze({
-		name(this: object) {
-			return isRecordPosition(this)
-				? viewUsingDirectiveArm$name$native.call(this as unknown as RecordHandle)
-				: wrapUsingDirectiveArm$name$native.call(this);
-		}
-	}),
 	[TSKindId.AttributeArgumentArm]: Object.freeze({
 		name(this: object) {
 			return isRecordPosition(this)
@@ -37884,6 +37904,13 @@ export const nativeSlots: NativeSlots = Object.freeze({
 			return isRecordPosition(this)
 				? viewDeclarationListBodyWithBody$body$native.call(this as unknown as RecordHandle)
 				: wrapDeclarationListBodyWithBody$body$native.call(this);
+		}
+	}),
+	[TSKindId.UsingDirectiveAlias]: Object.freeze({
+		name(this: object) {
+			return isRecordPosition(this)
+				? viewUsingDirectiveAlias$name$native.call(this as unknown as RecordHandle)
+				: wrapUsingDirectiveAlias$name$native.call(this);
 		}
 	}),
 	[TSKindId.ElementBindingExpression]: Object.freeze({

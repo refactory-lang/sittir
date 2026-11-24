@@ -89,41 +89,9 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 ]);
 
 // Bitflag enums — ordered-unique literal sets per bitflag field
-/** Bitflag set for `anonymous_method_expression.elements`. */
-export enum AnonymousMethodExpressionElements {
-	None = 0,
-	Static = 1 << 0,
-	Async = 1 << 1
-}
-
-/** Bitflag set for `lambda_expression.elements`. */
-export enum LambdaExpressionElements {
-	None = 0,
-	Static = 1 << 0,
-	Async = 1 << 1
-}
-
 /** Bitflag set for `order_by_clause.operator`. */
 export enum Operators {
 	None = 0,
 	Ascending = 1 << 0,
 	Descending = 1 << 1
-}
-
-/** Bitflag set for `parameter.elements`. */
-export enum ParameterElements {
-	None = 0,
-	This = 1 << 0,
-	Scoped = 1 << 1,
-	Ref = 1 << 2,
-	Out = 1 << 3,
-	In = 1 << 4,
-	Readonly = 1 << 5
-}
-
-/** Bitflag set for `using_directive.elements`. */
-export enum UsingDirectiveElements {
-	None = 0,
-	Static = 1 << 0,
-	Unsafe = 1 << 1
 }

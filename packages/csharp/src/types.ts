@@ -48,13 +48,7 @@ export { TSKindId } from './kinds.js';
 import type * as T from './types.js';
 import type { KindMembers } from './is.js';
 import type { PortableQueryIds } from '@sittir/common/portable';
-import {
-	AnonymousMethodExpressionElements,
-	LambdaExpressionElements,
-	Operators,
-	ParameterElements,
-	UsingDirectiveElements
-} from './consts.js';
+import { Operators } from './consts.js';
 
 export type LeafScalarMap = {
 	[TSKindId.TrueKeyword]: true;
@@ -73,6 +67,7 @@ export type LeafStringMap = {
 	[TSKindId.EmptyStatement]: ';';
 	[TSKindId.Discard]: '_';
 	[TSKindId.NullLiteral]: 'null';
+	[TSKindId.RefReadonly]: 'ref readonly';
 	[TSKindId.TypeParameterConstraintStruct]: 'struct';
 	[TSKindId.TypeParameterConstraintNotnull]: 'notnull';
 	[TSKindId.TypeParameterConstraintUnmanaged]: 'unmanaged';
@@ -135,12 +130,10 @@ export type LeafStringMap = {
 	[TSKindId.SealedKeyword]: 'sealed';
 	[TSKindId.VirtualKeyword]: 'virtual';
 	[TSKindId.VolatileKeyword]: 'volatile';
-	[TSKindId.ThisKeyword]: 'this';
-	[TSKindId.ScopedKeyword]: 'scoped';
-	[TSKindId.OutKeyword]: 'out';
-	[TSKindId.InKeyword]: 'in';
 	[TSKindId.Lt]: '<';
 	[TSKindId.Gt]: '>';
+	[TSKindId.InKeyword]: 'in';
+	[TSKindId.OutKeyword]: 'out';
 	[TSKindId.WhereKeyword]: 'where';
 	[TSKindId.OperatorKeyword]: 'operator';
 	[TSKindId.CheckedKeyword]: 'checked';
@@ -172,7 +165,9 @@ export type LeafStringMap = {
 	[TSKindId.AddKeyword]: 'add';
 	[TSKindId.RemoveKeyword]: 'remove';
 	[TSKindId.InitKeyword]: 'init';
+	[TSKindId.ThisKeyword]: 'this';
 	[TSKindId.Dot]: '.';
+	[TSKindId.ScopedKeyword]: 'scoped';
 	[TSKindId.ParamsKeyword]: 'params';
 	[TSKindId.BaseKeyword]: 'base';
 	[TSKindId.EqGt]: '=>';
@@ -311,12 +306,7 @@ export type LeafStringMap = {
 		| 'static'
 		| 'unsafe'
 		| 'virtual'
-		| 'volatile'
-		| 'this'
-		| 'scoped'
-		| 'ref'
-		| 'out'
-		| 'in';
+		| 'volatile';
 	[TSKindId.PredefinedType]:
 		| 'bool'
 		| 'byte'
@@ -760,7 +750,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[395, 'or_pattern'],
 	[396, 'declaration_pattern'],
 	[397, '_variable_designation'],
-	[620, '_variable_designation'],
+	[618, '_variable_designation'],
 	[398, 'parenthesized_variable_designation'],
 	[399, 'expression'],
 	[400, 'non_lvalue_expression'],
@@ -903,14 +893,14 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[537, 'preproc_line_arm2'],
 	[538, 'preproc_pragma_arm1'],
 	[539, 'preproc_pragma_arm2'],
-	[540, 'using_directive_arm'],
-	[541, 'attribute_argument_arm'],
-	[542, 'property_declaration_arm'],
-	[543, 'calling_convention_arm'],
-	[544, 'foreach_statement_initializer_arm'],
-	[545, 'subpattern_arm'],
-	[546, 'query_body_group'],
-	[547, 'anonymous_object_member_declarator_arm'],
+	[540, 'attribute_argument_arm'],
+	[541, 'property_declaration_arm'],
+	[542, 'calling_convention_arm'],
+	[543, 'foreach_statement_initializer_arm'],
+	[544, 'subpattern_arm'],
+	[545, 'query_body_group'],
+	[546, 'anonymous_object_member_declarator_arm'],
+	[547, 'ref_readonly'],
 	[548, 'switch_statement_parenthesized'],
 	[549, 'switch_statement_tuple'],
 	[550, 'type_parameter_constraint_class'],
@@ -926,8 +916,8 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[560, 'type_argument_list_bound'],
 	[561, 'record_base_names'],
 	[562, 'record_base_primary_constructor'],
-	[563, 'compilation_unit_repeat1'],
-	[564, 'using_directive_repeat1'],
+	[563, 'using_directive_alias'],
+	[564, 'compilation_unit_repeat1'],
 	[565, '_class_declaration_initializer_repeat1'],
 	[566, '_class_declaration_initializer_repeat2'],
 	[567, '_class_declaration_initializer_repeat3'],
@@ -939,50 +929,48 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[573, 'conversion_operator_declaration_repeat1'],
 	[574, 'declaration_list_repeat1'],
 	[575, 'accessor_list_repeat1'],
-	[576, '_parameter_type_with_modifiers_repeat1'],
-	[577, 'tuple_pattern_repeat1'],
-	[578, 'block_repeat1'],
-	[579, 'variable_declaration_repeat1'],
-	[580, 'using_variable_declaration_repeat1'],
-	[581, 'array_rank_specifier_repeat1'],
-	[582, 'function_pointer_type_repeat1'],
-	[583, 'tuple_type_repeat1'],
-	[584, 'switch_body_repeat1'],
-	[585, 'try_statement_repeat1'],
-	[586, 'catch_clause_repeat1'],
-	[587, '_query_body_repeat1'],
-	[588, '_query_body_repeat2'],
-	[589, 'order_by_clause_repeat1'],
-	[590, 'interpolated_string_expression_repeat1'],
-	[591, 'interpolated_string_expression_repeat2'],
-	[592, 'interpolated_string_expression_repeat3'],
-	[593, '_lambda_expression_init_repeat1'],
-	[594, 'implicit_array_creation_expression_repeat1'],
-	[595, 'tuple_expression_repeat1'],
-	[596, 'string_literal_repeat1'],
-	[597, 'preproc_if_in_top_level_repeat1'],
-	[598, 'attributes_repeat1'],
-	[599, '_attribute_argument_list_optional1_repeat1'],
-	[600, 'enum_member_declaration_list_elements_repeat1'],
-	[601, '_record_base_optional1_repeat1'],
-	[602, '_bracketed_parameter_list_optional1_repeat1'],
-	[603, 'arguments_repeat1'],
-	[604, '_calling_convention_optional1_repeat1'],
-	[605, 'for_statement_conditions_initializer_repeat1'],
-	[606, 'list_pattern_elements_repeat1'],
-	[607, '_positional_pattern_clause_optional1_repeat1'],
-	[608, 'subpatterns_repeat1'],
-	[609, '_parenthesized_variable_designation_optional1_repeat1'],
-	[610, 'switch_expression_arms_repeat1'],
-	[611, 'anonymous_object_member_declarators_repeat1'],
-	[612, 'collection_elements_repeat1'],
-	[613, 'expressions_repeat1'],
-	[614, 'with_initializers_repeat1'],
-	[615, '_preproc_pragma_optional1_repeat1'],
-	[616, 'type_argument_list_bound_repeat1'],
-	[617, 'element_binding_expression'],
-	[618, 'implicit_parameter'],
-	[619, 'interpolation_quote'],
+	[576, 'tuple_pattern_repeat1'],
+	[577, 'block_repeat1'],
+	[578, 'variable_declaration_repeat1'],
+	[579, 'using_variable_declaration_repeat1'],
+	[580, 'array_rank_specifier_repeat1'],
+	[581, 'function_pointer_type_repeat1'],
+	[582, 'tuple_type_repeat1'],
+	[583, 'switch_body_repeat1'],
+	[584, 'try_statement_repeat1'],
+	[585, 'catch_clause_repeat1'],
+	[586, '_query_body_repeat1'],
+	[587, '_query_body_repeat2'],
+	[588, 'order_by_clause_repeat1'],
+	[589, 'interpolated_string_expression_repeat1'],
+	[590, 'interpolated_string_expression_repeat2'],
+	[591, 'interpolated_string_expression_repeat3'],
+	[592, 'implicit_array_creation_expression_repeat1'],
+	[593, 'tuple_expression_repeat1'],
+	[594, 'string_literal_repeat1'],
+	[595, 'preproc_if_in_top_level_repeat1'],
+	[596, 'attributes_repeat1'],
+	[597, '_attribute_argument_list_optional1_repeat1'],
+	[598, 'enum_member_declaration_list_elements_repeat1'],
+	[599, '_record_base_optional1_repeat1'],
+	[600, '_bracketed_parameter_list_optional1_repeat1'],
+	[601, 'arguments_repeat1'],
+	[602, '_calling_convention_optional1_repeat1'],
+	[603, 'for_statement_conditions_initializer_repeat1'],
+	[604, 'list_pattern_elements_repeat1'],
+	[605, '_positional_pattern_clause_optional1_repeat1'],
+	[606, 'subpatterns_repeat1'],
+	[607, '_parenthesized_variable_designation_optional1_repeat1'],
+	[608, 'switch_expression_arms_repeat1'],
+	[609, 'anonymous_object_member_declarators_repeat1'],
+	[610, 'collection_elements_repeat1'],
+	[611, 'expressions_repeat1'],
+	[612, 'with_initializers_repeat1'],
+	[613, '_preproc_pragma_optional1_repeat1'],
+	[614, 'type_argument_list_bound_repeat1'],
+	[615, 'element_binding_expression'],
+	[616, 'implicit_parameter'],
+	[617, 'interpolation_quote'],
 	[65535, 'ERROR']
 ]);
 
@@ -1385,7 +1373,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[395, 'or_pattern'],
 	[396, 'declaration_pattern'],
 	[397, '_variable_designation'],
-	[620, 'variable_designation'],
+	[618, 'variable_designation'],
 	[398, 'parenthesized_variable_designation'],
 	[399, 'expression'],
 	[400, 'non_lvalue_expression'],
@@ -1528,14 +1516,14 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[537, 'preproc_line_arm2'],
 	[538, 'preproc_pragma_arm1'],
 	[539, 'preproc_pragma_arm2'],
-	[540, 'using_directive_arm'],
-	[541, 'attribute_argument_arm'],
-	[542, 'property_declaration_arm'],
-	[543, 'calling_convention_arm'],
-	[544, 'foreach_statement_initializer_arm'],
-	[545, 'subpattern_arm'],
-	[546, 'query_body_group'],
-	[547, 'anonymous_object_member_declarator_arm'],
+	[540, 'attribute_argument_arm'],
+	[541, 'property_declaration_arm'],
+	[542, 'calling_convention_arm'],
+	[543, 'foreach_statement_initializer_arm'],
+	[544, 'subpattern_arm'],
+	[545, 'query_body_group'],
+	[546, 'anonymous_object_member_declarator_arm'],
+	[547, 'ref_readonly'],
 	[548, 'switch_statement_parenthesized'],
 	[549, 'switch_statement_tuple'],
 	[550, 'type_parameter_constraint_class'],
@@ -1551,8 +1539,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[560, 'type_argument_list_bound'],
 	[561, 'record_base_names'],
 	[562, 'record_base_primary_constructor'],
-	[563, 'compilation_unit_repeat1'],
-	[564, 'using_directive_repeat1'],
+	[563, 'using_directive_alias'],
+	[564, 'compilation_unit_repeat1'],
 	[565, '_class_declaration_initializer_repeat1'],
 	[566, '_class_declaration_initializer_repeat2'],
 	[567, '_class_declaration_initializer_repeat3'],
@@ -1564,50 +1552,48 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[573, 'conversion_operator_declaration_repeat1'],
 	[574, 'declaration_list_repeat1'],
 	[575, 'accessor_list_repeat1'],
-	[576, '_parameter_type_with_modifiers_repeat1'],
-	[577, 'tuple_pattern_repeat1'],
-	[578, 'block_repeat1'],
-	[579, 'variable_declaration_repeat1'],
-	[580, 'using_variable_declaration_repeat1'],
-	[581, 'array_rank_specifier_repeat1'],
-	[582, 'function_pointer_type_repeat1'],
-	[583, 'tuple_type_repeat1'],
-	[584, 'switch_body_repeat1'],
-	[585, 'try_statement_repeat1'],
-	[586, 'catch_clause_repeat1'],
-	[587, '_query_body_repeat1'],
-	[588, '_query_body_repeat2'],
-	[589, 'order_by_clause_repeat1'],
-	[590, 'interpolated_string_expression_repeat1'],
-	[591, 'interpolated_string_expression_repeat2'],
-	[592, 'interpolated_string_expression_repeat3'],
-	[593, '_lambda_expression_init_repeat1'],
-	[594, 'implicit_array_creation_expression_repeat1'],
-	[595, 'tuple_expression_repeat1'],
-	[596, 'string_literal_repeat1'],
-	[597, 'preproc_if_in_top_level_repeat1'],
-	[598, 'attributes_repeat1'],
-	[599, '_attribute_argument_list_optional1_repeat1'],
-	[600, 'enum_member_declaration_list_elements_repeat1'],
-	[601, '_record_base_optional1_repeat1'],
-	[602, '_bracketed_parameter_list_optional1_repeat1'],
-	[603, 'arguments_repeat1'],
-	[604, '_calling_convention_optional1_repeat1'],
-	[605, 'for_statement_conditions_initializer_repeat1'],
-	[606, 'list_pattern_elements_repeat1'],
-	[607, '_positional_pattern_clause_optional1_repeat1'],
-	[608, 'subpatterns_repeat1'],
-	[609, '_parenthesized_variable_designation_optional1_repeat1'],
-	[610, 'switch_expression_arms_repeat1'],
-	[611, 'anonymous_object_member_declarators_repeat1'],
-	[612, 'collection_elements_repeat1'],
-	[613, 'expressions_repeat1'],
-	[614, 'with_initializers_repeat1'],
-	[615, '_preproc_pragma_optional1_repeat1'],
-	[616, 'type_argument_list_bound_repeat1'],
-	[617, 'element_binding_expression'],
-	[618, 'implicit_parameter'],
-	[619, 'interpolation_quote'],
+	[576, 'tuple_pattern_repeat1'],
+	[577, 'block_repeat1'],
+	[578, 'variable_declaration_repeat1'],
+	[579, 'using_variable_declaration_repeat1'],
+	[580, 'array_rank_specifier_repeat1'],
+	[581, 'function_pointer_type_repeat1'],
+	[582, 'tuple_type_repeat1'],
+	[583, 'switch_body_repeat1'],
+	[584, 'try_statement_repeat1'],
+	[585, 'catch_clause_repeat1'],
+	[586, '_query_body_repeat1'],
+	[587, '_query_body_repeat2'],
+	[588, 'order_by_clause_repeat1'],
+	[589, 'interpolated_string_expression_repeat1'],
+	[590, 'interpolated_string_expression_repeat2'],
+	[591, 'interpolated_string_expression_repeat3'],
+	[592, 'implicit_array_creation_expression_repeat1'],
+	[593, 'tuple_expression_repeat1'],
+	[594, 'string_literal_repeat1'],
+	[595, 'preproc_if_in_top_level_repeat1'],
+	[596, 'attributes_repeat1'],
+	[597, '_attribute_argument_list_optional1_repeat1'],
+	[598, 'enum_member_declaration_list_elements_repeat1'],
+	[599, '_record_base_optional1_repeat1'],
+	[600, '_bracketed_parameter_list_optional1_repeat1'],
+	[601, 'arguments_repeat1'],
+	[602, '_calling_convention_optional1_repeat1'],
+	[603, 'for_statement_conditions_initializer_repeat1'],
+	[604, 'list_pattern_elements_repeat1'],
+	[605, '_positional_pattern_clause_optional1_repeat1'],
+	[606, 'subpatterns_repeat1'],
+	[607, '_parenthesized_variable_designation_optional1_repeat1'],
+	[608, 'switch_expression_arms_repeat1'],
+	[609, 'anonymous_object_member_declarators_repeat1'],
+	[610, 'collection_elements_repeat1'],
+	[611, 'expressions_repeat1'],
+	[612, 'with_initializers_repeat1'],
+	[613, '_preproc_pragma_optional1_repeat1'],
+	[614, 'type_argument_list_bound_repeat1'],
+	[615, 'element_binding_expression'],
+	[616, 'implicit_parameter'],
+	[617, 'interpolation_quote'],
 	[65535, 'ERROR']
 ]);
 
@@ -2694,8 +2680,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PreprocPragmaArm1;
 		case 'preproc_pragma_arm2':
 			return TSKindId.PreprocPragmaArm2;
-		case 'using_directive_arm':
-			return TSKindId.UsingDirectiveArm;
 		case 'attribute_argument_arm':
 			return TSKindId.AttributeArgumentArm;
 		case 'property_declaration_arm':
@@ -2710,6 +2694,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.QueryBodyGroup;
 		case 'anonymous_object_member_declarator_arm':
 			return TSKindId.AnonymousObjectMemberDeclaratorArm;
+		case 'ref_readonly':
+			return TSKindId.RefReadonly;
 		case 'switch_statement_parenthesized':
 			return TSKindId.SwitchStatementParenthesized;
 		case 'switch_statement_tuple':
@@ -2740,10 +2726,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.RecordBaseNames;
 		case 'record_base_primary_constructor':
 			return TSKindId.RecordBasePrimaryConstructor;
+		case 'using_directive_alias':
+			return TSKindId.UsingDirectiveAlias;
 		case 'compilation_unit_repeat1':
 			return TSKindId.CompilationUnitRepeat1;
-		case 'using_directive_repeat1':
-			return TSKindId.UsingDirectiveRepeat1;
 		case '_class_declaration_initializer_repeat1':
 			return TSKindId._ClassDeclarationInitializerRepeat1;
 		case '_class_declaration_initializer_repeat2':
@@ -2766,8 +2752,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DeclarationListRepeat1;
 		case 'accessor_list_repeat1':
 			return TSKindId.AccessorListRepeat1;
-		case '_parameter_type_with_modifiers_repeat1':
-			return TSKindId._ParameterTypeWithModifiersRepeat1;
 		case 'tuple_pattern_repeat1':
 			return TSKindId.TuplePatternRepeat1;
 		case 'block_repeat1':
@@ -2800,8 +2784,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.InterpolatedStringExpressionRepeat2;
 		case 'interpolated_string_expression_repeat3':
 			return TSKindId.InterpolatedStringExpressionRepeat3;
-		case '_lambda_expression_init_repeat1':
-			return TSKindId._LambdaExpressionInitRepeat1;
 		case 'implicit_array_creation_expression_repeat1':
 			return TSKindId.ImplicitArrayCreationExpressionRepeat1;
 		case 'tuple_expression_repeat1':
@@ -3822,38 +3804,32 @@ export interface ExternAliasDirective {
 export interface UsingDirective {
 	readonly $type: TSKindId.UsingDirective;
 	readonly _global: boolean;
-	readonly _elements?: number;
-	readonly _using_directive_arm?: UsingDirectiveArm;
-	readonly _name?: AliasQualifiedName | QualifiedName | Identifier | GenericName;
+	readonly _static: boolean;
+	readonly _unsafe: boolean;
+	readonly _content: UsingDirectiveAlias | AliasQualifiedName | QualifiedName | Identifier | GenericName;
 	readonly __slotNames__?: {
 		readonly _global: 'global';
-		readonly _elements: 'elements';
-		readonly _using_directive_arm: 'usingDirectiveArm';
-		readonly _name: 'name';
+		readonly _static: 'static';
+		readonly _unsafe: 'unsafe';
+		readonly _content: 'content';
 	};
 	readonly __inputHints__?: {
 		readonly global?: BaseBooleanKeyword<'global'>;
-		readonly elements?: Bitflag<UsingDirectiveElements, number>;
+		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
 	};
 	readonly __slotHints__?: {
 		readonly global: SlotHint<NonNullable<T.UsingDirective.Config>['global'], true>;
-		readonly elements: SlotHint<
-			Extract<NonNullable<NonNullable<T.UsingDirective.Config>['elements']>, readonly unknown[]>[number][],
-			true,
-			true
+		readonly static: SlotHint<NonNullable<T.UsingDirective.Config>['static'], true>;
+		readonly unsafe: SlotHint<NonNullable<T.UsingDirective.Config>['unsafe'], true>;
+		readonly content: SlotHint<
+			T.UsingDirectiveAlias | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName
 		>;
-		readonly usingDirectiveArm: SlotHint<NonNullable<T.UsingDirectiveArm>>;
-		readonly name: SlotHint<NonNullable<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>>;
-		readonly $clears: {
-			readonly elements: 'usingDirectiveArm';
-			readonly usingDirectiveArm: 'elements' | 'name';
-			readonly name: 'usingDirectiveArm';
-		};
 	};
 	readonly global: () => boolean;
-	readonly elements: () => number | undefined;
-	readonly usingDirectiveArm: () => UsingDirectiveArm | undefined;
-	readonly name: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | undefined;
+	readonly static: () => boolean;
+	readonly unsafe: () => boolean;
+	readonly content: () => UsingDirectiveAlias | AliasQualifiedName | QualifiedName | Identifier | GenericName;
 }
 
 export interface GlobalAttribute {
@@ -4039,11 +4015,6 @@ export interface ClassDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _name: Identifier;
 	readonly _elements: readonly (TypeParameterList | ParameterList | BaseList)[];
@@ -4078,12 +4049,7 @@ export interface ClassDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -4104,11 +4070,6 @@ export interface ClassDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly name:
 			| IdentifierToken
@@ -4200,11 +4161,6 @@ export interface ClassDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly name: () =>
 		| IdentifierToken
@@ -4259,11 +4215,6 @@ export interface StructDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _ref: boolean;
 	readonly _name: Identifier;
@@ -4300,12 +4251,7 @@ export interface StructDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -4326,11 +4272,6 @@ export interface StructDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly ref?: BaseBooleanKeyword<'ref'>;
 		readonly name:
@@ -4424,11 +4365,6 @@ export interface StructDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly ref: () => boolean;
 	readonly name: () =>
@@ -4626,11 +4562,6 @@ export interface InterfaceDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameterList;
@@ -4667,12 +4598,7 @@ export interface InterfaceDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -4693,11 +4619,6 @@ export interface InterfaceDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly name:
 			| IdentifierToken
@@ -4793,11 +4714,6 @@ export interface InterfaceDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly name: () =>
 		| IdentifierToken
@@ -4853,11 +4769,6 @@ export interface DelegateDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _type: Type;
 	readonly _name: Identifier;
@@ -4894,12 +4805,7 @@ export interface DelegateDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -4920,11 +4826,6 @@ export interface DelegateDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly type:
 			| KindEnum<
@@ -5064,11 +4965,6 @@ export interface DelegateDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly type: () => Type;
 	readonly name: () =>
@@ -5124,11 +5020,6 @@ export interface RecordDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _operator?: TSKindId.ClassKeyword | TSKindId.StructKeyword;
 	readonly _name: Identifier;
@@ -5167,12 +5058,7 @@ export interface RecordDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -5193,11 +5079,6 @@ export interface RecordDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly operator?: KindEnum<'class' | 'struct', TSKindId.ClassKeyword | TSKindId.StructKeyword>;
 		readonly name:
@@ -5292,11 +5173,6 @@ export interface RecordDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly operator: () => TSKindId.ClassKeyword | TSKindId.StructKeyword | undefined;
 	readonly name: () =>
@@ -5666,11 +5542,6 @@ export interface OperatorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _type: Type;
 	readonly _explicit_interface_specifier?: ExplicitInterfaceSpecifier;
@@ -5732,12 +5603,7 @@ export interface OperatorDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -5758,11 +5624,6 @@ export interface OperatorDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly type:
 			| KindEnum<
@@ -5905,11 +5766,6 @@ export interface OperatorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly type: () => Type;
 	readonly explicitInterfaceSpecifier: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | undefined;
@@ -5966,11 +5822,6 @@ export interface ConversionOperatorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _operator: TSKindId.ImplicitKeyword | TSKindId.ExplicitKeyword;
 	readonly _elements: NonEmptyArray<ExplicitInterfaceSpecifier | TSKindId.OperatorKeyword | TSKindId.CheckedKeyword>;
@@ -6007,12 +5858,7 @@ export interface ConversionOperatorDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -6033,11 +5879,6 @@ export interface ConversionOperatorDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly operator: KindEnum<'implicit' | 'explicit', TSKindId.ImplicitKeyword | TSKindId.ExplicitKeyword>;
 		readonly elements: NonEmptyArray<
@@ -6140,11 +5981,6 @@ export interface ConversionOperatorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly operator: () => TSKindId.ImplicitKeyword | TSKindId.ExplicitKeyword;
 	readonly elements: () => NonEmptyArray<
@@ -6191,11 +6027,6 @@ export interface FieldDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _variable_declaration: VariableDeclaration;
 	readonly __slotNames__?: {
@@ -6224,12 +6055,7 @@ export interface FieldDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -6250,11 +6076,6 @@ export interface FieldDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 	};
 	readonly __slotHints__?: {
@@ -6288,11 +6109,6 @@ export interface FieldDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly variableDeclaration: () => VariableDeclaration;
 }
@@ -6321,11 +6137,6 @@ export interface ConstructorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _name: Identifier;
 	readonly _parameters: ParameterList;
@@ -6360,12 +6171,7 @@ export interface ConstructorDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -6386,11 +6192,6 @@ export interface ConstructorDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly name:
 			| IdentifierToken
@@ -6484,11 +6285,6 @@ export interface ConstructorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly name: () =>
 		| IdentifierToken
@@ -6654,11 +6450,6 @@ export interface MethodDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _returns: Type;
 	readonly _explicit_interface_specifier?: ExplicitInterfaceSpecifier;
@@ -6699,12 +6490,7 @@ export interface MethodDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -6725,11 +6511,6 @@ export interface MethodDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly returns:
 			| KindEnum<
@@ -6877,11 +6658,6 @@ export interface MethodDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly returns: () => Type;
 	readonly explicitInterfaceSpecifier: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | undefined;
@@ -6939,11 +6715,6 @@ export interface EventDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _type: Type;
 	readonly _explicit_interface_specifier?: ExplicitInterfaceSpecifier;
@@ -6978,12 +6749,7 @@ export interface EventDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -7004,11 +6770,6 @@ export interface EventDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly type:
 			| KindEnum<
@@ -7148,11 +6909,6 @@ export interface EventDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly type: () => Type;
 	readonly explicitInterfaceSpecifier: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | undefined;
@@ -7207,11 +6963,6 @@ export interface EventFieldDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _variable_declaration: VariableDeclaration;
 	readonly __slotNames__?: {
@@ -7240,12 +6991,7 @@ export interface EventFieldDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -7266,11 +7012,6 @@ export interface EventFieldDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 	};
 	readonly __slotHints__?: {
@@ -7304,11 +7045,6 @@ export interface EventFieldDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly variableDeclaration: () => VariableDeclaration;
 }
@@ -7349,11 +7085,6 @@ export interface AccessorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _name:
 		| TSKindId.GetKeyword
@@ -7390,12 +7121,7 @@ export interface AccessorDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -7416,11 +7142,6 @@ export interface AccessorDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly name:
 			| KindEnum<
@@ -7492,11 +7213,6 @@ export interface AccessorDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly name: () =>
 		| TSKindId.GetKeyword
@@ -7532,11 +7248,6 @@ export interface IndexerDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _type: Type;
 	readonly _explicit_interface_specifier?: ExplicitInterfaceSpecifier;
@@ -7573,12 +7284,7 @@ export interface IndexerDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -7599,11 +7305,6 @@ export interface IndexerDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly type:
 			| KindEnum<
@@ -7701,11 +7402,6 @@ export interface IndexerDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly type: () => Type;
 	readonly explicitInterfaceSpecifier: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | undefined;
@@ -7750,11 +7446,6 @@ export interface PropertyDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _type: Type;
 	readonly _explicit_interface_specifier?: ExplicitInterfaceSpecifier;
@@ -7789,12 +7480,7 @@ export interface PropertyDeclaration {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -7815,11 +7501,6 @@ export interface PropertyDeclaration {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly type:
 			| KindEnum<
@@ -7958,11 +7639,6 @@ export interface PropertyDeclaration {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly type: () => Type;
 	readonly explicitInterfaceSpecifier: () => AliasQualifiedName | QualifiedName | Identifier | GenericName | undefined;
@@ -8020,19 +7696,28 @@ export interface ParameterList {
 export interface Parameter {
 	readonly $type: TSKindId.Parameter;
 	readonly _attribute_lists: readonly (AttributeList | PreprocIfInAttributeList)[];
-	readonly _elements?: number;
+	readonly _this: boolean;
+	readonly _scoped: boolean;
+	readonly _mode?: TSKindId.RefKeyword | TSKindId.RefReadonly | TSKindId.OutKeyword | TSKindId.InKeyword;
 	readonly _type?: Type;
 	readonly _name: Identifier;
 	readonly _expression?: Expression;
 	readonly __slotNames__?: {
 		readonly _attribute_lists: 'attributeLists';
-		readonly _elements: 'elements';
+		readonly _this: 'this';
+		readonly _scoped: 'scoped';
+		readonly _mode: 'mode';
 		readonly _type: 'type';
 		readonly _name: 'name';
 		readonly _expression: 'expression';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: Bitflag<ParameterElements, number>;
+		readonly this?: BaseBooleanKeyword<'this'>;
+		readonly scoped?: BaseBooleanKeyword<'scoped'>;
+		readonly mode?: KindEnum<
+			'ref' | 'ref readonly' | 'out' | 'in',
+			TSKindId.RefKeyword | TSKindId.RefReadonly | TSKindId.OutKeyword | TSKindId.InKeyword
+		>;
 		readonly type?:
 			| KindEnum<
 					| 'var'
@@ -8142,17 +7827,22 @@ export interface Parameter {
 	};
 	readonly __slotHints__?: {
 		readonly attributeLists: SlotHint<(T.AttributeList | T.PreprocIfInAttributeList)[], true, true>;
-		readonly elements: SlotHint<
-			Extract<NonNullable<NonNullable<T.Parameter.Config>['elements']>, readonly unknown[]>[number][],
-			true,
-			true
-		>;
+		readonly this: SlotHint<NonNullable<T.Parameter.Config>['this'], true>;
+		readonly scoped: SlotHint<NonNullable<T.Parameter.Config>['scoped'], true>;
+		readonly mode: SlotHint<NonNullable<T.Parameter.Config>['mode'], true>;
 		readonly type: SlotHint<NonNullable<T.Parameter.Config>['type'], true>;
 		readonly name: SlotHint<NonNullable<T.Parameter.Config>['name']>;
 		readonly expression: SlotHint<NonNullable<T.Parameter.Config>['expression'], true>;
 	};
 	readonly attributeLists: () => readonly (AttributeList | PreprocIfInAttributeList)[];
-	readonly elements: () => number | undefined;
+	readonly this: () => boolean;
+	readonly scoped: () => boolean;
+	readonly mode: () =>
+		| TSKindId.RefKeyword
+		| TSKindId.RefReadonly
+		| TSKindId.OutKeyword
+		| TSKindId.InKeyword
+		| undefined;
 	readonly type: () => Type | undefined;
 	readonly name: () =>
 		| IdentifierToken
@@ -10761,11 +10451,6 @@ export interface LocalDeclarationStatement {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _variable_declaration: VariableDeclaration;
 	readonly __slotNames__?: {
@@ -10797,12 +10482,7 @@ export interface LocalDeclarationStatement {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -10823,11 +10503,6 @@ export interface LocalDeclarationStatement {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 	};
 	readonly __slotHints__?: {
@@ -10863,11 +10538,6 @@ export interface LocalDeclarationStatement {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly variableDeclaration: () => VariableDeclaration;
 }
@@ -10896,11 +10566,6 @@ export interface LocalFunctionStatement {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _type: Type;
 	readonly _name: Identifier;
@@ -10939,12 +10604,7 @@ export interface LocalFunctionStatement {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -10965,11 +10625,6 @@ export interface LocalFunctionStatement {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly type:
 			| KindEnum<
@@ -11110,11 +10765,6 @@ export interface LocalFunctionStatement {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly type: () => Type;
 	readonly name: () =>
@@ -13782,19 +13432,22 @@ export interface ParenthesizedLvalueExpression {
 export interface LambdaExpression {
 	readonly $type: TSKindId.LambdaExpression;
 	readonly _attribute_lists: readonly (AttributeList | PreprocIfInAttributeList)[];
-	readonly _elements?: number;
+	readonly _static: boolean;
+	readonly _async: boolean;
 	readonly _type?: Type;
 	readonly _parameters: ParameterList | ImplicitParameter;
 	readonly _body: Block | Expression;
 	readonly __slotNames__?: {
 		readonly _attribute_lists: 'attributeLists';
-		readonly _elements: 'elements';
+		readonly _static: 'static';
+		readonly _async: 'async';
 		readonly _type: 'type';
 		readonly _parameters: 'parameters';
 		readonly _body: 'body';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: Bitflag<LambdaExpressionElements, number>;
+		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly type?:
 			| KindEnum<
 					| 'var'
@@ -13851,17 +13504,15 @@ export interface LambdaExpression {
 	};
 	readonly __slotHints__?: {
 		readonly attributeLists: SlotHint<(T.AttributeList | T.PreprocIfInAttributeList)[], true, true>;
-		readonly elements: SlotHint<
-			Extract<NonNullable<NonNullable<T.LambdaExpression.Config>['elements']>, readonly unknown[]>[number][],
-			true,
-			true
-		>;
+		readonly static: SlotHint<NonNullable<T.LambdaExpression.Config>['static'], true>;
+		readonly async: SlotHint<NonNullable<T.LambdaExpression.Config>['async'], true>;
 		readonly type: SlotHint<NonNullable<T.LambdaExpression.Config>['type'], true>;
 		readonly parameters: SlotHint<T.ParameterList | T.ImplicitParameter>;
 		readonly body: SlotHint<NonNullable<T.LambdaExpression.Config>['body']>;
 	};
 	readonly attributeLists: () => readonly (AttributeList | PreprocIfInAttributeList)[];
-	readonly elements: () => number | undefined;
+	readonly static: () => boolean;
+	readonly async: () => boolean;
 	readonly type: () => Type | undefined;
 	readonly parameters: () => ParameterList | ImplicitParameter;
 	readonly body: () => Block | Expression;
@@ -13891,16 +13542,19 @@ export interface ArrayCreationExpression {
 
 export interface AnonymousMethodExpression {
 	readonly $type: TSKindId.AnonymousMethodExpression;
-	readonly _elements?: number;
+	readonly _static: boolean;
+	readonly _async: boolean;
 	readonly _parameters?: ParameterList;
 	readonly _block: Block;
 	readonly __slotNames__?: {
-		readonly _elements: 'elements';
+		readonly _static: 'static';
+		readonly _async: 'async';
 		readonly _parameters: 'parameters';
 		readonly _block: 'block';
 	};
 	readonly __inputHints__?: {
-		readonly elements?: Bitflag<AnonymousMethodExpressionElements, number>;
+		readonly static?: BaseBooleanKeyword<'static'>;
+		readonly async?: BaseBooleanKeyword<'async'>;
 		readonly block: readonly Statement[];
 	};
 	readonly __wrapperHints__?: {
@@ -13911,15 +13565,13 @@ export interface AnonymousMethodExpression {
 		readonly block: readonly Statement[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
-			Extract<NonNullable<NonNullable<T.AnonymousMethodExpression.Config>['elements']>, readonly unknown[]>[number][],
-			true,
-			true
-		>;
+		readonly static: SlotHint<NonNullable<T.AnonymousMethodExpression.Config>['static'], true>;
+		readonly async: SlotHint<NonNullable<T.AnonymousMethodExpression.Config>['async'], true>;
 		readonly parameters: SlotHint<T.ParameterList, true>;
 		readonly block: SlotHint<NonNullable<T.AnonymousMethodExpression.Config>['block']>;
 	};
-	readonly elements: () => number | undefined;
+	readonly static: () => boolean;
+	readonly async: () => boolean;
 	readonly parameters: () => ParameterList | undefined;
 	readonly block: () => readonly Statement[];
 }
@@ -16810,148 +16462,6 @@ export interface PreprocPragmaArm2 {
 	readonly checksum: () => StringLiteral;
 }
 
-export interface UsingDirectiveArm {
-	readonly $type: TSKindId.UsingDirectiveArm;
-	readonly _unsafe: boolean;
-	readonly _name: Identifier;
-	readonly _type: Type;
-	readonly __slotNames__?: {
-		readonly _unsafe: 'unsafe';
-		readonly _name: 'name';
-		readonly _type: 'type';
-	};
-	readonly __inputHints__?: {
-		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
-		readonly name:
-			| IdentifierToken
-			| TSKindId.AliasKeyword
-			| TSKindId.AscendingKeyword
-			| TSKindId.ByKeyword
-			| TSKindId.DescendingKeyword
-			| TSKindId.EqualsKeyword
-			| TSKindId.FileKeyword
-			| TSKindId.FromKeyword
-			| TSKindId.GlobalKeyword
-			| TSKindId.GroupKeyword
-			| TSKindId.IntoKeyword
-			| TSKindId.JoinKeyword
-			| TSKindId.LetKeyword
-			| TSKindId.NotnullKeyword
-			| TSKindId.OnKeyword
-			| TSKindId.OrderbyKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.SelectKeyword
-			| TSKindId.UnmanagedKeyword
-			| TSKindId.VarKeyword
-			| TSKindId.WhenKeyword
-			| TSKindId.WhereKeyword
-			| TSKindId.YieldKeyword;
-		readonly type:
-			| KindEnum<
-					| 'var'
-					| 'bool'
-					| 'byte'
-					| 'char'
-					| 'decimal'
-					| 'double'
-					| 'float'
-					| 'int'
-					| 'long'
-					| 'object'
-					| 'sbyte'
-					| 'short'
-					| 'string'
-					| 'uint'
-					| 'ulong'
-					| 'ushort'
-					| 'nint'
-					| 'nuint'
-					| 'void',
-					| TSKindId.VarKeyword
-					| TSKindId.BoolKeyword
-					| TSKindId.ByteKeyword
-					| TSKindId.CharKeyword
-					| TSKindId.DecimalKeyword
-					| TSKindId.DoubleKeyword
-					| TSKindId.FloatKeyword
-					| TSKindId.IntKeyword
-					| TSKindId.LongKeyword
-					| TSKindId.ObjectKeyword
-					| TSKindId.SbyteKeyword
-					| TSKindId.ShortKeyword
-					| TSKindId.StringKeyword
-					| TSKindId.UintKeyword
-					| TSKindId.UlongKeyword
-					| TSKindId.UshortKeyword
-					| TSKindId.NintKeyword
-					| TSKindId.NuintKeyword
-					| TSKindId.VoidKeyword
-			  >
-			| Type;
-	};
-	readonly __wrapperHints__?: {
-		readonly name: Identifier;
-	};
-	readonly __looseHints__?: {
-		readonly name: readonly (
-			| IdentifierToken
-			| 'alias'
-			| 'ascending'
-			| 'by'
-			| 'descending'
-			| 'equals'
-			| 'file'
-			| 'from'
-			| 'global'
-			| 'group'
-			| 'into'
-			| 'join'
-			| 'let'
-			| 'notnull'
-			| 'on'
-			| 'orderby'
-			| 'scoped'
-			| 'select'
-			| 'unmanaged'
-			| 'var'
-			| 'when'
-			| 'where'
-			| 'yield'
-		)[];
-	};
-	readonly __slotHints__?: {
-		readonly unsafe: SlotHint<NonNullable<T.UsingDirectiveArm.Config>['unsafe'], true>;
-		readonly name: SlotHint<NonNullable<T.UsingDirectiveArm.Config>['name']>;
-		readonly type: SlotHint<NonNullable<T.UsingDirectiveArm.Config>['type']>;
-	};
-	readonly unsafe: () => boolean;
-	readonly name: () =>
-		| IdentifierToken
-		| TSKindId.AliasKeyword
-		| TSKindId.AscendingKeyword
-		| TSKindId.ByKeyword
-		| TSKindId.DescendingKeyword
-		| TSKindId.EqualsKeyword
-		| TSKindId.FileKeyword
-		| TSKindId.FromKeyword
-		| TSKindId.GlobalKeyword
-		| TSKindId.GroupKeyword
-		| TSKindId.IntoKeyword
-		| TSKindId.JoinKeyword
-		| TSKindId.LetKeyword
-		| TSKindId.NotnullKeyword
-		| TSKindId.OnKeyword
-		| TSKindId.OrderbyKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.SelectKeyword
-		| TSKindId.UnmanagedKeyword
-		| TSKindId.VarKeyword
-		| TSKindId.WhenKeyword
-		| TSKindId.WhereKeyword
-		| TSKindId.YieldKeyword;
-	readonly type: () => Type;
-}
-
 export interface AttributeArgumentArm {
 	readonly $type: TSKindId.AttributeArgumentArm;
 	readonly _name: Identifier;
@@ -17647,11 +17157,6 @@ export interface EnumDeclarationWithBody {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _name: Identifier;
 	readonly _base_list?: BaseList;
@@ -17684,12 +17189,7 @@ export interface EnumDeclarationWithBody {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -17710,11 +17210,6 @@ export interface EnumDeclarationWithBody {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly name:
 			| IdentifierToken
@@ -17815,11 +17310,6 @@ export interface EnumDeclarationWithBody {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly name: () =>
 		| IdentifierToken
@@ -17873,11 +17363,6 @@ export interface EnumDeclarationWithoutBody {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly _name: Identifier;
 	readonly _base_list?: BaseList;
@@ -17908,12 +17393,7 @@ export interface EnumDeclarationWithoutBody {
 			| 'static'
 			| 'unsafe'
 			| 'virtual'
-			| 'volatile'
-			| 'this'
-			| 'scoped'
-			| 'ref'
-			| 'out'
-			| 'in',
+			| 'volatile',
 			| TSKindId.AbstractKeyword
 			| TSKindId.AsyncKeyword
 			| TSKindId.ConstKeyword
@@ -17934,11 +17414,6 @@ export interface EnumDeclarationWithoutBody {
 			| TSKindId.UnsafeKeyword
 			| TSKindId.VirtualKeyword
 			| TSKindId.VolatileKeyword
-			| TSKindId.ThisKeyword
-			| TSKindId.ScopedKeyword
-			| TSKindId.RefKeyword
-			| TSKindId.OutKeyword
-			| TSKindId.InKeyword
 		>[];
 		readonly name:
 			| IdentifierToken
@@ -18027,11 +17502,6 @@ export interface EnumDeclarationWithoutBody {
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
 		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword
 	)[];
 	readonly name: () =>
 		| IdentifierToken
@@ -18168,6 +17638,143 @@ export interface RecordBasePrimaryConstructor {
 	};
 	readonly primaryConstructorBaseType: () => PrimaryConstructorBaseType;
 	readonly names: () => readonly (AliasQualifiedName | QualifiedName | Identifier | GenericName)[];
+}
+
+export interface UsingDirectiveAlias {
+	readonly $type: TSKindId.UsingDirectiveAlias;
+	readonly _name: Identifier;
+	readonly _type: Type;
+	readonly __slotNames__?: {
+		readonly _name: 'name';
+		readonly _type: 'type';
+	};
+	readonly __inputHints__?: {
+		readonly name:
+			| IdentifierToken
+			| TSKindId.AliasKeyword
+			| TSKindId.AscendingKeyword
+			| TSKindId.ByKeyword
+			| TSKindId.DescendingKeyword
+			| TSKindId.EqualsKeyword
+			| TSKindId.FileKeyword
+			| TSKindId.FromKeyword
+			| TSKindId.GlobalKeyword
+			| TSKindId.GroupKeyword
+			| TSKindId.IntoKeyword
+			| TSKindId.JoinKeyword
+			| TSKindId.LetKeyword
+			| TSKindId.NotnullKeyword
+			| TSKindId.OnKeyword
+			| TSKindId.OrderbyKeyword
+			| TSKindId.ScopedKeyword
+			| TSKindId.SelectKeyword
+			| TSKindId.UnmanagedKeyword
+			| TSKindId.VarKeyword
+			| TSKindId.WhenKeyword
+			| TSKindId.WhereKeyword
+			| TSKindId.YieldKeyword;
+		readonly type:
+			| KindEnum<
+					| 'var'
+					| 'bool'
+					| 'byte'
+					| 'char'
+					| 'decimal'
+					| 'double'
+					| 'float'
+					| 'int'
+					| 'long'
+					| 'object'
+					| 'sbyte'
+					| 'short'
+					| 'string'
+					| 'uint'
+					| 'ulong'
+					| 'ushort'
+					| 'nint'
+					| 'nuint'
+					| 'void',
+					| TSKindId.VarKeyword
+					| TSKindId.BoolKeyword
+					| TSKindId.ByteKeyword
+					| TSKindId.CharKeyword
+					| TSKindId.DecimalKeyword
+					| TSKindId.DoubleKeyword
+					| TSKindId.FloatKeyword
+					| TSKindId.IntKeyword
+					| TSKindId.LongKeyword
+					| TSKindId.ObjectKeyword
+					| TSKindId.SbyteKeyword
+					| TSKindId.ShortKeyword
+					| TSKindId.StringKeyword
+					| TSKindId.UintKeyword
+					| TSKindId.UlongKeyword
+					| TSKindId.UshortKeyword
+					| TSKindId.NintKeyword
+					| TSKindId.NuintKeyword
+					| TSKindId.VoidKeyword
+			  >
+			| Type;
+	};
+	readonly __wrapperHints__?: {
+		readonly name: Identifier;
+	};
+	readonly __looseHints__?: {
+		readonly name: readonly (
+			| IdentifierToken
+			| 'alias'
+			| 'ascending'
+			| 'by'
+			| 'descending'
+			| 'equals'
+			| 'file'
+			| 'from'
+			| 'global'
+			| 'group'
+			| 'into'
+			| 'join'
+			| 'let'
+			| 'notnull'
+			| 'on'
+			| 'orderby'
+			| 'scoped'
+			| 'select'
+			| 'unmanaged'
+			| 'var'
+			| 'when'
+			| 'where'
+			| 'yield'
+		)[];
+	};
+	readonly __slotHints__?: {
+		readonly name: SlotHint<NonNullable<T.UsingDirectiveAlias.Config>['name']>;
+		readonly type: SlotHint<NonNullable<T.UsingDirectiveAlias.Config>['type']>;
+	};
+	readonly name: () =>
+		| IdentifierToken
+		| TSKindId.AliasKeyword
+		| TSKindId.AscendingKeyword
+		| TSKindId.ByKeyword
+		| TSKindId.DescendingKeyword
+		| TSKindId.EqualsKeyword
+		| TSKindId.FileKeyword
+		| TSKindId.FromKeyword
+		| TSKindId.GlobalKeyword
+		| TSKindId.GroupKeyword
+		| TSKindId.IntoKeyword
+		| TSKindId.JoinKeyword
+		| TSKindId.LetKeyword
+		| TSKindId.NotnullKeyword
+		| TSKindId.OnKeyword
+		| TSKindId.OrderbyKeyword
+		| TSKindId.ScopedKeyword
+		| TSKindId.SelectKeyword
+		| TSKindId.UnmanagedKeyword
+		| TSKindId.VarKeyword
+		| TSKindId.WhenKeyword
+		| TSKindId.WhereKeyword
+		| TSKindId.YieldKeyword;
+	readonly type: () => Type;
 }
 
 export interface ElementBindingExpression {
@@ -18353,12 +17960,7 @@ export type Modifier =
 	| TSKindId.StaticKeyword
 	| TSKindId.UnsafeKeyword
 	| TSKindId.VirtualKeyword
-	| TSKindId.VolatileKeyword
-	| TSKindId.ThisKeyword
-	| TSKindId.ScopedKeyword
-	| TSKindId.RefKeyword
-	| TSKindId.OutKeyword
-	| TSKindId.InKeyword;
+	| TSKindId.VolatileKeyword;
 export type ConstructorConstraint = TSKindId.ConstructorConstraint;
 export type ImplicitType = TSKindId.ImplicitType;
 export type PredefinedType =
@@ -18424,6 +18026,7 @@ export type EscapeSequenceArm1 = Terminal<TSKindId.EscapeSequenceArm1, string>;
 export type EscapeSequenceArm2 = Terminal<TSKindId.EscapeSequenceArm2, string>;
 export type EscapeSequenceArm3 = Terminal<TSKindId.EscapeSequenceArm3, string>;
 export type EscapeSequenceArm4 = Terminal<TSKindId.EscapeSequenceArm4, string>;
+export type RefReadonly = TSKindId.RefReadonly;
 export type TypeParameterConstraintClass = Terminal<TSKindId.TypeParameterConstraintClass, string>;
 export type TypeParameterConstraintStruct = TSKindId.TypeParameterConstraintStruct;
 export type TypeParameterConstraintNotnull = TSKindId.TypeParameterConstraintNotnull;
@@ -18976,7 +18579,6 @@ export interface OptionsHintMap {
 	expressions: Expressions.Hints;
 	withInitializers: WithInitializers.Hints;
 	preprocPragmaArm1: PreprocPragmaArm1.Hints;
-	usingDirectiveArm: UsingDirectiveArm.Hints;
 	attributeArgumentArm: AttributeArgumentArm.Hints;
 	propertyDeclarationArm: PropertyDeclarationArm.Hints;
 	callingConventionArm: CallingConventionArm.Hints;
@@ -18992,11 +18594,13 @@ export interface OptionsHintMap {
 	typeArgumentListBound: TypeArgumentListBound.Hints;
 	recordBaseNames: RecordBaseNames.Hints;
 	recordBasePrimaryConstructor: RecordBasePrimaryConstructor.Hints;
+	usingDirectiveAlias: UsingDirectiveAlias.Hints;
 	attributeTargetSpecifier: AttributeTargetSpecifier.Hints;
 	constructorConstraint: ConstructorConstraint.Hints;
 	breakStatement: BreakStatement.Hints;
 	continueStatement: ContinueStatement.Hints;
 	interpolationFormatClause: InterpolationFormatClause.Hints;
+	refReadonly: RefReadonly.Hints;
 	typeParameterConstraintClass: TypeParameterConstraintClass.Hints;
 	typeArgumentListUnbound: TypeArgumentListUnbound.Hints;
 }
@@ -19045,13 +18649,10 @@ export namespace UsingDirective {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly elements?: {
-				readonly end?: LayoutKindId;
-				readonly separator?: WhitespaceKindId;
-				readonly start?: LayoutKindId;
-			};
 			readonly globalKeyword?: { readonly after?: LayoutKindId };
 			readonly semi?: { readonly before?: LayoutKindId };
+			readonly staticKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly unsafeKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly usingKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
@@ -19698,16 +19299,18 @@ export namespace Parameter {
 			readonly after?: LayoutKindId;
 			readonly attributeLists?: {
 				readonly attributeList?: { readonly after?: LayoutKindId };
+				readonly end?: LayoutKindId;
 				readonly preprocIfInAttributeList?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
+				readonly start?: LayoutKindId;
 			};
 			readonly before?: LayoutKindId;
-			readonly elements?: {
-				readonly after?: LayoutKindId;
-				readonly before?: LayoutKindId;
-				readonly separator?: WhitespaceKindId;
-			};
 			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly inKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly outKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly refKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly scopedKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly thisKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -21113,15 +20716,12 @@ export namespace LambdaExpression {
 			readonly after?: LayoutKindId;
 			readonly attributeLists?: {
 				readonly attributeList?: { readonly after?: LayoutKindId };
+				readonly end?: LayoutKindId;
 				readonly preprocIfInAttributeList?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
+				readonly start?: LayoutKindId;
 			};
 			readonly before?: LayoutKindId;
-			readonly elements?: {
-				readonly after?: LayoutKindId;
-				readonly before?: LayoutKindId;
-				readonly separator?: WhitespaceKindId;
-			};
 			readonly eqGt?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
@@ -21141,13 +20741,10 @@ export namespace AnonymousMethodExpression {
 	export interface Hints {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
+			readonly asyncKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly before?: LayoutKindId;
 			readonly delegateKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly elements?: {
-				readonly end?: LayoutKindId;
-				readonly separator?: WhitespaceKindId;
-				readonly start?: LayoutKindId;
-			};
+			readonly staticKeyword?: { readonly after?: LayoutKindId };
 		};
 	}
 }
@@ -22260,17 +21857,6 @@ export namespace PreprocPragmaArm1 {
 	}
 }
 
-export namespace UsingDirectiveArm {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly unsafeKeyword?: { readonly after?: LayoutKindId };
-		};
-	}
-}
-
 export namespace AttributeArgumentArm {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -22493,6 +22079,16 @@ export namespace RecordBasePrimaryConstructor {
 	}
 }
 
+export namespace UsingDirectiveAlias {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		};
+	}
+}
+
 export namespace AttributeTargetSpecifier {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -22540,6 +22136,15 @@ export namespace ContinueStatement {
 export namespace InterpolationFormatClause {
 	export interface Hints {
 		readonly __optionsHint__?: { readonly colon?: { readonly after?: LayoutKindId } };
+	}
+}
+
+export namespace RefReadonly {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly readonlyKeyword?: { readonly before?: LayoutKindId };
+			readonly refKeyword?: { readonly after?: LayoutKindId };
+		};
 	}
 }
 
@@ -25809,20 +25414,6 @@ export interface PreprocPragmaArm2Ns extends NodeNs<
 	readonly BuildArgs: PreprocPragmaArm2.BuildArgs;
 	readonly LooseArgs: PreprocPragmaArm2.LooseArgs;
 }
-export interface UsingDirectiveArmNs extends NodeNs<
-	UsingDirectiveArm,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	UsingDirectiveArm.Bound,
-	never,
-	TSKindId.UsingDirectiveArm,
-	UsingDirectiveArm.Parsed,
-	never
-> {
-	readonly BuildArgs: UsingDirectiveArm.BuildArgs;
-	readonly LooseArgs: UsingDirectiveArm.LooseArgs;
-}
 export interface AttributeArgumentArmNs extends NodeNs<
 	AttributeArgumentArm,
 	LeafScalarMap,
@@ -26047,6 +25638,20 @@ export interface RecordBasePrimaryConstructorNs extends NodeNs<
 	readonly BuildArgs: RecordBasePrimaryConstructor.BuildArgs;
 	readonly LooseArgs: RecordBasePrimaryConstructor.LooseArgs;
 }
+export interface UsingDirectiveAliasNs extends NodeNs<
+	UsingDirectiveAlias,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	UsingDirectiveAlias.Bound,
+	never,
+	TSKindId.UsingDirectiveAlias,
+	UsingDirectiveAlias.Parsed,
+	never
+> {
+	readonly BuildArgs: UsingDirectiveAlias.BuildArgs;
+	readonly LooseArgs: UsingDirectiveAlias.LooseArgs;
+}
 export interface ElementBindingExpressionNs extends NodeNs<
 	ElementBindingExpression,
 	LeafScalarMap,
@@ -26090,6 +25695,7 @@ export interface ContinueStatementNs extends KeywordNs<
 export interface EmptyStatementNs extends KeywordNs<TSKindId.EmptyStatement, ';', TSKindId.EmptyStatement> {}
 export interface DiscardNs extends KeywordNs<TSKindId.Discard, '_', TSKindId.Discard> {}
 export interface NullLiteralNs extends KeywordNs<TSKindId.NullLiteral, 'null', TSKindId.NullLiteral> {}
+export interface RefReadonlyNs extends KeywordNs<TSKindId.RefReadonly, 'ref readonly', TSKindId.RefReadonly> {}
 export interface TypeParameterConstraintStructNs extends KeywordNs<
 	TSKindId.TypeParameterConstraintStruct,
 	'struct',
@@ -26514,7 +26120,6 @@ export interface NamespaceMap {
 	[TSKindId.PreprocLineArm2]: PreprocLineArm2Ns;
 	[TSKindId.PreprocPragmaArm1]: PreprocPragmaArm1Ns;
 	[TSKindId.PreprocPragmaArm2]: PreprocPragmaArm2Ns;
-	[TSKindId.UsingDirectiveArm]: UsingDirectiveArmNs;
 	[TSKindId.AttributeArgumentArm]: AttributeArgumentArmNs;
 	[TSKindId.PropertyDeclarationArm]: PropertyDeclarationArmNs;
 	[TSKindId.CallingConventionArm]: CallingConventionArmNs;
@@ -26531,6 +26136,7 @@ export interface NamespaceMap {
 	[TSKindId.TypeArgumentListBound]: TypeArgumentListBoundNs;
 	[TSKindId.RecordBaseNames]: RecordBaseNamesNs;
 	[TSKindId.RecordBasePrimaryConstructor]: RecordBasePrimaryConstructorNs;
+	[TSKindId.UsingDirectiveAlias]: UsingDirectiveAliasNs;
 	[TSKindId.ElementBindingExpression]: ElementBindingExpressionNs;
 	[TSKindId.ImplicitParameter]: ImplicitParameterNs;
 	[TSKindId.ConstructorConstraint]: ConstructorConstraintNs;
@@ -26540,6 +26146,7 @@ export interface NamespaceMap {
 	[TSKindId.EmptyStatement]: EmptyStatementNs;
 	[TSKindId.Discard]: DiscardNs;
 	[TSKindId.NullLiteral]: NullLiteralNs;
+	[TSKindId.RefReadonly]: RefReadonlyNs;
 	[TSKindId.TypeParameterConstraintStruct]: TypeParameterConstraintStructNs;
 	[TSKindId.TypeParameterConstraintNotnull]: TypeParameterConstraintNotnullNs;
 	[TSKindId.TypeParameterConstraintUnmanaged]: TypeParameterConstraintUnmanagedNs;
@@ -26819,7 +26426,6 @@ export interface BoundByKindId {
 	[TSKindId.PreprocLineArm2]: PreprocLineArm2.Bound;
 	[TSKindId.PreprocPragmaArm1]: PreprocPragmaArm1.Bound;
 	[TSKindId.PreprocPragmaArm2]: PreprocPragmaArm2.Bound;
-	[TSKindId.UsingDirectiveArm]: UsingDirectiveArm.Bound;
 	[TSKindId.AttributeArgumentArm]: AttributeArgumentArm.Bound;
 	[TSKindId.PropertyDeclarationArm]: PropertyDeclarationArm.Bound;
 	[TSKindId.CallingConventionArm]: CallingConventionArm.Bound;
@@ -26836,6 +26442,7 @@ export interface BoundByKindId {
 	[TSKindId.TypeArgumentListBound]: TypeArgumentListBound.Bound;
 	[TSKindId.RecordBaseNames]: RecordBaseNames.Bound;
 	[TSKindId.RecordBasePrimaryConstructor]: RecordBasePrimaryConstructor.Bound;
+	[TSKindId.UsingDirectiveAlias]: UsingDirectiveAlias.Bound;
 	[TSKindId.ElementBindingExpression]: ElementBindingExpression.Bound;
 	[TSKindId.ImplicitParameter]: ImplicitParameter.Bound;
 	[TSKindId.AttributeTargetSpecifier]: AttributeTargetSpecifier.Bound;
@@ -27102,7 +26709,6 @@ export interface ParsedByKindId {
 	[TSKindId.PreprocLineArm2]: PreprocLineArm2.Parsed;
 	[TSKindId.PreprocPragmaArm1]: PreprocPragmaArm1.Parsed;
 	[TSKindId.PreprocPragmaArm2]: PreprocPragmaArm2.Parsed;
-	[TSKindId.UsingDirectiveArm]: UsingDirectiveArm.Parsed;
 	[TSKindId.AttributeArgumentArm]: AttributeArgumentArm.Parsed;
 	[TSKindId.PropertyDeclarationArm]: PropertyDeclarationArm.Parsed;
 	[TSKindId.CallingConventionArm]: CallingConventionArm.Parsed;
@@ -27119,6 +26725,7 @@ export interface ParsedByKindId {
 	[TSKindId.TypeArgumentListBound]: TypeArgumentListBound.Parsed;
 	[TSKindId.RecordBaseNames]: RecordBaseNames.Parsed;
 	[TSKindId.RecordBasePrimaryConstructor]: RecordBasePrimaryConstructor.Parsed;
+	[TSKindId.UsingDirectiveAlias]: UsingDirectiveAlias.Parsed;
 	[TSKindId.ElementBindingExpression]: ElementBindingExpression.Parsed;
 	[TSKindId.ImplicitParameter]: ImplicitParameter.Parsed;
 	[TSKindId.AttributeTargetSpecifier]: AttributeTargetSpecifier.Parsed;
@@ -27162,6 +26769,7 @@ export type FixedTextKindId =
 	| TSKindId.EmptyStatement
 	| TSKindId.Discard
 	| TSKindId.NullLiteral
+	| TSKindId.RefReadonly
 	| TSKindId.TypeParameterConstraintStruct
 	| TSKindId.TypeParameterConstraintNotnull
 	| TSKindId.TypeParameterConstraintUnmanaged
@@ -27221,12 +26829,10 @@ export type FixedTextKindId =
 	| TSKindId.SealedKeyword
 	| TSKindId.VirtualKeyword
 	| TSKindId.VolatileKeyword
-	| TSKindId.ThisKeyword
-	| TSKindId.ScopedKeyword
-	| TSKindId.OutKeyword
-	| TSKindId.InKeyword
 	| TSKindId.Lt
 	| TSKindId.Gt
+	| TSKindId.InKeyword
+	| TSKindId.OutKeyword
 	| TSKindId.WhereKeyword
 	| TSKindId.OperatorKeyword
 	| TSKindId.CheckedKeyword
@@ -27258,7 +26864,9 @@ export type FixedTextKindId =
 	| TSKindId.AddKeyword
 	| TSKindId.RemoveKeyword
 	| TSKindId.InitKeyword
+	| TSKindId.ThisKeyword
 	| TSKindId.Dot
+	| TSKindId.ScopedKeyword
 	| TSKindId.ParamsKeyword
 	| TSKindId.BaseKeyword
 	| TSKindId.EqGt
@@ -27611,7 +27219,6 @@ export interface TypeKeyOf {
 	[TSKindId.PreprocLineArm2]: 'preprocLineArm2';
 	[TSKindId.PreprocPragmaArm1]: 'preprocPragmaArm1';
 	[TSKindId.PreprocPragmaArm2]: 'preprocPragmaArm2';
-	[TSKindId.UsingDirectiveArm]: 'usingDirectiveArm';
 	[TSKindId.AttributeArgumentArm]: 'attributeArgumentArm';
 	[TSKindId.PropertyDeclarationArm]: 'propertyDeclarationArm';
 	[TSKindId.CallingConventionArm]: 'callingConventionArm';
@@ -27628,6 +27235,7 @@ export interface TypeKeyOf {
 	[TSKindId.TypeArgumentListBound]: 'typeArgumentListBound';
 	[TSKindId.RecordBaseNames]: 'recordBaseNames';
 	[TSKindId.RecordBasePrimaryConstructor]: 'recordBasePrimaryConstructor';
+	[TSKindId.UsingDirectiveAlias]: 'usingDirectiveAlias';
 	[TSKindId.ElementBindingExpression]: 'elementBindingExpression';
 	[TSKindId.ImplicitParameter]: 'implicitParameter';
 	[TSKindId.ConstructorConstraint]: 'constructorConstraint';
@@ -27637,6 +27245,7 @@ export interface TypeKeyOf {
 	[TSKindId.EmptyStatement]: 'emptyStatement';
 	[TSKindId.Discard]: 'discard';
 	[TSKindId.NullLiteral]: 'nullLiteral';
+	[TSKindId.RefReadonly]: 'refReadonly';
 	[TSKindId.TypeParameterConstraintStruct]: 'typeParameterConstraintStruct';
 	[TSKindId.TypeParameterConstraintNotnull]: 'typeParameterConstraintNotnull';
 	[TSKindId.TypeParameterConstraintUnmanaged]: 'typeParameterConstraintUnmanaged';
@@ -27814,16 +27423,8 @@ export namespace UsingDirective {
 	}
 	export type Loose = LooseFor<TSKindId.UsingDirective>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UsingDirective>;
-	export type BuildArgs = ArmRows<
-		[config?: Partial<ConfigOf<T.UsingDirective>>],
-		'elements' | 'usingDirectiveArm' | 'name',
-		[['usingDirectiveArm', 'usingDirectiveArm'], ['elements' | 'name', 'name']]
-	>;
-	export type LooseArgs = ArmRows<
-		[config?: T.UsingDirective.Loose],
-		'elements' | 'usingDirectiveArm' | 'name',
-		[['usingDirectiveArm', 'usingDirectiveArm'], ['elements' | 'name', 'name']]
-	>;
+	export type BuildArgs = [config: ConfigOf<T.UsingDirective>];
+	export type LooseArgs = [config: T.UsingDirective.Loose];
 	export type Kind = TSKindId.UsingDirective;
 }
 export namespace GlobalAttribute {
@@ -34531,30 +34132,6 @@ export namespace PreprocPragmaArm2 {
 	export type LooseArgs = [config?: T.PreprocPragmaArm2.Loose];
 	export type Kind = TSKindId.PreprocPragmaArm2;
 }
-export namespace UsingDirectiveArm {
-	export type Config = ConfigFor<TSKindId.UsingDirectiveArm>;
-	export interface Bound extends BoundOf<T.UsingDirectiveArm, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.UsingDirectiveArm['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.UsingDirectiveArm, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.UsingDirectiveArm['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.UsingDirectiveArm['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.UsingDirectiveArm>;
-	export type LooseConfig = LooseConfigFor<TSKindId.UsingDirectiveArm>;
-	export type BuildArgs = [config: ConfigOf<T.UsingDirectiveArm>];
-	export type LooseArgs = [config: T.UsingDirectiveArm.Loose];
-	export type Kind = TSKindId.UsingDirectiveArm;
-}
 export namespace AttributeArgumentArm {
 	export type Config = ConfigFor<TSKindId.AttributeArgumentArm>;
 	export interface Bound extends BoundOf<T.AttributeArgumentArm, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -35037,6 +34614,31 @@ export namespace RecordBasePrimaryConstructor {
 	export type LooseArgs = [config: T.RecordBasePrimaryConstructor.Loose];
 	export type Kind = TSKindId.RecordBasePrimaryConstructor;
 }
+export namespace UsingDirectiveAlias {
+	export type Config = ConfigFor<TSKindId.UsingDirectiveAlias>;
+	export interface Bound extends BoundOf<T.UsingDirectiveAlias, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.UsingDirectiveAlias['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.UsingDirectiveAlias, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.UsingDirectiveAlias['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.UsingDirectiveAlias['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.UsingDirectiveAlias>;
+	export type LooseConfig = LooseConfigFor<TSKindId.UsingDirectiveAlias>;
+	export type BuildArgs = [config: ConfigOf<T.UsingDirectiveAlias>];
+	export type LooseArgs = [config: T.UsingDirectiveAlias.Loose];
+	export type Kind = TSKindId.UsingDirectiveAlias;
+}
 export namespace ElementBindingExpression {
 	export type Config = ConfigFor<TSKindId.ElementBindingExpression>;
 	export interface Bound extends BoundOf<T.ElementBindingExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -35181,6 +34783,16 @@ export namespace NullLiteral {
 	export type BuildArgs = NullLiteralNs['BuildArgs'];
 	export type LooseArgs = NullLiteralNs['LooseArgs'];
 	export type Kind = TSKindId.NullLiteral;
+}
+export namespace RefReadonly {
+	export type Config = RefReadonlyNs['Config'];
+	export type Bound = RefReadonlyNs['Bound'];
+	export type Parsed = RefReadonlyNs['Bound'];
+	export type Loose = RefReadonlyNs['Loose'];
+	export type LooseConfig = RefReadonlyNs['LooseConfig'];
+	export type BuildArgs = RefReadonlyNs['BuildArgs'];
+	export type LooseArgs = RefReadonlyNs['LooseArgs'];
+	export type Kind = TSKindId.RefReadonly;
 }
 export namespace TypeParameterConstraintStruct {
 	export type Config = TypeParameterConstraintStructNs['Config'];

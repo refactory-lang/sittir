@@ -391,79 +391,67 @@ function withExternAliasDirective(node: object, setter: string, args: readonly u
 	throw new Error(`extern_alias_directive has no $with.${setter}`);
 }
 
-export function buildUsingDirective<
-	UsingDirectiveArmSlot extends T.UsingDirective.Config['usingDirectiveArm'],
-	NameSlot extends T.UsingDirective.Config['name']
->(
-	config?: RefusingConfig<
-		Partial<T.UsingDirective.Config>,
-		{ usingDirectiveArm: UsingDirectiveArmSlot; name: NameSlot }
-	>
+export function buildUsingDirective<ContentSlot extends T.UsingDirective.Config['content']>(
+	config: RefusingConfig<T.UsingDirective.Config, { content: ContentSlot }>
 ): T.UsingDirective.Bound;
-export function buildUsingDirective(config: Partial<T.UsingDirective.Config> = {}): T.UsingDirective.Bound {
+export function buildUsingDirective(config: T.UsingDirective.Config): T.UsingDirective.Bound {
 	currentHandle()?.admit(TSKindId.UsingDirective, [config]);
 	const _global = strictBooleanStorage(config.global);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'unsafe']);
-	const _using_directive_arm = config.usingDirectiveArm;
-	const _name = config.name;
+	const _static = strictBooleanStorage(config.static);
+	const _unsafe = strictBooleanStorage(config.unsafe);
+	const _content = config.content;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'using_directive', {
-			global: _global,
-			elements: _elements,
-			usingDirectiveArm: _using_directive_arm,
-			name: _name
-		});
+		admitChildren(handle, 'using_directive', { global: _global, static: _static, unsafe: _unsafe, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UsingDirective as const, { _global, _elements, _using_directive_arm, _name });
+	handle?.verifyStored?.(TSKindId.UsingDirective as const, { _global, _static, _unsafe, _content });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.UsingDirective as const);
 		if (_global) storeFlag(record.data, record.base + 2, 1);
-		storeList(arena, record, 3, 3, _elements);
-		storeCell(arena, record, 4, 4, _using_directive_arm);
-		storeCell(arena, record, 5, 17, _name);
+		if (_static) storeFlag(record.data, record.base + 2, 2);
+		if (_unsafe) storeFlag(record.data, record.base + 2, 4);
+		storeCell(arena, record, 3, 3, _content);
 		const node = arena.view(record);
 		return node as unknown as T.UsingDirective.Bound;
 	});
 }
 
-function buildUsingDirective$patch(
-	source: object,
-	config: Partial<T.UsingDirective.Config> = {}
-): T.UsingDirective.Bound {
+function buildUsingDirective$patch(source: object, config: T.UsingDirective.Config): T.UsingDirective.Bound {
 	currentHandle()?.admit(TSKindId.UsingDirective, [config]);
 	const _global = strictBooleanStorage(config.global);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'unsafe']);
-	const _using_directive_arm = config.usingDirectiveArm;
-	const _name = config.name;
+	const _static = strictBooleanStorage(config.static);
+	const _unsafe = strictBooleanStorage(config.unsafe);
+	const _content = config.content;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'using_directive', {
-			global: _global,
-			elements: _elements,
-			usingDirectiveArm: _using_directive_arm,
-			name: _name
-		});
+		admitChildren(handle, 'using_directive', { global: _global, static: _static, unsafe: _unsafe, content: _content });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UsingDirective as const, { _global, _elements, _using_directive_arm, _name });
+	handle?.verifyStored?.(TSKindId.UsingDirective as const, { _global, _static, _unsafe, _content });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.UsingDirective as const);
 		patchFlag(record, 2, 1, _global);
-		patchList(arena, record, 3, 3, _elements);
-		patchCell(arena, record, 4, 4, carriedSlot(source, 'usingDirectiveArm', _using_directive_arm));
-		patchCell(arena, record, 5, 17, carriedSlot(source, 'name', _name));
+		patchFlag(record, 2, 2, _static);
+		patchFlag(record, 2, 4, _unsafe);
+		patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
 		const node = arena.view(record);
 		return node as unknown as T.UsingDirective.Bound;
 	});
 }
 function buildUsingDirective$set(
 	source: object,
-	...[slot, input]: ['global', Partial<T.UsingDirective.Config>]
+	...[slot, input]:
+		| ['global', Partial<T.UsingDirective.Config>]
+		| ['static', Partial<T.UsingDirective.Config>]
+		| ['unsafe', Partial<T.UsingDirective.Config>]
+		| ['content', Partial<T.UsingDirective.Config>]
 ): T.UsingDirective.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'global':
+			case 'static':
+			case 'unsafe':
+			case 'content':
 				return buildUsingDirective$patch(source, { ...(inputs.config as T.UsingDirective.Config), ...input });
 		}
 	}
@@ -480,6 +468,42 @@ function buildUsingDirective$set(
 				_global
 			) as unknown as T.UsingDirective.Bound;
 		}
+		case 'static': {
+			const config = input;
+			const _static = strictBooleanStorage(config.static);
+			return setSlot(
+				source,
+				TSKindId.UsingDirective as const,
+				'using_directive',
+				1,
+				'static',
+				_static
+			) as unknown as T.UsingDirective.Bound;
+		}
+		case 'unsafe': {
+			const config = input;
+			const _unsafe = strictBooleanStorage(config.unsafe);
+			return setSlot(
+				source,
+				TSKindId.UsingDirective as const,
+				'using_directive',
+				2,
+				'unsafe',
+				_unsafe
+			) as unknown as T.UsingDirective.Bound;
+		}
+		case 'content': {
+			const config = input;
+			const _content = config.content;
+			return setSlot(
+				source,
+				TSKindId.UsingDirective as const,
+				'using_directive',
+				3,
+				'content',
+				_content
+			) as unknown as T.UsingDirective.Bound;
+		}
 	}
 }
 function withUsingDirective(node: object, setter: string, args: readonly unknown[]): unknown {
@@ -489,54 +513,20 @@ function withUsingDirective(node: object, setter: string, args: readonly unknown
 			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirective.Config>['global']>) =>
 				rebuilt(node, handle, () => buildUsingDirective$set(node, 'global', { global: value }))
 			);
-		case 'elements': {
-			const inputs = builtInputs(node);
-			const config = inputs.config as T.UsingDirective.Config;
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirective.Config>['static']>) =>
+				rebuilt(node, handle, () => buildUsingDirective$set(node, 'static', { static: value }))
+			);
+		case 'unsafe':
+			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirective.Config>['unsafe']>) =>
+				rebuilt(node, handle, () => buildUsingDirective$set(node, 'unsafe', { unsafe: value }))
+			);
+		case 'content':
 			return applySetter(
 				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.UsingDirective.Config>['elements']>, readonly unknown[]>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () =>
-						restItems('elements', values) === undefined
-							? buildUsingDirective$patch(node, { ...config, elements: restItems('elements', values) })
-							: buildUsingDirective$patch(node, {
-									...config,
-									usingDirectiveArm: undefined,
-									elements: restItems('elements', values)
-								})
-					)
+				(value: Admit<T.UsingDirectiveAlias | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>) =>
+					rebuilt(node, handle, () => buildUsingDirective$set(node, 'content', { content: value }))
 			);
-		}
-		case 'usingDirectiveArm': {
-			const inputs = builtInputs(node);
-			const config = inputs.config as T.UsingDirective.Config;
-			return applySetter(args, (value: Admit<T.UsingDirectiveArm>) =>
-				rebuilt(node, handle, () =>
-					value === undefined
-						? buildUsingDirective$patch(node, { ...config, usingDirectiveArm: value })
-						: buildUsingDirective$patch(node, {
-								...config,
-								elements: undefined,
-								name: undefined,
-								usingDirectiveArm: value
-							})
-				)
-			);
-		}
-		case 'name': {
-			const inputs = builtInputs(node);
-			const config = inputs.config as T.UsingDirective.Config;
-			return applySetter(args, (value: Admit<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>) =>
-				rebuilt(node, handle, () =>
-					value === undefined
-						? buildUsingDirective$patch(node, { ...config, name: value })
-						: buildUsingDirective$patch(node, { ...config, usingDirectiveArm: undefined, name: value })
-				)
-			);
-		}
 	}
 	throw new Error(`using_directive has no $with.${setter}`);
 }
@@ -7300,7 +7290,9 @@ export function buildParameter<
 export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	currentHandle()?.admit(TSKindId.Parameter, [config]);
 	const _attribute_lists = listStorage<NonNullable<T.Parameter['_attribute_lists']>>(config.attributeLists ?? []);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['this', 'scoped', 'ref', 'out', 'in', 'readonly']);
+	const _this = strictBooleanStorage(config.this);
+	const _scoped = strictBooleanStorage(config.scoped);
+	const _mode = kindIdStorage<NonNullable<T.Parameter['_mode']>>(config.mode);
 	const _type = kindIdStorage<NonNullable<T.Parameter['_type']>>(config.type);
 	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
 	const _expression = kindIdStorage<NonNullable<T.Parameter['_expression']>>(config.expression);
@@ -7308,20 +7300,32 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	if (handle !== undefined)
 		admitChildren(handle, 'parameter', {
 			attributeLists: _attribute_lists,
-			elements: _elements,
+			this: _this,
+			scoped: _scoped,
+			mode: _mode,
 			type: _type,
 			name: _name,
 			expression: _expression
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Parameter as const, { _attribute_lists, _elements, _type, _name, _expression });
+	handle?.verifyStored?.(TSKindId.Parameter as const, {
+		_attribute_lists,
+		_this,
+		_scoped,
+		_mode,
+		_type,
+		_name,
+		_expression
+	});
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.Parameter as const);
-		storeList(arena, record, 2, 2, _attribute_lists);
-		storeList(arena, record, 3, 3, _elements);
-		storeCell(arena, record, 4, 4, _type);
-		storeCell(arena, record, 5, 8, _name);
-		storeCell(arena, record, 6, 14, _expression);
+		storeList(arena, record, 3, 3, _attribute_lists);
+		if (_this) storeFlag(record.data, record.base + 2, 1);
+		if (_scoped) storeFlag(record.data, record.base + 2, 2);
+		storeCell(arena, record, 4, 4, _mode);
+		storeCell(arena, record, 5, 5, _type);
+		storeCell(arena, record, 6, 9, _name);
+		storeCell(arena, record, 7, 15, _expression);
 		const node = arena.view(record);
 		return node as unknown as T.Parameter.Bound;
 	});
@@ -7330,7 +7334,9 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 function buildParameter$patch(source: object, config: T.Parameter.Config): T.Parameter.Bound {
 	currentHandle()?.admit(TSKindId.Parameter, [config]);
 	const _attribute_lists = listStorage<NonNullable<T.Parameter['_attribute_lists']>>(config.attributeLists ?? []);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['this', 'scoped', 'ref', 'out', 'in', 'readonly']);
+	const _this = strictBooleanStorage(config.this);
+	const _scoped = strictBooleanStorage(config.scoped);
+	const _mode = kindIdStorage<NonNullable<T.Parameter['_mode']>>(config.mode);
 	const _type = kindIdStorage<NonNullable<T.Parameter['_type']>>(config.type);
 	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
 	const _expression = kindIdStorage<NonNullable<T.Parameter['_expression']>>(config.expression);
@@ -7338,20 +7344,32 @@ function buildParameter$patch(source: object, config: T.Parameter.Config): T.Par
 	if (handle !== undefined)
 		admitChildren(handle, 'parameter', {
 			attributeLists: _attribute_lists,
-			elements: _elements,
+			this: _this,
+			scoped: _scoped,
+			mode: _mode,
 			type: _type,
 			name: _name,
 			expression: _expression
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Parameter as const, { _attribute_lists, _elements, _type, _name, _expression });
+	handle?.verifyStored?.(TSKindId.Parameter as const, {
+		_attribute_lists,
+		_this,
+		_scoped,
+		_mode,
+		_type,
+		_name,
+		_expression
+	});
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.Parameter as const);
-		patchList(arena, record, 2, 2, _attribute_lists);
-		patchList(arena, record, 3, 3, _elements);
-		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
-		patchCell(arena, record, 5, 8, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 6, 14, carriedSlot(source, 'expression', _expression));
+		patchList(arena, record, 3, 3, _attribute_lists);
+		patchFlag(record, 2, 1, _this);
+		patchFlag(record, 2, 2, _scoped);
+		patchCell(arena, record, 4, 4, carriedSlot(source, 'mode', _mode));
+		patchCell(arena, record, 5, 5, carriedSlot(source, 'type', _type));
+		patchCell(arena, record, 6, 9, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 7, 15, carriedSlot(source, 'expression', _expression));
 		const node = arena.view(record);
 		return node as unknown as T.Parameter.Bound;
 	});
@@ -7360,7 +7378,9 @@ function buildParameter$set(
 	source: object,
 	...[slot, input]:
 		| ['attributeLists', Partial<T.Parameter.Config>]
-		| ['elements', Partial<T.Parameter.Config>]
+		| ['this', Partial<T.Parameter.Config>]
+		| ['scoped', Partial<T.Parameter.Config>]
+		| ['mode', Partial<T.Parameter.Config>]
 		| ['type', Partial<T.Parameter.Config>]
 		| ['name', Partial<T.Parameter.Config>]
 		| ['expression', Partial<T.Parameter.Config>]
@@ -7369,7 +7389,9 @@ function buildParameter$set(
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'attributeLists':
-			case 'elements':
+			case 'this':
+			case 'scoped':
+			case 'mode':
 			case 'type':
 			case 'name':
 			case 'expression':
@@ -7389,16 +7411,40 @@ function buildParameter$set(
 				_attribute_lists
 			) as unknown as T.Parameter.Bound;
 		}
-		case 'elements': {
+		case 'this': {
 			const config = input;
-			const _elements = coerceBitflagStorage(config.elements ?? [], ['this', 'scoped', 'ref', 'out', 'in', 'readonly']);
+			const _this = strictBooleanStorage(config.this);
 			return setSlot(
 				source,
 				TSKindId.Parameter as const,
 				'parameter',
 				1,
-				'elements',
-				_elements
+				'this',
+				_this
+			) as unknown as T.Parameter.Bound;
+		}
+		case 'scoped': {
+			const config = input;
+			const _scoped = strictBooleanStorage(config.scoped);
+			return setSlot(
+				source,
+				TSKindId.Parameter as const,
+				'parameter',
+				2,
+				'scoped',
+				_scoped
+			) as unknown as T.Parameter.Bound;
+		}
+		case 'mode': {
+			const config = input;
+			const _mode = kindIdStorage<NonNullable<T.Parameter['_mode']>>(config.mode);
+			return setSlot(
+				source,
+				TSKindId.Parameter as const,
+				'parameter',
+				3,
+				'mode',
+				_mode
 			) as unknown as T.Parameter.Bound;
 		}
 		case 'type': {
@@ -7408,7 +7454,7 @@ function buildParameter$set(
 				source,
 				TSKindId.Parameter as const,
 				'parameter',
-				2,
+				4,
 				'type',
 				_type
 			) as unknown as T.Parameter.Bound;
@@ -7420,7 +7466,7 @@ function buildParameter$set(
 				source,
 				TSKindId.Parameter as const,
 				'parameter',
-				3,
+				5,
 				'name',
 				_name
 			) as unknown as T.Parameter.Bound;
@@ -7432,7 +7478,7 @@ function buildParameter$set(
 				source,
 				TSKindId.Parameter as const,
 				'parameter',
-				4,
+				6,
 				'expression',
 				_expression
 			) as unknown as T.Parameter.Bound;
@@ -7448,15 +7494,17 @@ function withParameter(node: object, setter: string, args: readonly unknown[]): 
 					buildParameter$set(node, 'attributeLists', { attributeLists: restItems('attributeLists', values) })
 				)
 			);
-		case 'elements':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.Parameter.Config>['elements']>, readonly unknown[]>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () => buildParameter$set(node, 'elements', { elements: restItems('elements', values) }))
+		case 'this':
+			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['this']>) =>
+				rebuilt(node, handle, () => buildParameter$set(node, 'this', { this: value }))
+			);
+		case 'scoped':
+			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['scoped']>) =>
+				rebuilt(node, handle, () => buildParameter$set(node, 'scoped', { scoped: value }))
+			);
+		case 'mode':
+			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['mode']>) =>
+				rebuilt(node, handle, () => buildParameter$set(node, 'mode', { mode: value }))
 			);
 		case 'type':
 			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['type']>) =>
@@ -18959,7 +19007,8 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 	const _attribute_lists = listStorage<NonNullable<T.LambdaExpression['_attribute_lists']>>(
 		config.attributeLists ?? []
 	);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+	const _static = strictBooleanStorage(config.static);
+	const _async = strictBooleanStorage(config.async);
 	const _type = kindIdStorage<NonNullable<T.LambdaExpression['_type']>>(config.type);
 	const _parameters = config.parameters;
 	const _body = kindIdStorage<NonNullable<T.LambdaExpression['_body']>>(config.body);
@@ -18967,7 +19016,8 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 	if (handle !== undefined)
 		admitChildren(handle, 'lambda_expression', {
 			attributeLists: _attribute_lists,
-			elements: _elements,
+			static: _static,
+			async: _async,
 			type: _type,
 			parameters: _parameters,
 			body: _body
@@ -18975,15 +19025,17 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LambdaExpression as const, {
 		_attribute_lists,
-		_elements,
+		_static,
+		_async,
 		_type,
 		_parameters,
 		_body
 	});
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.LambdaExpression as const);
-		storeList(arena, record, 2, 2, _attribute_lists);
-		storeList(arena, record, 3, 3, _elements);
+		storeList(arena, record, 3, 3, _attribute_lists);
+		if (_static) storeFlag(record.data, record.base + 2, 1);
+		if (_async) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 4, 4, _type);
 		storeCell(arena, record, 5, 8, _parameters);
 		storeCell(arena, record, 6, 14, _body);
@@ -18997,7 +19049,8 @@ function buildLambdaExpression$patch(source: object, config: T.LambdaExpression.
 	const _attribute_lists = listStorage<NonNullable<T.LambdaExpression['_attribute_lists']>>(
 		config.attributeLists ?? []
 	);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+	const _static = strictBooleanStorage(config.static);
+	const _async = strictBooleanStorage(config.async);
 	const _type = kindIdStorage<NonNullable<T.LambdaExpression['_type']>>(config.type);
 	const _parameters = config.parameters;
 	const _body = kindIdStorage<NonNullable<T.LambdaExpression['_body']>>(config.body);
@@ -19005,7 +19058,8 @@ function buildLambdaExpression$patch(source: object, config: T.LambdaExpression.
 	if (handle !== undefined)
 		admitChildren(handle, 'lambda_expression', {
 			attributeLists: _attribute_lists,
-			elements: _elements,
+			static: _static,
+			async: _async,
 			type: _type,
 			parameters: _parameters,
 			body: _body
@@ -19013,15 +19067,17 @@ function buildLambdaExpression$patch(source: object, config: T.LambdaExpression.
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LambdaExpression as const, {
 		_attribute_lists,
-		_elements,
+		_static,
+		_async,
 		_type,
 		_parameters,
 		_body
 	});
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.LambdaExpression as const);
-		patchList(arena, record, 2, 2, _attribute_lists);
-		patchList(arena, record, 3, 3, _elements);
+		patchList(arena, record, 3, 3, _attribute_lists);
+		patchFlag(record, 2, 1, _static);
+		patchFlag(record, 2, 2, _async);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'type', _type));
 		patchCell(arena, record, 5, 8, carriedSlot(source, 'parameters', _parameters));
 		patchCell(arena, record, 6, 14, carriedSlot(source, 'body', _body));
@@ -19033,7 +19089,8 @@ function buildLambdaExpression$set(
 	source: object,
 	...[slot, input]:
 		| ['attributeLists', Partial<T.LambdaExpression.Config>]
-		| ['elements', Partial<T.LambdaExpression.Config>]
+		| ['static', Partial<T.LambdaExpression.Config>]
+		| ['async', Partial<T.LambdaExpression.Config>]
 		| ['type', Partial<T.LambdaExpression.Config>]
 		| ['parameters', Partial<T.LambdaExpression.Config>]
 		| ['body', Partial<T.LambdaExpression.Config>]
@@ -19042,7 +19099,8 @@ function buildLambdaExpression$set(
 		const inputs = builtInputs(source);
 		switch (slot) {
 			case 'attributeLists':
-			case 'elements':
+			case 'static':
+			case 'async':
 			case 'type':
 			case 'parameters':
 			case 'body':
@@ -19064,16 +19122,28 @@ function buildLambdaExpression$set(
 				_attribute_lists
 			) as unknown as T.LambdaExpression.Bound;
 		}
-		case 'elements': {
+		case 'static': {
 			const config = input;
-			const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+			const _static = strictBooleanStorage(config.static);
 			return setSlot(
 				source,
 				TSKindId.LambdaExpression as const,
 				'lambda_expression',
 				1,
-				'elements',
-				_elements
+				'static',
+				_static
+			) as unknown as T.LambdaExpression.Bound;
+		}
+		case 'async': {
+			const config = input;
+			const _async = strictBooleanStorage(config.async);
+			return setSlot(
+				source,
+				TSKindId.LambdaExpression as const,
+				'lambda_expression',
+				2,
+				'async',
+				_async
 			) as unknown as T.LambdaExpression.Bound;
 		}
 		case 'type': {
@@ -19083,7 +19153,7 @@ function buildLambdaExpression$set(
 				source,
 				TSKindId.LambdaExpression as const,
 				'lambda_expression',
-				2,
+				3,
 				'type',
 				_type
 			) as unknown as T.LambdaExpression.Bound;
@@ -19095,7 +19165,7 @@ function buildLambdaExpression$set(
 				source,
 				TSKindId.LambdaExpression as const,
 				'lambda_expression',
-				3,
+				4,
 				'parameters',
 				_parameters
 			) as unknown as T.LambdaExpression.Bound;
@@ -19107,7 +19177,7 @@ function buildLambdaExpression$set(
 				source,
 				TSKindId.LambdaExpression as const,
 				'lambda_expression',
-				4,
+				5,
 				'body',
 				_body
 			) as unknown as T.LambdaExpression.Bound;
@@ -19123,17 +19193,13 @@ function withLambdaExpression(node: object, setter: string, args: readonly unkno
 					buildLambdaExpression$set(node, 'attributeLists', { attributeLists: restItems('attributeLists', values) })
 				)
 			);
-		case 'elements':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.LambdaExpression.Config>['elements']>, readonly unknown[]>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () =>
-						buildLambdaExpression$set(node, 'elements', { elements: restItems('elements', values) })
-					)
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.LambdaExpression.Config>['static']>) =>
+				rebuilt(node, handle, () => buildLambdaExpression$set(node, 'static', { static: value }))
+			);
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.LambdaExpression.Config>['async']>) =>
+				rebuilt(node, handle, () => buildLambdaExpression$set(node, 'async', { async: value }))
 			);
 		case 'type':
 			return applySetter(args, (value?: Admit<NonNullable<T.LambdaExpression.Config>['type']>) =>
@@ -19276,7 +19342,8 @@ export function buildAnonymousMethodExpression(
 	config: Partial<T.AnonymousMethodExpression.Config> = {}
 ): T.AnonymousMethodExpression.Bound {
 	currentHandle()?.admit(TSKindId.AnonymousMethodExpression, [config]);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+	const _static = strictBooleanStorage(config.static);
+	const _async = strictBooleanStorage(config.async);
 	const _parameters = config.parameters;
 	const _block = orDefault(
 		wrapHoisted(
@@ -19290,15 +19357,17 @@ export function buildAnonymousMethodExpression(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'anonymous_method_expression', {
-			elements: _elements,
+			static: _static,
+			async: _async,
 			parameters: _parameters,
 			block: _block
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AnonymousMethodExpression as const, { _elements, _parameters, _block });
+	handle?.verifyStored?.(TSKindId.AnonymousMethodExpression as const, { _static, _async, _parameters, _block });
 	return arena.scope(() => {
 		const record = arena.record(TSKindId.AnonymousMethodExpression as const);
-		storeList(arena, record, 2, 2, _elements);
+		if (_static) storeFlag(record.data, record.base + 2, 1);
+		if (_async) storeFlag(record.data, record.base + 2, 2);
 		storeCell(arena, record, 3, 3, _parameters);
 		storeCell(arena, record, 4, 6, _block);
 		const node = arena.view(record);
@@ -19311,7 +19380,8 @@ function buildAnonymousMethodExpression$patch(
 	config: Partial<T.AnonymousMethodExpression.Config> = {}
 ): T.AnonymousMethodExpression.Bound {
 	currentHandle()?.admit(TSKindId.AnonymousMethodExpression, [config]);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+	const _static = strictBooleanStorage(config.static);
+	const _async = strictBooleanStorage(config.async);
 	const _parameters = config.parameters;
 	const _block = orDefault(
 		wrapHoisted(
@@ -19325,15 +19395,17 @@ function buildAnonymousMethodExpression$patch(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'anonymous_method_expression', {
-			elements: _elements,
+			static: _static,
+			async: _async,
 			parameters: _parameters,
 			block: _block
 		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.AnonymousMethodExpression as const, { _elements, _parameters, _block });
+	handle?.verifyStored?.(TSKindId.AnonymousMethodExpression as const, { _static, _async, _parameters, _block });
 	return arena.scope(() => {
 		const record = arena.copy(source, TSKindId.AnonymousMethodExpression as const);
-		patchList(arena, record, 2, 2, _elements);
+		patchFlag(record, 2, 1, _static);
+		patchFlag(record, 2, 2, _async);
 		patchCell(arena, record, 3, 3, carriedSlot(source, 'parameters', _parameters));
 		patchCell(arena, record, 4, 6, carriedSlot(source, 'block', _block));
 		const node = arena.view(record);
@@ -19343,14 +19415,16 @@ function buildAnonymousMethodExpression$patch(
 function buildAnonymousMethodExpression$set(
 	source: object,
 	...[slot, input]:
-		| ['elements', Partial<T.AnonymousMethodExpression.Config>]
+		| ['static', Partial<T.AnonymousMethodExpression.Config>]
+		| ['async', Partial<T.AnonymousMethodExpression.Config>]
 		| ['parameters', Partial<T.AnonymousMethodExpression.Config>]
 		| ['block', Partial<T.AnonymousMethodExpression.Config>]
 ): T.AnonymousMethodExpression.Bound {
 	if (!patchesByCopy(source)) {
 		const inputs = builtInputs(source);
 		switch (slot) {
-			case 'elements':
+			case 'static':
+			case 'async':
 			case 'parameters':
 			case 'block':
 				return buildAnonymousMethodExpression$patch(source, {
@@ -19360,16 +19434,28 @@ function buildAnonymousMethodExpression$set(
 		}
 	}
 	switch (slot) {
-		case 'elements': {
+		case 'static': {
 			const config = input;
-			const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+			const _static = strictBooleanStorage(config.static);
 			return setSlot(
 				source,
 				TSKindId.AnonymousMethodExpression as const,
 				'anonymous_method_expression',
 				0,
-				'elements',
-				_elements
+				'static',
+				_static
+			) as unknown as T.AnonymousMethodExpression.Bound;
+		}
+		case 'async': {
+			const config = input;
+			const _async = strictBooleanStorage(config.async);
+			return setSlot(
+				source,
+				TSKindId.AnonymousMethodExpression as const,
+				'anonymous_method_expression',
+				1,
+				'async',
+				_async
 			) as unknown as T.AnonymousMethodExpression.Bound;
 		}
 		case 'parameters': {
@@ -19379,7 +19465,7 @@ function buildAnonymousMethodExpression$set(
 				source,
 				TSKindId.AnonymousMethodExpression as const,
 				'anonymous_method_expression',
-				1,
+				2,
 				'parameters',
 				_parameters
 			) as unknown as T.AnonymousMethodExpression.Bound;
@@ -19399,7 +19485,7 @@ function buildAnonymousMethodExpression$set(
 				source,
 				TSKindId.AnonymousMethodExpression as const,
 				'anonymous_method_expression',
-				2,
+				3,
 				'block',
 				_block
 			) as unknown as T.AnonymousMethodExpression.Bound;
@@ -19409,20 +19495,13 @@ function buildAnonymousMethodExpression$set(
 function withAnonymousMethodExpression(node: object, setter: string, args: readonly unknown[]): unknown {
 	const handle = handleOf(node as RecordHandle);
 	switch (setter) {
-		case 'elements':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<
-							NonNullable<NonNullable<T.AnonymousMethodExpression.Config>['elements']>,
-							readonly unknown[]
-						>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () =>
-						buildAnonymousMethodExpression$set(node, 'elements', { elements: restItems('elements', values) })
-					)
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.AnonymousMethodExpression.Config>['static']>) =>
+				rebuilt(node, handle, () => buildAnonymousMethodExpression$set(node, 'static', { static: value }))
+			);
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.AnonymousMethodExpression.Config>['async']>) =>
+				rebuilt(node, handle, () => buildAnonymousMethodExpression$set(node, 'async', { async: value }))
 			);
 		case 'parameters':
 			return applySetter(args, (value?: Admit<T.ParameterList>) =>
@@ -29859,136 +29938,6 @@ function withPreprocPragmaArm2(node: object, setter: string, args: readonly unkn
 	throw new Error(`preproc_pragma_arm2 has no $with.${setter}`);
 }
 
-export function buildUsingDirectiveArm<
-	NameSlot extends T.UsingDirectiveArm.Config['name'],
-	TypeSlot extends T.UsingDirectiveArm.Config['type']
->(config: RefusingConfig<T.UsingDirectiveArm.Config, { name: NameSlot; type: TypeSlot }>): T.UsingDirectiveArm.Bound;
-export function buildUsingDirectiveArm(config: T.UsingDirectiveArm.Config): T.UsingDirectiveArm.Bound {
-	currentHandle()?.admit(TSKindId.UsingDirectiveArm, [config]);
-	const _unsafe = strictBooleanStorage(config.unsafe);
-	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
-	const _type = kindIdStorage<NonNullable<T.UsingDirectiveArm['_type']>>(config.type);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'using_directive_arm', { unsafe: _unsafe, name: _name, type: _type });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UsingDirectiveArm as const, { _unsafe, _name, _type });
-	return arena.scope(() => {
-		const record = arena.record(TSKindId.UsingDirectiveArm as const);
-		if (_unsafe) storeFlag(record.data, record.base + 2, 1);
-		storeCell(arena, record, 3, 3, _name);
-		storeCell(arena, record, 4, 9, _type);
-		const node = arena.view(record);
-		return node as unknown as T.UsingDirectiveArm.Bound;
-	});
-}
-
-function buildUsingDirectiveArm$patch(source: object, config: T.UsingDirectiveArm.Config): T.UsingDirectiveArm.Bound {
-	currentHandle()?.admit(TSKindId.UsingDirectiveArm, [config]);
-	const _unsafe = strictBooleanStorage(config.unsafe);
-	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
-	const _type = kindIdStorage<NonNullable<T.UsingDirectiveArm['_type']>>(config.type);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'using_directive_arm', { unsafe: _unsafe, name: _name, type: _type });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UsingDirectiveArm as const, { _unsafe, _name, _type });
-	return arena.scope(() => {
-		const record = arena.copy(source, TSKindId.UsingDirectiveArm as const);
-		patchFlag(record, 2, 1, _unsafe);
-		patchCell(arena, record, 3, 3, carriedSlot(source, 'name', _name));
-		patchCell(arena, record, 4, 9, carriedSlot(source, 'type', _type));
-		const node = arena.view(record);
-		return node as unknown as T.UsingDirectiveArm.Bound;
-	});
-}
-function buildUsingDirectiveArm$set(
-	source: object,
-	...[slot, input]:
-		| ['unsafe', Partial<T.UsingDirectiveArm.Config>]
-		| ['name', Partial<T.UsingDirectiveArm.Config>]
-		| ['type', Partial<T.UsingDirectiveArm.Config>]
-): T.UsingDirectiveArm.Bound {
-	if (!patchesByCopy(source)) {
-		const inputs = builtInputs(source);
-		switch (slot) {
-			case 'unsafe':
-			case 'name':
-			case 'type':
-				return buildUsingDirectiveArm$patch(source, { ...(inputs.config as T.UsingDirectiveArm.Config), ...input });
-		}
-	}
-	switch (slot) {
-		case 'unsafe': {
-			const config = input;
-			const _unsafe = strictBooleanStorage(config.unsafe);
-			return setSlot(
-				source,
-				TSKindId.UsingDirectiveArm as const,
-				'using_directive_arm',
-				0,
-				'unsafe',
-				_unsafe
-			) as unknown as T.UsingDirectiveArm.Bound;
-		}
-		case 'name': {
-			const config = input;
-			const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
-			return setSlot(
-				source,
-				TSKindId.UsingDirectiveArm as const,
-				'using_directive_arm',
-				1,
-				'name',
-				_name
-			) as unknown as T.UsingDirectiveArm.Bound;
-		}
-		case 'type': {
-			const config = input;
-			const _type = kindIdStorage<NonNullable<T.UsingDirectiveArm['_type']>>(config.type);
-			return setSlot(
-				source,
-				TSKindId.UsingDirectiveArm as const,
-				'using_directive_arm',
-				2,
-				'type',
-				_type
-			) as unknown as T.UsingDirectiveArm.Bound;
-		}
-	}
-}
-function withUsingDirectiveArm(node: object, setter: string, args: readonly unknown[]): unknown {
-	const handle = handleOf(node as RecordHandle);
-	switch (setter) {
-		case 'unsafe':
-			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirectiveArm.Config>['unsafe']>) =>
-				rebuilt(node, handle, () => buildUsingDirectiveArm$set(node, 'unsafe', { unsafe: value }))
-			);
-		case 'name':
-			return hoistedWith(
-				node,
-				'name',
-				'_name',
-				'content',
-				false,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveArm.Config>['name']>) =>
-						rebuilt(node, handle, () => buildUsingDirectiveArm$set(node, 'name', { name: value }))
-					),
-				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => wrapHoisted(v, (v: never) => buildIdentifier(v), TSKindId.Identifier)),
-				TSKindId.Identifier
-			);
-		case 'type':
-			return applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveArm.Config>['type']>) =>
-				rebuilt(node, handle, () => buildUsingDirectiveArm$set(node, 'type', { type: value }))
-			);
-	}
-	throw new Error(`using_directive_arm has no $with.${setter}`);
-}
-
 export function buildAttributeArgumentArm<NameSlot extends T.AttributeArgumentArm.Config['name']>(
 	config: RefusingConfig<T.AttributeArgumentArm.Config, { name: NameSlot }>
 ): T.AttributeArgumentArm.Bound;
@@ -30794,6 +30743,8 @@ function withAnonymousObjectMemberDeclaratorArm(node: object, setter: string, ar
 	}
 	throw new Error(`anonymous_object_member_declarator_arm has no $with.${setter}`);
 }
+
+export const buildRefReadonly: TSKindId.RefReadonly = TSKindId.RefReadonly;
 
 export function buildSwitchStatementParenthesized<
 	ValueSlot extends T.SwitchStatementParenthesized.Config['value'],
@@ -32082,6 +32033,117 @@ function withRecordBasePrimaryConstructor(node: object, setter: string, args: re
 	throw new Error(`record_base_primary_constructor has no $with.${setter}`);
 }
 
+export function buildUsingDirectiveAlias<
+	NameSlot extends T.UsingDirectiveAlias.Config['name'],
+	TypeSlot extends T.UsingDirectiveAlias.Config['type']
+>(
+	config: RefusingConfig<T.UsingDirectiveAlias.Config, { name: NameSlot; type: TypeSlot }>
+): T.UsingDirectiveAlias.Bound;
+export function buildUsingDirectiveAlias(config: T.UsingDirectiveAlias.Config): T.UsingDirectiveAlias.Bound {
+	currentHandle()?.admit(TSKindId.UsingDirectiveAlias, [config]);
+	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
+	const _type = kindIdStorage<NonNullable<T.UsingDirectiveAlias['_type']>>(config.type);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'using_directive_alias', { name: _name, type: _type });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDirectiveAlias as const, { _name, _type });
+	return arena.scope(() => {
+		const record = arena.record(TSKindId.UsingDirectiveAlias as const);
+		storeCell(arena, record, 2, 2, _name);
+		storeCell(arena, record, 3, 8, _type);
+		const node = arena.view(record);
+		return node as unknown as T.UsingDirectiveAlias.Bound;
+	});
+}
+
+function buildUsingDirectiveAlias$patch(
+	source: object,
+	config: T.UsingDirectiveAlias.Config
+): T.UsingDirectiveAlias.Bound {
+	currentHandle()?.admit(TSKindId.UsingDirectiveAlias, [config]);
+	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
+	const _type = kindIdStorage<NonNullable<T.UsingDirectiveAlias['_type']>>(config.type);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'using_directive_alias', { name: _name, type: _type });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UsingDirectiveAlias as const, { _name, _type });
+	return arena.scope(() => {
+		const record = arena.copy(source, TSKindId.UsingDirectiveAlias as const);
+		patchCell(arena, record, 2, 2, carriedSlot(source, 'name', _name));
+		patchCell(arena, record, 3, 8, carriedSlot(source, 'type', _type));
+		const node = arena.view(record);
+		return node as unknown as T.UsingDirectiveAlias.Bound;
+	});
+}
+function buildUsingDirectiveAlias$set(
+	source: object,
+	...[slot, input]: ['name', Partial<T.UsingDirectiveAlias.Config>] | ['type', Partial<T.UsingDirectiveAlias.Config>]
+): T.UsingDirectiveAlias.Bound {
+	if (!patchesByCopy(source)) {
+		const inputs = builtInputs(source);
+		switch (slot) {
+			case 'name':
+			case 'type':
+				return buildUsingDirectiveAlias$patch(source, { ...(inputs.config as T.UsingDirectiveAlias.Config), ...input });
+		}
+	}
+	switch (slot) {
+		case 'name': {
+			const config = input;
+			const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
+			return setSlot(
+				source,
+				TSKindId.UsingDirectiveAlias as const,
+				'using_directive_alias',
+				0,
+				'name',
+				_name
+			) as unknown as T.UsingDirectiveAlias.Bound;
+		}
+		case 'type': {
+			const config = input;
+			const _type = kindIdStorage<NonNullable<T.UsingDirectiveAlias['_type']>>(config.type);
+			return setSlot(
+				source,
+				TSKindId.UsingDirectiveAlias as const,
+				'using_directive_alias',
+				1,
+				'type',
+				_type
+			) as unknown as T.UsingDirectiveAlias.Bound;
+		}
+	}
+}
+function withUsingDirectiveAlias(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'name':
+			return hoistedWith(
+				node,
+				'name',
+				'_name',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveAlias.Config>['name']>) =>
+						rebuilt(node, handle, () => buildUsingDirectiveAlias$set(node, 'name', { name: value }))
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildIdentifier(v), TSKindId.Identifier)),
+				TSKindId.Identifier
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveAlias.Config>['type']>) =>
+				rebuilt(node, handle, () => buildUsingDirectiveAlias$set(node, 'type', { type: value }))
+			);
+	}
+	throw new Error(`using_directive_alias has no $with.${setter}`);
+}
+
 export const buildOptionalSemi: TSKindId.OptionalSemi = TSKindId.OptionalSemi;
 
 export function buildInterpolationRegularStart(text: string): T.InterpolationRegularStart.Bound {
@@ -32956,7 +33018,6 @@ export type FluentKindMap = {
 	preproc_line_arm2: T.PreprocLineArm2.Bound;
 	preproc_pragma_arm1: T.PreprocPragmaArm1.Bound;
 	preproc_pragma_arm2: T.PreprocPragmaArm2.Bound;
-	using_directive_arm: T.UsingDirectiveArm.Bound;
 	attribute_argument_arm: T.AttributeArgumentArm.Bound;
 	property_declaration_arm: T.PropertyDeclarationArm.Bound;
 	calling_convention_arm: T.CallingConventionArm.Bound;
@@ -32964,6 +33025,7 @@ export type FluentKindMap = {
 	subpattern_arm: T.SubpatternArm.Bound;
 	query_body_group: T.QueryBodyGroup.Bound;
 	anonymous_object_member_declarator_arm: T.AnonymousObjectMemberDeclaratorArm.Bound;
+	ref_readonly: T.RefReadonly;
 	switch_statement_parenthesized: T.SwitchStatementParenthesized.Bound;
 	switch_statement_tuple: T.SwitchStatementTuple.Bound;
 	type_parameter_constraint_class: T.TypeParameterConstraintClass;
@@ -32979,6 +33041,7 @@ export type FluentKindMap = {
 	type_argument_list_bound: T.TypeArgumentListBound.Bound;
 	record_base_names: T.RecordBaseNames.Bound;
 	record_base_primary_constructor: T.RecordBasePrimaryConstructor.Bound;
+	using_directive_alias: T.UsingDirectiveAlias.Bound;
 	optional_semi: T.OptionalSemi;
 	interpolation_regular_start: T.InterpolationRegularStart;
 	interpolation_verbatim_start: T.InterpolationVerbatimStart;
@@ -33259,7 +33322,6 @@ export const _factoryMap = {
 	preproc_line_arm2: buildPreprocLineArm2,
 	preproc_pragma_arm1: buildPreprocPragmaArm1,
 	preproc_pragma_arm2: buildPreprocPragmaArm2,
-	using_directive_arm: buildUsingDirectiveArm,
 	attribute_argument_arm: buildAttributeArgumentArm,
 	property_declaration_arm: buildPropertyDeclarationArm,
 	calling_convention_arm: buildCallingConventionArm,
@@ -33267,6 +33329,7 @@ export const _factoryMap = {
 	subpattern_arm: buildSubpatternArm,
 	query_body_group: buildQueryBodyGroup,
 	anonymous_object_member_declarator_arm: buildAnonymousObjectMemberDeclaratorArm,
+	ref_readonly: buildRefReadonly,
 	switch_statement_parenthesized: buildSwitchStatementParenthesized,
 	switch_statement_tuple: buildSwitchStatementTuple,
 	type_parameter_constraint_class: buildTypeParameterConstraintClass,
@@ -33282,6 +33345,7 @@ export const _factoryMap = {
 	type_argument_list_bound: buildTypeArgumentListBound,
 	record_base_names: buildRecordBaseNames,
 	record_base_primary_constructor: buildRecordBasePrimaryConstructor,
+	using_directive_alias: buildUsingDirectiveAlias,
 	optional_semi: buildOptionalSemi,
 	interpolation_regular_start: buildInterpolationRegularStart,
 	interpolation_verbatim_start: buildInterpolationVerbatimStart,
@@ -33541,14 +33605,13 @@ export const builtViews: BuiltViews = Object.freeze({
 		537: withPreprocLineArm2,
 		538: withPreprocPragmaArm1,
 		539: withPreprocPragmaArm2,
-		540: withUsingDirectiveArm,
-		541: withAttributeArgumentArm,
-		542: withPropertyDeclarationArm,
-		543: withCallingConventionArm,
-		544: withForeachStatementInitializerArm,
-		545: withSubpatternArm,
-		546: withQueryBodyGroup,
-		547: withAnonymousObjectMemberDeclaratorArm,
+		540: withAttributeArgumentArm,
+		541: withPropertyDeclarationArm,
+		542: withCallingConventionArm,
+		543: withForeachStatementInitializerArm,
+		544: withSubpatternArm,
+		545: withQueryBodyGroup,
+		546: withAnonymousObjectMemberDeclaratorArm,
 		548: withSwitchStatementParenthesized,
 		549: withSwitchStatementTuple,
 		554: withTypeParameterConstraintDefault,
@@ -33558,8 +33621,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		560: withTypeArgumentListBound,
 		561: withRecordBaseNames,
 		562: withRecordBasePrimaryConstructor,
-		617: withElementBindingExpression,
-		618: withImplicitParameter
+		563: withUsingDirectiveAlias,
+		615: withElementBindingExpression,
+		616: withImplicitParameter
 	}),
 	words: Object.freeze({
 		170: 5,
@@ -33573,7 +33637,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		251: 4,
 		253: 3,
 		254: 3,
-		255: 6,
+		255: 4,
 		256: 4,
 		257: 4,
 		258: 3,
@@ -33609,7 +33673,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		305: 8,
 		306: 3,
 		307: 3,
-		308: 7,
+		308: 8,
 		309: 5,
 		310: 4,
 		311: 3,
@@ -33794,14 +33858,13 @@ export const builtViews: BuiltViews = Object.freeze({
 		537: 8,
 		538: 4,
 		539: 5,
-		540: 5,
+		540: 4,
 		541: 4,
-		542: 4,
-		543: 3,
+		542: 3,
+		543: 4,
 		544: 4,
-		545: 4,
-		546: 5,
-		547: 4,
+		545: 5,
+		546: 4,
 		548: 4,
 		549: 4,
 		554: 3,
@@ -33811,8 +33874,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		560: 3,
 		561: 3,
 		562: 4,
-		617: 3,
-		618: 3
+		563: 4,
+		615: 3,
+		616: 3
 	}),
 	cells: Object.freeze({
 		170: 2,
@@ -33862,7 +33926,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		305: 2,
 		306: 2,
 		307: 2,
-		308: 2,
+		308: 3,
 		309: 2,
 		310: 2,
 		311: 2,
@@ -33969,9 +34033,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		447: 2,
 		448: 2,
 		449: 2,
-		450: 2,
+		450: 3,
 		453: 2,
-		454: 2,
+		454: 3,
 		455: 2,
 		457: 2,
 		458: 2,
@@ -34047,14 +34111,13 @@ export const builtViews: BuiltViews = Object.freeze({
 		537: 2,
 		538: 2,
 		539: 2,
-		540: 3,
+		540: 2,
 		541: 2,
 		542: 2,
 		543: 2,
 		544: 2,
 		545: 2,
 		546: 2,
-		547: 2,
 		548: 2,
 		549: 2,
 		554: 2,
@@ -34064,8 +34127,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		560: 2,
 		561: 2,
 		562: 2,
-		617: 2,
-		618: 2
+		563: 2,
+		615: 2,
+		616: 2
 	}),
 	places: Object.freeze({
 		170: [
@@ -34109,9 +34173,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		254: [[2, 2, 6, 8, 6, 0]],
 		255: [
 			[2, 0],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 13, 8, 13, 0],
-			[17, 5, 3, 1, 0, 0]
+			[2, 1],
+			[2, 2],
+			[3, 3, 3, 1, 0, 0]
 		],
 		256: [
 			[2, 2, 1, 2, 0, 0],
@@ -34296,11 +34360,13 @@ export const builtViews: BuiltViews = Object.freeze({
 		306: [[2, 2, 3, 1, 0, 0]],
 		307: [[2, 2, 1, 1, 0, 3]],
 		308: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
-			[4, 4, 4, 3, 0, 0],
-			[8, 5, 6, 8, 6, 0],
-			[14, 6, 4, 3, 0, 0]
+			[3, 3, 1, 1, 0, 3],
+			[2, 0],
+			[2, 1],
+			[4, 4, 1, 2, 0, 0],
+			[5, 5, 4, 3, 0, 0],
+			[9, 6, 6, 8, 6, 0],
+			[15, 7, 4, 3, 0, 0]
 		],
 		309: [
 			[2, 2, 1, 1, 0, 3],
@@ -34655,8 +34721,9 @@ export const builtViews: BuiltViews = Object.freeze({
 		448: [[2, 2, 4, 3, 0, 0]],
 		449: [[2, 2, 4, 3, 0, 0]],
 		450: [
-			[2, 2, 1, 1, 0, 3],
-			[3, 3, 1, 2, 0, 1],
+			[3, 3, 1, 1, 0, 3],
+			[2, 0],
+			[2, 1],
 			[4, 4, 4, 3, 0, 0],
 			[8, 5, 6, 8, 6, 0],
 			[14, 6, 4, 3, 0, 0]
@@ -34666,7 +34733,8 @@ export const builtViews: BuiltViews = Object.freeze({
 			[5, 3, 5, 8, 5, 0]
 		],
 		454: [
-			[2, 2, 1, 2, 0, 1],
+			[2, 0],
+			[2, 1],
 			[3, 3, 3, 8, 3, 0],
 			[6, 4, 3, 8, 3, 0]
 		],
@@ -34923,33 +34991,28 @@ export const builtViews: BuiltViews = Object.freeze({
 			[14, 4, 6, 8, 6, 0]
 		],
 		540: [
-			[2, 0],
-			[3, 3, 6, 8, 6, 0],
-			[9, 4, 4, 3, 0, 0]
-		],
-		541: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 1, 2, 0, 0]
 		],
-		542: [
+		541: [
 			[2, 2, 3, 8, 3, 0],
 			[5, 3, 4, 3, 0, 0]
 		],
-		543: [[2, 2, 1, 3, 0, 4]],
+		542: [[2, 2, 1, 3, 0, 4]],
+		543: [
+			[2, 2, 4, 3, 0, 0],
+			[6, 3, 6, 8, 6, 0]
+		],
 		544: [
 			[2, 2, 4, 3, 0, 0],
 			[6, 3, 6, 8, 6, 0]
 		],
 		545: [
-			[2, 2, 4, 3, 0, 0],
-			[6, 3, 6, 8, 6, 0]
-		],
-		546: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 1, 1, 0, 3],
 			[9, 4, 3, 1, 0, 0]
 		],
-		547: [
+		546: [
 			[2, 2, 6, 8, 6, 0],
 			[8, 3, 4, 3, 0, 0]
 		],
@@ -34982,8 +35045,12 @@ export const builtViews: BuiltViews = Object.freeze({
 			[2, 2, 8, 8, 8, 0],
 			[10, 3, 1, 1, 0, 3]
 		],
-		617: [[2, 2, 3, 8, 3, 0]],
-		618: [[2, 2, 4, 3, 0, 0]]
+		563: [
+			[2, 2, 6, 8, 6, 0],
+			[8, 3, 4, 3, 0, 0]
+		],
+		615: [[2, 2, 3, 8, 3, 0]],
+		616: [[2, 2, 4, 3, 0, 0]]
 	} as const),
 	leaves: Object.freeze({
 		1: leafIdentifierToken,

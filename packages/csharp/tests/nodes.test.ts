@@ -239,7 +239,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -335,8 +334,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	describe('using_directive', () => {
 		it('factory produces correct type', () => {
 			const node = ir.usingDirective({
-				usingDirectiveArm: {
-					$type: TSKindId.UsingDirectiveArm,
+				content: {
+					$type: TSKindId.UsingDirectiveAlias,
 					name: { $type: TSKindId.IdentifierToken, text: 'test' } as never,
 					type: TSKindId.ImplicitType as never
 				} as never
@@ -346,8 +345,8 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 		});
 		it('render produces non-empty string', () => {
 			const node = ir.usingDirective({
-				usingDirectiveArm: {
-					$type: TSKindId.UsingDirectiveArm,
+				content: {
+					$type: TSKindId.UsingDirectiveAlias,
 					name: { $type: TSKindId.IdentifierToken, text: 'test' } as never,
 					type: TSKindId.ImplicitType as never
 				} as never
@@ -358,13 +357,13 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 	});
 
 	describe('using_directive sub-factories', () => {
-		it('arm builds the parent', () => {
-			const node = ir.usingDirective.arm({
+		it('alias builds the parent', () => {
+			const node = ir.usingDirective.alias({
 				name: { $type: TSKindId.IdentifierToken, text: 'test' } as never,
 				type: TSKindId.ImplicitType as never
 			});
 			expect(node.$type).toBe(TSKindId.UsingDirective);
-			expect((node as any).usingDirectiveArm()?.$type).toBe(TSKindId.UsingDirectiveArm);
+			expect((node as any).content()?.$type).toBe(TSKindId.UsingDirectiveAlias);
 			expect(node.$render!().length).toBeGreaterThan(0);
 		});
 	});
@@ -766,7 +765,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -782,7 +780,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1007,7 +1004,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1023,7 +1019,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1055,7 +1050,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1084,7 +1078,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1115,7 +1108,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1145,7 +1137,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1212,7 +1203,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1227,7 +1217,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1245,7 +1234,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1260,7 +1248,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1279,7 +1266,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1295,7 +1281,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -1402,7 +1387,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				],
@@ -1418,7 +1402,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				],
@@ -3392,7 +3375,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -3408,7 +3390,6 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 					{
 						$type: TSKindId.Parameter,
 						attributeLists: [],
-						elements: [],
 						name: { $type: TSKindId.IdentifierToken, text: 'test' } as never
 					} as never
 				]
@@ -6500,6 +6481,12 @@ describe.each(Object.entries(engines))('%s construction', (_, { build: ir }) => 
 			});
 			const rendered = node.$render!();
 			expect(rendered.length).toBeGreaterThan(0);
+		});
+	});
+
+	describe('ref_readonly', () => {
+		it('is the kind id', () => {
+			expect(ir.refReadonly).toBe(TSKindId.RefReadonly);
 		});
 	});
 

@@ -78,20 +78,16 @@ export const gotoStatement$default =
 	(config: OmitEach<ArgsOf<PF>[0], 'operator'>, options?: OptionsArg<PF>): ReturnType<PF> =>
 		_s<ReturnType<PF>>(parent)({ ...config, operator: value } as never, options as never);
 
-export const usingDirective$branch =
-	<PF extends (...args: never[]) => unknown, R = ReturnType<PF>>(parent: PF) =>
-	(...args: readonly unknown[]): R =>
-		_s<R>(parent)(...args);
-export const usingDirective$arm =
+export const usingDirective$alias =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'usingDirectiveArm'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+	(config: OmitEach<ArgsOf<PF>[0], 'content'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
 		const rest: Record<string, unknown> = {};
 		const inner: Record<string, unknown> = {};
 		for (const [key, value] of Object.entries(_o(config))) {
-			if (key === 'unsafe' || key === 'name' || key === 'type') inner[key] = value;
+			if (key === 'name' || key === 'type') inner[key] = value;
 			else rest[key] = value;
 		}
-		return _s<ReturnType<PF>>(parent)({ ...rest, usingDirectiveArm: _c(child)(inner) } as never, options as never);
+		return _s<ReturnType<PF>>(parent)({ ...rest, content: _c(child)(inner) } as never, options as never);
 	};
 
 export const globalAttribute$attributes = <

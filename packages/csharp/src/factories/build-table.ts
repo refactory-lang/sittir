@@ -66,19 +66,18 @@ export interface Routes<Table extends AnyTable> {
 		readonly case: Routes<Table>['gotoStatement$case'];
 		readonly default: Routes<Table>['gotoStatement$default'];
 	};
-	readonly usingDirective$arm: <
-		const V extends OmitEach<ArgsOf<Table['usingDirective$seated']>[0], 'usingDirectiveArm'> &
-			ArgsOf<Table['buildUsingDirectiveArm']>[0]
+	readonly usingDirective$alias: <
+		const V extends OmitEach<ArgsOf<Table['buildUsingDirective']>[0], 'content'> &
+			ArgsOf<Table['buildUsingDirectiveAlias']>[0]
 	>(
 		config: V &
 			RefuseUndeclared<
 				V,
-				OmitEach<ArgsOf<Table['usingDirective$seated']>[0], 'usingDirectiveArm'> &
-					ArgsOf<Table['buildUsingDirectiveArm']>[0]
+				OmitEach<ArgsOf<Table['buildUsingDirective']>[0], 'content'> & ArgsOf<Table['buildUsingDirectiveAlias']>[0]
 			>,
-		options?: OptionsArg<Table['usingDirective$seated']>
-	) => ReturnType<Table['usingDirective$seated']>;
-	readonly usingDirective: Table['usingDirective$seated'] & { readonly arm: Routes<Table>['usingDirective$arm'] };
+		options?: OptionsArg<Table['buildUsingDirective']>
+	) => ReturnType<Table['buildUsingDirective']>;
+	readonly usingDirective: Table['buildUsingDirective'] & { readonly alias: Routes<Table>['usingDirective$alias'] };
 	readonly globalAttribute$assembly: <const V extends OmitEach<ArgsOf<Table['globalAttribute$seated']>[0], 'operator'>>(
 		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['globalAttribute$seated']>[0], 'operator'>>,
 		options?: OptionsArg<Table['globalAttribute$seated']>
@@ -6003,6 +6002,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly emptyStatement: typeof F.buildEmptyStatement;
 	readonly discard: typeof F.buildDiscard;
 	readonly nullLiteral: typeof F.buildNullLiteral;
+	readonly refReadonly: typeof F.buildRefReadonly;
 	readonly typeParameterConstraintStruct: typeof F.buildTypeParameterConstraintStruct;
 	readonly typeParameterConstraintNotnull: typeof F.buildTypeParameterConstraintNotnull;
 	readonly typeParameterConstraintUnmanaged: typeof F.buildTypeParameterConstraintUnmanaged;
@@ -6159,12 +6159,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			default: gotoStatement$default
 		} as const)
 	);
-	const usingDirective$arm: Routes<Table>['usingDirective$arm'] = K.usingDirective$arm(
-		$at('usingDirective$seated'),
-		$at('buildUsingDirectiveArm')
+	const usingDirective$alias: Routes<Table>['usingDirective$alias'] = K.usingDirective$alias(
+		$at('buildUsingDirective'),
+		$at('buildUsingDirectiveAlias')
 	);
 	const usingDirective: Routes<Table>['usingDirective'] = Object.freeze(
-		Object.assign(delegate($at('usingDirective$seated')), { arm: usingDirective$arm } as const)
+		Object.assign(delegate($at('buildUsingDirective')), { alias: usingDirective$alias } as const)
 	);
 	const globalAttribute$assembly: Routes<Table>['globalAttribute$assembly'] = K.globalAttribute$assembly(
 		$at('globalAttribute$seated'),
@@ -9194,6 +9194,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		emptyStatement: F.buildEmptyStatement,
 		discard: F.buildDiscard,
 		nullLiteral: F.buildNullLiteral,
+		refReadonly: F.buildRefReadonly,
 		typeParameterConstraintStruct: F.buildTypeParameterConstraintStruct,
 		typeParameterConstraintNotnull: F.buildTypeParameterConstraintNotnull,
 		typeParameterConstraintUnmanaged: F.buildTypeParameterConstraintUnmanaged,

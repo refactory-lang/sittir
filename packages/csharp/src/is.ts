@@ -298,12 +298,7 @@ export interface KindMembers {
 		| TSKindId.StaticKeyword
 		| TSKindId.UnsafeKeyword
 		| TSKindId.VirtualKeyword
-		| TSKindId.VolatileKeyword
-		| TSKindId.ThisKeyword
-		| TSKindId.ScopedKeyword
-		| TSKindId.RefKeyword
-		| TSKindId.OutKeyword
-		| TSKindId.InKeyword;
+		| TSKindId.VolatileKeyword;
 	[TSKindId.PredefinedType]:
 		| TSKindId.BoolKeyword
 		| TSKindId.ByteKeyword
@@ -364,7 +359,7 @@ export interface IsGuards {
 		<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UsingDirective };
-		arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UsingDirective };
+		alias<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UsingDirective };
 	};
 	globalAttribute<T extends { readonly $type: number } | number>(
 		v: T
@@ -1178,9 +1173,6 @@ export interface IsGuards {
 	preprocPragmaArm2<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PreprocPragmaArm2 };
-	usingDirectiveArm<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UsingDirectiveArm };
 	attributeArgumentArm<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AttributeArgumentArm };
@@ -1229,6 +1221,9 @@ export interface IsGuards {
 	recordBasePrimaryConstructor<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.RecordBasePrimaryConstructor };
+	usingDirectiveAlias<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UsingDirectiveAlias };
 	elementBindingExpression<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ElementBindingExpression };
@@ -1357,7 +1352,7 @@ export interface IsGuards {
 			<T extends { readonly $type: number } | number>(
 				v: T
 			): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.UsingDirective };
-			arm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UsingDirective };
+			alias<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UsingDirective };
 		};
 		preprocIf<T extends { readonly $type: number } | number>(
 			v: T
@@ -1694,6 +1689,7 @@ export interface IsGuards {
 	preprocArg<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.PreprocArg };
+	refReadonly<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.RefReadonly>;
 	typeParameterConstraintClass<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TypeParameterConstraintClass };
@@ -1770,14 +1766,14 @@ const _supertype_pattern_ids = new Set<number>([381, 396, 113, 388, 385, 393, 38
 const _supertype_expression_ids = new Set<number>([
 	69, 404, 438, 423, 424, 164, 480, 199, 200, 201, 202, 203, 204, 205, 172, 173, 483, 170, 485, 403, 430, 405, 406, 435,
 	447, 448, 426, 427, 425, 428, 429, 460, 431, 436, 466, 450, 467, 470, 471, 472, 473, 474, 475, 476, 477, 453, 454,
-	455, 457, 458, 459, 464, 408, 495, 617, 64, 445, 478, 487, 326, 437, 407, 449
+	455, 457, 458, 459, 464, 408, 495, 615, 64, 445, 478, 487, 326, 437, 407, 449
 ]);
 const _supertype_nonLvalueExpression_ids = new Set<number>([
 	69, 404, 438, 423, 424, 164, 480, 199, 200, 201, 202, 203, 204, 205, 172, 173, 483, 170, 485, 403, 430, 405, 406, 435,
 	447, 448, 426, 427, 425, 428, 429, 460, 431, 436, 466, 450, 467, 470, 471, 472, 473, 474, 475, 476, 477, 453, 454,
 	455, 457, 458, 459, 464, 408, 495
 ]);
-const _supertype_lvalueExpression_ids = new Set<number>([617, 64, 445, 478, 487, 326, 437, 407, 449]);
+const _supertype_lvalueExpression_ids = new Set<number>([615, 64, 445, 478, 487, 326, 437, 407, 449]);
 const _supertype_literal_ids = new Set<number>([164, 480, 199, 200, 201, 202, 203, 204, 205, 172, 173, 483, 170, 485]);
 const _supertype_integerLiteral_ids = new Set<number>([199, 200, 201]);
 const _supertype_realLiteral_ids = new Set<number>([202, 203, 204, 205]);
@@ -1806,10 +1802,7 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.RealLiteral, _supertype_realLiteral_ids],
 	[TSKindId.EscapeSequence, _supertype_escapeSequence_ids],
 	[TSKindId.TuplePatternElement, _supertype_tuplePatternElement_ids],
-	[
-		TSKindId.Modifier,
-		new Set<number>([30, 31, 32, 2, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 64, 66, 67, 53, 52])
-	],
+	[TSKindId.Modifier, new Set<number>([30, 31, 32, 2, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48])],
 	[TSKindId.PredefinedType, new Set<number>([76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93])],
 	[TSKindId.BooleanLiteral, new Set<number>([172, 173])],
 	[
@@ -1900,7 +1893,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ConversionOperatorDeclaration_guard = _g(TSKindId.ConversionOperatorDeclaration);
 	const _kind_PropertyDeclarationArm_guard = _g(TSKindId.PropertyDeclarationArm);
 	const _kind_PropertyDeclaration_guard = _g(TSKindId.PropertyDeclaration);
-	const _kind_UsingDirectiveArm_guard = _g(TSKindId.UsingDirectiveArm);
+	const _kind_UsingDirectiveAlias_guard = _g(TSKindId.UsingDirectiveAlias);
 	const _kind_UsingDirective_guard = _g(TSKindId.UsingDirective);
 	const _kind_PreprocIf_guard = _g(TSKindId.PreprocIf);
 	const _kind_TypeArgumentListUnbound_guard = _g(TSKindId.TypeArgumentListUnbound);
@@ -2157,6 +2150,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ReservedIdentifier_guard = _mg(TSKindId.ReservedIdentifier);
 	const _kind_PreprocIfText2_guard = _g(TSKindId.PreprocIfText2);
 	const _kind_PreprocArg_guard = _g(TSKindId.PreprocArg);
+	const _kind_RefReadonly_guard = _mg(TSKindId.RefReadonly);
 	const _kind_OptionalSemi_guard = _mg(TSKindId.OptionalSemi);
 	const _kind_InterpolationRegularStart_guard = _g(TSKindId.InterpolationRegularStart);
 	const _kind_InterpolationVerbatimStart_guard = _g(TSKindId.InterpolationVerbatimStart);
@@ -2173,7 +2167,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		arm: _at(_kind_PropertyDeclaration_guard, 'content', _kind_PropertyDeclarationArm_guard)
 	});
 	const _form_UsingDirective_guard = _vg(_g(TSKindId.UsingDirective), {
-		arm: _at(_kind_UsingDirective_guard, 'usingDirectiveArm', _kind_UsingDirectiveArm_guard)
+		alias: _at(_kind_UsingDirective_guard, 'content', _kind_UsingDirectiveAlias_guard)
 	});
 	const _form_UsingStatement_guard = _vg(_g(TSKindId.UsingStatement), {
 		usingVariableDeclaration: _at(_kind_UsingStatement_guard, 'content', _kind_UsingVariableDeclaration_guard)
@@ -2638,7 +2632,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		preprocLineArm2: _kind_PreprocLineArm2_guard,
 		preprocPragmaArm1: _kind_PreprocPragmaArm1_guard,
 		preprocPragmaArm2: _kind_PreprocPragmaArm2_guard,
-		usingDirectiveArm: _kind_UsingDirectiveArm_guard,
 		attributeArgumentArm: _kind_AttributeArgumentArm_guard,
 		propertyDeclarationArm: _kind_PropertyDeclarationArm_guard,
 		callingConventionArm: _kind_CallingConventionArm_guard,
@@ -2655,6 +2648,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		typeArgumentListBound: _kind_TypeArgumentListBound_guard,
 		recordBaseNames: _kind_RecordBaseNames_guard,
 		recordBasePrimaryConstructor: _kind_RecordBasePrimaryConstructor_guard,
+		usingDirectiveAlias: _kind_UsingDirectiveAlias_guard,
 		elementBindingExpression: _kind_ElementBindingExpression_guard,
 		implicitParameter: _kind_ImplicitParameter_guard,
 		kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),
@@ -2699,6 +2693,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		reservedIdentifier: _kind_ReservedIdentifier_guard,
 		preprocIfText2: _kind_PreprocIfText2_guard,
 		preprocArg: _kind_PreprocArg_guard,
+		refReadonly: _kind_RefReadonly_guard,
 		typeParameterConstraintClass: _kind_TypeParameterConstraintClass_guard,
 		typeParameterConstraintStruct: _kind_TypeParameterConstraintStruct_guard,
 		typeParameterConstraintNotnull: _kind_TypeParameterConstraintNotnull_guard,

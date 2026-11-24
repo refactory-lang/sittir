@@ -261,7 +261,6 @@ export {
 	coerceToPreprocLineArm2 as buildPreprocLineArm2,
 	coerceToPreprocPragmaArm1 as buildPreprocPragmaArm1,
 	coerceToPreprocPragmaArm2 as buildPreprocPragmaArm2,
-	coerceToUsingDirectiveArm as buildUsingDirectiveArm,
 	coerceToAttributeArgumentArm as buildAttributeArgumentArm,
 	coerceToPropertyDeclarationArm as buildPropertyDeclarationArm,
 	coerceToCallingConventionArm as buildCallingConventionArm,
@@ -269,6 +268,7 @@ export {
 	coerceToSubpatternArm as buildSubpatternArm,
 	coerceToQueryBodyGroup as buildQueryBodyGroup,
 	coerceToAnonymousObjectMemberDeclaratorArm as buildAnonymousObjectMemberDeclaratorArm,
+	coerceToRefReadonly as buildRefReadonly,
 	coerceToSwitchStatementParenthesized as buildSwitchStatementParenthesized,
 	coerceToSwitchStatementTuple as buildSwitchStatementTuple,
 	coerceToTypeParameterConstraintClass as buildTypeParameterConstraintClass,
@@ -284,6 +284,7 @@ export {
 	coerceToTypeArgumentListBound as buildTypeArgumentListBound,
 	coerceToRecordBaseNames as buildRecordBaseNames,
 	coerceToRecordBasePrimaryConstructor as buildRecordBasePrimaryConstructor,
+	coerceToUsingDirectiveAlias as buildUsingDirectiveAlias,
 	coerceToOptionalSemi as buildOptionalSemi,
 	coerceToInterpolationRegularStart as buildInterpolationRegularStart,
 	coerceToInterpolationVerbatimStart as buildInterpolationVerbatimStart,
@@ -310,11 +311,6 @@ export const forStatement$seated: Seat<
 	T.ForStatement.LooseArgs,
 	ReturnType<typeof C.coerceToForStatement>
 > = K.forStatement$initializer(C.coerceToForStatement, C.coerceToForStatementConditionsInitializer);
-
-export const usingDirective$seated: Seat<
-	T.UsingDirective.LooseArgs,
-	ReturnType<typeof C.coerceToUsingDirective>
-> = K.usingDirective$branch(C.coerceToUsingDirective);
 
 export const globalAttribute$seated: Seat<
 	T.GlobalAttribute.LooseArgs,

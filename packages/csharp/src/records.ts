@@ -15,12 +15,12 @@ export const records = {
 	GlobalStatementNode: { words: 6, builtWords: 3, statement: { word: 2, width: 4, forms: 3, built: 2 } },
 	ExternAliasDirectiveNode: { words: 8, builtWords: 3, name: { word: 2, width: 6, inline: 6, forms: 8, built: 2 } },
 	UsingDirectiveNode: {
-		words: 20,
-		builtWords: 6,
+		words: 6,
+		builtWords: 4,
 		global: { word: 2, bit: 0 },
-		elements: { word: 3, width: 1, run: 1, forms: 2, built: 3 },
-		using_directive_arm: { word: 4, width: 13, inline: 13, forms: 8, built: 4 },
-		name: { word: 17, width: 3, forms: 1, built: 5 }
+		static_: { word: 2, bit: 1 },
+		unsafe_: { word: 2, bit: 2 },
+		content: { word: 3, width: 3, forms: 1, built: 3 }
 	},
 	GlobalAttributeNode: {
 		words: 6,
@@ -270,13 +270,15 @@ export const records = {
 	ExplicitInterfaceSpecifierNode: { words: 5, builtWords: 3, name: { word: 2, width: 3, forms: 1, built: 2 } },
 	ParameterListNode: { words: 3, builtWords: 3, element: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
 	ParameterNode: {
-		words: 18,
-		builtWords: 7,
-		attribute_lists: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		elements: { word: 3, width: 1, run: 1, forms: 2, built: 3 },
-		type_: { word: 4, width: 4, forms: 3, built: 4 },
-		name: { word: 8, width: 6, inline: 6, forms: 8, built: 5 },
-		expression: { word: 14, width: 4, forms: 3, built: 6 }
+		words: 19,
+		builtWords: 8,
+		attribute_lists: { word: 3, width: 1, run: 3, forms: 1, built: 3 },
+		this: { word: 2, bit: 0 },
+		scoped: { word: 2, bit: 1 },
+		mode: { word: 4, width: 1, forms: 2, built: 4 },
+		type_: { word: 5, width: 4, forms: 3, built: 5 },
+		name: { word: 9, width: 6, inline: 6, forms: 8, built: 6 },
+		expression: { word: 15, width: 4, forms: 3, built: 7 }
 	},
 	ParameterArrayNode: {
 		words: 13,
@@ -812,8 +814,9 @@ export const records = {
 	LambdaExpressionNode: {
 		words: 18,
 		builtWords: 7,
-		attribute_lists: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
-		elements: { word: 3, width: 1, run: 1, forms: 2, built: 3 },
+		attribute_lists: { word: 3, width: 1, run: 3, forms: 1, built: 3 },
+		static_: { word: 2, bit: 0 },
+		async_: { word: 2, bit: 1 },
 		type_: { word: 4, width: 4, forms: 3, built: 4 },
 		parameters: { word: 8, width: 6, inline: 6, forms: 8, built: 5 },
 		body: { word: 14, width: 4, forms: 3, built: 6 }
@@ -827,7 +830,8 @@ export const records = {
 	AnonymousMethodExpressionNode: {
 		words: 9,
 		builtWords: 5,
-		elements: { word: 2, width: 1, run: 1, forms: 2, built: 2 },
+		static_: { word: 2, bit: 0 },
+		async_: { word: 2, bit: 1 },
 		parameters: { word: 3, width: 3, inline: 3, forms: 8, built: 3 },
 		block: { word: 6, width: 3, inline: 3, forms: 8, built: 4 }
 	},
@@ -1248,13 +1252,6 @@ export const records = {
 		guid: { word: 8, width: 6, inline: 6, forms: 8, built: 3 },
 		checksum: { word: 14, width: 6, inline: 6, forms: 8, built: 4 }
 	},
-	UsingDirectiveArmNode: {
-		words: 13,
-		builtWords: 5,
-		unsafe_: { word: 2, bit: 0 },
-		name: { word: 3, width: 6, inline: 6, forms: 8, built: 3 },
-		type_: { word: 9, width: 4, forms: 3, built: 4 }
-	},
 	AttributeArgumentArmNode: {
 		words: 9,
 		builtWords: 4,
@@ -1337,6 +1334,12 @@ export const records = {
 		builtWords: 4,
 		primary_constructor_base_type: { word: 2, width: 8, inline: 8, forms: 8, built: 2 },
 		name: { word: 10, width: 1, run: 3, forms: 1, built: 3 }
+	},
+	UsingDirectiveAliasNode: {
+		words: 12,
+		builtWords: 4,
+		name: { word: 2, width: 6, inline: 6, forms: 8, built: 2 },
+		type_: { word: 8, width: 4, forms: 3, built: 3 }
 	},
 	InterpolationRegularStartNode: { words: 2, builtWords: 2 },
 	InterpolationVerbatimStartNode: { words: 2, builtWords: 2 },

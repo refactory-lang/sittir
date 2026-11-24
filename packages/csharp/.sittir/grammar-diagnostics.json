@@ -1149,8 +1149,9 @@
         ],
         "lookahead": "'('",
         "interpretations": [
-          "_reserved_identifier",
-          "_parameter_type_with_modifiers_repeat1"
+          "parameter",
+          "parameter",
+          "_reserved_identifier"
         ]
       }
     }
@@ -1197,6 +1198,45 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "c_sharp",
+    "message": "conflict between parameter, declaration_expression on ',' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "parameter",
+          "declaration_expression"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "parameter"
+        ],
+        [
+          "declaration_expression"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "'in'",
+          "type",
+          "identifier"
+        ],
+        "lookahead": "','",
+        "interpretations": [
+          "declaration_expression",
+          "parameter"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c_sharp",
     "message": "conflict between parameter, lvalue_expression on '(' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -1223,8 +1263,49 @@
         ],
         "lookahead": "'('",
         "interpretations": [
-          "lvalue_expression",
-          "_parameter_type_with_modifiers_repeat1"
+          "parameter",
+          "parameter",
+          "lvalue_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c_sharp",
+    "message": "conflict between parameter, ref_type on 'alias' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "parameter",
+          "ref_type"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "parameter"
+        ],
+        [
+          "ref_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "'this'",
+          "'ref'",
+          "type"
+        ],
+        "lookahead": "'alias'",
+        "interpretations": [
+          "ref_type",
+          "parameter",
+          "parameter"
         ]
       }
     }
@@ -1264,9 +1345,12 @@
         ],
         "lookahead": "'alias'",
         "interpretations": [
+          "parameter",
+          "parameter",
+          "parameter",
+          "parameter",
           "scoped_type",
-          "_reserved_identifier",
-          "_parameter_type_with_modifiers_repeat1"
+          "_reserved_identifier"
         ]
       }
     }
@@ -1426,6 +1510,44 @@
         "interpretations": [
           "qualified_name",
           "member_access_expression"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c_sharp",
+    "message": "conflict between ref_type, ref_readonly on 'alias' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "ref_type",
+          "ref_readonly"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "ref_type"
+        ],
+        [
+          "ref_readonly"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "'ref'",
+          "'readonly'"
+        ],
+        "lookahead": "'alias'",
+        "interpretations": [
+          "ref_type",
+          "ref_readonly"
         ]
       }
     }
@@ -1749,6 +1871,44 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "c_sharp",
+    "message": "conflict between type, _scoped_base_type on 'alias' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "type",
+          "_scoped_base_type"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "type"
+        ],
+        [
+          "_scoped_base_type"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'('",
+          "'scoped'",
+          "_name"
+        ],
+        "lookahead": "'alias'",
+        "interpretations": [
+          "type",
+          "_scoped_base_type"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "c_sharp",
     "message": "conflict between type, array_creation_expression on '(' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -1906,125 +2066,6 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "c_sharp",
-    "message": "conflict between using_directive, modifier, using_directive_arm on 'alias' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "using_directive",
-          "modifier",
-          "using_directive_arm"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "using_directive"
-        ],
-        [
-          "modifier"
-        ],
-        [
-          "using_directive_arm",
-          "using_directive"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'using'",
-          "'unsafe'"
-        ],
-        "lookahead": "'alias'",
-        "interpretations": [
-          "modifier",
-          "using_directive_arm",
-          "using_directive_repeat1"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "c_sharp",
-    "message": "conflict between using_directive, modifier on 'alias' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "using_directive",
-          "modifier"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "using_directive"
-        ],
-        [
-          "modifier"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'using'",
-          "'static'"
-        ],
-        "lookahead": "'alias'",
-        "interpretations": [
-          "modifier",
-          "using_directive_repeat1"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "c_sharp",
-    "message": "conflict between using_directive, using_directive_arm on 'alias' resolved by AddConflict (upstream-declared)",
-    "canProceed": true,
-    "details": {
-      "resolution": {
-        "kind": "AddConflict",
-        "symbols": [
-          "using_directive",
-          "using_directive_arm"
-        ]
-      },
-      "step": "upstream-declared",
-      "sourceChains": [
-        [
-          "using_directive"
-        ],
-        [
-          "using_directive_arm",
-          "using_directive"
-        ]
-      ],
-      "conflict": {
-        "symbolSequence": [
-          "'global'",
-          "'using'",
-          "'unsafe'"
-        ],
-        "lookahead": "'alias'",
-        "interpretations": [
-          "using_directive_arm",
-          "using_directive_repeat1"
-        ]
-      }
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "conflict-resolution",
-    "severity": "info",
-    "grammar": "c_sharp",
     "message": "conflict between using_variable_declarator, tuple_element on ',' resolved by AddConflict (upstream-declared)",
     "canProceed": true,
     "details": {
@@ -2089,26 +2130,30 @@
   },
   {
     "scope": "grammar",
-    "code": "unclassifiable-shape",
-    "severity": "error",
+    "code": "conflict-unnecessary-upstream",
+    "severity": "info",
     "grammar": "c_sharp",
-    "ownerKind": "using_directive",
-    "message": "[collect-slots] kind 'using_directive': member rule:using_directive:members.2 is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
-    "canProceed": false,
+    "message": "upstream declares the conflict using_directive, modifier, which the reshaped grammar never reports",
+    "canProceed": true,
     "details": {
-      "bucket": "choice-with-structured-arms",
-      "shape": "choice[2]",
-      "ruleId": "rule:using_directive:members.2"
+      "symbols": [
+        "using_directive",
+        "modifier"
+      ]
     }
   },
   {
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "error",
+    "code": "conflict-unnecessary-upstream",
+    "severity": "info",
     "grammar": "c_sharp",
-    "ownerKind": "using_directive",
-    "message": "[collect-slots] kind 'using_directive': choice rule:using_directive:members.2 is a singular mixed row — structured named arm(s) [seq[2](choice choice)] alongside union arm(s) [using_directive_arm]. Resolve with variant(name) in edits: splitting the row, until the structured-arm enrich mint gives each structured arm a kind of its own in the union slot.",
-    "canProceed": false
+    "message": "upstream declares the conflict using_directive, which the reshaped grammar never reports",
+    "canProceed": true,
+    "details": {
+      "symbols": [
+        "using_directive"
+      ]
+    }
   },
   {
     "scope": "grammar",
@@ -2284,6 +2329,20 @@
   },
   {
     "scope": "grammar",
+    "code": "unclassifiable-shape",
+    "severity": "error",
+    "grammar": "c_sharp",
+    "ownerKind": "lambda_expression",
+    "message": "[collect-slots] kind 'lambda_expression': member rule:lambda_expression:members.0/members.1 is not a leaf or a choice of leaves (choice-with-structured-arms: choice[2]). Resolve with rule(name, body) in edits: naming the structured arm as its own rule",
+    "canProceed": false,
+    "details": {
+      "bucket": "choice-with-structured-arms",
+      "shape": "choice[2]",
+      "ruleId": "rule:lambda_expression:members.0/members.1"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "union-slot-routed-repeated",
     "severity": "error",
     "grammar": "c_sharp",
@@ -2324,44 +2383,5 @@
     "canProceed": false,
     "scope": "grammar",
     "grammar": "c_sharp"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "csharp",
-    "code": "accessor-class-clash",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "accessor 'elements' holds flags (using_directive, parameter, lambda_expression, anonymous_method_expression); list (class_declaration, struct_declaration, record_declaration, conversion_operator_declaration, bracketed_parameter_list, parameter_list, tuple_pattern, catch_clause, string_literal, preproc_if_in_top_level, preproc_else_in_top_level, preproc_elif_in_top_level, preproc_pragma_arm1, calling_convention_arm); single (enum_member_declaration_list, list_pattern); rename the choice side, or name the slot for what it holds",
-    "details": {
-      "name": "elements",
-      "classes": {
-        "flags": [
-          "using_directive",
-          "parameter",
-          "lambda_expression",
-          "anonymous_method_expression"
-        ],
-        "list": [
-          "class_declaration",
-          "struct_declaration",
-          "record_declaration",
-          "conversion_operator_declaration",
-          "bracketed_parameter_list",
-          "parameter_list",
-          "tuple_pattern",
-          "catch_clause",
-          "string_literal",
-          "preproc_if_in_top_level",
-          "preproc_else_in_top_level",
-          "preproc_elif_in_top_level",
-          "preproc_pragma_arm1",
-          "calling_convention_arm"
-        ],
-        "single": [
-          "enum_member_declaration_list",
-          "list_pattern"
-        ]
-      }
-    }
   }
 ]

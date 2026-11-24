@@ -191,8 +191,44 @@
 			"field": "anonymous_method_expression_before"
 		},
 		{
-			"kind": "slot",
-			"name": "elements"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static"
+						},
+						{
+							"kind": "seam",
+							"field": "static_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "async_before"
+						},
+						{
+							"kind": "slot",
+							"name": "async"
+						},
+						{
+							"kind": "seam",
+							"field": "async_after"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
@@ -4368,20 +4404,46 @@
 			"field": "lambda_expression_before"
 		},
 		{
-			"kind": "slot",
-			"name": "attribute_lists"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "attribute_lists",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "attribute_lists"
+						}
+					]
+				}
+			]
 		},
 		{
-			"kind": "seam",
-			"field": "elements_before"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "static",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "static"
+						}
+					]
+				}
+			]
 		},
 		{
-			"kind": "slot",
-			"name": "elements"
-		},
-		{
-			"kind": "seam",
-			"field": "elements_after"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "if",
@@ -4398,8 +4460,18 @@
 			]
 		},
 		{
-			"kind": "slot",
-			"name": "parameters"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "parameters"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "seam",
@@ -5416,16 +5488,62 @@
 			"name": "attribute_lists"
 		},
 		{
-			"kind": "seam",
-			"field": "elements_before"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "this",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "this_before"
+						},
+						{
+							"kind": "slot",
+							"name": "this"
+						},
+						{
+							"kind": "seam",
+							"field": "this_after"
+						}
+					]
+				}
+			]
 		},
 		{
-			"kind": "slot",
-			"name": "elements"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "scoped",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "scoped_before"
+						},
+						{
+							"kind": "slot",
+							"name": "scoped"
+						},
+						{
+							"kind": "seam",
+							"field": "scoped_after"
+						}
+					]
+				}
+			]
 		},
 		{
-			"kind": "seam",
-			"field": "elements_after"
+			"kind": "if",
+			"arms": [
+				{
+					"test": "mode",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "mode"
+						}
+					]
+				}
+			]
 		},
 		{
 			"kind": "if",
@@ -9335,11 +9453,19 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "using_directive_arm",
+					"test": "static",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "static_before"
+						},
+						{
 							"kind": "slot",
-							"name": "using_directive_arm"
+							"name": "static"
+						},
+						{
+							"kind": "seam",
+							"field": "static_after"
 						}
 					]
 				}
@@ -9349,29 +9475,27 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "elements",
+					"test": "unsafe",
 					"body": [
 						{
-							"kind": "slot",
-							"name": "elements"
+							"kind": "seam",
+							"field": "unsafe_before"
 						},
 						{
-							"kind": "if",
-							"arms": [
-								{
-									"test": "name",
-									"body": [
-										{
-											"kind": "slot",
-											"name": "name"
-										}
-									]
-								}
-							]
+							"kind": "slot",
+							"name": "unsafe"
+						},
+						{
+							"kind": "seam",
+							"field": "unsafe_after"
 						}
 					]
 				}
 			]
+		},
+		{
+			"kind": "slot",
+			"name": "content"
 		},
 		{
 			"kind": "seam",
@@ -9386,28 +9510,10 @@
 			"field": "using_directive_after"
 		}
 	],
-	"using_directive_arm": [
+	"using_directive_alias": [
 		{
 			"kind": "seam",
-			"field": "using_directive_arm_before"
-		},
-		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "unsafe",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "unsafe"
-						},
-						{
-							"kind": "seam",
-							"field": "unsafe_after"
-						}
-					]
-				}
-			]
+			"field": "using_directive_alias_before"
 		},
 		{
 			"kind": "slot",
@@ -9431,7 +9537,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "using_directive_arm_after"
+			"field": "using_directive_alias_after"
 		}
 	],
 	"using_statement": [

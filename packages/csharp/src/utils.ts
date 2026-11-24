@@ -34,7 +34,7 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		202, 203, 204, 205, 210, 211, 517, 518, 519, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534,
-		535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 554, 555, 556, 557, 560, 561, 562, 617
+		535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 548, 549, 554, 555, 556, 557, 560, 561, 562, 563, 615
 	]),
 	listKinds: new Set<number>([517, 518, 521, 525, 530, 531, 532, 533, 534, 535]),
 	layout: new Set<number>([243, 244, 245, 246, 247, 248, 249, 250]),
@@ -64,7 +64,7 @@ export const triviaFacts = Object.freeze({
 		[460, ['_collection_elements']],
 		[464, ['_expressions']]
 	]),
-	namedUnits: new Set<number>([113, 164, 231, 289, 329, 347, 349, 351, 551, 552, 553, 558]),
+	namedUnits: new Set<number>([113, 164, 231, 289, 329, 347, 349, 351, 547, 551, 552, 553, 558]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\x09-\x0D\x20\u00A0\uFEFF\u3000]+))+)$/u,
 		kindIdByText: Object.freeze({ '': 243, ' ': 244, '\t': 245, '\n': 246, '\n\n': 247, '\n\n\n': 248 })
@@ -113,9 +113,9 @@ export const querySlots: QuerySlots = Object.freeze({
 	254: [['name', 0, undefined, '_name']],
 	255: [
 		['global', 0, 'global', '_global', 174],
-		['elements', 1, undefined, '_elements'],
-		['usingDirectiveArm', 2, undefined, '_using_directive_arm'],
-		['name', 3, undefined, '_name']
+		['static', 1, 'static', '_static', 45],
+		['unsafe', 2, 'unsafe', '_unsafe', 46],
+		['content', 3, undefined, '_content']
 	],
 	256: [
 		['operator', 0, undefined, '_operator'],
@@ -301,10 +301,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	307: [['elements', 0, undefined, '_element']],
 	308: [
 		['attributeLists', 0, undefined, '_attribute_lists'],
-		['elements', 1, undefined, '_elements'],
-		['type', 2, undefined, '_type'],
-		['name', 3, undefined, '_name'],
-		['expression', 4, undefined, '_expression']
+		['this', 1, 'this', '_this', 64],
+		['scoped', 2, 'scoped', '_scoped', 66],
+		['mode', 3, undefined, '_mode'],
+		['type', 4, undefined, '_type'],
+		['name', 5, undefined, '_name'],
+		['expression', 6, undefined, '_expression']
 	],
 	309: [
 		['attributeLists', 0, undefined, '_attribute_lists'],
@@ -660,19 +662,21 @@ export const querySlots: QuerySlots = Object.freeze({
 	449: [['lvalueExpression', 0, undefined, '_lvalue_expression']],
 	450: [
 		['attributeLists', 0, undefined, '_attribute_lists'],
-		['elements', 1, undefined, '_elements'],
-		['type', 2, undefined, '_type'],
-		['parameters', 3, undefined, '_parameters'],
-		['body', 4, undefined, '_body']
+		['static', 1, 'static', '_static', 45],
+		['async', 2, 'async', '_async', 31],
+		['type', 3, undefined, '_type'],
+		['parameters', 4, undefined, '_parameters'],
+		['body', 5, undefined, '_body']
 	],
 	453: [
 		['type', 0, undefined, '_type'],
 		['initializerExpression', 1, undefined, '_initializer_expression']
 	],
 	454: [
-		['elements', 0, undefined, '_elements'],
-		['parameters', 1, undefined, '_parameters'],
-		['block', 2, undefined, '_block']
+		['static', 0, 'static', '_static', 45],
+		['async', 1, 'async', '_async', 31],
+		['parameters', 2, undefined, '_parameters'],
+		['block', 3, undefined, '_block']
 	],
 	455: [['anonymousObjectMemberDeclarators', 0, undefined, '_anonymous_object_member_declarators']],
 	457: [
@@ -897,33 +901,28 @@ export const querySlots: QuerySlots = Object.freeze({
 		['checksum', 2, undefined, '_checksum']
 	],
 	540: [
-		['unsafe', 0, 'unsafe', '_unsafe', 46],
-		['name', 1, undefined, '_name'],
-		['type', 2, undefined, '_type']
-	],
-	541: [
 		['name', 0, undefined, '_name'],
 		['operator', 1, undefined, '_operator']
 	],
-	542: [
+	541: [
 		['accessors', 0, undefined, '_accessors'],
 		['value', 1, undefined, '_value']
 	],
-	543: [['elements', 0, undefined, '_element']],
-	544: [
+	542: [['elements', 0, undefined, '_element']],
+	543: [
 		['type', 0, undefined, '_type'],
 		['left', 1, undefined, '_left']
 	],
-	545: [
+	544: [
 		['expression', 0, undefined, '_expression'],
 		['identifier', 1, undefined, '_identifier']
 	],
-	546: [
+	545: [
 		['identifier', 0, undefined, '_identifier'],
 		['queryClauses', 1, undefined, '_query_clauses'],
 		['selectOrGroupClause', 2, undefined, '_select_or_group_clause']
 	],
-	547: [
+	546: [
 		['name', 0, undefined, '_name'],
 		['value', 1, undefined, '_value']
 	],
@@ -956,8 +955,12 @@ export const querySlots: QuerySlots = Object.freeze({
 		['primaryConstructorBaseType', 0, undefined, '_primary_constructor_base_type'],
 		['names', 1, undefined, '_name']
 	],
-	617: [['arguments', 0, undefined, '_arguments']],
-	618: [['content', 0, undefined, '_content']]
+	563: [
+		['name', 0, undefined, '_name'],
+		['type', 1, undefined, '_type']
+	],
+	615: [['arguments', 0, undefined, '_arguments']],
+	616: [['content', 0, undefined, '_content']]
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -1077,22 +1080,22 @@ export const structure: StructureTable = Object.freeze({
 	},
 	255: {
 		kind: 'using_directive',
-		single: [
-			['_using_directive_arm', 'UsingDirective.usingDirectiveArm'],
-			['_name', 'UsingDirective.name']
-		],
+		required: [['_content', 'content']],
+		single: [['_content', 'UsingDirective.content']],
 		nodeOnly: [
-			['_using_directive_arm', 'UsingDirective.usingDirectiveArm', 'a built UsingDirectiveArm', [540]],
 			[
-				'_name',
-				'UsingDirective.name',
-				'a built AliasQualifiedName / QualifiedName / Identifier / GenericName',
-				[323, 325, 326, 487]
+				'_content',
+				'UsingDirective.content',
+				'a built UsingDirectiveAlias / AliasQualifiedName / QualifiedName / Identifier / GenericName',
+				[323, 325, 326, 487, 563]
 			]
 		],
-		booleans: [['_global', 'UsingDirective.global']],
-		config: ['global', 'elements', 'usingDirectiveArm', 'name'],
-		lists: [['elements', false, 'key']]
+		booleans: [
+			['_global', 'UsingDirective.global'],
+			['_static', 'UsingDirective.static'],
+			['_unsafe', 'UsingDirective.unsafe']
+		],
+		config: ['global', 'static', 'unsafe', 'content']
 	},
 	256: {
 		kind: 'global_attribute',
@@ -1139,7 +1142,7 @@ export const structure: StructureTable = Object.freeze({
 			['_expression', 'AttributeArgument.expression']
 		],
 		nodeOnly: [
-			['_attribute_argument_arm', 'AttributeArgument.attributeArgumentArm', 'a built AttributeArgumentArm', [541]],
+			['_attribute_argument_arm', 'AttributeArgument.attributeArgumentArm', 'a built AttributeArgumentArm', [540]],
 			['_expression', 'AttributeArgument.expression', 'a built Expression', [399]]
 		],
 		config: ['attributeArgumentArm', 'expression']
@@ -1234,7 +1237,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'ClassDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [['name', 'ClassDeclaration.name', 'a built Identifier', [1, 487]]],
@@ -1290,7 +1293,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'StructDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [['name', 'StructDeclaration.name', 'a built Identifier', [1, 487]]],
@@ -1378,7 +1381,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'InterfaceDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -1435,7 +1438,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'DelegateDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -1491,7 +1494,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'RecordDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			],
 			['_operator', 'RecordDeclaration.operator', [22, 23]]
 		],
@@ -1626,7 +1629,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'OperatorDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			],
 			[
 				'_operator',
@@ -1687,7 +1690,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'ConversionOperatorDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			],
 			['_operator', 'ConversionOperatorDeclaration.operator', [56, 57]]
 		],
@@ -1723,7 +1726,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'FieldDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		config: ['attributeLists', 'modifiers', 'variableDeclaration'],
@@ -1765,7 +1768,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'ConstructorDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -1852,7 +1855,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'MethodDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -1916,7 +1919,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'EventDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -1951,7 +1954,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'EventFieldDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		config: ['attributeLists', 'modifiers', 'variableDeclaration'],
@@ -1988,7 +1991,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'AccessorDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		config: ['attributeLists', 'modifiers', 'name', 'body'],
@@ -2032,7 +2035,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'IndexerDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -2084,13 +2087,13 @@ export const structure: StructureTable = Object.freeze({
 				[306]
 			],
 			['_name', 'PropertyDeclaration.name', 'a built Identifier', [487]],
-			['_content', 'PropertyDeclaration.content', 'a built PropertyDeclarationArm / ArrowExpressionClause', [315, 542]]
+			['_content', 'PropertyDeclaration.content', 'a built PropertyDeclarationArm / ArrowExpressionClause', [315, 541]]
 		],
 		kindIds: [
 			[
 				'_modifier',
 				'PropertyDeclaration.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -2140,12 +2143,14 @@ export const structure: StructureTable = Object.freeze({
 			['_name', 'Parameter.name', 'a built Identifier', [487]],
 			['_expression', 'Parameter.expression', 'a built Expression', [399]]
 		],
+		booleans: [
+			['_this', 'Parameter.this'],
+			['_scoped', 'Parameter.scoped']
+		],
+		kindIds: [['_mode', 'Parameter.mode', [52, 53, 67, 547]]],
 		hoisted: [['name', 'Parameter.name', 'a built Identifier', [1, 487]]],
-		config: ['attributeLists', 'elements', 'type', 'name', 'expression'],
-		lists: [
-			['attributeLists', false, 'key'],
-			['elements', false, 'key']
-		]
+		config: ['attributeLists', 'this', 'scoped', 'mode', 'type', 'name', 'expression'],
+		lists: [['attributeLists', false, 'key']]
 	},
 	309: {
 		kind: 'parameter_array',
@@ -2426,7 +2431,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_calling_convention_arm', 'callingConventionArm']],
 		single: [['_calling_convention_arm', 'CallingConvention.callingConventionArm']],
 		nodeOnly: [
-			['_calling_convention_arm', 'CallingConvention.callingConventionArm', 'a built CallingConventionArm', [543]]
+			['_calling_convention_arm', 'CallingConvention.callingConventionArm', 'a built CallingConventionArm', [542]]
 		]
 	},
 	338: {
@@ -2701,7 +2706,7 @@ export const structure: StructureTable = Object.freeze({
 			['_body', 'ForeachStatement.body']
 		],
 		nodeOnly: [
-			['_content', 'ForeachStatement.content', 'a built ForeachStatementInitializerArm / Expression', [399, 544]],
+			['_content', 'ForeachStatement.content', 'a built ForeachStatementInitializerArm / Expression', [399, 543]],
 			['_right', 'ForeachStatement.right', 'a built Expression', [399]],
 			['_body', 'ForeachStatement.body', 'a built Statement', [346]]
 		],
@@ -2781,7 +2786,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'LocalDeclarationStatement.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		config: ['await', 'using', 'modifiers', 'variableDeclaration'],
@@ -2824,7 +2829,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'LocalFunctionStatement.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -3027,7 +3032,7 @@ export const structure: StructureTable = Object.freeze({
 			['_pattern', 'Subpattern.pattern']
 		],
 		nodeOnly: [
-			['_subpattern_arm', 'Subpattern.subpatternArm', 'a built SubpatternArm', [545]],
+			['_subpattern_arm', 'Subpattern.subpatternArm', 'a built SubpatternArm', [544]],
 			['_pattern', 'Subpattern.pattern', 'a built Pattern', [379]]
 		],
 		config: ['subpatternArm', 'pattern']
@@ -3225,7 +3230,7 @@ export const structure: StructureTable = Object.freeze({
 				'a built GroupClause / SelectClause',
 				[421, 422]
 			],
-			['_query_body_group', 'QueryExpression.queryBodyGroups', 'a built QueryBodyGroup', [546]]
+			['_query_body_group', 'QueryExpression.queryBodyGroups', 'a built QueryBodyGroup', [545]]
 		],
 		config: ['fromClause', 'queryClauses', 'selectOrGroupClause', 'queryBodyGroups'],
 		lists: [
@@ -3378,7 +3383,7 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'ConditionalAccessExpression.content',
 				'a built MemberBindingExpression / ElementBindingExpression',
-				[446, 617]
+				[446, 615]
 			]
 		],
 		config: ['condition', 'content']
@@ -3754,14 +3759,15 @@ export const structure: StructureTable = Object.freeze({
 				[260, 501]
 			],
 			['_type', 'LambdaExpression.type', 'a built Type', [328]],
-			['_parameters', 'LambdaExpression.parameters', 'a built ParameterList / ImplicitParameter', [307, 618]],
+			['_parameters', 'LambdaExpression.parameters', 'a built ParameterList / ImplicitParameter', [307, 616]],
 			['_body', 'LambdaExpression.body', 'a built Block / Expression', [314, 399]]
 		],
-		config: ['attributeLists', 'elements', 'type', 'parameters', 'body'],
-		lists: [
-			['attributeLists', false, 'key'],
-			['elements', false, 'key']
-		]
+		booleans: [
+			['_static', 'LambdaExpression.static'],
+			['_async', 'LambdaExpression.async']
+		],
+		config: ['attributeLists', 'static', 'async', 'type', 'parameters', 'body'],
+		lists: [['attributeLists', false, 'key']]
 	},
 	453: {
 		kind: 'array_creation_expression',
@@ -3792,9 +3798,12 @@ export const structure: StructureTable = Object.freeze({
 			['_parameters', 'AnonymousMethodExpression.parameters', 'a built ParameterList', [307]],
 			['_block', 'AnonymousMethodExpression.block', 'a built Block', [314]]
 		],
+		booleans: [
+			['_static', 'AnonymousMethodExpression.static'],
+			['_async', 'AnonymousMethodExpression.async']
+		],
 		hoisted: [['block', 'AnonymousMethodExpression.block', 'a built Block', [314, 346]]],
-		config: ['elements', 'parameters', 'block'],
-		lists: [['elements', false, 'key']]
+		config: ['static', 'async', 'parameters', 'block']
 	},
 	455: {
 		kind: 'anonymous_object_creation_expression',
@@ -3814,7 +3823,7 @@ export const structure: StructureTable = Object.freeze({
 				'anonymousObjectMemberDeclarators',
 				'AnonymousObjectCreationExpression.anonymousObjectMemberDeclarators',
 				'a built AnonymousObjectMemberDeclarators',
-				[399, 532, 547]
+				[399, 532, 546]
 			]
 		]
 	},
@@ -4829,7 +4838,7 @@ export const structure: StructureTable = Object.freeze({
 				'_item',
 				'AnonymousObjectMemberDeclarators.items',
 				'a built AnonymousObjectMemberDeclaratorArm / Expression',
-				[399, 547]
+				[399, 546]
 			]
 		],
 		lists: [['items', false, 0]]
@@ -4920,24 +4929,6 @@ export const structure: StructureTable = Object.freeze({
 		config: ['fileName', 'guid', 'checksum']
 	},
 	540: {
-		kind: 'using_directive_arm',
-		required: [
-			['_name', 'name'],
-			['_type', 'type']
-		],
-		single: [
-			['_name', 'UsingDirectiveArm.name'],
-			['_type', 'UsingDirectiveArm.type']
-		],
-		nodeOnly: [
-			['_name', 'UsingDirectiveArm.name', 'a built Identifier', [487]],
-			['_type', 'UsingDirectiveArm.type', 'a built Type', [328]]
-		],
-		booleans: [['_unsafe', 'UsingDirectiveArm.unsafe']],
-		hoisted: [['name', 'UsingDirectiveArm.name', 'a built Identifier', [1, 487]]],
-		config: ['unsafe', 'name', 'type']
-	},
-	541: {
 		kind: 'attribute_argument_arm',
 		required: [
 			['_name', 'name'],
@@ -4949,7 +4940,7 @@ export const structure: StructureTable = Object.freeze({
 		hoisted: [['name', 'AttributeArgumentArm.name', 'a built Identifier', [1, 487]]],
 		config: ['name', 'operator']
 	},
-	542: {
+	541: {
 		kind: 'property_declaration_arm',
 		required: [['_accessors', 'accessors']],
 		single: [
@@ -4963,12 +4954,12 @@ export const structure: StructureTable = Object.freeze({
 		hoisted: [['accessors', 'PropertyDeclarationArm.accessors', 'a built AccessorList', [301, 302, 487]]],
 		config: ['accessors', 'value']
 	},
-	543: {
+	542: {
 		kind: 'calling_convention_arm',
 		nodeOnly: [['_element', 'CallingConventionArm.elements', 'a built Identifier', [487]]],
 		lists: [['elements', false, 0]]
 	},
-	544: {
+	543: {
 		kind: 'foreach_statement_initializer_arm',
 		required: [
 			['_type', 'type'],
@@ -4984,7 +4975,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['type', 'left']
 	},
-	545: {
+	544: {
 		kind: 'subpattern_arm',
 		single: [
 			['_expression', 'SubpatternArm.expression'],
@@ -4997,7 +4988,7 @@ export const structure: StructureTable = Object.freeze({
 		hoisted: [['identifier', 'SubpatternArm.identifier', 'a built Identifier', [1, 487]]],
 		config: ['expression', 'identifier']
 	},
-	546: {
+	545: {
 		kind: 'query_body_group',
 		required: [
 			['_identifier', 'identifier'],
@@ -5026,7 +5017,7 @@ export const structure: StructureTable = Object.freeze({
 		config: ['identifier', 'queryClauses', 'selectOrGroupClause'],
 		lists: [['queryClauses', false, 'key']]
 	},
-	547: {
+	546: {
 		kind: 'anonymous_object_member_declarator_arm',
 		required: [
 			['_name', 'name'],
@@ -5112,7 +5103,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'EnumDeclarationWithBody.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [
@@ -5146,7 +5137,7 @@ export const structure: StructureTable = Object.freeze({
 			[
 				'_modifier',
 				'EnumDeclarationWithoutBody.modifiers',
-				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 52, 53, 64, 66, 67]
+				[2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48]
 			]
 		],
 		hoisted: [['name', 'EnumDeclarationWithoutBody.name', 'a built Identifier', [1, 487]]],
@@ -5203,14 +5194,31 @@ export const structure: StructureTable = Object.freeze({
 		config: ['primaryConstructorBaseType', 'names'],
 		lists: [['names', false, 'key']]
 	},
-	617: {
+	563: {
+		kind: 'using_directive_alias',
+		required: [
+			['_name', 'name'],
+			['_type', 'type']
+		],
+		single: [
+			['_name', 'UsingDirectiveAlias.name'],
+			['_type', 'UsingDirectiveAlias.type']
+		],
+		nodeOnly: [
+			['_name', 'UsingDirectiveAlias.name', 'a built Identifier', [487]],
+			['_type', 'UsingDirectiveAlias.type', 'a built Type', [328]]
+		],
+		hoisted: [['name', 'UsingDirectiveAlias.name', 'a built Identifier', [1, 487]]],
+		config: ['name', 'type']
+	},
+	615: {
 		kind: 'element_binding_expression',
 		required: [['_arguments', 'arguments']],
 		single: [['_arguments', 'ElementBindingExpression.arguments']],
 		nodeOnly: [['_arguments', 'ElementBindingExpression.arguments', 'a built Arguments', [521]]],
 		hoisted: [['arguments', 'ElementBindingExpression.arguments', 'a built Arguments', [313, 399, 465, 521]]]
 	},
-	618: {
+	616: {
 		kind: 'implicit_parameter',
 		required: [['_content', 'content']],
 		single: [['_content', 'ImplicitParameter.content']],

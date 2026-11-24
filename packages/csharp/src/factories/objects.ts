@@ -361,41 +361,30 @@ function buildExternAliasDirective$with$name(this: Received<Held>, ...args: unkn
 	return buildExternAliasDirective$with(receiverOf(this, '$with.name'), 'name', args);
 }
 
-export function buildUsingDirective<
-	UsingDirectiveArmSlot extends T.UsingDirective.Config['usingDirectiveArm'],
-	NameSlot extends T.UsingDirective.Config['name']
->(
-	config?: RefusingConfig<
-		Partial<T.UsingDirective.Config>,
-		{ usingDirectiveArm: UsingDirectiveArmSlot; name: NameSlot }
-	>
+export function buildUsingDirective<ContentSlot extends T.UsingDirective.Config['content']>(
+	config: RefusingConfig<T.UsingDirective.Config, { content: ContentSlot }>
 ): T.UsingDirective.Bound;
-export function buildUsingDirective(config: Partial<T.UsingDirective.Config> = {}): T.UsingDirective.Bound {
+export function buildUsingDirective(config: T.UsingDirective.Config): T.UsingDirective.Bound {
 	currentHandle()?.admit(TSKindId.UsingDirective, [config]);
 	const _global = strictBooleanStorage(config.global);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'unsafe']);
-	const _using_directive_arm = config.usingDirectiveArm;
-	const _name = config.name;
+	const _static = strictBooleanStorage(config.static);
+	const _unsafe = strictBooleanStorage(config.unsafe);
+	const _content = config.content;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'using_directive', {
-			global: _global,
-			elements: _elements,
-			usingDirectiveArm: _using_directive_arm,
-			name: _name
-		});
+		admitChildren(handle, 'using_directive', { global: _global, static: _static, unsafe: _unsafe, content: _content });
 	const node = {
 		$type: TSKindId.UsingDirective as const,
 		_global,
-		_elements,
-		_using_directive_arm,
-		_name,
+		_static,
+		_unsafe,
+		_content,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		global: () => _global,
-		elements: () => _elements,
-		usingDirectiveArm: () => hydrateStoredSlot(node, '_using_directive_arm'),
-		name: () => hydrateStoredSlot(node, '_name'),
+		static: () => _static,
+		unsafe: () => _unsafe,
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -408,9 +397,9 @@ export function buildUsingDirective(config: Partial<T.UsingDirective.Config> = {
 	};
 	node.$with = {
 		global: buildUsingDirective$with$global,
-		elements: buildUsingDirective$with$elements,
-		usingDirectiveArm: buildUsingDirective$with$usingDirectiveArm,
-		name: buildUsingDirective$with$name,
+		static: buildUsingDirective$with$static,
+		unsafe: buildUsingDirective$with$unsafe,
+		content: buildUsingDirective$with$content,
 		[RECEIVER]: node
 	};
 	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
@@ -425,39 +414,19 @@ function buildUsingDirective$with(node: Held, setter: string, args: readonly unk
 			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirective.Config>['global']>) =>
 				rebuilt(node, handle, () => buildUsingDirective({ ...config, global: value }))
 			);
-		case 'elements':
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirective.Config>['static']>) =>
+				rebuilt(node, handle, () => buildUsingDirective({ ...config, static: value }))
+			);
+		case 'unsafe':
+			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirective.Config>['unsafe']>) =>
+				rebuilt(node, handle, () => buildUsingDirective({ ...config, unsafe: value }))
+			);
+		case 'content':
 			return applySetter(
 				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.UsingDirective.Config>['elements']>, readonly unknown[]>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () =>
-						restItems('elements', values) === undefined
-							? buildUsingDirective({ ...config, elements: restItems('elements', values) })
-							: buildUsingDirective({
-									...config,
-									usingDirectiveArm: undefined,
-									elements: restItems('elements', values)
-								})
-					)
-			);
-		case 'usingDirectiveArm':
-			return applySetter(args, (value: Admit<T.UsingDirectiveArm>) =>
-				rebuilt(node, handle, () =>
-					value === undefined
-						? buildUsingDirective({ ...config, usingDirectiveArm: value })
-						: buildUsingDirective({ ...config, elements: undefined, name: undefined, usingDirectiveArm: value })
-				)
-			);
-		case 'name':
-			return applySetter(args, (value: Admit<T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>) =>
-				rebuilt(node, handle, () =>
-					value === undefined
-						? buildUsingDirective({ ...config, name: value })
-						: buildUsingDirective({ ...config, usingDirectiveArm: undefined, name: value })
-				)
+				(value: Admit<T.UsingDirectiveAlias | T.AliasQualifiedName | T.QualifiedName | T.Identifier | T.GenericName>) =>
+					rebuilt(node, handle, () => buildUsingDirective({ ...config, content: value }))
 			);
 	}
 	throw new Error(`using_directive has no $with.${setter}`);
@@ -465,14 +434,14 @@ function buildUsingDirective$with(node: Held, setter: string, args: readonly unk
 function buildUsingDirective$with$global(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildUsingDirective$with(receiverOf(this, '$with.global'), 'global', args);
 }
-function buildUsingDirective$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDirective$with(receiverOf(this, '$with.elements'), 'elements', args);
+function buildUsingDirective$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDirective$with(receiverOf(this, '$with.static'), 'static', args);
 }
-function buildUsingDirective$with$usingDirectiveArm(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDirective$with(receiverOf(this, '$with.usingDirectiveArm'), 'usingDirectiveArm', args);
+function buildUsingDirective$with$unsafe(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDirective$with(receiverOf(this, '$with.unsafe'), 'unsafe', args);
 }
-function buildUsingDirective$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDirective$with(receiverOf(this, '$with.name'), 'name', args);
+function buildUsingDirective$with$content(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDirective$with(receiverOf(this, '$with.content'), 'content', args);
 }
 
 export function buildGlobalAttribute<AttributesSlot extends T.GlobalAttribute.Config['attributes']>(
@@ -4776,7 +4745,9 @@ export function buildParameter<
 export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	currentHandle()?.admit(TSKindId.Parameter, [config]);
 	const _attribute_lists = listStorage<NonNullable<T.Parameter['_attribute_lists']>>(config.attributeLists ?? []);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['this', 'scoped', 'ref', 'out', 'in', 'readonly']);
+	const _this = strictBooleanStorage(config.this);
+	const _scoped = strictBooleanStorage(config.scoped);
+	const _mode = kindIdStorage<NonNullable<T.Parameter['_mode']>>(config.mode);
 	const _type = kindIdStorage<NonNullable<T.Parameter['_type']>>(config.type);
 	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
 	const _expression = kindIdStorage<NonNullable<T.Parameter['_expression']>>(config.expression);
@@ -4784,7 +4755,9 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	if (handle !== undefined)
 		admitChildren(handle, 'parameter', {
 			attributeLists: _attribute_lists,
-			elements: _elements,
+			this: _this,
+			scoped: _scoped,
+			mode: _mode,
 			type: _type,
 			name: _name,
 			expression: _expression
@@ -4792,14 +4765,18 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	const node = {
 		$type: TSKindId.Parameter as const,
 		_attribute_lists,
-		_elements,
+		_this,
+		_scoped,
+		_mode,
 		_type,
 		_name,
 		_expression,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		attributeLists: () => hydrateStoredSlots(node, '_attribute_lists'),
-		elements: () => _elements,
+		this: () => _this,
+		scoped: () => _scoped,
+		mode: () => _mode,
 		type: () => hydrateStoredSlot(node, '_type'),
 		name: () => hoistRead(hydrateStoredSlot(node, '_name'), [storedHop('content', '_content', false)], false),
 		expression: () => hydrateStoredSlot(node, '_expression'),
@@ -4815,7 +4792,9 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	};
 	node.$with = {
 		attributeLists: buildParameter$with$attributeLists,
-		elements: buildParameter$with$elements,
+		this: buildParameter$with$this,
+		scoped: buildParameter$with$scoped,
+		mode: buildParameter$with$mode,
 		type: buildParameter$with$type,
 		name: buildParameter$with$name,
 		expression: buildParameter$with$expression,
@@ -4833,14 +4812,17 @@ function buildParameter$with(node: Held, setter: string, args: readonly unknown[
 			return applySetter(args, (...values: Admit<(T.AttributeList | T.PreprocIfInAttributeList)[]>) =>
 				rebuilt(node, handle, () => buildParameter({ ...config, attributeLists: restItems('attributeLists', values) }))
 			);
-		case 'elements':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.Parameter.Config>['elements']>, readonly unknown[]>[number][]
-					>
-				) => rebuilt(node, handle, () => buildParameter({ ...config, elements: restItems('elements', values) }))
+		case 'this':
+			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['this']>) =>
+				rebuilt(node, handle, () => buildParameter({ ...config, this: value }))
+			);
+		case 'scoped':
+			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['scoped']>) =>
+				rebuilt(node, handle, () => buildParameter({ ...config, scoped: value }))
+			);
+		case 'mode':
+			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['mode']>) =>
+				rebuilt(node, handle, () => buildParameter({ ...config, mode: value }))
 			);
 		case 'type':
 			return applySetter(args, (value?: Admit<NonNullable<T.Parameter.Config>['type']>) =>
@@ -4875,8 +4857,14 @@ function buildParameter$with(node: Held, setter: string, args: readonly unknown[
 function buildParameter$with$attributeLists(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildParameter$with(receiverOf(this, '$with.attributeLists'), 'attributeLists', args);
 }
-function buildParameter$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildParameter$with(receiverOf(this, '$with.elements'), 'elements', args);
+function buildParameter$with$this(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParameter$with(receiverOf(this, '$with.this'), 'this', args);
+}
+function buildParameter$with$scoped(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParameter$with(receiverOf(this, '$with.scoped'), 'scoped', args);
+}
+function buildParameter$with$mode(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildParameter$with(receiverOf(this, '$with.mode'), 'mode', args);
 }
 function buildParameter$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildParameter$with(receiverOf(this, '$with.type'), 'type', args);
@@ -13058,7 +13046,8 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 	const _attribute_lists = listStorage<NonNullable<T.LambdaExpression['_attribute_lists']>>(
 		config.attributeLists ?? []
 	);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+	const _static = strictBooleanStorage(config.static);
+	const _async = strictBooleanStorage(config.async);
 	const _type = kindIdStorage<NonNullable<T.LambdaExpression['_type']>>(config.type);
 	const _parameters = config.parameters;
 	const _body = kindIdStorage<NonNullable<T.LambdaExpression['_body']>>(config.body);
@@ -13066,7 +13055,8 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 	if (handle !== undefined)
 		admitChildren(handle, 'lambda_expression', {
 			attributeLists: _attribute_lists,
-			elements: _elements,
+			static: _static,
+			async: _async,
 			type: _type,
 			parameters: _parameters,
 			body: _body
@@ -13074,14 +13064,16 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 	const node = {
 		$type: TSKindId.LambdaExpression as const,
 		_attribute_lists,
-		_elements,
+		_static,
+		_async,
 		_type,
 		_parameters,
 		_body,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
 		attributeLists: () => hydrateStoredSlots(node, '_attribute_lists'),
-		elements: () => _elements,
+		static: () => _static,
+		async: () => _async,
 		type: () => hydrateStoredSlot(node, '_type'),
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		body: () => hydrateStoredSlot(node, '_body'),
@@ -13097,7 +13089,8 @@ export function buildLambdaExpression(config: T.LambdaExpression.Config): T.Lamb
 	};
 	node.$with = {
 		attributeLists: buildLambdaExpression$with$attributeLists,
-		elements: buildLambdaExpression$with$elements,
+		static: buildLambdaExpression$with$static,
+		async: buildLambdaExpression$with$async,
 		type: buildLambdaExpression$with$type,
 		parameters: buildLambdaExpression$with$parameters,
 		body: buildLambdaExpression$with$body,
@@ -13117,14 +13110,13 @@ function buildLambdaExpression$with(node: Held, setter: string, args: readonly u
 					buildLambdaExpression({ ...config, attributeLists: restItems('attributeLists', values) })
 				)
 			);
-		case 'elements':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<NonNullable<NonNullable<T.LambdaExpression.Config>['elements']>, readonly unknown[]>[number][]
-					>
-				) => rebuilt(node, handle, () => buildLambdaExpression({ ...config, elements: restItems('elements', values) }))
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.LambdaExpression.Config>['static']>) =>
+				rebuilt(node, handle, () => buildLambdaExpression({ ...config, static: value }))
+			);
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.LambdaExpression.Config>['async']>) =>
+				rebuilt(node, handle, () => buildLambdaExpression({ ...config, async: value }))
 			);
 		case 'type':
 			return applySetter(args, (value?: Admit<NonNullable<T.LambdaExpression.Config>['type']>) =>
@@ -13144,8 +13136,11 @@ function buildLambdaExpression$with(node: Held, setter: string, args: readonly u
 function buildLambdaExpression$with$attributeLists(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildLambdaExpression$with(receiverOf(this, '$with.attributeLists'), 'attributeLists', args);
 }
-function buildLambdaExpression$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildLambdaExpression$with(receiverOf(this, '$with.elements'), 'elements', args);
+function buildLambdaExpression$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLambdaExpression$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildLambdaExpression$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildLambdaExpression$with(receiverOf(this, '$with.async'), 'async', args);
 }
 function buildLambdaExpression$with$type(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildLambdaExpression$with(receiverOf(this, '$with.type'), 'type', args);
@@ -13245,7 +13240,8 @@ export function buildAnonymousMethodExpression(
 	config: Partial<T.AnonymousMethodExpression.Config> = {}
 ): T.AnonymousMethodExpression.Bound {
 	currentHandle()?.admit(TSKindId.AnonymousMethodExpression, [config]);
-	const _elements = coerceBitflagStorage(config.elements ?? [], ['static', 'async']);
+	const _static = strictBooleanStorage(config.static);
+	const _async = strictBooleanStorage(config.async);
 	const _parameters = config.parameters;
 	const _block = orDefault(
 		wrapHoisted(
@@ -13259,18 +13255,21 @@ export function buildAnonymousMethodExpression(
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'anonymous_method_expression', {
-			elements: _elements,
+			static: _static,
+			async: _async,
 			parameters: _parameters,
 			block: _block
 		});
 	const node = {
 		$type: TSKindId.AnonymousMethodExpression as const,
-		_elements,
+		_static,
+		_async,
 		_parameters,
 		_block,
 		$_layout: undefined,
 		$with: undefined as unknown as object,
-		elements: () => _elements,
+		static: () => _static,
+		async: () => _async,
 		parameters: () => hydrateStoredSlot(node, '_parameters'),
 		block: () => hoistRead(hydrateStoredSlot(node, '_block'), [storedHop('statements', '_statements', true)], true),
 		$render: () => renderText(handle, node),
@@ -13284,7 +13283,8 @@ export function buildAnonymousMethodExpression(
 		[Symbol.dispose]: releaseNothing
 	};
 	node.$with = {
-		elements: buildAnonymousMethodExpression$with$elements,
+		static: buildAnonymousMethodExpression$with$static,
+		async: buildAnonymousMethodExpression$with$async,
 		parameters: buildAnonymousMethodExpression$with$parameters,
 		block: buildAnonymousMethodExpression$with$block,
 		[RECEIVER]: node
@@ -13297,20 +13297,13 @@ function buildAnonymousMethodExpression$with(node: Held, setter: string, args: r
 	const handle = node[HANDLE];
 	const config = node[INPUT] as T.AnonymousMethodExpression.Config;
 	switch (setter) {
-		case 'elements':
-			return applySetter(
-				args,
-				(
-					...values: Admit<
-						Extract<
-							NonNullable<NonNullable<T.AnonymousMethodExpression.Config>['elements']>,
-							readonly unknown[]
-						>[number][]
-					>
-				) =>
-					rebuilt(node, handle, () =>
-						buildAnonymousMethodExpression({ ...config, elements: restItems('elements', values) })
-					)
+		case 'static':
+			return applySetter(args, (value?: Admit<NonNullable<T.AnonymousMethodExpression.Config>['static']>) =>
+				rebuilt(node, handle, () => buildAnonymousMethodExpression({ ...config, static: value }))
+			);
+		case 'async':
+			return applySetter(args, (value?: Admit<NonNullable<T.AnonymousMethodExpression.Config>['async']>) =>
+				rebuilt(node, handle, () => buildAnonymousMethodExpression({ ...config, async: value }))
 			);
 		case 'parameters':
 			return applySetter(args, (value?: Admit<T.ParameterList>) =>
@@ -13342,8 +13335,11 @@ function buildAnonymousMethodExpression$with(node: Held, setter: string, args: r
 	}
 	throw new Error(`anonymous_method_expression has no $with.${setter}`);
 }
-function buildAnonymousMethodExpression$with$elements(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildAnonymousMethodExpression$with(receiverOf(this, '$with.elements'), 'elements', args);
+function buildAnonymousMethodExpression$with$static(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAnonymousMethodExpression$with(receiverOf(this, '$with.static'), 'static', args);
+}
+function buildAnonymousMethodExpression$with$async(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildAnonymousMethodExpression$with(receiverOf(this, '$with.async'), 'async', args);
 }
 function buildAnonymousMethodExpression$with$parameters(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildAnonymousMethodExpression$with(receiverOf(this, '$with.parameters'), 'parameters', args);
@@ -20804,91 +20800,6 @@ function buildPreprocPragmaArm2$with$checksum(this: Received<Held>, ...args: unk
 	return buildPreprocPragmaArm2$with(receiverOf(this, '$with.checksum'), 'checksum', args);
 }
 
-export function buildUsingDirectiveArm<
-	NameSlot extends T.UsingDirectiveArm.Config['name'],
-	TypeSlot extends T.UsingDirectiveArm.Config['type']
->(config: RefusingConfig<T.UsingDirectiveArm.Config, { name: NameSlot; type: TypeSlot }>): T.UsingDirectiveArm.Bound;
-export function buildUsingDirectiveArm(config: T.UsingDirectiveArm.Config): T.UsingDirectiveArm.Bound {
-	currentHandle()?.admit(TSKindId.UsingDirectiveArm, [config]);
-	const _unsafe = strictBooleanStorage(config.unsafe);
-	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
-	const _type = kindIdStorage<NonNullable<T.UsingDirectiveArm['_type']>>(config.type);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'using_directive_arm', { unsafe: _unsafe, name: _name, type: _type });
-	const node = {
-		$type: TSKindId.UsingDirectiveArm as const,
-		_unsafe,
-		_name,
-		_type,
-		$_layout: undefined,
-		$with: undefined as unknown as object,
-		unsafe: () => _unsafe,
-		name: () => hoistRead(hydrateStoredSlot(node, '_name'), [storedHop('content', '_content', false)], false),
-		type: () => hydrateStoredSlot(node, '_type'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: undefined as unknown as object,
-		$engine: handle && (() => handle.current),
-		[SOURCE]: Source.Factory,
-		[HANDLE]: handle,
-		[INPUT]: config,
-		[Symbol.dispose]: releaseNothing
-	};
-	node.$with = {
-		unsafe: buildUsingDirectiveArm$with$unsafe,
-		name: buildUsingDirectiveArm$with$name,
-		type: buildUsingDirectiveArm$with$type,
-		[RECEIVER]: node
-	};
-	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
-	return node as unknown as T.UsingDirectiveArm.Bound;
-}
-
-function buildUsingDirectiveArm$with(node: Held, setter: string, args: readonly unknown[]): unknown {
-	const handle = node[HANDLE];
-	const config = node[INPUT] as T.UsingDirectiveArm.Config;
-	switch (setter) {
-		case 'unsafe':
-			return applySetter(args, (value?: Admit<NonNullable<T.UsingDirectiveArm.Config>['unsafe']>) =>
-				rebuilt(node, handle, () => buildUsingDirectiveArm({ ...config, unsafe: value }))
-			);
-		case 'name':
-			return hoistedWith(
-				node,
-				'name',
-				'_name',
-				'content',
-				false,
-				undefined,
-				handle,
-				args,
-				(args) =>
-					applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveArm.Config>['name']>) =>
-						rebuilt(node, handle, () => buildUsingDirectiveArm({ ...config, name: value }))
-					),
-				undefined,
-				(args: readonly never[]) =>
-					args.map((v) => wrapHoisted(v, (v: never) => buildIdentifier(v), TSKindId.Identifier)),
-				TSKindId.Identifier
-			);
-		case 'type':
-			return applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveArm.Config>['type']>) =>
-				rebuilt(node, handle, () => buildUsingDirectiveArm({ ...config, type: value }))
-			);
-	}
-	throw new Error(`using_directive_arm has no $with.${setter}`);
-}
-function buildUsingDirectiveArm$with$unsafe(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDirectiveArm$with(receiverOf(this, '$with.unsafe'), 'unsafe', args);
-}
-function buildUsingDirectiveArm$with$name(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDirectiveArm$with(receiverOf(this, '$with.name'), 'name', args);
-}
-function buildUsingDirectiveArm$with$type(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildUsingDirectiveArm$with(receiverOf(this, '$with.type'), 'type', args);
-}
-
 export function buildAttributeArgumentArm<NameSlot extends T.AttributeArgumentArm.Config['name']>(
 	config: RefusingConfig<T.AttributeArgumentArm.Config, { name: NameSlot }>
 ): T.AttributeArgumentArm.Bound;
@@ -21456,6 +21367,8 @@ function buildAnonymousObjectMemberDeclaratorArm$with$name(this: Received<Held>,
 function buildAnonymousObjectMemberDeclaratorArm$with$value(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildAnonymousObjectMemberDeclaratorArm$with(receiverOf(this, '$with.value'), 'value', args);
 }
+
+export const buildRefReadonly: TSKindId.RefReadonly = TSKindId.RefReadonly;
 
 export function buildSwitchStatementParenthesized<
 	ValueSlot extends T.SwitchStatementParenthesized.Config['value'],
@@ -22332,6 +22245,78 @@ function buildRecordBasePrimaryConstructor$with$names(this: Received<Held>, ...a
 	return buildRecordBasePrimaryConstructor$with(receiverOf(this, '$with.names'), 'names', args);
 }
 
+export function buildUsingDirectiveAlias<
+	NameSlot extends T.UsingDirectiveAlias.Config['name'],
+	TypeSlot extends T.UsingDirectiveAlias.Config['type']
+>(
+	config: RefusingConfig<T.UsingDirectiveAlias.Config, { name: NameSlot; type: TypeSlot }>
+): T.UsingDirectiveAlias.Bound;
+export function buildUsingDirectiveAlias(config: T.UsingDirectiveAlias.Config): T.UsingDirectiveAlias.Bound {
+	currentHandle()?.admit(TSKindId.UsingDirectiveAlias, [config]);
+	const _name = wrapHoisted(config.name, (v: never) => buildIdentifier(v), TSKindId.Identifier);
+	const _type = kindIdStorage<NonNullable<T.UsingDirectiveAlias['_type']>>(config.type);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'using_directive_alias', { name: _name, type: _type });
+	const node = {
+		$type: TSKindId.UsingDirectiveAlias as const,
+		_name,
+		_type,
+		$_layout: undefined,
+		$with: undefined as unknown as object,
+		name: () => hoistRead(hydrateStoredSlot(node, '_name'), [storedHop('content', '_content', false)], false),
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: undefined as unknown as object,
+		$engine: handle && (() => handle.current),
+		[SOURCE]: Source.Factory,
+		[HANDLE]: handle,
+		[INPUT]: config,
+		[Symbol.dispose]: releaseNothing
+	};
+	node.$with = { name: buildUsingDirectiveAlias$with$name, type: buildUsingDirectiveAlias$with$type, [RECEIVER]: node };
+	node.$trivia = { leading: objectLeading, trailing: objectTrailing, [RECEIVER]: node };
+	return node as unknown as T.UsingDirectiveAlias.Bound;
+}
+
+function buildUsingDirectiveAlias$with(node: Held, setter: string, args: readonly unknown[]): unknown {
+	const handle = node[HANDLE];
+	const config = node[INPUT] as T.UsingDirectiveAlias.Config;
+	switch (setter) {
+		case 'name':
+			return hoistedWith(
+				node,
+				'name',
+				'_name',
+				'content',
+				false,
+				undefined,
+				handle,
+				args,
+				(args) =>
+					applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveAlias.Config>['name']>) =>
+						rebuilt(node, handle, () => buildUsingDirectiveAlias({ ...config, name: value }))
+					),
+				undefined,
+				(args: readonly never[]) =>
+					args.map((v) => wrapHoisted(v, (v: never) => buildIdentifier(v), TSKindId.Identifier)),
+				TSKindId.Identifier
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.UsingDirectiveAlias.Config>['type']>) =>
+				rebuilt(node, handle, () => buildUsingDirectiveAlias({ ...config, type: value }))
+			);
+	}
+	throw new Error(`using_directive_alias has no $with.${setter}`);
+}
+function buildUsingDirectiveAlias$with$name(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDirectiveAlias$with(receiverOf(this, '$with.name'), 'name', args);
+}
+function buildUsingDirectiveAlias$with$type(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildUsingDirectiveAlias$with(receiverOf(this, '$with.type'), 'type', args);
+}
+
 export const buildOptionalSemi: TSKindId.OptionalSemi = TSKindId.OptionalSemi;
 
 export function buildInterpolationRegularStart(text: string): T.InterpolationRegularStart.Bound {
@@ -23079,7 +23064,6 @@ export type FluentKindMap = {
 	preproc_line_arm2: T.PreprocLineArm2.Bound;
 	preproc_pragma_arm1: T.PreprocPragmaArm1.Bound;
 	preproc_pragma_arm2: T.PreprocPragmaArm2.Bound;
-	using_directive_arm: T.UsingDirectiveArm.Bound;
 	attribute_argument_arm: T.AttributeArgumentArm.Bound;
 	property_declaration_arm: T.PropertyDeclarationArm.Bound;
 	calling_convention_arm: T.CallingConventionArm.Bound;
@@ -23087,6 +23071,7 @@ export type FluentKindMap = {
 	subpattern_arm: T.SubpatternArm.Bound;
 	query_body_group: T.QueryBodyGroup.Bound;
 	anonymous_object_member_declarator_arm: T.AnonymousObjectMemberDeclaratorArm.Bound;
+	ref_readonly: T.RefReadonly;
 	switch_statement_parenthesized: T.SwitchStatementParenthesized.Bound;
 	switch_statement_tuple: T.SwitchStatementTuple.Bound;
 	type_parameter_constraint_class: T.TypeParameterConstraintClass;
@@ -23102,6 +23087,7 @@ export type FluentKindMap = {
 	type_argument_list_bound: T.TypeArgumentListBound.Bound;
 	record_base_names: T.RecordBaseNames.Bound;
 	record_base_primary_constructor: T.RecordBasePrimaryConstructor.Bound;
+	using_directive_alias: T.UsingDirectiveAlias.Bound;
 	optional_semi: T.OptionalSemi;
 	interpolation_regular_start: T.InterpolationRegularStart;
 	interpolation_verbatim_start: T.InterpolationVerbatimStart;
@@ -23382,7 +23368,6 @@ export const _factoryMap = {
 	preproc_line_arm2: buildPreprocLineArm2,
 	preproc_pragma_arm1: buildPreprocPragmaArm1,
 	preproc_pragma_arm2: buildPreprocPragmaArm2,
-	using_directive_arm: buildUsingDirectiveArm,
 	attribute_argument_arm: buildAttributeArgumentArm,
 	property_declaration_arm: buildPropertyDeclarationArm,
 	calling_convention_arm: buildCallingConventionArm,
@@ -23390,6 +23375,7 @@ export const _factoryMap = {
 	subpattern_arm: buildSubpatternArm,
 	query_body_group: buildQueryBodyGroup,
 	anonymous_object_member_declarator_arm: buildAnonymousObjectMemberDeclaratorArm,
+	ref_readonly: buildRefReadonly,
 	switch_statement_parenthesized: buildSwitchStatementParenthesized,
 	switch_statement_tuple: buildSwitchStatementTuple,
 	type_parameter_constraint_class: buildTypeParameterConstraintClass,
@@ -23405,6 +23391,7 @@ export const _factoryMap = {
 	type_argument_list_bound: buildTypeArgumentListBound,
 	record_base_names: buildRecordBaseNames,
 	record_base_primary_constructor: buildRecordBasePrimaryConstructor,
+	using_directive_alias: buildUsingDirectiveAlias,
 	optional_semi: buildOptionalSemi,
 	interpolation_regular_start: buildInterpolationRegularStart,
 	interpolation_verbatim_start: buildInterpolationVerbatimStart,

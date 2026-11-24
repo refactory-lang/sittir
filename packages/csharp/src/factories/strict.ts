@@ -261,7 +261,6 @@ export {
 	buildPreprocLineArm2,
 	buildPreprocPragmaArm1,
 	buildPreprocPragmaArm2,
-	buildUsingDirectiveArm,
 	buildAttributeArgumentArm,
 	buildPropertyDeclarationArm,
 	buildCallingConventionArm,
@@ -269,6 +268,7 @@ export {
 	buildSubpatternArm,
 	buildQueryBodyGroup,
 	buildAnonymousObjectMemberDeclaratorArm,
+	buildRefReadonly,
 	buildSwitchStatementParenthesized,
 	buildSwitchStatementTuple,
 	buildTypeParameterConstraintClass,
@@ -284,6 +284,7 @@ export {
 	buildTypeArgumentListBound,
 	buildRecordBaseNames,
 	buildRecordBasePrimaryConstructor,
+	buildUsingDirectiveAlias,
 	buildOptionalSemi,
 	buildInterpolationRegularStart,
 	buildInterpolationVerbatimStart,
@@ -310,11 +311,6 @@ export const forStatement$seated: Seat<
 	T.ForStatement.BuildArgs,
 	ReturnType<typeof F.buildForStatement>
 > = K.forStatement$initializer(F.buildForStatement, F.buildForStatementConditionsInitializer);
-
-export const usingDirective$seated: Seat<
-	T.UsingDirective.BuildArgs,
-	ReturnType<typeof F.buildUsingDirective>
-> = K.usingDirective$branch(F.buildUsingDirective);
 
 export const globalAttribute$seated: Seat<
 	T.GlobalAttribute.BuildArgs,

@@ -1,7 +1,10 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
-import { alias, enrich, field, preference, variant, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, enrich, field, preference, variant, vocabulary, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+
+const flag = (word: string) => optional(field(word, word));
+const staticAsync = () => choice(seq(flag('static'), flag('async')), seq(flag('async'), flag('static')));
 
 const realExponent = () => seq(field('marker', choice('e', 'E')), field('exponent_sign', optional(choice('-', '+'))), field('exponent', /[0-9][0-9_]*/));
 
@@ -10,8 +13,8 @@ export default grammar(enrich(base), wire({
 	options: { indent: preference('    ') },
 	expectDiagnostics: {
 		'token-interior-unstructurable': ['identifier_token'],
-		'unclassifiable-shape': ['interpolated_string_expression', 'recursive_pattern', 'using_directive'],
-		'union-slot-mixed-row': ['recursive_pattern', 'using_directive'],
+		'unclassifiable-shape': ['interpolated_string_expression', 'lambda_expression', 'recursive_pattern'],
+		'union-slot-mixed-row': ['recursive_pattern'],
 		'union-slot-routed-repeated': ['for_statement_conditions_initializer']
 	},
 	renderAs: (_$) => ({
@@ -57,6 +60,24 @@ export default grammar(enrich(base), wire({
 		_join_header: { 1: field('name'), 3: field('source') },
 		_join_body: { 1: field('left'), 3: field('right') },
 		_anonymous_object_member_declarator: { '0/0': field('name'), '0/2': field('value') },
-		_parenthesized_pattern_with_designation: { 1: field('pattern') }
+		_parenthesized_pattern_with_designation: { 1: field('pattern') },
+		using_directive: [
+			{ 1: () => seq('using', flag('static'), flag('unsafe')), '2/0': ($) => seq(field('name', $.identifier), '=', $.type), '2/1': ($) => $._name },
+			{ '2/0': variant('alias') }
+		],
+		_lambda_expression_init: { '.': ($) => seq(field('attribute_lists', repeat($._attribute_list)), staticAsync(), optional(field('type', $.type)), field('parameters', $._lambda_parameters)) },
+		anonymous_method_expression: { '.': ($) => seq(staticAsync(), 'delegate', optional(field('parameters', $.parameter_list)), field('block', $.block)) },
+		parameter: {
+			1: ($) =>
+				seq(
+					flag('this'),
+					optional(field('scoped', prec.dynamic(1, 'scoped'))),
+					optional(field('mode', prec.dynamic(1, choice('ref', $.ref_readonly, 'out', 'in')))),
+					optional(field('type', $.type))
+				)
+		}
+	},
+	rules: {
+		ref_readonly: vocabulary(() => seq('ref', 'readonly'))
 	}
 }));

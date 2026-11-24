@@ -274,7 +274,6 @@ export const buildPreprocLineArm1 = dispatched(() => backend().buildPreprocLineA
 export const buildPreprocLineArm2 = dispatched(() => backend().buildPreprocLineArm2);
 export const buildPreprocPragmaArm1 = dispatched(() => backend().buildPreprocPragmaArm1);
 export const buildPreprocPragmaArm2 = dispatched(() => backend().buildPreprocPragmaArm2);
-export const buildUsingDirectiveArm = dispatched(() => backend().buildUsingDirectiveArm);
 export const buildAttributeArgumentArm = dispatched(() => backend().buildAttributeArgumentArm);
 export const buildPropertyDeclarationArm = dispatched(() => backend().buildPropertyDeclarationArm);
 export const buildCallingConventionArm = dispatched(() => backend().buildCallingConventionArm);
@@ -284,6 +283,7 @@ export const buildQueryBodyGroup = dispatched(() => backend().buildQueryBodyGrou
 export const buildAnonymousObjectMemberDeclaratorArm = dispatched(
 	() => backend().buildAnonymousObjectMemberDeclaratorArm
 );
+export const buildRefReadonly = O.buildRefReadonly;
 export const buildSwitchStatementParenthesized = dispatched(() => backend().buildSwitchStatementParenthesized);
 export const buildSwitchStatementTuple = dispatched(() => backend().buildSwitchStatementTuple);
 export const buildTypeParameterConstraintClass = dispatched(() => backend().buildTypeParameterConstraintClass);
@@ -299,6 +299,7 @@ export const buildTypeArgumentListUnbound = dispatched(() => backend().buildType
 export const buildTypeArgumentListBound = dispatched(() => backend().buildTypeArgumentListBound);
 export const buildRecordBaseNames = dispatched(() => backend().buildRecordBaseNames);
 export const buildRecordBasePrimaryConstructor = dispatched(() => backend().buildRecordBasePrimaryConstructor);
+export const buildUsingDirectiveAlias = dispatched(() => backend().buildUsingDirectiveAlias);
 export const buildOptionalSemi = O.buildOptionalSemi;
 export const buildInterpolationRegularStart = dispatched(() => backend().buildInterpolationRegularStart);
 export const buildInterpolationVerbatimStart = dispatched(() => backend().buildInterpolationVerbatimStart);
@@ -578,7 +579,6 @@ export const _factoryMap = {
 	preproc_line_arm2: buildPreprocLineArm2,
 	preproc_pragma_arm1: buildPreprocPragmaArm1,
 	preproc_pragma_arm2: buildPreprocPragmaArm2,
-	using_directive_arm: buildUsingDirectiveArm,
 	attribute_argument_arm: buildAttributeArgumentArm,
 	property_declaration_arm: buildPropertyDeclarationArm,
 	calling_convention_arm: buildCallingConventionArm,
@@ -586,6 +586,7 @@ export const _factoryMap = {
 	subpattern_arm: buildSubpatternArm,
 	query_body_group: buildQueryBodyGroup,
 	anonymous_object_member_declarator_arm: buildAnonymousObjectMemberDeclaratorArm,
+	ref_readonly: buildRefReadonly,
 	switch_statement_parenthesized: buildSwitchStatementParenthesized,
 	switch_statement_tuple: buildSwitchStatementTuple,
 	type_parameter_constraint_class: buildTypeParameterConstraintClass,
@@ -601,6 +602,7 @@ export const _factoryMap = {
 	type_argument_list_bound: buildTypeArgumentListBound,
 	record_base_names: buildRecordBaseNames,
 	record_base_primary_constructor: buildRecordBasePrimaryConstructor,
+	using_directive_alias: buildUsingDirectiveAlias,
 	optional_semi: buildOptionalSemi,
 	interpolation_regular_start: buildInterpolationRegularStart,
 	interpolation_verbatim_start: buildInterpolationVerbatimStart,
