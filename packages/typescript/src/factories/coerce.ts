@@ -2620,6 +2620,8 @@ export function coerceToExpressionStatement(
 	input: T.ExpressionStatement.Loose,
 	options?: T.ExpressionStatement.Options
 ): ReturnType<typeof F.buildExpressionStatement> {
+	if (isNodeOfKind(input, TSKindId.ExpressionStatement) && options !== undefined)
+		throw new TypeError('ExpressionStatement: a built node carries its own options; pass them when the node is built');
 	if (isNodeOfKind(input, TSKindId.ExpressionStatement))
 		return input as unknown as ReturnType<typeof F.buildExpressionStatement>;
 	return F.buildExpressionStatement(
@@ -3089,6 +3091,8 @@ export function coerceToBreakStatement(
 	input?: T.BreakStatement.Loose,
 	options?: T.BreakStatement.Options
 ): ReturnType<typeof F.buildBreakStatement> {
+	if (input !== undefined && isNodeOfKind(input, TSKindId.BreakStatement) && options !== undefined)
+		throw new TypeError('BreakStatement: a built node carries its own options; pass them when the node is built');
 	if (input !== undefined && isNodeOfKind(input, TSKindId.BreakStatement))
 		return input as unknown as ReturnType<typeof F.buildBreakStatement>;
 	return F.buildBreakStatement(
@@ -3115,6 +3119,8 @@ export function coerceToContinueStatement(
 	input?: T.ContinueStatement.Loose,
 	options?: T.ContinueStatement.Options
 ): ReturnType<typeof F.buildContinueStatement> {
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ContinueStatement) && options !== undefined)
+		throw new TypeError('ContinueStatement: a built node carries its own options; pass them when the node is built');
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ContinueStatement))
 		return input as unknown as ReturnType<typeof F.buildContinueStatement>;
 	return F.buildContinueStatement(
@@ -3156,6 +3162,8 @@ export function coerceToReturnStatement(
 	input?: T.ReturnStatement.Loose,
 	options?: T.ReturnStatement.Options
 ): ReturnType<typeof F.buildReturnStatement> {
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ReturnStatement) && options !== undefined)
+		throw new TypeError('ReturnStatement: a built node carries its own options; pass them when the node is built');
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ReturnStatement))
 		return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement(
@@ -3193,6 +3201,8 @@ export function coerceToThrowStatement(
 	input: T.ThrowStatement.Loose,
 	options?: T.ThrowStatement.Options
 ): ReturnType<typeof F.buildThrowStatement> {
+	if (isNodeOfKind(input, TSKindId.ThrowStatement) && options !== undefined)
+		throw new TypeError('ThrowStatement: a built node carries its own options; pass them when the node is built');
 	if (isNodeOfKind(input, TSKindId.ThrowStatement)) return input as unknown as ReturnType<typeof F.buildThrowStatement>;
 	return F.buildThrowStatement(
 		coerceMixedEnumStorage(
@@ -4827,6 +4837,8 @@ export function coerceToClassStaticBlock(
 	input?: T.ClassStaticBlock.Loose,
 	options?: T.ClassStaticBlock.Options
 ): ReturnType<typeof F.buildClassStaticBlock> {
+	if (input !== undefined && isNodeOfKind(input, TSKindId.ClassStaticBlock) && options !== undefined)
+		throw new TypeError('ClassStaticBlock: a built node carries its own options; pass them when the node is built');
 	if (input !== undefined && isNodeOfKind(input, TSKindId.ClassStaticBlock))
 		return input as unknown as ReturnType<typeof F.buildClassStaticBlock>;
 	return F.buildClassStaticBlock(
@@ -7389,6 +7401,8 @@ export function coerceToConstraint(
 	input: T.Constraint.Loose,
 	options?: T.Constraint.Options
 ): ReturnType<typeof F.buildConstraint> {
+	if (isNodeOfKind(input, TSKindId.Constraint) && options !== undefined)
+		throw new TypeError('Constraint: a built node carries its own options; pass them when the node is built');
 	if (isNodeOfKind(input, TSKindId.Constraint)) return input as unknown as ReturnType<typeof F.buildConstraint>;
 	return F.buildConstraint(
 		coerceMixedEnumStorage(
@@ -8899,6 +8913,10 @@ export function coerceToClassBodyMemberMethodSig(
 	input: T.ClassBodyMemberMethodSig.Loose,
 	options?: T.ClassBodyMemberMethodSig.Options
 ): ReturnType<typeof F.buildClassBodyMemberMethodSig> {
+	if (isNodeOfKind(input, TSKindId.ClassBodyMemberMethodSig) && options !== undefined)
+		throw new TypeError(
+			'ClassBodyMemberMethodSig: a built node carries its own options; pass them when the node is built'
+		);
 	if (isNodeOfKind(input, TSKindId.ClassBodyMemberMethodSig))
 		return input as unknown as ReturnType<typeof F.buildClassBodyMemberMethodSig>;
 	return F.buildClassBodyMemberMethodSig(
@@ -8929,6 +8947,10 @@ export function coerceToClassBodyMemberDeclaration(
 	input: T.ClassBodyMemberDeclaration.Loose,
 	options?: T.ClassBodyMemberDeclaration.Options
 ): ReturnType<typeof F.buildClassBodyMemberDeclaration> {
+	if (isNodeOfKind(input, TSKindId.ClassBodyMemberDeclaration) && options !== undefined)
+		throw new TypeError(
+			'ClassBodyMemberDeclaration: a built node carries its own options; pass them when the node is built'
+		);
 	if (isNodeOfKind(input, TSKindId.ClassBodyMemberDeclaration))
 		return input as unknown as ReturnType<typeof F.buildClassBodyMemberDeclaration>;
 	return F.buildClassBodyMemberDeclaration(
@@ -9258,6 +9280,10 @@ export function coerceToExportStatementEqualsExport(
 	input: T.ExportStatementEqualsExport.Loose,
 	options?: T.ExportStatementEqualsExport.Options
 ): ReturnType<typeof F.buildExportStatementEqualsExport> {
+	if (isNodeOfKind(input, TSKindId.ExportStatementEqualsExport) && options !== undefined)
+		throw new TypeError(
+			'ExportStatementEqualsExport: a built node carries its own options; pass them when the node is built'
+		);
 	if (isNodeOfKind(input, TSKindId.ExportStatementEqualsExport))
 		return input as unknown as ReturnType<typeof F.buildExportStatementEqualsExport>;
 	return F.buildExportStatementEqualsExport(
@@ -9292,6 +9318,10 @@ export function coerceToExportStatementNamespaceExport(
 	input: T.ExportStatementNamespaceExport.Loose,
 	options?: T.ExportStatementNamespaceExport.Options
 ): ReturnType<typeof F.buildExportStatementNamespaceExport> {
+	if (isNodeOfKind(input, TSKindId.ExportStatementNamespaceExport) && options !== undefined)
+		throw new TypeError(
+			'ExportStatementNamespaceExport: a built node carries its own options; pass them when the node is built'
+		);
 	if (isNodeOfKind(input, TSKindId.ExportStatementNamespaceExport))
 		return input as unknown as ReturnType<typeof F.buildExportStatementNamespaceExport>;
 	return F.buildExportStatementNamespaceExport(
@@ -9796,6 +9826,10 @@ export function coerceToExportStatementDefaultDeclarationDefaultKwValue(
 	input: T.ExportStatementDefaultDeclarationDefaultKwValue.Loose,
 	options?: T.ExportStatementDefaultDeclarationDefaultKwValue.Options
 ): ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue> {
+	if (isNodeOfKind(input, TSKindId.ExportStatementDefaultDeclarationDefaultKwValue) && options !== undefined)
+		throw new TypeError(
+			'ExportStatementDefaultDeclarationDefaultKwValue: a built node carries its own options; pass them when the node is built'
+		);
 	if (isNodeOfKind(input, TSKindId.ExportStatementDefaultDeclarationDefaultKwValue))
 		return input as unknown as ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKwValue>;
 	return F.buildExportStatementDefaultDeclarationDefaultKwValue(
@@ -10236,6 +10270,10 @@ export function coerceToFormalParametersElementsSetAccessorSignature(
 	input: T.FormalParametersElementsSetAccessorSignature.Loose,
 	options?: T.FormalParametersElementsSetAccessorSignature.Options
 ): ReturnType<typeof F.buildFormalParametersElementsSetAccessorSignature> {
+	if (isNodeOfKind(input, TSKindId.FormalParametersElementsSetAccessorSignature) && options !== undefined)
+		throw new TypeError(
+			'FormalParametersElementsSetAccessorSignature: a built node carries its own options; pass them when the node is built'
+		);
 	if (isNodeOfKind(input, TSKindId.FormalParametersElementsSetAccessorSignature))
 		return input as unknown as ReturnType<typeof F.buildFormalParametersElementsSetAccessorSignature>;
 	return F.buildFormalParametersElementsSetAccessorSignature(

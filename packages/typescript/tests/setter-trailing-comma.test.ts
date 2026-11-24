@@ -184,6 +184,12 @@ describe('parsed setter elements given options, on both engines', () => {
 		expect(() => (ts.build.formalParametersSetAccessorSignature as (...a: unknown[]) => unknown)(parsed, { trailingComma: ts.kinds.Comma })).toThrow('carries its own options');
 	});
 
+	it('refuses options after a parsed elements node through the elements builder (default)', async () => {
+		await using ts = await createEngine(typescript);
+		const parsed = [...ts.parse('class A { set x(v: number,) {} }\n').$query().$descendants.ofType(ts.kinds.FormalParametersElementsSetAccessorSignature)][0]!;
+		expect(() => (ts.build.formalParametersSetAccessorSignature.elements as (...a: unknown[]) => unknown)(parsed, { trailingComma: null })).toThrow('carries its own options');
+	});
+
 	it('refuses options after a parsed elements node (default)', async () => {
 		await using ts = await createEngine(typescript);
 		const parsed = [...ts.parse('class A { set x(v: number,) {} }\n').$query().$descendants.ofType(ts.kinds.FormalParametersElementsSetAccessorSignature)][0]!;
