@@ -175,7 +175,6 @@ export {
 	coerceToEscapeSequenceSimple as buildEscapeSequenceSimple,
 	coerceToEscapeSequenceNamed as buildEscapeSequenceNamed,
 	coerceToLineContinuationNewline as buildLineContinuationNewline,
-	coerceToLineContinuationNul as buildLineContinuationNul,
 	coerceToSimplePatternNegative as buildSimplePatternNegative,
 	coerceToExceptClauseExceptionList as buildExceptClauseExceptionList,
 	coerceToExceptClauseException as buildExceptClauseException,

@@ -21776,9 +21776,9 @@ export function buildPublicFieldDefinitionPlain(
 		config.accessibilityModifier
 	);
 	const _static = strictBooleanStorage(config.static);
+	const _abstract = strictBooleanStorage(config.abstract);
 	const _override = strictBooleanStorage(config.override);
 	const _readonly = strictBooleanStorage(config.readonly);
-	const _abstract = strictBooleanStorage(config.abstract);
 	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinitionPlain['_name']>>(
 		rejectReservedText(
 			config.name,
@@ -21803,9 +21803,9 @@ export function buildPublicFieldDefinitionPlain(
 			declare: _declare,
 			accessibilityModifier: _accessibility_modifier,
 			static: _static,
+			abstract: _abstract,
 			override: _override,
 			readonly: _readonly,
-			abstract: _abstract,
 			name: _name,
 			optionality: _optionality,
 			type: _type,
@@ -21817,9 +21817,9 @@ export function buildPublicFieldDefinitionPlain(
 		_declare,
 		_accessibility_modifier,
 		_static,
+		_abstract,
 		_override,
 		_readonly,
-		_abstract,
 		_name,
 		_optionality,
 		_type,
@@ -21831,9 +21831,9 @@ export function buildPublicFieldDefinitionPlain(
 		declare: () => _declare,
 		accessibilityModifier: () => _accessibility_modifier,
 		static: () => _static,
+		abstract: () => _abstract,
 		override: () => _override,
 		readonly: () => _readonly,
-		abstract: () => _abstract,
 		name: () => hydrateStoredSlot(node, '_name'),
 		optionality: () => _optionality,
 		type: () => hoistRead(hydrateStoredSlot(node, '_type'), [storedHop('type', '_type', false)], false),
@@ -21853,9 +21853,9 @@ export function buildPublicFieldDefinitionPlain(
 		declare: buildPublicFieldDefinitionPlain$with$declare,
 		accessibilityModifier: buildPublicFieldDefinitionPlain$with$accessibilityModifier,
 		static: buildPublicFieldDefinitionPlain$with$static,
+		abstract: buildPublicFieldDefinitionPlain$with$abstract,
 		override: buildPublicFieldDefinitionPlain$with$override,
 		readonly: buildPublicFieldDefinitionPlain$with$readonly,
-		abstract: buildPublicFieldDefinitionPlain$with$abstract,
 		name: buildPublicFieldDefinitionPlain$with$name,
 		optionality: buildPublicFieldDefinitionPlain$with$optionality,
 		type: buildPublicFieldDefinitionPlain$with$type,
@@ -21914,6 +21914,10 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['static']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, static: value }))
 			);
+		case 'abstract':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, abstract: value }))
+			);
 		case 'override':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['override']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, override: value }))
@@ -21921,10 +21925,6 @@ function buildPublicFieldDefinitionPlain$with(node: Held, setter: string, args: 
 		case 'readonly':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, readonly: value }))
-			);
-		case 'abstract':
-			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain({ ...config, abstract: value }))
 			);
 		case 'name':
 			return applySetter(
@@ -21986,14 +21986,14 @@ function buildPublicFieldDefinitionPlain$with$accessibilityModifier(this: Receiv
 function buildPublicFieldDefinitionPlain$with$static(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.static'), 'static', args);
 }
+function buildPublicFieldDefinitionPlain$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
+	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.abstract'), 'abstract', args);
+}
 function buildPublicFieldDefinitionPlain$with$override(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.override'), 'override', args);
 }
 function buildPublicFieldDefinitionPlain$with$readonly(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.readonly'), 'readonly', args);
-}
-function buildPublicFieldDefinitionPlain$with$abstract(this: Received<Held>, ...args: unknown[]): unknown {
-	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.abstract'), 'abstract', args);
 }
 function buildPublicFieldDefinitionPlain$with$name(this: Received<Held>, ...args: unknown[]): unknown {
 	return buildPublicFieldDefinitionPlain$with(receiverOf(this, '$with.name'), 'name', args);

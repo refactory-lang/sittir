@@ -13,7 +13,7 @@ function fixture(disposes: boolean): string {
 		"import { it } from 'vitest';",
 		`import { createEngine } from '${pathToFileURL(join(ROOT, 'packages/common/src/index.ts')).href}';`,
 		`import { languageByName } from '${pathToFileURL(join(ROOT, 'packages/tools/src/languages.ts')).href}';`,
-		`it('creates an engine', async () => { ${open} void engine; }, 60_000);`,
+		`it('creates an engine', async () => { ${open} void engine; }, 30_000);`,
 		''
 	].join('\n');
 }

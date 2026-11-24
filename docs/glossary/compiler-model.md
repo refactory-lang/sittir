@@ -5286,8 +5286,10 @@ Each flat leaf's ir key mapped to its kind, by `isFlatLeafOrKeyword`.
 One variant route of a flattened parent: its name, the child kind, whether it
 is `arm.default`, whether it is `leaf` (the child has
 no factory of its own; `emitPolymorphsOverlay` spells the route as the
-child's kind-id expression instead of a factory reference), and — when the
-child is itself a flattened parent — that parent's route key.
+child's kind-id expression instead of a factory reference), whether it is
+`unbuildable` (the child's text holds a NUL byte, so the builders skip the
+route and the guards keep it), and — when the child is itself a flattened
+parent — that parent's route key.
 
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isHoistedCompound`
 
@@ -5907,7 +5909,11 @@ The node that holds the alias envelope's storage.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation`
 
-A node that is punctuation: a single anonymous literal token.
+A node that is punctuation: a single anonymous literal token. A token whose
+text holds a NUL byte (python's line continuation that ends the source) is
+`unbuildable`: it has no factory, so no builder, coercion or route writes it,
+while a parse still reads it, `is` still guards it and a render writes its
+source bytes.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::KindEdgeClasses`
 

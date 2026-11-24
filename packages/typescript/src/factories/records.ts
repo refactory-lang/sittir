@@ -32344,9 +32344,9 @@ export function buildPublicFieldDefinitionPlain(
 		config.accessibilityModifier
 	);
 	const _static = strictBooleanStorage(config.static);
+	const _abstract = strictBooleanStorage(config.abstract);
 	const _override = strictBooleanStorage(config.override);
 	const _readonly = strictBooleanStorage(config.readonly);
-	const _abstract = strictBooleanStorage(config.abstract);
 	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinitionPlain['_name']>>(
 		rejectReservedText(
 			config.name,
@@ -32371,9 +32371,9 @@ export function buildPublicFieldDefinitionPlain(
 			declare: _declare,
 			accessibilityModifier: _accessibility_modifier,
 			static: _static,
+			abstract: _abstract,
 			override: _override,
 			readonly: _readonly,
-			abstract: _abstract,
 			name: _name,
 			optionality: _optionality,
 			type: _type,
@@ -32385,9 +32385,9 @@ export function buildPublicFieldDefinitionPlain(
 		_declare,
 		_accessibility_modifier,
 		_static,
+		_abstract,
 		_override,
 		_readonly,
-		_abstract,
 		_name,
 		_optionality,
 		_type,
@@ -32399,9 +32399,9 @@ export function buildPublicFieldDefinitionPlain(
 		if (_declare) storeFlag(record.data, record.base + 2, 1);
 		storeCell(arena, record, 4, 4, _accessibility_modifier);
 		if (_static) storeFlag(record.data, record.base + 2, 2);
-		if (_override) storeFlag(record.data, record.base + 2, 4);
-		if (_readonly) storeFlag(record.data, record.base + 2, 8);
-		if (_abstract) storeFlag(record.data, record.base + 2, 16);
+		if (_abstract) storeFlag(record.data, record.base + 2, 4);
+		if (_override) storeFlag(record.data, record.base + 2, 8);
+		if (_readonly) storeFlag(record.data, record.base + 2, 16);
 		storeCell(arena, record, 5, 5, _name);
 		storeCell(arena, record, 6, 8, _optionality);
 		storeCell(arena, record, 7, 9, _type);
@@ -32424,9 +32424,9 @@ function buildPublicFieldDefinitionPlain$patch(
 		config.accessibilityModifier
 	);
 	const _static = strictBooleanStorage(config.static);
+	const _abstract = strictBooleanStorage(config.abstract);
 	const _override = strictBooleanStorage(config.override);
 	const _readonly = strictBooleanStorage(config.readonly);
-	const _abstract = strictBooleanStorage(config.abstract);
 	const _name = admitAliasContent<NonNullable<T.PublicFieldDefinitionPlain['_name']>>(
 		rejectReservedText(
 			config.name,
@@ -32451,9 +32451,9 @@ function buildPublicFieldDefinitionPlain$patch(
 			declare: _declare,
 			accessibilityModifier: _accessibility_modifier,
 			static: _static,
+			abstract: _abstract,
 			override: _override,
 			readonly: _readonly,
-			abstract: _abstract,
 			name: _name,
 			optionality: _optionality,
 			type: _type,
@@ -32465,9 +32465,9 @@ function buildPublicFieldDefinitionPlain$patch(
 		_declare,
 		_accessibility_modifier,
 		_static,
+		_abstract,
 		_override,
 		_readonly,
-		_abstract,
 		_name,
 		_optionality,
 		_type,
@@ -32479,9 +32479,9 @@ function buildPublicFieldDefinitionPlain$patch(
 		patchFlag(record, 2, 1, _declare);
 		patchCell(arena, record, 4, 4, carriedSlot(source, 'accessibilityModifier', _accessibility_modifier));
 		patchFlag(record, 2, 2, _static);
-		patchFlag(record, 2, 4, _override);
-		patchFlag(record, 2, 8, _readonly);
-		patchFlag(record, 2, 16, _abstract);
+		patchFlag(record, 2, 4, _abstract);
+		patchFlag(record, 2, 8, _override);
+		patchFlag(record, 2, 16, _readonly);
 		patchCell(arena, record, 5, 5, carriedSlot(source, 'name', _name));
 		patchCell(arena, record, 6, 8, carriedSlot(source, 'optionality', _optionality));
 		patchCell(arena, record, 7, 9, carriedSlot(source, 'type', _type));
@@ -32497,9 +32497,9 @@ function buildPublicFieldDefinitionPlain$set(
 		| ['declare', Partial<T.PublicFieldDefinitionPlain.Config>]
 		| ['accessibilityModifier', Partial<T.PublicFieldDefinitionPlain.Config>]
 		| ['static', Partial<T.PublicFieldDefinitionPlain.Config>]
+		| ['abstract', Partial<T.PublicFieldDefinitionPlain.Config>]
 		| ['override', Partial<T.PublicFieldDefinitionPlain.Config>]
 		| ['readonly', Partial<T.PublicFieldDefinitionPlain.Config>]
-		| ['abstract', Partial<T.PublicFieldDefinitionPlain.Config>]
 		| ['name', Partial<T.PublicFieldDefinitionPlain.Config>]
 		| ['optionality', Partial<T.PublicFieldDefinitionPlain.Config>]
 		| ['type', Partial<T.PublicFieldDefinitionPlain.Config>]
@@ -32512,9 +32512,9 @@ function buildPublicFieldDefinitionPlain$set(
 			case 'declare':
 			case 'accessibilityModifier':
 			case 'static':
+			case 'abstract':
 			case 'override':
 			case 'readonly':
-			case 'abstract':
 			case 'name':
 			case 'optionality':
 			case 'type':
@@ -32578,6 +32578,18 @@ function buildPublicFieldDefinitionPlain$set(
 				_static
 			) as unknown as T.PublicFieldDefinitionPlain.Bound;
 		}
+		case 'abstract': {
+			const config = input;
+			const _abstract = strictBooleanStorage(config.abstract);
+			return setSlot(
+				source,
+				TSKindId.PublicFieldDefinitionPlain as const,
+				'public_field_definition_plain',
+				4,
+				'abstract',
+				_abstract
+			) as unknown as T.PublicFieldDefinitionPlain.Bound;
+		}
 		case 'override': {
 			const config = input;
 			const _override = strictBooleanStorage(config.override);
@@ -32585,7 +32597,7 @@ function buildPublicFieldDefinitionPlain$set(
 				source,
 				TSKindId.PublicFieldDefinitionPlain as const,
 				'public_field_definition_plain',
-				4,
+				5,
 				'override',
 				_override
 			) as unknown as T.PublicFieldDefinitionPlain.Bound;
@@ -32597,21 +32609,9 @@ function buildPublicFieldDefinitionPlain$set(
 				source,
 				TSKindId.PublicFieldDefinitionPlain as const,
 				'public_field_definition_plain',
-				5,
+				6,
 				'readonly',
 				_readonly
-			) as unknown as T.PublicFieldDefinitionPlain.Bound;
-		}
-		case 'abstract': {
-			const config = input;
-			const _abstract = strictBooleanStorage(config.abstract);
-			return setSlot(
-				source,
-				TSKindId.PublicFieldDefinitionPlain as const,
-				'public_field_definition_plain',
-				6,
-				'abstract',
-				_abstract
 			) as unknown as T.PublicFieldDefinitionPlain.Bound;
 		}
 		case 'name': {
@@ -32726,6 +32726,10 @@ function withPublicFieldDefinitionPlain(node: object, setter: string, args: read
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['static']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain$set(node, 'static', { static: value }))
 			);
+		case 'abstract':
+			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract']>) =>
+				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain$set(node, 'abstract', { abstract: value }))
+			);
 		case 'override':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['override']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain$set(node, 'override', { override: value }))
@@ -32733,10 +32737,6 @@ function withPublicFieldDefinitionPlain(node: object, setter: string, args: read
 		case 'readonly':
 			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['readonly']>) =>
 				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain$set(node, 'readonly', { readonly: value }))
-			);
-		case 'abstract':
-			return applySetter(args, (value?: Admit<NonNullable<T.PublicFieldDefinitionPlain.Config>['abstract']>) =>
-				rebuilt(node, handle, () => buildPublicFieldDefinitionPlain$set(node, 'abstract', { abstract: value }))
 			);
 		case 'name':
 			return applySetter(

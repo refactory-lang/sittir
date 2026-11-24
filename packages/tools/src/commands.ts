@@ -126,16 +126,16 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`${grammar}/${formatBackendLabel(backend)}:`,
 		`  fromPass=${from.pass}    fromTotal=${from.total}    fromTrivia=${from.trivia.length}`,
 		`  covPass=${coverage.pass}    covTotal=${coverage.total}`,
-		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}    read-render-parseTrivia=${readRenderParse.trivia.length}    read-render-parseSpellingNormalized=${readRenderParse.spellingNormalized.length}    read-render-parseFoldedMismatches=${readRenderParse.foldedMismatches.length}`,
-		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}    read-render-parse-shallowSpellingNormalized=${readRenderParseShallow.spellingNormalized.length}    read-render-parse-shallowFoldedMismatches=${readRenderParseShallow.foldedMismatches.length}`,
+		`  read-render-parsePass=${readRenderParse.pass}    read-render-parseTotal=${readRenderParse.total}    read-render-parseAstMatchPass=${readRenderParse.astMatchPass}    read-render-parseTrivia=${readRenderParse.trivia.length}    read-render-parseSpellingNormalized=${readRenderParse.spellingNormalized.length}    read-render-parseFlagReordered=${readRenderParse.flagReordered.length}    read-render-parseFoldedMismatches=${readRenderParse.foldedMismatches.length}`,
+		`  read-render-parse-shallowPass=${readRenderParseShallow.pass}    read-render-parse-shallowTotal=${readRenderParseShallow.total}    read-render-parse-shallowAstMatchPass=${readRenderParseShallow.astMatchPass}    read-render-parse-shallowTrivia=${readRenderParseShallow.trivia.length}    read-render-parse-shallowSpellingNormalized=${readRenderParseShallow.spellingNormalized.length}    read-render-parse-shallowFlagReordered=${readRenderParseShallow.flagReordered.length}    read-render-parse-shallowFoldedMismatches=${readRenderParseShallow.foldedMismatches.length}`,
 		`  factory-storagePass=${factoryStorage.pass}    factory-storageTotal=${factoryStorage.total}    factory-storageAstMatchPass=${factoryStorage.astMatchPass}`,
 		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
-		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}    built-render-parseSpellingNormalized=${builtRenderParse.spellingNormalized}`,
+		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}    built-render-parseSpellingNormalized=${builtRenderParse.spellingNormalized}    built-render-parseFlagReordered=${builtRenderParse.flagReordered}`,
 		`  layout-storedSlots=${storedLayout.stored.slots}    layout-storedRefused=${storedLayout.refused.length}`,
 		...(portableRoundTrip === undefined
 			? []
 			: [
-					`  portable-round-tripPass=${portableRoundTrip.pass}    portable-round-tripTotal=${portableRoundTrip.total}    portable-round-tripAstMatchPass=${portableRoundTrip.astMatchPass}    portable-round-tripCarried=${portableRoundTrip.carried.length}`
+					`  portable-round-tripPass=${portableRoundTrip.pass}    portable-round-tripTotal=${portableRoundTrip.total}    portable-round-tripAstMatchPass=${portableRoundTrip.astMatchPass}    portable-round-tripFlagReordered=${portableRoundTrip.flagReordered}    portable-round-tripCarried=${portableRoundTrip.carried.length}`
 				]),
 		...(portableConformance === undefined ? [] : [`  portable-conformance=${portableConformance.total}`])
 	];
@@ -233,6 +233,8 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		readRenderParseShallowAstMatchPass: readRenderParseShallow.astMatchPass,
 		readRenderParseSpellingNormalized: readRenderParse.spellingNormalized.length,
 		readRenderParseShallowSpellingNormalized: readRenderParseShallow.spellingNormalized.length,
+		readRenderParseFlagReordered: readRenderParse.flagReordered.length,
+		readRenderParseShallowFlagReordered: readRenderParseShallow.flagReordered.length,
 		factoryStoragePass: factoryStorage.pass,
 		factoryStorageTotal: factoryStorage.total,
 		factoryStorageAstMatchPass: factoryStorage.astMatchPass,
@@ -244,6 +246,7 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		builtRenderParseAstMatchPass: builtRenderParse.astMatchPass,
 		builtRenderParseSeparatorTolerated: builtRenderParse.separatorTolerated,
 		builtRenderParseSpellingNormalized: builtRenderParse.spellingNormalized,
+		builtRenderParseFlagReordered: builtRenderParse.flagReordered,
 		fromTrivia: from.trivia.length,
 		readRenderParseTrivia: readRenderParse.trivia.length,
 		readRenderParseFoldedMismatches: readRenderParse.foldedMismatches.length,

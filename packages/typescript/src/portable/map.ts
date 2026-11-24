@@ -15955,7 +15955,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 				| T.UpdateExpressionPostfix.Parsed
 				| T.UpdateExpressionPrefix.Parsed
 				| T.YieldExpression.Parsed;
-			readonly $forms: V.Form<'left' | 'right'>;
 		};
 		readonly 'expression.binary.arithmetic.add': {
 			readonly left:
@@ -25872,7 +25871,6 @@ export interface TypeScriptMap extends V.GrammarMap {
 								| V.Read<TypeScriptMap, 'expression.assignment.compound.shift_right_unsigned'>
 								| V.Read<TypeScriptMap, 'expression.assignment.compound.subtract'>
 								| V.Read<TypeScriptMap, 'expression.await'>
-								| V.Read<TypeScriptMap, 'expression.binary'>
 								| V.Read<TypeScriptMap, 'expression.binary.arithmetic.add'>
 								| V.Read<TypeScriptMap, 'expression.binary.arithmetic.divide'>
 								| V.Read<TypeScriptMap, 'expression.binary.arithmetic.exponent'>

@@ -34,6 +34,7 @@
 4. **One owner; everything else borrows.**
    - The engine owns the nodes and the source text each parse call leaves.
    - The source text has one owner, and everything else reads it as `&str`.
+   - The options have one owner, the engine. A render borrows them, and only a call that passes overrides builds a new table (the maintainer, 2026-11-23).
    - Caches own their values. A lookup returns `&T` tied to the borrow. Where a borrow can't outlive a later insert, it returns an index into storage the owner keeps, never a clone.
    - `Nodes::kids` fills a buffer its caller owns, or gives a borrowed slice. It no longer allocates an `Arc<[Kid]>` per call.
 5. **The work counters belong to the call.** `LayoutWork` is a plain record the borrow owns and the caller reads after the call. Tests read it the way they do today.

@@ -545,8 +545,14 @@ export interface LoadedNodeModel {
 	readonly fullForms: Record<string, ModelFullForm>;
 	readonly delimiterTokens: ReadonlySet<string>;
 	readonly delimiterFacets: Record<string, Readonly<Record<string, DelimiterFacet>>>;
+	readonly flagTokens: Record<string, FlagTokens>;
 	/** Whether a node with these grammar and display ids is a relaxed keyword: the model's table read as the generated reader reads it. */
 	readonly relaxes: (grammar: number, display: number) => boolean;
+}
+
+export interface FlagTokens {
+	readonly anon: ReadonlySet<string>;
+	readonly named: ReadonlySet<string>;
 }
 
 export interface ModelFullForm {
@@ -668,6 +674,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	fullForms: {},
 	delimiterTokens: new Set(),
 	delimiterFacets: {},
+	flagTokens: {},
 	relaxes: () => false
 };
 
@@ -712,6 +719,10 @@ export async function loadDelimiterSpellings(grammar: string): Promise<Readonly<
 	return Object.fromEntries(
 		Object.entries(delimiterFacets).flatMap(([kind, facets]) => (interiors[kind] === undefined ? [] : [[kind, { interior: interiors[kind]!, facets: spelled(kind, facets) }] as const]))
 	);
+}
+
+export async function loadFlagTokens(grammar: string): Promise<Readonly<Record<string, FlagTokens>>> {
+	return (await loadNodeModel(grammar)).flagTokens;
 }
 
 export function sameSpelledMeaning(left: string, right: string, kind: string, spelling: DelimiterSpelling): boolean {
@@ -770,6 +781,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const fullForms: Record<string, ModelFullForm> = {};
 	const delimiterTokens = new Set<string>();
 	const delimiterFacets: Record<string, Readonly<Record<string, DelimiterFacet>>> = {};
+	const flagTokens: Record<string, FlagTokens> = {};
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
@@ -826,6 +838,13 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
 		if (node.separatorCandidates !== undefined) listSeparators[node.kind] = node.separatorCandidates;
 		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
+		const flagValues = (node.slots ?? []).filter((slot) => slot.storage === 'boolean').flatMap((slot) => slot.values ?? []);
+		if (flagValues.length > 0) {
+			flagTokens[node.kind] = {
+				anon: new Set(flagValues.flatMap((value) => (value.kind === 'terminal' && value.value !== undefined ? [value.value] : []))),
+				named: new Set(flagValues.flatMap((value) => (value.kind === 'node-ref' && value.parseKind !== undefined ? [value.parseKind] : [])))
+			};
+		}
 		if (node.delimiterOf !== undefined) {
 			delimiterTokens.add(node.kind);
 			delimiterFacets[node.kind] = Object.fromEntries(
@@ -873,6 +892,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		fullForms,
 		delimiterTokens,
 		delimiterFacets,
+		flagTokens,
 		relaxes: relaxesOf(model.relaxes)
 	};
 }

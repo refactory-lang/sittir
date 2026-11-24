@@ -6371,9 +6371,9 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.PublicFieldDefinitionPlain]: {
 		declare: { op: 'present', slots: { '463': 1 } },
 		static: { op: 'present', slots: { '463': 3 } },
-		override: { op: 'present', slots: { '463': 4 } },
-		readonly: { op: 'present', slots: { '463': 5 } },
-		abstract: { op: 'present', slots: { '463': 6 } },
+		abstract: { op: 'present', slots: { '463': 4 } },
+		override: { op: 'present', slots: { '463': 5 } },
+		readonly: { op: 'present', slots: { '463': 6 } },
 		optional: { op: 'eq', text: '?', slots: { '463': 8 } },
 		definite: { op: 'eq', text: '!', slots: { '463': 8 } },
 		privateName: { op: 'is', types: [109], slots: { '463': 7 } },
@@ -7312,9 +7312,9 @@ declare module '../types.js' {
 		readonly __flags__?:
 			| 'declare'
 			| 'static'
+			| 'abstract'
 			| 'override'
 			| 'readonly'
-			| 'abstract'
 			| 'optional'
 			| 'definite'
 			| 'privateName'

@@ -10991,6 +10991,12 @@ export function resolvePublicFieldDefinitionPlain_static(
 	return _resolveBooleanKeyword(value);
 }
 
+export function resolvePublicFieldDefinitionPlain_abstract(
+	value: T.PublicFieldDefinitionPlain.LooseConfig['abstract']
+): Admit<T.PublicFieldDefinitionPlain['_abstract']> {
+	return _resolveBooleanKeyword(value);
+}
+
 export function resolvePublicFieldDefinitionPlain_override(
 	value: T.PublicFieldDefinitionPlain.LooseConfig['override']
 ): Admit<T.PublicFieldDefinitionPlain['_override']> {
@@ -11000,12 +11006,6 @@ export function resolvePublicFieldDefinitionPlain_override(
 export function resolvePublicFieldDefinitionPlain_readonly(
 	value: T.PublicFieldDefinitionPlain.LooseConfig['readonly']
 ): Admit<T.PublicFieldDefinitionPlain['_readonly']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolvePublicFieldDefinitionPlain_abstract(
-	value: T.PublicFieldDefinitionPlain.LooseConfig['abstract']
-): Admit<T.PublicFieldDefinitionPlain['_abstract']> {
 	return _resolveBooleanKeyword(value);
 }
 
@@ -11061,9 +11061,9 @@ export const coerceToPublicFieldDefinitionPlain: ConfigSeat<
 		declare: resolvePublicFieldDefinitionPlain_declare(input.declare),
 		accessibilityModifier: resolvePublicFieldDefinitionPlain_accessibilityModifier(input.accessibilityModifier),
 		static: resolvePublicFieldDefinitionPlain_static(input.static),
+		abstract: resolvePublicFieldDefinitionPlain_abstract(input.abstract),
 		override: resolvePublicFieldDefinitionPlain_override(input.override),
 		readonly: resolvePublicFieldDefinitionPlain_readonly(input.readonly),
-		abstract: resolvePublicFieldDefinitionPlain_abstract(input.abstract),
 		name: resolvePublicFieldDefinitionPlain_name(input.name),
 		optionality: resolvePublicFieldDefinitionPlain_optionality(input.optionality),
 		type: resolvePublicFieldDefinitionPlain_type(input.type),

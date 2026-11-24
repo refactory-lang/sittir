@@ -34112,7 +34112,7 @@
     "wrappedText": "{}\n"
   },
   {
-    "expectedOutput": "\nabstract class Foo {}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {}\n",
+    "expectedOutput": "\nabstract class Foo {}\n\nabstract class Animal {\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {}\n",
     "grammar": "typescript",
     "input": {
       "$errors": [],
@@ -34382,13 +34382,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body)) statements: (abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))) statements: (abstract_class_declaration decorator: (decorator expression: (identifier)) name: (type_identifier) body: (class_body)))",
-    "expectedSourceOut": "\nabstract class Foo {}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {}\n",
+    "expectedSourceOut": "\nabstract class Foo {}\n\nabstract class Animal {\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "program",
     "sourceIn": "\nabstract class Foo {\n}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {\n}\n",
     "wrappedOffset": 0,
-    "wrappedText": "\nabstract class Foo {}\n\nabstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {}\n"
+    "wrappedText": "\nabstract class Foo {}\n\nabstract class Animal {\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}\n\n@bar\nabstract class Foo {}\n"
   },
   {
     "expectedOutput": "abstract class Foo {}",
@@ -34424,7 +34424,7 @@
     "wrappedText": "abstract class Foo {}"
   },
   {
-    "expectedOutput": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
+    "expectedOutput": "abstract class Animal {\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "grammar": "typescript",
     "input": {
       "$type": 314,
@@ -34636,13 +34636,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(abstract_class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))))",
-    "expectedSourceOut": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
+    "expectedSourceOut": "abstract class Animal {\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "abstract_class_declaration",
     "sourceIn": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "wrappedOffset": 0,
-    "wrappedText": "abstract class Animal {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}"
+    "wrappedText": "abstract class Animal {\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}"
   },
   {
     "expectedOutput": "@bar\nabstract class Foo {}",
@@ -34783,7 +34783,7 @@
     "wrappedText": "class _C {}"
   },
   {
-    "expectedOutput": "{\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
+    "expectedOutput": "{\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "grammar": "typescript",
     "input": {
       "$type": 288,
@@ -34984,13 +34984,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_getter name: (property_identifier) parameters: (formal_parameters) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (abstract_method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) members: (class_body_member_method (method_definition_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)) body: (statement_block statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments elements: (string_double elements: (string_fragment))))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon)))",
-    "expectedSourceOut": "{\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
+    "expectedSourceOut": "{\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "class_body",
     "sourceIn": "{\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}",
     "wrappedOffset": 9,
-    "wrappedText": "class _C {\n    readonly abstract prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}"
+    "wrappedText": "class _C {\n    abstract readonly prop: string;\n    requiredProp!: string;\n    abstract makeSound(): void;\n    abstract get readonlyProp(): string;\n    protected abstract readonlyProp?(): string;\n    move(): void {\n        console.log(\"roaming the earth...\");\n    }\n}"
   },
   {
     "expectedOutput": "{}",
@@ -35015,7 +35015,7 @@
     "wrappedText": "class _C {}"
   },
   {
-    "expectedOutput": "readonly abstract prop: string;",
+    "expectedOutput": "abstract readonly prop: string;",
     "grammar": "typescript",
     "input": {
       "$type": 409,
@@ -35048,13 +35048,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type))))",
-    "expectedSourceOut": "readonly abstract prop: string;",
+    "expectedSourceOut": "abstract readonly prop: string;",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "class_body_member_declaration",
     "sourceIn": "readonly abstract prop: string;",
     "wrappedOffset": 13,
-    "wrappedText": "class _C {\n  readonly abstract prop: string;\n}"
+    "wrappedText": "class _C {\n  abstract readonly prop: string;\n}"
   },
   {
     "expectedOutput": "requiredProp!: string;",
@@ -35222,7 +35222,7 @@
     "wrappedText": "class _C {\n  protected abstract readonlyProp?(): string;\n}"
   },
   {
-    "expectedOutput": "readonly abstract prop: string",
+    "expectedOutput": "abstract readonly prop: string",
     "grammar": "typescript",
     "input": {
       "$type": 463,
@@ -35251,13 +35251,13 @@
   {
     "edits": [],
     "expectedReparseTree": "(public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))",
-    "expectedSourceOut": "readonly abstract prop: string",
+    "expectedSourceOut": "abstract readonly prop: string",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "public_field_definition_plain",
     "sourceIn": "readonly abstract prop: string",
     "wrappedOffset": 13,
-    "wrappedText": "class _C {\n  readonly abstract prop: string\n}"
+    "wrappedText": "class _C {\n  abstract readonly prop: string\n}"
   },
   {
     "expectedOutput": "requiredProp!: string",

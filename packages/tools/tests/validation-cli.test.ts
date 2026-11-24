@@ -49,6 +49,7 @@ vi.mock('../src/run.ts', () => ({
 			pass: 6,
 			astMatchPass: 6,
 			separatorTolerated: 0,
+			flagReordered: 0,
 			errors: [],
 			astMismatches: [],
 			excluded: []
@@ -192,7 +193,8 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				skips: [],
 				excluded: [],
 				trivia: [],
-				spellingNormalized: []
+				spellingNormalized: [],
+				flagReordered: []
 			})
 			.mockResolvedValueOnce({
 				grammar: 'rust',
@@ -207,7 +209,8 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 				skips: [],
 				excluded: [],
 				trivia: [],
-				spellingNormalized: []
+				spellingNormalized: [],
+				flagReordered: []
 			});
 	});
 
