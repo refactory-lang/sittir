@@ -48,19 +48,25 @@ def record(grammar, name, tree):
     facts = json.loads(receipt.read_text())
     if str(copy) not in facts['mapped']:
         raise SystemExit(f'{label}: the process mapped {facts["mapped"]}, not the unstripped copy {copy}')
-    script = subprocess.run([PERF, 'script', '-i', str(data), '-F', 'dso,sym'], check=True, capture_output=True, text=True).stdout
-    return facts, selfSamples(script)
+    script = subprocess.run([PERF, 'script', '-i', str(data), '-F', 'ip,sym,dso'], check=True, capture_output=True, text=True)
+    symbols = selfSamples(script.stdout)
+    if not symbols:
+        sys.stderr.write(script.stderr[-6000:])
+        raise SystemExit(f'{label}: perf script gave no samples from {data}')
+    return facts, symbols
+
+
+SAMPLE = re.compile(r'^\s*[0-9a-f]+\s+(.*) \(([^()]*)\)$')
 
 
 def selfSamples(script):
     symbols = Counter()
     for line in script.splitlines():
-        line = line.strip()
-        if not line:
+        sample = SAMPLE.match(line)
+        if not sample:
             continue
-        sym, _, dso = line.rpartition(' (')
-        sym = re.sub(r'::h[0-9a-f]{16}$', '', sym.strip())
-        symbols[(Path(dso.rstrip(')')).name or '[unknown]', sym or '[unknown]')] += 1
+        sym = re.sub(r'::h[0-9a-f]{16}$', '', sample[1].strip())
+        symbols[(Path(sample[2]).name or '[unknown]', sym or '[unknown]')] += 1
     return symbols
 
 
