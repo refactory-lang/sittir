@@ -16,17 +16,27 @@ const ts = await sharedEngine(() => createEngine(typescript));
 const rs = await sharedEngine(() => createEngine(rust));
 const storages = { arena: await createEngine(rust, { nodeStorage: 'arena' }), object: await createEngine(rust, { nodeStorage: 'object' }) };
 
-describe('an ERROR region keeps the source bytes beside it wherever its owner renders from its template', () => {
-	it.each(['x = a ?b\n', 'x = a?b\n', 'x = a ? b\n', 'x = 1abc\n'])('python %j snapshots to its source', (source) => {
+describe('an ERROR region takes the gaps beside it from the options, as a built node does, wherever its owner renders from its template', () => {
+	it.each([
+		['x = a ?b\n', 'x = a ? b\n'],
+		['x = a?b\n', 'x = a? b\n'],
+		['x = a ? b\n', 'x = a ? b\n'],
+		['x = 1abc\n', 'x = 1 abc\n']
+	])('python %j snapshots to %j', (source, expected) => {
 		const root = py.parse(source);
 		expect(root.$errors.length).toBeGreaterThan(0);
-		expect(py.render(root.$snapshot()).toString()).toBe(source);
+		expect(py.render(root.$snapshot()).toString()).toBe(expected);
 	});
 
-	it.each(['let x = 1 + ;\n', 'let x = 1 +;\n', 'let x = a @@ b;\n', 'let x = 1abc;\n'])('typescript %j snapshots to its source', (source) => {
+	it.each([
+		['let x = 1 + ;\n', 'let x = 1 +;\n'],
+		['let x = 1 +;\n', 'let x = 1 +;\n'],
+		['let x = a @@ b;\n', 'let x = a @@ b;\n'],
+		['let x = 1abc;\n', 'let x = 1 abc;\n']
+	])('typescript %j snapshots to %j', (source, expected) => {
 		const root = ts.parse(source);
 		expect(root.$errors.length).toBeGreaterThan(0);
-		expect(ts.render(root.$snapshot()).toString()).toBe(source);
+		expect(ts.render(root.$snapshot()).toString()).toBe(expected);
 	});
 
 	it.each(['fn f() {} @@ fn g() {}\n', 'fn f() { a b c; }\n'])('rust %j writes no in-line run where the render breaks the line beside the region', (source) => {
@@ -35,16 +45,16 @@ describe('an ERROR region keeps the source bytes beside it wherever its owner re
 		for (const line of out.split('\n')) expect((line.length - line.trimStart().length) % 4).toBe(0);
 	});
 
-	it('reads an ERROR entry as its own text, with the runs beside it on its line as $before and $after', () => {
+	it('reads an ERROR entry as its own text, with no $before or $after, which only a caller writes', () => {
 		const [first] = rs.parse('fn f() {} @@ fn g() {}').statements();
 		if (first === undefined || !rs.is.functionItem(first)) throw new Error('expected a function item');
 		const [entry] = first.$trivia.trailing();
 		if (!isErrorNode(entry)) throw new Error('expected an ERROR entry');
-		expect([entry.$text(), entry.$before, entry.$after]).toEqual(['@@', ' ', ' ']);
+		expect([entry.$text(), entry.$before, entry.$after]).toEqual(['@@', undefined, undefined]);
 		expect(rs.render(entry as never).toString()).toBe('@@');
 	});
 
-	it('gives a snapshot ERROR entry an empty $after where it touches the token after it', () => {
+	it('gives a snapshot ERROR entry no $before or $after, which only a caller writes', () => {
 		const errors: Record<string, unknown>[] = [];
 		const collect = (value: unknown): void => {
 			if (Array.isArray(value)) value.forEach(collect);
@@ -55,13 +65,13 @@ describe('an ERROR region keeps the source bytes beside it wherever its owner re
 			}
 		};
 		collect(py.parse('x = a ?b\n').$snapshot());
-		expect(errors).toEqual([{ $text: 'a ?', $before: ' ', $after: '' }]);
+		expect(errors).toEqual([{ $text: 'a ?', $before: undefined, $after: undefined }]);
 	});
 
-	it('renders an edited typescript declaration with the space before its ERROR region', () => {
+	it('renders an edited typescript declaration with the gaps beside its ERROR region from the options', () => {
 		const [declaration] = ts.parse('let x = 1 + ;\n').statements();
 		if (declaration === undefined || typeof declaration === 'number' || !ts.is.lexicalDeclaration(declaration)) throw new Error('expected a lexical declaration');
-		expect(declaration.$with.declarators(...declaration.declarators()).$render()).toBe('let x = 1 + ;');
+		expect(declaration.$with.declarators(...declaration.declarators()).$render()).toBe('let x = 1 +;');
 	});
 });
 
@@ -93,14 +103,14 @@ describe.each(['arena', 'object'] as const)('a whitespace entry written beside a
 	});
 
 	it.each([
-		['a line break where the source keeps the line', 'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n', 'fn f() {\n    let x = [\n        1,\n        2, $\n        3,\n        4,\n    ];\n}\n', newline],
-		['a space where the source breaks the line', 'fn f() {\n    let x = [\n        1,\n        2, $\n        3,\n        4,\n    ];\n}\n', 'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n', space]
+		['a line break where the source keeps the line', 'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n', 'fn f() {\n    let x = [1, 2, $\n    3, 4,];\n}\n', newline],
+		['a space where the source breaks the line', 'fn f() {\n    let x = [\n        1,\n        2, $\n        3,\n        4,\n    ];\n}\n', 'fn f() {\n    let x = [1, 2, $ 3, 4,];\n}\n', space]
 	] as const)('renders %s after it in a list separator gap, written beside the ERROR on the next item', (_, source, expected, entry) => {
 		const root = engine.parse(source);
 		const next = items(root)[2];
 		if (next === undefined || typeof next === 'number') throw new Error('expected a third item');
-		const [error] = next.$trivia.leading();
-		if (!isErrorNode(error)) throw new Error('expected the ERROR on the item');
+		const error = next.$trivia.leading().find(isErrorNode);
+		if (error === undefined) throw new Error('expected the ERROR on the item');
 		next.$trivia.leading(error, entry);
 		expect(engine.render(root).toString()).toBe(expected);
 	});

@@ -1,8 +1,7 @@
-//! A snapshot measures every run in one full-depth record, the one of the
-//! node enclosing its own, and so seats each node's sides as the tree's own
-//! lookup seats each alone, each run measured in its region: a region alone
-//! and inside the subtrees around it agree.
+//! A snapshot seats each node's sides as the tree's own lookup seats each
+//! alone.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::EngineGrammar;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::types::NodeIndex;
@@ -72,33 +71,3 @@ fn every_typescript_node_snapshots_as_its_sides_seated_alone() {
     assert_ne!(on_deep_stack(|| agree("typescript", sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults)), 0);
 }
 
-/// A snapshot whose enclosing record refuses measures each run in its
-/// region. A typescript function type that error recovery leaves without
-/// its return type reads with its required `return_type` empty, so the
-/// whole tree's record refuses: the statement after it, enclosed by the
-/// root, snapshots as with its sides seated alone, and so does the statement
-/// holding the function type, since a snapshot reads no slot.
-#[test]
-fn a_snapshot_whose_record_refuses_measures_each_run_in_its_region() {
-    let source = "let p: () => \nconst y: number = 2;\nlet q =\n    1;\nlet r = 2;\n";
-    let parse = || parsed(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults(), source);
-    let statement = |text: &str| {
-        let tree = parse();
-        let count = sittir_core::read::descendant_count(&tree.tree().root_node());
-        (0..count)
-            .map(NodeIndex::new)
-            .find(|&index| sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| node.kind() == "lexical_declaration" && source[sittir_core::types::Span::of(&node).range()].starts_with(text)))
-            .expect("the statement")
-    };
-    let alone = |index: NodeIndex| {
-        let tree = parse();
-        let seating = tree.seating();
-        tree.snapshot_layouts_seated(index, Some(0), &seating).expect("a node")
-    };
-    assert!(parse().baseline_runs(true).is_err(), "the whole tree's record refuses");
-    for index in [statement("let q"), statement("let p")] {
-        let snapped = parse().snapshot_layouts(index, Some(0)).expect("a node");
-        assert!(snapped.is_ok(), "{index:?} snapshots: {snapped:?}");
-        assert_eq!(snapped, alone(index), "{index:?}");
-    }
-}

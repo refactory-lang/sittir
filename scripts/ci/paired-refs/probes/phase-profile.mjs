@@ -1,12 +1,18 @@
-// Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <parse|render|edit> <receipt.json> <warmup batches> <batches> <batches per engine>
-// One corpus phase alone, in arena storage (STORAGE=object for object storage), for a profiler. Each batch parses
+// Usage: node [--perf-basic-prof] phase-profile.mjs <tree> <grammar> <parse|render|edit|built|worker> <receipt.json> <warmup batches> <batches> <batches per engine>
+// One corpus phase alone, in arena storage (STORAGE=object for object storage), for a profiler. A built batch
+// builds 8000 Rust function items, each named x by a name node of its own, as the paired construction worker's
+// distinct-name case does, and renders them (renderPhase); the build is untimed. A worker batch is the paired
+// construction worker's whole timed loop (construction-cases.mjs): every case in each of its rotated rounds,
+// built, rendered, edited, the edit rendered, checked and released, timed whole and with no yield inside it.
+// Every other batch parses
 // <grammar>'s corpus (corpus-batch.mjs's parsePhase), the parse being the phase
 // itself for parse (the roots' text, from an untimed renderPhase, checked
 // after it), else runs the phase over every
 // parsed root (renderPhase: render, toString, dispose; or editPhase, after an
 // untimed renderPhase as in corpusBatch: a same-value edit of each root's
-// settable members, each result rendered and released after the timed
-// phase, as corpusBatch does), then releases the
+// settable members, each result rendered in its entry's adopted style
+// (editRenders) and released after the timed phase, as corpusBatch does),
+// then releases the
 // roots. A fresh engine every <batches per engine> batches, since an arena
 // parse's records live until their engine is disposed. A profiler samples only
 // while a timed batch runs the phase: when PERF_CTL and PERF_ACK name perf
@@ -34,7 +40,8 @@ import { Session } from 'node:inspector/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { cpuModel } from '../../arena-benchmark-cpu.mjs';
-import { editPhase, hash, parsePhase, renderPhase } from '../corpus-batch.mjs';
+import { editPhase, editRenders, hash, parsePhase, renderPhase } from '../corpus-batch.mjs';
+import { CASES, ROUNDS, constructionCases } from '../construction-cases.mjs';
 
 const [root, grammar, phase, receipt, warmupArg, batchesArg, perEngineArg] = process.argv.slice(2);
 const storage = process.env.STORAGE ?? 'arena';
@@ -46,7 +53,25 @@ const language = (await import(`${root}/packages/${grammar}/dist/index.js`)).def
 
 let engine;
 const parsed = () => parsePhase(engine, sources);
+const BUILT_ROOTS = 8000;
+const built = () => {
+  const b = engine.build;
+  return Array.from({ length: BUILT_ROOTS }, () => b.functionItem({ name: b.identifier('x'), parameters: b.parameters(), body: b.block({ statements: [] }) }));
+};
+function workerPhase() {
+  const { timed } = constructionCases(engine, storage);
+  const texts = [];
+  for (let round = 0; round < ROUNDS; round++) {
+    for (let j = 0; j < CASES.length; j++) {
+      const { text, edited } = timed(CASES[(j + round) % CASES.length]);
+      texts.push(text, edited);
+    }
+  }
+  return texts;
+}
 const phases = {
+  built: { fn: renderPhase, input: built, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {}, roots: (roots) => roots },
+  worker: { fn: workerPhase, input: () => [], run: workerPhase, texts: (texts) => texts, release() {}, roots: () => [] },
   parse: { fn: parsePhase, input: () => sources, run: (input) => parsePhase(engine, input), texts: (roots) => renderPhase(engine, roots), release() {}, roots: (_, roots) => roots },
   render: { fn: renderPhase, input: parsed, run: (roots) => renderPhase(engine, roots), texts: (renders) => renders, release() {}, roots: (roots) => roots },
   edit: {
@@ -56,14 +81,19 @@ const phases = {
       renderPhase(engine, roots);
       return roots;
     },
-    run: editPhase,
-    texts: (changed) => changed.map((node) => node.$render()),
-    release: (changed) => { for (const node of changed) node[Symbol.dispose]?.(); },
+    run: (roots) => {
+      const labels = [];
+      return { changed: editPhase(roots, labels), labels };
+    },
+    texts: ({ changed, labels }) => editRenders(engine, sources, changed, labels),
+    release: ({ changed }) => { for (const node of changed) node[Symbol.dispose]?.(); },
     roots: (roots) => roots
   }
 };
+const rootsPerBatch = { built: BUILT_ROOTS, worker: ROUNDS * CASES.reduce((roots, { n }) => roots + n, 0) }[phase] ?? sources.length;
 const timed = phases[phase];
 assert.ok(timed, `phase ${phase} is not one of ${Object.keys(phases).join(', ')}`);
+assert.ok(!['built', 'worker'].includes(phase) || grammar === 'rust', `the ${phase} phase builds Rust function items, not ${grammar} nodes`);
 
 function perfWindow() {
   const ctl = openSync(process.env.PERF_CTL, constants.O_WRONLY);
@@ -247,11 +277,11 @@ try {
   const sampling = sampler?.finish();
   const sorted = [...phaseMs].sort((a, b) => a - b);
   writeFileSync(receipt, JSON.stringify({
-    root, grammar, phase, nodeStorage: storage, entries: sources.length, warmupBatches, batches, batchesPerEngine,
+    root, grammar, phase, nodeStorage: storage, entries: rootsPerBatch, warmupBatches, batches, batchesPerEngine,
     buildProfile: engine.diagnostics.buildProfile, node: process.version, cpu: cpuModel(), sampled: sampler !== undefined, sampling,
     texts, phaseMsMedian: sorted[sorted.length >> 1], phaseMsTotal: phaseMs.reduce((sum, ms) => sum + ms, 0), mapped, phaseMs
   }, null, 1) + '\n');
-  console.log(JSON.stringify({ grammar, phase, batches, entries: sources.length, phaseMsMedian: sorted[sorted.length >> 1], mapped }));
+  console.log(JSON.stringify({ grammar, phase, batches, entries: rootsPerBatch, phaseMsMedian: sorted[sorted.length >> 1], mapped }));
 } finally {
   engine?.dispose();
 }

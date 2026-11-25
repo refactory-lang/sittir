@@ -9,12 +9,13 @@
 use sittir_core::engine::EngineGrammar;
 use sittir_core::options::ResolvedOptions;
 use sittir_core::spacing::{SpacingWriter, WordMatcher};
-use sittir_parity_tests::{each_grammar, fixture_sources, parsed};
+use sittir_parity_tests::{each_grammar, fixture_sources};
 
 /// The default unit of `name` and every unit its fixture sources infer,
 /// each taken by a writer and checked: their count.
 fn units_hold_no_line_break<G: EngineGrammar + Copy>(name: &str, grammar: G, options: fn() -> ResolvedOptions) -> usize {
-    let inferred = fixture_sources(name).iter().filter_map(|source| parsed(grammar, options(), source).inferred().indent.clone()).collect::<Vec<_>>();
+    let _ = grammar;
+    let inferred = fixture_sources(name).iter().filter_map(|source| sittir_core::options::indent_unit(source)).collect::<Vec<_>>();
     let units = [vec![options().indent], inferred].concat();
     for unit in &units {
         let _ = SpacingWriter::new(&mut String::new(), WordMatcher::default_ident()).with_indent(unit);

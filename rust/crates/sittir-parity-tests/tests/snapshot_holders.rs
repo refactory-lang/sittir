@@ -5,6 +5,7 @@
 //! from where it or its own leading side begins. A holder after the first
 //! byte a snapshot measures is refused, never wrapped.
 
+use sittir_core::engine::Backing as _;
 use sittir_core::engine::{node_at_index, ParsedTree};
 use sittir_core::read::ReadError;
 use sittir_core::types::{NodeIndex, Span};

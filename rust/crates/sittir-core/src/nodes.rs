@@ -9,7 +9,6 @@ use crate::layout::LayoutWorkCounter;
 use crate::options::Side;
 use crate::tree_sitter;
 use crate::types::{FieldId, KindId, NodeIndex, Span};
-use std::ops::Range;
 use std::sync::Arc;
 
 /// What navigation reads of a node: its descendant index, numbered from the
@@ -103,6 +102,9 @@ impl Kid {
     }
 }
 
+/// A node's children, in order: one list, shared by each holder of it.
+pub type Kids = Arc<[Kid]>;
+
 /// Where a walk is (`Nodes::walk`): at a node it meets, or leaving a node
 /// it entered, once that node's children are walked.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -143,7 +145,7 @@ pub trait Nodes<'t> {
     /// The node at `index`.
     fn kid(&mut self, index: NodeIndex) -> Kid;
     /// The children of the node at `index`, in order.
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]>;
+    fn kids(&mut self, index: NodeIndex) -> Kids;
     /// The first child of the node at `index` (`Side::Before`) or its last
     /// (`Side::After`), `None` for a node with no children, found without
     /// listing them.
@@ -158,10 +160,49 @@ pub trait Nodes<'t> {
     /// token too.
     fn holds_error(&mut self, index: NodeIndex) -> bool;
 
+    /// The delimiter option the parse stored on the list `at`, itself `None`
+    /// for a node that stores none; `None` for a backer that keeps no
+    /// stored option, which resolves it from the node's children.
+    fn stored_delimiter(&mut self, at: &Kid) -> Option<Option<crate::types::Delimiter>> {
+        let _ = at;
+        None
+    }
+
+    /// The outermost `ERROR` that is or holds the node at `index`, or `None`
+    /// when none does. A tree whose root holds no error answers at once;
+    /// otherwise the node's ancestors are climbed, so the cost follows the
+    /// node's depth, not how many siblings precede it.
+    fn error_holding(&mut self, index: NodeIndex) -> Option<Kid> {
+        if !self.holds_error(NodeIndex::ROOT) {
+            return None;
+        }
+        let mut outermost = None;
+        let mut at = Some(index);
+        while let Some(here) = at {
+            let kid = self.kid(here);
+            if kid.error() {
+                outermost = Some(kid);
+            }
+            at = self.parent(here);
+        }
+        outermost
+    }
+
+    /// How many indexes name a node, from 0 up, where that is known
+    /// before any is met.
+    fn bound(&mut self) -> Option<u32> {
+        Some(self.kid(NodeIndex::ROOT).count)
+    }
+
+    /// Whether `index` names a node.
+    fn names(&mut self, index: NodeIndex) -> bool {
+        self.bound().is_some_and(|bound| index.0 < bound)
+    }
+
     /// Walks the subtree of the node at `from` in preorder, telling `visit`
     /// each node it meets and each node it leaves.
     fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {
-        let mut entered: Vec<(Kid, Arc<[Kid]>, usize)> = Vec::new();
+        let mut entered: Vec<(Kid, Kids, usize)> = Vec::new();
         let mut next = Some(self.kid(from));
         loop {
             if let Some(kid) = next.take() {
@@ -191,6 +232,21 @@ pub trait Nodes<'t> {
         self.kids(index).iter().find(|kid| kid.end > byte).copied()
     }
 
+    /// The fixed token, unit or list separator the render body of `holder`
+    /// writes at its edge on `side`, `arm` answering the separator the read's
+    /// options write for a list of a kind; none where that edge is a child,
+    /// and for a node with no record, whose edge is found by position.
+    fn edge_token(&mut self, holder: &Kid, side: Side, arm: &dyn Fn(KindId) -> Option<KindId>) -> Option<KindId> {
+        let _ = (holder, side, arm);
+        None
+    }
+    /// Whether the node at `index` is a unit its holder's cell or flag names,
+    /// with no row of its own.
+    fn is_unit(&mut self, index: NodeIndex) -> bool {
+        let _ = index;
+        false
+    }
+
     /// The node after the node at `index` among its parent's children.
     fn next(&mut self, index: NodeIndex) -> Option<Kid> {
         let parent = self.parent(index)?;
@@ -208,34 +264,64 @@ pub trait Nodes<'t> {
     }
 }
 
-/// Visits the child at the edge on `side` of `holder`, then the child at
-/// the same edge of that one, level by level down, while each starts
-/// (`Side::Before`) or ends (`Side::After`) where its holder does: one
-/// `Nodes::edge` a level, and no node's children listed.
-pub fn for_each_edge_child(nodes: &mut dyn Nodes<'_>, holder: &Kid, side: Side, visit: &mut dyn FnMut(&Kid)) {
+/// Visits each level at the edge on `side` of `holder`, from the level
+/// below it down: a child that starts (`Side::Before`) or ends
+/// (`Side::After`) where its holder does, found with one `Nodes::edge` and
+/// no node's children listed, until a node's render body writes a fixed
+/// token, a unit or a list's separator there (`Nodes::edge_token`), the last
+/// level. `stamped` is the kind a read stamps a level's grammar and display
+/// kinds with, and `arm` the separator the options the tree was read with
+/// write for a list of a kind.
+pub fn for_each_edge_part(nodes: &mut dyn Nodes<'_>, holder: &Kid, side: Side, stamped: &dyn Fn(KindId, KindId) -> KindId, arm: &dyn Fn(KindId) -> Option<KindId>, visit: &mut dyn FnMut(crate::render::EdgeLevel)) {
     let mut holder = *holder;
-    while let Some(child) = nodes.edge(holder.index, side).filter(|child| match side {
-        Side::Before => child.start == holder.start,
-        Side::After => child.end == holder.end,
-    }) {
-        visit(&child);
+    loop {
+        if let Some(token) = nodes.edge_token(&holder, side, arm) {
+            visit(crate::render::EdgeLevel { stamp: stamped(token, token), grammar: token, display: token, field: None });
+            return;
+        }
+        let Some(child) = nodes.edge(holder.index, side).filter(|child| match side {
+            Side::Before => child.start == holder.start,
+            Side::After => child.end == holder.end,
+        }) else {
+            return;
+        };
+        visit(crate::render::EdgeLevel { stamp: stamped(child.grammar, child.display), grammar: child.grammar, display: child.display, field: child.field });
         holder = child;
     }
+}
+
+/// The last node with bytes at `holder`'s end, level by level down: at
+/// each level the last child, stepping back past zero-width ones (a dedent,
+/// a newline token) to the sibling that ends where its holder does. A
+/// zero-width child is the only case that lists a node's children.
+pub(crate) fn spelled_end(nodes: &mut dyn Nodes<'_>, holder: &Kid) -> Kid {
+    let mut holder = *holder;
+    while let Some(mut child) = nodes.edge(holder.index, Side::After) {
+        while child.start == child.end {
+            match nodes.previous(child.index) {
+                Some(before) => child = before,
+                None => return holder,
+            }
+        }
+        if child.end != holder.end {
+            return holder;
+        }
+        holder = child;
+    }
+    holder
 }
 
 /// Navigation over a tree-sitter tree: one cursor, created at the tree's
 /// root, moved from where it last stood (`read::goto_from`). The root's
 /// facts are read without a move. Its moves count in the
-/// tree's layout work: the levels climbed (`LayoutWork::cursor_climbs`), the
-/// moves down from the root to below its children
-/// (`LayoutWork::root_descents`), and, for navigation of a region, the moves
-/// to a node outside it (`LayoutWork::region_fallbacks`).
+/// tree's layout work: the levels climbed (`LayoutWork::cursor_climbs`) and
+/// the moves down from the root to below its children
+/// (`LayoutWork::root_descents`).
 pub struct TreeNodes<'t> {
     tree: &'t tree_sitter::Tree,
     text: &'t str,
     work: &'t LayoutWorkCounter,
     cursor: Option<tree_sitter::TreeCursor<'t>>,
-    region: Option<Range<NodeIndex>>,
 }
 
 impl<'t> TreeNodes<'t> {
@@ -243,14 +329,7 @@ impl<'t> TreeNodes<'t> {
     /// first move, its moves counted in `work`.
     #[must_use]
     pub fn new(tree: &'t tree_sitter::Tree, text: &'t str, work: &'t LayoutWorkCounter) -> Self {
-        Self { tree, text, work, cursor: None, region: None }
-    }
-
-    /// Navigation of the region `nodes`, a node's subtree, that moves a copy
-    /// of this navigation's cursor from where it stands.
-    #[must_use]
-    pub fn region(&mut self, nodes: Range<NodeIndex>) -> Self {
-        Self { region: Some(nodes), ..self.copy() }
+        Self { tree, text, work, cursor: None }
     }
 
     /// Navigation of what this one navigates that moves a copy of its
@@ -259,15 +338,12 @@ impl<'t> TreeNodes<'t> {
     pub fn copy(&mut self) -> Self {
         let tree = self.tree;
         let cursor = self.cursor.get_or_insert_with(|| tree.walk()).clone();
-        Self { tree, text: self.text, work: self.work, cursor: Some(cursor), region: self.region.clone() }
+        Self { tree, text: self.text, work: self.work, cursor: Some(cursor) }
     }
 
     /// The cursor, standing on the node at `index`, for a reader, which
     /// reads tree-sitter's tree itself and numbers nodes from the root.
     pub fn reader(&mut self, index: NodeIndex) -> &mut tree_sitter::TreeCursor<'t> {
-        if self.region.as_ref().is_some_and(|region| !region.contains(&index)) {
-            self.work.region_fallbacks(1);
-        }
         let tree = self.tree;
         let cursor = self.cursor.get_or_insert_with(|| tree.walk());
         let moved = crate::read::goto_from_noting_top(cursor, NodeIndex::ROOT, index);
@@ -313,7 +389,7 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
         node.has_error() || shown_as_error(crate::read::display_id(&node))
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+    fn kids(&mut self, index: NodeIndex) -> Kids {
         let cursor = self.reader(index);
         let mut kids = Vec::new();
         if cursor.goto_first_child() {
@@ -398,116 +474,15 @@ impl<'t> Nodes<'t> for TreeNodes<'t> {
     }
 }
 
-/// Navigation over the rows a parsed tree's arena keeps for its nodes
-/// (`TreeArena::node_rows`), with no tree: each node's facts read from its
-/// row, its children by stepping from one subtree end to the next, and its
-/// parent from the rows' index of every node's parent.
-#[cfg(feature = "arena")]
-#[derive(Clone, Copy)]
-pub struct RecordNodes<'t> {
-    rows: &'t crate::arena::NodeRows,
-    text: &'t str,
-}
-
-#[cfg(feature = "arena")]
-impl<'t> RecordNodes<'t> {
-    /// Navigation over the rows of `tree`'s nodes, whose bytes index `text`;
-    /// `None` while some node of the tree has no row.
-    #[must_use]
-    pub fn new(tree: &'t crate::arena::TreeArena, text: &'t str) -> Option<Self> {
-        tree.node_rows().map(|rows| Self::over(rows, text))
-    }
-
-    /// Navigation over `rows`, every node's, whose bytes index `text`.
-    #[must_use]
-    pub fn over(rows: &'t crate::arena::NodeRows, text: &'t str) -> Self {
-        Self { rows, text }
-    }
-
-    /// Every node of the tree, in preorder: the rows in index order.
-    pub fn preorder(&self) -> impl Iterator<Item = Kid> + '_ {
-        (0..self.rows.len()).map(|index| self.rows.kid(NodeIndex(index)))
-    }
-}
-
-#[cfg(feature = "arena")]
-impl<'t> Nodes<'t> for RecordNodes<'t> {
-    fn text(&self) -> &'t str {
-        self.text
-    }
-
-    fn kid(&mut self, index: NodeIndex) -> Kid {
-        self.rows.kid(index)
-    }
-
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
-        let end = self.rows.subtree_end(index);
-        let mut kids = Vec::new();
-        let mut at = index + 1;
-        while at < end {
-            let kid = self.rows.kid(at);
-            at = at + kid.count;
-            kids.push(kid);
-        }
-        kids.into()
-    }
-
-    fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
-        let end = self.rows.subtree_end(index);
-        let mut at = index + 1;
-        if at >= end {
-            return None;
-        }
-        if side == Side::After {
-            loop {
-                let next = self.rows.subtree_end(at);
-                if next >= end {
-                    break;
-                }
-                at = next;
-            }
-        }
-        Some(self.rows.kid(at))
-    }
-
-    fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
-        self.rows.parent(index)
-    }
-
-    fn missing(&mut self, index: NodeIndex) -> bool {
-        self.rows.missing(index)
-    }
-
-    fn holds_error(&mut self, index: NodeIndex) -> bool {
-        self.rows.holds_error(index)
-    }
-
-    fn next(&mut self, index: NodeIndex) -> Option<Kid> {
-        let parent = self.rows.parent(index)?;
-        let at = index + self.rows.kid(index).count;
-        (at < self.rows.subtree_end(parent)).then(|| self.rows.kid(at))
-    }
-}
-
-/// Navigation of one parse for one call: over its rows once every node has
-/// one (`RecordNodes`), else over tree-sitter's tree (`TreeNodes`).
+/// Navigation of one parse for one call: over tree-sitter's tree
+/// (`TreeNodes`), or over the records a read left of it (`RunNodes`).
 pub enum Navigation<'t> {
     Tree(TreeNodes<'t>),
     #[cfg(feature = "arena")]
-    Records(RecordNodes<'t>),
+    Runs(crate::arena::RunNodes<'t>),
 }
 
 impl<'t> Navigation<'t> {
-    /// Navigation of the region `nodes`, a node's subtree
-    /// (`TreeNodes::region`); rows navigate any region alike.
-    #[must_use]
-    pub fn region(&mut self, nodes: Range<NodeIndex>) -> Self {
-        match self {
-            Self::Tree(tree) => Self::Tree(tree.region(nodes)),
-            #[cfg(feature = "arena")]
-            Self::Records(records) => Self::Records(*records),
-        }
-    }
 
     /// Navigation of what this one navigates, leaving this one where it is
     /// (`TreeNodes::copy`).
@@ -516,7 +491,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => Self::Tree(tree.copy()),
             #[cfg(feature = "arena")]
-            Self::Records(records) => Self::Records(*records),
+            Self::Runs(runs) => Self::Runs(*runs),
         }
     }
 
@@ -527,7 +502,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => Some(tree.reader(index)),
             #[cfg(feature = "arena")]
-            Self::Records(_) => None,
+            Self::Runs(_) => None,
         }
     }
 
@@ -535,7 +510,7 @@ impl<'t> Navigation<'t> {
         match self {
             Self::Tree(tree) => tree,
             #[cfg(feature = "arena")]
-            Self::Records(records) => records,
+            Self::Runs(runs) => runs,
         }
     }
 }
@@ -545,7 +520,7 @@ impl<'t> Nodes<'t> for Navigation<'t> {
         match self {
             Self::Tree(tree) => tree.text(),
             #[cfg(feature = "arena")]
-            Self::Records(records) => records.text(),
+            Self::Runs(runs) => runs.text(),
         }
     }
 
@@ -553,12 +528,27 @@ impl<'t> Nodes<'t> for Navigation<'t> {
         self.nodes().kid(index)
     }
 
-    fn kids(&mut self, index: NodeIndex) -> Arc<[Kid]> {
+    fn bound(&mut self) -> Option<u32> {
+        self.nodes().bound()
+    }
+
+    fn names(&mut self, index: NodeIndex) -> bool {
+        self.nodes().names(index)
+    }
+
+    fn kids(&mut self, index: NodeIndex) -> Kids {
         self.nodes().kids(index)
     }
 
     fn edge(&mut self, index: NodeIndex, side: Side) -> Option<Kid> {
         self.nodes().edge(index, side)
+    }
+
+    fn edge_token(&mut self, holder: &Kid, side: Side, arm: &dyn Fn(KindId) -> Option<KindId>) -> Option<KindId> {
+        self.nodes().edge_token(holder, side, arm)
+    }
+    fn is_unit(&mut self, index: NodeIndex) -> bool {
+        self.nodes().is_unit(index)
     }
 
     fn parent(&mut self, index: NodeIndex) -> Option<NodeIndex> {
@@ -571,6 +561,14 @@ impl<'t> Nodes<'t> for Navigation<'t> {
 
     fn holds_error(&mut self, index: NodeIndex) -> bool {
         self.nodes().holds_error(index)
+    }
+
+    fn stored_delimiter(&mut self, at: &Kid) -> Option<Option<crate::types::Delimiter>> {
+        self.nodes().stored_delimiter(at)
+    }
+
+    fn error_holding(&mut self, index: NodeIndex) -> Option<Kid> {
+        self.nodes().error_holding(index)
     }
 
     fn walk(&mut self, from: NodeIndex, visit: &mut dyn FnMut(Step, &Kid) -> Visit) {

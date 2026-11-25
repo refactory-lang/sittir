@@ -16,7 +16,7 @@ export function queryContext<View>(querySlots: QuerySlots, membership = IDENTITY
 		query: {
 			descendants(walk) {
 				walks.push(walk);
-				return { items: [], resume: null, origin: 0 };
+				return { items: [], resume: null, origin: { handle: 0 } };
 			},
 			planHolds: () => []
 		}

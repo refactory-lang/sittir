@@ -2,6 +2,7 @@
 //! seam its templates write after it: the root's edge ends with the first
 //! text however that text is written.
 
+use sittir_core::engine::Backing as _;
 use sittir_parity_tests::edited_rendered;
 
 #[test]

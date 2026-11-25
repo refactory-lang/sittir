@@ -255,7 +255,7 @@ describe('portable is: rust', async () => {
 	it('reads a self parameter and the self it names by the receiver kinds', () => {
 		const SOURCE = 'impl A { fn f(&self) -> u8 { self.x } }\n';
 		const parameter = find(SOURCE, 'self_parameter');
-		const receiver = find(SOURCE, 'self', undefined, 1);
+		const receiver = find(SOURCE, 'self');
 		expect(at('declaration.parameter.receiver')(parameter)).toBe(true);
 		expect(at('identifier.receiver')(receiver)).toBe(true);
 	});

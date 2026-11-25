@@ -221,7 +221,7 @@ fn refusal_reason(spec: &DelimiterSpec, content: &str) -> String {
 fn read_token<T: Prepare, const ADJACENT: bool>(slot: &SlotValue<T, ADJACENT>, ctx: &RenderContext<'_>) -> Option<T> {
     let coord = slot.coord()?;
     let mut node = None;
-    ctx.sources.read_node(coord.tree, coord.index, &mut |cursor, read| node = T::read_coordinate(cursor, read));
+    ctx.sources.read_node(coord, &mut |cursor, read| node = T::read_coordinate(cursor, read));
     node?.ok()
 }
 
@@ -278,7 +278,7 @@ fn rendered(content: &dyn Render, spec: &DelimiterSpec, opener: &TokenFacts, ctx
     let mut out = String::new();
     let admitted = interpolates(spec, opener);
     let probe = LeafProbe { leaves: if admitted { spec.free_text } else { &[] }, excluded: spec.excluded, nested: spec.id, arms: spec.opened, refuses_arms: !admitted };
-    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(spec.whitespace).with_options(ctx.options).with_sources(ctx.sources).with_lent(ctx.lent).with_leaf_probe(probe);
+    let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident()).with_table(spec.whitespace).with_options(ctx.options).with_sources(ctx.sources).with_leaf_probe(probe);
     content.render(&mut w)?;
     w.finish()?;
     let refusal = |reason: String| RenderError::Delimiter(DelimiterRefusal { kind: spec.kind, reason });

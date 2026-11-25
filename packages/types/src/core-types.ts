@@ -132,29 +132,16 @@ export interface NodeLayout {
 export type ErrorKindId = 65535;
 
 /**
- * The in-line whitespace a trivia item the source fixes in place carries on
- * either side of it, as a read finds it: an ERROR node's, and a line
- * continuation's that has whitespace beside it. The item renders verbatim
- * with them: on a side it carries, no other spacing is written, a line
- * break included, unless a whitespace entry the side holds spells it. One
- * with neither (a built line continuation) takes the spacing the options
- * give its gap.
+ * The in-line whitespace a caller writes on either side of a trivia item the
+ * source fixes in place: an ERROR node, or a line continuation. A read writes
+ * neither. The item renders verbatim with them: on a side it carries, no other
+ * spacing is written, a line break included, unless a whitespace entry the side
+ * holds spells it. One with neither takes the spacing the options give its gap.
  */
 export interface TriviaFlanks {
-	/**
-	 * The source's whitespace on the item's line between the token before it
-	 * and the item, rendered verbatim before `$text`; `''` when the item
-	 * touches that token. Absent when a line break or the file's start lies
-	 * between them, or when the item before it carries that whitespace as
-	 * its `$after`.
-	 */
+	/** Whitespace rendered verbatim before `$text`; `''` to touch the token before it. */
 	readonly $before?: string;
-	/**
-	 * The source's whitespace on the item's line between the item and the
-	 * token after it, rendered verbatim after `$text`; `''` when the item
-	 * touches that token. Absent when a line break or the file's end lies
-	 * between them.
-	 */
+	/** Whitespace rendered verbatim after `$text`; `''` to touch the token after it. */
 	readonly $after?: string;
 }
 
@@ -307,13 +294,10 @@ export interface CSTNode {
 // ---------------------------------------------------------------------------
 
 /**
- * Return value of the native (NAPI) `parse` call: the tree it keeps, the
- * render options its source infers and its error regions. It reads nothing;
- * the root is read from the tree at index 0.
+ * Return value of the native (NAPI) `parse` call: the tree it keeps and its
+ * error regions. It reads nothing; the root is read from the tree at index 0.
  */
 export interface NativeParseResult {
-	/** The tree's layer of the render options: the ones its source infers where they differ from the engine's (the indent unit, the root's edges), shaped like the grammar's `Options`. */
-	readonly options: Readonly<Record<string, unknown>>;
 	/** The tree this parse produced, released once nothing reads from it. */
 	readonly treeId: number;
 	/** The parse's ERROR and MISSING regions; empty for a clean parse. */

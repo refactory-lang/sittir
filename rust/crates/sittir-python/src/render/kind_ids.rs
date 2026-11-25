@@ -378,14 +378,16 @@ pub const SIMPLE_PATTERN: KindId = KindId(363);
 pub const KIND_BITS: u32 = 9;
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
-/// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
+/// The surface kinds: list kinds, whose items the surface exposes in their place, the wrappers a list seats around each element, which expose the element in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, the depth members a layout run's excess indentation reads as, the kinds whose template renders an inner side, and whether the grammar has trivia that isn't whitespace.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[KindId(141), KindId(186), KindId(198), KindId(199), KindId(223), KindId(248), KindId(265), KindId(266), KindId(267), KindId(268), KindId(269), KindId(270), KindId(271), KindId(272), KindId(273), KindId(278), KindId(279), KindId(280), KindId(281), KindId(285), KindId(286), KindId(305), KindId(306), KindId(362)],
+    wrappers: &[],
     units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(30), KindId(31), KindId(32), KindId(33), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53), KindId(54), KindId(55), KindId(56), KindId(57), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(66), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(74), KindId(75), KindId(76), KindId(77), KindId(78), KindId(79), KindId(80), KindId(81), KindId(82), KindId(83), KindId(84), KindId(85), KindId(86), KindId(87), KindId(89), KindId(112), KindId(113), KindId(114), KindId(115), KindId(116), KindId(117), KindId(118), KindId(119), KindId(120), KindId(121), KindId(122), KindId(123), KindId(128), KindId(129), KindId(130), KindId(131), KindId(132), KindId(143), KindId(153), KindId(154), KindId(155), KindId(216), KindId(217), KindId(258), KindId(263), KindId(264), KindId(289)],
     layout: &[KindId(111), KindId(112)],
     indent: KindId(122),
     dedent: KindId(123),
-    depth: super::options::DEPTH_REGIONS,
+    inner: &[KindId(133), KindId(160), KindId(171), KindId(182), KindId(192), KindId(202), KindId(203), KindId(238), KindId(240), KindId(241), KindId(283), KindId(284)],
+    named_extras: true,
 };
 
 /// The grammar's root kinds: a render whose root is one of them is a document.

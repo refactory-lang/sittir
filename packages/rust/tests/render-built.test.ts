@@ -2,9 +2,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { addressOf, cellFormatOf, nativeEngineOf } from '@sittir/common/engine';
-import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
+import { snapshotOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
+import { coordinateIndex, coordinateOf, keyName } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.js';
 import rust from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
@@ -39,10 +40,14 @@ function arenaEngine() {
 		},
 		entry: (kind: number, text: string) => {
 			const encoded = new TextEncoder().encode(text);
-			const chunk = builtBytes(4 + encoded.length);
-			new DataView(chunk.data.buffer, chunk.data.byteOffset).setUint32(0, (kind + encoded.length * 2 ** format.kindBits) >>> 0, true);
-			chunk.data.set(encoded, 4);
-			return addressOf(chunk.chunk, 0, format);
+			const size = (4 + encoded.length + 3) & ~3;
+			const chunk = builtBytes(size);
+			const marks = new Uint32Array(chunk.meta.buffer, chunk.meta.byteOffset, 2);
+			const at = marks[1]!;
+			new DataView(chunk.data.buffer, chunk.data.byteOffset).setUint32(at, (kind + encoded.length * 2 ** format.kindBits) >>> 0, true);
+			chunk.data.set(encoded, at + 4);
+			marks[1] = at + size;
+			return addressOf(chunk.chunk, at, format);
 		},
 		builtWords,
 		renderBuilt: (address: number) => renderBuilt(native.handle, address, false, false),
@@ -83,6 +88,15 @@ describe('a built arena rendered natively', () => {
 		expect(native.renderBuiltLeaf(TSKindId.Identifier, x)).toBe('x');
 		expect(() => native.renderBuiltLeaf(60000, x)).toThrow(/built leaf kind 60000/);
 		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, x + 64)).toThrow();
+	});
+
+	it('answers the string chunk an entry was written into while it has room, its written mark past that entry', () => {
+		const native = arenaEngine();
+		const first = native.entry(TSKindId.Identifier, 'first');
+		const second = native.entry(TSKindId.Identifier, 'second');
+		expect(second).toBe(first + 12);
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, first)).toBe('first');
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, second)).toBe('second');
 	});
 
 	it('refuses words that are no record it admits', () => {
@@ -156,6 +170,16 @@ describe('a built arena rendered natively', () => {
 		engine.dispose();
 	});
 
+	it('refuses a built leaf holding a node of a kind no side holds, naming the kind', async () => {
+		const engine = await recordEngine();
+		const b = engine.build;
+		const x = b.identifier('x');
+		const z = b.expressionStatement(b.identifier('z'));
+		writeTrivia(x, { leading: [z as never] });
+		expect(() => engine.render(x).toString()).toThrow(new RegExp(`unknown kind id ${z.$type} \\(expression_statement\\) in TriviaNode`));
+		engine.dispose();
+	});
+
 	it.each([
 		['objects', async () => rust.createEngine({ nodeStorage: 'object' })],
 		['records', recordEngine]
@@ -222,18 +246,37 @@ describe('a built arena rendered natively', () => {
 			expect(() => statementOf(objects).statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
 		});
 
+		it('names a parsed leaf by its holder and the cell that holds it', async () => {
+			const engine = await recordEngine();
+			const item = engine.parse('fn f() {}\n').statements()[0] as unknown as { readonly $at: number; name(): { $text(): string } };
+			const leaf = item.name();
+			const at = coordinateOf(leaf) as unknown as { readonly $node: number; readonly $site: readonly [number, number] };
+			expect(at.$node).toBe(item.$at);
+			expect(at.$site).toEqual([expect.any(Number), 0]);
+			expect(at.$site[0]).toBeGreaterThan(0);
+			const { nodeId } = treeOf(leaf)!.built!.format;
+			expect(keyName(coordinateIndex(at as never, nodeId), nodeId)).toEqual({ node: item.$at, site: at.$site[0] });
+			expect((treeOf(leaf)!.built!.named(at as never) as { $text(): string }).$text()).toBe('f');
+		});
+
 		it("reads back as its builder's node from a parsed unit's side", async () => {
 			const engine = await recordEngine();
 			const block = (engine.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
 			const tree = treeOf(block)!;
-			const holderRow = treeHandleOf(block)! % 2 ** 32;
-			const comments = [1, 2, 3].map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
-			const unit = comments.findIndex((comment, n) => {
-				tree.writeTriviaSide!(holderRow + n + 1, 'leading', [writtenEntry(comment)]);
-				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(holderRow + n + 1, 'leading', []), false);
+			const holder = (block as { readonly $at: number }).$at;
+			const key = (site: readonly [number, number]): number => coordinateIndex({ $node: holder, $site: site, $span: { start: 0, end: 0 }, $type: 0 } as never, tree.built!.format.nodeId);
+			const sites = Array.from({ length: 16 }, (_, word) => [word + 1, 0] as const);
+			const comments = sites.map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
+			const unit = sites.findIndex((site, n) => {
+				try {
+					tree.writeTriviaSide!(key(site), 'leading', [writtenEntry(comments[n]!)]);
+				} catch {
+					return false;
+				}
+				return (tree.unitSides!(holder) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(key(site), 'leading', []), false);
 			});
 			expect(unit).not.toBe(-1);
-			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comments[unit]]);
+			expect((tree.unitSides!(holder) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comments[unit]]);
 			expect(JSON.stringify(snapshotOf(block))).toContain('" c "');
 		});
 	});
@@ -249,16 +292,4 @@ describe('a built arena rendered natively', () => {
 		});
 		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ before: '/* its builder */ x;', after: '/* its builder */ x;' });
 	}, 60_000);
-
-	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {
-		const records = await rust.createEngine();
-		const parsed = records.parse('fn f() { g(); }').statements()[0] as unknown as { body(): unknown };
-		const b = records.build;
-		const fn = b.functionItem({ name: b.identifier('h'), parameters: b.parameters(), body: parsed.body() as never });
-		const id = treeOf(parsed as object)?.id;
-		if (id === undefined) throw new Error('a parsed tree has an id');
-		addon().disposeTree(id);
-		expect(() => records.render(fn).toString()).toThrow(new RegExp(`names tree ${id}, which is not live`));
-		records.dispose();
-	});
 });

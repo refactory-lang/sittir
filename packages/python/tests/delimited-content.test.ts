@@ -240,25 +240,35 @@ describe.each([
 	});
 });
 
-describe('a string read with an interpolation its prefix does not admit', () => {
+describe.each(['object', 'arena'] as const)('a string read with an interpolation its prefix does not admit, in %s storage', (nodeStorage) => {
 	const source = `print(f"a"'b {c}")\n`;
-	const unadmitted = () => {
-		const tree = py.parse(source);
+	const engine = createEngine(python, { nodeStorage });
+	const unadmitted = async () => {
+		const tree = (await engine).parse(source);
 		const found = Array.from(tree.$query().$descendants.ofType(py.kinds.String)).find((string) => string.prefix() === undefined);
 		if (found === undefined) throw new Error('the recovered string is not read');
 		return found;
 	};
 
-	it('renders as its source, the delimiters it reads being its own', () => {
-		expect(String(py.render(py.parse(source)))).toBe(source);
+	it('renders as its source, the delimiters it reads being its own', async () => {
+		const read = await engine;
+		expect(String(read.render(read.parse(source)))).toBe(source);
 	});
 
-	it('takes an admitting prefix through $with.prefix, and a refusing one still refuses', () => {
-		expect(rendered(unadmitted().$with.prefix('f'))).toBe(`f'b {c}"`);
-		expect(() => rendered(unadmitted().$with.prefix('b'))).toThrow('string: its interpolation is no part of it under the `b` prefix');
+	it('gives the ERROR after its last string to the concatenated string, not to the string the ERROR follows', async () => {
+		const read = await engine;
+		const [concatenated] = Array.from(read.parse(source).$query().$descendants.ofType(py.kinds.ConcatenatedString));
+		if (concatenated === undefined) throw new Error('expected the concatenated string');
+		expect(concatenated.$trivia.trailing().map((entry) => String(read.render(entry as never)))).toEqual(['"']);
+		expect(rendered(await unadmitted())).toBe(`'b {c}`);
 	});
 
-	it('keeps its source delimiters when its content is edited, as a string under an unknown prefix does', () => {
-		expect(rendered(unadmitted().$with.contents(...content("a'b")))).toBe(`'b a'b`);
+	it('takes an admitting prefix through $with.prefix, and a refusing one still refuses', async () => {
+		expect(rendered((await unadmitted()).$with.prefix('f'))).toBe(`f' b{c}`);
+		await expect(async () => rendered((await unadmitted()).$with.prefix('b'))).rejects.toThrow('string: its interpolation is no part of it under the `b` prefix');
+	});
+
+	it('keeps its source delimiters when its content is edited, as a string under an unknown prefix does', async () => {
+		expect(rendered((await unadmitted()).$with.contents((await engine).build.stringContent("a'b")))).toBe(`' ba'b`);
 	});
 });

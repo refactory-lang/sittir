@@ -19,16 +19,24 @@ describe.each(Object.keys(engines) as (keyof typeof engines)[])('an automatic se
 		[NEXT_DEPLOY, 'delete process.env.NEXT_TEST_MODE'],
 		['if (c) {\n  x()\n}\nelse y()\n', 'c'],
 		['function f(): void\nfunction f() {}\n', 'f'],
-		['class A {\n  m(): void\n  m() {}\n}\n', 'm']
+		['class A {\n  m(): void\n  m() {}\n}\n', 'm'],
+		['do x()\nwhile (y)\n', 'y'],
+		['class A {\n  a\n  *b() {}\n}\n', 'a']
 	])('%j, edited at %j, renders on source', (source, text) => {
 		expect(editedRender(engines[storage], source, text)).toBe(source);
 	});
 
 	it.each([
-		['if (c) { x() } else y()\n', 'c'],
-		['f(() => { x() })\n', 'x']
-	])('%j, edited at %j, keeps the source gap after the automatic semicolon', (source, text) => {
-		expect(editedRender(engines[storage], source, text)).toBe(source);
+		['if (c) { x() } else y()\n', 'c', 'if (c) { x() } else y()\n'],
+		['f(() => { x() })\n', 'x', 'f(() => {\n  x()\n})\n']
+	])('%j, edited at %j, takes the options\' gap after the automatic semicolon', (source, text, expected) => {
+		expect(editedRender(engines[storage], source, text)).toBe(expected);
+	});
+
+	it.each(['x\n++y\n', 'x\n--y\n', 'let a\n(b)\n'])('%j keeps the line break after its automatic semicolon when its statements are rebuilt', (source) => {
+		const root = engines[storage].parse(source) as unknown as { statements(): readonly unknown[]; $with: { statements(...items: readonly unknown[]): { $render(): unknown } } };
+		const rebuilt = String(root.$with.statements(...root.statements()).$render());
+		expect(rebuilt.split('\n').filter((line) => line !== '')).toEqual(source.split('\n').filter((line) => line !== ''));
 	});
 
 	it.each(['const x = 1', 'x()', 'if (c) { x() }'])('%j, which ends at its automatic semicolon, renders untouched on source', (source) => {
