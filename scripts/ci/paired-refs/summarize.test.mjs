@@ -23,7 +23,7 @@ const NAMINGS = [
 	[false, false, true, 'commented']
 ];
 
-function measured(dir, held) {
+function measured(dir, held, sampleOf) {
 	const runs = join(dir, 'runs');
 	mkdirSync(runs, { recursive: true });
 	const json = (name, value) => writeFileSync(join(dir, name), JSON.stringify(value));
@@ -40,8 +40,8 @@ function measured(dir, held) {
 				json(`runs/corpus-${grammar}-${version}-${round}.json`, {
 					signature: { entries: 4 },
 					buildProfile: 'release',
-					samples: [SAMPLE],
-					samplesMatched: [SAMPLE],
+					samples: [sampleOf(version)],
+					samplesMatched: [sampleOf(version)],
 					peakRssMB: 100,
 					byEntry
 				});
@@ -112,10 +112,10 @@ const outputOf = (version, grammar, at, key) =>
 			? 'changed'
 			: 'kept';
 
-function summarize(held, identity) {
+function summarize(held, identity, sampleOf = () => SAMPLE) {
 	const dir = mkdtempSync(join(tmpdir(), 'paired-refs-summary-'));
 	try {
-		measured(dir, held);
+		measured(dir, held, sampleOf);
 		const { GITHUB_STEP_SUMMARY: _, ...env } = process.env;
 		const run = spawnSync('python3', [SUMMARIZE, dir, EARLIER, '--identity', identity], { encoding: 'utf8', env });
 		const written = join(dir, 'summary.json');
@@ -245,6 +245,23 @@ test('the parsed long list reports arena over object for each tree, and the feat
 	assert.equal(summary.longList.items, 49153);
 	for (const tree of TREES) assert.equal(summary.longList.pairs[`${tree}-arena/${tree}`].renderMs.ratio, 2, tree);
 	assert.equal(summary.longList.pairs['feature-arena/master-arena'].renderMs.ratio, 1);
+});
+
+test("arena storage's null pair, master-arena over base-arena, is reported beside object storage's and, like it, is held to no bar", () => {
+	const slower = { ...SAMPLE, pipelineMs: 3 };
+	const { status, summary } = summarize(outputOf, 'feature', (version) =>
+		['master', 'master-arena', 'feature-arena'].includes(version) ? slower : SAMPLE
+	);
+	assert.equal(status, 0);
+	for (const row of summary.corpus) {
+		assert.equal(row.pairs['master/base'].pipelineMs.ratio, 1.5, row.grammar);
+		assert.equal(row.pairs['master-arena/base-arena'].pipelineMs.ratio, 1.5, row.grammar);
+	}
+	for (const row of summary.construction) assert.ok(row.pairs['master-arena/base-arena'], `${row.functionRoots} roots`);
+	assert.deepEqual(
+		summary.overBar,
+		GRAMMARS.map((grammar) => `${grammar} feature-arena ×1.500`)
+	);
 });
 
 test('a version whose edited long list renders apart is named', () => {

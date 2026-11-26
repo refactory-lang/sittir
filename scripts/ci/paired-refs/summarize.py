@@ -5,7 +5,8 @@
 # The versions are base, master, feature and each candidate in object storage
 # and, when they ran, <tree>-arena (that tree in arena storage). A candidate
 # is compared with base and with feature in the same storage, and the headline
-# pairs compare arena with arena; a cross-storage pair is labelled. Every
+# pairs compare arena with arena; a cross-storage pair is labelled. master/base
+# and master-arena/base-arena are each storage's null pair, held to no bar. Every
 # ratio is the median of the per-round ratios of process medians, with a
 # seeded bootstrap 95% range of that median, beside the earlier summary's
 # feature/master. Pipeline ratios against base above <bar> (default 1.10) are
@@ -48,10 +49,11 @@ TREES = ['base', 'master', 'feature'] + CANDIDATES
 VERSIONS = [v for t in TREES for v in [t, t + '-arena'] if any(r['version'] == v for r in receipts)]
 treeOf = lambda v: v.removesuffix('-arena')
 storageOf = lambda v: 'arena' if v.endswith('-arena') else 'object'
-LIKE_FOR_LIKE = [('feature', 'base'), ('feature-arena', 'base-arena'), ('master', 'base'), ('feature', 'master')] + [p for c in CANDIDATES for p in [(c, 'base'), (c + '-arena', 'base-arena'), (c, 'feature'), (c + '-arena', 'feature-arena')]]
+NULL_PAIRS = [('master', 'base'), ('master-arena', 'base-arena')]
+LIKE_FOR_LIKE = [('feature', 'base'), ('feature-arena', 'base-arena')] + NULL_PAIRS + [('feature', 'master')] + [p for c in CANDIDATES for p in [(c, 'base'), (c + '-arena', 'base-arena'), (c, 'feature'), (c + '-arena', 'feature-arena')]]
 CROSS_STORAGE = [('feature-arena', 'base'), ('feature-arena', 'master')] + [(c + '-arena', 'base') for c in CANDIDATES]
 PAIRS = [(a, b) for a, b in LIKE_FOR_LIKE + CROSS_STORAGE if a in VERSIONS and b in VERSIONS]
-AGAINST_BASE = [(a, b) for a, b in PAIRS if b in ('base', 'base-arena') and a != 'master' and storageOf(a) == storageOf(b)]
+AGAINST_BASE = [(a, b) for a, b in PAIRS if b in ('base', 'base-arena') and (a, b) not in NULL_PAIRS and storageOf(a) == storageOf(b)]
 GRAMMARS = ['python', 'rust', 'typescript', 'regex', 'scm']
 ROUNDS = 5
 assert IDENTITY in TREES, f"identity {IDENTITY} is none of {', '.join(TREES)}"
