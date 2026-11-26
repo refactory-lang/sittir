@@ -1,5 +1,5 @@
 export type * from './portable-build.ts';
-export type { PortableCondition, PortableFact, PortablePath, PortableReadEntry, PortableRows, PortableStep, PortableTable } from './portable-read.ts';
+export type { PortableCondition, PortableFact, PortablePath, PortableProjectRows, PortableReadEntry, PortableRows, PortableStep, PortableTable } from './portable-read.ts';
 
 /** A portable kind: one vocabulary path, the same object for every language. */
 export type PortableKind<Path extends string = string> = { readonly $path: Path };

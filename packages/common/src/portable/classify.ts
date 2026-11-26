@@ -8,7 +8,7 @@ import { entriesHolding, portablePathHasFacts, portableRowHasFacts, readableEntr
 
 type Node = { readonly $type: number };
 
-class Keyword {
+export class Keyword {
 	constructor(
 		readonly text: string,
 		readonly kind: number | undefined
@@ -141,16 +141,19 @@ const itemsOf = (node: object, [accessor, , keyword, storage, , blank, spellings
 	return Array.isArray(value) ? value : value === undefined ? [] : [value];
 };
 
+export const rowItems = (node: object, slot: QuerySlotEntry): readonly unknown[] => {
+	const [, , keyword, , keywordKind] = slot;
+	const items = itemsOf(node, slot).filter((item) => item !== null);
+	if (keyword === undefined) return items;
+	const present = new Keyword(keyword, keywordKind);
+	return items.flatMap((item) => (item === true ? [present] : []));
+};
+
 function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const itemsIn = (node: Node, subject: SlotSubject): readonly unknown[] => {
 		const number = subject.slots[node.$type];
 		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
-		if (slot === undefined) return [];
-		const [, , keyword, , keywordKind] = slot;
-		const items = itemsOf(node, slot).filter((item) => item !== null);
-		if (keyword === undefined) return items;
-		const present = new Keyword(keyword, keywordKind);
-		return items.flatMap((item) => (item === true ? [present] : []));
+		return slot === undefined ? [] : rowItems(node, slot);
 	};
 	const rendered = new WeakMap<object, string>();
 	const renderedText = (node: Node): string | undefined => {

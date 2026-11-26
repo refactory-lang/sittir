@@ -4,11 +4,15 @@ import { bindingPatternsInProcess, readBindingsInProcess, roundTripBindingsInPro
 import { exportedStringsInProcess } from './pinned-typescript.ts';
 import { vocabularyDeclaredInProcess, vocabularyFeatureIndexInProcess } from './pinned-vocabulary.ts';
 import type { PortableBuildTable } from '@sittir/types';
-import type { PortableEmitInput, PortableEmitOutput } from '../emitters/overlays/portable/emit-input.ts';
-import { EMITTER_ENTRY, PINNED_READER_MARKER, type PinnedInput, type PinnedOutput, type PinnedReaderMode, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
+import type { PortableEmitInput, PortableEmitOutput, PortableProjectInput, PortableProjectOutput } from '../emitters/overlays/portable/emit-input.ts';
+import { EMITTER_ENTRY, PINNED_READER_MARKER, PROJECTION_ENTRY, type PinnedInput, type PinnedOutput, type PinnedReaderMode, type PinnedReaderReply, type PinnedReaderRequest } from './read.ts';
 
 interface PortableEmitter {
 	readonly emitPortableBuildInProcess: (input: PortableEmitInput<PortableBuildTable>) => Promise<PortableEmitOutput>;
+}
+
+interface PortableProjector {
+	readonly emitPortableProjectionInProcess: (input: PortableProjectInput<PortableBuildTable, unknown>) => Promise<PortableProjectOutput>;
 }
 
 const READS: { readonly [M in PinnedReaderMode]: (input: PinnedInput<M>) => Promise<PinnedOutput<M>> } = {
@@ -18,7 +22,8 @@ const READS: { readonly [M in PinnedReaderMode]: (input: PinnedInput<M>) => Prom
 	vocabularyDeclared: vocabularyDeclaredInProcess,
 	vocabularyFeatureIndex: vocabularyFeatureIndexInProcess,
 	exportedStrings: exportedStringsInProcess,
-	portableBuild: async (input) => ((await import(EMITTER_ENTRY.href)) as PortableEmitter).emitPortableBuildInProcess(input)
+	portableBuild: async (input) => ((await import(EMITTER_ENTRY.href)) as PortableEmitter).emitPortableBuildInProcess(input),
+	portableProject: async (input) => ((await import(PROJECTION_ENTRY.href)) as PortableProjector).emitPortableProjectionInProcess(input)
 };
 
 const run = <M extends PinnedReaderMode>({ mode, input }: PinnedReaderRequest<M>): Promise<PinnedOutput<M>> => READS[mode](input);

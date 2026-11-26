@@ -859,3 +859,7 @@ The name of a grammar's node union, `<Prefix>Node` (`RustNode`, `TypescriptNode`
 ### `packages/codegen/src/grammars.ts::PORTABLE_TABLE_FILE`
 
 Where a grammar package keeps its portable build table, beside the generated build module: `portable/table.ts`. The build hook's loader, the tools' delimiter spellings and the grammar-internals module list read the table there.
+
+### `packages/codegen/src/grammars.ts::PORTABLE_PROJECT_FILE`
+
+Where a grammar package's generated projection is written, beside its build module: `portable/project.ts`. `runCodegen` writes it when the grammar has a portable build and removes it when it has none.

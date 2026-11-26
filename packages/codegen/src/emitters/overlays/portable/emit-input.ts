@@ -47,3 +47,15 @@ export interface PortableEmitOutput {
 	readonly text: string;
 	readonly diagnostics: readonly PortableEmitDiagnostic[];
 }
+
+export interface PortableProjectInput<Table, Rows> {
+	readonly grammar: string;
+	readonly kinds: Readonly<Record<number, string>>;
+	readonly table: Table;
+	readonly rows: Rows;
+	readonly imports: { readonly kinds: string; readonly utils: string };
+}
+
+export interface PortableProjectOutput {
+	readonly text: string;
+}

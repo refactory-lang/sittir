@@ -27,7 +27,7 @@ import { generateWithDerivedConflicts } from './transpile/conflict-driver.ts';
 import { assertGrammarRuntimeFloor } from './transpile/tree-sitter-cli.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { manifestPath, recordNativeBuild, recordedGeneration, sourceFingerprint, writeManifestForGrammar, type SourceFingerprint } from './scripts/generated-manifest.ts';
-import { GRAMMAR_ENTRY, NODE_MODEL_FILE, REPO_ROOT, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_TABLE_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
+import { GRAMMAR_ENTRY, NODE_MODEL_FILE, REPO_ROOT, PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_PROJECT_FILE, PORTABLE_TABLE_FILE, PORTABLE_NODE_MODEL_FILE, PORTABLE_SURFACE_FILE, grammarPackage, isGrammar, nativeCrateDir, nativeCrateRelDir, parserNameOf, sittirDirOf, type GrammarPackage } from './grammars.ts';
 import { conflictResolutionsPath } from './transpile/conflict-resolutions-file.ts';
 import { nativeCrateFiles } from './emitters/native-crate.ts';
 import type { NodeMap } from './compiler/types.ts';
@@ -381,6 +381,8 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	else await writeFile(join(outDir, PORTABLE_TABLE_FILE), result.portableTable);
 	if (result.portableBuild === undefined) rmSync(join(outDir, PORTABLE_BUILD_FILE), { force: true });
 	else await writeFile(join(outDir, PORTABLE_BUILD_FILE), result.portableBuild);
+	if (result.portableProject === undefined) rmSync(join(outDir, PORTABLE_PROJECT_FILE), { force: true });
+	else await writeFile(join(outDir, PORTABLE_PROJECT_FILE), result.portableProject);
 	await writePortableTyped(sittirDir, result.portableTyped);
 	if (result.portableBuild === undefined) rmSync(join(sittirDir, PORTABLE_BUILD_TSCONFIG), { force: true });
 	const emitDiagnostics = [...result.emitDiagnostics, ...(result.portableBuild === undefined ? [] : await portableBuildTypeDiagnostics(grammar, sittirDir, join(outDir, PORTABLE_BUILD_FILE)))];

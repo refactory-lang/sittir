@@ -1289,9 +1289,33 @@ Creates the portable runtime for a language.
 
 The text of a portable value, or undefined when the value has none.
 
+### `packages/common/src/portable/classify.ts::Keyword`
+
+A keyword a slot holds, as a query plan and a read see it: the keyword's text and its kind id, if it has one. A slot that stores `true` for a present keyword reads as one `Keyword` (`rowItems`), so a text or kind test treats it like a token, and the projection's `kindOf` and `textOf` read its kind and text.
+
+### `packages/common/src/portable/classify.ts::Keyword::constructor`
+
+Takes the keyword's text and kind id from the query slot row that names the keyword.
+
+### `packages/common/src/portable/classify.ts::rowItems`
+
+A node's items in one query slot row, without `null` holes. For a row that names a keyword, `true` reads as that row's `Keyword` and anything else as no item. The classifier's plans and a generated projection both read slot items through it, so a keyword reads one way in both.
+
 ### `packages/common/src/portable/facts.ts::portableRowHasFacts`
 
 Whether a read lands at or under a path's row: at or under the path itself (`portablePathHasFacts`), or at or under one of the row's `targets`, what the aliases the language holds at or beneath the path reach. `readsAs` asks it of a row its kinds do not decide, and `emitPortableSurface` asks it when stamping `exact`, so the guard and the stamp read an alias one way.
+
+### `packages/common/src/portable/facts.ts::SeatText`
+
+The parts of a seat a text's read depends on: its token texts, leaf, pattern, `text`, `texts` and `contents`. `rebuilds`, `spelledText` and `tokenText` take only these, so a generated projection interns seats without their routes or containers.
+
+### `packages/common/src/portable/facts.ts::rebuilds`
+
+Whether a node's text, read as that text, builds the node's kind again in the seats it is read through. Outside a seat, or where a seat lists the kind's token (`tokenText`), it always does. Otherwise the leaf seat that spells the text (`leafSeatOf`) decides, by whether its `texts` include the kind; with no leaf seat, a seat that takes text (`text: true`) does.
+
+### `packages/common/src/portable/facts.ts::spelledText`
+
+A node's text as its read: the text itself where it rebuilds in its seats (`rebuilds`); else, when a path builds the kind as text (`built`), that path with the text as `$value`; else none, and the reader keeps the node. Today's read and a generated projection both read a text through it.
 
 ### `packages/common/src/portable/read.ts::PortableCarry`
 
@@ -1469,11 +1493,7 @@ Walks one slot value. An array is walked item by item. An object is verified onl
 
 ### `packages/common/src/portable/project.ts::Node`
 
-What a generated projection reads a node as: anything with a numeric `$type`, the kind id it switches on. Its slots are read through `slotOf` and `stored`, so the projection works the same over the object and arena storages.
-
-### `packages/common/src/portable/project.ts::Other`
-
-The read a generated projection hands a node to when it doesn't project it (a kind outside its paths, or a path that needs a feature it didn't emit), with the node's container when it has one.
+What a generated projection reads a node as: anything with a numeric `$type`, the kind id it switches on. Its slots are read through `slotOf` and `rowItems`, so the projection works the same over the object and arena storages.
 
 ### `packages/common/src/portable/project.ts::Found`
 
@@ -1499,21 +1519,13 @@ Whether a slot's value is there: not `undefined`, not `null`, and not an empty l
 
 A node's slot by its key, through `slotReader`, so it reads the same over either storage; a reader that is a function is called on the node. A value that isn't a node has no slots.
 
-### `packages/common/src/portable/project.ts::storedTrue`
-
-A node's stored slot by its accessor and storage key (`storedSlotRead`), as stored. A keyword slot reads `true` when its keyword is there, which a flag plan tests. A value that isn't a node reads nothing.
-
-### `packages/common/src/portable/project.ts::stored`
-
-A node's stored slot as a list of its items: a list without its `null` holes, one value as a list of one, an absent slot as the empty list. A query plan's subject reads its items through it.
-
 ### `packages/common/src/portable/project.ts::textOf`
 
-A value's text: a string is itself, a node is its source text (`sourceTextOf`), anything else has none.
+A value's text: a string is itself, a `Keyword` its keyword's text, a fixed token (a kind id) its text in the grammar's fixed-text table, a node its source text (`sourceTextOf`); anything else has none. The table is the generated module's `FIXED`, so a token a slot holds as its kind id reads the text today's read gives it.
 
 ### `packages/common/src/portable/project.ts::texts`
 
-The texts of a list of items (`textOf`), leaving out items that have none.
+The texts of a list of items (`textOf`, with the fixed-text table), leaving out items that have none.
 
 ### `packages/common/src/portable/project.ts::one`
 
@@ -1527,21 +1539,9 @@ A list of exactly one item as itself, any other list as the empty list: the `onl
 
 One step of a slot route's walk: reads the slot from a node, or from each node of a list, flattening what the list's nodes reach. When the step names kinds, it keeps only the items of those kinds, and a single value of another kind reaches nothing.
 
-### `packages/common/src/portable/project.ts::seated`
-
-A seat resolver's result for a value that fits a seat, with whether the seat holds many. When the value and its holder are both nodes it records the holder, so `readValue` can give the item its container, as today's read gives an item the node that encloses it.
-
 ### `packages/common/src/portable/project.ts::joined`
 
 Joins a seat resolver's results for the items of a list: their values flattened into one list, holding many if any part does.
-
-### `packages/common/src/portable/project.ts::pick`
-
-Chooses a slot's value among its routes' results: leaving out routes that reached nothing or `null`, the first whose value fit a seat, else the first that reached anything.
-
-### `packages/common/src/portable/project.ts::readValue`
-
-Reads a slot's value item by item, or as one item, with the reader the slot was emitted with. Each node item is read with the holder `seated` recorded for it as its container.
 
 ### `packages/common/src/portable/project.ts::place`
 
@@ -1566,3 +1566,107 @@ An integer literal's `$value` from its parsed value: a `bigint` when the arm's s
 ### `packages/common/src/portable/project.ts::floatOf`
 
 A float literal's `$value`: its text with `_` digit separators removed, read as a number when it is plain decimal digits with an optional point and exponent and the result is finite, else none.
+
+### `packages/common/src/portable/project.ts::Seats`
+
+The seats a generated projection reads a value through, as the module interns them (`SEATS<n>`): each seat cut to the parts a text's read depends on (`facts.ts::SeatText`), so the module carries no seat's routes or containers.
+
+### `packages/common/src/portable/project.ts::Routed`
+
+What a generated route function (`route<n>`) returns for one slot route: the value it reached, whether that value fit a seat (`fitted`), and `extra`, the slot's key when a route that takes one item reached more than one. A chosen candidate with `extra` makes the node's read keep the node, as today's read records `extra` in its frame and returns an `unread` carry.
+
+### `packages/common/src/portable/project.ts::Candidate`
+
+One route's value for a slot, as a generated path case lists it for `fill`: the slot's name, what the route reached (`Routed`, or none), the seats the value is read through, the route's depth (its step count), and the route's `requires`, groups of slot names of which each group needs one chosen.
+
+### `packages/common/src/portable/project.ts::kindIn`
+
+Whether a value's kind id (`kindOf`) is in a set of kind ids. A value with no kind id is in none.
+
+### `packages/common/src/portable/project.ts::itemsAt`
+
+A slot's items (`rowItems`, with the slot's query row) on a value that is a node of the given kind; any other value has none. A generated plan reads the items of a subject whose kind its step fixes through it.
+
+### `packages/common/src/portable/project.ts::holderOf`
+
+The container a seat resolver found a node in (recorded by `enclose`), or none. A generated read places the node's facts from that container's items and reads the routes it holds for the node there, as today's read uses the node's enclosing node.
+
+### `packages/common/src/portable/project.ts::flagsSetOn`
+
+The flags the container a node was found in sets on it (recorded by `enclose`), which a generated read adds to the node's `$flags` after the flags its own arm reads.
+
+### `packages/common/src/portable/project.ts::holdsKey`
+
+Whether an object has a key, its own or through its prototype (`in`). A generated seat resolver tells a slot a node has but left empty (vacant) from one it doesn't have, and a generated path case tells a slot it has already written from one it hasn't.
+
+### `packages/common/src/portable/project.ts::enclose`
+
+Records, when a seat resolver's result is a node, the container it was found in (`holderOf`) and the flags that container's `sets` give a node of its kind (`facts.ts::setsOn`, read by `flagsSetOn`), and returns the result unchanged. It is how a generated read gives an item the enclosing node and container flags today's read gives it.
+
+### `packages/common/src/portable/project.ts::fits`
+
+Whether a value fits a seat's kinds: a node or keyword whose kind id is among them, or a fixed token (a kind id) wherever the seat names any kind.
+
+### `packages/common/src/portable/project.ts::leafFits`
+
+Whether a value fits a leaf seat: a node with its own text (`nodeText`).
+
+### `packages/common/src/portable/project.ts::unclaimedText`
+
+The text a node no path claims reads as in the seats it is read through: the token's text where a seat lists the kind (`tokenText`), else the text of the slot a seat's `contents` names for the kind, else the node's own text where it rebuilds in those seats (`rebuilds`). Outside a seat it has none, and the generated read keeps the node, as today's read returns an `unclaimed` carry.
+
+### `packages/common/src/portable/project.ts::choose`
+
+Picks one candidate per slot name, as today's read picks among a path's routes. Candidates that reached nothing or `null` are dropped. Each name's candidates are ordered with fitted values first, and the deeper route first among fitted ones. Then each name takes its first candidate whose `requires` groups each hold a name that has a candidate, and this repeats over the names taken until no name drops out.
+
+### `packages/common/src/portable/project.ts::fill`
+
+Writes each slot's chosen candidate (`choose`) into a structure, in the order the slots first appear among the candidates, reading the value with the given read in the candidate's seats. Returns the first chosen candidate's `extra`, if any, which makes the generated read keep the node.
+
+### `packages/common/src/portable/project.ts::templated`
+
+Fills a structure's slots from each read flag's template: the template's `match` runs on the text of the slot it names, and each hole is set to its named group. A flag whose slot text doesn't match throws, naming the path, slot and flag; a template whose slot isn't a text is skipped. Today's read and a generated projection both apply flag templates through it.
+
+### `packages/common/src/portable/project.ts::Spellings`
+
+Each delimiter kind's spellings, by kind id and facet: a spelled text to the slot it names, the map `spelledMember` reads. A generated module interns the build table's delimiter spellings as one `SPELLINGS` constant.
+
+### `packages/common/src/portable/project.ts::walkSteps`
+
+Walks a preset's steps from a value. Each step reads its slot (through `storedSlotRead` when it names a storage key) and, when it names kinds, keeps only items of those kinds. A list is walked item by item, flattening what each reaches. A step that names a builder and reaches a list skips the step after it, since the list's items are what that step reads. Nothing is reached once a step finds nothing.
+
+### `packages/common/src/portable/project.ts::contradicted`
+
+Whether a node's slots contradict any of an arm's presets, so the arm can't be what built it. A text preset is contradicted when the single value its steps reach has a text that, as its delimiter spells it (`spelledMember`), is outside the preset's `among` (or its own text). A kind preset is contradicted when that value is of another kind. A preset that states neither, ends in a mounted step, or reaches nothing or a list contradicts nothing. A generated path case writes one case for each set of preset arms that holds, choosing among them with it.
+
+### `packages/common/src/portable/project.ts::Closer`
+
+A closing delimiter a path's content reads, keyed in a generated module's `CLOSERS<n>` by the delimiter's kind id: the facet its text is read from, the slot the text fills, the kind id the text is read as, the seats it is read in, and the path that builds that kind as text (`built`), if one does.
+
+### `packages/common/src/portable/project.ts::closerTexts`
+
+The texts a list of items spell through the facet their kind names: a content arm's text takes each closing delimiter's facet text in order. An item whose kind names no facet, and an empty or missing text, are left out.
+
+### `packages/common/src/portable/project.ts::closersInto`
+
+Adds each closing delimiter among the items to a structure: an item whose kind has a `Closer` and whose facet spells a non-empty text adds that text read as the closer's kind (`facts.ts::spelledText`) to the closer's slot, a second value making the slot a list. A text that reads as neither is left out.
+
+### `packages/common/src/portable/project.ts::slotsText`
+
+The texts of a node's slots, by the keys given, joined in that order; none when any slot has no text. A scalar arm whose `numeric` names the slots its number is spelled across reads the number's text through it, then as an integer or a float.
+
+### `packages/common/src/portable/project.ts::decimalOf`
+
+A float literal's `$value` from the slots its decimal parts name (integer, fraction, exponent and the exponent's sign): `floatOf` reads `<integer>.<fraction>e<sign><exponent>`, a missing integer or fraction reading as `0` and a missing exponent leaving the exponent out.
+
+### `packages/common/src/portable/project.ts::delimited`
+
+Whether any item is a node whose `delimiter` stamp shares a bit with the given delimiter mask: what a query plan's `delimiter` test compiles to.
+
+### `packages/common/src/portable/project.ts::readOnlySpelled`
+
+Whether any item is a delimiter spelled read-only: for an item whose kind has read-only facets, one facet's text, as the delimiter spells it (`spelledMember`), names one of that facet's read-only slots. A generated read checks the slots that can hold such a delimiter first and keeps the node when one does, as today's read returns a `readOnly` carry.
+
+### `packages/common/src/portable/project.ts::sameText`
+
+Whether two lists of texts are each exactly one text, and the same one: a `same` fact's test, comparing the text an item's steps reach with the text the node's steps reach (a python setter's decorator names the property it sets).

@@ -543,19 +543,30 @@ Each kind whose readable entries hold a test-less one whose path builds none of 
 
 One spelling of a fact a container spells, from the read entry whose tests on the container name it: the item those tests reach (its own text, or the slots they test, each a text or a nested item), and a hole for each slot a capture fills. Every spelling also carries its text, rendered in the same codegen run from the render bodies of the item's kinds (`EmittedTemplates.bodies`): each body's text parts and placed slots in order, its seams written as nothing, and split where a hole's slot sits (`['', '.setter']` for `@x.setter`; one part for a spelling with no holes). That text is the spelling the reader records at the fact, so a build can tell `@override` from `@typing.override`, and the grammar map types `$at` from it. Word characters are checked for meeting only between parts no hole separates. A slot the item states that its kind's body never places, a body part that spells no one text (a gate, a space, a token seam), or two parts whose word characters would meet once its seams are written as nothing refuses the spelling, naming the kind.
 
-### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::PortableProjectInput`
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableProjectInput`
 
-What the projection emitter reads for one grammar: the paths whose kinds it projects; each kind's name by kind id (what `K.<name>` writes); the build table (each path's arms, slot routes and seats); the read rows (query slots, facts, flag plans); each kind's readable entries in order, each with `refinedBy`, the indices of the entries that refine it; and the module specifiers the generated file imports its kind ids and run-time helpers from. The caller computes `refinedBy` with common's `readableEntries` and `portablePathHasFacts`, so the generated classification picks the entry today's read picks.
+What the projection emitter reads for one grammar: the grammar's name; each kind's name by kind id (what `K.<name>` writes); the build table (each path's arms, slot routes and seats); the read rows (`PortableProjectRows`); and the module specifiers the generated file imports its kind ids and run-time helpers from. The table and rows are type parameters, so this import-free module names neither shape. The pinned reader's `portableProject` mode (`bindings/read.ts`) names the table and carries the rows untyped: `read.ts` is in codegen's build and in the pinned program, and the pinned `@sittir/types` predates `PortableProjectRows`. `emitPortable`, which builds the rows, and the emitter, which reads them, name them.
 
-### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::PortableProjectOutput`
+### `packages/codegen/src/emitters/overlays/portable/emit-input.ts::PortableProjectOutput`
 
-The rendered projection module and the features it did not emit, one line each (a preset, a route that requires another slot, a number read from slots, a content arm, a refined seat, a `same` fact, a delimiter plan). A kind whose path needs one of them still reads through the `other` read it is given.
+The rendered projection module's text, which `runCodegen` writes to the grammar package's `PORTABLE_PROJECT_FILE`.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::emitPortableProjection`
 
-Writes a grammar's projection, through the pinned builders: a default-exported `projection(other)` that returns `project(node, container?)`, which reads a node of a projected kind as today's portable read does and hands every other node to `other`. Inside it, one `read<Kind>` per projected kind places the kind's facts, tests its readable entries and picks the path (a placed fact's path first, else the first holding entry no holding entry refines), then switches on the path to assemble `$path`, `$flags`, `$at` and each slot. A flag the arm can't read (its plan holds, or a placed fact names it) sends the node to `other`.
+Writes a grammar's projection through the pinned builders: a module exporting `project(value, seats?)`, which reads a value as today's portable read does. A list reads item by item. A fixed token (a kind id) reads as the path its literal arm builds when it has one, else as its token text in the seats, else itself. A value that isn't a node is itself, a node of a kind some read entry names goes to its `read<Kind>`, and any other node reads as its unclaimed text (`unclaimedText`) or stays a node.
 
-What would repeat is written once and shared: kind sets are `KINDS<n>` constants, seat resolvers (`seats<n>`) and route functions (`route<n>`) are named by what they read rather than by kind, path and slot, a slot's fixed tokens share one item reader (`items<n>`), and a slot with none reads its items through `project` itself. Within `read<Kind>` the node's kind is known, so its slot reads take that kind's slot with no kind test, each once (`slot<n>`).
+`read<Kind>` keeps the node when a slot that can hold a read-only delimiter holds one (`readOnlySpelled`). It places the facts its container holds for it (`place`, a `same` fact compared with `sameText`), tests its readable entries and picks the path: a placed fact's path first, else the first holding entry that no holding entry refines. Then it switches on the path. A path case writes one case for each set of the path's preset arms the node's slots don't contradict (`contradicted`). Each case reads, in order:
+- a literal arm as its value;
+- a scalar arm's number, from its text, its slots or its decimal parts;
+- a content arm's text, with its closing delimiters' texts;
+- a text arm's text (`spelledText`);
+- otherwise a structure of `$path`, the flags its arms read plus those its container sets (`flagsSetOn`), `$at`, and each slot from its routes' candidates (`fill`), then the routes its container holds for it, the empty lists, the closing delimiters (`closersInto`) and the flag templates (`templated`).
+
+A flag its arms can't read, or a candidate that reached more than one item for a one-item slot, keeps the node. When no path case returns, a container kind read outside any seat reads as its one element in the seats its container slot gives, and any other node as its unclaimed text or itself. The module keeps no node for an opaque token or an unread slot.
+
+What would repeat is written once and shared. Kind sets (`KINDS<n>`), query rows (`ROW<n>`), seats (`SEATS<n>`), container sets, presets, templates, closers and facets are interned constants. Seat resolvers (`seats<n>`) and route functions (`route<n>`) are named by what they read, not by kind, path and slot. A seat that takes only a refinement of a path tests a value through `classify`, which goes to a `classify<Kind>` for each kind such a seat can hold. Within `read<Kind>` the node's kind is known, so its slot reads take that kind's query row with no kind test, each once (`slot<n>`).
+
+A kind that reads as a path through more than three arms with presets is refused, naming the kind and the path, since a case is written for each set of them.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::emitPortableProjectionInProcess`
 

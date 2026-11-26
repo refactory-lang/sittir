@@ -10,7 +10,7 @@ import { type PinnedMemo, pinnedMemo, readerDigest } from './pinned-memo.ts';
 import { type BindingFacts, type BindingPattern, type BindingsRoundTrip, BindingsSyntaxError } from './facts.ts';
 import type { Declared, FeatureIndex } from './vocabulary.ts';
 import type { PortableBuildTable } from '@sittir/types';
-import type { PortableEmitInput, PortableEmitOutput } from '../emitters/overlays/portable/emit-input.ts';
+import type { PortableEmitInput, PortableEmitOutput, PortableProjectInput, PortableProjectOutput } from '../emitters/overlays/portable/emit-input.ts';
 
 export const PINNED_READER_MARKER = '\u0000sittir-pinned-reader\u0000';
 
@@ -22,6 +22,7 @@ export interface PinnedReaderModes {
 	readonly vocabularyFeatureIndex: { readonly input: string; readonly output: FeatureIndex };
 	readonly exportedStrings: { readonly input: string; readonly output: Readonly<Record<string, string>> };
 	readonly portableBuild: { readonly input: PortableEmitInput<PortableBuildTable>; readonly output: PortableEmitOutput };
+	readonly portableProject: { readonly input: PortableProjectInput<PortableBuildTable, unknown>; readonly output: PortableProjectOutput };
 }
 
 export type PinnedReaderMode = keyof PinnedReaderModes;
@@ -60,6 +61,8 @@ const requireFromHere = createRequire(import.meta.url);
 export const CHILD_ENTRY = fileURLToPath(new URL('./pinned-reader.child.ts', import.meta.url));
 
 export const EMITTER_ENTRY = new URL('../emitters/overlays/portable/emit/build.ts', import.meta.url);
+
+export const PROJECTION_ENTRY = new URL('../emitters/overlays/portable/emit/project.ts', import.meta.url);
 
 const CHILD_TSCONFIG = fileURLToPath(new URL('../../tsconfig.pinned.json', import.meta.url));
 
@@ -130,7 +133,7 @@ function askReader<M extends PinnedReaderMode>(mode: M, input: PinnedInput<M>): 
 function readsMemo(): PinnedMemo {
 	memo ??= pinnedMemo(
 		join(bootstrapDir(), PINNED_READS_DIR),
-		readerDigest(REPO_ROOT, [CHILD_ENTRY, fileURLToPath(EMITTER_ENTRY)].map((entry) => relative(REPO_ROOT, entry)), [relative(REPO_ROOT, CHILD_TSCONFIG), LOCKFILE])
+		readerDigest(REPO_ROOT, [CHILD_ENTRY, fileURLToPath(EMITTER_ENTRY), fileURLToPath(PROJECTION_ENTRY)].map((entry) => relative(REPO_ROOT, entry)), [relative(REPO_ROOT, CHILD_TSCONFIG), LOCKFILE])
 	);
 	return memo;
 }

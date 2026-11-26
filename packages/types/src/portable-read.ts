@@ -125,3 +125,21 @@ export interface PortableRows {
 	readonly querySlots: QuerySlots;
 	readonly flags: QueryFlags;
 }
+
+/**
+ * The read rows a grammar's projection is emitted from: the slots its plans name, each kind's flag plans and placed facts,
+ * each kind's readable entries in order with the indices of the entries that refine it, the text of each fixed token by kind id,
+ * each path's arms that build as text (by index), the seats each kind is read through when no path of its own claims it, the
+ * path each fixed token reads as, and the slots (by accessor) of each kind that can hold a delimiter token with read-only spellings.
+ */
+export interface PortableProjectRows<Seat> {
+	readonly querySlots: QuerySlots;
+	readonly flags: QueryFlags;
+	readonly facts: Readonly<Record<number, readonly PortableFact[]>>;
+	readonly entries: Readonly<Record<number, readonly (PortableReadEntry & { readonly refinedBy: readonly number[] })[]>>;
+	readonly fixedText: Readonly<Record<number, string>>;
+	readonly textBuilt: Readonly<Record<string, readonly number[]>>;
+	readonly unwrap: Readonly<Record<number, readonly Seat[]>>;
+	readonly numbers: Readonly<Record<number, string>>;
+	readonly readOnlyHolders: Readonly<Record<number, readonly string[]>>;
+}

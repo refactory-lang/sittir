@@ -3,7 +3,7 @@ import { byCodepoint, compositionOf, declaredFlags, textKind } from '../../../bi
 import type { NodeMap } from '../../../compiler/types.ts';
 import { findKindEntry, fixedTextKinds, kindDiscriminantExpr, type KindEnumEntry } from '../../kind-discriminant.ts';
 import type { QueryPlan } from '@sittir/types';
-import { PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, grammarNodeTypeName, moduleSpecifier } from '../../../grammars.ts';
+import { PORTABLE_BUILD_FILE, PORTABLE_MAP_FILE, PORTABLE_PROJECT_FILE, grammarNodeTypeName, moduleSpecifier } from '../../../grammars.ts';
 import { valueParseKindsOf } from '../../../compiler/model/node-map.ts';
 import { isSlotBearingCompound } from '../../shared.ts';
 import { membershipKindsOf } from '../../membership.ts';
@@ -12,19 +12,22 @@ import { flagPlansOf, slotFlagsOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
 import { familyCoverageOf } from './covered.ts';
 import type { Body } from '../../render-body.ts';
-import { ownTextClaimsOf, portableFactOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
+import { ownTextClaimsOf, portableFactOf, portableReadRowsOf, presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
+import { classifierOf, containerSlots, portablePathHasFacts, readableEntries, textBuilt } from '@sittir/common/engine';
+import { querySlotRows } from '../../client-utils.ts';
 import { emitPortableSurface } from './surface.ts';
 import { emitPortableTyped, type PortableTypedOutput } from './typed.ts';
 import { grammarMapName, scalarInputsOf, VOCABULARY_MODULE, type ScalarInput } from './grammar-map.ts';
 import type { ExactSet } from './exact.ts';
-import type { PortableBuildTable } from '@sittir/types';
-import type { PortableEmitInput, PortableEmitSlot } from './emit-input.ts';
+import type { PortableBuildTable, PortableProjectRows, PortableSeat } from '@sittir/types';
+import type { PortableEmitInput, PortableEmitSlot, PortableProjectInput } from './emit-input.ts';
 
 export interface PortableOutputs {
 	readonly nodeModel: string;
 	readonly surface: string;
 	readonly build: string;
 	readonly emit: PortableEmitInput<PortableBuildTable>;
+	readonly project: PortableProjectInput<PortableBuildTable, PortableProjectRows<PortableSeat>>;
 	readonly typed: PortableTypedOutput;
 	readonly pickDiagnostics: readonly PickDiagnostic[];
 }
@@ -78,6 +81,55 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 	});
 	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind, features: [...input.vocabulary.featuresOf(compositionOf(input.grammar))].sort(byCodepoint), factOf, readTest, flagsOf: (path) => declaredFlags(input.vocabulary, path), valueScalarOf: (path) => (input.vocabulary.kinds.has(path) ? input.vocabulary.slots(path).get('$value')?.scalar : undefined), bodies });
 	const coverage = familyCoverageOf({ routes, nodeMap, table: build.table, readTest, kindEntries });
+	const kindNumberOf = (kind: string): number => {
+		const id = typeOf(kind);
+		if (id === undefined) throw new Error(`portable: ${kind} has no kind id`);
+		return id;
+	};
+	const projectInputOf = (): PortableProjectInput<PortableBuildTable, PortableProjectRows<PortableSeat>> => {
+		const rows = portableReadRowsOf(routes.readEntries, readTest, factOf, kindNumberOf);
+		const querySlots = Object.fromEntries(querySlotRows(nodeMap));
+		const flags = Object.fromEntries([...plansByKind].map(([kind, plans]) => [kindNumberOf(kind), Object.fromEntries(plans)]));
+		const fixedText = Object.fromEntries(fixedTextKinds(nodeMap, kindEntries).map(([kind, text]) => [kindNumberOf(kind), text]));
+		const classify = classifierOf({ table: { paths: {}, entries: Object.fromEntries(rows.entries), facts: Object.fromEntries(rows.facts), fixedText, literals: [] }, querySlots, flags });
+		return {
+			grammar: input.grammar,
+			kinds: Object.fromEntries(kindEntries.map((entry) => [entry.id, entry.member])),
+			table: build.table,
+			rows: {
+				querySlots,
+				flags,
+				facts: Object.fromEntries(rows.facts),
+				fixedText,
+				textBuilt: Object.fromEntries(
+					Object.entries(build.table.paths).flatMap(([path, { arms }]) => {
+						const built = arms.flatMap((arm, i) => (textBuilt(build.table, arm) ? [i] : []));
+						return built.length === 0 ? [] : [[path, built]];
+					})
+				),
+				unwrap: Object.fromEntries([...containerSlots(build.table)].map(([kind, slots]) => [kind, [...new Set(slots.flatMap((slot) => slot.seats))]])),
+				readOnlyHolders: Object.fromEntries(
+					[...nodeMap.nodes.values()].flatMap((node) => {
+						const readOnly = new Set(Object.entries(build.table.delimiters ?? {}).flatMap(([kind, token]) => (token.readOnly === undefined ? [] : [Number(kind)])));
+						if (node.kindId === undefined || readOnly.size === 0) return [];
+						const accessors = node.slots.filter((slot) => membershipKindsOf(valueParseKindsOf(slot), nodeMap).some((kind) => readOnly.has(typeOf(kind) ?? -1))).map((slot) => slot.propertyName);
+						return accessors.length === 0 ? [] : [[node.kindId, accessors]];
+					})
+				),
+				numbers: Object.fromEntries([...rows.entries.keys()].flatMap((kind) => {
+					const path = classify(kind);
+					return path === undefined ? [] : [[kind, path]];
+				})),
+				entries: Object.fromEntries(
+					[...rows.entries].map(([id, read]) => {
+						const readable = readableEntries(read);
+						return [id, readable.map((entry) => ({ ...entry, refinedBy: readable.flatMap((other, j) => (other.path !== entry.path && portablePathHasFacts(entry.path, other.path) ? [j] : [])) }))];
+					})
+				)
+			},
+			imports: { kinds: moduleSpecifier(PORTABLE_PROJECT_FILE, 'kinds.ts'), utils: '@sittir/common/portable/utils' }
+		};
+	};
 	const typed = emitPortableTyped({ routes, input, nodeMap, kindEntries, readTest, table: build.table, presetCarried: build.presetCarried, covered: new Set(coverage.map(({ entry }) => entry)), totalIntegerReads: build.totalIntegerReads, freeTextClosedBy: build.freeTextClosedBy, flags: new Map([...plansByKind].map(([kind, plans]) => [kind, [...plans.keys()]])) });
 	return {
 		build: build.source,
@@ -101,6 +153,7 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 			decided: Object.fromEntries(typed.decided.map(([path, slotKinds]) => [path, Object.fromEntries(slotKinds)])),
 			tails: Object.fromEntries(typed.tails.map(([path, slotTails]) => [path, Object.fromEntries(slotTails.map(([slot, at]) => [slot, Object.fromEntries(at)]))]))
 		},
+		project: projectInputOf(),
 		typed,
 		pickDiagnostics: [
 			...build.diagnostics,

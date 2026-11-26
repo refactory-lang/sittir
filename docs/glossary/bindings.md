@@ -1045,6 +1045,10 @@ The path of the child module the pinned reader runs in: `pinned-reader.child.ts`
 
 The portable build emitter's module, as the URL the pinned child imports it from. TypeScript doesn't follow a URL specifier, so codegen's own program never types the emitter against the workspace builders, and the emitter's directory stays typed by the pinned build alone. The pinned-read memo digests the emitter's module closure beside the child's, so an emitter edit invalidates a stored emit.
 
+### `packages/codegen/src/bindings/read.ts::PROJECTION_ENTRY`
+
+The projection emitter's module, as the URL the pinned child imports it from for the `portableProject` mode. Like `EMITTER_ENTRY`, it keeps the emitter out of codegen's own program, so only the pinned build types it. The pinned-read memo digests its module closure beside the child's and the build emitter's, so an edit to the projection emitter invalidates a stored projection.
+
 ### `packages/codegen/src/bindings/facts.ts::bindingsPathIn`
 
 The `bindings.scm` of the grammar package in a directory. The one spelling of the file's name; compile and generate reach it through the package they were given.

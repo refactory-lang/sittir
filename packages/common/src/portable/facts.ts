@@ -70,7 +70,7 @@ export const builtFlags = (arm: PortableBuildArm): readonly string[] => [
 	...(arm.facts ?? []).flatMap((fact) => fact.flag ?? [])
 ];
 
-export const setsOn = (container: PortableContainer, kind: number): readonly string[] =>
+export const setsOn = (container: Pick<PortableContainer, 'sets'>, kind: number): readonly string[] =>
 	container.sets === undefined || (container.sets.elements !== undefined && !container.sets.elements.includes(kind)) ? [] : container.sets.flags;
 
 export const seatSets = (seat: PortableSeat, kind: number): readonly string[] => (seat.within ?? []).flatMap((container) => setsOn(container, kind));
@@ -102,9 +102,9 @@ export const containerSlots = (table: PortableBuildTable): ReadonlyMap<number, r
 
 export const isNumberSlots = (numeric: PortableBuildArm['numeric']): numeric is readonly string[] => Array.isArray(numeric);
 
-const tokenTexts = new WeakMap<PortableSeat, ReadonlyMap<number, string>>();
+const tokenTexts = new WeakMap<Pick<PortableSeat, 'tokens'>, ReadonlyMap<number, string>>();
 
-export function tokenText(kind: number, seats: readonly PortableSeat[] | undefined): string | undefined {
+export function tokenText(kind: number, seats: readonly Pick<PortableSeat, 'tokens'>[] | undefined): string | undefined {
 	for (const seat of seats ?? []) {
 		if (seat.tokens === undefined) continue;
 		let texts = tokenTexts.get(seat);
@@ -124,11 +124,22 @@ export function tokenKind(text: string, seats: readonly PortableSeat[]): number 
 
 const patterns = new WeakMap<NonNullable<PortableSeat['pattern']>, RegExp>();
 
-export const spells = (seat: PortableSeat, text: string): boolean => {
+export const spells = (seat: Pick<PortableSeat, 'pattern'>, text: string): boolean => {
 	if (seat.pattern === undefined) return true;
 	const regex = patterns.get(seat.pattern) ?? patterns.set(seat.pattern, new RegExp(seat.pattern.source, seat.pattern.flags)).get(seat.pattern)!;
 	return regex.test(text);
 };
 
-export const leafSeatOf = (text: string, seats: readonly PortableSeat[]): PortableSeat | undefined =>
+export const leafSeatOf = <S extends Pick<PortableSeat, 'leaf' | 'pattern'>>(text: string, seats: readonly S[]): S | undefined =>
 	seats.find((seat) => seat.leaf !== undefined && spells(seat, text)) ?? seats.find((seat) => seat.leaf !== undefined);
+
+export type SeatText = Pick<PortableSeat, 'tokens' | 'leaf' | 'pattern' | 'text' | 'texts' | 'contents'>;
+
+export const rebuilds = (kind: number, text: string, seats: readonly SeatText[] | undefined): boolean => {
+	if (seats === undefined || tokenText(kind, seats) !== undefined) return true;
+	const leaf = leafSeatOf(text, seats);
+	return leaf === undefined ? seats.some((seat) => seat.text === true) : (leaf.texts ?? []).includes(kind);
+};
+
+export const spelledText = (kind: number, text: string, seats: readonly SeatText[] | undefined, built: string | undefined): unknown =>
+	rebuilds(kind, text, seats) ? text : built === undefined ? undefined : { $path: built, $value: text };

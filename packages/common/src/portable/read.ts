@@ -5,10 +5,11 @@ import { isErrorNode } from '../utils.ts';
 import { treeOf } from '../tree-token.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { containerSlots, isNumberSlots, leafSeatOf, setsOn, textBuilt, tokenText } from './facts.ts';
+import { containerSlots, isNumberSlots, rebuilds, setsOn, spelledText, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
+import { templated } from './project.ts';
 
 type Node = { readonly $type: number };
 
@@ -254,13 +255,8 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		const kind = kindOfValue(held);
 		return kind !== undefined && kind !== preset.kind;
 	};
-	const rebuilds = (kind: number, text: string, seats: readonly PortableSeat[] | undefined): boolean => {
-		if (seats === undefined || tokenText(kind, seats) !== undefined) return true;
-		const leaf = leafSeatOf(text, seats);
-		return leaf === undefined ? seats.some((seat) => seat.text === true) : (leaf.texts ?? []).includes(kind);
-	};
 	const spelledAs = (kind: number, path: string | undefined, arms: readonly PortableBuildArm[], text: string, seats: readonly PortableSeat[] | undefined): unknown =>
-		rebuilds(kind, text, seats) ? text : path !== undefined && arms.length > 0 && arms.every((arm) => textBuilt(table, arm)) ? { $path: path, $value: text } : undefined;
+		spelledText(kind, text, seats, path !== undefined && arms.length > 0 && arms.every((arm) => textBuilt(table, arm)) ? path : undefined);
 	const facetText = (token: object, facet: string): string | undefined => {
 		const held = accessed(token, facet);
 		return typeof held === 'string' ? held : textOf(held);
@@ -404,14 +400,15 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		for (const route of readArms.flatMap(readRoutesOf)) if ((route.list ?? route.multiple) && route.emptyContainer !== true && !(route.name in structure)) structure[route.name] = [];
 		for (const test of readArms.flatMap((arm) => arm.when)) if ('empty' in test) for (const name of test.empty) if (!(name in structure)) structure[name] = [];
 		closerContent(node, readArms, structure);
-		for (const flag of flags) {
-			const template = readArms.map((arm) => arm.flags[flag]?.template).find((found) => found !== undefined);
-			const text = template === undefined ? undefined : structure[template.slot];
-			if (template === undefined || typeof text !== 'string') continue;
-			const groups = new RegExp(template.match, 'u').exec(text)?.groups;
-			if (groups === undefined) throw new Error(`portable read: ${path}'s ${template.slot} ${JSON.stringify(text)} spells no ${flag}`);
-			for (const hole of template.holes) structure[hole] = groups[hole];
-		}
+		templated(
+			structure,
+			path,
+			flags,
+			Object.fromEntries(flags.flatMap((flag) => {
+				const template = readArms.map((arm) => arm.flags[flag]?.template).find((found) => found !== undefined);
+				return template === undefined ? [] : [[flag, template] as const];
+			}))
+		);
 		return structure;
 	};
 	const meaningfulText = (item: Node): string => {

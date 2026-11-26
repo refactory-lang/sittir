@@ -65,6 +65,7 @@ export interface GeneratedFiles {
 	portable: string | undefined;
 	portableTable: string | undefined;
 	portableBuild: string | undefined;
+	portableProject: string | undefined;
 	emitDiagnostics: readonly GrammarDiagnostic[];
 	is: string;
 	kindIds: string;
@@ -174,6 +175,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir), vocabulary);
 		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries, emitted.templates.bodies);
 		const portableModule = portable === undefined ? undefined : await runPinned('portableBuild', portable.emit);
+		const projectModule = portable === undefined ? undefined : await runPinned('portableProject', portable.project);
 		const emitDiagnostics = (portableModule?.diagnostics ?? []).map(
 			({ code, path, slot, message }): GrammarDiagnostic => ({ scope: 'grammar', grammar: cfg.grammar, code, severity: 'warning', canProceed: true, message: `${path}${slot === undefined ? '' : `.${slot}`}: ${message}` })
 		);
@@ -255,6 +257,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			portable: portable?.surface,
 			portableTable: portable?.build,
 			portableBuild: portableModule?.text,
+			portableProject: projectModule?.text,
 			portableTyped: portable?.typed,
 			emitDiagnostics: [...accessorClassDiagnostics(nodeMap, cfg.grammar, leadEffectsOf(raw.bindingEffects)), ...portableDiagnostics, ...emitDiagnostics],
 			is: emitted.is,

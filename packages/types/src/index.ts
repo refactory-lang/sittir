@@ -53,6 +53,7 @@ export type {
 	PortablePickTest,
 	PortablePlace,
 	PortablePreset,
+	PortableProjectRows,
 	PortableReadEntry,
 	PortableRows,
 	PortableSeat,
