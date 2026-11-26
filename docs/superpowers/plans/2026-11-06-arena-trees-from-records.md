@@ -444,11 +444,120 @@ Any new `pub` item among these is a row for the maintainer before code.
 
 ### Task 6f: A built root's edit is no slower in arena storage than in object storage
 
-**Status:** Step 2 in progress on `perf/arena-built-edit` (from master `f793d21c4`). Built red then green, each test counting what it removes: a release skips the side rows while the store holds none (`bcf373d2d`); a handle is told from another object by one load, its own key asked only when the load matches (`e4b2f195f`); a rebuild resolves its source's built record and its source identity once each (`536138d72`, `373335a2a`); a release walks with one set of buffers (`f7e1dea54`); and a built release is refused at once and crosses to native in one call per batch, as the maintainer ruled, with a reused leaf text crossing the waiting releases first (`e6fa5a5e6`), and an engine's dispose crossing what waits and throwing its refusal (`50298cf21`). The store carries a record's own sides onto its rebuild (`TriviaStore::carry_sides`, `b3b129cf1`); how JavaScript reaches it, and how far JavaScript stops holding side layout and bookkeeping, is with the maintainer. Addon and engine rows so far: `releaseBuilt(engine, batch: Float64Array)` in place of `releaseBuilt(engine, address, held, owned)`; the new `HELD_DROPPED`; `NativeEngineLike.releaseBuilt(address, held)` and `crossReleases()`; `BuiltRecords.release(at, held)` and `cross()`; the carry's row follows the maintainer's answer. Per root, local macOS arm, edit plus release, arena over object: plain 2.2 to 1.44, many names 2.5 to 1.68, commented 4.9 to 4.17; arena release 0.77 to 0.22 µs, its crossing included. On paired run 45878576050 (Neoverse-N2, `6e75d89be` against master `f793d21c4`), before the buffers and the batch: 1.49–1.66 plain, 2.07–2.19 many names, 3.30–3.63 with a comment on each root, and no row worse than master; paired run 45891775946 measures `e6fa5a5e6`. What remains: a comment carried through a native side read and write, which the native side carry the maintainer approved replaces with one addon call; interning each new name in `BuiltArena.entry`; then, only if a paired run still shows edit above object, folding the generated setter's two `liveAt` calls. Arena storage is the performance path, so an arena row above object storage's is a defect, and a row still above 1 when a PR lands continues in the next PR as work. Render, arena over object, is 0.49–0.56.
+**Status:** Step 2a, the side boundary's count and proposal, is written below and with the maintainer; no code past `TriviaStore::carry_sides` until it is approved. Step 2 in progress on `perf/arena-built-edit` (from master `f793d21c4`, master merged at `f061da032`). Built red then green, each test counting what it removes: a release skips the side rows while the store holds none (`bcf373d2d`); a handle is told from another object by one load, its own key asked only when the load matches (`e4b2f195f`); a rebuild resolves its source's built record and its source identity once each (`536138d72`, `373335a2a`); a release walks with one set of buffers (`f7e1dea54`); and a built release is refused at once and crosses to native in one call per batch, as the maintainer ruled, with a reused leaf text crossing the waiting releases first (`e6fa5a5e6`), and an engine's dispose crossing what waits and throwing its refusal (`50298cf21`). The store carries a record's own sides onto its rebuild (`TriviaStore::carry_sides`, `b3b129cf1`); the maintainer ruled that JavaScript holds no side layout or side bookkeeping, so the carry's JavaScript and its addon row wait on Step 2a. On paired run 45891775946 (Neoverse-N2, `e6fa5a5e6` against master `f793d21c4`), edit plus release, arena over object: 1.24–1.28 plain, 1.64–1.71 many names, 3.26–3.29 commented; against master's arena 0.66–0.88. Four rows were above master with their whole range, three of them object storage; paired run 45900422392 at `8c1dc6469` repeats them. Addon and engine rows so far: `releaseBuilt(engine, batch: Float64Array)` in place of `releaseBuilt(engine, address, held, owned)`; the new `HELD_DROPPED`; `NativeEngineLike.releaseBuilt(address, held)` and `crossReleases()`; `BuiltRecords.release(at, held)` and `cross()`; the carry's row follows the maintainer's answer. Per root, local macOS arm, edit plus release, arena over object: plain 2.2 to 1.44, many names 2.5 to 1.68, commented 4.9 to 4.17; arena release 0.77 to 0.22 µs, its crossing included. On paired run 45878576050 (Neoverse-N2, `6e75d89be` against master `f793d21c4`), before the buffers and the batch: 1.49–1.66 plain, 2.07–2.19 many names, 3.30–3.63 with a comment on each root, and no row worse than master; paired run 45891775946 measures `e6fa5a5e6`. What remains: a comment carried through a native side read and write, which the native side carry the maintainer approved replaces with one addon call; interning each new name in `BuiltArena.entry`; then, only if a paired run still shows edit above object, folding the generated setter's two `liveAt` calls. Arena storage is the performance path, so an arena row above object storage's is a defect, and a row still above 1 when a PR lands continues in the next PR as work. Render, arena over object, is 0.49–0.56.
 
 - [x] **Step 1:** find the cause, with numbers from both storages on the construction workload.
+- [ ] **Step 2a:** count every place JavaScript touches side layout or side bookkeeping and propose the boundary the spec bullet "JS holds no side layout or side bookkeeping" draws (below). The maintainer approves it before any code past `TriviaStore::carry_sides`; the commented case's bar and interning wait on it.
 - [ ] **Step 2:** fix it red then green, each test counting the work it removes.
 - [ ] **Step 3:** a paired run on the arm runner: every built-root edit row, arena over object, at most 1, and no other row worse than master.
+
+#### Step 2a: the side boundary, counted and proposed
+
+The count is read from the code at `f061da032`, every row at the file and lines named. Scope is arena records, built and read. Object storage's nodes hold their trivia as their own data, and its tree functions by tree id (`triviaSide`, `writeTriviaSide`, `unitSides`, `editedWithin`, `engine.ts:150–187`, wired at `697–699`) are left as they are: the bullet names records, which object storage has none of (an assumption the maintainer confirms).
+
+**Count.**
+
+| # | where | what JavaScript does | crosses |
+|---|---|---|---|
+| 1 | `built-arena.ts:281–282` `SIDE_BITS`, `sideHolds` | a bit per side name; the read trees each side place holds | no |
+| 2 | `built-arena.ts:332–334` `#sided`, `#unitSided`, `#leafSited`; cleared at `469–471` | per chunk, which built records a write gave trivia sides, unit sides, leaf sides | no |
+| 3 | `built-arena.ts:326–327`, `376–387`, `476`, `1104–1111`, `1204–1209` `#readSides`, `#readUnits`, `sidesOf`, `unitsOf`, `wantsSides`, `keepSides`, `#forgetReadSides` | caches a read record's three sides and its unit sides, filled by a render | `readSides`, `readUnitSides` on a miss; `renderBuiltSides` fills it |
+| 4 | `built-arena.ts:397–424` the trivia table's closures | answers a built record's side from `#sided` before asking; sets the bits on a write | `builtTriviaSide`, `writeBuiltTriviaSide`, `builtUnitSides`, `writeBuiltUnitSides`, `writeReadTriviaSide` |
+| 5 | `built-arena.ts:479–532` `defer`, `settle`, `#undefer`, `#prune`; `#siteAlive` at `339` | work deferred per holder, the unit-side carry of a read source among it, run at the holder's next read or render | the deferred work's calls |
+| 6 | `built-arena.ts:651–657`, `679–700`, `855`, `868–899` `#parkOwn`, commit marks' `#parked`, `repark`, `#park`, `#parkedOf`, `#unpark`, `#eachParked` | an unplaced leaf's own sides, held on the leaf with a count of each record they name | no |
+| 7 | `built-arena.ts:912–926` `#copyCells(…, side)` from `copy` at `948` | copies the side word, word 1, and holds the side record | no |
+| 8 | `built-arena.ts:1166`, `1229–1238` `view` → `#copySites` | copies the source's unit and leaf sides, gated by `#unitSided` and `#leafSited` | `copyBuiltSites` |
+| 9 | `built-arena.ts:1196–1227` `#site`, `leafSites`, `writeLeafSide`, `leafSide`; `built-ref.ts:84–122`, `946` `placeLeaf`, `moveLeafSite`, `leafSitesOf`, `LEAF_SITES` | where a leaf sits, so a write on the leaf reaches each site; a leaf side read gated by `#leafSited` | `writeBuiltLeafSide`, `builtLeafSide` |
+| 10 | `built-arena.ts:1299–1358` `rebuiltFromRead`, `#rebuilt`, `#sidesNaming` | stamps the side record's `sides` field with the read node a record was rebuilt from, reading and copying the side record's field mask | no |
+| 11 | `built-arena.ts:1396–1452`, `1476–1487` `readEntries`, `readUnits`, `readOwnUnits`, `heldTree`, `sideEntryOf`, `holdSideEntries` | wraps side entries as views; keeps the read trees a side's coordinates name | no |
+| 12 | `utils.ts:140–170` `rebuilt` | the inner rule (`sideOf(…, 'inner')`); a built source's `writtenSides` read and `writeTrivia` back; `carryUnitSides` | `builtTriviaSide` and `writeBuiltTriviaSide` per written side; `readSides` for a read source |
+| 13 | `utils.ts:198–256` `writeTrivia`, `writeLeafSites`, `leafWireSides`, `wireSides`, `writeSites` | a `$trivia` write: picks leaf sites, the record, or parking; wires the entries; records their holds | `writeBuiltLeafSide`, `writeBuiltTriviaSide`, `writeReadTriviaSide` |
+| 14 | `utils.ts:258–291` `writeUnitSides`, `carryUnitSides`, `carryUnitSidesNow` | unit sides written and carried, realigned to the new items, deferred for a read source | `readUnitSides` and `writeBuiltUnitSides` in the deferred work |
+| 15 | `utils.ts:111–135`, `293–318`, `445–470` the `$trivia` accessors, `triviaWriter`, `triviaSide`, `triviaInner`, `handleTrivia` | `$trivia` reads and writes, and the inner rule on a write (`isEmptyNode`) | as rows 13 and 16 |
+| 16 | `node-data.ts:359–376` `tableAt`; `553–615` `sideOf`, `sideRead`, `sitedLeaf`, `siteSide`, `sidesOf`, `writtenSides` | where a node's side is answered: a leaf's site, the record's own, held trivia, else its source's (`placeOf`) | the reads of rows 3, 4 and 9 |
+| 17 | `node-data.ts:388–460` `unitSidesOf`, `heldUnitSides`, `setUnitSides`, `carriedUnitSides`, `realignedUnits` | a node's unit sides and their realignment between item lists | the unit-side reads |
+| 18 | `engine.ts:227–280` the 13 side members of `NativeEngineLike`; `745–747` a render asks `renderBuiltSides` while `wantsSides`; `892–908` `builtRecordsOf`'s side wiring | the addon rows | — |
+| 19 | `record-view.ts:71–84` `sideWordsAt`, `sideOf` | reads the side record's list settings, its delimiter and separator kind | no |
+
+Validators in `packages/tools` read sides through rows 16 and 17 (`writtenSides`, `sideOf`, `tableSides`) and keep reading through whatever those become: not checked one by one.
+
+**The side record.** It holds three things: the `sides` field (the node a rebuilt record names as its source, which the render reads for the sides and the layout the record doesn't hold), the list's delimiter, and its separator kind. The spec bullet names trivia sides, unit sides and leaf sites, not the side record. The code splits it: the delimiter and separator kind are list settings (`storeListOptions`, `sideWordsAt`). The `sides` field is the record's source identity, which `slotsOf` and `slotSeparatorOf` also follow (through `placeOf`), so it is not about sides alone. Neither the spec nor the code settles whether writing the `sides` field is side bookkeeping. Recommendation: the side record stays outside the boundary, and rows 7, 10 and 19 stay. That is the maintainer's call.
+
+**What native owns.**
+- Every row of built and read records: trivia sides, unit sides and leaf sides.
+- The header's gap codes, and the counts the rows hold.
+- The records a row names.
+- Unit sides' realignment and the inner rule.
+- A flag in the record's header word, `SIDED` beside `LINK`. Native sets it whenever it writes a row, a unit side, a leaf side or a gap code under the record or its sites, and at hydrate on a read record it placed any of those under. It is never cleared: a stale flag costs one call that finds nothing.
+
+**What JavaScript keeps.**
+- Addresses: a record's `$at`, and a leaf's placements as holder, word and item.
+- The entries a `$trivia` write hands over, as wire.
+- (Open question, row 6) an unplaced leaf's own entries until it is placed.
+
+**How JavaScript learns a record has nothing to carry.** It reads `SIDED` from the header word in the `$words` view it already holds: one load, no crossing. Every grammar has room for it. The kind field is 9 bits (python, rust, typescript) or 7 (regex, scm), then 2 flag bits, then 4 codes of 3 bits each, so at most 23 of 32 bits are used (checked).
+
+**After, per row.**
+
+| # | after |
+|---|---|
+| 1–4, 11 | gone: no side bits, caches or held trees in JavaScript. Native holds the records a row names; a coordinate entry from an object-storage read is refused by the store's `compact` today (read, not built). |
+| 5 | the unit-side carry is no longer deferred; whether other work still uses `defer` is not checked |
+| 6 | open: (a) an unplaced leaf keeps its entries and their counts until placed, with entries only and no layout; or (b) native gives an unplaced leaf a parked place, at one crossing per write. Recommendation (a). |
+| 7, 10, 19 | stay, pending the side record question |
+| 8, 12, 14 | one call at the rebuild's `view`, only when the source's header carries `SIDED`. Native carries the trivia sides and gap codes of a built source, the unit sides realigned to the new items, and the leaf sides of the kept sites. It applies the inner rule: it refuses inner comments once `to` holds a child, and writes an empty inner side over layout. |
+| 9 | the placement list stays (addresses); a leaf's side read and write become the general ones |
+| 13, 15 | a `$trivia` write hands native the record's address or the leaf's sites, the side and the entries; native adopts what they name and sets `SIDED`; an unplaced leaf parks (row 6) |
+| 16, 17 | a `$trivia` read asks native for one side of a record or a leaf site, or for a record's unit sides; native answers a rebuilt record's side from its source when it holds none, so JavaScript walks no fallback |
+| 18 | the addon rows below |
+
+**Addon rows** (arena only; object storage's are unchanged). Names are placeholders until the maintainer names them.
+
+| change | rows |
+|---|---|
+| removed (12) | `builtTriviaSide`, `writeBuiltTriviaSide`, `builtUnitSides`, `writeBuiltUnitSides`, `builtLeafSide`, `writeBuiltLeafSide`, `copyBuiltSites`, `readTriviaSide`, `writeReadTriviaSide`, `readUnitSides`, `readSides`, `renderBuiltSides` |
+| added (4) | a side read of a record or leaf site, its own or else its source's; a record's unit sides; a side write to a record or to leaf sites with the entries; the rebuild's carry from a source to its rebuild, skipping the patched words |
+| added constant | `RECORD_FLAG_SIDED`, beside `RECORD_FLAG_LINK` |
+| engine and arena | `NativeEngineLike`, `BuiltRecords.trivia` and `ReadNodes` lose their side members and gain the four |
+| unchanged | `renderBuilt`, `releaseBuilt`, `readEditedWithin` |
+
+**Crossings per edit, then per render of the edit.** "Today" was probed at `8c1dc6469` on local macOS by counting every addon call. "After" is the proposal, not built.
+
+| edit | today | after (not checked) |
+|---|---|---|
+| built, plain | 0, then 1 (`renderBuilt`) | 0, then 1 |
+| built, many names | 0, then 1 | 0, then 1 |
+| built, commented | 2 (`builtTriviaSide`, `writeBuiltTriviaSide`), then 1 | 1, then 1 |
+| read root `fn x() {}` | 1 (`readSides`), then 2 (`renderBuilt`, `readUnitSides`) | 0, then 1, if hydrate sets `SIDED` on no record of it (not checked) |
+| the same, rendered first | 0, then 2 | 0, then 1 |
+| read root `// c\nfn x() {}` | 1, then 2 | 0 or 1, by whether the comment is placed under the item's name or its parent's (not checked), then 1 |
+| read root with a unit side | 1, then 2 | 1, then 1 |
+
+**Release.** Measured locally at `8c1dc6469`, per root, which is the root and its edit (two handles):
+- plain: 0.08 µs in JavaScript (count drop, queue, handle checks) and 0.16 µs in the native flush;
+- commented: 0.13 µs and 0.54 µs.
+
+On the arm runner the totals are 0.38 µs plain and 0.97 µs commented per root. Their split there is not measured; at the local ratio it would be about 0.13 and 0.25 plain. The boundary changes neither part: release reads no side map in JavaScript (`#sweep` clears them per freed chunk, not per root), and the flush's side work, dropping a record's rows, is already native.
+
+```mermaid
+flowchart LR
+  subgraph JS[JavaScript]
+    H["handle: $at, $words view"]
+    L["leaf: placements (holder, word, item)"]
+    P["unplaced leaf: its entries (open question)"]
+    W["$trivia write: entries as wire"]
+  end
+  subgraph N[native]
+    S["side store: rows of trivia sides, unit sides, leaf sides; counts; realignment; inner rule"]
+    F["header word: SIDED flag, gap codes"]
+  end
+  H -- "reads SIDED: one load" --> F
+  H -- "rebuild, only when SIDED: carry from source to rebuild" --> S
+  W -- "write: address or sites, side, entries" --> S
+  L -- "sites for a leaf's write" --> W
+  H -- "$trivia read: one side" --> S
+  S -- "sets on any row or code" --> F
+```
 
 ### Task 7: The measurements
 
