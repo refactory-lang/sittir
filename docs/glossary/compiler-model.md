@@ -6271,7 +6271,7 @@ Whether the list's separator also comes after its last item: the elements slot's
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergedSlot`
 
-One slot from two of the same name: the values sequenced and deduplicated by kind, the delimiter flags joined, the source rule ids merged. The named one of the two is the merged slot's identity, whichever comes first. `mergeSlotsByName` folds same-named fields with it, and `mergeExclusiveSlots` folds same-named slots of exclusive arms.
+One slot from two of the same name: the values sequenced and deduplicated by kind, the delimiter flags joined, the source rule ids and the arm stamps merged (`mergeArmsHeld`). The named one of the two is the merged slot's identity, whichever comes first. `mergeSlotsByName` folds same-named fields with it, and `mergeExclusiveSlots` folds same-named slots of exclusive arms.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ruleChildren`
 
@@ -6331,6 +6331,10 @@ diagnostic (`nested-optional-branch`), which blocks.
 ### `packages/codegen/src/compiler/model/node-map.ts::SlotArms`
 
 Which arms of one required choice hold a slot, and whether each arm requires it. `choice` is the rule id of the choice whose arms the slot came from; `held` lists, per arm index, whether the slot is required inside that arm. A slot every arm holds carries an entry for each arm. Only a choice whose arms hold different slots is stamped, so a choice whose arms hold the same slots leaves its slots without one. The stamp is set where the arms merge and read by the factory emitter, which types the builder's config as one config per arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::mergeArmsHeld`
+
+Joins the arm stamps of two same-named slots that merge into one, whether `mergeChoiceArms` merges them across a choice's arms or `mergedSlot` folds them: the merged slot holds every arm either held, an arm held by both keeping the first's requiredness. A slot with no stamp takes the other's.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

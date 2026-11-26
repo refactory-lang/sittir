@@ -561,7 +561,8 @@ function mergedSlot([existing, f]: readonly [AssembledNonterminal, AssembledNont
 		hasLeadingDelimiter: existing.hasLeadingDelimiter || f.hasLeadingDelimiter,
 		trailingDelimiter: mergeDelimiterMode([existing.trailingDelimiter, f.trailingDelimiter]),
 		leadingDelimiter: mergeDelimiterMode([existing.leadingDelimiter, f.leadingDelimiter]),
-		sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
+		sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds),
+		arms: mergeArmsHeld([existing.arms, f.arms])
 	});
 }
 
@@ -1328,6 +1329,11 @@ export interface SlotCoOptional {
 export interface SlotArms {
 	readonly choice: RuleId;
 	readonly held: readonly { readonly arm: number; readonly required: boolean }[];
+}
+
+export function mergeArmsHeld([a, b]: readonly [SlotArms | undefined, SlotArms | undefined]): SlotArms | undefined {
+	if (a === undefined || b === undefined) return a ?? b;
+	return { choice: a.choice, held: [...a.held, ...b.held.filter((h) => !a.held.some((g) => g.arm === h.arm))] };
 }
 
 export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | undefined)[]): readonly RuleId[] {

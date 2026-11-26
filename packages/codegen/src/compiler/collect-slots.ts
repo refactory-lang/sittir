@@ -18,13 +18,13 @@ import {
 	type AssembleDiagnosticsCollector,
 	type DeriveCtx,
 	type NodeOrTerminal,
-	type SlotArms,
 	deriveValuesForRule,
 	dedupeValues,
 	extractSeparatorKindId,
 	extractSeparatorString,
 	foldedRequired,
 	isRequired,
+	mergeArmsHeld,
 	mergeDelimiterMode,
 	mergeSlotsByName,
 	mergeSourceRuleIds,
@@ -167,7 +167,7 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 					trailingDelimiter: mergeDelimiterMode([prev.trailingDelimiter, slot.trailingDelimiter]),
 					leadingDelimiter: mergeDelimiterMode([prev.leadingDelimiter, slot.leadingDelimiter]),
 					sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds),
-					arms: mergeArmsHeld(prev.arms, slot.arms)
+					arms: mergeArmsHeld([prev.arms, slot.arms])
 				})
 			);
 		}
@@ -178,11 +178,6 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 		instances.map((slot) => (isPresentInEveryArm(slot.name) ? slot : relaxToOptional(slot)))
 	);
 	return [...namedOut, ...unnamedOut];
-}
-
-function mergeArmsHeld(a: SlotArms | undefined, b: SlotArms | undefined): SlotArms | undefined {
-	if (a === undefined || b === undefined) return a ?? b;
-	return { choice: a.choice, held: [...a.held, ...b.held.filter((h) => !a.held.some((g) => g.arm === h.arm))] };
 }
 
 function stampArms(

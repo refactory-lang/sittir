@@ -7761,10 +7761,6 @@ A field over a sequence names that sequence's one named child: tree-sitter puts 
 
 Stamps the slots of a structural choice with the arm that holds each, before the arms merge and a slot that only some arms hold is relaxed to optional. It stamps only when some slot is missing from some arm and the choice has a rule id; a choice whose arms all hold the same slots keeps its slots as they are. The caller does not stamp a choice that repeats (array or nonEmptyArray multiplicity, own or inherited): separate iterations may take different arms, so a config holding both arms' slots is valid. A slot already stamped by an inner choice records a blocking `unclassifiable-shape` diagnostic (`nested-arms`) rather than lose the inner stamp. Requiredness is the slot's own inside the arm, so an optional choice, which pushes optional onto every arm, stamps every slot as not required.
 
-### `packages/codegen/src/compiler/collect-slots.ts::mergeArmsHeld`
-
-Joins the arm stamps of two same-named slots that `mergeChoiceArms` merges into one: the merged slot holds every arm either held, an arm held by both keeping the first's requiredness. A slot with no stamp takes the other's.
-
 ### `packages/codegen/src/compiler/assemble.ts::perInstanceSeparator`
 
 The separator a list keeps per instance. A separator whose arms are all

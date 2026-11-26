@@ -17101,7 +17101,7 @@ export namespace ObjectCreationExpressionArm {
 		'annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody',
 		[
 			['annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody', 'typeArguments' | 'type' | 'arguments'],
-			['annotations' | 'type' | 'arguments', 'type' | 'arguments']
+			['annotations' | 'type' | 'arguments' | 'classBody', 'type' | 'arguments']
 		]
 	>;
 	export type LooseArgs = ArmRows<
@@ -17109,7 +17109,7 @@ export namespace ObjectCreationExpressionArm {
 		'annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody',
 		[
 			['annotations' | 'typeArguments' | 'type' | 'arguments' | 'classBody', 'typeArguments' | 'type' | 'arguments'],
-			['annotations' | 'type' | 'arguments', 'type' | 'arguments']
+			['annotations' | 'type' | 'arguments' | 'classBody', 'type' | 'arguments']
 		]
 	>;
 	export type Kind = TSKindId.ObjectCreationExpressionArm;

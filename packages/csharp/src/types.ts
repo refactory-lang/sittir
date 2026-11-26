@@ -29798,9 +29798,19 @@ export namespace RecursivePattern {
 				'type' | 'positionalPatternClause' | 'variableDesignation'
 			],
 			['type' | 'positionalPatternClause' | 'propertyPatternClause', 'type' | 'positionalPatternClause'],
+			['positionalPatternClause' | 'variableDesignation', 'positionalPatternClause' | 'variableDesignation'],
 			['positionalPatternClause', 'positionalPatternClause'],
+			[
+				'type' | 'propertyPatternClause' | 'variableDesignation',
+				'type' | 'propertyPatternClause' | 'variableDesignation'
+			],
 			['type' | 'propertyPatternClause', 'type' | 'propertyPatternClause'],
+			[
+				'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation',
+				'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation'
+			],
 			['positionalPatternClause' | 'propertyPatternClause', 'positionalPatternClause' | 'propertyPatternClause'],
+			['propertyPatternClause' | 'variableDesignation', 'propertyPatternClause' | 'variableDesignation'],
 			['propertyPatternClause', 'propertyPatternClause']
 		]
 	>;
@@ -29813,9 +29823,19 @@ export namespace RecursivePattern {
 				'type' | 'positionalPatternClause' | 'variableDesignation'
 			],
 			['type' | 'positionalPatternClause' | 'propertyPatternClause', 'type' | 'positionalPatternClause'],
+			['positionalPatternClause' | 'variableDesignation', 'positionalPatternClause' | 'variableDesignation'],
 			['positionalPatternClause', 'positionalPatternClause'],
+			[
+				'type' | 'propertyPatternClause' | 'variableDesignation',
+				'type' | 'propertyPatternClause' | 'variableDesignation'
+			],
 			['type' | 'propertyPatternClause', 'type' | 'propertyPatternClause'],
+			[
+				'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation',
+				'positionalPatternClause' | 'propertyPatternClause' | 'variableDesignation'
+			],
 			['positionalPatternClause' | 'propertyPatternClause', 'positionalPatternClause' | 'propertyPatternClause'],
+			['propertyPatternClause' | 'variableDesignation', 'propertyPatternClause' | 'variableDesignation'],
 			['propertyPatternClause', 'propertyPatternClause']
 		]
 	>;
