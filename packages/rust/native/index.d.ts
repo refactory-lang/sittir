@@ -294,6 +294,12 @@ export declare function externalBuffers(): void
 export declare function framedSpan(treeId: TreeId, index: NodeIndex): { start: number; end: number }
 
 /**
+ * r" Set beside a tag in a release batch: the caller already
+ * r" dropped the entry's count to zero (`releaseBuilt`).
+ */
+export declare const HELD_DROPPED: number
+
+/**
  * r" The tags `releaseBuilt` reads (`count::held`): a record, a
  * r" run, a side record, a leaf entry.
  */
@@ -516,16 +522,19 @@ export declare const RECORD_FLAG_LINK: number
 export declare const RECORD_HEADER_WORDS: number
 
 /**
- * r" Releases a count of the entry at `address`, a builder's or a
- * r" read's, a record (`held` 0), a run (1), a side record (2) or
- * r" a leaf entry (3): with `owned`, the count the handle naming
- * r" it holds, a builder's or a parse's root's, a no-op when it
- * r" holds none. An entry whose count reaches zero releases what
- * r" it holds, and a chunk left holding nothing live is freed and
- * r" its buffers detached. Refuses a count below zero, an address
- * r" no entry starts at, and an engine already disposed.
+ * r" Releases each entry `batch` names, as pairs of its address,
+ * r" a builder's or a read's, and its form: a record (`held` 0), a
+ * r" run (1), a side record (2) or a leaf entry (3), with
+ * r" `HELD_DROPPED` set beside it when the caller already dropped
+ * r" the entry's count to zero. Any other entry gives back one
+ * r" count. An entry whose count reaches zero releases what it
+ * r" holds, and a chunk left holding nothing live is freed and its
+ * r" buffers detached. Refuses a batch of an odd length and an
+ * r" unknown form before releasing any entry; otherwise releases
+ * r" every entry and refuses with the first of a count below zero,
+ * r" an address no entry starts at, and an engine already disposed.
  */
-export declare function releaseBuilt(engine: object, address: number, held: number, owned: boolean): void
+export declare function releaseBuilt(engine: object, batch: Float64Array): void
 
 /**
  * Render a typed node object (napi-native, numeric `$type`).

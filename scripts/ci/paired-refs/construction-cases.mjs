@@ -5,6 +5,8 @@
 // x and led by the comment // c, which the edit keeps. One case builds, renders,
 // edits, renders the edit, checks both texts and releases the roots and the
 // edit, recording each step's window so a GC can be put in the step it ran in.
+// A release ends with a call to the engine's builtMemory, which crosses a
+// batched release to native first, so the release step holds that work.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { performance } from 'node:perf_hooks';
@@ -44,6 +46,7 @@ export function constructionCases(engine, nodeStorage) {
   }
   function release(...lists) {
     for (const list of lists) for (const node of list) node[Symbol.dispose]?.();
+    engine.diagnostics.builtMemory?.();
   }
   function warmup(batch) {
     const tree = build(128, batch % 4 === 1, batch % 4 === 2, batch % 4 === 3);

@@ -57,6 +57,7 @@ it('a new placement prunes a leaf site whose earlier chunk was freed', async () 
 	const fillers = Array.from({ length: 3000 }, (_, n) => engine.build.expressionStatement(engine.build.identifier(`x${n}`)));
 	for (const node of fillers) engine.release(node);
 	engine.release(old);
+	engine.diagnostics.builtMemory?.();
 	expect(words.length).toBe(0);
 	const current = engine.build.expressionStatement(leaf);
 	expect(leafSitesOf(leaf)).toHaveLength(3);

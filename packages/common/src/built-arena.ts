@@ -67,7 +67,8 @@ export interface BuiltRecords {
 	words(length: number): BuiltChunk<WritableWords>;
 	bytes(least: number): BuiltChunk<Uint8Array>;
 	bump(at: number): void;
-	release(at: number, held: number, owned: boolean): void;
+	release(at: number, held: number): void;
+	cross(): void;
 	read(chunk: number): ReadChunk | undefined;
 	parse(source: string, options?: ParseOptions): ParsedRecords;
 	text(node: number, start: number, end: number): string;
@@ -82,6 +83,11 @@ export interface BuiltRecords {
 		leafSide(holder: number, word: number, item: number, side: TriviaSideName): WireNode[] | undefined;
 		copySites(from: number, to: number, skip: readonly number[]): void;
 	};
+}
+
+interface CountAt {
+	readonly counts: Uint8Array;
+	readonly index: number;
 }
 
 export interface ReadChunk {
@@ -310,6 +316,8 @@ export class BuiltArena {
 	readonly #cells: (Uint32Array | undefined)[] = [];
 	readonly #bump: BuiltRecords['bump'];
 	readonly #release: BuiltRecords['release'];
+	readonly #cross: BuiltRecords['cross'];
+	#releasing = false;
 	readonly #read: BuiltRecords['read'];
 	readonly #parse: BuiltRecords['parse'];
 	readonly #text: BuiltRecords['text'];
@@ -345,12 +353,16 @@ export class BuiltArena {
 	#pruneAt = DEFERRED_PRUNE;
 	#scopes = 0;
 
-	constructor({ format, owner, kinds, words, bytes, bump, release, read, parse, text, query, reads, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, bump, release, cross, read, parse, text, query, reads, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
 		this.#bump = bump;
-		this.#release = release;
+		this.#release = (at, held) => {
+			this.#releasing = true;
+			release(at, held);
+		};
+		this.#cross = cross;
 		this.#read = read;
 		this.#parse = parse;
 		this.#text = text;
@@ -694,9 +706,16 @@ export class BuiltArena {
 	}
 
 	#giveBack(at: number): void {
+		this.#crossReleases();
 		const { counts, index } = this.#countAt(at);
 		this.#countOneMore(at, counts, index);
 		counts[index] = counts[index]! | this.format.countOwned;
+	}
+
+	#crossReleases(): void {
+		if (!this.#releasing) return;
+		this.#releasing = false;
+		this.#cross();
 	}
 
 	#countOneMore(at: number, counts: Uint8Array, index: number): void {
@@ -707,12 +726,18 @@ export class BuiltArena {
 		else counts[index] = byte + 1;
 	}
 
-	#countAt(at: number): { readonly counts: Uint8Array; readonly index: number } {
+	#countAt(at: number): CountAt {
+		const counted = this.#countedAt(at);
+		if (counted === undefined) throw new Error(releasedRecord(at));
+		return counted;
+	}
+
+	#countedAt(at: number): CountAt | undefined {
 		const chunk = chunkOf(at, this.format);
 		const word = wordOf(at, this.format);
 		const live = this.#words.has(chunk) || (this.#readChunk(chunk)?.length ?? 0) !== 0;
 		const table = this.#tables[chunk];
-		if (table === undefined || !live) throw new Error(releasedRecord(at));
+		if (table === undefined || !live) return undefined;
 		const block = word >>> 6;
 		const bit = word & 63;
 		const lo = table.bits[block << 1]!;
@@ -726,6 +751,7 @@ export class BuiltArena {
 
 	/** Holds the entry at `at` once more for a holder that takes the handle naming it, a builder's or a read's: moves the count that handle holds, else takes one more. */
 	adopt(at: number): void {
+		this.#crossReleases();
 		const { counts, index } = this.#countAt(at);
 		const byte = counts[index]!;
 		const { countOwned } = this.format;
@@ -739,6 +765,7 @@ export class BuiltArena {
 
 	/** Takes one more count of the entry at `at`, a builder's or a read's, for a holder that only names it: a count the handle naming it holds stays with that handle. */
 	hold(at: number): void {
+		this.#crossReleases();
 		const { counts, index } = this.#countAt(at);
 		this.#countOneMore(at, counts, index);
 	}
@@ -759,6 +786,7 @@ export class BuiltArena {
 
 	/** Takes one more count of the string chunk the leaf entry at `at` lies in. */
 	holdText(at: number): void {
+		this.#crossReleases();
 		const cells = this.#cells[chunkOf(at, this.format)];
 		if (cells === undefined || cells.length === 0) throw new Error(releasedRecord(at));
 		cells[0] = cells[0]! + 1;
@@ -774,7 +802,7 @@ export class BuiltArena {
 			const cells = this.#cells[chunk];
 			if (cells === undefined || cells.length === 0) throw new Error(releasedRecord(at));
 			if (cells[0]! > 1) cells[0] = cells[0]! - 1;
-			else this.#release(at, this.format.held.text, false);
+			else this.#release(at, this.format.held.text);
 			return;
 		}
 		this.drop(at, list ? this.format.held.run : this.format.held.record);
@@ -782,21 +810,33 @@ export class BuiltArena {
 
 	/** Drops one count of the entry at `at`, which `held` names the form of. */
 	drop(at: number, held: number): void {
-		const { counts, index } = this.#countAt(at);
-		const byte = counts[index]!;
-		const count = byte & this.format.countSaturated;
-		if (count > 1 && count !== this.format.countSaturated) counts[index] = byte - 1;
-		else this.#release(at, held, false);
+		this.#dropCount(this.#countAt(at), at, held);
 	}
 
-	/** Releases the count the handle of the record at `at` holds, a builder's or a parse's root's, a no-op when the handle holds none. */
+	/** Releases the count the handle of the record at `at` holds, a builder's or a parse's root's, a no-op when the handle holds none or its chunk was freed. */
 	release(at: number): void {
 		const entry = this.#roots.get(at);
 		if (entry !== undefined && this.#ownedByHandle(at)) {
 			this.#roots.delete(at);
 			this.#errors.delete(entry);
 		}
-		this.#release(at, this.format.held.record, true);
+		const counted = this.#countedAt(at);
+		if (counted === undefined) return;
+		const byte = counted.counts[counted.index]!;
+		if ((byte & this.format.countOwned) === 0) return;
+		counted.counts[counted.index] = byte & ~this.format.countOwned;
+		this.#dropCount(counted, at, this.format.held.record);
+	}
+
+	#dropCount({ counts, index }: CountAt, at: number, held: number): void {
+		const byte = counts[index]!;
+		const count = byte & this.format.countSaturated;
+		if (count === 0 || count === this.format.countSaturated) {
+			this.#release(at, held);
+			return;
+		}
+		counts[index] = byte - 1;
+		if (count === 1) this.#release(at, held | this.format.held.dropped);
 	}
 
 	/** Releases what the handle `node` holds: its record's count, the count of the parse's root a wrapper with no view of its record holds, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
@@ -860,6 +900,7 @@ export class BuiltArena {
 
 	/** Refuses the record at `at` once it is released. */
 	refuseReleased(at: number): void {
+		this.#crossReleases();
 		const { counts, index } = this.#countAt(at);
 		if ((counts[index]! & this.format.countSaturated) === 0) throw new Error(releasedRecord(at));
 	}
@@ -983,6 +1024,7 @@ export class BuiltArena {
 
 	/** The leaf entry of `kind` holding `text`, interned: each call with equal kind and text answers the same entry. */
 	entry(kind: number, text: string): BuiltText {
+		this.#crossReleases();
 		const texts = (this.#entries[kind] ??= new Map());
 		const known = texts.get(text);
 		if (known !== undefined && this.#live(known)) return known;
@@ -1005,6 +1047,7 @@ export class BuiltArena {
 
 	/** The entry of `leaf`, of kind `kind`, interned at its first placement: a leaf placed before keeps its entry. */
 	placeEntry(leaf: object, kind: number, entry: BuiltText): BuiltText {
+		this.#crossReleases();
 		if (entry.at !== 0 && this.#live(entry)) return entry;
 		const placed = this.entry(kind, entry.text ?? '');
 		(leaf as { $entry: BuiltText }).$entry = placed;

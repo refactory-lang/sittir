@@ -16,7 +16,6 @@ function recording() {
 			dispose = () => {};
 		},
 		builtBump: call('builtBump'),
-		releaseBuilt: call('releaseBuilt'),
 		renderBuilt: call('renderBuilt')
 	} as unknown as NativeModuleLike;
 	return { calls, engine: nativeEngineOf(native) };
@@ -28,19 +27,19 @@ describe('holds past a saturated count', () => {
 		for (let held = 0; held < 500; held++) engine.holdSaturated!(64);
 		engine.holdSaturated!(96);
 		expect(calls).toEqual([]);
-		engine.releaseBuilt!(64, 0, false);
+		engine.renderBuilt!({}, 64, false, false);
 		expect(calls).toEqual([
 			['builtBump', 64, 500],
 			['builtBump', 96, 1],
-			['releaseBuilt', 64, 0, false]
+			['renderBuilt', {}, 64, false, false]
 		]);
 	});
 
 	it('are told once', () => {
 		const { calls, engine } = recording();
 		engine.holdSaturated!(64);
-		engine.releaseBuilt!(64, 0, false);
-		engine.releaseBuilt!(64, 0, false);
+		engine.renderBuilt!({}, 64, false, false);
+		engine.renderBuilt!({}, 64, false, false);
 		expect(calls.filter(([name]) => name === 'builtBump')).toEqual([['builtBump', 64, 1]]);
 	});
 

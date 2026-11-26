@@ -51,7 +51,7 @@ function chunksOf() {
 
 const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined, chunks: Pick<Records, 'words' | 'bytes'> = chunksOf(), read: Records['read'] = NO_READS.read): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunks, bump: () => undefined, release: () => [], ...NO_READS, read, trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunks, bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read, trivia },
 		(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
@@ -190,7 +190,7 @@ describe('a built arena', () => {
 		const read = { data: record, meta: new Uint8Array(metaBytes(record.length)) };
 		const reads = { ...NO_READS.reads, sides, unitSides, writeTriviaSide: (node: number, side: string) => void written.push([node, side]) };
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], ...NO_READS, read: (chunk: number) => (chunk === 9 ? read : undefined), reads, trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read: (chunk: number) => (chunk === 9 ? read : undefined), reads, trivia: NO_SIDES },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,
@@ -230,7 +230,7 @@ describe('a built arena', () => {
 		const read = { data: record, meta: new Uint8Array(metaBytes(record.length)) };
 		const reads = { ...NO_READS.reads, sides: (node: number) => (asked.push(node), { leading: [], trailing: [], inner: [] }) };
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], ...NO_READS, read: (chunk: number) => (chunk === 9 ? read : undefined), reads, trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read: (chunk: number) => (chunk === 9 ? read : undefined), reads, trivia: NO_SIDES },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,
@@ -254,7 +254,7 @@ describe('a built arena', () => {
 		const record = new Uint32Array(2 ** format!.chunkShift);
 		const read = { data: record, meta: new Uint8Array(metaBytes(record.length)) };
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: () => [], ...NO_READS, read: (chunk: number) => (made === 2 && chunk === 1 ? read : undefined), trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: () => [], cross: () => undefined, ...NO_READS, read: (chunk: number) => (made === 2 && chunk === 1 ? read : undefined), trivia: NO_SIDES },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,
@@ -274,7 +274,7 @@ describe('a built arena', () => {
 		let next = 0;
 		const words = (length: number) => ({ chunk: 1, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: next++ === 0 ? [] : [1] });
 		const arena = new BuiltArena(
-			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), ...NO_READS, trivia: NO_SIDES },
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), cross: () => undefined, ...NO_READS, trivia: NO_SIDES },
 			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 			NO_VIEWS,

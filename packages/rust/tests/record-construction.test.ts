@@ -65,6 +65,68 @@ describe('record construction', () => {
 		}
 	});
 
+	it('releases built roots in one native call at the next native call, refusing each at once', async () => {
+		const native = createRequire(import.meta.url)('../native/index.cjs') as Required<NativeModuleLike>;
+		const releaseBuilt = native.releaseBuilt;
+		const batches: number[][] = [];
+		const release = vi.spyOn(native, 'releaseBuilt').mockImplementation((handle, batch) => {
+			batches.push([...batch]);
+			releaseBuilt(handle, batch);
+		});
+		try {
+			using engine = await rust.createEngine({ nodeStorage: 'arena' });
+			const b = engine.build;
+			const before = engine.diagnostics.builtMemory!()!.live;
+			const roots = Array.from({ length: 50 }, (_, n) => b.functionItem({ name: b.identifier(`f${n}`), parameters: b.parameters(), body: b.block({ statements: [] }) }));
+			expect(engine.diagnostics.builtMemory!()!.live).toBeGreaterThan(before);
+			release.mockClear();
+			batches.length = 0;
+			for (const root of roots) engine.release(root);
+			expect(release).not.toHaveBeenCalled();
+			expect(() => b.expressionStatement(roots[0] as never)).toThrow('was released');
+			expect(release).toHaveBeenCalledTimes(1);
+			const released = new Set(batches[0]!.filter((_, n) => n % 2 === 0));
+			expect(roots.filter((root) => !released.has((root as unknown as { readonly $at: number }).$at))).toEqual([]);
+			expect(engine.diagnostics.builtMemory!()!.live).toBe(before);
+		} finally {
+			release.mockRestore();
+		}
+	});
+
+	it('refuses a release batch that is not pairs of whole numbers, naming why', () => {
+		const native = createRequire(import.meta.url)('../native/index.cjs') as Required<NativeModuleLike>;
+		const engine = new native.SittirEngine();
+		try {
+			expect(() => native.releaseBuilt(engine.handle, new Float64Array([64]))).toThrow('a release batch holds pairs, not 1 numbers');
+			expect(() => native.releaseBuilt(engine.handle, new Float64Array([64.5, 0]))).toThrow('address must be a whole number (got 64.5)');
+			expect(() => native.releaseBuilt(engine.handle, new Float64Array([64, -1]))).toThrow('held must not be negative (got -1)');
+		} finally {
+			engine.dispose();
+		}
+	});
+
+	it('writes a leaf text anew whose string chunk the releases waiting to cross leave unheld', async () => {
+		using engine = await rust.createEngine({ nodeStorage: 'arena' });
+		const b = engine.build;
+		const before = engine.diagnostics.builtMemory!()!.live;
+		const chunkOf = (leaf: object): Uint8Array => (leaf as unknown as { readonly $entry: { readonly data: Uint8Array } }).$entry.data;
+		const statement = (name: string) => {
+			const leaf = b.identifier(name);
+			return { root: b.expressionStatement(leaf), chunk: chunkOf(leaf) };
+		};
+		const first = statement('only');
+		const sealed = [first];
+		while (sealed.at(-1)!.chunk === first.chunk) sealed.push(statement(`filler_${sealed.length}_${'x'.repeat(96)}`));
+		const open = sealed.pop()!;
+		for (const { root } of sealed) engine.release(root);
+		const again = statement('only');
+		expect(String(again.root)).toBe('only;');
+		expect(again.chunk === first.chunk).toBe(false);
+		engine.release(again.root);
+		engine.release(open.root);
+		expect(engine.diagnostics.builtMemory!()!.live).toBe(before);
+	});
+
 	it('takes how it stores built nodes from its storage alone, ignoring a construction key as it ignores any key it does not know', async () => {
 		using objectEngine = await rust.createEngine({ nodeStorage: 'object', nodeConstruction: 'record' } as never);
 		expect(recordOf(build(objectEngine))).toBeUndefined();

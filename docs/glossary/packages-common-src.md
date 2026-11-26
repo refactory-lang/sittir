@@ -1172,6 +1172,14 @@ Adds `more` counts to the native overflow of the built entry at `address`, whose
 
 Notes one more hold of the built entry at `address`, whose count byte has saturated, without crossing to native. The holds wait in JavaScript, summed by address, and every engine function tells native all of them through `builtBump` before it runs, so native never reads a count that is short. Disposing the engine drops holds not yet told. Present only when the addon carries `builtBump`.
 
+### `packages/common/src/engine.ts::NativeEngineLike::releaseBuilt`
+
+Queues one release of the built entry at `address` in form `held`, without crossing to native. `held` carries the format's `dropped` tag when the arena already dropped the entry's count to zero in its count view: native then releases what the entry holds without dropping its count again. Any other entry gives back one count natively. The queued releases cross in one addon call, a `Float64Array` of address and form pairs, after the holds `holdSaturated` gathered. They cross before the next engine function runs, at the end of the microtask, or when `crossReleases` asks, whichever comes first. A refusal the native release meets is thrown by the engine function that crossed it; one met at the end of the microtask is kept and thrown by the next engine function. Disposing the engine drops releases not yet crossed. Present only when the addon carries `releaseBuilt`.
+
+### `packages/common/src/engine.ts::NativeEngineLike::crossReleases`
+
+Crosses the holds and releases waiting in JavaScript to native now, as the next engine function would, and throws a refusal one of them met, or one kept from a crossing at the end of the microtask. The built arena calls it through `BuiltRecords.cross` before it raises or checks a count while a release it handed over may still wait, so a record that release leaves unheld is refused at once, as it was when every release crossed by itself.
+
 ### `packages/common/src/built-arena.ts::BuiltArena::node`
 
 The node a child cell names by its record's address: the one its builder returned while anything holds it, else a fresh view of the record, which the arena then holds weakly in its place.
@@ -1279,6 +1287,14 @@ Holds the entry at `at` once more for a holder that takes the handle naming it: 
 ### `packages/common/src/built-arena.ts::BuiltArena::holdsRootWithoutView`
 
 Whether `node` is the wrapper of a parse's root whose kind has no view, and whose count it still holds. Such a root, an `ERROR`, wraps as a read row with no `$at`, so it is no handle: the arena keeps its address beside the wrapper, and `release` and the wrapper's dispose give the count back through `releaseHandle`. Releasing it drops the entry, so a second release is a no-op even once the address has been reused by a later parse.
+
+### `packages/common/src/built-arena.ts::BuiltRecords::release`
+
+Hands the engine one release of the entry at `at` in form `held` (`NativeEngineLike.releaseBuilt`), which waits to cross with the others. The arena hands over only what its count view cannot settle: a count it dropped to zero itself, tagged `dropped`, whose holdings native releases; a count at zero or saturated, which native drops; and a string chunk's last count. A count above one drops in the view and crosses nothing. Because the arena drops a record's last count in its view at once, a released handle is refused at once, before its release crosses.
+
+### `packages/common/src/built-arena.ts::BuiltRecords::cross`
+
+Crosses the releases the engine holds waiting (`NativeEngineLike.crossReleases`). The arena calls it before it holds, adopts or checks a count, and before it reuses a leaf text entry (`entry`, `placeEntry`), while a release it handed over may still wait, and only then. So a record that release leaves unheld, a child of a released root among them, is refused at once, and a text is not reused from a string chunk that release empties: the chunk is freed when the release crosses, so a leaf built after it writes its text anew.
 
 ### `packages/common/src/create-engine.ts::storedVerifierOf`
 

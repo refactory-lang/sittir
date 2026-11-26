@@ -23,6 +23,7 @@ describe('disposing a tree no read made records of', () => {
 		while (wordsOf(fillers.at(-1)!) === words) fillers.push(comment('filler'));
 		for (const filler of fillers) rs.release(filler);
 		rs.release(held);
+		rs.diagnostics.builtMemory?.();
 		expect(words.length).not.toBe(0);
 		native.disposeTree(tree.id!);
 		expect(words.length).toBe(0);

@@ -803,6 +803,10 @@ macro_rules! napi_engine {
             pub const HELD_SIDE: u32 = $crate::arena::count::held::SIDE;
             #[::napi_derive::napi]
             pub const HELD_TEXT: u32 = $crate::arena::count::held::TEXT;
+            /// Set beside a tag in a release batch: the caller already
+            /// dropped the entry's count to zero (`releaseBuilt`).
+            #[::napi_derive::napi]
+            pub const HELD_DROPPED: u32 = $crate::arena::count::held::DROPPED;
             /// The bits of a packed record address or string offset below its
             /// chunk (`arena::CHUNK_SHIFT`).
             #[::napi_derive::napi]
@@ -1251,20 +1255,22 @@ macro_rules! napi_engine {
                 Ok(())
             }
 
-            /// Releases a count of the entry at `address`, a builder's or a
-            /// read's, a record (`held` 0), a run (1), a side record (2) or
-            /// a leaf entry (3): with `owned`, the count the handle naming
-            /// it holds, a builder's or a parse's root's, a no-op when it
-            /// holds none. An entry whose count reaches zero releases what
-            /// it holds, and a chunk left holding nothing live is freed and
-            /// its buffers detached. Refuses a count below zero, an address
-            /// no entry starts at, and an engine already disposed.
+            /// Releases each entry `batch` names, as pairs of its address,
+            /// a builder's or a read's, and its form: a record (`held` 0), a
+            /// run (1), a side record (2) or a leaf entry (3), with
+            /// `HELD_DROPPED` set beside it when the caller already dropped
+            /// the entry's count to zero. Any other entry gives back one
+            /// count. An entry whose count reaches zero releases what it
+            /// holds, and a chunk left holding nothing live is freed and its
+            /// buffers detached. Refuses a batch of an odd length and an
+            /// unknown form before releasing any entry; otherwise releases
+            /// every entry and refuses with the first of a count below zero,
+            /// an address no entry starts at, and an engine already disposed.
             #[::napi_derive::napi]
-            pub fn release_built(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, address: f64, held: u32, owned: bool) -> ::napi::Result<()> {
+            pub fn release_built(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, batch: ::napi::bindgen_prelude::Float64Array) -> ::napi::Result<()> {
                 let engine = engine_of(engine)?;
-                let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                let held = $crate::arena::count::Held::of(held, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                let released = engine.written().release(held, owned).map_err(|e| ::napi::Error::from_reason(e.to_string()));
+                let entries = $crate::napi_engine::released_entries(&batch)?;
+                let released = engine.written().release_batch(entries).map_err(|e| ::napi::Error::from_reason(e.to_string()));
                 $crate::napi_engine::settle(&env, engine.written())?;
                 released?;
                 Ok(())
@@ -2053,6 +2059,31 @@ pub fn dispose<G: crate::engine::EngineGrammar>(env: &napi::Env, mut tree: crate
 pub fn dispose<G: crate::engine::EngineGrammar>(_env: &napi::Env, tree: crate::engine::ParsedTree<G>) -> napi::Result<()> {
     drop(tree);
     Ok(())
+}
+
+/// The entries a release batch names (`release_built`): each pair of
+/// numbers an address and its form, with whether its caller already dropped
+/// its count to zero (`held::DROPPED`).
+///
+/// # Errors
+///
+/// A batch of an odd length, a number that is not a whole `u32`, and a
+/// form `Held::of` refuses.
+#[cfg(feature = "arena")]
+pub fn released_entries(batch: &[f64]) -> napi::Result<Vec<(crate::arena::count::Held, bool)>> {
+    use crate::arena::count::{held, Held};
+    let pairs = batch.chunks_exact(2);
+    if !pairs.remainder().is_empty() {
+        return Err(napi::Error::from_reason(format!("a release batch holds pairs, not {} numbers", batch.len())));
+    }
+    pairs
+        .map(|pair| {
+            let at = crate::arena::Address(checked_whole(pair[0], "address")?);
+            let form: u32 = checked_whole(pair[1], "held")?;
+            let entry = Held::of(form & !held::DROPPED, at).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+            Ok((entry, form & held::DROPPED != 0))
+        })
+        .collect()
 }
 
 /// Detaches every buffer over the built arena `store` holds, then frees its

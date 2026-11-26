@@ -205,8 +205,10 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtBump?(address: number, more: number): void;
 	/** One more count of the built entry at `address`, whose count saturated, told to native before the next engine function runs. Present when the addon carries the record codec. */
 	holdSaturated?(address: number): void;
-	/** Releases a count of the entry at `address` of form `held`, a builder's or a read's, the count the handle naming it holds when `owned`. Present when the addon carries the record codec. */
-	releaseBuilt?(address: number, held: number, owned: boolean): void;
+	/** Releases a count of the entry at `address` of form `held`, a builder's or a read's, whose count the caller already dropped to zero when `held` carries the format's `dropped` tag. The releases cross to native in one call before the next engine function runs or at the end of the microtask, whichever comes first, and a refusal surfaces on that engine function. Present when the addon carries the record codec. */
+	releaseBuilt?(address: number, held: number): void;
+	/** Crosses the releases and the holds past a saturated count waiting in JavaScript to native now, as the next engine function would, throwing a refusal one of them met. Present when the addon carries the record codec. */
+	crossReleases?(): void;
 	/** Parses `source` and keeps no tree, adopting its style as the engine's options under `options.adoptStyle`: as JSON `{ root, source, errors }`, the address of the root's record in the built arena, null when its reader writes none, the address of the source's entry, and its error regions. Present when the addon carries the record codec. */
 	parseRecords?(source: string, options?: ParseOptions): string;
 	/** Chunk `chunk` of the built arena, which a read wrote, and its meta, its counts included, over their native memory with no copy; null for a chunk no read wrote. Present when the addon carries the record codec. */
@@ -372,7 +374,6 @@ const ENGINE_FUNCTIONS = [
 	'builtWords',
 	'builtBytes',
 	'builtBump',
-	'releaseBuilt',
 	'parseRecords',
 	'readWords',
 	'readRenderAt',
@@ -413,7 +414,10 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 	treeMemory(): { readonly trees: number; readonly counted: number; readonly reported: number };
 	/** The engine image this process mapped: its stamp and the file it was loaded from. Diagnostics only. */
 	engineStamp(): { readonly stamp: string; readonly path?: string };
-} & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> };
+} & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> } & {
+	/** Releases each entry `batch` names, as pairs of its address and its form, the form carrying the format's `dropped` tag for an entry whose count the caller already dropped to zero. Every entry is released and the first refusal is thrown. Present when the addon carries the record codec. */
+	readonly releaseBuilt?: (handle: EngineHandle, batch: Float64Array) => void;
+};
 
 /**
  * A new engine of `native`, as {@link NativeEngineLike}: its module's tree functions as they are, and its engine
@@ -422,23 +426,66 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(native: NativeModuleLike<TNode, TEngine>, options?: { options?: object }): NativeEngineLike<TNode> {
 	const instance = new native.SittirEngine(options);
 	const { handle } = instance;
-	const { builtBump } = native;
+	const { builtBump, releaseBuilt } = native;
 	const heldPast = new Map<number, number>();
-	const tellHeldPast = (): void => {
+	let releases = new Float64Array(256);
+	let released = 0;
+	let crossing = false;
+	let refused: { readonly error: unknown } | undefined;
+	const cross = (): void => {
 		for (const [address, more] of heldPast) {
 			heldPast.delete(address);
 			builtBump!(handle, address, more);
 		}
+		if (released === 0) return;
+		const batch = releases.subarray(0, released);
+		released = 0;
+		releaseBuilt!(handle, batch);
+	};
+	const crossAtTheEnd = (): void => {
+		crossing = false;
+		try {
+			cross();
+		} catch (error) {
+			refused ??= { error };
+		}
+	};
+	const settled = (): void => {
+		if (heldPast.size !== 0 || released !== 0) cross();
+		if (refused === undefined) return;
+		const { error } = refused;
+		refused = undefined;
+		throw error;
+	};
+	const release = (address: number, held: number): void => {
+		if (released + 2 > releases.length) {
+			const grown = new Float64Array(releases.length * 2);
+			grown.set(releases);
+			releases = grown;
+		}
+		releases[released] = address;
+		releases[released + 1] = held;
+		released += 2;
+		if (crossing) return;
+		crossing = true;
+		queueMicrotask(crossAtTheEnd);
 	};
 	const engine: Record<string, unknown> = {
 		handle,
 		buildProfile: instance.buildProfile,
-		parse: (source: string, options?: ParseOptions) => instance.parse(source, options),
+		parse: (source: string, options?: ParseOptions) => {
+			settled();
+			return instance.parse(source, options);
+		},
 		dispose: () => {
 			heldPast.clear();
+			released = 0;
+			refused = undefined;
 			instance.dispose();
 		},
-		holdSaturated: builtBump && ((address: number) => void heldPast.set(address, (heldPast.get(address) ?? 0) + 1))
+		holdSaturated: builtBump && ((address: number) => void heldPast.set(address, (heldPast.get(address) ?? 0) + 1)),
+		releaseBuilt: releaseBuilt && release,
+		crossReleases: releaseBuilt && settled
 	};
 	for (const name of TREE_FUNCTIONS) engine[name] = native[name];
 	for (const name of ENGINE_FUNCTIONS) {
@@ -446,7 +493,7 @@ export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(nati
 		engine[name] =
 			call &&
 			((...args: unknown[]) => {
-				if (heldPast.size !== 0) tellHeldPast();
+				settled();
 				return call(handle, ...args);
 			});
 	}
@@ -793,10 +840,11 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readEditedWithin, readIsEmpty, readSources } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readEditedWithin, readIsEmpty, readSources } = engine;
 	if (
 		holdSaturated === undefined ||
 		releaseBuilt === undefined ||
+		crossReleases === undefined ||
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
 		builtUnitSides === undefined ||
@@ -829,7 +877,8 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		words: (length) => builtWords.call(engine, length),
 		bytes: (least) => builtBytes.call(engine, least),
 		bump: (at) => holdSaturated.call(engine, at),
-		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
+		release: (at, held) => releaseBuilt.call(engine, at, held),
+		cross: () => crossReleases.call(engine),
 		read: (chunk) => readWords.call(engine, chunk) ?? undefined,
 		parse: (source, options) => JSON.parse(parseRecords.call(engine, source, options)) as ParsedRecords,
 		text: (node, start, end) => readText.call(engine, node, start, end),

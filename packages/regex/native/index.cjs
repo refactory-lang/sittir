@@ -722,6 +722,7 @@ module.exports.editedWithin = nativeBinding.editedWithin
 module.exports.engineStamp = nativeBinding.engineStamp
 module.exports.externalBuffers = nativeBinding.externalBuffers
 module.exports.framedSpan = nativeBinding.framedSpan
+module.exports.HELD_DROPPED = nativeBinding.HELD_DROPPED
 module.exports.HELD_RECORD = nativeBinding.HELD_RECORD
 module.exports.HELD_RUN = nativeBinding.HELD_RUN
 module.exports.HELD_SIDE = nativeBinding.HELD_SIDE
