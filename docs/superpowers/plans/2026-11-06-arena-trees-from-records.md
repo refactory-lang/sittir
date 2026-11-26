@@ -503,7 +503,7 @@ Validators in `packages/tools` read sides through rows 16 and 17 (`writtenSides`
 |---|---|
 | 1–4, 11 | gone: no side bits, caches or held trees in JavaScript. Native holds the records a row names; a coordinate entry from an object-storage read is refused by the store's `compact` today (read, not built). |
 | 5 | the unit-side carry is no longer deferred; whether other work still uses `defer` is not checked |
-| 6 | open: (a) an unplaced leaf keeps its entries and their counts until placed, with entries only and no layout; or (b) native gives an unplaced leaf a parked place, at one crossing per write. Recommendation (a). |
+| 6 | open. **(a)** An unplaced leaf keeps its entries until it is placed, entries only, no layout; JavaScript still raises the count of each built record they name (`#park` adopts, `#unpark` drops), so the record outlives a release of its own handle. That count is a **departure** from the bullet's "never counts the entries a side holds". **(a′)** The same with no count: a parked comment whose handle is released is freed, and placing the leaf then refuses it as released, which is a change to what a caller may do. **(b)** Native gives an unplaced leaf a parked place and holds the counts, at one crossing per `$trivia` write on an unplaced leaf. Recommendation (a), named as a departure. |
 | 7, 10, 19 | stay, pending the side record question |
 | 8, 12, 14 | one call at the rebuild's `view`, only when the source's header carries `SIDED`. Native carries the trivia sides and gap codes of a built source, the unit sides realigned to the new items, and the leaf sides of the kept sites. It applies the inner rule: it refuses inner comments once `to` holds a child, and writes an empty inner side over layout. |
 | 9 | the placement list stays (addresses); a leaf's side read and write become the general ones |
@@ -532,6 +532,42 @@ Validators in `packages/tools` read sides through rows 16 and 17 (`writtenSides`
 | the same, rendered first | 0, then 2 | 0, then 1 |
 | read root `// c\nfn x() {}` | 1, then 2 | 0 or 1, by whether the comment is placed under the item's name or its parent's (not checked), then 1 |
 | read root with a unit side | 1, then 2 | 1, then 1 |
+
+**A second placement, raised by the maintainer** ("Trivia writes can be either side b/c it's into shared mem"). Today only a side's gap codes live in shared memory, in the header word. The rows live in `TriviaStore`'s `SideRows` map behind its lock, out of JavaScript's sight.
+- **(A)** The rows stay in native's map, and native writes them. This is the proposal above.
+- **(B)** The rows move into the arena's words chunks beside the records. Either side writes them, and JavaScript takes the row layout from native's exported constants, as it takes a record's.
+
+In (B), a side row is a run of the cells lists already use (read):
+- a comment record is a record cell;
+- a leaf comment is its leaf entry's cell, whose kind is in the entry's head;
+- a layout member is a unit cell.
+
+`BuiltArena.run` places a run as a counted entry: its length word, then its cells. Native's release of `Held::Run` drops each item cell. It skips a unit cell, since that names chunk 0, and drops a record's count or a string chunk's count for the others. A record reaches its rows through its side record (word 1): fields for its leading, trailing and inner rows, and a table of `(word, item, side, row)` for the sides of its unit children and leaf sites. Those fields are new to the side record's format (not built).
+
+| | (A) native's map | (B) rows in chunks |
+|---|---|---|
+| built plain edit, then render | 0, then 1 | 0, then 1 |
+| built many names | 0, then 1 | 0, then 1 |
+| built commented | 1, then 1 | **0**: `copy` already copies the side word and holds the side record, so the rebuild shares the source's rows (read); then 1 |
+| read root | 0, then 1 | 0, then 1 |
+| read root with a unit side | 1, then 1 | **0**: JavaScript realigns the unit rows and writes new runs; then 1 |
+| a `$trivia` write | 1 | **0** |
+| a `$trivia` read | 1 | **0**: JavaScript reads the cells and wraps them as views |
+| what JavaScript holds | addresses, a write's entries (and row 6) | the row and site-table layout from exported constants; copy on write of a shared side record; the inner rule; unit-side realignment; the counts of the entries it writes, through the count tables, as it holds a record's cells |
+| fits the bullet as written | yes, except row 6 (a) | **no**: JavaScript would hold side layout and count side entries, so the bullet would have to widen |
+
+Every crossing count in this table is a design figure, not checked. The (B) rows marked "read" are read from the code.
+
+What (B) needs that (A) doesn't:
+1. **Releasing a replaced side.** A write that replaces a side drops the old run's count, and native's run release drops the entries it names (read). Its words aren't reused: the arena allocates by bumping and frees a chunk only once nothing in it lives (read). Rewriting the sides of a long-lived record leaves dead runs pinning its chunk until the chunk empties, where the map gives a replaced row's memory back at once. How much memory that holds on a real edit workload is not checked.
+2. **Rows of varying length.** These are runs, as lists already are (`run(length)`; read). On the read side, hydrate would write placed sides into the read's chunks rather than the map (not built). The read writer places runs today (`RunAt`; read), but whether a placed side fits its place-and-claim order is not checked.
+3. **Holding the entries a row names.** Writes go through the count tables as a record's cells do: `adopt` and `holdText` in JavaScript, `hold` natively (read). The release is today's run release (read). A side shared between a source and its rebuild is one run under one count, so a write to the rebuild copies first: a new side record and new runs, with the old ones dropped (not built).
+4. **`SIDED`.** It isn't needed. A side word of 0 says the record has no side record, and the side record's field mask says which rows it has, both read from shared memory in one or two loads. For a read record, whether hydrate gives every record that has placed sides a side record is not checked.
+
+The trade, in short:
+- **(B)** removes every side crossing from edits, `$trivia` writes and reads, which is (A)'s one remaining edit crossing in the commented and unit-side cases.
+- **(B)** puts side layout and counting in JavaScript, and it holds dead rows until their chunk empties.
+- **(A)** fits the bullet as written, at one crossing per side-carrying edit and per `$trivia` write or read.
 
 **Release.** Measured locally at `8c1dc6469`, per root, which is the root and its edit (two handles):
 - plain: 0.08 µs in JavaScript (count drop, queue, handle checks) and 0.16 µs in the native flush;
