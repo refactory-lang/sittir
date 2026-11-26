@@ -343,13 +343,16 @@ export function placeOf(node: object): SourceIdentity | undefined {
  * `undefined` for any other node. The envelope holds that parser node's sides.
  */
 export function envelopeKindOf(node: object): number | undefined {
-	const stamp = placeOf(node)?.kind ?? coordinateOf(node)?.$type;
+	return envelopeKindAt(node, placeOf(node));
+}
+
+function envelopeKindAt(node: object, place: SourceIdentity | undefined): number | undefined {
+	const stamp = place?.kind ?? coordinateOf(node)?.$type;
 	return stamp !== undefined && stamp !== (node as { readonly $type?: unknown }).$type ? stamp : undefined;
 }
 
 /** Make `to` keep the source identity `from` has: the node an edit rebuilt from it. */
-export function carryPlace(from: object, to: object): void {
-	const source = placeOf(from);
+export function carryPlace(from: object, to: object, source: SourceIdentity | undefined = placeOf(from)): void {
 	if (source !== undefined) places.set(to, source);
 }
 
@@ -563,12 +566,14 @@ export function sideRead(node: object, side: TriviaSideName, built?: BuiltRef): 
 	const site = sitedLeaf(node);
 	if (site !== undefined) return { entries: (siteSide(site, side) ?? []) as TriviaEntry[], tree: undefined };
 	const at = tableAt(node, built ?? builtRefOf(node));
-	if (at !== undefined && envelopeKindOf(node) !== undefined) return NO_SIDE;
+	const place = at === undefined ? undefined : placeOf(node);
+	if (at !== undefined && envelopeKindAt(node, place) !== undefined) return NO_SIDE;
 	const written = at?.tree.triviaSide(at.index, side);
 	if (written !== undefined) return { entries: written as TriviaEntry[], tree: treeOf(node) };
 	const stored = triviaOf(node)?.[side];
 	if (stored !== undefined) return { entries: stored, tree: undefined };
-	const source = envelopeKindOf(node) === undefined ? placeOf(node) : undefined;
+	const own = at === undefined ? placeOf(node) : place;
+	const source = envelopeKindAt(node, own) === undefined ? own : undefined;
 	const tree = source === undefined ? undefined : sourceTree(source);
 	const table = source === undefined ? undefined : tableOf(tree, source.index);
 	return table === undefined ? NO_SIDE : { entries: (table.tree.triviaSide(table.index, side) ?? []) as TriviaEntry[], tree };

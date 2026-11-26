@@ -1,7 +1,7 @@
 import type { CellSite } from './record-cell.ts';
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, Pending, TriviaEntry, TriviaFacts, UnitSidesWire, WireNode } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, triviaOf, unitSidesOf, writtenSides } from './node-data.ts';
+import { carryRead, carryPlace, coordinateIndex, coordinateOf, heldUnitSides, indexOf, isRead, isStorageKey, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, triviaOf, unitSidesOf, writtenSides, type SourceIdentity } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { admitSlot, builtArenaOf as handleBuiltArena, currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
@@ -145,9 +145,10 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	let result = built;
 	try {
 		const from = builtRefOf(node);
-		result = sourcedRecord(node, built, true);
+		const place = placeOf(node);
+		result = sourcedRecord(node, built, true, place);
 		carryRead(node, result);
-		carryPlace(node, result);
+		if (place !== undefined) carryPlace(node, result, place);
 		carryUnitSides(node, result, from);
 		const facts = handle?.current.trivia;
 		if (facts !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, standsIn(facts));
@@ -326,8 +327,7 @@ export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEnt
 	return (tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
 }
 
-function sourcedRecord<R extends object>(source: object, built: R, own: boolean): R {
-	const from = placeOf(source);
+function sourcedRecord<R extends object>(source: object, built: R, own: boolean, from: SourceIdentity | undefined): R {
 	if (from === undefined) return built;
 	const ref = builtRefOf(built);
 	const tree = treeOfToken(from.token);
@@ -347,12 +347,13 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		const fresh = result[key];
 		const held = read[key];
 		if (!carriesFrom(held, fresh, stands)) continue;
-		if (placeOf(held as object) === undefined) {
+		const place = placeOf(held as object);
+		if (place === undefined) {
 			carrySides(held as object, fresh);
 			continue;
 		}
 		carryRead(held as object, fresh);
-		carryPlace(held as object, fresh);
+		carryPlace(held as object, fresh, place);
 	}
 }
 
@@ -389,7 +390,8 @@ export function carriedSlot(source: object, accessor: string, value: unknown): u
 	if (facts === undefined || builtRefOf(value)?.at === undefined) return value;
 	const held = slotRead(source, accessor);
 	if (!carriesFrom(held, value, standsIn(facts))) return value;
-	if (placeOf(held as object) !== undefined) return sourcedRecord(held as object, value, false);
+	const place = placeOf(held as object);
+	if (place !== undefined) return sourcedRecord(held as object, value, false, place);
 	carrySides(held as object, value);
 	return value;
 }

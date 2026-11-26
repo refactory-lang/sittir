@@ -134,6 +134,19 @@ describe('record construction', () => {
 		}
 	});
 
+	it("asks whether a read made a rebuild's source 12 times, finding where the source sits once in the rebuild and once where it reads the source's sides", () => {
+		const b = records.build;
+		const fn = b.functionItem({ name: b.identifier('f'), parameters: b.parameters(), body: b.block({ statements: [] }) }) as unknown as Built & { readonly $at: number };
+		const reads = vi.spyOn(BuiltArena.prototype, 'reads');
+		try {
+			const renamed = (fn.$with as { name(value: unknown): Built }).name(b.identifier('g'));
+			expect(reads.mock.calls.filter(([at]) => at === fn.$at)).toHaveLength(12);
+			expect(String(renamed)).toBe('fn g() {}');
+		} finally {
+			reads.mockRestore();
+		}
+	});
+
 	it("builds a kind that seats a group: a key reads the group's field while the group is there, and $with seats it", () => {
 		const seated = (engine: typeof objects) => {
 			const b = engine.build;
