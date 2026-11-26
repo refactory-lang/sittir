@@ -3,7 +3,7 @@ import { leafItemPastNames, type CellSite, type NodeIdFormat } from './record-ce
 import { decodeIndex, isCoordinate, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { builtRefOf, siteOf } from './built-ref.ts';
+import { builtRefOf, siteOf, type BuiltRef } from './built-ref.ts';
 import { HANDLE_FIELDS, isLeafHandle, isParsedPosition, type LeafHandle } from './handle.ts';
 import { hydrateOn } from './engine-scope.ts';
 import { storedSlotValues } from './record-view.ts';
@@ -367,8 +367,7 @@ function tableOf(tree: TreeHandle | undefined, index: number | undefined): Table
 	return writesSides(tree) && index !== undefined ? { tree, index } : undefined;
 }
 
-export function tableAt(node: object): TableAt | undefined {
-	const built = builtRefOf(node);
+export function tableAt(node: object, built: BuiltRef | undefined = builtRefOf(node)): TableAt | undefined {
 	if (built === undefined) return tableOf(treeOf(node), indexOf(node));
 	return built.at === undefined ? undefined : { tree: built.arena.tree, index: built.at };
 }
@@ -383,8 +382,7 @@ function sourceTree(source: SourceIdentity): TreeHandle | undefined {
  * store's, else the ones it holds, else its tree's for a parsed node, else those of the node it
  * was rebuilt from (`placeOf`); `undefined` when none answers.
  */
-export function unitSidesOf(node: object): readonly UnitSidesWire[] | undefined {
-	const built = builtRefOf(node);
+export function unitSidesOf(node: object, built: BuiltRef | undefined = builtRefOf(node)): readonly UnitSidesWire[] | undefined {
 	if (built !== undefined) return built.at === undefined ? undefined : built.arena.tree.unitSides(built.at);
 	const held = heldUnitSides(node);
 	if (held !== undefined) return held;
@@ -549,8 +547,8 @@ function alignedItems(before: readonly unknown[], after: readonly unknown[]): Re
  * or else the ones the table assigns it; a built node's stored side, else the side of the node it
  * was rebuilt from (`placeOf`).
  */
-export function sideOf(node: object, side: TriviaSideName): readonly TriviaEntry[] {
-	return sideRead(node, side).entries;
+export function sideOf(node: object, side: TriviaSideName, built?: BuiltRef): readonly TriviaEntry[] {
+	return sideRead(node, side, built).entries;
 }
 
 /** One side of a node and the tree whose table holds it (`sideOf`'s source); `tree` is `undefined` for a side the node holds as its own data. */
@@ -561,10 +559,10 @@ export interface SideRead {
 
 const NO_SIDE: SideRead = { entries: [], tree: undefined };
 
-export function sideRead(node: object, side: TriviaSideName): SideRead {
+export function sideRead(node: object, side: TriviaSideName, built?: BuiltRef): SideRead {
 	const site = sitedLeaf(node);
 	if (site !== undefined) return { entries: (siteSide(site, side) ?? []) as TriviaEntry[], tree: undefined };
-	const at = tableAt(node);
+	const at = tableAt(node, built ?? builtRefOf(node));
 	if (at !== undefined && envelopeKindOf(node) !== undefined) return NO_SIDE;
 	const written = at?.tree.triviaSide(at.index, side);
 	if (written !== undefined) return { entries: written as TriviaEntry[], tree: treeOf(node) };
@@ -603,10 +601,10 @@ export function sidesOf(node: object): NodeTrivia | undefined {
 	return Object.keys(sides).length === 0 ? undefined : sides;
 }
 
-export function writtenSides(node: object): NodeTrivia | undefined {
+export function writtenSides(node: object, resolved?: BuiltRef): NodeTrivia | undefined {
 	const site = sitedLeaf(node);
 	if (site !== undefined) return sidesWhere((side) => siteSide(site, side));
-	const built = builtRefOf(node);
+	const built = resolved ?? builtRefOf(node);
 	if (built?.at === undefined) return triviaOf(node);
 	return sidesWhere((side) => built.arena.tree.triviaSide(built.at, side));
 }

@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it, vi } from 'vitest';
-import type { NativeModuleLike } from '@sittir/common/engine';
+import { BuiltArena, type NativeModuleLike } from '@sittir/common/engine';
 import { recordOf } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 import { expectGiven } from './constructions.mts';
@@ -119,6 +119,19 @@ describe('record construction', () => {
 		expect(((renamed.name as () => Built)().$text as () => string)()).toBe('g');
 		expectGiven((renamed.body as () => unknown)(), body);
 		expect(((fn.name as () => Built)().$text as () => string)()).toBe('f');
+	});
+
+	it("resolves the record of a rebuild's source once in the rebuild, beside the two the setter's copy resolves", () => {
+		const b = records.build;
+		const fn = b.functionItem({ name: b.identifier('f'), parameters: b.parameters(), body: b.block({ statements: [] }) }) as unknown as Built;
+		const live = vi.spyOn(BuiltArena.prototype, 'liveAt');
+		try {
+			const renamed = (fn.$with as { name(value: unknown): Built }).name(b.identifier('g'));
+			expect(live.mock.calls.filter(([node]) => node === fn)).toHaveLength(3);
+			expect(String(renamed)).toBe('fn g() {}');
+		} finally {
+			live.mockRestore();
+		}
 	});
 
 	it("builds a kind that seats a group: a key reads the group's field while the group is there, and $with seats it", () => {

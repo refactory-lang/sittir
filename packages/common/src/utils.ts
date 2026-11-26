@@ -17,7 +17,7 @@ import { spelledMember } from './spelled.ts';
 import { snapshotOf } from './snapshot.ts';
 import { cacheOf, chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import { HANDLE, isParsedPosition, receiverOf, type Held, type LeafHandle, type Received, type RecordHandle, type RecordPosition } from './handle.ts';
-import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
+import { builtLeafOf, builtRefOf, handleArenaOf, siteOf, type BuiltRef } from './built-ref.ts';
 import { builtRecordOf, holdSideEntries, isBuiltNode, patchCell, patchFlag, patchList, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -144,19 +144,20 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	if (!isNode(built)) return built;
 	let result = built;
 	try {
+		const from = builtRefOf(node);
 		result = sourcedRecord(node, built, true);
 		carryRead(node, result);
 		carryPlace(node, result);
-		carryUnitSides(node, result);
+		carryUnitSides(node, result, from);
 		const facts = handle?.current.trivia;
 		if (facts !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, standsIn(facts));
-		const held = sideOf(node, 'inner');
+		const held = sideOf(node, 'inner', from);
 		const inner = held.length === 0 || isEmptyNode(result) ? [] : held;
 		if (inner.some((entry) => typeof entry !== 'number')) {
 			const kind = facts?.kindName(node.$type) ?? String(node.$type);
 			throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 		}
-		const trivia = isReadRecord(node) ? undefined : writtenSides(node);
+		const trivia = isReadRecord(from) ? undefined : writtenSides(node, from);
 		if (inner.length > 0) writeTrivia(result, { ...trivia, inner: [] });
 		else if (trivia !== undefined) writeTrivia(result, trivia);
 		return handle === undefined ? result : handle.settle(result);
@@ -265,19 +266,18 @@ export function writeUnitSides(node: object, units: readonly UnitSidesWire[]): v
 	holdSideEntries(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
 }
 
-function isReadRecord(node: object): boolean {
-	const built = builtRefOf(node);
+function isReadRecord(built: BuiltRef | undefined): boolean {
 	return built?.at !== undefined && built.arena.reads(built.at);
 }
 
-function carryUnitSides(from: object, to: object): void {
+function carryUnitSides(from: object, to: object, source: BuiltRef | undefined = builtRefOf(from)): void {
 	const built = builtRefOf(to);
-	if (built?.at !== undefined && (builtRefOf(from) === undefined || isReadRecord(from))) built.arena.defer(built.at, () => carryUnitSidesNow(from, to));
-	else carryUnitSidesNow(from, to);
+	if (built?.at !== undefined && (source === undefined || isReadRecord(source))) built.arena.defer(built.at, () => carryUnitSidesNow(from, to, builtRefOf(from), builtRefOf(to)));
+	else carryUnitSidesNow(from, to, source, built);
 }
 
-function carryUnitSidesNow(from: object, to: object): void {
-	const units = builtRefOf(to) === undefined ? heldUnitSides(from) : unitSidesOf(from);
+function carryUnitSidesNow(from: object, to: object, source: BuiltRef | undefined, built: BuiltRef | undefined): void {
+	const units = built === undefined ? heldUnitSides(from) : unitSidesOf(from, source);
 	if (units !== undefined && units.length > 0) writeUnitSides(to, realignedUnits(units, from, to));
 }
 
@@ -327,10 +327,11 @@ export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEnt
 }
 
 function sourcedRecord<R extends object>(source: object, built: R, own: boolean): R {
-	const ref = builtRefOf(built);
 	const from = placeOf(source);
-	const tree = from === undefined ? undefined : treeOfToken(from.token);
-	if (ref?.at === undefined || from === undefined) return built;
+	if (from === undefined) return built;
+	const ref = builtRefOf(built);
+	const tree = treeOfToken(from.token);
+	if (ref?.at === undefined) return built;
 	if (tree?.built === ref.arena) return ref.arena.rebuiltFromRead(built, from.index, from.span, own) as R;
 	if (tree?.id === undefined) return built;
 	throw new Error(`a built record is rebuilt only from a node its own engine parsed, not from a node of tree ${tree.id}`);
