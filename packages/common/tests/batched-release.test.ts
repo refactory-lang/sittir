@@ -13,7 +13,7 @@ function recording(refusal?: Error) {
 		SittirEngine: class {
 			readonly handle = handle;
 			parse = () => '';
-			dispose = () => {};
+			dispose = () => void calls.push(['dispose']);
 		},
 		builtBump: call('builtBump'),
 		releaseBuilt: (_: object, batch: Float64Array) => {
@@ -69,11 +69,28 @@ describe('a batched release', () => {
 		expect(() => engine.renderBuilt!({}, 8, false, false)).not.toThrow();
 	});
 
-	it('goes with a disposed engine', async () => {
+	it('crosses what waits when the engine is disposed, then disposes it', async () => {
 		const { calls, engine } = recording();
 		engine.releaseBuilt!(64, 0);
 		engine.dispose();
 		await Promise.resolve();
-		expect(calls).toEqual([]);
+		expect(calls).toEqual([['releaseBuilt', [64, 0]], ['dispose']]);
+	});
+
+	it('surfaces a refusal met crossing on dispose from that dispose, the engine disposed', () => {
+		const refusal = new Error('released count');
+		const { calls, engine } = recording(refusal);
+		engine.releaseBuilt!(64, 0);
+		expect(() => engine.dispose()).toThrow(refusal);
+		expect(calls.at(-1)).toEqual(['dispose']);
+	});
+
+	it('surfaces a refusal from the end of the microtask on dispose when no engine call comes first', async () => {
+		const refusal = new Error('released count');
+		const { calls, engine } = recording(refusal);
+		engine.releaseBuilt!(64, 0);
+		await Promise.resolve();
+		expect(() => engine.dispose()).toThrow(refusal);
+		expect(calls.at(-1)).toEqual(['dispose']);
 	});
 });

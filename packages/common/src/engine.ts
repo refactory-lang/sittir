@@ -205,7 +205,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtBump?(address: number, more: number): void;
 	/** One more count of the built entry at `address`, whose count saturated, told to native before the next engine function runs. Present when the addon carries the record codec. */
 	holdSaturated?(address: number): void;
-	/** Releases a count of the entry at `address` of form `held`, a builder's or a read's, whose count the caller already dropped to zero when `held` carries the format's `dropped` tag. The releases cross to native in one call before the next engine function runs or at the end of the microtask, whichever comes first, and a refusal surfaces on that engine function. Present when the addon carries the record codec. */
+	/** Releases a count of the entry at `address` of form `held`, a builder's or a read's, whose count the caller already dropped to zero when `held` carries the format's `dropped` tag. The releases cross to native in one call before the next engine function runs, at the end of the microtask, or when the engine is disposed, whichever comes first, and a refusal surfaces on that engine function or on dispose. Present when the addon carries the record codec. */
 	releaseBuilt?(address: number, held: number): void;
 	/** Crosses the releases and the holds past a saturated count waiting in JavaScript to native now, as the next engine function would, throwing a refusal one of them met. Present when the addon carries the record codec. */
 	crossReleases?(): void;
@@ -478,10 +478,14 @@ export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(nati
 			return instance.parse(source, options);
 		},
 		dispose: () => {
-			heldPast.clear();
-			released = 0;
-			refused = undefined;
-			instance.dispose();
+			try {
+				if (released !== 0 || refused !== undefined) settled();
+			} finally {
+				heldPast.clear();
+				released = 0;
+				refused = undefined;
+				instance.dispose();
+			}
 		},
 		holdSaturated: builtBump && ((address: number) => void heldPast.set(address, (heldPast.get(address) ?? 0) + 1)),
 		releaseBuilt: releaseBuilt && release,
