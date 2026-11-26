@@ -444,7 +444,7 @@ Any new `pub` item among these is a row for the maintainer before code.
 
 ### Task 6f: A built root's edit is no slower in arena storage than in object storage
 
-**Status:** Step 2a: the maintainer chose placement (B), side rows in the arena's chunks. Its format proposal is written below and is with the maintainer, and no side code is built until it is approved. Step 2 in progress on `perf/arena-built-edit` (from master `f793d21c4`, master merged at `5b3b1f619`). Built red then green, each test counting what it removes: a release skips the side rows while the store holds none (`bcf373d2d`); a handle is told from another object by one load, its own key asked only when the load matches (`e4b2f195f`); a rebuild resolves its source's built record and its source identity once each (`536138d72`, `373335a2a`); a release walks with one set of buffers (`f7e1dea54`); and a built release is refused at once and crosses to native in one call per batch, as the maintainer ruled, with a reused leaf text crossing the waiting releases first (`e6fa5a5e6`), and an engine's dispose crossing what waits and throwing its refusal (`50298cf21`). `TriviaStore::carry_sides` (`b3b129cf1`) is superseded by (B), under which a rebuild shares its source's rows, and it goes when (B) is built. On paired run 45891775946 (Neoverse-N2, `e6fa5a5e6` against master `f793d21c4`), edit plus release, arena over object: 1.24–1.28 plain, 1.64–1.71 many names, 3.26–3.29 commented; against master's arena 0.66–0.88. Four rows were above master with their whole range, three of them object storage; paired run 45900422392 at `8c1dc6469` repeats them. Addon and engine rows so far: `releaseBuilt(engine, batch: Float64Array)` in place of `releaseBuilt(engine, address, held, owned)`; the new `HELD_DROPPED`; `NativeEngineLike.releaseBuilt(address, held)` and `crossReleases()`; `BuiltRecords.release(at, held)` and `cross()`. Step 2a lists (B)'s rows. Per root, local macOS arm, edit plus release, arena over object: plain 2.2 to 1.44, many names 2.5 to 1.68, commented 4.9 to 4.17; arena release 0.77 to 0.22 µs, its crossing included. On paired run 45878576050 (Neoverse-N2, `6e75d89be` against master `f793d21c4`), before the buffers and the batch: 1.49–1.66 plain, 2.07–2.19 many names, 3.30–3.63 with a comment on each root, and no row worse than master; paired run 45891775946 measures `e6fa5a5e6`. Two rows stay open: the 2000-distinct build and pipeline, arena against master's arena, at 1.05–1.07 build and 1.07–1.17 pipeline. On the build row, the object null pair (master over base) spreads as wide. On the pipeline row it stays at or below 1.001. So the paired run gains an arena null column, master-arena over base-arena, as its own commit on this branch with the next code push, and a run with it settles both rows. What remains: (B) once approved; interning each new name in `BuiltArena.entry`; then, only if a paired run still shows edit above object, folding the generated setter's two `liveAt` calls. Arena storage is the performance path, so an arena row above object storage's is a defect, and a row still above 1 when a PR lands continues in the next PR as work. Render, arena over object, is 0.49–0.56.
+**Status:** Step 2a: the maintainer chose placement (B), side rows in the arena's chunks. Its format proposal is written below and is with the maintainer, and no side code is built until it is approved. Step 2 in progress on `perf/arena-built-edit` (from master `f793d21c4`, master merged at `5b3b1f619`). Built red then green, each test counting what it removes: a release skips the side rows while the store holds none (`bcf373d2d`); a handle is told from another object by one load, its own key asked only when the load matches (`e4b2f195f`); a rebuild resolves its source's built record and its source identity once each (`536138d72`, `373335a2a`); a release walks with one set of buffers (`f7e1dea54`); and a built release is refused at once and crosses to native in one call per batch, as the maintainer ruled, with a reused leaf text crossing the waiting releases first (`e6fa5a5e6`), and an engine's dispose crossing what waits and throwing its refusal (`50298cf21`). `TriviaStore::carry_sides` (`b3b129cf1`) is superseded by (B), under which a rebuild shares its source's rows, and it goes when (B) is built. On paired run 45891775946 (Neoverse-N2, `e6fa5a5e6` against master `f793d21c4`), edit plus release, arena over object: 1.24–1.28 plain, 1.64–1.71 many names, 3.26–3.29 commented; against master's arena 0.66–0.88. Four rows were above master with their whole range, three of them object storage; paired run 45900422392 at `8c1dc6469` repeats them. Addon and engine rows so far: `releaseBuilt(engine, batch: Float64Array)` in place of `releaseBuilt(engine, address, held, owned)`; the new `HELD_DROPPED`; `NativeEngineLike.releaseBuilt(address, held)` and `crossReleases()`; `BuiltRecords.release(at, held)` and `cross()`. Step 2a lists (B)'s rows. Per root, local macOS arm, edit plus release, arena over object: plain 2.2 to 1.44, many names 2.5 to 1.68, commented 4.9 to 4.17; arena release 0.77 to 0.22 µs, its crossing included. On paired run 45878576050 (Neoverse-N2, `6e75d89be` against master `f793d21c4`), before the buffers and the batch: 1.49–1.66 plain, 2.07–2.19 many names, 3.30–3.63 with a comment on each root, and no row worse than master; paired run 45891775946 measures `e6fa5a5e6`. Two rows stay open: the 2000-distinct build and pipeline, arena against master's arena, at 1.05–1.07 build and 1.07–1.17 pipeline. On the build row, the object null pair (master over base) spreads as wide. On the pipeline row it stays at or below 1.001. So the paired run gains an arena null column, master-arena over base-arena. It is built as its own commit (`4e2f2e98f`) and goes up with the next code push; a run with it settles both rows. What remains: (B) once approved; interning each new name in `BuiltArena.entry`; then, only if a paired run still shows edit above object, folding the generated setter's two `liveAt` calls. Arena storage is the performance path, so an arena row above object storage's is a defect, and a row still above 1 when a PR lands continues in the next PR as work. Render, arena over object, is 0.49–0.56.
 
 - [x] **Step 1:** find the cause, with numbers from both storages on the construction workload.
 - [ ] **Step 2a:** count every place JavaScript touches side layout or side bookkeeping and propose the boundary the spec bullet "JS holds no side layout or side bookkeeping" draws (below). The maintainer chose placement (B) and approves its format before code; the commented case's bar and interning wait on it.
@@ -491,21 +491,22 @@ Each claim below is marked:
 - **built**: in code;
 - **not checked**: none of those.
 
-Field and constant names are placeholders until the maintainer names them. "Head" and "base" are shorthand for this proposal only, not names for code.
+Field and constant names are placeholders until the maintainer names them. They follow the `SIDE_FIELD_*` pattern.
 
-**A record's word 1** names its side record, as today (read). Under (B) it names one of two kinds:
-- **Base:** today's side record, unchanged (read: `SideRecord::fields`). It gains one flag, `EDITED` (see "Written sides of a read").
-  - Built and read records: `at`, `edges`, `span`, `sides` and the list settings.
+**A record's word 1** names its side record, as today (read). Under (B), a side record holds one of two sets of fields:
+- **Today's fields, unchanged except two changes** (read: `SideRecord::fields`):
+  - Built and read records hold `at`, `edges`, `span`, `sides` and the list settings.
   - Read records also hold `flanks`, `slots`, `parent`, `node`, `source`, `depth`, `run`, `spans` and `starts`.
-- **Head:** a side record that holds only rows:
+  - The two changes: `parent` moves ahead of the list settings, and a flag, `EDITED`, is added. Both are explained under "Written sides of a read".
+- **Row fields**, in a side record that holds nothing else:
   - `NEXT`: the side record it was written over, if any;
   - `LEADING`, `TRAILING` and `INNER`: each the list cell of a row's run;
   - `SITES`: the table for unit and leaf sites;
   - three flags: `WRITTEN_LEADING`, `WRITTEN_TRAILING` and `WRITTEN_INNER`.
 
-**Why a head, rather than new base fields.** Fields are packed in mask order, so a base can't gain a field in place; adding one means copying it (read). A read record's base holds `run`, `slots` and `node`, all of varying length, and it names a counted `source` (read). To copy it, JavaScript would need that whole layout and its counts. A head names the base whole, so a side write copies only the head, at most `1 + 1 + 3 + 1 + 2n` words.
+**Why row fields get a side record of their own.** Fields are packed in mask order, so a side record can't gain a field in place; adding one means copying it (read). A read record's side record holds `run`, `slots` and `node`, all of varying length, and names a counted `source` (read). To copy one, JavaScript would need that whole layout and those counts. A side record with row fields names the one it was written over whole, through `NEXT`. A side write therefore copies only the row fields: at most `1 + 1 + 3 + 1 + 2n` words.
 
-**Mask bits.** The base uses bits 0–18; 19–31 are free (read: `mask::ALL`).
+**Mask bits.** Today's fields use bits 0–18, which leaves 19–31 free (read: `mask::ALL`).
 
 | bit | field | words |
 |---|---|---|
@@ -515,9 +516,9 @@ Field and constant names are placeholders until the maintainer names them. "Head
 | 22 | `SITES` | 1 + 2n |
 | 23 | `NEXT` | 1 |
 | 24–26 | `WRITTEN_LEADING`, `WRITTEN_TRAILING`, `WRITTEN_INNER` | 0 |
-| 27 | `EDITED` (base only) | 0 |
+| 27 | `EDITED`, on a side record without row fields | 0 |
 
-A head's fields go in the order `NEXT`, `LEADING`, `TRAILING`, `INNER`, `SITES`, so `NEXT`, when present, is always the word after the mask.
+Row fields go in the order `NEXT`, `LEADING`, `TRAILING`, `INNER`, `SITES`. So `NEXT`, when it is present, is always the word after the mask.
 
 **A row** is a counted run, written as a list is: its length, then its cells (read: `BuiltArena.run`, `BuiltWriter::run`). A field holds the run's list cell, `run << 2`, which `decodeListCell` already reads (read). Each cell is one of:
 - a record cell, for a comment record or an `ERROR`;
@@ -530,19 +531,19 @@ A coordinate entry, a read node of object storage, is refused as today (read: `c
 - A reader takes a record's side as its codes, then its row, as today (read: `kept_side`).
 - Hydrate splits a placed side's leading gaps into the codes, as today (read: `header_split`).
 - A JavaScript write clears that side's codes and writes the whole side as its row, so JavaScript needs no rule for which gaps fit a code (not built).
-- A JavaScript read decodes the codes through each code's gap kind, a new export (see "Addon rows").
+- A JavaScript read decodes the codes through each code's gap kind, a new export (see "Exported constants").
 
 **The table for unit and leaf sites** (`SITES`) is a count word, then two words per site, sorted by key:
-- **Key:** `word << (ITEM_BITS + 3) | item << 3 | written << 2 | side`, where side 0 is leading and 1 is trailing. That's 5 + 18 + 3 = 26 bits (read: `NodeId::WORD_BITS`, `ITEM_BITS`).
+- **Key:** `word << (ITEM_BITS + 3) | item << 3 | written << 2 | side`, where side 0 is leading and 1 is trailing. That is 5 + 18 + 3 = 26 bits (read: `NodeId::WORD_BITS`, `ITEM_BITS`).
 - **Row:** the row's list cell.
 
-Every site is a `(word, item)` in its holder, as `Place::site` keys it today (read): a unit, a built leaf, and a read row (a leaf that a holder's cell names). A site has no inner side (read: `NO_INSIDE`). The inside site goes: today it keys a record's inner side, and here `INNER` is the head's own field.
+Every site is a `(word, item)` in its holder, as `Place::site` keys it today (read). Sites include a unit, a built leaf, and a read row, which is a leaf a holder's cell names. A site has no inner side (read: `NO_INSIDE`). The inside site, which keys a record's inner side today, goes: `INNER` is a row field of the record itself.
 
 ```mermaid
 flowchart LR
   R["record: header (kind, flags, 3 leading codes, 1 trailing code), word 1, cells"]
-  H["head: mask, NEXT, LEADING, TRAILING, INNER, SITES (n, then key and row n times)"]
-  B["base: mask, at, edges, span, sides, delimiter, separator kind, flanks, slots, parent, node, source, depth, run, spans, starts"]
+  H["side record with row fields: mask, NEXT, LEADING, TRAILING, INNER, SITES (n, then key and row n times)"]
+  B["the side record it was written over: mask, at, edges, span, sides, parent, delimiter, separator kind, flanks, slots, node, source, depth, run, spans, starts"]
   RL["run: length, cells"]
   RS["run of a site: length, cells"]
   C["comment record or ERROR"]
@@ -558,75 +559,103 @@ flowchart LR
 ```
 
 **Counts.**
-- A head holds one count of each run it names, and one of its `NEXT`.
-- A run holds one count of each record and leaf entry its cells name, as a list's run does. Releasing a run drops each item cell, and skips a unit cell, which names chunk 0 (read: the `Held::Run` release).
-- Releasing a head (`Held::Side`) drops its runs and its `NEXT` (not built). Today a `Held::Side` release drops only `source` and `sides` (read).
-- Every native reader of a side record follows `NEXT` to the base's fields. One is `release_parsed`, which reads `run` to drop the children no cell names (read).
+- A side record with row fields holds one count of each run it names, and one of its `NEXT`.
+- A run holds one count of each record and leaf entry its cells name, as a list's run does. Releasing a run drops each item cell and skips a unit cell, which names chunk 0 (read: the `Held::Run` release).
+- Releasing a side record (`Held::Side`) also drops its runs and its `NEXT` (not built). Today it drops only `source` and `sides` (read).
+- Every native reader of a side record follows `NEXT` to the fields under it. One of them is `release_parsed`, which reads `run` to drop the children no cell names (read).
 
 **A write, by either side.** To write side `s` of record `R`, or of a site in `R`:
 1. Write the new row as a run, holding each entry it names: `adopt` and `holdText` in JavaScript, `hold` natively (read).
-2. If `R`'s word 1 names a head that is held once and already has the field, replace the field's cell in place and drop the old run.
-3. Otherwise write a new head:
-   - the old head's other fields, each run held once more;
-   - its `NEXT`, held once more, or, when word 1 named a base, that base as `NEXT`;
-   - and the new field.
-   Point word 1 at the new head and drop one count of what word 1 named before.
+2. If `R`'s word 1 names a side record with row fields that is held once and already has the field, replace the field's cell in place and drop the old run.
+3. Otherwise write a new side record with row fields. It holds the old one's other row fields, each run held once more, and the new field. Its `NEXT` is the old one's `NEXT`, held once more. If word 1 named a side record without row fields, `NEXT` is that side record instead. Point word 1 at the new side record and drop one count of what word 1 named before.
 
 Step 3 is also **copy-on-write of a shared side.**
-- A rebuild shares its source's head, because `copy` copies word 1 and holds it (read: `#copyCells`).
-- A write to either record then writes a head of its own, and the other keeps the shared one.
-- `#sidesNaming` already copies a built base this way for the `sides` field (read). How it meets a head, by writing a new base under it, is not built.
+- A rebuild shares its source's side record, because `copy` copies word 1 and holds it (read: `#copyCells`).
+- A write to either record then writes a side record of its own, and the other record keeps the shared one.
+- `#sidesNaming` already copies a built side record this way for the `sides` field (read). How it meets row fields is not built. It would write a new side record under them and a new one with row fields over it.
 
 A write to a read record's side also sets its `WRITTEN_*` flag, or its site key's written bit, and `EDITED` (see "Written sides of a read"). JavaScript writes a read record's word 1 through its read chunk's view, which is writable (read: `#readChunk`). Whether anything else forbids that is not checked.
 
 **A rebuild.**
 - **Its own sides** are shared through word 1, with no work (read: `copy`).
-- **Header codes:** today `draft` writes a fresh header (read) and the store's carry restores the codes. Under (B), the copy also takes the code bits of the source's header, in one masked OR (not built).
-- **The inner rule** stays in JavaScript, where it is (read: `utils.ts` `rebuilt`). When the rebuild holds a child and the shared head has an `INNER` row:
+- **Header codes:** today `draft` writes a fresh header (read), and the store's carry restores the codes. Under (B) the copy also takes the code bits of the source's header, in one masked OR (not built).
+- **The inner rule** stays in JavaScript, where it is (read: `utils.ts` `rebuilt`). When the rebuild holds a child and the shared side record has an `INNER` row:
   - a comment among its cells is refused, as today;
-  - a row of layout alone is dropped through step 3, by a head without `INNER`.
-- **Sites at patched words:** the shared `SITES` still names sites at the words the edit replaced. When the edit patches a word that has a site entry, the rebuild writes a head without those entries, as the skip in `copy_sites` does today (read).
-- **A list's unit sides** stay realigned in JavaScript (read: `realignedUnits`). JavaScript reads the source's `SITES` and writes the rebuild's head with the realigned table. The deferral for a read source (read: `carryUnitSides`) goes, since nothing crosses.
+  - a row of layout alone is dropped through step 3, by a side record with no `INNER`.
+- **Sites at patched words:** the shared `SITES` still names sites at the words the edit replaced. When the edit patches a word that has a site entry, the rebuild writes a side record without those entries, as the skip in `copy_sites` does today (read).
+- **A list's unit sides** stay realigned in JavaScript (read: `realignedUnits`). JavaScript reads the source's `SITES` and writes the rebuild's side record with the realigned table. The deferral for a read source (read: `carryUnitSides`) goes, since nothing crosses.
 
 **What hydrate writes.** Today `place_extras` runs after `ReadWriter::finish`, through the built chunks, into the store's map (read: `read_records`). The proposal runs it before `finish`, through the read writer:
 1. Sort the placements (`Placed` and `apart`) by holder, then site, then side.
 2. For each holder, write each row's run.
-3. Write one head that names the holder's old side record as `NEXT`, and point word 1 at it.
+3. Write one side record with row fields that names the holder's old side record as `NEXT`, and point word 1 at it.
 
 This fits the place-and-claim order. The writer places each entry with a count of one, claimed by the one entry that names it (read: `ReadWriter::alloc`):
-- a run is claimed by its head;
-- a head is claimed by word 1;
-- the old side record is claimed by the head's `NEXT`, which takes over word 1's claim with no count changed.
+- a run is claimed by the side record with row fields;
+- that side record is claimed by word 1;
+- the old side record is claimed by `NEXT`, which takes over word 1's claim with no count changed.
 
-A refused read gives its runs and heads back with the rest of its spans (read: `abandon`). Today a `place_extras` failure releases the root after `finish` (read). None of this is built or timed.
+A refused read gives these entries back with the rest of its spans (read: `abandon`). Today a failed `place_extras` releases the root after `finish` (read). None of this is built or timed.
 
-An alternative writes no heads at hydrate. Each record's side record would be written at its parent's finish, when the parent's walk has placed its sides, with the rows as base fields. That saves 2 words per record with placed sides. It changes the walk's order, though, and holds each child's side record until its parent closes (not checked).
+An alternative writes the rows as fields of each record's own side record, with no side record over it. Each record's side record would then be written at its parent's finish, when the parent's walk has placed its sides. That saves 2 words per record with placed sides. It changes the walk's order, though, and keeps each child's side record in memory until its parent closes (not checked).
+
+**The cost to parse.** Parse plus whole-tree read must stay at or below 1, arena over object.
+
+What hydrate writes for each record with placed sides:
+- **A run for each placed side:** `1 + entries` words, so 2 for one comment.
+- **One side record with row fields:** a mask word, `NEXT`, one word per own side, and `1 + 2n` for sites.
+- **Totals:** one leading comment on a record is 5 words (20 bytes); one comment on a unit or leaf site is 7.
+
+Today, for each placed side, `place_extras` inserts a `Vec<CompactEntry>` (8 bytes per entry, on the heap) into a `BTreeMap` under the store's write lock (read). `row_bytes` counts the key, the value and the heap; the map's node overhead is extra. Neither is measured per row here.
+
+| | today | (B) |
+|---|---|---|
+| per placed side | a heap allocation and an ordered insert | a run written at the chunk's end |
+| per record with placed sides | — | one side record written at the chunk's end, and word 1 patched |
+| allocation | one `Vec` per side, plus map nodes | none, past the chunk's growth |
+
+The (B) column is not checked. Every native read of those records' side records, in render and in deep read, also takes one more step through `NEXT` (not checked).
+
+The read's words in chunks rise by these words, since today the map holds them outside the chunks. The deep-read word pins (`deep_read_words`) move by that amount, a planned trade that is reported with numbers when built.
+
+The paired-run rows that judge it are in the corpus table, for each of the five grammars: `parse`, `whole-tree read` and `pipeline`.
+- `feature-arena/base` (cross-storage) carries the arena-over-object bar of 1.
+- `feature-arena/base-arena` is read against the arena null pair, `master-arena/base-arena`.
 
 **Every read record with placed sides gets a side record.**
-- Today a record finished with an open run always gets a base, since the base names its node and source (read: `finish` in `hydrate.rs`).
-- A record finished without an open run gets a base only when its side record isn't empty (read).
-- Under the proposal, every record with placed sides gets a head. A head with no `NEXT` stands alone (not built).
+- Today a record finished with an open run always gets one, since its side record names its node and source (read: `finish` in `hydrate.rs`).
+- A record finished without an open run gets one only when its side record isn't empty (read).
+- Under the proposal, every record with placed sides gets a side record with row fields. One with no `NEXT` stands alone (not built).
 
 **Written sides of a read, and `edited_within`.** Today the store marks each side a write gave a read node (read):
-- `written(spans)` ranges over those marks for `edited_within`;
+- `written(spans)` ranges over the marks for `edited_within`;
 - `seated` reads a marked side as written.
 
-With no map:
-- **`seated`:** the `WRITTEN_*` flags and the site key's written bit answer it.
-- **`EDITED`** on a read record's base says a write lies under the record or on its inner side.
-  - A write sets it on the record whose site or inner side it writes, and on every ancestor through `parent`.
-  - That costs O(depth) per write, and `edited_within` of a record reads one bit.
-- **A read row** is a node with no record, in its holder's run. Native looks at the holder's written site keys, and at the `EDITED` bit of the records within the row's range, only when the holder has `EDITED`.
-- **The walk to the ancestors** needs `parent`'s offset, which comes after `flanks` and `slots`. So `SIDE_FIELD_FLANKS`, `SIDE_FIELD_SLOTS`, `SIDE_WORDS_SLOT` and `SIDE_FIELD_PARENT` are exported too.
+With no map, `seated` reads the `WRITTEN_*` flags and the site key's written bit. `edited_within` asks whether a write lies under a node. Three ways were weighed:
 
-None of this is built. The alternative, one scan of a read's records per render that asks, costs O(records in the read) per render (not checked).
+1. **`EDITED` on each ancestor, with `parent` moved.** Recommended.
+   - `parent` moves ahead of the list settings in the read record's side record. It then follows `at`, `edges`, `span` and `sides`, the fields JavaScript already finds through exported constants (read: `sideBeforeDelimiter`). Built records hold no `parent`, so their side records keep their words.
+   - A write sets `EDITED` on the side record of the record it writes under, then on each ancestor in turn through `parent`. A write to `R`'s leading or trailing side starts at `R`'s parent; a write to `R`'s inner side or to a site in it starts at `R`.
+   - The walk stops at the first record already marked, since every ancestor above it is marked too. Marks are never cleared, as today's are not (read: `mark`).
+   - **Cost:** O(depth) for the first write under a path, and about 4 loads per level. Later writes stop early. A call costs one bit for a record.
+   - **For a read row**, a node with no record in its holder's run, native reads the holder's written site keys and the `EDITED` bits of the records in the row's range of the run. It does so only when the holder has `EDITED`, at a cost of O(entries of the row).
+   - **Constants JavaScript needs:** `SIDE_FIELD_PARENT` alone.
+   - **Format change:** the read side record's fields are reordered in `SideRecord::fields` and `read_into`. The number of words is unchanged (read), so the deep-read word pins hold (not checked).
+2. **`EDITED` on each ancestor, with `parent` where it is.** Dropped. Finding `parent` needs `flanks` and `slots`, which vary in length, so this brings the side record's layout back into JavaScript through four constants.
+3. **The written record marked alone, and a walk per call.** A write sets only its own record's marks. `edited_within(node)` reads the marks of the records under the node.
+   - **"One range of the read's records" does not hold.** In the writer's order the node's records are one segment: a record is drafted as the walk enters it (`open_record`) and its side record is written at its `finish` (read). In addresses, though, they are not one range:
+     - The writer opens a new chunk at any free number, a lower or an in-between one included (read: tests `a_read_on_a_reused_lower_number_starts_a_span_there`, `a_chunk_numbered_between_two_of_a_read_s_chunks_parts_its_spans`).
+     - An entry wider than a chunk takes a chunk of its own while the open chunk stays open, and the open span is extended past it. So the spans don't keep the writer's order (read: `ReadWriter::note`). Long lists are such entries.
+     - Even within one range, the words don't say which entries are records. A range holds records, side records, runs and link records, and the count table marks only where each entry starts (read: `CountTable::place`, a bit per word).
+   - **What remains is a walk** of the node's subtree through its cells and runs: O(records under the node) per call. Done once per render, it covers the rendered root's subtree.
+   - **Cost:** a write costs O(1), and JavaScript needs no constant beyond the row fields. A render of an edited read pays O(records in the read), where today it pays O(written sides × log n) and renders each untouched child as a slice. The time is not checked; at 100,000 records it is one load of word 1 and one of the mask per record.
 
-**Dead rows.** A replaced run or head is dropped, and its words wait until their chunk holds nothing live (read: the arena bump-allocates and frees a chunk at zero live).
+**Dead rows.** A replaced run or side record is dropped, and its words wait until their chunk holds nothing live (read: the arena bump-allocates and frees a chunk at zero live).
 - They pin no chunk: a chunk holding only dead words is freed.
-- They do take room in chunks that other live entries hold.
-- Each rewrite leaves the old run (1 + entries words) dead and, when it writes a new head, the old head too.
+- They take room in chunks that other live entries hold.
+- Each rewrite leaves the old run (1 + entries words) dead and, when a new side record is written, the old one too.
 
-How much that adds on a long-lived record is not checked. The proposed probe: 1,000 `$trivia` writes to one record's leading side, with `builtMemory()` before and after, in both storages.
+How much that adds on a long-lived record is not checked. Once (B) is built, a probe measures it: 1,000 `$trivia` writes to one record's leading side, with `builtMemory()` read before and after, in both storages.
 
 **The unplaced leaf, option (a).** A leaf's own sides stay on the leaf until it is placed. They hold a count of each record and leaf entry they name, through the count tables (read: `#park`, `#unpark`). When the leaf is placed, JavaScript writes them as rows in the holder's `SITES` and moves the counts to the runs (not built).
 
@@ -634,16 +663,16 @@ How much that adds on a long-lived record is not checked. The proposed probe: 1,
 
 | # | after |
 |---|---|
-| 1–4, 11 | gone: no side bits, caches or held trees; a side is read from its head |
+| 1–4, 11 | gone: no side bits, caches or held trees; a side is read from the record's side record |
 | 5 | the deferral of the unit-side carry goes; whether other work still uses `defer` is not checked |
 | 6 | option (a) |
-| 7 | stays: `copy` shares word 1, so the head and its rows come along |
-| 8 | `#copySites` and `copyBuiltSites` go; a rebuild writes a head without the patched words' sites |
+| 7 | stays: `copy` shares word 1, so the side record and its rows come along |
+| 8 | `#copySites` and `copyBuiltSites` go; a rebuild writes a side record without the sites at patched words |
 | 9 | the placement list stays as addresses; a leaf's side read and write go through each holder's `SITES` |
 | 10, 19 | stay; `#sidesNaming`, `sideWordsAt` and `sideOf` follow `NEXT` |
-| 12 | the inner rule stays; reading `writtenSides` and writing them back go, since the head is shared |
-| 13, 15 | a `$trivia` write writes runs and a head, as above |
-| 14 | realignment stays in JavaScript; the realigned table is written as a head |
+| 12 | the inner rule stays; reading `writtenSides` and writing them back go, since the side record is shared |
+| 13, 15 | a `$trivia` write writes runs and a side record with row fields, as above |
+| 14 | realignment stays in JavaScript; the realigned table is written in the rebuild's side record |
 | 16, 17 | a read decodes the codes and rows; a rebuilt record with no row reads its source's, as today |
 | 18 | the addon rows below |
 
@@ -655,21 +684,21 @@ How much that adds on a long-lived record is not checked. The proposed probe: 1,
 | added | none |
 | unchanged | `renderBuilt`, `releaseBuilt`, `readEditedWithin` (it reads the marks natively) |
 
-**Exported constants added:**
-- **head fields:** `SIDE_FIELD_LEADING`, `SIDE_FIELD_TRAILING`, `SIDE_FIELD_INNER`, `SIDE_FIELD_SITES`, `SIDE_WORDS_SITE`, `SIDE_FIELD_NEXT`;
+**Exported constants**, added with the first choice for `edited_within`:
+- **row fields:** `SIDE_FIELD_LEADING`, `SIDE_FIELD_TRAILING`, `SIDE_FIELD_INNER`, `SIDE_FIELD_SITES`, `SIDE_WORDS_SITE`, `SIDE_FIELD_NEXT`;
 - **marks:** `SIDE_FIELD_WRITTEN_LEADING`, `SIDE_FIELD_WRITTEN_TRAILING`, `SIDE_FIELD_WRITTEN_INNER`, `SIDE_FIELD_EDITED`, `SITE_SIDE_BITS`, `SITE_WRITTEN`;
-- **the walk to `parent`:** `SIDE_FIELD_FLANKS`, `SIDE_FIELD_SLOTS`, `SIDE_WORDS_SLOT`, `SIDE_FIELD_PARENT`;
+- **the walk to the ancestors:** `SIDE_FIELD_PARENT`;
 - **header codes:** `LAYOUT_CODE_BITS`, `LAYOUT_LEADING_CODES`, `LAYOUT_TRAILING_CODES`;
 - **each layout code's gap kind:** seven per grammar, as constants or read once when the engine is made. Which of the two the addon allows is not checked.
 
 **What goes natively.**
 - `TriviaStore`'s map of built places, and every method over it:
-  - `side`, `sides`, `units`;
-  - `write_units`, `copy_sites`, `write_side`, `write_kept`, `write_held_side`, and the map write in `write_placed`;
-  - `written`, `edited`, and the release's `drop_record`.
+  - the reads: `side`, `sides` and `units`;
+  - the writes: `write_units`, `copy_sites`, `write_side`, `write_kept`, `write_held_side`, and the map write in `write_placed`;
+  - the marks and release: `written`, `edited`, and the release's `drop_record`.
 - A parsed tree's own rows, object storage's, stay (read: `ParsedTree::sides`).
-- `TriviaStore::carry_sides` (`b3b129cf1`) goes too. A rebuild shares its source's head through word 1, so there's nothing to carry, and nothing builds on it. Its uncommitted JavaScript test is dropped, not committed.
-- `Place::RootLeaf`, a lone built leaf's sides handed to its render, isn't counted here. It renders through its own addon row, with the leaf's sides as wire (read). Whether it changes is not checked.
+- `TriviaStore::carry_sides` (`b3b129cf1`) goes too. A rebuild shares its source's side record through word 1, so there is nothing to carry, and nothing builds on it. Its uncommitted JavaScript test is dropped, not committed.
+- `Place::RootLeaf` is not counted here. It holds a lone built leaf's sides for that leaf's render, which goes through its own addon row with the sides as wire (read). Whether it changes is not checked.
 
 **Crossings per edit, then per render of the edit.** The "today" column was probed at `8c1dc6469` by counting every addon call. The (B) column is the design, not checked.
 
@@ -684,19 +713,19 @@ How much that adds on a long-lived record is not checked. The proposed probe: 1,
 | a `$trivia` write or read | 1 | **0** |
 
 **For the maintainer.**
-1. **Where rows live.**
-   - Recommended: in a head over the base, so a write never copies a base.
-   - Or: as base fields. A write then copies the base, and for a read record that means JavaScript knows the base's whole layout and its counts.
+1. **Where row fields live.**
+   - Recommended: in a side record of their own over the record's side record, so a write never copies the record's side record.
+   - Or: as fields of the record's own side record. A write then copies it, and for a read record JavaScript would need its whole layout and its counts.
 2. **What hydrate writes.**
-   - Recommended: heads, written before `finish` through the read writer.
-   - Or: side records written a level later, holding the rows, with no heads.
+   - Recommended: side records with row fields, written before `finish` through the read writer.
+   - Or: each record's side record written a level later, holding its rows, with no side record over it.
 3. **How a read knows a write lies under a node.**
-   - Recommended: `EDITED`, set on the ancestors at each write.
-   - Or: a scan of the read's records per render.
+   - Recommended: `EDITED` on each ancestor, with `parent` moved ahead of the list settings.
+   - Or: the written record marked alone, and a walk of the node's subtree per render.
 4. **A written side's header codes.**
    - Recommended: the write clears them and holds the whole side as its row.
    - Or: JavaScript splits gaps into codes, which repeats native's rule.
-5. **Out of scope, as the spec recommends:** object storage's tree functions, and the base's `sides` field.
+5. **Out of scope, as the spec recommends:** object storage's tree functions, and the `sides` field.
 
 **Release.** Measured locally at `8c1dc6469`, per root, which is the root and its edit (two handles):
 - plain: 0.08 µs in JavaScript (count drop, queue, handle checks) and 0.16 µs in the native flush;
