@@ -36,7 +36,7 @@ on:
         type: boolean
         default: false
       phase:
-        description: The corpus phase a phase profile runs, parse, render or edit.
+        description: The corpus phase a phase profile runs, parse, render or edit; built, the render of built Rust function items; or worker, the paired construction worker's whole timed loop.
         type: string
         default: render
       storage:
@@ -80,7 +80,7 @@ jobs:
           components: llvm-tools
       # The same flags on every tree, so the build stamps still agree: line
       # tables name inlined functions, frame pointers give perf the call chain.
-      - name: Build for a native profiler, and install perf and llvm
+      - name: Build for a native profiler
         if: inputs.native-profiler
         shell: bash
         env:
@@ -92,6 +92,12 @@ jobs:
             echo "CARGO_PROFILE_${profile}_STRIP=false"
             echo "RUSTFLAGS=-C force-frame-pointers=yes"
           } >> "$GITHUB_ENV"
+      # A flat profile samples the builds a paired run measures, so it installs
+      # perf without the native profiler's build flags.
+      - name: Install perf and llvm
+        if: inputs.native-profiler || inputs.script == 'run-phase-flat.py'
+        shell: bash
+        run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq llvm "linux-tools-$(uname -r)" || sudo apt-get install -y -qq llvm linux-tools-generic
           perf=/usr/lib/linux-tools/$(uname -r)/perf

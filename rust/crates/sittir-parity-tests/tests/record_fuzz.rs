@@ -5,7 +5,8 @@
 //! that names a record holding it is refused at admission.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, ArenaError, ArenaRead, BuiltChunks, Cell, CellAt, CellWord, HeldArenas, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
+use sittir_core::engine::Backing as _;
+use sittir_core::arena::{Address, ArenaError, ArenaRead, BuiltChunks, Cell, CellAt, CellWord, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
@@ -85,7 +86,7 @@ impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
         let mut link = |_: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> { Err(sittir_core::arena::ArenaError::Unwritable("a coordinate in a snapshot")) };
         let word = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)).ok()?;
         let cell = Cell::decode_built(word, &arena, G::KIND_BITS).ok()?;
-        matches!(cell, Cell::Child { .. }).then(|| Self { image: Image::of(&arena), bits: G::KIND_BITS, store, root: CellAt { cell, tree: None, site: None } })
+        matches!(cell, Cell::Child { .. }).then(|| Self { image: Image::of(&arena), bits: G::KIND_BITS, store, root: CellAt { cell, node: None, site: None } })
     }
 
     /// The address of every word of each words chunk up to the word after
@@ -113,8 +114,7 @@ impl<T: Clone + sittir_core::heap::HeapBytes> Built<T> {
 
     /// `G`'s render of the root, its panic caught.
     fn render<G: RecordGrammar<Trivia = T>>(&self, tree: &ParsedTree<G>, ctx: &RenderContext<'_>) -> std::thread::Result<Result<String, RenderError>> {
-        let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
-        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, &mut arenas, &self.image, &self.store, ctx, None)))
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, None, &self.image, &self.store, ctx)))
     }
 }
 
@@ -215,7 +215,7 @@ fn a_child_cell_naming_a_record_that_holds_it_is_refused() {
         .addresses()
         .into_iter()
         .filter_map(|cell| match built.image.word(cell).ok().map(|word| Cell::decode_built(CellWord(word), &built.image, built.bits)) {
-            Some(Ok(Cell::Child { kind: CALL_EXPRESSION, at, link: None, .. })) => Some((cell, at)),
+            Some(Ok(Cell::Child { kind: CALL_EXPRESSION, at, .. })) => Some((cell, at)),
             _ => None,
         })
         .collect();

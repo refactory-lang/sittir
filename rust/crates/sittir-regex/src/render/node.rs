@@ -532,91 +532,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            AnyNode::Pattern(t) => t.source_separator(ctx),
-            AnyNode::Alternation(t) => t.source_separator(ctx),
-            AnyNode::Term(t) => t.source_separator(ctx),
-            AnyNode::LookaroundAssertion(t) => t.source_separator(ctx),
-            AnyNode::LookaheadAssertion(t) => t.source_separator(ctx),
-            AnyNode::LookbehindAssertion(t) => t.source_separator(ctx),
-            AnyNode::PatternCharacter(t) => t.source_separator(ctx),
-            AnyNode::CharacterClass(t) => t.source_separator(ctx),
-            AnyNode::PosixCharacterClass(t) => t.source_separator(ctx),
-            AnyNode::PosixClassName(t) => t.source_separator(ctx),
-            AnyNode::ClassRange(t) => t.source_separator(ctx),
-            AnyNode::ClassCharacter(t) => t.source_separator(ctx),
-            AnyNode::AnonymousCapturingGroup(t) => t.source_separator(ctx),
-            AnyNode::NamedCapturingGroup(t) => t.source_separator(ctx),
-            AnyNode::NonCapturingGroup(t) => t.source_separator(ctx),
-            AnyNode::Flags(t) => t.source_separator(ctx),
-            AnyNode::ZeroOrMore(t) => t.source_separator(ctx),
-            AnyNode::OneOrMore(t) => t.source_separator(ctx),
-            AnyNode::Optional(t) => t.source_separator(ctx),
-            AnyNode::CountQuantifier(t) => t.source_separator(ctx),
-            AnyNode::BackreferenceEscape(t) => t.source_separator(ctx),
-            AnyNode::NamedGroupBackreference(t) => t.source_separator(ctx),
-            AnyNode::DecimalEscape(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscape(t) => t.source_separator(ctx),
-            AnyNode::UnicodeCharacterEscape(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyValueExpression(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyValue(t) => t.source_separator(ctx),
-            AnyNode::ControlEscape(t) => t.source_separator(ctx),
-            AnyNode::ControlLetterEscape(t) => t.source_separator(ctx),
-            AnyNode::IdentityEscape(t) => t.source_separator(ctx),
-            AnyNode::GroupName(t) => t.source_separator(ctx),
-            AnyNode::DecimalDigits(t) => t.source_separator(ctx),
-            AnyNode::TermGroup(t) => t.source_separator(ctx),
-            AnyNode::CountQuantifierGroup(t) => t.source_separator(ctx),
-            AnyNode::CountQuantifierArm(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscapeArm(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyValueExpressionGroup(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscapeText1(t) => t.source_separator(ctx),
-            AnyNode::CharacterClassEscapeText2(t) => t.source_separator(ctx),
-            AnyNode::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
-            AnyNode::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
-            AnyNode::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
-            AnyNode::UnicodePropertyName(t) => t.source_separator(ctx),
-            AnyNode::AnyCharacter => None,
-            AnyNode::StartAssertion => None,
-            AnyNode::EndAssertion => None,
-            AnyNode::BoundaryAssertion => None,
-            AnyNode::NonBoundaryAssertion => None,
-            AnyNode::Lazy => None,
-            AnyNode::Negation => None,
-            AnyNode::Tight => None,
-            AnyNode::Newline => None,
-            AnyNode::Blankline => None,
-            AnyNode::DoubleBlankline => None,
-            AnyNode::Caret => None,
-            AnyNode::LparenQmark => None,
-            AnyNode::Eq => None,
-            AnyNode::Bang => None,
-            AnyNode::Rparen => None,
-            AnyNode::LparenQmarkLt => None,
-            AnyNode::Lbrack => None,
-            AnyNode::Dash => None,
-            AnyNode::BslashDash => None,
-            AnyNode::Rbrack => None,
-            AnyNode::LbrackColon => None,
-            AnyNode::ColonRbrack => None,
-            AnyNode::Lparen => None,
-            AnyNode::LparenQmarkPLt => None,
-            AnyNode::Gt => None,
-            AnyNode::LparenQmarkColon => None,
-            AnyNode::Star => None,
-            AnyNode::Plus => None,
-            AnyNode::Qmark => None,
-            AnyNode::Lbrace => None,
-            AnyNode::Rbrace => None,
-            AnyNode::Bslashk => None,
-            AnyNode::Lt => None,
-            AnyNode::LparenQmarkPEq => None,
-            AnyNode::Comma => None,
-            AnyNode::Colon => None,
-            AnyNode::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -683,16 +598,6 @@ impl ::sittir_core::prepare::Prepare for TriviaNode {
             TriviaNode::DoubleBlankline => None,
             TriviaNode::Verbatim(t) => t.source_coordinate(),
             TriviaNode::Text(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            TriviaNode::Tight => None,
-            TriviaNode::Newline => None,
-            TriviaNode::Blankline => None,
-            TriviaNode::DoubleBlankline => None,
-            TriviaNode::Verbatim(t) => t.source_separator(ctx),
-            TriviaNode::Text(t) => t.source_separator(ctx),
         }
     }
 }
@@ -773,12 +678,6 @@ impl ::sittir_core::prepare::Prepare for PatternContentNodeSlot {
             PatternContentNodeSlot::Term(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            PatternContentNodeSlot::Alternation(t) => t.source_separator(ctx),
-            PatternContentNodeSlot::Term(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -857,12 +756,6 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionContentNodeSlot {
         match self {
             LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.source_coordinate(),
             LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            LookaroundAssertionContentNodeSlot::LookaheadAssertion(t) => t.source_separator(ctx),
-            LookaroundAssertionContentNodeSlot::LookbehindAssertion(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1023,18 +916,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassClassAtomsNodeSlot {
             CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            CharacterClassClassAtomsNodeSlot::ClassCharacter(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::ControlEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::ControlLetterEscape(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::PosixCharacterClass(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::ClassRange(t) => t.source_separator(ctx),
-            CharacterClassClassAtomsNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -1155,15 +1036,6 @@ impl ::sittir_core::prepare::Prepare for ClassRangeStartNodeSlot {
             ClassRangeStartNodeSlot::ControlEscape(t) => t.source_coordinate(),
             ClassRangeStartNodeSlot::Dash => None,
             ClassRangeStartNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            ClassRangeStartNodeSlot::ClassCharacter(t) => t.source_separator(ctx),
-            ClassRangeStartNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            ClassRangeStartNodeSlot::ControlEscape(t) => t.source_separator(ctx),
-            ClassRangeStartNodeSlot::Dash => None,
-            ClassRangeStartNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1306,13 +1178,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierContentNodeSlot {
             CountQuantifierContentNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            CountQuantifierContentNodeSlot::CountQuantifierArm(t) => t.source_separator(ctx),
-            CountQuantifierContentNodeSlot::DecimalDigits(t) => t.source_separator(ctx),
-            CountQuantifierContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -1407,14 +1272,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeContentNodeSlot {
             CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.source_coordinate(),
             CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.source_coordinate(),
             CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeText1(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentNodeSlot::CharacterClassEscapeArm(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentNodeSlot::UnicodeCharacterEscape(t) => t.source_separator(ctx),
-            CharacterClassEscapeContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1515,14 +1372,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupQuantifierNodeSlot {
             TermGroupQuantifierNodeSlot::OneOrMore(t) => t.source_coordinate(),
             TermGroupQuantifierNodeSlot::Optional(t) => t.source_coordinate(),
             TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.source_coordinate(),
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            TermGroupQuantifierNodeSlot::ZeroOrMore(t) => t.source_separator(ctx),
-            TermGroupQuantifierNodeSlot::OneOrMore(t) => t.source_separator(ctx),
-            TermGroupQuantifierNodeSlot::Optional(t) => t.source_separator(ctx),
-            TermGroupQuantifierNodeSlot::CountQuantifier(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -1739,33 +1588,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupContentNodeSlot {
             TermGroupContentNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            TermGroupContentNodeSlot::LookaroundAssertion(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::PatternCharacter(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::CharacterClass(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::PosixCharacterClass(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::DecimalEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::CharacterClassEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::ControlEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::ControlLetterEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::IdentityEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::BackreferenceEscape(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::NamedGroupBackreference(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::AnonymousCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::NamedCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::NonCapturingGroup(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
-            TermGroupContentNodeSlot::StartAssertion => None,
-            TermGroupContentNodeSlot::EndAssertion => None,
-            TermGroupContentNodeSlot::BoundaryAssertion => None,
-            TermGroupContentNodeSlot::NonBoundaryAssertion => None,
-            TermGroupContentNodeSlot::AnyCharacter => None,
-            TermGroupContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
-        }
-    }
     fn read_coordinate(cursor: &mut ::sittir_core::tree_sitter::TreeCursor<'_>, ctx: &mut ::sittir_core::read::ReadCtx<'_>) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(cursor, ctx))
     }
@@ -1898,7 +1720,7 @@ impl ::sittir_core::render::Render for TermGroupContentNodeSlotRecord<'_> {
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PATTERN, words = 5, built_words = 3, fields = PatternFields, prepare = PatternPrepare, view = PatternNodeRecord, prepare_fn = prepare_pattern)]
+#[node(kind = kind::PATTERN, words = 5, built_words = 3, order = [content], edges = ([slot(content)], [slot(content)]), fields = PatternFields, prepare = PatternPrepare, view = PatternNodeRecord, prepare_fn = prepare_pattern)]
 pub struct PatternNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -1906,7 +1728,7 @@ pub struct PatternNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 3, inline = 3, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub content: ::sittir_core::SlotValue<PatternContentNodeSlot>,
 }
 
@@ -1950,9 +1772,6 @@ impl ::sittir_core::prepare::Prepare for PatternNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -1982,7 +1801,7 @@ fn prepare_pattern<N: PatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ALTERNATION, words = 3, built_words = 3, fields = AlternationFields, prepare = AlternationPrepare, view = AlternationNodeRecord, prepare_fn = prepare_alternation)]
+#[node(kind = kind::ALTERNATION, words = 3, built_words = 3, order = [terms], edges = ([slot(terms)], [slot(terms)]), fields = AlternationFields, prepare = AlternationPrepare, view = AlternationNodeRecord, prepare_fn = prepare_alternation)]
 pub struct AlternationNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2040,9 +1859,6 @@ impl ::sittir_core::prepare::Prepare for AlternationNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2068,7 +1884,7 @@ fn prepare_alternation<N: AlternationPrepare + ?Sized>(node: &mut N, overlay: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TERM, words = 3, built_words = 3, fields = TermFields, prepare = TermPrepare, view = TermNodeRecord, prepare_fn = prepare_term)]
+#[node(kind = kind::TERM, words = 3, built_words = 3, order = [term_group], edges = ([slot(term_group)], [slot(term_group)]), fields = TermFields, prepare = TermPrepare, view = TermNodeRecord, prepare_fn = prepare_term)]
 pub struct TermNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2122,9 +1938,6 @@ impl ::sittir_core::prepare::Prepare for TermNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2306,7 +2119,7 @@ impl ::sittir_core::render::Render for NonBoundaryAssertionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LOOKAROUND_ASSERTION, words = 10, built_words = 3, fields = LookaroundAssertionFields, prepare = LookaroundAssertionPrepare, view = LookaroundAssertionNodeRecord, prepare_fn = prepare_lookaround_assertion)]
+#[node(kind = kind::LOOKAROUND_ASSERTION, words = 5, built_words = 3, order = [content], edges = ([slot(content)], [slot(content)]), fields = LookaroundAssertionFields, prepare = LookaroundAssertionPrepare, view = LookaroundAssertionNodeRecord, prepare_fn = prepare_lookaround_assertion)]
 pub struct LookaroundAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2314,7 +2127,7 @@ pub struct LookaroundAssertionNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 8, inline = 8, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub content: ::sittir_core::SlotValue<LookaroundAssertionContentNodeSlot>,
 }
 
@@ -2358,9 +2171,6 @@ impl ::sittir_core::prepare::Prepare for LookaroundAssertionNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2383,7 +2193,7 @@ fn prepare_lookaround_assertion<N: LookaroundAssertionPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN], words = 8, built_words = 4, fields = LookaheadAssertionFields, prepare = LookaheadAssertionPrepare, view = LookaheadAssertionNodeRecord, prepare_fn = prepare_lookahead_assertion)]
+#[node(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN], words = 6, built_words = 4, order = [operator, pattern], edges = ([token(kind::LPAREN_QMARK)], [token(kind::RPAREN)]), fields = LookaheadAssertionFields, prepare = LookaheadAssertionPrepare, view = LookaheadAssertionNodeRecord, prepare_fn = prepare_lookahead_assertion)]
 pub struct LookaheadAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2394,7 +2204,7 @@ pub struct LookaheadAssertionNode {
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
     pub operator: ::sittir_core::SlotValue<LookaheadAssertionOperatorNodeSlot>,
     #[wire(key = "_pattern")]
-    #[slot(word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(word = 3, width = 3, forms = 1, built = 3)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -2438,9 +2248,6 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2465,7 +2272,7 @@ fn prepare_lookahead_assertion<N: LookaheadAssertionPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN], words = 8, built_words = 4, fields = LookbehindAssertionFields, prepare = LookbehindAssertionPrepare, view = LookbehindAssertionNodeRecord, prepare_fn = prepare_lookbehind_assertion)]
+#[node(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN], words = 6, built_words = 4, order = [operator, pattern], edges = ([token(kind::LPAREN_QMARK_LT)], [token(kind::RPAREN)]), fields = LookbehindAssertionFields, prepare = LookbehindAssertionPrepare, view = LookbehindAssertionNodeRecord, prepare_fn = prepare_lookbehind_assertion)]
 pub struct LookbehindAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2476,7 +2283,7 @@ pub struct LookbehindAssertionNode {
     #[slot(word = 2, width = 1, forms = 2, built = 2)]
     pub operator: ::sittir_core::SlotValue<LookaheadAssertionOperatorNodeSlot>,
     #[wire(key = "_pattern")]
-    #[slot(word = 3, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(word = 3, width = 3, forms = 1, built = 3)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -2519,9 +2326,6 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2597,9 +2401,6 @@ impl ::sittir_core::prepare::Prepare for PatternCharacterNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2621,7 +2422,7 @@ fn prepare_pattern_character<N: PatternCharacterPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], words = 4, built_words = 4, fields = CharacterClassFields, prepare = CharacterClassPrepare, view = CharacterClassNodeRecord, prepare_fn = prepare_character_class)]
+#[node(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], words = 4, built_words = 4, order = [negation, leading, class_atoms, trailing], edges = ([token(kind::LBRACK)], [token(kind::RBRACK)]), fields = CharacterClassFields, prepare = CharacterClassPrepare, view = CharacterClassNodeRecord, prepare_fn = prepare_character_class)]
 pub struct CharacterClassNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2632,13 +2433,13 @@ pub struct CharacterClassNode {
     #[slot(presence = display(kind::_NEGATION), word = 2, bit = 0)]
     pub negation: bool,
     #[wire(key = "_leading")]
-    #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER), word = 2, bit = 1)]
+    #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER, kind::DASH), word = 2, bit = 1)]
     pub leading: bool,
     #[wire(key = "_class_atoms")]
     #[slot(field = field::CLASS_ATOMS, word = 3, width = 1, run = 3, forms = 1, built = 3)]
     pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsNodeSlot>>,
     #[wire(key = "_trailing")]
-    #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER), word = 2, bit = 2)]
+    #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER, kind::DASH), word = 2, bit = 2)]
     pub trailing: bool,
 }
 
@@ -2682,9 +2483,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2709,7 +2507,7 @@ fn prepare_character_class<N: CharacterClassPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK], words = 5, built_words = 3, fields = PosixCharacterClassFields, prepare = PosixCharacterClassPrepare, view = PosixCharacterClassNodeRecord, prepare_fn = prepare_posix_character_class)]
+#[node(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK], words = 5, built_words = 3, order = [posix_class_name], edges = ([token(kind::LBRACK_COLON)], [token(kind::COLON_RBRACK)]), fields = PosixCharacterClassFields, prepare = PosixCharacterClassPrepare, view = PosixCharacterClassNodeRecord, prepare_fn = prepare_posix_character_class)]
 pub struct PosixCharacterClassNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2760,9 +2558,6 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2837,9 +2632,6 @@ impl ::sittir_core::prepare::Prepare for PosixClassNameNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -2861,7 +2653,7 @@ fn prepare_posix_class_name<N: PosixClassNamePrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 40, built_words = 4, fields = ClassRangeFields, prepare = ClassRangePrepare, view = ClassRangeNodeRecord, prepare_fn = prepare_class_range)]
+#[node(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 10, built_words = 4, order = [start, end], edges = ([slot(start)], [slot(end)]), fields = ClassRangeFields, prepare = ClassRangePrepare, view = ClassRangeNodeRecord, prepare_fn = prepare_class_range)]
 pub struct ClassRangeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2869,10 +2661,10 @@ pub struct ClassRangeNode {
     #[height]
     height: u16,
     #[wire(key = "_start")]
-    #[slot(field = field::START, word = 2, width = 19, inline = 18, forms = 11, built = 2)]
+    #[slot(field = field::START, listed = kind::DASH, word = 2, width = 4, forms = 3, built = 2)]
     pub start: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
     #[wire(key = "_end")]
-    #[slot(field = field::END, word = 21, width = 19, inline = 18, forms = 11, built = 3)]
+    #[slot(field = field::END, listed = kind::DASH, word = 6, width = 4, forms = 3, built = 3)]
     pub end: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
 }
 
@@ -2915,9 +2707,6 @@ impl ::sittir_core::prepare::Prepare for ClassRangeNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -2993,9 +2782,6 @@ impl ::sittir_core::prepare::Prepare for ClassCharacterNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3017,7 +2803,7 @@ fn prepare_class_character<N: ClassCharacterPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 7, built_words = 3, fields = AnonymousCapturingGroupFields, prepare = AnonymousCapturingGroupPrepare, view = AnonymousCapturingGroupNodeRecord, prepare_fn = prepare_anonymous_capturing_group)]
+#[node(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 5, built_words = 3, order = [pattern], edges = ([token(kind::LPAREN)], [token(kind::RPAREN)]), fields = AnonymousCapturingGroupFields, prepare = AnonymousCapturingGroupPrepare, view = AnonymousCapturingGroupNodeRecord, prepare_fn = prepare_anonymous_capturing_group)]
 pub struct AnonymousCapturingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3025,7 +2811,7 @@ pub struct AnonymousCapturingGroupNode {
     #[height]
     height: u16,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::PATTERN, word = 2, width = 3, forms = 1, built = 2)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -3069,9 +2855,6 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3095,7 +2878,7 @@ fn prepare_anonymous_capturing_group<N: AnonymousCapturingGroupPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN], words = 11, built_words = 5, fields = NamedCapturingGroupFields, prepare = NamedCapturingGroupPrepare, view = NamedCapturingGroupNodeRecord, prepare_fn = prepare_named_capturing_group)]
+#[node(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN], words = 9, built_words = 5, order = [operator, group_name, pattern], edges = ([slot(operator)], [token(kind::RPAREN)]), fields = NamedCapturingGroupFields, prepare = NamedCapturingGroupPrepare, view = NamedCapturingGroupNodeRecord, prepare_fn = prepare_named_capturing_group)]
 pub struct NamedCapturingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3109,7 +2892,7 @@ pub struct NamedCapturingGroupNode {
     #[slot(field = field::GROUP_NAME, word = 3, width = 3, forms = 1, built = 3)]
     pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 6, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::PATTERN, word = 6, width = 3, forms = 1, built = 4)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -3153,9 +2936,6 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3181,7 +2961,7 @@ fn prepare_named_capturing_group<N: NamedCapturingGroupPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN], words = 7, built_words = 3, fields = NonCapturingGroupFields, prepare = NonCapturingGroupPrepare, view = NonCapturingGroupNodeRecord, prepare_fn = prepare_non_capturing_group)]
+#[node(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN], words = 5, built_words = 3, order = [pattern], edges = ([token(kind::LPAREN_QMARK_COLON)], [token(kind::RPAREN)]), fields = NonCapturingGroupFields, prepare = NonCapturingGroupPrepare, view = NonCapturingGroupNodeRecord, prepare_fn = prepare_non_capturing_group)]
 pub struct NonCapturingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3189,7 +2969,7 @@ pub struct NonCapturingGroupNode {
     #[height]
     height: u16,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(field = field::PATTERN, word = 2, width = 3, forms = 1, built = 2)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -3232,9 +3012,6 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3309,9 +3086,6 @@ impl ::sittir_core::prepare::Prepare for FlagsNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3333,7 +3107,7 @@ fn prepare_flags<N: FlagsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ZERO_OR_MORE, layout = [kind::STAR], words = 3, built_words = 3, fields = ZeroOrMoreFields, prepare = ZeroOrMorePrepare, view = ZeroOrMoreNodeRecord, prepare_fn = prepare_zero_or_more)]
+#[node(kind = kind::ZERO_OR_MORE, layout = [kind::STAR], words = 3, built_words = 3, order = [lazy], edges = ([token(kind::STAR)], [slot(lazy), token(kind::STAR)]), fields = ZeroOrMoreFields, prepare = ZeroOrMorePrepare, view = ZeroOrMoreNodeRecord, prepare_fn = prepare_zero_or_more)]
 pub struct ZeroOrMoreNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3383,9 +3157,6 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3408,7 +3179,7 @@ fn prepare_zero_or_more<N: ZeroOrMorePrepare + ?Sized>(node: &mut N, overlay: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ONE_OR_MORE, layout = [kind::PLUS], words = 3, built_words = 3, fields = OneOrMoreFields, prepare = OneOrMorePrepare, view = OneOrMoreNodeRecord, prepare_fn = prepare_one_or_more)]
+#[node(kind = kind::ONE_OR_MORE, layout = [kind::PLUS], words = 3, built_words = 3, order = [lazy], edges = ([token(kind::PLUS)], [slot(lazy), token(kind::PLUS)]), fields = OneOrMoreFields, prepare = OneOrMorePrepare, view = OneOrMoreNodeRecord, prepare_fn = prepare_one_or_more)]
 pub struct OneOrMoreNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3458,9 +3229,6 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3483,7 +3251,7 @@ fn prepare_one_or_more<N: OneOrMorePrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OPTIONAL, layout = [kind::QMARK], words = 3, built_words = 3, fields = OptionalFields, prepare = OptionalPrepare, view = OptionalNodeRecord, prepare_fn = prepare_optional)]
+#[node(kind = kind::OPTIONAL, layout = [kind::QMARK], words = 3, built_words = 3, order = [lazy], edges = ([token(kind::QMARK)], [slot(lazy), token(kind::QMARK)]), fields = OptionalFields, prepare = OptionalPrepare, view = OptionalNodeRecord, prepare_fn = prepare_optional)]
 pub struct OptionalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3533,9 +3301,6 @@ impl ::sittir_core::prepare::Prepare for OptionalNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3558,7 +3323,7 @@ fn prepare_optional<N: OptionalPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE], words = 14, built_words = 4, fields = CountQuantifierFields, prepare = CountQuantifierPrepare, view = CountQuantifierNodeRecord, prepare_fn = prepare_count_quantifier)]
+#[node(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE], words = 6, built_words = 4, order = [content, lazy], edges = ([token(kind::LBRACE)], [slot(lazy), token(kind::RBRACE)]), fields = CountQuantifierFields, prepare = CountQuantifierPrepare, view = CountQuantifierNodeRecord, prepare_fn = prepare_count_quantifier)]
 pub struct CountQuantifierNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3566,7 +3331,7 @@ pub struct CountQuantifierNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 3, width = 11, inline = 10, forms = 9, built = 3)]
+    #[slot(word = 3, width = 3, forms = 1, built = 3)]
     pub content: ::sittir_core::SlotValue<CountQuantifierContentNodeSlot>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY), word = 2, bit = 0)]
@@ -3613,9 +3378,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3639,7 +3401,7 @@ fn prepare_count_quantifier<N: CountQuantifierPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT], words = 5, built_words = 3, fields = BackreferenceEscapeFields, prepare = BackreferenceEscapePrepare, view = BackreferenceEscapeNodeRecord, prepare_fn = prepare_backreference_escape)]
+#[node(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT], words = 5, built_words = 3, order = [group_name], edges = ([token(kind::BSLASHK)], [token(kind::GT)]), fields = BackreferenceEscapeFields, prepare = BackreferenceEscapePrepare, view = BackreferenceEscapeNodeRecord, prepare_fn = prepare_backreference_escape)]
 pub struct BackreferenceEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3691,9 +3453,6 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3717,7 +3476,7 @@ fn prepare_backreference_escape<N: BackreferenceEscapePrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN], words = 5, built_words = 3, fields = NamedGroupBackreferenceFields, prepare = NamedGroupBackreferencePrepare, view = NamedGroupBackreferenceNodeRecord, prepare_fn = prepare_named_group_backreference)]
+#[node(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN], words = 5, built_words = 3, order = [group_name], edges = ([token(kind::LPAREN_QMARK_P_EQ)], [token(kind::RPAREN)]), fields = NamedGroupBackreferenceFields, prepare = NamedGroupBackreferencePrepare, view = NamedGroupBackreferenceNodeRecord, prepare_fn = prepare_named_group_backreference)]
 pub struct NamedGroupBackreferenceNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3768,9 +3527,6 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3845,9 +3601,6 @@ impl ::sittir_core::prepare::Prepare for DecimalEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -3869,7 +3622,7 @@ fn prepare_decimal_escape<N: DecimalEscapePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE, words = 18, built_words = 3, fields = CharacterClassEscapeFields, prepare = CharacterClassEscapePrepare, view = CharacterClassEscapeNodeRecord, prepare_fn = prepare_character_class_escape)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE, words = 5, built_words = 3, order = [content], edges = ([slot(content)], [slot(content)]), fields = CharacterClassEscapeFields, prepare = CharacterClassEscapePrepare, view = CharacterClassEscapeNodeRecord, prepare_fn = prepare_character_class_escape)]
 pub struct CharacterClassEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3877,7 +3630,7 @@ pub struct CharacterClassEscapeNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 16, inline = 15, forms = 9, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentNodeSlot>,
 }
 
@@ -3920,9 +3673,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -3996,9 +3746,6 @@ impl ::sittir_core::prepare::Prepare for UnicodeCharacterEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4020,7 +3767,7 @@ fn prepare_unicode_character_escape<N: UnicodeCharacterEscapePrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 10, built_words = 4, fields = UnicodePropertyValueExpressionFields, prepare = UnicodePropertyValueExpressionPrepare, view = UnicodePropertyValueExpressionNodeRecord, prepare_fn = prepare_unicode_property_value_expression)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 8, built_words = 4, order = [unicode_property_value_expression_group, unicode_property_value], edges = ([slot(unicode_property_value_expression_group), slot(unicode_property_value)], [slot(unicode_property_value)]), fields = UnicodePropertyValueExpressionFields, prepare = UnicodePropertyValueExpressionPrepare, view = UnicodePropertyValueExpressionNodeRecord, prepare_fn = prepare_unicode_property_value_expression)]
 pub struct UnicodePropertyValueExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4028,10 +3775,10 @@ pub struct UnicodePropertyValueExpressionNode {
     #[height]
     height: u16,
     #[wire(key = "_unicode_property_value_expression_group")]
-    #[slot(word = 2, width = 5, inline = 5, forms = 8, built = 2)]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupNode>>,
     #[wire(key = "_unicode_property_value")]
-    #[slot(word = 7, width = 3, forms = 1, built = 3)]
+    #[slot(word = 5, width = 3, forms = 1, built = 3)]
     pub unicode_property_value: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
 }
 
@@ -4074,9 +3821,6 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4154,9 +3898,6 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4228,9 +3969,6 @@ impl ::sittir_core::prepare::Prepare for ControlEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4301,9 +4039,6 @@ impl ::sittir_core::prepare::Prepare for ControlLetterEscapeNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4379,9 +4114,6 @@ impl ::sittir_core::prepare::Prepare for IdentityEscapeNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4452,9 +4184,6 @@ impl ::sittir_core::prepare::Prepare for GroupNameNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -4527,9 +4256,6 @@ impl ::sittir_core::prepare::Prepare for DecimalDigitsNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4582,7 +4308,7 @@ impl ::sittir_core::render::Render for LazyNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TERM_GROUP, words = 35, built_words = 4, fields = TermGroupFields, prepare = TermGroupPrepare, view = TermGroupNodeRecord, prepare_fn = prepare_term_group)]
+#[node(kind = kind::TERM_GROUP, words = 9, built_words = 4, order = [content, quantifier], edges = ([slot(content)], [slot(quantifier), slot(content)]), fields = TermGroupFields, prepare = TermGroupPrepare, view = TermGroupNodeRecord, prepare_fn = prepare_term_group)]
 pub struct TermGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4590,10 +4316,10 @@ pub struct TermGroupNode {
     #[height]
     height: u16,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 19, inline = 18, forms = 11, built = 2)]
+    #[slot(word = 2, width = 4, forms = 3, built = 2)]
     pub content: ::sittir_core::SlotValue<TermGroupContentNodeSlot>,
     #[wire(key = "_quantifier")]
-    #[slot(field = field::QUANTIFIER, word = 21, width = 14, inline = 14, forms = 8, built = 3)]
+    #[slot(field = field::QUANTIFIER, word = 6, width = 3, forms = 1, built = 3)]
     pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierNodeSlot>>,
 }
 
@@ -4637,9 +4363,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4664,7 +4387,7 @@ fn prepare_term_group<N: TermGroupPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA], words = 5, built_words = 3, fields = CountQuantifierGroupFields, prepare = CountQuantifierGroupPrepare, view = CountQuantifierGroupNodeRecord, prepare_fn = prepare_count_quantifier_group)]
+#[node(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA], words = 5, built_words = 3, order = [decimal_digits], edges = ([token(kind::COMMA)], [slot(decimal_digits), token(kind::COMMA)]), fields = CountQuantifierGroupFields, prepare = CountQuantifierGroupPrepare, view = CountQuantifierGroupNodeRecord, prepare_fn = prepare_count_quantifier_group)]
 pub struct CountQuantifierGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4716,9 +4439,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierGroupNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4742,7 +4462,7 @@ fn prepare_count_quantifier_group<N: CountQuantifierGroupPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COUNT_QUANTIFIER_ARM, words = 10, built_words = 4, fields = CountQuantifierArmFields, prepare = CountQuantifierArmPrepare, view = CountQuantifierArmNodeRecord, prepare_fn = prepare_count_quantifier_arm)]
+#[node(kind = kind::COUNT_QUANTIFIER_ARM, words = 8, built_words = 4, order = [decimal_digits, count_quantifier_group], edges = ([slot(decimal_digits)], [slot(count_quantifier_group), slot(decimal_digits)]), fields = CountQuantifierArmFields, prepare = CountQuantifierArmPrepare, view = CountQuantifierArmNodeRecord, prepare_fn = prepare_count_quantifier_arm)]
 pub struct CountQuantifierArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4753,7 +4473,7 @@ pub struct CountQuantifierArmNode {
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub decimal_digits: ::sittir_core::SlotValue<DecimalDigitsNode>,
     #[wire(key = "_count_quantifier_group")]
-    #[slot(word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(word = 5, width = 3, forms = 1, built = 3)]
     pub count_quantifier_group: Option<::sittir_core::SlotValue<CountQuantifierGroupNode>>,
 }
 
@@ -4797,9 +4517,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierArmNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4824,7 +4541,7 @@ fn prepare_count_quantifier_arm<N: CountQuantifierArmPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 15, built_words = 4, fields = CharacterClassEscapeArmFields, prepare = CharacterClassEscapeArmPrepare, view = CharacterClassEscapeArmNodeRecord, prepare_fn = prepare_character_class_escape_arm)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 8, built_words = 4, order = [character_class_escape_text2, unicode_property_value_expression], edges = ([slot(character_class_escape_text2)], [token(kind::RBRACE)]), fields = CharacterClassEscapeArmFields, prepare = CharacterClassEscapeArmPrepare, view = CharacterClassEscapeArmNodeRecord, prepare_fn = prepare_character_class_escape_arm)]
 pub struct CharacterClassEscapeArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4835,7 +4552,7 @@ pub struct CharacterClassEscapeArmNode {
     #[slot(word = 2, width = 3, forms = 1, built = 2)]
     pub character_class_escape_text2: ::sittir_core::SlotValue<CharacterClassEscapeText2Node>,
     #[wire(key = "_unicode_property_value_expression")]
-    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION, word = 5, width = 10, inline = 10, forms = 8, built = 3)]
+    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION, word = 5, width = 3, forms = 1, built = 3)]
     pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionNode>,
 }
 
@@ -4879,9 +4596,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -4906,7 +4620,7 @@ fn prepare_character_class_escape_arm<N: CharacterClassEscapeArmPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 5, built_words = 3, fields = UnicodePropertyValueExpressionGroupFields, prepare = UnicodePropertyValueExpressionGroupPrepare, view = UnicodePropertyValueExpressionGroupNodeRecord, prepare_fn = prepare_unicode_property_value_expression_group)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 5, built_words = 3, order = [unicode_property_name], edges = ([slot(unicode_property_name)], [token(kind::EQ)]), fields = UnicodePropertyValueExpressionGroupFields, prepare = UnicodePropertyValueExpressionGroupPrepare, view = UnicodePropertyValueExpressionGroupNodeRecord, prepare_fn = prepare_unicode_property_value_expression_group)]
 pub struct UnicodePropertyValueExpressionGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4957,9 +4671,6 @@ impl ::sittir_core::prepare::Prepare for UnicodePropertyValueExpressionGroupNode
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -5034,9 +4745,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText1Node {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5108,9 +4816,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeText2Node {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5163,7 +4868,7 @@ impl ::sittir_core::render::Render for NegationNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN], words = 10, built_words = 4, fields = InlineFlagsGroupEnableFields, prepare = InlineFlagsGroupEnablePrepare, view = InlineFlagsGroupEnableNodeRecord, prepare_fn = prepare_inline_flags_group_enable)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN], words = 8, built_words = 4, order = [enabled, pattern], edges = ([token(kind::LPAREN_QMARK)], [token(kind::RPAREN)]), fields = InlineFlagsGroupEnableFields, prepare = InlineFlagsGroupEnablePrepare, view = InlineFlagsGroupEnableNodeRecord, prepare_fn = prepare_inline_flags_group_enable)]
 pub struct InlineFlagsGroupEnableNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -5174,7 +4879,7 @@ pub struct InlineFlagsGroupEnableNode {
     #[slot(field = field::ENABLED, word = 2, width = 3, forms = 1, built = 2)]
     pub enabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::PATTERN, word = 5, width = 3, forms = 1, built = 3)]
     pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
@@ -5218,9 +4923,6 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupEnableNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5245,7 +4947,7 @@ fn prepare_inline_flags_group_enable<N: InlineFlagsGroupEnablePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 13, built_words = 5, fields = InlineFlagsGroupToggleFields, prepare = InlineFlagsGroupTogglePrepare, view = InlineFlagsGroupToggleNodeRecord, prepare_fn = prepare_inline_flags_group_toggle)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 11, built_words = 5, order = [enabled, disabled, pattern], edges = ([token(kind::LPAREN_QMARK)], [token(kind::RPAREN)]), fields = InlineFlagsGroupToggleFields, prepare = InlineFlagsGroupTogglePrepare, view = InlineFlagsGroupToggleNodeRecord, prepare_fn = prepare_inline_flags_group_toggle)]
 pub struct InlineFlagsGroupToggleNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -5259,7 +4961,7 @@ pub struct InlineFlagsGroupToggleNode {
     #[slot(field = field::DISABLED, word = 5, width = 3, forms = 1, built = 3)]
     pub disabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 8, width = 5, inline = 5, forms = 8, built = 4)]
+    #[slot(field = field::PATTERN, word = 8, width = 3, forms = 1, built = 4)]
     pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
@@ -5303,9 +5005,6 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupToggleNode {
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
     }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
@@ -5331,7 +5030,7 @@ fn prepare_inline_flags_group_toggle<N: InlineFlagsGroupTogglePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 10, built_words = 4, fields = InlineFlagsGroupDisableFields, prepare = InlineFlagsGroupDisablePrepare, view = InlineFlagsGroupDisableNodeRecord, prepare_fn = prepare_inline_flags_group_disable)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 8, built_words = 4, order = [disabled, pattern], edges = ([token(kind::LPAREN_QMARK)], [token(kind::RPAREN)]), fields = InlineFlagsGroupDisableFields, prepare = InlineFlagsGroupDisablePrepare, view = InlineFlagsGroupDisableNodeRecord, prepare_fn = prepare_inline_flags_group_disable)]
 pub struct InlineFlagsGroupDisableNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -5342,7 +5041,7 @@ pub struct InlineFlagsGroupDisableNode {
     #[slot(field = field::DISABLED, word = 2, width = 3, forms = 1, built = 2)]
     pub disabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 5, width = 5, inline = 5, forms = 8, built = 3)]
+    #[slot(field = field::PATTERN, word = 5, width = 3, forms = 1, built = 3)]
     pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
@@ -5385,9 +5084,6 @@ impl ::sittir_core::prepare::Prepare for InlineFlagsGroupDisableNode {
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
@@ -6375,7 +6071,6 @@ fn render_alternation<N: AlternationFields + ?Sized>(node: &N, w: &mut dyn ::sit
         items: node.terms(),
         template: "{}",
         token: "|",
-        separators: None,
         before: node.terms_separator_space_before().unwrap_or(KindId::BLANK),
         after: node.terms_separator_space_after().unwrap_or(KindId::BLANK),
         leading: false,
@@ -6394,7 +6089,6 @@ fn render_term<N: TermFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::rend
         items: node.term_group(),
         template: "{}",
         token: "",
-        separators: None,
         before: KindId::BLANK,
         after: node.term_group_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
@@ -6459,7 +6153,6 @@ fn render_character_class<N: CharacterClassFields + ?Sized>(node: &N, w: &mut dy
         items: node.class_atoms(),
         template: "{}",
         token: "",
-        separators: None,
         before: KindId::BLANK,
         after: KindId::BLANK,
         leading: false,
@@ -7006,20 +6699,19 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
 /// wrap — a second entry point would be a second place the root seam
 /// policy could drift. A root of the grammar's root kind renders as a
 /// document.
-pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {
-    render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
+pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {
+    render_root(ctx, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))
 }
 
 /// The one writer a root renders through, a node's or a record's: built
 /// from the render context, and a document when `document` says so of it.
 fn render_root(
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
     document: impl FnOnce(&dyn ::sittir_core::render::RenderSink) -> bool,
     root: impl FnOnce(&mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult,
 ) -> Result<String, ::sittir_core::render::RenderError> {
     let mut s = String::new();
-    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options).with_recording(recording).with_lent(ctx.lent);
+    let w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options);
     let document = document(&w);
     let mut w = w.with_document(document);
     root(&mut w)?;
@@ -7031,21 +6723,29 @@ fn render_root(
 /// Render the record `root` names: a parsed root its source renders as
 /// the coordinate a native read of its row renders as; any other
 /// prepared into a fresh overlay, then written through its view by the
-/// writer a node renders through, which a recording render records
-/// what it writes into (`sittir_core::arena::Recording`).
+/// writer a node renders through.
 pub fn render_record(
     root: ::sittir_core::arena::CellAt,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<::sittir_core::arena::Recording<'_>>,
 ) -> Result<String, ::sittir_core::render::RenderError> {
-    let (templates, baseline) = ::sittir_core::arena::Recording::parts(recording);
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
-        return render_node_parts(::sittir_core::SlotValue::Coord(coord), &ctx.lending(&*trees), baseline).map(|(_, text)| text);
+    if let Some(at) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+        return render_source_root(at, ctx);
     }
-    with_record_node(root, templates, trees, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+    with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+}
+
+/// Render the node a read left that `at` names as a render root: its
+/// source bytes between its kind's edges, by the writer a node renders
+/// through.
+pub fn render_source_root(
+    at: ::sittir_core::slot::NodeIdOrCoordinate<'_>,
+    ctx: &::sittir_core::prepare::RenderContext<'_>,
+) -> Result<String, ::sittir_core::render::RenderError> {
+    let at = ::sittir_core::prepare::prepared_source(at, ctx)?;
+    render_root(ctx, |w| w.kind_of(at).is_some_and(|kind| kind::ROOT_KINDS.contains(&kind)), |w| ::sittir_core::slot::write_coordinate(at, false, w))
 }
 
 /// Write the built record `root` names into `w` as a trivia entry in
@@ -7053,34 +6753,32 @@ pub fn render_record(
 /// as `render_record` renders it, where `w` stands.
 pub fn render_entry_record(
     root: ::sittir_core::arena::CellAt,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
     w: &mut dyn ::sittir_core::render::RenderSink,
 ) -> ::sittir_core::render::RenderResult {
-    if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
-        return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<TriviaNode>::Coord(coord), w);
+    if let Some(at) = ::sittir_core::arena::source_root(root, built, reads, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {
+        return ::sittir_core::slot::write_coordinate(at, false, w);
     }
-    with_record_node(root, None, trees, built, store, ctx, |node, _| node.render(w))
+    with_record_node(root, reads, built, store, ctx, |node| node.render(w))
 }
 
-/// The record `root` names, prepared into a fresh overlay for a render
-/// that renders `templates` from their templates, as `body` reads it
-/// through its view, under `ctx` lending the arenas `trees` it holds.
+/// The record `root` names, prepared into a fresh overlay, as `body`
+/// reads it through its view under `ctx`.
 fn with_record_node<R>(
     root: ::sittir_core::arena::CellAt,
-    templates: Option<::sittir_core::arena::Templates>,
-    trees: &mut dyn ::sittir_core::arena::RecordTrees,
+    reads: Option<&dyn ::sittir_core::arena::ArenaRead>,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    body: impl FnOnce(&AnyNodeRecord<'_>, &::sittir_core::prepare::RenderContext<'_>) -> Result<R, ::sittir_core::render::RenderError>,
+    body: impl FnOnce(&AnyNodeRecord<'_>) -> Result<R, ::sittir_core::render::RenderError>,
 ) -> Result<R, ::sittir_core::render::RenderError> {
-    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, templates, ctx, kind::KIND_BITS)?;
-    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(reads, built, store, root, ctx, kind::KIND_BITS)?;
+    let view = ::sittir_core::arena::RecordCtx::of(root.node, built, reads, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
-    body(&node, &ctx.lending(&*trees))
+    body(&node)
 }
 }
 
@@ -7450,10 +7148,9 @@ pub type RenderRoot = ::sittir_core::SlotValue<AnyNode>;
 pub fn render_node_parts(
     mut node: RenderRoot,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    recording: Option<&mut ::sittir_core::baseline::Baseline>,
 ) -> Result<(NodeSource, String), ::sittir_core::render::RenderError> {
     let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {
-        Ok(()) => render_node_dispatch(&node, ctx, recording),
+        Ok(()) => render_node_dispatch(&node, ctx),
         Err(error) => Err(error),
     };
     ::sittir_core::codec::release::<TriviaNode, _>(node);
@@ -7675,7 +7372,7 @@ const _: () = assert!(::core::mem::size_of::<TermNode>() == 40, "TermNode is not
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<TightNode>() == 0, "TightNode is not the 0 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 112, "TriviaNode is not the 112 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<TriviaNode>() == 96, "TriviaNode is not the 96 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<UnicodeCharacterEscapeNode>() == 32, "UnicodeCharacterEscapeNode is not the 32 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

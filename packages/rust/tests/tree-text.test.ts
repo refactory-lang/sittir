@@ -1,4 +1,4 @@
-// A parsed tree's source stays native: JavaScript gets the text a span covers
+// In object storage a parsed tree's source stays native: JavaScript gets the text a span covers
 // by one native call, one string of that span's characters. A span is counted
 // in UTF-8 bytes, so text after a multi-byte character or a CRLF line ending
 // reads at its own bytes, and a span that is not one of the source's is
@@ -11,7 +11,7 @@ import rust from '../src/index.ts';
 const SOURCE = '// é ✓\r\nfn after() {}\r\n';
 
 async function nameOfFirstFunction(): Promise<object> {
-	const engine = await createEngine(rust);
+	const engine = await createEngine(rust, { nodeStorage: 'object' });
 	const root = engine.parse(SOURCE) as unknown as { statements(): { name(): object }[] };
 	return root.statements()[0]!.name();
 }

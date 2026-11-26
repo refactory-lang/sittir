@@ -70,6 +70,54 @@ impl Address {
     }
 }
 
+/// A node as a query names it where its records outlive its tree: by its
+/// own name, or by a parent's name and a child's position under it.
+#[derive(serde::Deserialize, Clone, Copy, Debug)]
+#[serde(untagged)]
+pub enum NamedAddress {
+    Own(crate::types::NodeId),
+    Child { parent: crate::types::NodeId, index: crate::types::ChildPosition },
+}
+
+impl NamedAddress {
+    /// The name the address holds: the node's own, or its parent's.
+    #[must_use]
+    pub fn name(&self) -> crate::types::NodeId {
+        match *self {
+            NamedAddress::Own(name) | NamedAddress::Child { parent: name, .. } => name,
+        }
+    }
+}
+
+/// A `DescendantBatch` whose nodes are named past the call: each item's
+/// coordinate and the walk's start by name (`NodeId`).
+#[derive(serde::Serialize)]
+pub struct NamedBatch {
+    pub items: Vec<NamedItem>,
+    pub resume: Option<Vec<crate::types::ChildPosition>>,
+    pub origin: crate::types::NodeId,
+}
+
+/// A `QueryItem` whose node is named past the call.
+#[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[serde(untagged)]
+pub enum NamedItem {
+    Node(NamedCoordinate),
+    Unit(crate::types::KindId),
+}
+
+/// A node a walk found, as it crosses where its records outlive its tree:
+/// `{ $node, $row?, $span, $type }`.
+#[derive(serde::Serialize, Debug, Clone, Copy, PartialEq, Eq)]
+pub struct NamedCoordinate {
+    #[serde(flatten)]
+    pub name: crate::types::NodeId,
+    #[serde(rename = "$span")]
+    pub span: Span,
+    #[serde(rename = "$type")]
+    pub kind: crate::types::KindId,
+}
+
 /// A slot by its number in each kind that has it, keyed by the kind a
 /// coordinate of the node carries (`ReadCtx::node_kind`). The number is the
 /// slot field's position among the kind's node slots, the numbering
@@ -166,13 +214,15 @@ pub enum Subject {
 
 /// What a plan reads a node with: the source, the kind a coordinate of a
 /// node carries (`ReadCtx::stamped_kind`), how a node's kind finds its
-/// slots (`ReadNode::router`), and the delimiter flags the read stamps on
-/// a list (`ReadNode::delimiter`).
+/// slots (`ReadNode::router`), the delimiter flags the read stamps on a
+/// list (`ReadNode::delimiter`), and the text of a unit that holds no bytes
+/// of the source, which is its kind's.
 pub struct QueryCtx<'a> {
     pub source: &'a str,
     pub stamp: &'a dyn Fn(&Kid) -> crate::types::KindId,
     pub router: &'a dyn Fn(&Kid) -> Option<Router>,
     pub delimiter: &'a dyn Fn(&mut dyn Nodes<'_>, &Kid) -> Option<crate::types::Delimiter>,
+    pub unit_text: &'a dyn Fn(crate::types::KindId) -> Option<String>,
 }
 
 /// One value a slot holds: its text, and the node that spells it, by its
@@ -268,11 +318,12 @@ fn any_hit(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'_>, slots: &Slot
 /// as the node's read finds it (`Router`). `false` when the node holds
 /// nothing there: its kind has no number for the slot, no router, or a child
 /// the read cannot route, so the query and the read agree.
-fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots: &Slots, visit: &mut dyn FnMut(Hit<'s>)) -> bool {
+fn slot_hits(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'_>, slots: &Slots, visit: &mut dyn for<'h> FnMut(Hit<'h>)) -> bool {
     let (Some(&slot), Some(router)) = (slots.slots.get(&(ctx.stamp)(at)), (ctx.router)(at)) else {
         return false;
     };
     let text = |kid: &Kid| ctx.source.get(kid.span().range()).unwrap_or("");
+    let unit_text = |nodes: &mut dyn Nodes<'_>, kid: &Kid| nodes.is_unit(kid.index).then(|| (ctx.unit_text)(kid.grammar)).flatten();
     match router {
         Router::Children(route, unit, _) => {
             let mut routed = true;
@@ -280,7 +331,8 @@ fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots:
                 match route(child) {
                     Ok(Route::Slot { slot: taken, .. }) if taken == slot => {
                         let kind = unit(slot, nodes, child).unwrap_or_else(|| (ctx.stamp)(child));
-                        visit(Hit { node: Some((child.index, kind)), text: text(child) });
+                        let held = unit_text(nodes, child);
+                        visit(Hit { node: Some((child.index, kind)), text: held.as_deref().unwrap_or_else(|| text(child)) });
                     }
                     Ok(_) => {}
                     Err(_) => routed = false,
@@ -306,7 +358,8 @@ fn slot_hits<'s>(nodes: &mut dyn Nodes<'_>, at: &Kid, ctx: &QueryCtx<'s>, slots:
             }
             let Some(child) = nodes.kids(at.index).iter().find(|child| !child.entry()).copied() else { return false };
             let kind = unit(nodes, &child).unwrap_or_else(|| (ctx.stamp)(&child));
-            visit(Hit { node: Some((child.index, kind)), text: text(&child) });
+            let held = unit_text(nodes, &child);
+            visit(Hit { node: Some((child.index, kind)), text: held.as_deref().unwrap_or_else(|| text(&child)) });
             true
         }
     }
@@ -402,7 +455,7 @@ mod tests {
         parser.set_language(language()).unwrap();
         let tree = parser.parse(source, None).unwrap();
         let stamp = |at: &Kid| at.display;
-        let ctx = QueryCtx { source, stamp: &stamp, router: &router, delimiter: &|_, _| None };
+        let ctx = QueryCtx { source, stamp: &stamp, router: &router, delimiter: &|_, _| None, unit_text: &|_| None };
         let work = crate::layout::LayoutWorkCounter::default();
         let mut nodes = crate::nodes::TreeNodes::new(&tree, source, &work);
         let mut out = Vec::new();

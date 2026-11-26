@@ -86,13 +86,38 @@ impl WhitespaceTable {
         self.gaps.iter().find(|(_, gap)| *gap == id).map(|(bit, _)| crate::layout_kinds::LayoutKinds(*bit))
     }
 
-    /// The text the grammar spells one gap kind with.
+    /// The gap kinds the grammar admits: tight, and each kind its extras
+    /// accept.
+    #[must_use]
+    pub fn admitted_gaps(&self) -> crate::layout_kinds::LayoutKinds {
+        crate::layout_kinds::LayoutKinds(self.gaps.iter().fold(crate::layout_kinds::LayoutKinds::TIGHT.0, |set, (bit, _)| set | bit))
+    }
+
+    /// The gap kind the grammar writes for `gap`: `gap` where the grammar
+    /// admits it, and otherwise the widest in-line kind it admits that is
+    /// narrower. A gap that breaks the line is kept: a grammar admits every
+    /// breaking kind or none, each being a run of its newline.
+    #[must_use]
+    pub fn admit(&self, gap: crate::layout_kinds::LayoutKinds) -> crate::layout_kinds::LayoutKinds {
+        let admitted = self.admitted_gaps();
+        if gap.is_empty() || gap.breaks() || admitted.has(gap) {
+            return gap;
+        }
+        admitted.and(crate::layout_kinds::LayoutKinds(gap.0.wrapping_sub(1))).widest()
+    }
+
+    /// The kind id the grammar gives the gap kind `gap` (`gap_of` read
+    /// backwards); none when it has no member of that kind.
+    #[must_use]
+    pub fn gap_kind(&self, gap: crate::layout_kinds::LayoutKinds) -> Option<KindId> {
+        self.gaps.iter().find(|(bit, _)| *bit == gap.0).map(|(_, id)| *id)
+    }
+
+    /// The text the grammar spells a gap with, as it admits it (`admit`); a
+    /// kind it has no member for writes nothing.
     #[must_use]
     pub fn text_of_gap(&self, gap: crate::layout_kinds::LayoutKinds) -> &'static str {
-        match self.gaps.iter().find(|(bit, _)| *bit == gap.0) {
-            Some((_, id)) => (self.text_of)(*id),
-            None => gap.default_text(),
-        }
+        self.gap_kind(self.admit(gap)).map_or("", self.text_of)
     }
 
     /// The layout kinds a leaf of `kind` takes before and after it, when it is stamped.
@@ -118,64 +143,21 @@ pub struct EdgeLevel {
     pub field: Option<crate::types::FieldId>,
 }
 
-/// The parsed trees' arenas a caller holds, lent read-only to a lookup it
-/// makes: a render's held arenas, or the arena a call outside a render
-/// locked for it. A tree read whole measures its baselines from the records
-/// in them (`Lookups::recorded`); a caller that holds none lends none.
-#[derive(Clone, Copy)]
-pub struct Lent<'a> {
-    #[cfg(feature = "arena")]
-    arenas: Option<&'a dyn crate::arena::RecordArenas>,
-    #[cfg(not(feature = "arena"))]
-    arenas: std::marker::PhantomData<&'a ()>,
-}
-
-impl Lent<'_> {
-    /// No arena lent.
-    pub const NONE: Self = Self {
-        #[cfg(feature = "arena")]
-        arenas: None,
-        #[cfg(not(feature = "arena"))]
-        arenas: std::marker::PhantomData,
-    };
-}
-
-#[cfg(feature = "arena")]
-impl<'a> Lent<'a> {
-    /// `arenas`, lent.
-    #[must_use]
-    pub fn of(arenas: &'a dyn crate::arena::RecordArenas) -> Self {
-        Self { arenas: Some(arenas) }
-    }
-
-    /// The arena of `tree`, when one is lent.
-    #[must_use]
-    pub fn tree(self, tree: crate::types::TreeId) -> Option<&'a crate::arena::TreeArena> {
-        self.arenas?.tree(tree)
-    }
-
-    /// The arenas lent.
-    #[must_use]
-    pub fn arenas(self) -> Option<&'a dyn crate::arena::RecordArenas> {
-        self.arenas
-    }
-}
-
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str>;
+    fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str>;
 
-    /// Whether the source of `tree_id` spells every line break `\n`, holding
+    /// Whether the source of `at` spells every line break `\n`, holding
     /// no `\r`, as its parse found: a slice of it enters the writer as it is.
     /// A table that does not know says no, and the writer respells the slice.
-    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
-        let _ = tree_id;
+    fn breaks_spelled_lf(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        let _ = at;
         false
     }
 
     /// The kind of the node a coordinate names, when the table still holds
     /// its tree. A table of bare sources cannot answer and says so.
-    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+    fn kind_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
         let _ = coord;
         None
     }
@@ -184,7 +166,7 @@ pub trait SourceTable {
     /// order, with its kind and source text; a visit that answers `false`
     /// skips that node's children. A table of bare sources knows no nodes and
     /// visits none.
-    fn for_each_descendant(&self, coord: &crate::slot::NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+    fn for_each_descendant(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, visit: &mut dyn FnMut(KindId, &str) -> bool) {
         let _ = (coord, visit);
     }
 
@@ -192,17 +174,16 @@ pub trait SourceTable {
     /// begin inside a token (`engine::line_starts_inside_tokens`): a slice
     /// re-indented to its new column leaves these lines as they are. A table
     /// of bare sources knows no tokens and answers none.
-    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
+    fn line_starts_inside_tokens(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<u32> {
         let _ = coord;
         Vec::new()
     }
 
-    /// The kind of the last child that is not an extra of the list spanning
-    /// `span` in `tree`, the list's own kind being `kind`
-    /// (`engine::last_list_child`). A table of bare sources cannot
+    /// The delimiter the read resolved for the list of `kind` that `at`
+    /// names, found going down from `at`. A table of bare sources cannot
     /// answer and says so.
-    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        let _ = (tree, span, kind);
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: KindId) -> Option<crate::types::Delimiter> {
+        let _ = (at, kind);
         None
     }
 
@@ -214,11 +195,22 @@ pub trait SourceTable {
     /// what its template writes there (`RenderSink::boundary`). A coordinate
     /// whose handle names a node other than its own span (a deep read's leaf,
     /// trivia) visits only its own level.
-    fn for_each_edge_level(&self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {
+    fn for_each_edge_level(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {
         let _ = side;
         if let Some(grammar) = self.kind_of(coord) {
-            f(EdgeLevel { stamp: coord.kind.unwrap_or(grammar), grammar, display: grammar, field: None });
+            f(EdgeLevel { stamp: match coord { crate::slot::NodeIdOrCoordinate::Coordinate(at) => at.kind, at @ crate::slot::NodeIdOrCoordinate::NodeId { .. } => self.stamp_of(at) }.unwrap_or(grammar), grammar, display: grammar, field: None });
         }
+    }
+
+    /// The grammar kind of the last node with bytes at the end of a
+    /// coordinate's bytes (`nodes::spelled_end`), where that is a node below
+    /// the edge chain `for_each_edge_level` visits: a line comment a block
+    /// ends in, before the zero-width tokens that close the block. The line
+    /// end its text owes is held after the coordinate. A table of bare
+    /// sources cannot answer and says so.
+    fn spelled_end_kind(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
+        let _ = coord;
+        None
     }
 
     /// The levels the node a coordinate names opens net of those it closes:
@@ -227,43 +219,33 @@ pub trait SourceTable {
     /// node's template would; a tree root's slice once something after it
     /// reads the depth, so a render that reads none never asks. A coordinate whose handle names a node other
     /// than its own span, and a table of bare sources, answer none.
-    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+    fn depth_move(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> i32 {
         let _ = coord;
         0
     }
 
     /// The sides of the node a coordinate names, as its tree's trivia table
     /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
-    /// none, the layout measured over the arenas the caller lends (`Lent`).
-    /// A table of bare sources knows no sides.
-    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        let _ = (coord, lent);
+    /// none. A table of bare sources knows no sides.
+    fn sides(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        let _ = coord;
         None
     }
 
     /// The sides a coordinate's bytes render between: its node's own
     /// (`sides`), then those of each node inside its bytes that holds trivia
-    /// at its edges for it (`ParsedTree::frame_levels`), measured over the
-    /// arenas the caller lends. A table of bare sources knows no sides.
-    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> crate::trivia::Frames {
-        crate::trivia::Frames { own: self.sides(coord, lent), items: Vec::new() }
+    /// at its edges for it (`ParsedTree::frame_levels`). A table of bare
+    /// sources knows no sides.
+    fn frames(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> crate::trivia::Frames {
+        crate::trivia::Frames { own: self.sides(coord), items: Vec::new() }
     }
 
     /// The stored layout of each list slot of the node a coordinate names
-    /// (`layout::SlotLayout`), as its tree measures it over the arenas the
-    /// caller lends; none for a table of bare sources.
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Vec<crate::layout::SlotLayout> {
-        let _ = (coord, lent);
+    /// (`layout::SlotLayout`), as its tree measures it; none for a table of
+    /// bare sources.
+    fn slot_layouts(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
+        let _ = coord;
         Vec::new()
-    }
-
-    /// The separator before the node a coordinate names as an item of its
-    /// parent's list slot, where it is not the one the slot renders
-    /// (`ParsedTree::separator_before`), measured over the arenas the caller
-    /// lends; none for a table of bare sources.
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<KindId> {
-        let _ = (coord, lent);
-        None
     }
 
     /// The bytes the node a coordinate names renders over with its sides: its
@@ -271,13 +253,16 @@ pub trait SourceTable {
     /// trailing sides. A layout run is the gap beside them, and a written
     /// entry has no bytes. A table of bare sources knows no sides and answers
     /// the span.
-    fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
-        coord.span
+    fn framed_span(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
+        match coord {
+            crate::slot::NodeIdOrCoordinate::Coordinate(at) => Some(at.span),
+            at @ crate::slot::NodeIdOrCoordinate::NodeId { .. } => self.span_of(at),
+        }
     }
 
     /// Whether a write replaced a side of a node in the range of the node a
     /// coordinate names, its own `inner` included (`ParsedTree::edited_within`).
-    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+    fn edited_within(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         let _ = coord;
         false
     }
@@ -286,7 +271,7 @@ pub trait SourceTable {
     /// coordinate, its source bytes: a parsed node with no write in its range
     /// (`edited_within`). A table that holds no tree, or one a render reads
     /// templates through on purpose, answers no.
-    fn renders_as_source(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+    fn renders_as_source(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         let _ = coord;
         false
     }
@@ -304,27 +289,45 @@ pub trait SourceTable {
     /// (`ResolvedOptions::seat_wrappers`): for each node held by the one
     /// before it, from the coordinate's own, the first that `seat` gives a
     /// site. A table of bare sources knows no nodes and answers none.
-    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+    fn seat_through(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         let _ = (coord, wrappers, seat);
         None
     }
 
-    /// The coordinate a read of the live tree `tree` names the node at
-    /// `index` by (`ReadCtx::coordinate_of`), as the read of a cursor on it
-    /// (`read_node`) names it; `None` where the table holds no such node.
-    fn row_coordinate(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::slot::NodeCoordinate> {
-        let mut at = None;
-        self.read_node(tree, index, &mut |cursor, read| at = Some(read.coordinate_of(&crate::nodes::Kid::at(cursor))));
-        at
+    /// Hands `read` a cursor on the node `coord` names, created at its tree's
+    /// root, and the context the tree's reads share; false, `read` not
+    /// called, where the table holds no such node. A table of bare sources
+    /// holds no trees.
+    fn read_node(&self, coord: &crate::slot::NodeCoordinate, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        let _ = (coord, read);
+        false
     }
 
-    /// Hands `read` a cursor on the node at `index` of the live tree `tree`,
-    /// created at the tree's root, and the context the tree's reads share;
-    /// false, `read` not called, where the table holds no such node. A table
-    /// of bare sources holds no trees.
-    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
-        let _ = (tree, index, read);
-        false
+    /// The bytes of the node `at` names by its id; a coordinate carries its
+    /// own. A table of bare sources knows no ids.
+    fn span_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
+        let _ = at;
+        None
+    }
+
+    /// The kind a read stamped on the node `at` names by its id; a coordinate
+    /// carries its own.
+    fn stamp_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
+        let _ = at;
+        None
+    }
+
+    /// Whether `one` and `other` name the same node: a content shares its
+    /// envelope's.
+    fn same_node(&self, one: crate::types::NodeId, other: crate::types::NodeId) -> bool {
+        one == other
+    }
+
+    /// Whether `at` names its source's root, the one slice whose depth move
+    /// the writer holds: a tree's index 0, or a record whose side record has
+    /// no parent. A leaf is never one.
+    fn is_source_root(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        matches!(at, crate::slot::NodeIdOrCoordinate::Coordinate(coord) if coord.index == crate::types::NodeIndex::ROOT)
     }
 
     /// Renders the built record `record`, which the store `held` answered,
@@ -350,63 +353,63 @@ pub trait SourceTable {
 pub struct ThroughTemplates<'a>(pub &'a dyn SourceTable);
 
 impl SourceTable for ThroughTemplates<'_> {
-    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&str> {
-        self.0.source_of(tree_id)
+    fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+        self.0.source_of(at)
     }
 
-    fn breaks_spelled_lf(&self, tree_id: crate::types::TreeId) -> bool {
-        self.0.breaks_spelled_lf(tree_id)
+    fn breaks_spelled_lf(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.0.breaks_spelled_lf(at)
     }
 
-    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+    fn kind_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
         self.0.kind_of(coord)
     }
 
-    fn for_each_descendant(&self, coord: &crate::slot::NodeCoordinate, visit: &mut dyn FnMut(KindId, &str) -> bool) {
+    fn for_each_descendant(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, visit: &mut dyn FnMut(KindId, &str) -> bool) {
         self.0.for_each_descendant(coord, visit);
     }
 
-    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
+    fn line_starts_inside_tokens(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<u32> {
         self.0.line_starts_inside_tokens(coord)
     }
 
-    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
-        self.0.last_list_child_kind(tree, span, kind)
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: KindId) -> Option<crate::types::Delimiter> {
+        self.0.list_delimiter(at, kind)
     }
 
-    fn for_each_edge_level(&self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {
+    fn for_each_edge_level(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {
         self.0.for_each_edge_level(coord, side, f);
     }
 
-    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+    fn spelled_end_kind(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
+        self.0.spelled_end_kind(coord)
+    }
+
+    fn depth_move(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> i32 {
         self.0.depth_move(coord)
     }
 
-    fn sides(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        self.0.sides(coord, lent)
+    fn sides(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.0.sides(coord)
     }
 
-    fn frames(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> crate::trivia::Frames {
-        self.0.frames(coord, lent)
+    fn frames(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> crate::trivia::Frames {
+        self.0.frames(coord)
     }
 
-    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Vec<crate::layout::SlotLayout> {
-        self.0.slot_layouts(coord, lent)
+    fn slot_layouts(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
+        self.0.slot_layouts(coord)
     }
 
-    fn separator_before(&self, coord: &crate::slot::NodeCoordinate, lent: Lent<'_>) -> Option<KindId> {
-        self.0.separator_before(coord, lent)
-    }
-
-    fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
+    fn framed_span(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
         self.0.framed_span(coord)
     }
 
-    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+    fn edited_within(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         self.0.edited_within(coord)
     }
 
-    fn renders_as_source(&self, _: &crate::slot::NodeCoordinate) -> bool {
+    fn renders_as_source(&self, _: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         false
     }
 
@@ -414,16 +417,28 @@ impl SourceTable for ThroughTemplates<'_> {
         true
     }
 
-    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+    fn span_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
+        self.0.span_of(at)
+    }
+
+    fn stamp_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
+        self.0.stamp_of(at)
+    }
+
+    fn same_node(&self, one: crate::types::NodeId, other: crate::types::NodeId) -> bool {
+        self.0.same_node(one, other)
+    }
+
+    fn is_source_root(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.0.is_source_root(at)
+    }
+
+    fn seat_through(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
         self.0.seat_through(coord, wrappers, seat)
     }
 
-    fn row_coordinate(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex) -> Option<crate::slot::NodeCoordinate> {
-        self.0.row_coordinate(tree, index)
-    }
-
-    fn read_node(&self, tree: crate::types::TreeId, index: crate::types::NodeIndex, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
-        self.0.read_node(tree, index, read)
+    fn read_node(&self, coord: &crate::slot::NodeCoordinate, read: &mut dyn FnMut(&mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        self.0.read_node(coord, read)
     }
 
     #[cfg(feature = "arena")]
@@ -457,6 +472,12 @@ pub enum CoordinateError {
         handle: crate::types::TreeHandle,
         detail: String,
     },
+    /// A node named by its id that no source of the render holds, or whose
+    /// span is no character range of its source.
+    Node {
+        id: crate::types::NodeId,
+        detail: String,
+    },
     /// A record's cell or word that no record writer writes, met by a
     /// record's prepare.
     #[cfg(feature = "arena")]
@@ -479,6 +500,7 @@ impl fmt::Display for CoordinateError {
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
             Self::Unread { handle, detail } => write!(f, "handle {handle}: the node holds a write, and its read failed: {detail}"),
+            Self::Node { id, detail } => write!(f, "node {id:?}: {detail}"),
             #[cfg(feature = "arena")]
             Self::Record(e) => fmt::Display::fmt(e, f),
         }
@@ -539,12 +561,9 @@ pub trait RenderSink {
     /// break included, and a whitespace entry at trivia strength (one stored
     /// or written on the side) replaces the run. On a side that breaks, a
     /// line break writes and a seam that stays on the line does not, unless
-    /// a whitespace entry spells it. `at`, the bytes of its tree's source the
-    /// text spans when read from a live tree, anchors it in a recording
-    /// render as a slice is anchored. The text's last token counts as
-    /// joining whatever is written after it (`JoinArm::next`).
-    fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>, at: Option<crate::types::Span>) -> RenderResult {
-        let _ = at;
+    /// a whitespace entry spells it. The text's last token counts as joining
+    /// whatever is written after it (`JoinArm::next`).
+    fn verbatim(&mut self, before: Option<&str>, text: &str, after: Option<&str>) -> RenderResult {
         let s = [before.unwrap_or_default(), text, after.unwrap_or_default()].concat();
         if !s.is_empty() {
             self.join_arm(JoinArm::NEXT);
@@ -556,6 +575,22 @@ pub trait RenderSink {
     /// The next text is a leaf of `kind`: its edge stamp, when it carries one
     /// (`ResolvedOptions::leaf_edges_of`), applies as `leaf_edges` does.
     fn leaf_kind(&mut self, kind: KindId) {
+        let _ = kind;
+    }
+    /// Write `text` as the bytes of a parsed unit of `kind` that no row
+    /// names, as `slice` writes a coordinate's.
+    ///
+    /// # Errors
+    ///
+    /// What writing the text refuses.
+    fn unit_text(&mut self, kind: KindId, text: &str) -> RenderResult {
+        let _ = kind;
+        self.text(text)
+    }
+    /// A parsed unit of `kind` that no row names has ended: the seam it
+    /// stands for (`ResolvedOptions::token_seam`), when it stands for one, is
+    /// held as a gap, which a render that ends there drops.
+    fn unit_seam(&mut self, kind: KindId) {
         let _ = kind;
     }
     /// A node of `kind` begins its body; `exit_kind` ends the one begun last.
@@ -616,7 +651,7 @@ pub trait RenderSink {
     /// A node begins, after its leading trivia, read from the source node
     /// `origin` names (none for a built node). The excess indentation its
     /// children's trivia opens (`layout_depth`) closes with it.
-    fn open_frame(&mut self, origin: Option<&crate::slot::NodeCoordinate>) {
+    fn open_frame(&mut self, origin: Option<crate::slot::NodeIdOrCoordinate<'_>>) {
         let _ = origin;
     }
     /// The node `open_frame` began last ends, restoring the excess
@@ -625,7 +660,7 @@ pub trait RenderSink {
     /// Whether the open frame is `coord`'s node's: an alias envelope rebuilt
     /// around its read content names one parser node twice, and its sides
     /// frame the content once.
-    fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+    fn in_frame_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
         let _ = coord;
         false
     }
@@ -652,23 +687,19 @@ pub trait RenderSink {
     /// after it (`JoinArm::next`) when its kind carries
     /// `KindFlags::JOINS_NEXT`, or when its kind is unknown. The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.
-    fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
-        Err(CoordinateError::UnknownTree {
-            handle: coord.handle(),
-            tree_id: coord.tree,
-        }
-        .into())
+    fn slice(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> RenderResult {
+        Err(coord.unknown().into())
     }
     /// The kind of the node a coordinate names, from the tree table this
     /// writer holds; a sink with no table answers nothing.
-    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+    fn kind_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
         let _ = coord;
         None
     }
     /// The frames a coordinate's bytes render between, from the tree table
     /// this writer holds (`SourceTable::frames`), each prepared as a slot's
     /// trivia is; a sink with no table answers none.
-    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, RenderError> {
+    fn frames(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<crate::trivia::Frames, RenderError> {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
     }
@@ -686,9 +717,17 @@ pub trait RenderSink {
         let _ = (record, held);
         Err(RenderError::Record(NO_ARENA))
     }
+    /// The kind a read stamped on the node `coord` names, from the tree table
+    /// this writer holds; a coordinate carries its own.
+    fn stamp_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<KindId> {
+        match coord {
+            crate::slot::NodeIdOrCoordinate::Coordinate(coord) => coord.kind,
+            crate::slot::NodeIdOrCoordinate::NodeId { .. } => None,
+        }
+    }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.
-    fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
+    fn end_lines_after(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>) {
         if let Some(kind) = self.kind_of(coord) {
             self.end_line_after(kind);
         }
@@ -703,7 +742,7 @@ pub trait RenderSink {
     /// either: the move it pairs with lies inside the coordinate's bytes,
     /// which keep their own indentation. A sink with no tree table or options
     /// places nothing.
-    fn boundary(&mut self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side) {
+    fn boundary(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side) {
         let _ = (coord, side);
     }
     /// Deepens the depth the next line is paid at. Depth is one fact per
@@ -747,6 +786,14 @@ pub trait RenderSink {
     fn take_seam(&mut self) -> Option<HeldSeam> {
         None
     }
+    /// Set aside the seam held for the next write when it is a blank line a
+    /// trivia entry wrote (`trivia_seam`), leaving none held; else leave it
+    /// held and answer none. A blank line an item's trailing side ends with
+    /// is written after the separator that follows the item, and after a
+    /// list's last item not at all (`ListView`).
+    fn take_blank_seam(&mut self) -> Option<HeldSeam> {
+        None
+    }
     /// Merge a seam set aside by `take_seam` back in, under two seam laws.
     /// Where the output already stands at a line start (text whose span
     /// includes its terminator), one break of the seam is already written.
@@ -782,6 +829,21 @@ pub trait RenderSink {
             self.hold_line_end(LineHold::Break);
         }
     }
+    /// A node of `kind` is about to be written: when the kind spells nothing
+    /// but the token its list's items end with
+    /// (`options::KindFlags::TERMINATOR_ONLY`), the gap before it breaks no
+    /// line (`drop_held_breaks`).
+    fn stay_on_line(&mut self, kind: KindId) {
+        if self.kind_has(kind, crate::options::KindFlags::TERMINATOR_ONLY) {
+            self.drop_held_breaks();
+        }
+    }
+    /// The seam held for the next write keeps only its kinds that do not
+    /// break the line, none leaving it tight. It keeps its breaks where a
+    /// line end is held, where the output stands at a line start or a block
+    /// body's start, and where it is a list's flank. A sink that holds no
+    /// seam does nothing.
+    fn drop_held_breaks(&mut self) {}
     /// Render trailing trivia that shares its owner's row, held until the
     /// anonymous tokens after the owner are written: the sink seats it before
     /// the next owner, coordinate or line break, or at the end of the render.

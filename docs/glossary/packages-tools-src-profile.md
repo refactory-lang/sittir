@@ -58,27 +58,23 @@ The corpus-entry count, UTF-8 byte count and SHA-256 of ordered names and source
 
 ### `packages/tools/src/profile/native-hydration.ts::NativeHydrationSample`
 
-A native worker's hydration depth, complete-workflow root count, retained roots with records, stage-labelled refusals, rendered output fingerprint, memory samples and five phase durations. Root counts do not count individual records or native allocations.
+A native worker's timed entry count, roots with a record, stage-labelled refusals, rendered output fingerprint, memory samples and the durations of each phase in `nativePhases`. Root counts do not count individual records or native allocations.
 
 ### `packages/tools/src/profile/native-hydration.ts::NativeContext`
 
-The shared raw native engine, tree disposal capability, ordered corpus, normalized numeric native depth and GC-settling callback for a native workflow measurement. It carries no JS node wrappers or copied chunks.
+The backend each measurement makes its native engine from (`withRecordEngine`), the ordered corpus and the GC-settling callback for a native workflow measurement. It carries no JS node wrappers or copied chunks.
 
-### `packages/tools/src/profile/native-hydration.ts::withNativeTrees`
+### `packages/tools/src/profile/native-hydration.ts::withRecordEngine`
 
-Parses a selected corpus population into raw native tree IDs, supplies parse start/end timestamps to the callback, and releases every successfully created tree in a finally block, including on parse or callback failure. Disposal is outside all recorded timers.
+Makes a native engine from the backend and hands the callback its records parse (`parseRecords`) and its render of a read record (`readRenderAt`). It refuses an addon without them, and disposes the engine in a finally block, including on a parse or callback failure. Disposal is outside all recorded timers.
 
 ### `packages/tools/src/profile/native-hydration.ts::nativePopulation`
 
-Hydrates all roots without exporting records and samples GC-settled memory with all syntax trees retained. Then preflights address-based rendering, fingerprints the output and records complete-workflow eligibility and stage-labelled refusals. Refused inputs remain in the memory population and leave the timed population.
-
-### `packages/tools/src/profile/native-hydration.ts::timeNativeAfterShallow`
-
-Times native hydration at the requested depth after a depth-one read prepared outside the timer, using the same eligible roots as the complete workflow. Verifies the root-record count outside timing and disposes each batch explicitly.
+Parses every root into the arena on one engine, which keeps no tree, and samples GC-settled memory with every parse's records held. Then preflights the render of each root's record, fingerprints the output and records complete-workflow eligibility and stage-labelled refusals; a root whose parse left no record is refused at render. Refused inputs remain in the memory population and leave the timed population.
 
 ### `packages/tools/src/profile/native-hydration.ts::sampleNativeHydration`
 
-Runs one raw engine's retained-memory and parse/hydrate/render workflow measurements, plus hydration after a shallow read. Requires the native record entry points and transfers only parse metadata, addresses and rendered strings. Always disposes the engine.
+Runs the retained-memory population and the parse/render workflow measurements, each on its own engine of the backend. Requires the native record entry points and transfers only parse answers, addresses and rendered strings.
 
 ### `packages/tools/src/profile/native-hydration.ts::renderFingerprint`
 
@@ -86,15 +82,15 @@ The framed SHA-256 and UTF-8 byte count of rendered roots in corpus order. Share
 
 ### `packages/tools/src/profile/native-hydration.ts::timeNativeWorkflow`
 
-Measures parse, native hydration and address-based rendering sequentially on the same fresh corpus batch, plus the total workflow duration. Checks the rendered bytes/hash and record-address presence after timing. Normal source folding remains enabled; no record inspection or chunk transfer occurs.
+Measures the records parse, which hydrates the arena, and the render of each root's record sequentially on a fresh engine per iteration, plus their total. Checks the rendered bytes and hash against the population's after timing; a root with no record or a changed output fails the run. No record inspection or chunk transfer occurs.
 
 ### `packages/tools/src/profile/native-hydration.ts::nativePhases`
 
-The native report's phase keys, shared by sample initialization and summary aggregation: parse, hydrate, render, total pipeline and hydration after a shallow read.
+The native report's phase keys, shared by sample initialization and summary aggregation (`summarizeNativeHydration`): parse, render and the total pipeline.
 
 ### `packages/tools/src/profile/native-hydration-worker.ts::NativeHydrationOptions`
 
-A fresh worker's grammar, explicit positive hydration depth or all, warmup and measured iteration counts, and optional corpus smoke limit. Serialized all becomes Infinity only at the native call.
+A fresh worker's grammar, warmup and measured iteration counts, and optional corpus smoke limit.
 
 ### `packages/tools/src/profile/native-hydration-worker.ts::NativeHydrationRun`
 
@@ -102,7 +98,7 @@ A native hydration sample with grammar, fresh worker PID and ordered corpus fing
 
 ### `packages/tools/src/profile/native-hydration-worker.ts::sampleNative`
 
-Loads the grammar's native hooks and corpus, then measures native parse, requested-depth hydration and address-based rendering in a fresh process without constructing wrapped nodes. Returns raw samples plus worker and corpus provenance.
+Loads the grammar's native hooks and corpus, then measures the native records parse and the render of each root's record in a fresh process without constructing wrapped nodes. Returns raw samples plus worker and corpus provenance.
 
 ### `packages/tools/src/profile/validation-storage-worker.ts::ValidationStorageOptions`
 

@@ -46,29 +46,6 @@ it('reads each diagnostic root at its own depth, keeping each tree, error stamp 
 	}
 });
 
-function refuseExports() {
-	return ['read', 'readRecord', 'chunk', 'text'] as const;
-}
-
-it('hydrates and renders a diagnostic tree without exporting objects or record chunks', async () => {
-	for (const method of refuseExports())
-		vi.spyOn(native, method).mockImplementation(() => {
-			throw new Error(`unexpected ${method}`);
-		});
-	const hydrated = vi.spyOn(native, 'hydrateRecord');
-	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'arena' });
-	try {
-		const source = '(identifier) @name';
-		const tree = engine.diagnostics.parseTree(source) as TreeHandle;
-		const address = tree.records!.hydrate(0, Infinity);
-		expect(address).toBeDefined();
-		expect(tree.records!.render(address!, false, false)).toBe(source);
-		expect(hydrated).toHaveBeenCalledWith(tree.id, 0, Infinity);
-	} finally {
-		engine.dispose();
-	}
-});
-
 it.each(['python', 'regex', 'rust', 'scm', 'typescript'])(
 	'%s deep arena validation covers the same typed candidates and outcomes as objects',
 	async (grammar) => {

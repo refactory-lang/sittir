@@ -13,7 +13,7 @@ export function rebuildTriviaRustLoose() {
 			name: "g",
 			parameters: rs.build.parameters(),
 			body: rs.build.block(),
-		}).$trivia.trailing(rs.build.blockComment(" t ")), rs.build.functionItem({
+		}).$trivia.trailing(rs.build.blockComment(" t "), rs.kinds.Blankline), rs.build.functionItem({
 			name: "h",
 			parameters: rs.build.parameters(),
 			body: rs.build.block({

@@ -1,6 +1,6 @@
 /**
- * Format roundtrip for the TypeScript fixtures: the native reader records each
- * fixture's inferred render options, and an edit with `$with` changes only the slot it replaces.
+ * Format roundtrip for the TypeScript fixtures: a parse that adopts each fixture's
+ * style renders it in the fixture's indentation, and an edit with `$with` changes only the slot it replaces.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -9,7 +9,8 @@ import typescript from '@sittir/typescript';
 import {
 	loadFixtureSource,
 	loadFormatCorpusEntries,
-	parseNativeFixture,
+	firstIndent,
+	renderDetachedFixture,
 	tryLoadNativeEngine
 } from './helpers.ts';
 
@@ -19,15 +20,14 @@ describe('format-roundtrip typescript fixtures', () => {
 	for (const entry of tsFixtures) {
 		it.todo(`${entry.fixture}: byte-equal roundtrip (Phase 2 — needs slot/indent restoration)`);
 
-		it(`${entry.fixture}: the parse records the indent unit its source infers`, () => {
+		it(`${entry.fixture}: a parse that adopts its style renders a detached copy in its indentation`, () => {
 			const engine = tryLoadNativeEngine('typescript');
 			if (!engine) return; // skip — native not built
 
 			const source = loadFixtureSource(entry.fixture);
-			const parsed = parseNativeFixture(engine, source);
-
+			expect(firstIndent(renderDetachedFixture(engine, source, true))).toBe(firstIndent(source));
 			if (entry.formatCategory !== 'canonical') {
-				expect(parsed.options).toHaveProperty(['layout', 'indent']);
+				expect(firstIndent(renderDetachedFixture(tryLoadNativeEngine('typescript')!, source, false))).not.toBe(firstIndent(source));
 			}
 		});
 	}

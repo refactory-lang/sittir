@@ -3,6 +3,7 @@ import { createEngine } from '@sittir/common';
 import python from '../src/index.ts';
 
 const engine = await createEngine(python);
+const adopting = await createEngine(python);
 const SOURCE = 'if a:\n  b\n    # four\n  c\n';
 
 function blockOf(root: ReturnType<typeof engine.parse>) {
@@ -26,8 +27,8 @@ describe("an outside write keeps the span's layout", () => {
 		expect(block.$render()).toBe('b\n  # four\nc # tail\n');
 	});
 
-	it("the whole tree renders the written entry and the reader's comment, and reparses clean", () => {
-		const root = engine.parse(SOURCE);
+	it("the whole tree renders the written entry and the reader's comment in the adopted style, and reparses clean", () => {
+		const root = adopting.parse(SOURCE, { adoptStyle: true });
 		blockOf(root).$trivia.leading('# lead');
 		const out = root.$render();
 		expect(out).toBe('if a:\n  # lead\n  b\n    # four\n  c\n');
@@ -44,7 +45,7 @@ describe("a folded slice keeps its inner layout at the column it lands on", () =
 	});
 
 	it('a line that starts inside a string keeps its bytes', () => {
-		const root = engine.parse('if a:\n  s = """x\n  y"""\n  c\n');
+		const root = adopting.parse('if a:\n  s = """x\n  y"""\n  c\n', { adoptStyle: true });
 		blockOf(root).$trivia.leading('# lead');
 		const out = root.$render();
 		expect(out).toBe('if a:\n  # lead\n  s = """x\n  y"""\n  c\n');

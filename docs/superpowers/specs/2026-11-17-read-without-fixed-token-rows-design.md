@@ -147,6 +147,7 @@ Every reader takes a fixed token's offsets through navigation's `Kid`, which `Ru
 - **After.**
   - The positional test stays for records and rows: their spans are stored.
   - Where the chain reaches a node whose edge is a fixed token or a unit, the token's kind comes from the node kind's render body: its first (last) part, read against the record's cells when that part is a slot, so the edge is the one the record's own render would write.
+  - Where that part sits under an arm the render body picks by a slot's kind, the edge reads the arm the cell's kind picks, against the kinds the render body stamps on each arm. Examples: a C# method's body, where a block ends the method but an arrow clause is followed by `;`; and Java's `assert` and `wildcard_bounds`. The Rust walk compares the cell's kind id with the arm's stamped set. No grammar or API changes; a presence-gated reauthoring of those kinds would fix only them.
   - A fixed token is fixed for its kind, or for the polymorph form that is the record's kind. A choice among literal texts is a slot (a `kindEnum` or `mixedEnum` slot), so its edge is the cell's kind.
   - The per-kind leading and trailing fixed token is generated with the crate from `render-bodies.json`, the source of fixed tokens, as one fact per kind. It is never derived from text at run time.
   - A list's separator at a record's edge follows the same rule, and nothing new is stored for it. The list's `delimiter` says whether a separator sits at that edge. Its kind is the list's resolved separator: `SideSlot::separator`, else the arm of the options the tree was read with. A zero-width automatic semicolon is no trailing delimiter, so that edge goes on to the last item.
@@ -332,7 +333,7 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 - A parsed read stores no offset and no row for a fixed token or a unit.
 - The four readers answer as today on every fixture, from positions, the render body and facts stamped at parse.
 - A parsed unit cell is the built unit cell.
-- Read words fall to the "stage one" column on every corpus, less the measured cost of the stamped separator choices.
+- Read words fall to the "stage one" column on every corpus, less the measured cost of the stamped separator choices and of each read's own side record. That record came after the census. It holds the read's spans, which navigation and the keying of written sides read, and its entry starts, which let a render skip a frame with no entry. It costs 5 words for a read of one chunk run with no starts, plus 2 for each further run and 1 for each start. (The maintainer, 2026-11-24, accepting it over cutting its encoding: python sat 73 words over stage one and regex 92, each only by this record.)
 
 ## Non-goals
 

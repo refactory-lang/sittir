@@ -2,7 +2,7 @@
 
 > **Execution:** the prototype session executes this plan inline, task by task, with superpowers:executing-plans. This repository uses no subagents for code. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** written 2026-11-17, updated 2026-11-22. **It lands inside the hydrate-at-parse branch and its PR, and Task 10, the render's table, follows Task 9 there** (the maintainer, 2026-11-22: "2 and let's have prototype finish it in one shot"). Tasks 2–10 and 3a run straight through, by the rule in the arena plan's Task 6 status:
+**Status:** written 2026-11-17, updated 2026-11-23. **It lands inside the hydrate-at-parse branch and its PR, and Task 10, the render's table, follows Task 9 there** (the maintainer, 2026-11-22: "2 and let's have prototype finish it in one shot"). Tasks 2–10 and 3a run straight through, by the rule in the arena plan's Task 6 status:
 - Each commit runs its own targeted tests, red then green, and each piece is pushed so CI runs its suite.
 - `validate:history`, the full suites, storage parity and the census run once, at Task 10's gates on the final head. A step below that names one of them is read that way. Task 3a's arena baseline still runs at Task 3a, since the final comparison reads it.
 - The stop conditions below still stop the work.
@@ -14,6 +14,7 @@ Where the work stands:
   - named fixed tokens leave query results (Task 6).
 
   Task 4 is written from the delimiter audit (2026-11-17). `probe/delimiter-by-kind` and `probe/delimiter-options-decide` are kept. In arena storage a node is named by its `NodeId`, so wherever this plan says a coordinate or a node's index, read that node's `NodeId`. A unit is named by its holder's `NodeId` and its slot, which is what `NodeSite::Unit` means below. A flag's keyword has no cell, so it has no site, and no side is kept on it (the arena spec).
+- **Tasks 2, 3, 3a and 4** are done (`0a524d9eb`, `4e4ccad56`, `6fc600773`, `5febfa404`). The stored-layout row did not move under arena storage. **Task 5** is done: a record's edge comes from its body, a holder of a visible enum has an arm for each member, and every fixture holding a chain that differs from the position walk's renders the same bytes on both storages. The `validate:history` comparisons of Tasks 4 and 5 run with the final head's gates. **Tasks 6–10 are done**, and Task 10's gates ran once on the final head; its Status line holds the numbers.
 - **The same-line comment branch** (`fix/same-line-comment-after-separator`): a comment last on its row after an item's separator is leading of the next item, as on master. The maintainer, 2026-11-17: "Preserve master's behavior - let's not solve this one right now". Replacing that item loses the comment; that is a known gap, filed as an issue. Giving the comment to the item before was built and withdrawn, and nothing of its tokens-between fact remains.
 
   The branch still carries:
@@ -153,7 +154,7 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - `RecordShape::edges: [&'static [EdgePart]; 2]` for `Side::Before` and `Side::After`.
 - `pub enum EdgePart { Token(KindId), Slot(BodySlot), Guarded { slot: BodySlot, token: KindId } }`.
 
-- [ ] **Step 1: Write the failing codegen tests.**
+- [x] **Step 1: Write the failing codegen tests.**
   - `bodySlotOrder(rust reference_type)` equals `['lifetime', 'exclusive', 'type']`.
   - `bodySlotOrder(typescript subscript_expression)` equals `['object', 'optional_chain', 'index']`.
   - `bodyEdgeParts(rust let_declaration, 'before')` equals `[{ token: 'let' }]`.
@@ -161,23 +162,23 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - `bodyEdgeParts(rust let_declaration, 'after')` equals `[{ token: ';' }]`.
   - A `text` part inside an `if` arm on slot `s` gives `{ guarded: 's', token }`.
   - A `seam` part gives nothing.
-- [ ] **Step 2: Run the codegen tests.** Run `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-body.test.ts`. Expected: FAIL, `bodySlotOrder` is not defined.
-- [ ] **Step 3: Implement the two functions.**
+- [x] **Step 2: Run the codegen tests.** Run `pnpm exec vitest run packages/codegen/src/emitters/__tests__/render-body.test.ts`. Expected: FAIL, `bodySlotOrder` is not defined.
+- [x] **Step 3: Implement the two functions.**
   - `bodySlotOrder(body: RenderPart[]): string[]` takes each slot at its first appearance across arms. Throw when two arms order two slots both ways: none does today, which the spec states.
   - `bodyEdgeParts(body: RenderPart[], side: 'before' | 'after'): EdgePartSpec[]` reads parts from that edge and stops at the first unconditional `Token` or required slot.
   - Token kinds resolve through the catalog's kind ids, never by text at run time.
   - `render-module.ts` stamps `#[node(order = [...], edges = ([...], [...]))]` on every struct with `words`.
   - It also fails generation when a kind whose body has an `indent` or `dedent` part has no `words`, with the diagnostic "`<kind>` writes a depth part but is read with no record".
-- [ ] **Step 4: Add the derive attributes.** `attrs.rs` parses `order` and `edges`; `expand.rs` emits them in `RecordCells::shape`.
-- [ ] **Step 5: Write the failing Rust test.** `record_shapes_order_cells_as_their_bodies_write_them` in `stage_one_parity.rs` asserts:
+- [x] **Step 4: Add the derive attributes.** `attrs.rs` parses `order` and `edges`; `expand.rs` emits them in `RecordCells::shape`.
+- [x] **Step 5: Write the failing Rust test.** `record_shapes_order_cells_as_their_bodies_write_them` in `stage_one_parity.rs` asserts:
   - rust `reference_type`'s `order` is `lifetime`'s cell, `exclusive`'s flag, then `type`'s cell;
   - every record kind of the five grammars has one `order` entry for each cell and each flag.
-- [ ] **Step 6: Regenerate and run.**
+- [x] **Step 6: Regenerate and run.**
   - Regenerate each grammar: `pnpm exec tsx packages/cli/src/cli.ts gen --grammar <lang> --all --output packages/<lang>/src`.
   - Run `PARITY record_shapes`. Expected: PASS.
   - The codegen tests also pass.
   - `pnpm run validate:history` is unchanged per row.
-- [ ] **Step 7: Commit:** `feat(codegen): each record kind's slot order and edge parts, from its render body`.
+- [x] **Step 7: Commit:** `feat(codegen): each record kind's slot order and edge parts, from its render body`.
 
 ### Task 3: The walk's two modes
 
@@ -190,11 +191,11 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
 - Produces `NodeSite::Unit(trivia_store::Site<Address>)`.
 - Produces the derive call `records.role(route: &Route)`, made right after `records.meet(cursor)` in `routed`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `a_slot_content_read_writes_no_fixed_token_row`: typescript `f(a, b)` with `ReadRows::SlotContent` has an `arguments` run of exactly 2 rows (`a`, `b`), with cells naming rows 2 and 3. With `ReadRows::All` it has 5 rows, as the spec's figure shows.
   - `a_slot_content_read_holds_a_unit_by_its_kind`: rust `&mut T`'s `exclusive` and a typescript `expression_statement`'s automatic-semicolon terminator decode as `Cell::Unit { kind, row: None }`, the built form.
-- [ ] **Step 2: Run them.** Run `PARITY slot_content`. Expected: FAIL, `parse_records_with` is not found.
-- [ ] **Step 3: Implement the two modes.**
+- [x] **Step 2: Run them.** Run `PARITY slot_content`. Expected: FAIL, `parse_records_with` is not found.
+- [x] **Step 3: Implement the two modes.**
   - **Working list.** `OpenRun` keeps `entries` and `beside` as the working list, plus `kept: Vec<bool>`. An entry is kept when either:
     - its role is slot content held as a leaf or record, or trivia; or
     - it lies inside a kept row.
@@ -204,8 +205,8 @@ Internal, not public: `arena::side::FIELD_BITS` goes from 10 to 9 (Task 7), stil
   - **Writing.** `finish` writes only kept entries and recomputes each written row's `inner` over the kept entries.
   - **Units.** A unit cell is written with `row: None`.
   - **Seating.** `placed` reads the working list. A dropped fixed token counts as unnamed for seating. A dropped unit's site is `NodeSite::Unit` of its holder, slot word and item.
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `cargo test --workspace --no-default-features` is unchanged, since `parse_records` is still `All`.
-- [ ] **Step 5: Commit:** `feat(core): a read that writes slot content and trivia rows only, beside today's`.
+- [x] **Step 4: Run.** Run Step 2's command. Expected: PASS. `cargo test --workspace --no-default-features` is unchanged, since `parse_records` is still `All`.
+- [x] **Step 5: Commit:** `feat(core): a read that writes slot content and trivia rows only, beside today's`.
 
 ### Task 3a: The stored-layout row answers for an arena tree
 
@@ -218,13 +219,13 @@ The spec's gate (accepted by the maintainer, 2026-11-18). It runs before Task 4,
 **Interfaces:**
 - Produces the addon function `readStoredLayout(engine, node)`, listed in the PR body. `runStoredLayout` reads the storage its lane names.
 
-- [ ] **Step 1: Write the failing test.** `stored-layout.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars, the stored layout answers from the lane's own tree, not from a bare parse.
-- [ ] **Step 2: Run it.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/stored-layout.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
-- [ ] **Step 3: Implement** `readStoredLayout` and the lane's read.
-- [ ] **Step 4: Run.**
+- [x] **Step 1: Write the failing test.** `stored-layout.test.ts` runs under `nodeStorage: 'arena'` as well as object. For every validation-corpus source of the five grammars, the stored layout answers from the lane's own tree, not from a bare parse.
+- [x] **Step 2: Run it.** Run `pnpm exec vitest run --config vitest.config.ts packages/tools/tests/stored-layout.test.ts`. Expected: FAIL, since the arena lane has no tree id to pass.
+- [x] **Step 3: Implement** `readStoredLayout` and the lane's read.
+- [x] **Step 4: Run.**
   - Step 2's command. Expected: PASS.
   - `validate --node-storage arena`: the stored-layout row now describes arena trees. Each row that moves is listed and sent to brainstorm. Once accepted, it is the arena baseline that Task 4 compares against. Object storage's rows do not move.
-- [ ] **Step 5: Commit:** `feat(tools): the stored-layout row answers for an arena tree`.
+- [x] **Step 5: Commit:** `feat(tools): the stored-layout row answers for an arena tree`.
 
 ### Task 4: A list's delimiter and separators, resolved once in the read
 
@@ -268,7 +269,7 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - `EngineGrammar::delimiter(self, nodes, at)` keeps its signature.
 - Drops `SourceTable::last_list_child_kind`, `engine::last_list_child` and codegen's `sourceTrailingSeparator`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `the_query_reads_the_stored_delimiter`, arena, over `read_fixtures(name)` for the five grammars: for every flanked list, `Plan::Delimiter` holds iff the list's side `DELIMITER` has the flag, on the `SlotContent` tree.
   - `parsed_lists_answer_their_separators_from_stamps`, both storages, over `read_fixtures(name)` for the five grammars. For every parsed list, the `ReadRows::All` tree's answers equal the `SlotContent` tree's: `slot_separator`; `slot_layouts`. Nodes are matched by (grammar, display, span) in pre-order.
   - `the_separator_is_resolved_against_the_options_a_tree_was_read_with`: a list whose majority is the read-time arm and one whose majority differs, each rebuilt and rendered with a render call's own separator option, render the same in object and arena.
@@ -279,16 +280,16 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
     - a built list seated in its place through the holder's `$with` renders `a, b,`;
     - the same three over `f(a, b)`, under an engine whose `delimiter` option at that site is trailing, render `a, b`.
   - `delimiter-parity.test.ts` runs under `nodeStorage: 'arena'` as well as object.
-- [ ] **Step 2: Run them.** Run `PARITY the_query_reads`, `PARITY parsed_lists`, `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts packages/typescript/tests/edited-object-type.test.ts packages/tools/tests/portable/delimiter-parity.test.ts`. Expected:
+- [x] **Step 2: Run them.** Run `PARITY the_query_reads`, `PARITY parsed_lists`, `pnpm exec vitest run --config vitest.config.ts packages/rust/tests/rebuilt-list-trailing.test.ts packages/typescript/tests/edited-object-type.test.ts packages/tools/tests/portable/delimiter-parity.test.ts`. Expected:
   - `the_query_reads…` FAILs: the `SlotContent` tree has no separator rows to count.
   - `parsed_lists…` FAILs on the `SlotContent` tree.
   - `a_rebuilt_list_keeps…` PASSes: it pins today's behaviour through the change.
-- [ ] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
-- [ ] **Step 4: Run.**
+- [x] **Step 3: Implement** what "What changes" says. `ReadRows::All` trees keep their rows until Task 9.
+- [x] **Step 4: Run.**
   - Step 2's commands. Expected: PASS.
   - `validate:history` per row, both storages. Expected: no row moves.
   - The full unit suite.
-- [ ] **Step 5: Commit:** `feat(core): a list's delimiter and separators are resolved once in the read, and its readers take the resolved option`.
+- [x] **Step 5: Commit:** `feat(core): a list's delimiter and separators are resolved once in the read, and its readers take the resolved option`.
 
 ### Task 5: Edge levels from body facts
 
@@ -298,92 +299,97 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 
 **Interfaces:**
 - Consumes `RecordShape::edges` (Task 2) and the cells.
-- Produces `nodes::for_each_edge_part(nodes, holder, side, shape_of, visit)`. It walks `EdgePart`s at a record level and positions at a row level.
+- Produces `nodes::for_each_edge_part(nodes, holder, side, stamped, arm, visit)`. It walks `EdgePart`s at a record level and positions at a row level. `RunNodes` holds the record shape; `stamped` gives a level's stamped kind and `arm` a list's separator from the options the tree was read with.
 - `edge_levels` identifies the coordinate's node by its index, not `kid.span() != coord.span`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `edge_levels_agree_from_render_bodies`: for every parsed node and side in `read_fixtures`, the `EdgeLevel` sequence of the `All` tree equals the `SlotContent` tree's, except a chain that ends in a list's separator whose source token is not the list's resolved separator. The test lists those chains by grammar and counts them.
   - `edge_levels_at_a_zero_width_fixed_token_agree`: python `with_layout` and typescript `with_layout`, same assertion.
   - `a_listed_edge_chain_renders_the_same_bytes`: for every fixture holding a listed chain, the rendered bytes equal the `All` tree's, on both storages.
-- [ ] **Step 2: Run them.** Run `PARITY edge_levels`. Expected: FAIL, the `SlotContent` tree stops at a slot child.
-- [ ] **Step 3: Implement the record-level walk.** At a record level the walk reads `shape.edges[side]` in order:
+- [x] **Step 2: Run them.** Run `PARITY edge_levels`. Expected: FAIL, the `SlotContent` tree stops at a slot child.
+- [x] **Step 3: Implement the record-level walk.** At a record level the walk reads `shape.edges[side]` in order:
   - `Token(kind)` yields a level of that kind with field `None`, and the walk stops;
   - `Slot(Cell(i))` that is present descends into it (a record, a row, or a unit, which yields its kind and stops), `Slot(Flag { .. })` that is set yields its `kind` and stops, and an absent one goes to the next part;
   - `Guarded { slot, token }` yields `token` when `slot` is present;
   - a list whose `delimiter` holds this side's flag yields its resolved separator, `SideSlot::separator` or else the arm of the options the tree was read with, and the walk stops. Without the flag the walk goes on to the list's edge item. No new field is stored.
 
   At a row level the walk stays positional.
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS. `validate:history` is unchanged. If any rendered byte moves, stop and report the case with its source: it goes to the maintainer.
-- [ ] **Step 5: Commit:** `feat(core): a record's edge levels come from its body's edge parts`.
+- [x] **Step 4: Run.** Run Step 2's command. Expected: PASS. `validate:history` is unchanged. If any rendered byte moves, stop and report the case with its source: it goes to the maintainer.
+- [x] **Step 5: Commit:** `feat(core): a record's edge levels come from its body's edge parts`.
 
 ### Task 6: Navigation lists units from cells
 
 **Files:**
-- Modify `arena/run_nodes.rs` (`Walk::kids_of`) and `arena/built.rs` (`siblings_of`).
+- Modify `arena/run_nodes.rs` (`Walk::kids_of`, `childless`, `edge`), `engine.rs` (`descendants_under`) and `nodes.rs` (`Nodes::is_unit`).
+- Modify `arena/admit.rs` and the derive (`sittir-node-macros`), which stamp each slot's listed units and field, and `emitters/node-projection.ts`, which stamps a slot's aliased tokens and a flag's token.
 - Modify `rust/crates/sittir-parity-tests/src/lib.rs` to add `read_fixtures` and `out_of_order_units`.
 - Test: `stage_one_parity.rs`.
 
 **Interfaces:**
 - Consumes `RecordShape::order`.
+- Produces `CellShape::{listed, field}`, `RecordCells::listed` and `BodySlot::Flag { tokens, field }`. Whether a unit is named depends on its slot, not its kind: a slot lists the members of a visible enum it holds and the tokens its grammar aliases to a visible kind. The parser's named fact answers for the rest.
 - Produces `named_fixed_pairs(name) -> &'static [NamedFixedPair]`, with `NamedFixedPair { holder: &'static str, token: &'static str, source: &'static str }`: one source for each pair in the spec's "What navigation lists", taken from the census cases. That is 16 pairs: rust 7, typescript 6, python 3. Python's `block_statement` is the display of `block`.
-- Produces `out_of_order_units(name) -> Vec<&'static str>`: one source for each of the 20 kinds whose cells are out of document order. Examples are `&'a mut T`, `a?.[0]` and `fn f(&'a mut self) {}`, and the corpus gives the other 17. A kind that `fixture_sources` already covers needs no added source.
+- Produces `out_of_order_units(name) -> Vec<&'static str>`: one source for each of the 28 kinds whose cells are out of document order. Examples are `&'a mut T`, `a?.[0]` and `fn f(&'a mut self) {}`, and the corpus gives the other 25. A kind that `fixture_sources` already covers needs no added source.
 
-- [ ] **Step 1: Write the failing test.** `queries_list_units_in_render_body_order`. For every node of `read_fixtures(name)` plus `out_of_order_units(name)`, `$children` and `$descendants` as (stamped kind, span or none) sequences are equal between the trees, with two exceptions:
+- [x] **Step 1: Write the failing test.** `queries_list_units_in_render_body_order`. For every node of `read_fixtures(name)` plus `out_of_order_units(name)`, `$children` and `$descendants` as (stamped kind, span or none) sequences are equal between the trees, with two exceptions:
   - units compare by kind only;
   - the `All` side drops the named fixed tokens Task 1 counted, and the test prints each one it drops.
 
   And `a_named_fixed_token_leaves_query_results`: for each pair of `named_fixed_pairs(name)`, on the `SlotContent` tree, `ParsedTree::descendants` from the root yields no item of the token's kind, and yields one item of the holder's kind for each that the `All` tree yields (the maintainer, 2026-11-17: "Yes, they leave queries too").
-- [ ] **Step 2: Run them.** Run `PARITY queries_list_units` and `PARITY a_named_fixed_token_leaves_query_results`. Expected: FAIL. The `SlotContent` tree lists no units, and the token's kind is yielded.
-- [ ] **Step 3: Implement the merge in `kids_of`.** For a record, walk its slots in `order`:
+- [x] **Step 2: Run them.** Run `PARITY queries_list_units` and `PARITY a_named_fixed_token_leaves_query_results`. Expected: `queries_list_units` FAILS, since the `SlotContent` tree lists no units. `a_named_fixed_token_leaves_query_results` is a guard: Task 3 already dropped those rows, so it passes before and after.
+- [x] **Step 3: Implement the merge in `kids_of`.** For a record, walk its slots in `order`:
   - a cell naming a run entry emits the run's entries up to and including that one, in run order, so trivia keeps its place;
   - a unit cell or a set flag emits a unit kid with its kind and no span.
 
-  The rest of the run follows. `siblings_of` gives a unit sibling no span.
-- [ ] **Step 4: Run.** Run Step 2's commands. Expected: PASS, and the dropped list equals Task 1's count. A dropped token outside the pairs stops the plan.
-- [ ] **Step 5: Commit:** `feat(core): navigation lists a unit from its cell, where its body writes it`.
+  The rest of the run follows. A unit has no place in the source, so `edge` passes over it.
+- [x] **Step 4: Run.** Run Step 2's commands. Expected: PASS, and the dropped list equals Task 1's count. A dropped token outside the pairs stops the plan.
+- [x] **Step 5: Commit:** `feat(core): navigation lists a unit from its cell, where its body writes it`.
 
 ### Task 7: Depth moves and line starts
 
 **Files:**
-- Modify `run_nodes.rs` (`Walk::depth_move`), `engine.rs` (`Lookups::depth_move`, `line_starts_inside_tokens`), `arena/side.rs` and `arena/hydrate.rs`.
+- Modify `run_nodes.rs` (`Walk::line_starts`), `engine.rs` (`Lookups::line_starts`), `arena/side.rs`, `arena/admit.rs`, `arena/hydrate.rs` and the derive.
 - Test: `stage_one_parity.rs`.
 
 **Interfaces:**
 - Produces `NodeFacts::abuts_next: bool`, packed at bit 25, with `FIELD_BITS` 9. The walk sets it on a variable-text leaf whose text ends in `\n` when the next token it meets starts at the leaf's end.
 - `depth_move` finds the node by index.
+- Produces `RecordShape::own_text`: a kind read as one token (`text` or `interior`). With its fixed tokens gone, only such a childless record's span is one token.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `depth_moves_agree_without_depth_member_rows`: every parsed node's `depth_move` is equal between the trees on `read_fixtures`.
   - `line_starts_agree_from_the_stamped_bit`: every parsed node's `line_starts_inside_tokens` is equal between the trees.
   - `a_crlf_leaf_followed_by_a_fixed_token_keeps_its_line_start`: typescript `` `a\r\n${b}` `` and python `f"""a\r\n{b}"""`, same assertion.
-- [ ] **Step 2: Run them.** Run `PARITY -- depth_moves line_starts`. Expected: FAIL.
-- [ ] **Step 3: Implement both readers.**
+- [x] **Step 2: Run them.** Run `PARITY -- depth_moves line_starts`. Expected: `line_starts_agree_from_the_stamped_bit` FAILS. `depth_moves_agree_without_depth_member_rows` and the CRLF test are guards: a record's stored depth already counts its dropped rows, and the CRLF sources pass before the change.
+- [x] **Step 3: Implement both readers.**
   - A row's move is the sum of the `DEPTH` of the records inside it.
-  - `line_starts_inside_tokens` pushes a leaf's end when its `abuts_next` is set.
+  - `line_starts_inside_tokens` pushes a leaf's end when its `abuts_next` is set. Over a run it scans only a row leaf, trivia and an `own_text` record, since a gap between a run's entries holds dropped fixed tokens.
+  - The position-based reader stays for object storage, and the test compares the run's answer with it on the whole read.
   - `record_nodes.rs::field_fits` stays green at 9 bits (max field id 92).
-- [ ] **Step 4: Run.** Run Step 2's command. Expected: PASS.
-- [ ] **Step 5: Commit:** `feat(core): depth moves and line starts read no fixed-token row`.
+- [x] **Step 4: Run.** Run Step 2's command. Expected: PASS.
+- [x] **Step 5: Commit:** `feat(core): depth moves and line starts read no fixed-token row`.
 
 ### Task 8: Placed sides
 
 **Files:**
 - Modify `stage_one_parity.rs`.
 - Modify `arena/hydrate.rs`, only if the test finds an unexpected change.
+- Modify `engine.rs`: `Engine::parse_placed_with`, a diagnostic that returns the sides a read placed.
 
 **Interfaces:** Consumes Task 3's seating.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `placements_differ_only_beside_named_fixed_tokens`: on `read_fixtures`, each placed side is compared as (holder kind, span, side, extra kind, extra span). They are equal between the trees, except where the old tree's target is a named fixed token. Each exception is printed.
   - `a_comment_beside_a_flag_stays_on_its_neighbour`: rust `fn f(x: & /* c */ mut T) {}` renders identically from both trees, the comment leads `T`, and no side is keyed to the flag.
-  - `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`: a source whose comment the parse places on a named unit a cell holds renders identically from both trees, and its side's key is `NodeSite::Unit`. Rust `fn f(x: /* c */ u8) {}` is the first candidate (not checked: that the parse places this comment on `u8`).
-- [ ] **Step 2: Run them.** Run `PARITY -- placements comment_beside_a_unit`. Expected: PASS, or an exception that is not beside a named fixed token. Such an exception stops the plan, and the list goes to brainstorm.
-- [ ] **Step 3: Record and commit.**
-  - Put the printed list in the ledger and send it to brainstorm: these are the spec's "expected cases".
+  - `a_comment_beside_a_unit_keeps_its_side_through_the_units_site`: a source whose comment the parse places on a named unit a cell holds renders identically from both trees, and its side's key is `NodeSite::Unit`. Rust `fn f(x: /* c */ u8) {}` is that source: the parse places this comment on `u8`.
+- [x] **Step 2: Run them.** Run `PARITY -- placements comment_beside_a_unit`. Expected: PASS, or an exception that is not beside a named fixed token. Such an exception stops the plan, and the list goes to brainstorm.
+- [x] **Step 3: Record and commit.**
+  - Put the printed list in the ledger and send it to brainstorm: these are the spec's "expected cases". On `read_fixtures` the list is empty: rust 1,302, typescript 617, python 359, regex 1 and scm 110 placed sides are equal. A unit is compared with the row that spells it, since an enum kind's row and its member's cell name one node.
   - Commit: `test(parity): placed sides beside a named fixed token are the only ones that move`.
 
 ### Task 9: Rows go
 
-**Status (2026-11-23):** in progress, nothing committed; local head `c87d2d4e0`, pushed head `f689b1893`. With the read on slot content, 25 of the 38 retaken tests still fail. The from-templates render follows the spec's § Slots held by a kind id alone: a zero-width unit writes its seam, a unit's sides come through its site, a `MISSING` unit keeps its zero-width row, and a unit of several tokens keeps a row only where a `MISSING` token lies under it. The parity test names three byte changes from object storage: whitespace, comments and `ERROR` inside a unit of several tokens, `predefined_type`'s `unique symbol` among them; a comment beside a named fixed token, which arena seats as if the token were unnamed; and a bare `'` in a rust token tree, where object storage writes `a!(' lifetime);`, which `rustc` rejects. Object storage's space is fixed in a PR of its own right after this branch, and that PR removes the second exception. A built whitespace seam at a render's end still writes where the spec now drops it: that moves built bytes, so it also takes a PR of its own after this branch. A unit holding a `MISSING` token keeps its row, as the spec's `MISSING` rule says: without it, an edit inside its holder writes the assumed text (`private async()` gains `;`), 6 arena tests fail, and the records comparison moves on 27 typescript sources and 1 regex source. Still to attribute: the 12 tests that compare records with the tree.
+**Status (2026-11-24):** done. The from-templates render follows the spec's § Slots held by a kind id alone: a zero-width unit writes its seam, a unit's sides come through its site, a `MISSING` unit keeps its zero-width row, and a unit of several tokens keeps a row only where a `MISSING` token lies under it. The parity test names three byte changes from object storage: whitespace, comments and `ERROR` inside a unit of several tokens, `predefined_type`'s `unique symbol` among them; a comment beside a named fixed token, which arena seats as if the token were unnamed; and a bare `'` in a rust token tree, where object storage writes `a!(' lifetime);`, which `rustc` rejects. Object storage's space is fixed in a PR of its own right after this branch, and that PR removes the second exception. A built whitespace seam at a render's end still writes where the spec now drops it: that moves built bytes, so it also takes a PR of its own after this branch. A unit holding a `MISSING` token keeps its row, as the spec's `MISSING` rule says: without it, an edit inside its holder writes the assumed text (`private async()` gains `;`), 6 arena tests fail, and the records comparison moves on 27 typescript sources and 1 regex source.
 
 **Files:**
 - Modify `engine.rs` (`parse_records`), every `ReadRows::All` branch from Tasks 3–7, `record_nodes.rs` (`backers_agree`), `arena/parsed.rs` (`runs_agree`), `stage_one_parity.rs` and `deep_read_words.rs`.
@@ -393,23 +399,30 @@ The maintainer's rulings (2026-11-17, the spec's Decided list):
 - Consumes Task 6's `named_fixed_pairs`.
 - `ReadRows` is deleted, and `parse_records` writes slot content and trivia rows only.
 
-- [ ] **Step 1: Show the row-pinning tests pin rows (working standard 4).**
+- [x] **Step 1: Show the row-pinning tests pin rows (working standard 4).**
   - Run `backers_agree` and `runs_agree` with `parse_records` switched to `SlotContent`. Expected: FAIL on a fixed-token row.
   - Record the first failing node in the ledger.
   - Write `named-fixed-query.test.ts` in the three packages, both storages: for each pair's source, `root.$query().$descendants.ofType(kinds.<Token>)` holds no item, and `ofType(kinds.<Holder>)` holds one item for each holder in the source. Run them before the switch. Expected: FAIL, the token query finds each.
-- [ ] **Step 2: Retake them.** Both compare against the tree with fixed tokens and units filtered by role (`slot_routes`: not `Route::Slot` and not `Route::Trivia`, or a unit). Expected: PASS.
-- [ ] **Step 3: Delete the old paths.**
+- [x] **Step 2: Retake them.** Both compare against the tree with fixed tokens and units filtered by role (`slot_routes`: not `Route::Slot` and not `Route::Trivia`, or a unit). Expected: PASS.
+- [x] **Step 3: Delete the old paths.**
   - Delete `ReadRows` and the `All` branches.
   - Rerun `named-fixed-query.test.ts`. Expected: PASS.
   - The stage-one parity tests become checks of the new tree against the tree-sitter tree, filtered the same way.
-- [ ] **Step 4: Tighten the pins.**
+- [x] **Step 4: Tighten the pins.**
   - Rerun `deep_read_words` and set its two pins to the new word counts, which must be lower than 62,092 and 35,611.
   - Rerun the census.
 
-  Expected: read words at or below the spec's "stage one" column on every corpus, less the choice-list slot entries Task 1 counted.
-- [ ] **Step 5: Commit:** `feat(core): a parsed read stores no row for a fixed token or a unit`.
+  Expected: read words at or below the spec's "stage one" column on every corpus, less the measured cost of the stamped separator choices and of each read's own side record (the spec's read-words sentence: "less the measured cost of the stamped separator choices and of each read's own side record").
+- [x] **Step 5: Commit:** `feat(core): a parsed read stores no row for a fixed token or a unit`.
 
 ### Task 10: A render keeps no table of the nodes it visits
+
+**Status (2026-11-24):** done; the gates below ran once on the final head `a8dcf69ad`, which merges master `b49f65fed`.
+- **Three-way verification:** the named tests pass; the validation report is byte-identical in object and arena storage and to master's committed report, so no row moves; `cargo test` arena 858 and object 617 passed, clippy clean in four configurations, vitest 15,087 passed, type-check and lint pass, 0 failures.
+- **Read words** (share of the spec's today, beside its stage one): paired rust **84.5** (86.0), paired typescript **81.7** (83.8), paired python 88.7 (**88.6**), paired regex 93.4 (**92.5**), paired scm **81.1** (81.6), `engine.rs` **83.1** (86.5), `create-engine.ts` **82.0** (83.6), matter.js **80.1** (81.2), next.js **81.4** (82.6). Every corpus meets the expectation. Python and regex sit above the stage-one column, unchanged since Task 9, only by each read's own side record (its spans and entry starts), which the spec's today read did not hold and its read-words sentence allows. It costs a read 5 words for one chunk run with no starts, plus 2 for each further run and 1 for each start: regex 5 a read, python 5.7, matter.js 28.3, next.js 22.3. Python is 73 words over, with 663 in those records; regex is 92 over, with 185. Without them both are below stage one. Neither has a choice list, so Task 1's allowance is 0 for both. The census attributes every word of the paired rust, regex and scm reads and all but 0.03% of the others'.
+- **Census:** 0 refused, 0 cell rows of the wrong kind or naming no row, on all nine corpora. **Ratchets:** the `deep_read_words` pins hold, the lock-free census is at its ceilings, and the glossary key ceilings are lowered to their counts.
+- **Timings** (arm runner, feature arena over master's arena; the winner is the lower): render python **0.442**, rust **0.595**, typescript **0.644**, regex 1.287, scm **0.503**; edit python **0.464**, rust **0.549**, typescript **0.500**, regex **0.740**, scm **0.428**; parse python 1.494, rust 1.283, typescript 1.235, regex 1.229, scm 1.369. Parse plus whole read, arena over object: python **0.680**, rust **0.652**, typescript **0.643**, regex **0.556**, scm **0.619**. Regex render is reported as measured and does not hold the landing (the user).
+- **Edited renders:** the 36 that differ from master, in both storages, each follow the parsed-comments spec: 31 blank lines from a grammar's `blankline` or `double_blankline` arm, the larger of an arm and the source's fact; 2 statements a source wrote on one line, split by the options ("A gap that a rebuilt parent writes comes from the render options"); 3 comments indented at their depth, not the source's excess (§ Indentation).
 
 The arena spec's "A render keeps no table of the nodes it visits" (the maintainer, 2026-11-22). After Task 9 a render needs no row per node: a fixed token is written by its holder's template, an edge comes from the body facts, and a list's separators, depth moves and line starts come from stamps.
 
@@ -424,14 +437,14 @@ The arena spec's "A render keeps no table of the nodes it visits" (the maintaine
 - A parsed cell, a row's site and a row's `inner` name words of the holder's run (the arena spec's "A cell names its row by the word it starts at"). `Table.place`, `Table.last_row`, the scan in `entries_at` and `Walk::above` go. Every reader of a row's parent starts from a listed kid, whose parent is known, so a row named on its own and asked for its parent is refused by name. `NodeId` and the link record do not change: a rebuilt list's item reaches its row through the cell its link names.
 - No public item changes.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `a_render_keeps_no_row_per_node`: at a fixed depth, a plain render's peak heap above its output does not grow with the number of nodes it visits. A template render's growth is the prepare pass's overlay alone, which stays parked (arena plan, "Costed and parked"), and a ceiling that only falls pins it.
   - `a_wide_list_renders_in_linear_run_decodes`: a plain render of a parsed list of `n` items decodes a number of entries that does not grow with `n`, and a template render at most 3.5 decodes per run entry at every size, each a direct read. That ceiling only falls.
   - `a_rebuilt_list_renders_in_linear_run_decodes`: a rebuilt list of `n` parsed leaves decodes run entries linear in `n` when its items are reversed, interleaved from two lists, alternated with rebuilt calls, and when every item holds a comment.
-- [ ] **Step 2: Run them.** Run `PARITY -- a_render_keeps a_wide_list a_rebuilt_list`. Expected: FAIL while the render builds its table and scans its runs.
-- [ ] **Step 3: Implement.** The walk follows a record's cells and reads a parsed node by its record's address. `Records` holds no row per node for a render, and release builds neither a tree nor a table.
-- [ ] **Step 4: Run and commit.** Run Step 2's command and the stage-one parity tests. Expected: PASS. Commit: `feat(core): a render keeps no table of the nodes it visits`.
-- [ ] **Step 5: Run the gates.** These are the spec's § Gates, run once on the final head, with each result reported as numbers.
+- [x] **Step 2: Run them.** Run `PARITY -- a_render_keeps a_wide_list a_rebuilt_list`. Expected: FAIL while the render builds its table and scans its runs.
+- [x] **Step 3: Implement.** The walk follows a record's cells and reads a parsed node by its record's address. `Records` holds no row per node for a render, and release builds neither a tree nor a table.
+- [x] **Step 4: Run and commit.** Run Step 2's command and the stage-one parity tests. Expected: PASS. Commit: `feat(core): a render keeps no table of the nodes it visits`.
+- [x] **Step 5: Run the gates.** These are the spec's § Gates, run once on the final head, with each result reported as numbers.
   - **The three-way verification** (working standard 5):
     1. targeted probes of the cases this stage changes, wrap and render layers: the named tests of Tasks 4–8 and Task 10, rerun on the final tree;
     2. `pnpm run validate:native`, then `pnpm run validate:history` against master's recorded baseline. Every row of all three grammars is compared. Each row is unchanged, except as Task 4 records;
@@ -445,4 +458,4 @@ The arena spec's "A render keeps no table of the nodes it visits" (the maintaine
   - **Ratchets:** the `deep_read_words` pins from Step 4, and the lock-free census at or under its ceilings.
   - **Timings:** CI's paired run on the arm runner against master's arena, parse and render per grammar, which is also the branch's landing gate (arena plan Task 6). Report the ratio per grammar and phase, with each row's winner in bold.
   - Any failure stops the task and is reported with its numbers; nothing is reverted to pass a gate.
-- [ ] **Step 6: Mark the plan.** Tick this plan's tasks and set its Status line.
+- [x] **Step 6: Mark the plan.** Tick this plan's tasks and set its Status line.

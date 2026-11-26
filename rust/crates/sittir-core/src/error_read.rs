@@ -22,6 +22,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for ErrorRead {
         unsafe {
             let layout = match val.at {
                 Origin::Tree(at) => object_with(env, &[(c"at", crate::slot::coordinate_to_napi(env, &at)?)])?,
+                Origin::Node(at) => object_with(env, &[(c"at", crate::slot::named_to_napi(env, at.name, at.span, Some(at.kind))?)])?,
                 Origin::Snapshot(span) => object_with(env, &[(c"span", crate::points::PointSpan::to_napi_value(env, span)?)])?,
             };
             object_with_present(env, &[present(env, c"$type", kind)?, Some((c"$_layout", layout)), present(env, c"$text", Some(val.text))?])

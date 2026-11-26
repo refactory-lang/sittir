@@ -21,7 +21,6 @@ export { BuiltArena, builtCell, decodeBuiltCell, unitCell } from './built-arena.
 export type { HostPlatform, NativeBindingSpec } from './native-binding.ts';
 export type {
 	BackerParity,
-	BaselineRun,
 	LayoutWork,
 	StoredLayout,
 	ParseEngine,

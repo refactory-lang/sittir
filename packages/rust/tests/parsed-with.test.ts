@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import type { ParseOptions } from '@sittir/types';
 import rust from '../src/index.ts';
 
 type Node = Record<string, unknown> & {
@@ -36,12 +37,12 @@ function call(engine: Engine, name: string): unknown {
 	return b.expressionStatement(b.callExpression({ function: b.identifier(name), arguments: b.arguments() }));
 }
 
-function root(engine: Engine, source: string): Node {
-	return engine.parse(source) as unknown as Node;
+function root(engine: Engine, source: string, options?: ParseOptions): Node {
+	return engine.parse(source, options) as unknown as Node;
 }
 
-function body(engine: Engine, source: string): Node {
-	return slot(nth(root(engine, source), 'statements', 0), 'body') as Node;
+function body(engine: Engine, source: string, options?: ParseOptions): Node {
+	return slot(nth(root(engine, source, options), 'statements', 0), 'body') as Node;
 }
 
 const cases: readonly (readonly [string, (engine: Engine) => Node, string])[] = [
@@ -60,7 +61,7 @@ const cases: readonly (readonly [string, (engine: Engine) => Node, string])[] = 
 			const edited = nth(file, 'statements', 1).$with.name!(engine.build.identifier('h'));
 			return file.$with.statements!(nth(file, 'statements', 0), edited);
 		},
-		'fn f() {}\n@\nfn h() {}\n'
+		'fn f() {}\n\n@\nfn h() {}\n'
 	],
 	[
 		'every kept statement and a built one',
@@ -70,10 +71,10 @@ const cases: readonly (readonly [string, (engine: Engine) => Node, string])[] = 
 		},
 		'{\n    a();\n    b();\n}'
 	],
-	['an empty block, which keeps its inner layout', (engine) => rebuiltThrough(body(engine, 'fn f() {\n}\n'), 'statements'), '{\n}'],
+	['an empty block, which takes the options\' inner layout', (engine) => rebuiltThrough(body(engine, 'fn f() {\n}\n'), 'statements'), '{}'],
 	['a list, which keeps its own spacing', (engine) => rebuiltThrough((nth(root(engine, 'fn f(a: u8,b: u8) {}\n'), 'statements', 0) as unknown as { $query(): { $descendants: { ofType(kind: number): { at(index: number): Node } } } }).$query().$descendants.ofType(engine.kinds.Parameters).at(0), 'elements'), '(a: u8,b: u8)'],
 	['a padded statement, rendered without its padding as a render root', (engine) => rebuiltThrough(nth(body(engine, 'fn f() { a(); }\n'), 'statements', 0), 'content'), 'a();'],
-	['a block indented by two, which keeps its source indent', (engine) => rebuiltThrough(body(engine, 'fn f() {\n  if x {\n    a();\n  }\n}\n'), 'statements'), '{\n  if x {\n    a();\n  }\n}']
+	['a block indented by two, whose adopted style keeps its source indent', (engine) => rebuiltThrough(body(engine, 'fn f() {\n  if x {\n    a();\n  }\n}\n', { adoptStyle: true }), 'statements'), '{\n  if x {\n    a();\n  }\n}']
 ];
 
 describe('a parsed node rebuilt through $with renders as it does under object storage', () => {

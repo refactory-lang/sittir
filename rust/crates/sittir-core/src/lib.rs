@@ -9,7 +9,6 @@
 //! - [`view`]     — the render-time views (`View`, `ListView`) the generated
 //!   kind templates interpolate.
 
-pub mod baseline;
 pub mod boundary;
 pub mod classify;
 pub mod codec;

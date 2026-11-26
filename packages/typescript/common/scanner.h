@@ -1,3 +1,17 @@
+/*
+ * tree-sitter-typescript 0.23.2 common/scanner.h, MIT licence,
+ * Copyright (c) 2017 Max Brunsfeld.
+ *
+ * One change: scan_automatic_semicolon scans through a comment on the line
+ * where the scan starts, as tree-sitter-javascript 0.25.0's scanner does in
+ * the same loop (src/scanner.c, scan_automatic_semicolon, the lookahead '/'
+ * branch; MIT licence, Copyright (c) 2014 Max Brunsfeld), so the semicolon
+ * lands before a same-line comment, not after it. A block comment that
+ * reaches a line break ends the scan with no semicolon. A comment never
+ * accepts the semicolon by itself, as javascript's comment_condition branch
+ * does: the first character of the next line still decides, so a union that
+ * continues with `|` on the next line stays one type.
+ */
 #include "tree_sitter/parser.h"
 
 #include <wctype.h>
@@ -99,6 +113,34 @@ static bool scan_automatic_semicolon(TSLexer *lexer, const bool *valid_symbols, 
                 return valid_symbols[LOGICAL_OR]; // Don't return false if we're in a ternary by checking if || is valid
             }
             return true;
+        }
+        if (lexer->lookahead == '/') {
+            skip(lexer);
+            if (lexer->lookahead == '/') {
+                while (lexer->lookahead != 0 && lexer->lookahead != '\n') {
+                    skip(lexer);
+                }
+            } else if (lexer->lookahead == '*') {
+                skip(lexer);
+                for (;;) {
+                    if (lexer->lookahead == 0 || lexer->lookahead == '\n') {
+                        return false;
+                    }
+                    if (lexer->lookahead == '*') {
+                        skip(lexer);
+                        if (lexer->lookahead == '/') {
+                            skip(lexer);
+                            break;
+                        }
+                    } else {
+                        skip(lexer);
+                    }
+                }
+            } else {
+                return false;
+            }
+            *scanned_comment = true;
+            continue;
         }
         if (!iswspace(lexer->lookahead)) {
             return false;

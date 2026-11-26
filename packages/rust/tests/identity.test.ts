@@ -64,7 +64,7 @@ describe.each([
 	['a variant arm', 'fn b() { let r = 0..1; let s = 2..3; }\n', engine.kinds.RangeExpressionBounded]
 ] as const)('a descendants query over %s', (_, source, kind) => {
 	it('reads only the matches not already registered, and no ancestor', () => {
-		const root = engine.parse(source, { depth: 1 });
+		const root = objects.parse(source, { depth: 1 });
 		const reads = countingReads(root);
 		const first = Array.from(root.$query().$descendants.ofType(kind));
 		expect(first.length).toBe(2);
@@ -103,16 +103,16 @@ describe.each([
 
 describe('a variant arm a query reached', () => {
 	it('is returned by its accessor with no native read of its own', () => {
-		const root = engine.parse('fn b() { let r = 0..1; }\n', { depth: 1 });
+		const root = objects.parse('fn b() { let r = 0..1; }\n', { depth: 1 });
 		const reads = countingReads(root);
-		const [arm] = root.$query().$descendants.ofType(engine.kinds.RangeExpressionBounded);
+		const [arm] = root.$query().$descendants.ofType(objects.kinds.RangeExpressionBounded);
 		const armReads = [...reads];
 		expect(armReads.length).toBe(1);
 		reads.length = 0;
 		const fn = root.statements()[0];
-		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		if (fn === undefined || !objects.is.functionItem(fn)) throw new Error('expected a function');
 		const statement = fn.body().statements()[0];
-		if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
+		if (statement === undefined || !objects.is.letDeclaration(statement)) throw new Error('expected a let declaration');
 		expect(statement.value()).toBe(arm);
 		expect(reads.filter((index) => armReads.includes(index))).toEqual([]);
 	});
@@ -204,11 +204,11 @@ function letAt(fn: RootStatement | undefined, at: number) {
 }
 
 describe('the fold by range', () => {
-	it('a deep write unfolds its ancestors, whose in-line gaps keep their stored layout, and leaves siblings and cousins as bytes', () => {
+	it("a deep write unfolds its ancestors, which take the options' gaps, and leaves siblings and cousins as bytes", () => {
 		const root = engine.parse(NESTED, { depth: 1 });
 		const [, b] = root.statements();
 		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
-		expect(root.$render()).toBe('fn a() { let p = 1; }\nfn b() {\n    // q\n    let q = 2; let r = 3; }\nfn c() { let s = 4; }\n');
+		expect(root.$render()).toBe('fn a() { let p = 1; }\n\nfn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n\nfn c() { let s = 4; }\n');
 	});
 
 	it('nested writes fold only untouched ranges', () => {
@@ -228,7 +228,7 @@ describe('the fold by range', () => {
 		if (b === undefined || !engine.is.functionItem(b)) throw new Error('expected a function');
 		letAt(b, 0).$trivia.leading(engine.build.lineComment(' q'));
 		const built = engine.build.sourceFile({ statements: [b] });
-		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2; let r = 3; }\n');
+		expect(built.$render()).toBe('fn b() {\n    // q\n    let q = 2;\n    let r = 3;\n}\n');
 	});
 
 	it('an untouched node folds after a write elsewhere', () => {
@@ -255,10 +255,11 @@ describe('a built node over parsed storage', () => {
 	it("hydrates a list item it stores into the parsed holder's object", () => {
 		const parsed = objects.parse(SOURCE, { depth: 1 });
 		const built = objects.build.sourceFile({ statements: storageOf(parsed)._statements });
-		expect(built.$render()).toBe(SOURCE);
+		const rendered = 'fn a() {}\n\nfn b() { let x = 1; }\n';
+		expect(built.$render()).toBe(rendered);
 		expect(built.statements()[0]).toBe(parsed.statements()[0]);
 		expect(built.statements()).toBe(built.statements());
-		expect(built.$render()).toBe(SOURCE);
+		expect(built.$render()).toBe(rendered);
 	});
 
 	it("hydrates a single slot it stores into the parsed holder's object", () => {

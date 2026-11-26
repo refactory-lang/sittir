@@ -47,7 +47,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "hello"
   },
   {
     "edits": [],
@@ -104,7 +105,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "hello"
   },
   {
     "edits": [],
@@ -128,7 +130,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello"
   },
   {
     "edits": [],
@@ -152,7 +155,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello"
   },
   {
     "edits": [],
@@ -176,7 +180,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello"
   },
   {
     "edits": [],
@@ -200,7 +205,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello"
   },
   {
     "edits": [],
@@ -224,7 +230,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello"
   },
   {
     "edits": [],
@@ -279,7 +286,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "he..o"
   },
   {
     "edits": [],
@@ -330,7 +338,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "he..o"
   },
   {
     "edits": [],
@@ -354,7 +363,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o"
   },
   {
     "edits": [],
@@ -378,7 +388,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o"
   },
   {
     "edits": [],
@@ -399,7 +410,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o"
   },
   {
     "edits": [],
@@ -420,7 +432,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o"
   },
   {
     "edits": [],
@@ -444,7 +457,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o"
   },
   {
     "edits": [],
@@ -511,7 +525,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -574,7 +589,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -602,7 +618,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -630,7 +647,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -658,7 +676,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -683,7 +702,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -704,7 +724,8 @@
       "_lazy": true
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -725,7 +746,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -746,7 +768,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "one_or_more"
+    "pattern": "one_or_more",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -767,7 +790,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "optional"
+    "pattern": "optional",
+    "source": "h*?e*l+.?"
   },
   {
     "edits": [],
@@ -886,7 +910,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1001,7 +1026,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1043,7 +1069,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1067,7 +1094,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1109,7 +1137,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1141,7 +1170,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1179,7 +1209,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1214,7 +1245,8 @@
       "_lazy": true
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1249,7 +1281,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1277,7 +1310,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1308,7 +1342,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1339,7 +1374,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1370,7 +1406,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1394,7 +1431,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1421,7 +1459,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1445,7 +1484,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_group"
+    "pattern": "count_quantifier_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1469,7 +1509,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_group"
+    "pattern": "count_quantifier_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1489,7 +1530,8 @@
       "$type": 79
     },
     "kind": "render",
-    "pattern": "count_quantifier_group"
+    "pattern": "count_quantifier_group",
+    "source": "h{1,2}?el{1,2}.{3}t{4,}"
   },
   {
     "edits": [],
@@ -1529,7 +1571,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "{a"
   },
   {
     "edits": [],
@@ -1565,7 +1608,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "{a"
   },
   {
     "edits": [],
@@ -1589,7 +1633,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "{a"
   },
   {
     "edits": [],
@@ -1613,7 +1658,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "{a"
   },
   {
     "edits": [],
@@ -1710,7 +1756,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -1803,7 +1850,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "alternation"
+    "pattern": "alternation",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -1854,7 +1902,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -1908,7 +1957,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -1932,7 +1982,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -1956,7 +2007,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -1977,7 +2029,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -1998,7 +2051,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -2022,7 +2076,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -2046,7 +2101,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -2070,7 +2126,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -2091,7 +2148,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -2115,7 +2173,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -2139,7 +2198,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "he..o|wo.ld"
   },
   {
     "edits": [],
@@ -2242,7 +2302,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2341,7 +2402,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "alternation"
+    "pattern": "alternation",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2392,7 +2454,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2446,7 +2509,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2470,7 +2534,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2494,7 +2559,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2515,7 +2581,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2536,7 +2603,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2560,7 +2628,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2584,7 +2653,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2608,7 +2678,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2629,7 +2700,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2653,7 +2725,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2677,7 +2750,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "||he..o||wo.ld|||"
   },
   {
     "edits": [],
@@ -2740,7 +2814,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2799,7 +2874,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2820,7 +2896,8 @@
       "_content": 54
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2844,7 +2921,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2868,7 +2946,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2889,7 +2968,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2910,7 +2990,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2934,7 +3015,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -2955,7 +3037,8 @@
       "_content": 4
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$"
   },
   {
     "edits": [],
@@ -3018,7 +3101,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3077,7 +3161,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3098,7 +3183,8 @@
       "_content": 6
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3122,7 +3208,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3146,7 +3233,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3167,7 +3255,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3188,7 +3277,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3212,7 +3302,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3233,7 +3324,8 @@
       "_content": 5
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\Bhe..o\\b"
   },
   {
     "edits": [],
@@ -3340,7 +3432,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3443,7 +3536,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "alternation"
+    "pattern": "alternation",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3502,7 +3596,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3557,7 +3652,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3578,7 +3674,8 @@
       "_content": 54
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3602,7 +3699,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3626,7 +3724,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3647,7 +3746,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3668,7 +3768,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3692,7 +3793,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3713,7 +3815,8 @@
       "_content": 4
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3737,7 +3840,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3758,7 +3862,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3779,7 +3884,8 @@
       "_content": 2
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3803,7 +3909,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3827,7 +3934,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3848,7 +3956,8 @@
       "_content": 4
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "^he..o$||w..ld$"
   },
   {
     "edits": [],
@@ -3955,7 +4064,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4015,7 +4125,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4118,7 +4229,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4175,7 +4287,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4199,7 +4312,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4223,7 +4337,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4247,7 +4362,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4271,7 +4387,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4341,7 +4458,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4365,7 +4483,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4389,7 +4508,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4413,7 +4533,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4437,7 +4558,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4461,7 +4583,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4528,7 +4651,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookaround_assertion"
+    "pattern": "lookaround_assertion",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4592,7 +4716,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookahead_assertion"
+    "pattern": "lookahead_assertion",
+    "source": "Jack(?=Sprat)"
   },
   {
     "edits": [],
@@ -4699,7 +4824,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -4759,7 +4885,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -4862,7 +4989,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -4919,7 +5047,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -4943,7 +5072,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -4967,7 +5097,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -4991,7 +5122,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5015,7 +5147,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5085,7 +5218,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5109,7 +5243,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5133,7 +5268,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5157,7 +5293,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5181,7 +5318,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5205,7 +5343,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5272,7 +5411,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookaround_assertion"
+    "pattern": "lookaround_assertion",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5336,7 +5476,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookahead_assertion"
+    "pattern": "lookahead_assertion",
+    "source": "Jack(?!Sprat)"
   },
   {
     "edits": [],
@@ -5443,7 +5584,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5496,7 +5638,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5599,7 +5742,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5649,7 +5793,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5712,7 +5857,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5736,7 +5882,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5760,7 +5907,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5784,7 +5932,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5808,7 +5957,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5832,7 +5982,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5856,7 +6007,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5880,7 +6032,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5904,7 +6057,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5928,7 +6082,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -5988,7 +6143,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookaround_assertion"
+    "pattern": "lookaround_assertion",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -6045,7 +6201,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookbehind_assertion"
+    "pattern": "lookbehind_assertion",
+    "source": "(?<=Jack)Sprat"
   },
   {
     "edits": [],
@@ -6152,7 +6309,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6205,7 +6363,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6308,7 +6467,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6358,7 +6518,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6421,7 +6582,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6445,7 +6607,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6469,7 +6632,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6493,7 +6657,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6517,7 +6682,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6541,7 +6707,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6565,7 +6732,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6589,7 +6757,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6613,7 +6782,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6637,7 +6807,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6697,7 +6868,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookaround_assertion"
+    "pattern": "lookaround_assertion",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6754,7 +6926,8 @@
       }
     },
     "kind": "render",
-    "pattern": "lookbehind_assertion"
+    "pattern": "lookbehind_assertion",
+    "source": "(?<!Jack)Sprat"
   },
   {
     "edits": [],
@@ -6832,7 +7005,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -6906,7 +7080,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -6956,7 +7131,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -6992,7 +7168,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -7039,7 +7216,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -7072,7 +7250,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -7100,7 +7279,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -7128,7 +7308,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[A-Za-z][^Xx]"
   },
   {
     "edits": [],
@@ -7164,7 +7345,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "[-]"
   },
   {
     "edits": [],
@@ -7196,7 +7378,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "[-]"
   },
   {
     "edits": [],
@@ -7223,7 +7406,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[-]"
   },
   {
     "edits": [],
@@ -7247,7 +7431,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[-]"
   },
   {
     "edits": [],
@@ -7288,7 +7473,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "[a-]"
   },
   {
     "edits": [],
@@ -7325,7 +7511,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "[a-]"
   },
   {
     "edits": [],
@@ -7357,7 +7544,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[a-]"
   },
   {
     "edits": [],
@@ -7386,7 +7574,8 @@
       "_trailing": true
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[a-]"
   },
   {
     "edits": [],
@@ -7428,7 +7617,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "[---]"
   },
   {
     "edits": [],
@@ -7466,7 +7656,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "[---]"
   },
   {
     "edits": [],
@@ -7499,7 +7690,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[---]"
   },
   {
     "edits": [],
@@ -7529,7 +7721,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[---]"
   },
   {
     "edits": [],
@@ -7551,7 +7744,8 @@
       "_start": 14
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[---]"
   },
   {
     "edits": [],
@@ -7596,7 +7790,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "[\\-\\.]"
   },
   {
     "edits": [],
@@ -7637,7 +7832,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "[\\-\\.]"
   },
   {
     "edits": [],
@@ -7673,7 +7869,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[\\-\\.]"
   },
   {
     "edits": [],
@@ -7706,7 +7903,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[\\-\\.]"
   },
   {
     "edits": [],
@@ -7727,7 +7925,8 @@
       "_content": "-"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "[\\-\\.]"
   },
   {
     "edits": [],
@@ -7748,7 +7947,8 @@
       "_content": "."
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "[\\-\\.]"
   },
   {
     "edits": [],
@@ -7851,7 +8051,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -7950,7 +8151,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -7974,7 +8176,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -7995,7 +8198,8 @@
       "_content": 5
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8019,7 +8223,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8046,7 +8251,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8070,7 +8276,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8094,7 +8301,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8118,7 +8326,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8142,7 +8351,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8166,7 +8376,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8190,7 +8401,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8214,7 +8426,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8235,7 +8448,8 @@
       "_content": "a"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8256,7 +8470,8 @@
       "_content": "c"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8277,7 +8492,8 @@
       "_content": "\\"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8298,7 +8514,8 @@
       "_content": "{"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8319,7 +8536,8 @@
       "_content": "("
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8340,7 +8558,8 @@
       "_content": "["
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8361,7 +8580,8 @@
       "_content": "]"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8382,7 +8602,8 @@
       "_content": ")"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8403,7 +8624,8 @@
       "_content": "}"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8427,7 +8649,8 @@
       }
     },
     "kind": "render",
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\\a\\b\\c\\d\\\\\\{\\(\\[\\]\\)\\}"
   },
   {
     "edits": [],
@@ -8530,7 +8753,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8590,7 +8814,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8689,7 +8914,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8746,7 +8972,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8770,7 +8997,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8794,7 +9022,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8818,7 +9047,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8842,7 +9072,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8908,7 +9139,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8932,7 +9164,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8956,7 +9189,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -8980,7 +9214,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -9004,7 +9239,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -9028,7 +9264,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -9091,7 +9328,8 @@
       }
     },
     "kind": "render",
-    "pattern": "non_capturing_group"
+    "pattern": "non_capturing_group",
+    "source": "Jack(?:Sprat)"
   },
   {
     "edits": [],
@@ -9144,7 +9382,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\\S\\w\\cZ"
   },
   {
     "edits": [],
@@ -9193,7 +9432,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\\S\\w\\cZ"
   },
   {
     "edits": [],
@@ -9220,7 +9460,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\S\\w\\cZ"
   },
   {
     "edits": [],
@@ -9247,7 +9488,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\S\\w\\cZ"
   },
   {
     "edits": [],
@@ -9271,7 +9513,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\S\\w\\cZ"
   },
   {
     "edits": [],
@@ -9295,7 +9538,8 @@
       }
     },
     "kind": "render",
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\\S\\w\\cZ"
   },
   {
     "edits": [],
@@ -9319,7 +9563,8 @@
       }
     },
     "kind": "render",
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\\S\\w\\cZ"
   },
   {
     "edits": [],
@@ -9387,7 +9632,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9451,7 +9697,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9475,7 +9722,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9499,7 +9747,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9523,7 +9772,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9547,7 +9797,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9571,7 +9822,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9595,7 +9847,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\f\\n\\r\\t\\v\\0"
   },
   {
     "edits": [],
@@ -9628,7 +9881,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\\8230"
   },
   {
     "edits": [],
@@ -9657,7 +9911,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\\8230"
   },
   {
     "edits": [],
@@ -9681,7 +9936,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\8230"
   },
   {
     "edits": [],
@@ -9734,7 +9990,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\\p{General_Category=Decimal_Number}"
   },
   {
     "edits": [],
@@ -9783,7 +10040,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\\p{General_Category=Decimal_Number}"
   },
   {
     "edits": [],
@@ -9827,7 +10085,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\p{General_Category=Decimal_Number}"
   },
   {
     "edits": [],
@@ -9868,7 +10127,8 @@
       }
     },
     "kind": "render",
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\\p{General_Category=Decimal_Number}"
   },
   {
     "edits": [],
@@ -9906,7 +10166,8 @@
       }
     },
     "kind": "render",
-    "pattern": "character_class_escape_arm"
+    "pattern": "character_class_escape_arm",
+    "source": "\\p{General_Category=Decimal_Number}"
   },
   {
     "edits": [],
@@ -9937,7 +10198,8 @@
       }
     },
     "kind": "render",
-    "pattern": "unicode_property_value_expression"
+    "pattern": "unicode_property_value_expression",
+    "source": "\\p{General_Category=Decimal_Number}"
   },
   {
     "edits": [],
@@ -9961,7 +10223,8 @@
       }
     },
     "kind": "render",
-    "pattern": "unicode_property_value_expression_group"
+    "pattern": "unicode_property_value_expression_group",
+    "source": "\\p{General_Category=Decimal_Number}"
   },
   {
     "edits": [],
@@ -10007,7 +10270,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\\p{Decimal_Number}"
   },
   {
     "edits": [],
@@ -10049,7 +10313,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\\p{Decimal_Number}"
   },
   {
     "edits": [],
@@ -10086,7 +10351,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\\p{Decimal_Number}"
   },
   {
     "edits": [],
@@ -10120,7 +10386,8 @@
       }
     },
     "kind": "render",
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\\p{Decimal_Number}"
   },
   {
     "edits": [],
@@ -10151,7 +10418,8 @@
       }
     },
     "kind": "render",
-    "pattern": "character_class_escape_arm"
+    "pattern": "character_class_escape_arm",
+    "source": "\\p{Decimal_Number}"
   },
   {
     "edits": [],
@@ -10175,7 +10443,8 @@
       }
     },
     "kind": "render",
-    "pattern": "unicode_property_value_expression"
+    "pattern": "unicode_property_value_expression",
+    "source": "\\p{Decimal_Number}"
   },
   {
     "edits": [],
@@ -10233,13 +10502,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  47
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$text": " ",
@@ -10272,7 +10534,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10305,7 +10568,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10360,13 +10624,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                47
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$text": " ",
@@ -10398,7 +10655,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10428,7 +10686,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10452,7 +10711,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10476,7 +10736,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10500,7 +10761,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10524,7 +10786,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10548,7 +10811,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10587,7 +10851,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10612,7 +10877,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10648,7 +10914,8 @@
       }
     },
     "kind": "render",
-    "pattern": "anonymous_capturing_group"
+    "pattern": "anonymous_capturing_group",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10669,7 +10936,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "hello (.*)"
   },
   {
     "edits": [],
@@ -10683,7 +10951,7 @@
     "wrappedText": "h*"
   },
   {
-    "expectedOutput": "(?<the_world>.*)\n(?P<python>.*)",
+    "expectedOutput": "(?<the_world>.*)(?P<python>.*)",
     "grammar": "regex",
     "input": {
       "$errors": [],
@@ -10719,13 +10987,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  48
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$type": 63,
@@ -10756,18 +11017,19 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(pattern (term (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))) (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more))))))))",
-    "expectedSourceOut": "(?<the_world>.*)\n(?P<python>.*)",
+    "expectedSourceOut": "(?<the_world>.*)(?P<python>.*)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "pattern",
     "sourceIn": "(?<the_world>.*)\n(?P<python>.*)",
     "wrappedOffset": 0,
-    "wrappedText": "(?<the_world>.*)\n(?P<python>.*)"
+    "wrappedText": "(?<the_world>.*)(?P<python>.*)"
   },
   {
     "expectedOutput": ".*",
@@ -10789,7 +11051,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -10822,7 +11085,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -10836,7 +11100,7 @@
     "wrappedText": ".*"
   },
   {
-    "expectedOutput": "(?<the_world>.*)\n(?P<python>.*)",
+    "expectedOutput": "(?<the_world>.*)(?P<python>.*)",
     "grammar": "regex",
     "input": {
       "$type": 53,
@@ -10869,13 +11133,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$type": 63,
@@ -10905,18 +11162,19 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))) (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))))",
-    "expectedSourceOut": "(?<the_world>.*)\n(?P<python>.*)",
+    "expectedSourceOut": "(?<the_world>.*)(?P<python>.*)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term",
     "sourceIn": "(?<the_world>.*)\n(?P<python>.*)",
     "wrappedOffset": 0,
-    "wrappedText": "(?<the_world>.*)\n(?P<python>.*)"
+    "wrappedText": "(?<the_world>.*)(?P<python>.*)"
   },
   {
     "expectedOutput": ".*",
@@ -10935,7 +11193,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -10965,7 +11224,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11009,7 +11269,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11034,7 +11295,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11078,7 +11340,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11103,7 +11366,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11144,7 +11408,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_capturing_group"
+    "pattern": "named_capturing_group",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11185,7 +11450,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_capturing_group"
+    "pattern": "named_capturing_group",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11206,7 +11472,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11227,7 +11494,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "(?<the_world>.*)\n(?P<python>.*)"
   },
   {
     "edits": [],
@@ -11241,7 +11509,7 @@
     "wrappedText": "h*"
   },
   {
-    "expectedOutput": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)",
+    "expectedOutput": "(?<the_world>.*)\\k<the_world>(?P<python>.*)(?P=python)",
     "grammar": "regex",
     "input": {
       "$errors": [],
@@ -11287,13 +11555,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  48
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$type": 63,
@@ -11334,18 +11595,19 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(pattern (term (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))) (term_group (backreference_escape group_name: (group_name))) (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))) (term_group (named_group_backreference group_name: (group_name)))))",
-    "expectedSourceOut": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)",
+    "expectedSourceOut": "(?<the_world>.*)\\k<the_world>(?P<python>.*)(?P=python)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "pattern",
     "sourceIn": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)",
     "wrappedOffset": 0,
-    "wrappedText": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
+    "wrappedText": "(?<the_world>.*)\\k<the_world>(?P<python>.*)(?P=python)"
   },
   {
     "expectedOutput": ".*",
@@ -11367,7 +11629,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11400,7 +11663,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11414,7 +11678,7 @@
     "wrappedText": ".*"
   },
   {
-    "expectedOutput": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)",
+    "expectedOutput": "(?<the_world>.*)\\k<the_world>(?P<python>.*)(?P=python)",
     "grammar": "regex",
     "input": {
       "$type": 53,
@@ -11457,13 +11721,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$type": 63,
@@ -11503,18 +11760,19 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))) (term_group (backreference_escape group_name: (group_name))) (term_group (named_capturing_group group_name: (group_name) pattern: (pattern (term (term_group (any_character) quantifier: (zero_or_more)))))) (term_group (named_group_backreference group_name: (group_name))))",
-    "expectedSourceOut": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)",
+    "expectedSourceOut": "(?<the_world>.*)\\k<the_world>(?P<python>.*)(?P=python)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term",
     "sourceIn": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)",
     "wrappedOffset": 0,
-    "wrappedText": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
+    "wrappedText": "(?<the_world>.*)\\k<the_world>(?P<python>.*)(?P=python)"
   },
   {
     "expectedOutput": ".*",
@@ -11533,7 +11791,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11563,7 +11822,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11607,7 +11867,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11632,7 +11893,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11659,7 +11921,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11703,7 +11966,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11728,7 +11992,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11755,7 +12020,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11796,7 +12062,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_capturing_group"
+    "pattern": "named_capturing_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11837,7 +12104,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_capturing_group"
+    "pattern": "named_capturing_group",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11858,7 +12126,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11879,7 +12148,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11903,7 +12173,8 @@
       }
     },
     "kind": "render",
-    "pattern": "backreference_escape"
+    "pattern": "backreference_escape",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -11927,7 +12198,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_group_backreference"
+    "pattern": "named_group_backreference",
+    "source": "(?<the_world>.*)\\k<the_world>\n(?P<python>.*)(?P=python)"
   },
   {
     "edits": [],
@@ -12123,7 +12395,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12181,7 +12454,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12239,7 +12513,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12297,7 +12572,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12489,7 +12765,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12544,7 +12821,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12599,7 +12877,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12654,7 +12933,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12723,7 +13003,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12773,7 +13054,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12797,7 +13079,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12866,7 +13149,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12916,7 +13200,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -12940,7 +13225,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13009,7 +13295,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13059,7 +13346,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13125,7 +13413,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_capturing_group"
+    "pattern": "named_capturing_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13191,7 +13480,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_capturing_group"
+    "pattern": "named_capturing_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13257,7 +13547,8 @@
       }
     },
     "kind": "render",
-    "pattern": "named_capturing_group"
+    "pattern": "named_capturing_group",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13293,7 +13584,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13329,7 +13621,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13365,7 +13658,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13393,7 +13687,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13421,7 +13716,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13449,7 +13745,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13477,7 +13774,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13505,7 +13803,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13533,7 +13832,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13557,7 +13857,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13581,7 +13882,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13605,7 +13907,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "(?<year>[0-9]{4})-(?<month>[0-9]{2})-(?<day>[0-9]{2})"
   },
   {
     "edits": [],
@@ -13619,7 +13922,7 @@
     "wrappedText": "h{2}"
   },
   {
-    "expectedOutput": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedOutput": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "input": {
       "$errors": [],
@@ -13726,13 +14029,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  48
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$type": 37,
@@ -13788,16 +14084,6 @@
             "_content": {
               "$type": 62,
               "_pattern": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      48
-                    ],
-                    "trailing": [
-                      48
-                    ]
-                  }
-                },
                 "$type": 51,
                 "_content": {
                   "$type": 53,
@@ -13911,18 +14197,19 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))))) (term_group (identity_escape)) (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))))) (term_group (boundary_assertion)) (term_group (anonymous_capturing_group pattern: (pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (zero_or_more))))))))",
-    "expectedSourceOut": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedSourceOut": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "pattern",
     "sourceIn": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
     "wrappedOffset": 0,
-    "wrappedText": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+    "wrappedText": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)"
   },
   {
     "expectedOutput": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
@@ -14036,7 +14323,8 @@
       }
     },
     "kind": "render",
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -14050,7 +14338,7 @@
     "wrappedText": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*"
   },
   {
-    "expectedOutput": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedOutput": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "input": {
       "$type": 53,
@@ -14154,13 +14442,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$type": 37,
@@ -14216,16 +14497,6 @@
           "_content": {
             "$type": 62,
             "_pattern": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    48
-                  ],
-                  "trailing": [
-                    48
-                  ]
-                }
-              },
               "$type": 51,
               "_content": {
                 "$type": 53,
@@ -14338,18 +14609,19 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))))) (term_group (identity_escape)) (term_group (character_class class_atoms: (class_range start: (class_character) end: (class_character))) quantifier: (count_quantifier (count_quantifier_arm (decimal_digits) (count_quantifier_group (decimal_digits))))) (term_group (boundary_assertion)) (term_group (anonymous_capturing_group pattern: (pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (zero_or_more)))))))",
-    "expectedSourceOut": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedSourceOut": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term",
     "sourceIn": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
     "wrappedOffset": 0,
-    "wrappedText": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+    "wrappedText": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)"
   },
   {
     "expectedOutput": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
@@ -14460,7 +14732,8 @@
       ]
     },
     "kind": "render",
-    "pattern": "term"
+    "pattern": "term",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -14575,7 +14848,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -14599,7 +14873,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -14656,7 +14931,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -14677,7 +14953,8 @@
       "_content": 5
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -14691,23 +14968,13 @@
     "wrappedText": "\\b"
   },
   {
-    "expectedOutput": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedOutput": "([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "input": {
       "$type": 78,
       "_content": {
         "$type": 62,
         "_pattern": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ],
-              "trailing": [
-                48
-              ]
-            }
-          },
           "$type": 51,
           "_content": {
             "$type": 53,
@@ -14818,18 +15085,19 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term_group (anonymous_capturing_group pattern: (pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (zero_or_more))))))",
-    "expectedSourceOut": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedSourceOut": "([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term_group",
     "sourceIn": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
     "wrappedOffset": 0,
-    "wrappedText": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+    "wrappedText": "([-a-zA-Z0-9@:%_\\+.~#?&//=]*)"
   },
   {
     "expectedOutput": "[-a-zA-Z0-9@:%_\\+.~#?&//=]*",
@@ -14935,7 +15203,8 @@
       }
     },
     "kind": "render",
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15029,7 +15298,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15065,7 +15335,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15175,7 +15446,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15203,7 +15475,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15231,7 +15504,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15259,7 +15533,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15287,7 +15562,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15315,7 +15591,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15343,7 +15620,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15371,7 +15649,8 @@
       }
     },
     "kind": "render",
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15392,7 +15671,8 @@
       "_content": "+"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15413,7 +15693,8 @@
       "_content": "."
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15434,7 +15715,8 @@
       "_content": "+"
     },
     "kind": "render",
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15469,7 +15751,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15504,7 +15787,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "count_quantifier"
+    "pattern": "count_quantifier",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15535,7 +15819,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15566,7 +15851,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_arm"
+    "pattern": "count_quantifier_arm",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15590,7 +15876,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_group"
+    "pattern": "count_quantifier_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15614,7 +15901,8 @@
       }
     },
     "kind": "render",
-    "pattern": "count_quantifier_group"
+    "pattern": "count_quantifier_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15628,21 +15916,11 @@
     "wrappedText": "h{1,6}"
   },
   {
-    "expectedOutput": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedOutput": "([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "input": {
       "$type": 62,
       "_pattern": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              48
-            ],
-            "trailing": [
-              48
-            ]
-          }
-        },
         "$type": 51,
         "_content": {
           "$type": 53,
@@ -15752,18 +16030,19 @@
       }
     },
     "kind": "render",
-    "pattern": "anonymous_capturing_group"
+    "pattern": "anonymous_capturing_group",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
     "expectedReparseTree": "(anonymous_capturing_group pattern: (pattern (term (term_group (character_class leading: (class_character) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_range start: (class_character) end: (class_character)) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (identity_escape) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character) class_atoms: (class_character)) quantifier: (zero_or_more)))))",
-    "expectedSourceOut": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+    "expectedSourceOut": "([-a-zA-Z0-9@:%_\\+.~#?&//=]*)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "anonymous_capturing_group",
     "sourceIn": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
     "wrappedOffset": 0,
-    "wrappedText": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+    "wrappedText": "([-a-zA-Z0-9@:%_\\+.~#?&//=]*)"
   },
   {
     "expectedOutput": "*",
@@ -15773,7 +16052,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "pattern": "zero_or_more"
+    "pattern": "zero_or_more",
+    "source": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
   },
   {
     "edits": [],
@@ -15821,13 +16101,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n[[:alnum:]]+\n"
   },
   {
     "edits": [],
@@ -15871,13 +16146,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n[[:alnum:]]+\n"
   },
   {
     "edits": [],
@@ -15916,13 +16186,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n[[:alnum:]]+\n"
   },
   {
     "edits": [],
@@ -15954,13 +16219,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "\n[[:alnum:]]+\n"
   },
   {
     "edits": [],
@@ -15984,13 +16244,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "posix_character_class"
+    "pattern": "posix_character_class",
+    "source": "\n[[:alnum:]]+\n"
   },
   {
     "edits": [],
@@ -16011,13 +16266,8 @@
       "_lazy": false
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "one_or_more"
+    "pattern": "one_or_more",
+    "source": "\n[[:alnum:]]+\n"
   },
   {
     "edits": [],
@@ -16087,13 +16337,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16159,13 +16404,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16189,13 +16429,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16222,13 +16457,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16252,13 +16482,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16285,13 +16510,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16318,13 +16538,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16348,13 +16563,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16378,13 +16588,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16408,13 +16613,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\nH\\u0065e\\u006C\\u{006F}\n"
   },
   {
     "edits": [],
@@ -16461,13 +16661,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  47
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$text": " ",
@@ -16482,13 +16675,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  47
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$text": " ",
@@ -16513,13 +16699,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16563,13 +16744,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                47
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$text": " ",
@@ -16584,13 +16758,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                47
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$text": " ",
@@ -16614,13 +16781,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16647,13 +16809,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16677,13 +16834,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16707,13 +16859,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16737,13 +16884,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16767,13 +16909,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16797,13 +16934,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16827,13 +16959,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16854,13 +16981,8 @@
       "_content": "u"
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16881,13 +17003,8 @@
       "_content": "?"
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "identity_escape"
+    "pattern": "identity_escape",
+    "source": "\n\\u0048ow r \\u\\?\n"
   },
   {
     "edits": [],
@@ -16966,13 +17083,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17047,13 +17159,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17098,13 +17205,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17146,13 +17248,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17194,13 +17291,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17239,13 +17331,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17279,13 +17366,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17316,13 +17398,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17346,13 +17423,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17376,13 +17448,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17406,13 +17473,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class_escape"
+    "pattern": "character_class_escape",
+    "source": "\n[\\u005D-\\uFFFF][A-\\uFFFF]\n"
   },
   {
     "edits": [],
@@ -17478,13 +17540,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
   },
   {
     "edits": [],
@@ -17546,13 +17603,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
   },
   {
     "edits": [],
@@ -17576,13 +17628,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
   },
   {
     "edits": [],
@@ -17606,13 +17653,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
   },
   {
     "edits": [],
@@ -17655,13 +17697,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
   },
   {
     "edits": [],
@@ -17701,13 +17738,8 @@
       "_trailing": false
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "character_class"
+    "pattern": "character_class",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
   },
   {
     "edits": [],
@@ -17735,13 +17767,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "class_range"
+    "pattern": "class_range",
+    "source": "\n\\x0F\\xa8[\\x20-\\x5A\\x5c]\n"
   },
   {
     "edits": [],
@@ -17755,7 +17782,7 @@
     "wrappedText": "[\\x20-\\x5A]"
   },
   {
-    "expectedOutput": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n",
+    "expectedOutput": "\n(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)\n",
     "grammar": "regex",
     "input": {
       "$errors": [],
@@ -17774,13 +17801,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  48
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$type": 84,
@@ -17789,16 +17809,6 @@
                 "$type": 66
               },
               "_pattern": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      47
-                    ],
-                    "trailing": [
-                      47
-                    ]
-                  }
-                },
                 "$type": 51,
                 "_content": {
                   "$type": 53,
@@ -17837,13 +17847,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  48
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$type": 85,
@@ -17856,16 +17859,6 @@
                 "$type": 66
               },
               "_pattern": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      47
-                    ],
-                    "trailing": [
-                      47
-                    ]
-                  }
-                },
                 "$type": 51,
                 "_content": {
                   "$type": 53,
@@ -17904,13 +17897,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  48
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$type": 86,
@@ -17919,16 +17905,6 @@
                 "$type": 66
               },
               "_pattern": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      47
-                    ],
-                    "trailing": [
-                      47
-                    ]
-                  }
-                },
                 "$type": 51,
                 "_content": {
                   "$type": 53,
@@ -17967,13 +17943,6 @@
             }
           },
           {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  48
-                ]
-              }
-            },
             "$type": 78,
             "_content": {
               "$type": 86,
@@ -17987,24 +17956,19 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(pattern (term (term_group (inline_flags_group_enable enabled: (flags))) (term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags)))))",
-    "expectedSourceOut": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n",
+    "expectedSourceOut": "\n(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)\n",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "pattern",
     "sourceIn": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n",
     "wrappedOffset": 0,
-    "wrappedText": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
+    "wrappedText": "\n(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)\n"
   },
   {
     "expectedOutput": "\ntest\n",
@@ -18046,13 +18010,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18105,13 +18064,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18164,13 +18118,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "pattern"
+    "pattern": "pattern",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18184,7 +18133,7 @@
     "wrappedText": "\ntest\n"
   },
   {
-    "expectedOutput": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
+    "expectedOutput": "(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)",
     "grammar": "regex",
     "input": {
       "$type": 53,
@@ -18200,13 +18149,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$type": 84,
@@ -18215,16 +18157,6 @@
               "$type": 66
             },
             "_pattern": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    47
-                  ],
-                  "trailing": [
-                    47
-                  ]
-                }
-              },
               "$type": 51,
               "_content": {
                 "$type": 53,
@@ -18263,13 +18195,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$type": 85,
@@ -18282,16 +18207,6 @@
               "$type": 66
             },
             "_pattern": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    47
-                  ],
-                  "trailing": [
-                    47
-                  ]
-                }
-              },
               "$type": 51,
               "_content": {
                 "$type": 53,
@@ -18330,13 +18245,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$type": 86,
@@ -18345,16 +18253,6 @@
               "$type": 66
             },
             "_pattern": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    47
-                  ],
-                  "trailing": [
-                    47
-                  ]
-                }
-              },
               "$type": 51,
               "_content": {
                 "$type": 53,
@@ -18393,13 +18291,6 @@
           }
         },
         {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                48
-              ]
-            }
-          },
           "$type": 78,
           "_content": {
             "$type": 86,
@@ -18412,24 +18303,19 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term (term_group (inline_flags_group_enable enabled: (flags))) (term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))) (term_group (inline_flags_group_disable disabled: (flags))))",
-    "expectedSourceOut": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
+    "expectedSourceOut": "(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term",
     "sourceIn": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)"
+    "wrappedText": "(?aiLmsux)(?aiLmsux:\ntest\n)(?aiLmsux-imsx:\ntest\n)(?-imsx:\ntest\n)(?-imsx)"
   },
   {
     "expectedOutput": "test",
@@ -18468,13 +18354,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18524,13 +18405,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18580,13 +18456,8 @@
       ]
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term"
+    "pattern": "term",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18613,13 +18484,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18633,7 +18499,7 @@
     "wrappedText": "(?aiLmsux)"
   },
   {
-    "expectedOutput": "(?aiLmsux:test)",
+    "expectedOutput": "(?aiLmsux:\ntest\n)",
     "grammar": "regex",
     "input": {
       "$type": 78,
@@ -18644,16 +18510,6 @@
           "$type": 66
         },
         "_pattern": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                47
-              ],
-              "trailing": [
-                47
-              ]
-            }
-          },
           "$type": 51,
           "_content": {
             "$type": 53,
@@ -18692,24 +18548,19 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term_group (inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "expectedSourceOut": "(?aiLmsux:test)",
+    "expectedSourceOut": "(?aiLmsux:\ntest\n)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term_group",
     "sourceIn": "(?aiLmsux:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux:test)"
+    "wrappedText": "(?aiLmsux:\ntest\n)"
   },
   {
     "expectedOutput": "t",
@@ -18722,13 +18573,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18752,13 +18598,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18782,13 +18623,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18812,13 +18648,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18832,7 +18663,7 @@
     "wrappedText": "t"
   },
   {
-    "expectedOutput": "(?aiLmsux-imsx:test)",
+    "expectedOutput": "(?aiLmsux-imsx:\ntest\n)",
     "grammar": "regex",
     "input": {
       "$type": 78,
@@ -18847,16 +18678,6 @@
           "$type": 66
         },
         "_pattern": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                47
-              ],
-              "trailing": [
-                47
-              ]
-            }
-          },
           "$type": 51,
           "_content": {
             "$type": 53,
@@ -18895,24 +18716,19 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term_group (inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "expectedSourceOut": "(?aiLmsux-imsx:test)",
+    "expectedSourceOut": "(?aiLmsux-imsx:\ntest\n)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term_group",
     "sourceIn": "(?aiLmsux-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux-imsx:test)"
+    "wrappedText": "(?aiLmsux-imsx:\ntest\n)"
   },
   {
     "expectedOutput": "t",
@@ -18925,13 +18741,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18955,13 +18766,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -18985,13 +18791,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19015,13 +18816,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19035,7 +18831,7 @@
     "wrappedText": "t"
   },
   {
-    "expectedOutput": "(?-imsx:test)",
+    "expectedOutput": "(?-imsx:\ntest\n)",
     "grammar": "regex",
     "input": {
       "$type": 78,
@@ -19046,16 +18842,6 @@
           "$type": 66
         },
         "_pattern": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                47
-              ],
-              "trailing": [
-                47
-              ]
-            }
-          },
           "$type": 51,
           "_content": {
             "$type": 53,
@@ -19094,24 +18880,19 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(term_group (inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character))))))",
-    "expectedSourceOut": "(?-imsx:test)",
+    "expectedSourceOut": "(?-imsx:\ntest\n)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "term_group",
     "sourceIn": "(?-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?-imsx:test)"
+    "wrappedText": "(?-imsx:\ntest\n)"
   },
   {
     "expectedOutput": "t",
@@ -19124,13 +18905,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19154,13 +18930,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19184,13 +18955,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19214,13 +18980,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19247,13 +19008,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "term_group"
+    "pattern": "term_group",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19277,13 +19033,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "inline_flags_group_enable"
+    "pattern": "inline_flags_group_enable",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
@@ -19297,7 +19048,7 @@
     "wrappedText": "(?aiLmsux)"
   },
   {
-    "expectedOutput": "(?aiLmsux:test)",
+    "expectedOutput": "(?aiLmsux:\ntest\n)",
     "grammar": "regex",
     "input": {
       "$type": 84,
@@ -19306,16 +19057,6 @@
         "$type": 66
       },
       "_pattern": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              47
-            ],
-            "trailing": [
-              47
-            ]
-          }
-        },
         "$type": 51,
         "_content": {
           "$type": 53,
@@ -19353,27 +19094,22 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "inline_flags_group_enable"
+    "pattern": "inline_flags_group_enable",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(inline_flags_group_enable enabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "expectedSourceOut": "(?aiLmsux:test)",
+    "expectedSourceOut": "(?aiLmsux:\ntest\n)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "inline_flags_group_enable",
     "sourceIn": "(?aiLmsux:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux:test)"
+    "wrappedText": "(?aiLmsux:\ntest\n)"
   },
   {
-    "expectedOutput": "(?aiLmsux-imsx:test)",
+    "expectedOutput": "(?aiLmsux-imsx:\ntest\n)",
     "grammar": "regex",
     "input": {
       "$type": 85,
@@ -19386,16 +19122,6 @@
         "$type": 66
       },
       "_pattern": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              47
-            ],
-            "trailing": [
-              47
-            ]
-          }
-        },
         "$type": 51,
         "_content": {
           "$type": 53,
@@ -19433,27 +19159,22 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "inline_flags_group_toggle"
+    "pattern": "inline_flags_group_toggle",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(inline_flags_group_toggle enabled: (flags) disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "expectedSourceOut": "(?aiLmsux-imsx:test)",
+    "expectedSourceOut": "(?aiLmsux-imsx:\ntest\n)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "inline_flags_group_toggle",
     "sourceIn": "(?aiLmsux-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?aiLmsux-imsx:test)"
+    "wrappedText": "(?aiLmsux-imsx:\ntest\n)"
   },
   {
-    "expectedOutput": "(?-imsx:test)",
+    "expectedOutput": "(?-imsx:\ntest\n)",
     "grammar": "regex",
     "input": {
       "$type": 86,
@@ -19462,16 +19183,6 @@
         "$type": 66
       },
       "_pattern": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              47
-            ],
-            "trailing": [
-              47
-            ]
-          }
-        },
         "$type": 51,
         "_content": {
           "$type": 53,
@@ -19509,24 +19220,19 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "inline_flags_group_disable"
+    "pattern": "inline_flags_group_disable",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],
     "expectedReparseTree": "(inline_flags_group_disable disabled: (flags) pattern: (pattern (term (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)) (term_group (pattern_character)))))",
-    "expectedSourceOut": "(?-imsx:test)",
+    "expectedSourceOut": "(?-imsx:\ntest\n)",
     "grammar": "regex",
     "kind": "roundtrip",
     "pattern": "inline_flags_group_disable",
     "sourceIn": "(?-imsx:test)",
     "wrappedOffset": 0,
-    "wrappedText": "(?-imsx:test)"
+    "wrappedText": "(?-imsx:\ntest\n)"
   },
   {
     "expectedOutput": "(?-imsx)",
@@ -19539,13 +19245,8 @@
       }
     },
     "kind": "render",
-    "options": {
-      "pattern": {
-        "after": 48,
-        "before": 48
-      }
-    },
-    "pattern": "inline_flags_group_disable"
+    "pattern": "inline_flags_group_disable",
+    "source": "\n(?aiLmsux)\n(?aiLmsux:test)\n(?aiLmsux-imsx:test)\n(?-imsx:test)\n(?-imsx)\n"
   },
   {
     "edits": [],

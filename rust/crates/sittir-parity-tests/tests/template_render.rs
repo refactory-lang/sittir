@@ -1,56 +1,31 @@
 //! A render from templates renders a parsed node and every node under it
 //! that has a record from its template, and each leaf and unit from its
 //! source bytes (`ThroughTemplates`). For every round-trip source of each
-//! grammar, the root renders alike from its templates in both storages: as
-//! its coordinate (object) and as its record read one level down (arena),
-//! which the render reads through, writing every record a whole read writes
-//! but trivia's. A recording of the object render frames the root and slices
-//! no node with a record but trivia.
+//! grammar, the root renders alike from its templates both ways: as its
+//! coordinate, read from its tree (object), and as the record a read of the
+//! source left it, with no tree (arena).
 #![cfg(feature = "arena")]
 
+use sittir_core::engine::Backing as _;
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar};
-use sittir_core::baseline::{Baseline, Written};
-use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
+use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
-use sittir_core::read::{display_id, grammar_id, Depth, ReadNode};
+use sittir_core::read::ReadNode;
 use sittir_core::render::{RenderError, SourceTable, ThroughTemplates};
 use sittir_core::slot::ChangedEdges;
 use sittir_core::types::NodeIndex;
 use sittir_core::SlotValue;
+use sittir_parity_tests::OverRead;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
 
 /// A grammar's native render of a root (`render_node_parts`).
-type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>, Option<&mut Baseline>) -> Result<(sittir_core::types::Source, String), RenderError>;
+type NativeRender<N> = fn(SlotValue<N>, &RenderContext<'_>) -> Result<(sittir_core::types::Source, String), RenderError>;
 
 struct Renders<G, N> {
     grammar: G,
     options: fn() -> ResolvedOptions,
     native: NativeRender<N>,
-}
-
-/// The nodes with a record (`ReadNode::router`), trivia aside, that a
-/// recording of a render from templates sliced, and the root when it framed
-/// none.
-fn sliced_records<G: EngineGrammar, N: ReadNode>(tree: &ParsedTree<G>, baseline: &Baseline) -> Vec<String> {
-    let count = sittir_core::read::descendant_count(&tree.tree().root_node());
-    let mut sliced = Vec::new();
-    if baseline.frame(NodeIndex::ROOT).is_none() {
-        sliced.push("the root".to_owned());
-    }
-    for frame in (0..count).filter_map(|index| baseline.frame(NodeIndex::new(index))) {
-        for item in &frame.items {
-            let &Written::Node(index) = &item.what else { continue };
-            if baseline.frame(index).is_some() {
-                continue;
-            }
-            let node = sittir_core::engine::node_at_index(tree.tree(), index).expect("a node at every index");
-            if N::router(grammar_id(&node), display_id(&node)).is_some() && !node.is_extra() {
-                sliced.push(format!("node {} ({} {:?})", index.0, node.kind(), &tree.source()[sittir_core::types::Span::of(&node).range()]));
-            }
-        }
-    }
-    sliced
 }
 
 /// What `render` answers, or the message it panics with.
@@ -67,85 +42,77 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
         (engine.parse(source, claim_tree_id().expect("a tree id")).expect("a parse"), options)
     }
 
-    /// The root of `tree` rendered as its coordinate through `sources`,
-    /// recording into `baseline` when one is given.
-    fn coordinate(&self, tree: &ParsedTree<G>, sources: &dyn SourceTable, options: &ResolvedOptions, baseline: Option<&mut Baseline>) -> Result<String, String> {
-        let root = sources.row_coordinate(tree.tree_id(), NodeIndex::ROOT).ok_or("no root coordinate")?;
-        (self.native)(SlotValue::Coord(root), &RenderContext::new(options, sources), baseline).map(|(_, text)| text).map_err(|e| e.to_string())
+    /// The root of `tree` rendered as its coordinate through `sources`.
+    fn coordinate(&self, tree: &ParsedTree<G>, sources: &dyn SourceTable, options: &ResolvedOptions) -> Result<String, String> {
+        let root = tree.row_coordinate(NodeIndex::ROOT).ok_or("no root coordinate")?;
+        (self.native)(SlotValue::Coord(root), &RenderContext::new(options, sources)).map(|(_, text)| text).map_err(|e| e.to_string())
     }
 
-    /// The root's coordinate rendered from its templates, checked to slice
-    /// no node with a record but trivia.
+    /// The root's coordinate rendered from its templates.
     fn object(&self, source: &str) -> Result<String, String> {
         let (tree, options) = self.parse(source);
         let seating = tree.seating();
-        let through = self.coordinate(&tree, &ThroughTemplates(&seating), &options, None)?;
-        let mut baseline = Baseline::default();
-        self.coordinate(&tree, &ThroughTemplates(&seating), &options, Some(&mut baseline))?;
-        let sliced = sliced_records::<G, N>(&tree, &baseline);
-        if !sliced.is_empty() {
-            return Err(format!("object: a render from templates sliced {}", sliced.join(", ")));
-        }
-        Ok(through)
+        self.coordinate(&tree, &ThroughTemplates(&seating), &options)
     }
 
-    /// The nodes of `tree` a read has written a record of, trivia aside,
-    /// which a render writes from its source.
-    fn written(tree: &ParsedTree<G>) -> Vec<bool> {
-        let count = sittir_core::read::descendant_count(&tree.tree().root_node());
-        (0..count)
-            .map(NodeIndex::new)
-            .map(|index| !sittir_core::engine::node_at_index(tree.tree(), index).is_some_and(|node| node.is_extra()) && tree.written_record::<N>(index).is_some())
-            .collect()
+    /// The root's record, read whole at parse into the engine's built
+    /// arena with no tree left, rendered from its templates; `None` when the
+    /// parser rejects the source whole.
+    fn records(&self, source: &str) -> Result<Option<String>, String> {
+        let mut engine = Engine::new(self.grammar, (self.options)()).expect("an engine");
+        let options = engine.options().clone();
+        let Some(root) = engine.parse_records::<N>(source)?.root else { return Ok(None) };
+        let built = engine.written().built();
+        engine.render_at(&built, root, ChangedEdges::default(), &options, true, |_| Ok(())).map(Some).map_err(|e| e.to_string())
     }
 
-    /// The root's record, read one level down, rendered from its templates,
-    /// checked to have written every record a whole read writes; `None`
-    /// when the parser rejects the source whole, so the model reads no root.
-    fn arena(&self, source: &str) -> Result<Option<String>, String> {
+    /// Whether `arena` is `object` less what lies inside a unit of several
+    /// tokens of `source`.
+    fn apart_only_inside_a_unit(&self, source: &str, object: &str, arena: &str) -> bool {
         let (tree, options) = self.parse(source);
-        let Some(at) = tree.read_record::<N>(NodeIndex::ROOT, Depth::ONE)? else {
-            return if tree.tree().root_node().is_error() { Ok(None) } else { Err("arena: the model reads no root of a source the parser accepts".to_owned()) };
-        };
-        let through = tree.render_record(at, ChangedEdges::default(), &options, &ThroughTemplates(&tree.seating())).map_err(|e| e.to_string())?;
-        let (whole, _) = self.parse(source);
-        whole.hydrate_record::<N>(NodeIndex::ROOT, Depth::All)?;
-        let (rendered, read) = (Self::written(&tree), Self::written(&whole));
-        let apart: Vec<String> = rendered
-            .iter()
-            .zip(&read)
-            .enumerate()
-            .filter(|(_, (rendered, read))| rendered != read)
-            .map(|(index, (rendered, _))| (index, *rendered))
-            .map(|(index, rendered)| {
-                let node = sittir_core::engine::node_at_index(tree.tree(), NodeIndex::new(u32::try_from(index).expect("an index"))).expect("a node at every index");
-                let parent = node.parent().map_or("none", |parent| parent.kind());
-                format!("{index} {} under {parent}{} ({})", node.kind(), if node.is_extra() { " extra" } else { "" }, if rendered { "render only" } else { "whole read only" })
-            })
-            .collect();
-        if !apart.is_empty() {
-            return Err(format!("arena: a render from templates wrote other records than a whole read: {}", apart.join(", ")));
-        }
-        Ok(Some(through))
+        OverRead::of::<N>(self.grammar, &options, &tree).apart_only_inside_a_unit(&tree, object, arena)
     }
 
-    /// Whether `source` renders alike from its templates in both storages.
-    fn alike(&self, source: &str) -> Result<Outcome, String> {
-        match (caught(|| self.object(source)), caught(|| self.arena(source))) {
+    /// Whether `source` renders alike from its templates read from its
+    /// tree and from the records a parse leaves with no tree.
+    fn alike(&self, name: &str, source: &str) -> Result<Outcome, String> {
+        if self.parse(source).0.tree().root_node().is_error() {
+            return Ok(Outcome::Unread);
+        }
+        match (caught(|| self.object(source)), caught(|| self.records(source))) {
             (Err(object), Err(arena)) if object == arena => Ok(Outcome::Panicking(object)),
             (Err(object), Err(arena)) => Ok(Outcome::Panicking(format!("object: {object}; arena: {arena}"))),
             (Err(object), Ok(_)) => Err(format!("the object render from templates panics ({object}), and the arena one does not")),
             (Ok(_), Err(arena)) => Err(format!("the arena render from templates panics ({arena}), and the object one does not")),
-            (Ok(Ok(_)), Ok(Ok(None))) => Ok(Outcome::Unread),
+            (Ok(Ok(_)), Ok(Ok(None))) => Err("records: a parse left no root of a source the parser accepts".to_owned()),
             (Ok(object), Ok(arena)) => {
                 let (object, arena) = (object?, arena?.expect("a root"));
-                if object != arena {
+                if object != arena && !(name == "rust" && apart_only_beside_a_quote(&object, &arena)) && !self.apart_only_inside_a_unit(source, &object, &arena) {
                     return Err(format!("\n object {object:?}\n arena  {arena:?}"));
                 }
                 Ok(if object == source { Outcome::AsSource } else { Outcome::Rendered })
             }
         }
     }
+}
+
+/// Whether `arena` is `object` less spaces beside a `'`. A bare `'` in a rust
+/// token tree is the one token object storage spaces where a built node
+/// writes it tight, and that space is a lexical error (`rustc` E0762).
+fn apart_only_beside_a_quote(object: &str, arena: &str) -> bool {
+    let (object, arena) = (object.as_bytes(), arena.as_bytes());
+    let (mut one, mut other) = (0, 0);
+    while one < object.len() {
+        if other < arena.len() && object[one] == arena[other] {
+            one += 1;
+            other += 1;
+        } else if object[one] == b' ' && (object.get(one + 1) == Some(&b'\'') || one > 0 && object[one - 1] == b'\'') {
+            one += 1;
+        } else {
+            return false;
+        }
+    }
+    other == arena.len()
 }
 
 /// How one source renders from its templates.
@@ -195,7 +162,7 @@ fn corpus<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str,
     let (mut panicking, mut unread, mut rendered) = (Vec::new(), Vec::new(), 0);
     for (i, source) in sources.iter().enumerate() {
         let named = format!("source {i} ({:?})", source.lines().next().unwrap_or_default());
-        match grammar.alike(source) {
+        match grammar.alike(name, source) {
             Ok(Outcome::AsSource | Outcome::Rendered) => rendered += 1,
             Ok(Outcome::Panicking(message)) => panicking.push(format!("{named}: {message}")),
             Ok(Outcome::Unread) => unread.push(named),
@@ -231,4 +198,51 @@ fn every_regex_source_renders_alike_from_its_templates() {
 #[test]
 fn every_scm_source_renders_alike_from_its_templates() {
     corpus("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts }, Pins { panicking: 0, unread: 0 });
+}
+
+/// Each `(source, what its whitespace spells, what a built node writes)`
+/// that differs between the two storages only inside a unit of several tokens.
+#[test]
+fn a_unit_of_several_tokens_drops_what_lies_between_them() {
+    fn check<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>, cases: &[(&str, &str, &str)]) {
+        for &(source, spelled, tight) in cases {
+            let (tree, options) = grammar.parse(source);
+            let seating = tree.seating();
+            let object = grammar.coordinate(&tree, &ThroughTemplates(&seating), &options).expect("an object render");
+            let arena = grammar.records(source).expect("a read").expect("a root");
+            assert!(object.contains(spelled), "{name} {source:?}: object {object:?}");
+            assert_eq!(arena, object.replacen(spelled, tight, 1), "{name} {source:?}");
+        }
+    }
+    check("rust", &rust_renders(), &[("let x = ( );", "( )", "()"), ("fn f() -> ( ) {}", "( )", "()"), ("let x = (/* c */);", "(/* c */)", "()")]);
+    check("typescript", &typescript_renders(), &[("function f() { new . target; }", "new . target", "new.target"), ("import . meta;", "import . meta", "import.meta"), ("await  using x = y;", "await  using", "await using"), ("let x: unique /* c */ symbol;", "unique /* c */ symbol", "unique symbol")]);
+    check("python", &python_renders(), &[("a not  in b\n", "not  in", "not in"), ("a is  not b\n", "is  not", "is not"), ("(a not # c\n in b)\n", "not # c\n in", "not in")]);
+}
+
+/// A parsed unit renders from its templates as its row did: a zero-width one
+/// writes the seam it stands for, and its sides come through its site.
+#[test]
+fn a_parsed_unit_renders_alike_in_both_storages() {
+    fn check<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>, sources: &[&str]) {
+        for source in sources {
+            if let Err(apart) = grammar.alike(name, source) {
+                panic!("{name} {source:?}: {apart}");
+            }
+        }
+    }
+    check("rust", &rust_renders(), &["(&'a mut self)", "() => {};", "foo!($/';()*()+.);", "a!('lifetime);"]);
+    check("typescript", &typescript_renders(), &["function f() { return /* c */; }\n", "if (c) x()\nelse y()", "if (c) {\n  x()\n}\nelse y()", "{ /* c */ ; }", "abstract makeSound(): void;", "class A { get x( ): T { return 1 } }", "class A { get x(/* c */): T { return 1 } }"]);
+    check("python", &python_renders(), &["def f():\n    a\nx = 1\n"]);
+}
+
+fn rust_renders() -> Renders<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {
+    Renders { grammar: sittir_rust::RustGrammar, options: sittir_rust::render::options::defaults, native: sittir_rust::render::render_node_parts }
+}
+
+fn typescript_renders() -> Renders<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode> {
+    Renders { grammar: sittir_typescript::TypeScriptGrammar, options: sittir_typescript::render::options::defaults, native: sittir_typescript::render::render_node_parts }
+}
+
+fn python_renders() -> Renders<sittir_python::PythonGrammar, sittir_python::render::AnyNode> {
+    Renders { grammar: sittir_python::PythonGrammar, options: sittir_python::render::options::defaults, native: sittir_python::render::render_node_parts }
 }

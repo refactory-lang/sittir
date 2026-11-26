@@ -408,7 +408,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     let codec = codec::members(ident);
     let writer = crate::write::members(ident);
     let hydrate = crate::hydrate::members(ident);
-    let view = crate::views::members(ident);
+    let view = crate::views::members(ident, kind);
     let prepare_record = crate::prepare_record::members(ident);
     Ok(quote! {
         const _: () = {
@@ -983,7 +983,7 @@ enum SlotKind<'a> {
 fn presence_check(keyword: &Presence) -> TokenStream {
     match keyword {
         Presence::Token(group) => quote!([#(#group),*].contains(&child.grammar)),
-        Presence::Display(kind) => quote!(child.display == #kind),
+        Presence::Display(kind, _) => quote!(child.display == #kind),
     }
 }
 
@@ -1074,6 +1074,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
     }
 
     let accs: Vec<Ident> = slots.iter().map(|(i, ..)| format_ident!("__acc{}", i)).collect();
+    let flags: Vec<bool> = slots.iter().map(|(_, _, slot)| slot.cell.bit.is_some()).collect();
     let tys: Vec<&Type> = slots.iter().map(|(_, field, _)| field.ty).collect();
     let idxs: Vec<TokenStream> = slots.iter().map(|&(i, ..)| slot_id(i)).collect();
     let names: Vec<&Ident> = slots.iter().map(|(_, field, _)| field.ident).collect();
@@ -1110,7 +1111,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
                 }
                 let children = nodes.kids(at.index).to_vec();
                 let routes = children.iter().map(__route).collect::<::core::result::Result<::std::vec::Vec<__rt::Route>, __rt::ReadError>>().ok()?;
-                ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*], elided: __ELIDED })
+                ::core::option::Option::Some(__rt::Routed { children, routes, keys: &[#(#keys),*], elided: __ELIDED, flags: __FLAGS })
             }
             fn router(grammar: __Kind, display: __Kind) -> ::core::option::Option<__rt::Router> {
                 <Self as __rt::ReadNode>::admits(grammar, display).then_some(__rt::Router::Children(__route, __unit, <Self as __rt::ReadNode>::routes))
@@ -1119,6 +1120,7 @@ fn routed_body(attrs: &KindAttrs, fields: &[Field<'_>], height: Option<&Ident>) 
         },
         items: quote! {
             const __ELIDED: &[bool] = &[#(<#tys as __rt::ReadSlot>::ELIDED),*];
+            const __FLAGS: &[bool] = &[#(#flags),*];
             #[allow(unused_variables)]
             fn __unit(slot: ::sittir_core::types::SlotId, nodes: &mut dyn __rt::Nodes<'_>, at: &__rt::Kid) -> ::core::option::Option<__Kind> {
                 match slot {
@@ -1306,9 +1308,8 @@ mod tests {
     #[test]
     fn an_envelope_over_a_list_hydrates_as_the_lists_record_under_its_own_kind() {
         let charged = expand(&envelope(true));
-        assert!(has(&charged, "<ArgumentsNode as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, depth.and_then(__rt::Depth::below), records, inline)?"));
+        assert!(has(&charged, "<ArgumentsNode as ::sittir_core::arena::HydrateNode>::hydrate(cursor, ctx, records)?"));
         assert!(has(&charged, "::sittir_core::arena::Hydrated::Record { kind: __stored_kind(&__node), at }"));
-        assert!(has(&charged, "embedded @ ::sittir_core::arena::Hydrated::Embedded => ::core::result::Result::Ok(embedded),"));
         assert!(has(&charged, "::sittir_core::arena::Hydrated::Unit { .. } | ::sittir_core::arena::Hydrated::Text { .. } => ::core::result::Result::Err(::sittir_core::arena::ArenaError::Unwritable("));
         assert!(!has(&charged, "other => "));
         assert!(!has(&charged, "an envelope's content read from its own row is no node with a record"));

@@ -5,6 +5,7 @@ import { createEngine } from '@sittir/common';
 import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
+const adopting = await createEngine(typescript);
 
 function leadLastStatementOfFirstBody(root: ReturnType<typeof ts.parse>): void {
 	const [loop] = root.statements();
@@ -16,11 +17,23 @@ function leadLastStatementOfFirstBody(root: ReturnType<typeof ts.parse>): void {
 }
 
 describe('a comment between two of its owner tokens, with no named child beside it, goes to the nearest child', () => {
-	it('keeps it through an edit inside its owner and through a snapshot', () => {
-		const root = ts.parse('for /* keep */ (;;) { x(); }\n');
-		expect(ts.render(root.$snapshot()).toString()).toBe('for (/* keep */;;) { x(); }\n');
+	it.each(['object', 'arena'] as const)('keeps it through an edit inside its owner and through a snapshot, joined to the child it leads as a built side joins (%s storage)', async (nodeStorage) => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		const root = engine.parse('for /* keep */ (;;) { x(); }\n');
+		expect(engine.render(root.$snapshot()).toString()).toBe('for ( /* keep */ ;;) {\n  x();\n}\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('for (/* keep */;;) {\n  // lead\n  x(); }\n');
+		expect(root.$render()).toBe('for ( /* keep */ ;;) {\n  // lead\n  x();\n}\n');
+	});
+
+	it.each(['object', 'arena'] as const)("drops the source line break beside it once it sits between other tokens, as the options write it there (%s storage)", async (nodeStorage) => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		expect(engine.render(engine.parse('for /* keep */\n(;;) {}\n').$snapshot()).toString()).toBe('for ( /* keep */;;) {}\n');
+	});
+
+	it.each(['object', 'arena'] as const)('keeps the source gap beside it while it sits between the same two tokens (%s storage)', async (nodeStorage) => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		const root = engine.parse('for (/* keep */ ;;) { x(); }\n');
+		expect(engine.render(root.$snapshot()).toString()).toBe('for (/* keep */ ;;) {\n  x();\n}\n');
 	});
 
 	it('trails the last item of a list when it sits after the trailing separator', () => {
@@ -33,7 +46,7 @@ describe("a unit child's comment renders once and follows the unit through a lis
 	it('frames a unit once when an edit beside it rebuilds its holder', () => {
 		const root = ts.parse('while (a) { /* c */ ; x(); }\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('while (a) { /* c */ ;\n  // lead\n  x(); }\n');
+		expect(root.$render()).toBe('while (a) { /* c */ ;\n  // lead\n  x();\n}\n');
 	});
 
 	const source = '// A\n;\n// B\ndebugger;\n';
@@ -76,7 +89,7 @@ describe('unit items keep their own comments in an array', () => {
 	it('swaps two different units with their comments', () => {
 		const { array } = arrayOf('[/* A */ true, /* B */ false];\n');
 		const elements = array.elements().filter((element) => element !== undefined);
-		expect(array.$with.elements(...elements.reverse()).$render()).toBe('[/* B */ false, /* A */ true]');
+		expect(array.$with.elements(...elements.reverse()).$render()).toBe('[ /* B */ false, /* A */ true]');
 	});
 
 	it('counts the holes of a sparse array, at its start and between items', () => {
@@ -121,8 +134,9 @@ describe('an empty container whose inside is only layout takes its first child',
 		expect(() => body.$with.statements(x())).toThrow(/holds inner comments/);
 	});
 
-	it('gives a program of blank lines its first statement', () => {
-		expect(ts.parse('\n').$with.statements(x()).$render()).toBe('\nx;\n');
+	it('gives a program of blank lines its first statement, in the adopted style', () => {
+		const statement = adopting.build.expressionStatement(adopting.build.identifier('x'));
+		expect(adopting.parse('\n', { adoptStyle: true }).$with.statements(statement).$render()).toBe('\nx;\n');
 	});
 });
 

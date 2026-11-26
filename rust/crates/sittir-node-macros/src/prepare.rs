@@ -68,7 +68,7 @@ fn record_handle(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<(TokenS
         Role::Layout => Ok((quote!(#arena::LayoutAt<'r, #trivia>), quote!(self.layout()))),
         Role::Slot(slot) => {
             let (node, adjacent) = crate::views::held(field.ty).ok_or_else(|| syn::Error::new_spanned(field.ty, "a prepared slot holds a `SlotValue<…>`"))?;
-            let shape = crate::views::cell_shape(field, &slot.cell)?;
+            let shape = crate::views::cell_shape(field, slot)?;
             Ok((quote!(#arena::SlotAt<'r, #trivia, #node, #adjacent>), quote!(self.slot::<#node, #adjacent>(#shape))))
         }
         Role::Flank(_) => setting(quote!(Delimiter)),

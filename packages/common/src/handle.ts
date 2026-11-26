@@ -71,5 +71,5 @@ export function isLeafHandle(value: unknown): value is LeafHandle {
 }
 
 export function isParsedPosition(value: unknown): value is RecordPosition {
-	return isRecordPosition(value) && value.$tree.built === undefined;
+	return isRecordPosition(value) && (value.$tree.built === undefined || value.$tree.built.reads(value.$at));
 }

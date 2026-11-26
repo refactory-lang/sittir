@@ -2,10 +2,10 @@
 //! write one: word and string chunks numbered from one count from 1, records
 //! and link records in word chunks, leaf entries in string chunks.
 
-use super::cell::{flag, with_kind, LINK_WORDS};
+use super::cell::{flag, with_kind, CellWord, ListCell, LINK_WORDS};
 use super::{Address, ArenaRead, CHUNK_WORDS};
 use crate::slot::ChangedEdges;
-use crate::types::{KindId, NodeIndex, Span, TreeId};
+use crate::types::{KindId, Span};
 
 enum ImageChunk {
     Words(Vec<u32>),
@@ -97,10 +97,12 @@ impl BuiltImage {
         image
     }
 
-    /// The link record of the parsed node at `row` of `tree`, whose record
-    /// is `record`, `Address::NONE` for a node without one.
-    pub(crate) fn link(&mut self, kind: KindId, tree: TreeId, row: NodeIndex, end: NodeIndex, record: Address, span: Span) -> Address {
-        let words: [u32; LINK_WORDS as usize] = [self.header(kind, flag::LINK), 0, tree.0, row.0, end.0, record.0, span.start, span.end];
+    /// The link record of the node `name` names, a node a read left with
+    /// no record of its own: its holder, then the word and item of its
+    /// site, both 0 for its holder's own node.
+    pub(crate) fn link(&mut self, kind: KindId, name: crate::types::NodeId, span: Span) -> Address {
+        let [word, item] = name.site().unwrap_or([0, 0]);
+        let words: [u32; LINK_WORDS as usize] = [self.header(kind, flag::LINK), 0, name.address(), word, item, 0, span.start, span.end];
         self.words(&words)
     }
 
@@ -109,22 +111,24 @@ impl BuiltImage {
     pub(crate) fn run(&mut self, items: &[u32]) -> u32 {
         let mut run = vec![u32::try_from(items.len()).expect("a list length")];
         run.extend_from_slice(items);
-        if run.len() > CHUNK_WORDS as usize {
+        let at = if run.len() > CHUNK_WORDS as usize {
             self.chunks.push(Some(ImageChunk::Words(run)));
-            return Self::address(self.chunks.len() - 1, 0).0 << 2;
-        }
-        self.words(&run).0 << 2
+            Self::address(self.chunks.len() - 1, 0)
+        } else {
+            self.words(&run)
+        };
+        ListCell::word(at).expect("a run a list cell holds").0
     }
 }
 
 /// The built cell naming `at`, with the edges `changed`.
 pub(crate) fn built_cell(at: Address, changed: ChangedEdges) -> u32 {
-    at.0 << 2 | u32::from(changed.leading) | u32::from(changed.trailing) << 1
+    CellWord::of(at, changed).expect("an address a built cell holds").0
 }
 
 /// The built cell of a unit of `kind`.
 pub(crate) fn unit_cell(kind: KindId) -> u32 {
-    u32::from(kind.0) << 2
+    CellWord::unit(kind).expect("a kind a unit cell holds").0
 }
 
 impl ArenaRead for BuiltImage {

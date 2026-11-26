@@ -2,7 +2,7 @@
 # Rounds of the speed reference over every corpus admit.mjs admitted in
 # <corpora-dir>. Each round runs, for each corpus, five fresh processes: sittir
 # (built at <tree>) in object and in arena storage, the arena whole read's
-# native calls alone (deep-read) and oxfmt's format(), each timing <batches>
+# native call alone (deep-read) and oxfmt's format(), each timing <batches>
 # batches (reference-worker.mjs), and oxlint. The order
 # rotates by round and reverses on odd rounds. oxlint runs as its command from
 # <tree>'s node_modules, single-threaded, from the corpus directory over the
