@@ -15505,7 +15505,7 @@ Whether any kind of the grammar has a present and an absent shape (`hasShapes`).
 
 ### `packages/codegen/src/emitters/factories.ts::exclusiveArmsOf`
 
-The arms of a kind's one required choice of arms, read from its slots' arm stamps: the config keys of every arm, and per arm the keys it holds and the keys it requires. Arms with the same keys and required keys collapse to one. It answers undefined when no slot is stamped, and when the slots the arms do not all hold are flags (boolean storage), because arms that differ only in flags cannot be told apart by a config. It throws for slots stamped by two choices, and for an option slot an arm holds, rather than leave the row untyped. The builder's `BuildArgs` and `LooseArgs` wrap their rows in `ArmRows` over this fact.
+The arms of a kind's one required choice of arms, read from its slots' arm stamps: the config keys of every arm, and, for each of the choice's `armCount` arms, the keys it holds and the keys it requires, so an arm that holds no slot is a row with no keys. Arms with the same keys and required keys collapse to one. It answers undefined when no slot is stamped, and when the slots the arms do not all hold are flags (boolean storage), because arms that differ only in flags cannot be told apart by a config. It throws for slots stamped by two choices, and for an option slot an arm holds, rather than leave the row untyped. The builder's `BuildArgs` and `LooseArgs` wrap their rows in `ArmRows` over this fact.
 
 ### `packages/codegen/src/emitters/factories.ts::exclusiveArmsOfNode`
 

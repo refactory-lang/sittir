@@ -213,3 +213,8 @@ export const enumBody$seated: EmptyForm<
 	T.EmptyEnumBody,
 	Seat<T.EnumBody.LooseArgs, ReturnType<typeof C.coerceToEnumBody>>
 > = withEmptyForm(K.enumBody$enumConstants(C.coerceToEnumBody, C.coerceToEnumConstants));
+
+export const methodDeclaration$seated: Seat<
+	T.MethodDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToMethodDeclaration>
+> = K.methodDeclaration$branch(C.coerceToMethodDeclaration);

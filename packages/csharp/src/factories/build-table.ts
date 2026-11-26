@@ -29,6 +29,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly unchecked: Routes<Table>['checkedStatement$unchecked'];
 	};
 	readonly forStatement: Table['forStatement$seated'];
+	readonly yieldStatement: Table['yieldStatement$seated'];
 	readonly usingStatement$usingVariableDeclaration: <
 		const V extends OmitEach<ArgsOf<Table['buildUsingStatement']>[0], 'content'> &
 			ArgsOf<Table['buildUsingVariableDeclaration']>[0]
@@ -70,6 +71,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly case: Routes<Table>['gotoStatement$case'];
 		readonly default: Routes<Table>['gotoStatement$default'];
 	};
+	readonly localFunctionStatement: Table['localFunctionStatement$seated'];
 	readonly usingDirective$alias: <
 		const V extends OmitEach<ArgsOf<Table['buildUsingDirective']>[0], 'content'> &
 			ArgsOf<Table['buildUsingDirectiveAlias']>[0]
@@ -279,22 +281,28 @@ export interface Routes<Table extends AnyTable> {
 		readonly in: Routes<Table>['typeParameter$in'];
 		readonly out: Routes<Table>['typeParameter$out'];
 	};
+	readonly operatorDeclaration: Table['operatorDeclaration$seated'];
 	readonly conversionOperatorDeclaration$implicit: <
-		const V extends OmitEach<ArgsOf<Table['buildConversionOperatorDeclaration']>[0], 'operator'>
+		const V extends OmitEach<ArgsOf<Table['conversionOperatorDeclaration$seated']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildConversionOperatorDeclaration']>[0], 'operator'>>,
-		options?: OptionsArg<Table['buildConversionOperatorDeclaration']>
-	) => ReturnType<Table['buildConversionOperatorDeclaration']>;
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['conversionOperatorDeclaration$seated']>[0], 'operator'>>,
+		options?: OptionsArg<Table['conversionOperatorDeclaration$seated']>
+	) => ReturnType<Table['conversionOperatorDeclaration$seated']>;
 	readonly conversionOperatorDeclaration$explicit: <
-		const V extends OmitEach<ArgsOf<Table['buildConversionOperatorDeclaration']>[0], 'operator'>
+		const V extends OmitEach<ArgsOf<Table['conversionOperatorDeclaration$seated']>[0], 'operator'>
 	>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildConversionOperatorDeclaration']>[0], 'operator'>>,
-		options?: OptionsArg<Table['buildConversionOperatorDeclaration']>
-	) => ReturnType<Table['buildConversionOperatorDeclaration']>;
-	readonly conversionOperatorDeclaration: Table['buildConversionOperatorDeclaration'] & {
+		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['conversionOperatorDeclaration$seated']>[0], 'operator'>>,
+		options?: OptionsArg<Table['conversionOperatorDeclaration$seated']>
+	) => ReturnType<Table['conversionOperatorDeclaration$seated']>;
+	readonly conversionOperatorDeclaration: Table['conversionOperatorDeclaration$seated'] & {
 		readonly implicit: Routes<Table>['conversionOperatorDeclaration$implicit'];
 		readonly explicit: Routes<Table>['conversionOperatorDeclaration$explicit'];
 	};
+	readonly constructorDeclaration: Table['constructorDeclaration$seated'];
+	readonly destructorDeclaration: Table['destructorDeclaration$seated'];
+	readonly methodDeclaration: Table['methodDeclaration$seated'];
+	readonly eventDeclaration: Table['eventDeclaration$seated'];
+	readonly accessorDeclaration: Table['accessorDeclaration$seated'];
 	readonly indexerDeclaration: Table['indexerDeclaration$seated'];
 	readonly propertyDeclaration$arm: <
 		const V extends OmitEach<ArgsOf<Table['buildPropertyDeclaration']>[0], 'content'> &
@@ -936,16 +944,16 @@ export interface Routes<Table extends AnyTable> {
 		readonly enum: Routes<Table>['enumDeclaration'];
 		readonly delegate: Table['buildDelegateDeclaration'];
 		readonly field: Table['buildFieldDeclaration'];
-		readonly method: Table['buildMethodDeclaration'];
-		readonly event: Table['buildEventDeclaration'];
+		readonly method: Routes<Table>['methodDeclaration'];
+		readonly event: Routes<Table>['eventDeclaration'];
 		readonly eventField: Table['buildEventFieldDeclaration'];
 		readonly record: Routes<Table>['recordDeclaration'];
-		readonly constructor: Table['buildConstructorDeclaration'];
-		readonly destructor: Table['buildDestructorDeclaration'];
+		readonly constructor: Routes<Table>['constructorDeclaration'];
+		readonly destructor: Routes<Table>['destructorDeclaration'];
 		readonly indexer: Routes<Table>['indexerDeclaration'];
 		readonly interface: Table['buildInterfaceDeclaration'];
 		readonly namespace: Table['buildNamespaceDeclaration'];
-		readonly operator: Table['buildOperatorDeclaration'];
+		readonly operator: Routes<Table>['operatorDeclaration'];
 		readonly conversionOperator: Routes<Table>['conversionOperatorDeclaration'];
 		readonly property: Routes<Table>['propertyDeclaration'];
 		readonly usingDirective: Routes<Table>['usingDirective'];
@@ -985,7 +993,10 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildGlobalStatement>
 	>;
 	readonly globalStatement$lock: Seat<ArgsOf<Table['buildLockStatement']>, ReturnType<typeof F.buildGlobalStatement>>;
-	readonly globalStatement$yield: Seat<ArgsOf<Table['buildYieldStatement']>, ReturnType<typeof F.buildGlobalStatement>>;
+	readonly globalStatement$yield: Seat<
+		ArgsOf<Routes<Table>['yieldStatement']>,
+		ReturnType<typeof F.buildGlobalStatement>
+	>;
 	readonly globalStatement$throw: Seat<ArgsOf<Table['buildThrowStatement']>, ReturnType<typeof F.buildGlobalStatement>>;
 	readonly globalStatement$try: Seat<ArgsOf<Table['buildTryStatement']>, ReturnType<typeof F.buildGlobalStatement>>;
 	readonly globalStatement$unsafe: Seat<
@@ -1009,7 +1020,7 @@ export interface Routes<Table extends AnyTable> {
 		ReturnType<typeof F.buildGlobalStatement>
 	>;
 	readonly globalStatement$localFunction: Seat<
-		ArgsOf<Table['buildLocalFunctionStatement']>,
+		ArgsOf<Routes<Table>['localFunctionStatement']>,
 		ReturnType<typeof F.buildGlobalStatement>
 	>;
 	readonly globalStatement$preprocIfInTopLevel: Seat<
@@ -4419,7 +4430,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly for: Routes<Table>['forStatement'];
 		readonly return: Table['buildReturnStatement'];
 		readonly lock: Table['buildLockStatement'];
-		readonly yield: Table['buildYieldStatement'];
+		readonly yield: Routes<Table>['yieldStatement'];
 		readonly switch: Routes<Table>['switchStatement'];
 		readonly throw: Table['buildThrowStatement'];
 		readonly try: Table['buildTryStatement'];
@@ -4431,7 +4442,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly if: Table['buildIfStatement'];
 		readonly while: Table['buildWhileStatement'];
 		readonly localDeclaration: Table['buildLocalDeclarationStatement'];
-		readonly localFunction: Table['buildLocalFunctionStatement'];
+		readonly localFunction: Routes<Table>['localFunctionStatement'];
 		readonly preprocIfInTopLevel: Table['buildPreprocIfInTopLevel'];
 	};
 }
@@ -4460,17 +4471,17 @@ export interface Ir<Table extends AnyTable> {
 	readonly typeParameter: Routes<Table>['typeParameter'];
 	readonly baseList: Table['buildBaseList'];
 	readonly typeParameterConstraintsClause: Table['buildTypeParameterConstraintsClause'];
-	readonly operatorDeclaration: Table['buildOperatorDeclaration'];
+	readonly operatorDeclaration: Routes<Table>['operatorDeclaration'];
 	readonly conversionOperatorDeclaration: Routes<Table>['conversionOperatorDeclaration'];
 	readonly declarationList: Table['buildDeclarationList'];
 	readonly fieldDeclaration: Table['buildFieldDeclaration'];
-	readonly constructorDeclaration: Table['buildConstructorDeclaration'];
-	readonly destructorDeclaration: Table['buildDestructorDeclaration'];
-	readonly methodDeclaration: Table['buildMethodDeclaration'];
-	readonly eventDeclaration: Table['buildEventDeclaration'];
+	readonly constructorDeclaration: Routes<Table>['constructorDeclaration'];
+	readonly destructorDeclaration: Routes<Table>['destructorDeclaration'];
+	readonly methodDeclaration: Routes<Table>['methodDeclaration'];
+	readonly eventDeclaration: Routes<Table>['eventDeclaration'];
 	readonly eventFieldDeclaration: Table['buildEventFieldDeclaration'];
 	readonly accessorList: Table['buildAccessorList'];
-	readonly accessorDeclaration: Table['buildAccessorDeclaration'];
+	readonly accessorDeclaration: Routes<Table>['accessorDeclaration'];
 	readonly indexerDeclaration: Routes<Table>['indexerDeclaration'];
 	readonly bracketedParameterList: Table['buildBracketedParameterList'];
 	readonly propertyDeclaration: Routes<Table>['propertyDeclaration'];
@@ -4510,7 +4521,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly forStatement: Routes<Table>['forStatement'];
 	readonly returnStatement: Table['buildReturnStatement'];
 	readonly lockStatement: Table['buildLockStatement'];
-	readonly yieldStatement: Table['buildYieldStatement'];
+	readonly yieldStatement: Routes<Table>['yieldStatement'];
 	readonly switchBody: Table['buildSwitchBody'];
 	readonly switchSection: Routes<Table>['switchSection'];
 	readonly throwStatement: Table['buildThrowStatement'];
@@ -4527,7 +4538,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly ifStatement: Table['buildIfStatement'];
 	readonly whileStatement: Table['buildWhileStatement'];
 	readonly localDeclarationStatement: Table['buildLocalDeclarationStatement'];
-	readonly localFunctionStatement: Table['buildLocalFunctionStatement'];
+	readonly localFunctionStatement: Routes<Table>['localFunctionStatement'];
 	readonly parenthesizedPatternWithDesignation: Routes<Table>['parenthesizedPatternWithDesignation'];
 	readonly constantPattern: Routes<Table>['constantPattern'];
 	readonly nameInvocationPattern: Table['buildNameInvocationPattern'];
@@ -4826,6 +4837,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const forStatement: Routes<Table>['forStatement'] = $at('forStatement$seated');
+	const yieldStatement: Routes<Table>['yieldStatement'] = $at('yieldStatement$seated');
 	const usingStatement$usingVariableDeclaration: Routes<Table>['usingStatement$usingVariableDeclaration'] =
 		K.usingStatement$usingVariableDeclaration($at('buildUsingStatement'), $at('buildUsingVariableDeclaration'));
 	const usingStatement: Routes<Table>['usingStatement'] = Object.freeze(
@@ -4852,6 +4864,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			default: gotoStatement$default
 		} as const)
 	);
+	const localFunctionStatement: Routes<Table>['localFunctionStatement'] = $at('localFunctionStatement$seated');
 	const usingDirective$alias: Routes<Table>['usingDirective$alias'] = K.usingDirective$alias(
 		$at('buildUsingDirective'),
 		$at('buildUsingDirectiveAlias')
@@ -4975,16 +4988,22 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const typeParameter: Routes<Table>['typeParameter'] = Object.freeze(
 		Object.assign(delegate($at('buildTypeParameter')), { in: typeParameter$in, out: typeParameter$out } as const)
 	);
+	const operatorDeclaration: Routes<Table>['operatorDeclaration'] = $at('operatorDeclaration$seated');
 	const conversionOperatorDeclaration$implicit: Routes<Table>['conversionOperatorDeclaration$implicit'] =
-		K.conversionOperatorDeclaration$implicit($at('buildConversionOperatorDeclaration'), TSKindId.ImplicitKeyword);
+		K.conversionOperatorDeclaration$implicit($at('conversionOperatorDeclaration$seated'), TSKindId.ImplicitKeyword);
 	const conversionOperatorDeclaration$explicit: Routes<Table>['conversionOperatorDeclaration$explicit'] =
-		K.conversionOperatorDeclaration$explicit($at('buildConversionOperatorDeclaration'), TSKindId.ExplicitKeyword);
+		K.conversionOperatorDeclaration$explicit($at('conversionOperatorDeclaration$seated'), TSKindId.ExplicitKeyword);
 	const conversionOperatorDeclaration: Routes<Table>['conversionOperatorDeclaration'] = Object.freeze(
-		Object.assign(delegate($at('buildConversionOperatorDeclaration')), {
+		Object.assign(delegate($at('conversionOperatorDeclaration$seated')), {
 			implicit: conversionOperatorDeclaration$implicit,
 			explicit: conversionOperatorDeclaration$explicit
 		} as const)
 	);
+	const constructorDeclaration: Routes<Table>['constructorDeclaration'] = $at('constructorDeclaration$seated');
+	const destructorDeclaration: Routes<Table>['destructorDeclaration'] = $at('destructorDeclaration$seated');
+	const methodDeclaration: Routes<Table>['methodDeclaration'] = $at('methodDeclaration$seated');
+	const eventDeclaration: Routes<Table>['eventDeclaration'] = $at('eventDeclaration$seated');
+	const accessorDeclaration: Routes<Table>['accessorDeclaration'] = $at('accessorDeclaration$seated');
 	const indexerDeclaration: Routes<Table>['indexerDeclaration'] = $at('indexerDeclaration$seated');
 	const propertyDeclaration$arm: Routes<Table>['propertyDeclaration$arm'] = K.propertyDeclaration$arm(
 		$at('buildPropertyDeclaration'),
@@ -5426,16 +5445,16 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		enum: enumDeclaration,
 		delegate: $at('buildDelegateDeclaration'),
 		field: $at('buildFieldDeclaration'),
-		method: $at('buildMethodDeclaration'),
-		event: $at('buildEventDeclaration'),
+		method: methodDeclaration,
+		event: eventDeclaration,
 		eventField: $at('buildEventFieldDeclaration'),
 		record: recordDeclaration,
-		constructor: $at('buildConstructorDeclaration'),
-		destructor: $at('buildDestructorDeclaration'),
+		constructor: constructorDeclaration,
+		destructor: destructorDeclaration,
 		indexer: indexerDeclaration,
 		interface: $at('buildInterfaceDeclaration'),
 		namespace: $at('buildNamespaceDeclaration'),
-		operator: $at('buildOperatorDeclaration'),
+		operator: operatorDeclaration,
 		conversionOperator: conversionOperatorDeclaration,
 		property: propertyDeclaration,
 		usingDirective: usingDirective,
@@ -5495,7 +5514,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	);
 	const globalStatement$yield: Routes<Table>['globalStatement$yield'] = K.globalStatement$yield(
 		F.buildGlobalStatement,
-		$at('buildYieldStatement')
+		yieldStatement
 	);
 	const globalStatement$throw: Routes<Table>['globalStatement$throw'] = K.globalStatement$throw(
 		F.buildGlobalStatement,
@@ -5537,7 +5556,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		K.globalStatement$localDeclaration(F.buildGlobalStatement, $at('buildLocalDeclarationStatement'));
 	const globalStatement$localFunction: Routes<Table>['globalStatement$localFunction'] = K.globalStatement$localFunction(
 		F.buildGlobalStatement,
-		$at('buildLocalFunctionStatement')
+		localFunctionStatement
 	);
 	const globalStatement$preprocIfInTopLevel: Routes<Table>['globalStatement$preprocIfInTopLevel'] =
 		K.globalStatement$preprocIfInTopLevel(F.buildGlobalStatement, $at('buildPreprocIfInTopLevel'));
@@ -7031,7 +7050,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		for: forStatement,
 		return: $at('buildReturnStatement'),
 		lock: $at('buildLockStatement'),
-		yield: $at('buildYieldStatement'),
+		yield: yieldStatement,
 		switch: switchStatement,
 		throw: $at('buildThrowStatement'),
 		try: $at('buildTryStatement'),
@@ -7043,7 +7062,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		if: $at('buildIfStatement'),
 		while: $at('buildWhileStatement'),
 		localDeclaration: $at('buildLocalDeclarationStatement'),
-		localFunction: $at('buildLocalFunctionStatement'),
+		localFunction: localFunctionStatement,
 		preprocIfInTopLevel: $at('buildPreprocIfInTopLevel')
 	} as const);
 	return Object.freeze({
@@ -7070,17 +7089,17 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		typeParameter: typeParameter,
 		baseList: $at('buildBaseList'),
 		typeParameterConstraintsClause: $at('buildTypeParameterConstraintsClause'),
-		operatorDeclaration: $at('buildOperatorDeclaration'),
+		operatorDeclaration: operatorDeclaration,
 		conversionOperatorDeclaration: conversionOperatorDeclaration,
 		declarationList: $at('buildDeclarationList'),
 		fieldDeclaration: $at('buildFieldDeclaration'),
-		constructorDeclaration: $at('buildConstructorDeclaration'),
-		destructorDeclaration: $at('buildDestructorDeclaration'),
-		methodDeclaration: $at('buildMethodDeclaration'),
-		eventDeclaration: $at('buildEventDeclaration'),
+		constructorDeclaration: constructorDeclaration,
+		destructorDeclaration: destructorDeclaration,
+		methodDeclaration: methodDeclaration,
+		eventDeclaration: eventDeclaration,
 		eventFieldDeclaration: $at('buildEventFieldDeclaration'),
 		accessorList: $at('buildAccessorList'),
-		accessorDeclaration: $at('buildAccessorDeclaration'),
+		accessorDeclaration: accessorDeclaration,
 		indexerDeclaration: indexerDeclaration,
 		bracketedParameterList: $at('buildBracketedParameterList'),
 		propertyDeclaration: propertyDeclaration,
@@ -7120,7 +7139,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		forStatement: forStatement,
 		returnStatement: $at('buildReturnStatement'),
 		lockStatement: $at('buildLockStatement'),
-		yieldStatement: $at('buildYieldStatement'),
+		yieldStatement: yieldStatement,
 		switchBody: $at('buildSwitchBody'),
 		switchSection: switchSection,
 		throwStatement: $at('buildThrowStatement'),
@@ -7137,7 +7156,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		ifStatement: $at('buildIfStatement'),
 		whileStatement: $at('buildWhileStatement'),
 		localDeclarationStatement: $at('buildLocalDeclarationStatement'),
-		localFunctionStatement: $at('buildLocalFunctionStatement'),
+		localFunctionStatement: localFunctionStatement,
 		parenthesizedPatternWithDesignation: parenthesizedPatternWithDesignation,
 		constantPattern: constantPattern,
 		nameInvocationPattern: $at('buildNameInvocationPattern'),

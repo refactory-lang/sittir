@@ -152,6 +152,20 @@ describe('arms stamp', () => {
 		expect(held(nodeMap, 'input')['left']).toEqual([{ arm: 0, required: true }]);
 	});
 
+	it('records how many arms the choice has, counting an arm that holds no slot', () => {
+		const nodeMap = synthetic({ input: choice(field('value', sym('digits')), field('arguments', sym('word')), str(';')), ...leaves });
+		const node = nodeMap.nodes.get('input');
+		if (!node || !isSlotBearingCompound(node)) throw new Error("expected 'input' to assemble as a compound");
+		expect(node.slots.map((slot) => slot.arms?.armCount)).toEqual([3, 3]);
+	});
+
+	it('gives an arm that holds no slot a row with no keys, so a config that fills none builds', () => {
+		const assembled = assembledOf({ input: choice(field('value', sym('digits')), field('arguments', sym('word')), str(';')), ...leaves });
+		const kindEntries = collectKindEntries(assembled.nodeMap, assembled.generatedIdTables);
+		const surface = builtTypeSurfaceOf(assembled.nodeMap.nodes.get('input')!, assembled.nodeMap, kindEntries)!;
+		expect(surface.buildArgs).toContain("[['value', 'value'], ['arguments', 'arguments'], [never, never]]");
+	});
+
 	it('leaves a choice whose arms hold the same slots unstamped', () => {
 		const nodeMap = synthetic({
 			input: choice(seq(field('value', sym('digits')), str('p')), seq(field('value', sym('word')), str('q'))),

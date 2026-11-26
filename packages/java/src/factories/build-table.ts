@@ -470,6 +470,7 @@ export interface Routes<Table extends AnyTable> {
 		readonly arm1: Routes<Table>['explicitConstructorInvocation$arm1'];
 		readonly arm2: Routes<Table>['explicitConstructorInvocation$arm2'];
 	};
+	readonly methodDeclaration: Table['methodDeclaration$seated'];
 	readonly formalParametersReceiver$receiverParameter: Seat<
 		ArgsOf<Table['buildReceiverParameter']>,
 		ReturnType<typeof F.buildFormalParametersReceiver>
@@ -1192,7 +1193,7 @@ export interface Ir<Table extends AnyTable> {
 	readonly spreadParameter: Table['buildSpreadParameter'];
 	readonly throws: Table['buildThrows'];
 	readonly localVariableDeclaration: Table['buildLocalVariableDeclaration'];
-	readonly methodDeclaration: Table['buildMethodDeclaration'];
+	readonly methodDeclaration: Routes<Table>['methodDeclaration'];
 	readonly compactConstructorDeclaration: Table['buildCompactConstructorDeclaration'];
 	readonly decimalFloatingPointLiteralArm3Arm1: Table['buildDecimalFloatingPointLiteralArm3Arm1'];
 	readonly decimalFloatingPointLiteralArm3Arm2: Table['buildDecimalFloatingPointLiteralArm3Arm2'];
@@ -1586,6 +1587,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			arm2: explicitConstructorInvocation$arm2
 		} as const)
 	);
+	const methodDeclaration: Routes<Table>['methodDeclaration'] = $at('methodDeclaration$seated');
 	const formalParametersReceiver$receiverParameter: Routes<Table>['formalParametersReceiver$receiverParameter'] =
 		K.formalParametersReceiver$receiverParameter(F.buildFormalParametersReceiver, $at('buildReceiverParameter'));
 	const formalParametersReceiver: Routes<Table>['formalParametersReceiver'] = Object.freeze(
@@ -2059,7 +2061,7 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		spreadParameter: $at('buildSpreadParameter'),
 		throws: $at('buildThrows'),
 		localVariableDeclaration: $at('buildLocalVariableDeclaration'),
-		methodDeclaration: $at('buildMethodDeclaration'),
+		methodDeclaration: methodDeclaration,
 		compactConstructorDeclaration: $at('buildCompactConstructorDeclaration'),
 		decimalFloatingPointLiteralArm3Arm1: $at('buildDecimalFloatingPointLiteralArm3Arm1'),
 		decimalFloatingPointLiteralArm3Arm2: $at('buildDecimalFloatingPointLiteralArm3Arm2'),

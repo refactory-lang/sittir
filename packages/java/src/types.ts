@@ -16306,8 +16306,8 @@ export namespace MethodDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.MethodDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MethodDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.MethodDeclaration>];
-	export type LooseArgs = [config: T.MethodDeclaration.Loose];
+	export type BuildArgs = ArmRows<[config: ConfigOf<T.MethodDeclaration>], 'body', [['body', 'body'], [never, never]]>;
+	export type LooseArgs = ArmRows<[config: T.MethodDeclaration.Loose], 'body', [['body', 'body'], [never, never]]>;
 	export type Kind = TSKindId.MethodDeclaration;
 }
 export namespace CompactConstructorDeclaration {

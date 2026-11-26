@@ -1179,8 +1179,9 @@ export function exclusiveArmsOf(node: FieldCarryingNode, slots: readonly Assembl
 	if (stamped.some((slot) => registered.has(slot))) {
 		throw new Error(`[factories] kind '${node.kind}': an option slot held by only some arms of a choice is not typed`);
 	}
-	const armIndexes = [...new Set(stamped.flatMap((slot) => slot.arms!.held.map((held) => held.arm)))].sort((a, b) => a - b);
-	const heldByAll = (slot: AssembledNonterminal): boolean => slot.arms!.held.length === armIndexes.length;
+	const { armCount } = stamped[0]!.arms!;
+	const armIndexes = [...Array(armCount).keys()];
+	const heldByAll = (slot: AssembledNonterminal): boolean => slot.arms!.held.length === armCount;
 	if (stamped.every((slot) => heldByAll(slot) || slot.storageInfo?.kind === 'boolean')) return undefined;
 	const shape = (index: number): { keys: string[]; needed: string[] } => ({
 		keys: stamped.filter((slot) => slot.arms!.held.some((held) => held.arm === index)).map((slot) => slot.propertyName),

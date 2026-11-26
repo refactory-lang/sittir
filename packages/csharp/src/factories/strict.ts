@@ -309,6 +309,16 @@ export const forStatement$seated: Seat<
 	ReturnType<typeof F.buildForStatement>
 > = K.forStatement$initializer(F.buildForStatement, F.buildForStatementConditionsInitializer);
 
+export const yieldStatement$seated: EmptyForm<
+	T.EmptyYieldStatement,
+	Seat<T.YieldStatement.BuildArgs, ReturnType<typeof F.buildYieldStatement>>
+> = withEmptyForm(K.yieldStatement$branch(F.buildYieldStatement));
+
+export const localFunctionStatement$seated: Seat<
+	T.LocalFunctionStatement.BuildArgs,
+	ReturnType<typeof F.buildLocalFunctionStatement>
+> = K.localFunctionStatement$branch(F.buildLocalFunctionStatement);
+
 export const globalAttribute$seated: Seat<
 	T.GlobalAttribute.BuildArgs,
 	ReturnType<typeof F.buildGlobalAttribute>
@@ -318,6 +328,41 @@ export const attributeList$seated: Seat<
 	T.AttributeList.BuildArgs,
 	ReturnType<typeof F.buildAttributeList>
 > = K.attributeList$attributes(F.buildAttributeList, F.buildAttributes);
+
+export const operatorDeclaration$seated: Seat<
+	T.OperatorDeclaration.BuildArgs,
+	ReturnType<typeof F.buildOperatorDeclaration>
+> = K.operatorDeclaration$branch(F.buildOperatorDeclaration);
+
+export const conversionOperatorDeclaration$seated: Seat<
+	T.ConversionOperatorDeclaration.BuildArgs,
+	ReturnType<typeof F.buildConversionOperatorDeclaration>
+> = K.conversionOperatorDeclaration$branch(F.buildConversionOperatorDeclaration);
+
+export const constructorDeclaration$seated: Seat<
+	T.ConstructorDeclaration.BuildArgs,
+	ReturnType<typeof F.buildConstructorDeclaration>
+> = K.constructorDeclaration$branch(F.buildConstructorDeclaration);
+
+export const destructorDeclaration$seated: Seat<
+	T.DestructorDeclaration.BuildArgs,
+	ReturnType<typeof F.buildDestructorDeclaration>
+> = K.destructorDeclaration$branch(F.buildDestructorDeclaration);
+
+export const methodDeclaration$seated: Seat<
+	T.MethodDeclaration.BuildArgs,
+	ReturnType<typeof F.buildMethodDeclaration>
+> = K.methodDeclaration$branch(F.buildMethodDeclaration);
+
+export const eventDeclaration$seated: Seat<
+	T.EventDeclaration.BuildArgs,
+	ReturnType<typeof F.buildEventDeclaration>
+> = K.eventDeclaration$branch(F.buildEventDeclaration);
+
+export const accessorDeclaration$seated: Seat<
+	T.AccessorDeclaration.BuildArgs,
+	ReturnType<typeof F.buildAccessorDeclaration>
+> = K.accessorDeclaration$branch(F.buildAccessorDeclaration);
 
 export const indexerDeclaration$seated: Seat<
 	T.IndexerDeclaration.BuildArgs,

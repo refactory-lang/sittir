@@ -27680,8 +27680,12 @@ export namespace OperatorDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.OperatorDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.OperatorDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.OperatorDeclaration>];
-	export type LooseArgs = [config: T.OperatorDeclaration.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.OperatorDeclaration>],
+		'body',
+		[['body', 'body'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<[config: T.OperatorDeclaration.Loose], 'body', [['body', 'body'], [never, never]]>;
 	export type Kind = TSKindId.OperatorDeclaration;
 }
 export namespace ConversionOperatorDeclaration {
@@ -27705,8 +27709,16 @@ export namespace ConversionOperatorDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.ConversionOperatorDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConversionOperatorDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.ConversionOperatorDeclaration>];
-	export type LooseArgs = [config: T.ConversionOperatorDeclaration.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.ConversionOperatorDeclaration>],
+		'body',
+		[['body', 'body'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<
+		[config: T.ConversionOperatorDeclaration.Loose],
+		'body',
+		[['body', 'body'], [never, never]]
+	>;
 	export type Kind = TSKindId.ConversionOperatorDeclaration;
 	type NonEmptySlots = Proven<
 		[
@@ -27792,8 +27804,12 @@ export namespace ConstructorDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.ConstructorDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.ConstructorDeclaration>];
-	export type LooseArgs = [config: T.ConstructorDeclaration.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.ConstructorDeclaration>],
+		'body',
+		[['body', 'body'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<[config: T.ConstructorDeclaration.Loose], 'body', [['body', 'body'], [never, never]]>;
 	export type Kind = TSKindId.ConstructorDeclaration;
 }
 export namespace DestructorDeclaration {
@@ -27817,8 +27833,12 @@ export namespace DestructorDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.DestructorDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DestructorDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.DestructorDeclaration>];
-	export type LooseArgs = [config: T.DestructorDeclaration.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.DestructorDeclaration>],
+		'body',
+		[['body', 'body'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<[config: T.DestructorDeclaration.Loose], 'body', [['body', 'body'], [never, never]]>;
 	export type Kind = TSKindId.DestructorDeclaration;
 }
 export namespace MethodDeclaration {
@@ -27841,8 +27861,8 @@ export namespace MethodDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.MethodDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.MethodDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.MethodDeclaration>];
-	export type LooseArgs = [config: T.MethodDeclaration.Loose];
+	export type BuildArgs = ArmRows<[config: ConfigOf<T.MethodDeclaration>], 'body', [['body', 'body'], [never, never]]>;
+	export type LooseArgs = ArmRows<[config: T.MethodDeclaration.Loose], 'body', [['body', 'body'], [never, never]]>;
 	export type Kind = TSKindId.MethodDeclaration;
 }
 export namespace EventDeclaration {
@@ -27865,8 +27885,16 @@ export namespace EventDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.EventDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.EventDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.EventDeclaration>];
-	export type LooseArgs = [config: T.EventDeclaration.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.EventDeclaration>],
+		'accessors',
+		[['accessors', 'accessors'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<
+		[config: T.EventDeclaration.Loose],
+		'accessors',
+		[['accessors', 'accessors'], [never, never]]
+	>;
 	export type Kind = TSKindId.EventDeclaration;
 }
 export namespace EventFieldDeclaration {
@@ -27946,8 +27974,12 @@ export namespace AccessorDeclaration {
 	}
 	export type Loose = LooseFor<TSKindId.AccessorDeclaration>;
 	export type LooseConfig = LooseConfigFor<TSKindId.AccessorDeclaration>;
-	export type BuildArgs = [config: ConfigOf<T.AccessorDeclaration>];
-	export type LooseArgs = [config: T.AccessorDeclaration.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.AccessorDeclaration>],
+		'body',
+		[['body', 'body'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<[config: T.AccessorDeclaration.Loose], 'body', [['body', 'body'], [never, never]]>;
 	export type Kind = TSKindId.AccessorDeclaration;
 }
 export namespace IndexerDeclaration {
@@ -29087,8 +29119,16 @@ export namespace YieldStatement {
 	}
 	export type Loose = LooseFor<TSKindId.YieldStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.YieldStatement>;
-	export type BuildArgs = [value?: Admit<T.Expression>];
-	export type LooseArgs = [value?: T.YieldStatement.Loose];
+	export type BuildArgs = ArmRows<
+		[value?: Admit<T.Expression>],
+		'expression',
+		[['expression', 'expression'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<
+		[value?: T.YieldStatement.Loose],
+		'expression',
+		[['expression', 'expression'], [never, never]]
+	>;
 	export type Kind = TSKindId.YieldStatement;
 }
 export namespace SwitchBody {
@@ -29504,8 +29544,12 @@ export namespace LocalFunctionStatement {
 	}
 	export type Loose = LooseFor<TSKindId.LocalFunctionStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.LocalFunctionStatement>;
-	export type BuildArgs = [config: ConfigOf<T.LocalFunctionStatement>];
-	export type LooseArgs = [config: T.LocalFunctionStatement.Loose];
+	export type BuildArgs = ArmRows<
+		[config: ConfigOf<T.LocalFunctionStatement>],
+		'body',
+		[['body', 'body'], [never, never]]
+	>;
+	export type LooseArgs = ArmRows<[config: T.LocalFunctionStatement.Loose], 'body', [['body', 'body'], [never, never]]>;
 	export type Kind = TSKindId.LocalFunctionStatement;
 }
 export namespace ParenthesizedPatternWithDesignation {

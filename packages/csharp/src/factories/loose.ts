@@ -309,6 +309,16 @@ export const forStatement$seated: Seat<
 	ReturnType<typeof C.coerceToForStatement>
 > = K.forStatement$initializer(C.coerceToForStatement, C.coerceToForStatementConditionsInitializer);
 
+export const yieldStatement$seated: EmptyForm<
+	T.EmptyYieldStatement,
+	Seat<T.YieldStatement.LooseArgs, ReturnType<typeof C.coerceToYieldStatement>>
+> = withEmptyForm(K.yieldStatement$branch(C.coerceToYieldStatement));
+
+export const localFunctionStatement$seated: Seat<
+	T.LocalFunctionStatement.LooseArgs,
+	ReturnType<typeof C.coerceToLocalFunctionStatement>
+> = K.localFunctionStatement$branch(C.coerceToLocalFunctionStatement);
+
 export const globalAttribute$seated: Seat<
 	T.GlobalAttribute.LooseArgs,
 	ReturnType<typeof C.coerceToGlobalAttribute>
@@ -318,6 +328,41 @@ export const attributeList$seated: Seat<
 	T.AttributeList.LooseArgs,
 	ReturnType<typeof C.coerceToAttributeList>
 > = K.attributeList$attributes(C.coerceToAttributeList, C.coerceToAttributes);
+
+export const operatorDeclaration$seated: Seat<
+	T.OperatorDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToOperatorDeclaration>
+> = K.operatorDeclaration$branch(C.coerceToOperatorDeclaration);
+
+export const conversionOperatorDeclaration$seated: Seat<
+	T.ConversionOperatorDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToConversionOperatorDeclaration>
+> = K.conversionOperatorDeclaration$branch(C.coerceToConversionOperatorDeclaration);
+
+export const constructorDeclaration$seated: Seat<
+	T.ConstructorDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToConstructorDeclaration>
+> = K.constructorDeclaration$branch(C.coerceToConstructorDeclaration);
+
+export const destructorDeclaration$seated: Seat<
+	T.DestructorDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToDestructorDeclaration>
+> = K.destructorDeclaration$branch(C.coerceToDestructorDeclaration);
+
+export const methodDeclaration$seated: Seat<
+	T.MethodDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToMethodDeclaration>
+> = K.methodDeclaration$branch(C.coerceToMethodDeclaration);
+
+export const eventDeclaration$seated: Seat<
+	T.EventDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToEventDeclaration>
+> = K.eventDeclaration$branch(C.coerceToEventDeclaration);
+
+export const accessorDeclaration$seated: Seat<
+	T.AccessorDeclaration.LooseArgs,
+	ReturnType<typeof C.coerceToAccessorDeclaration>
+> = K.accessorDeclaration$branch(C.coerceToAccessorDeclaration);
 
 export const indexerDeclaration$seated: Seat<
 	T.IndexerDeclaration.LooseArgs,

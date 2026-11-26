@@ -6330,7 +6330,7 @@ diagnostic (`nested-optional-branch`), which blocks.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::SlotArms`
 
-Which arms of one required choice hold a slot, and whether each arm requires it. `choice` is the rule id of the choice whose arms the slot came from; `held` lists, per arm index, whether the slot is required inside that arm. A slot every arm holds carries an entry for each arm. Only a choice whose arms hold different slots is stamped, so a choice whose arms hold the same slots leaves its slots without one. The stamp is set where the arms merge and read by the factory emitter, which types the builder's config as one config per arm.
+Which arms of one required choice hold a slot, and whether each arm requires it. `choice` is the rule id of the choice whose arms the slot came from; `armCount` is how many arms that choice has, counting an arm that holds no slot (a method's bodiless `;`), which admits a build that fills none; `held` lists, per arm index, whether the slot is required inside that arm. A slot every arm holds carries an entry for each arm. Only a choice whose arms hold different slots is stamped, so a choice whose arms hold the same slots leaves its slots without one. The stamp is set where the arms merge, carried through every fold of same-named slots (`mergeArmsHeld`), and read by the factory emitter, which types the builder's config as one config per arm.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeArmsHeld`
 

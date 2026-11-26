@@ -193,7 +193,9 @@ function stampArms(
 	if (armSlots.some((arm) => arm.some((slot) => slot.arms !== undefined))) {
 		recordUnclassifiableShape(kindForName, rule, 'nested-arms', diagnostics);
 	}
-	return armSlots.map((arm, index) => arm.map((slot) => slot.with({ arms: { choice, held: [{ arm: index, required: isRequired(slot) }] } })));
+	return armSlots.map((arm, index) =>
+		arm.map((slot) => slot.with({ arms: { choice, armCount: armSlots.length, held: [{ arm: index, required: isRequired(slot) }] } }))
+	);
 }
 
 function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
