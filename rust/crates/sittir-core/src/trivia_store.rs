@@ -1056,13 +1056,13 @@ impl<T: Clone> TriviaStore<T> {
 
     #[cfg(feature = "arena")]
     fn release_records(&self, records: Vec<crate::arena::Address>) -> Result<(), ArenaError> {
-        records.into_iter().try_for_each(|at| self.release(crate::arena::count::Held::Record(at), false))
+        self.release_batch(records.into_iter().map(|at| (crate::arena::count::Held::Record(at), false)))
     }
 
     /// Gives back the count each record and leaf entry `kept` names holds.
     #[cfg(feature = "arena")]
     fn release_kept(&self, kept: &[CompactEntry]) -> Result<(), ArenaError> {
-        kept.iter().filter_map(|entry| entry.held()).try_for_each(|held| self.release(held, false))
+        self.release_batch(kept.iter().filter_map(|entry| entry.held()).map(|held| (held, false)))
     }
 
     /// Releases a count of `held` (`BuiltChunks::release`), dropping the
@@ -1078,6 +1078,21 @@ impl<T: Clone> TriviaStore<T> {
             return self.built_mut().release(held, owned, &mut |_| Vec::new());
         }
         self.built_mut().release(held, owned, &mut |at| self.drop_record(at))
+    }
+
+    /// Releases each entry of `batch` (`BuiltChunks::release_batch`) under
+    /// one lock of the built arena, dropping the sides of each record it
+    /// releases as `release` does.
+    ///
+    /// # Errors
+    ///
+    /// What `BuiltChunks::release_batch` refuses.
+    #[cfg(feature = "arena")]
+    pub fn release_batch(&self, batch: impl IntoIterator<Item = (crate::arena::count::Held, bool)>) -> Result<(), ArenaError> {
+        if self.read().is_empty() {
+            return self.built_mut().release_batch(batch, &mut |_| Vec::new());
+        }
+        self.built_mut().release_batch(batch, &mut |at| self.drop_record(at))
     }
 
     /// Drops the sides of the built record at `at` and of the units and

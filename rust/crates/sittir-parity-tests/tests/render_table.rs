@@ -19,6 +19,15 @@ struct Peak;
 thread_local! {
     static LIVE: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
     static HIGHEST: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    static ALLOCATIONS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+fn allocations() -> usize {
+    ALLOCATIONS.with(std::cell::Cell::get)
+}
+
+fn allocated() {
+    ALLOCATIONS.with(|allocations| allocations.set(allocations.get() + 1));
 }
 
 fn grew(by: usize) {
@@ -36,6 +45,7 @@ fn shrank(by: usize) {
 // SAFETY: each method passes its arguments to `System` unchanged.
 unsafe impl GlobalAlloc for Peak {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        allocated();
         grew(layout.size());
         // SAFETY: the caller's contract for this call is `System`'s.
         unsafe { System.alloc(layout) }
@@ -48,6 +58,7 @@ unsafe impl GlobalAlloc for Peak {
     }
 
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
+        allocated();
         grew(new_size);
         shrank(layout.size());
         // SAFETY: the caller's contract for this call is `System`'s.
@@ -460,4 +471,20 @@ fn a_release_looks_up_no_record_s_sides_while_the_store_holds_none() {
     let (engine, at) = rebuilding(Rebuilt::AlternatingWithCalls, 100);
     engine.written().write_kept(sittir_core::trivia_store::Place::RootLeaf, sittir_core::trivia_table::TriviaSide::Leading, Vec::new());
     assert!(release(&engine, at) > 50, "a release looks up the sides of each record it drops while the store holds some");
+}
+
+/// The allocations a release of a built list adds when the list doubles:
+/// its walk's buffers each grow once, and no record allocates.
+const RELEASE_ALLOCATIONS_A_DOUBLING: usize = 4;
+
+#[test]
+fn a_release_allocates_its_buffers_once_not_per_record_it_releases() {
+    let made = |items: usize| {
+        let (engine, at) = rebuilding(Rebuilt::AlternatingWithCalls, items);
+        let before = allocations();
+        engine.written().release(sittir_core::arena::count::Held::Record(at), true).expect("a release");
+        allocations() - before
+    };
+    let (narrow, wide) = (made(200), made(400));
+    assert!(wide.saturating_sub(narrow) <= RELEASE_ALLOCATIONS_A_DOUBLING, "releasing a built list of 100 calls made {narrow} allocations and one of 200 calls {wide}: more than {RELEASE_ALLOCATIONS_A_DOUBLING} more for twice the records");
 }

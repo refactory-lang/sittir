@@ -232,6 +232,19 @@ pub mod held {
     pub const RUN: u32 = 1;
     pub const SIDE: u32 = 2;
     pub const TEXT: u32 = 3;
+    /// Set beside a tag in a batch release: its caller already dropped the
+    /// entry's count to zero (`BuiltChunks::release_batch`).
+    pub const DROPPED: u32 = 1 << 8;
+}
+
+/// The buffers a release walks with, kept across the records it releases
+/// and the entries of a batch: the entries whose count reached zero, a
+/// record's cells, and a run's items.
+#[derive(Default)]
+struct Releasing {
+    stack: Vec<Held>,
+    cells: Vec<(bool, CellWord)>,
+    items: Vec<CellWord>,
 }
 
 /// What a released count held, by what it is.
@@ -450,9 +463,37 @@ impl BuiltChunks {
         if self.released {
             return Err(ARENA_RELEASED);
         }
-        let mut stack = Vec::new();
+        self.release_one(held, owned, false, &mut Releasing::default(), sides)
+    }
+
+    /// Releases each entry of `batch` as `release` releases it without a
+    /// handle's count, over one set of buffers: an entry whose count its
+    /// caller already dropped to zero (`true`) has what it holds released
+    /// without its count dropped again. Every entry is released, and the
+    /// first refusal is answered.
+    ///
+    /// # Errors
+    ///
+    /// What `release` refuses, for the first entry refused.
+    pub fn release_batch(&mut self, batch: impl IntoIterator<Item = (Held, bool)>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
+        if self.released {
+            return Err(ARENA_RELEASED);
+        }
+        let mut walk = Releasing::default();
+        let mut refused = Ok(());
+        for (held, dropped) in batch {
+            let released = self.release_one(held, false, dropped, &mut walk, sides);
+            walk.stack.clear();
+            if refused.is_ok() {
+                refused = released;
+            }
+        }
+        refused
+    }
+
+    fn release_one(&mut self, held: Held, owned: bool, dropped: bool, walk: &mut Releasing, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
         if let Held::Text(at) = held {
-            return self.drop_cell(at, &mut stack);
+            return self.drop_cell(at, walk);
         }
         if owned {
             if self.freed(held.at().chunk()) {
@@ -464,16 +505,20 @@ impl BuiltChunks {
             }
             *byte &= !OWNED;
         }
-        self.drop_count(held, &mut stack)?;
-        while let Some(dead) = stack.pop() {
-            self.release_held(dead, &mut stack, sides)?;
+        if dropped {
+            walk.stack.push(held);
+        } else {
+            self.drop_count(held, walk)?;
+        }
+        while let Some(dead) = walk.stack.pop() {
+            self.release_held(dead, walk, sides)?;
         }
         Ok(())
     }
 
-    fn drop_count(&mut self, held: Held, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
+    fn drop_count(&mut self, held: Held, walk: &mut Releasing) -> Result<(), ArenaError> {
         if self.drop_one(held.at())? {
-            stack.push(held);
+            walk.stack.push(held);
         }
         Ok(())
     }
@@ -527,12 +572,12 @@ impl BuiltChunks {
         Ok(())
     }
 
-    fn drop_cell(&mut self, at: Address, stack: &mut Vec<Held>) -> Result<(), ArenaError> {
+    fn drop_cell(&mut self, at: Address, walk: &mut Releasing) -> Result<(), ArenaError> {
         if at.chunk() == 0 {
             return Ok(());
         }
         match self.chunks.get_mut(at.chunk() as usize) {
-            Some(Some(BuiltChunk::Words { .. })) => self.drop_count(Held::Record(at), stack),
+            Some(Some(BuiltChunk::Words { .. })) => self.drop_count(Held::Record(at), walk),
             Some(Some(BuiltChunk::Bytes { cells, .. })) => {
                 // SAFETY: as `CountTable::bytes`.
                 let bytes = unsafe { cells.slice_mut() };
@@ -550,36 +595,39 @@ impl BuiltChunks {
         }
     }
 
-    fn release_held(&mut self, held: Held, stack: &mut Vec<Held>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
+    fn release_held(&mut self, held: Held, walk: &mut Releasing, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
         match held {
             Held::Record(at) => {
                 let header = self.word(at)?;
                 match header_of(header, self.kind_bits) {
                     (_, flag::LINK) => {
                         let holder = self.word(at.offset(2).ok_or(malformed("link record", at.0))?)?;
-                        self.drop_cell(Address(holder), stack)?;
+                        self.drop_cell(Address(holder), walk)?;
                     }
-                    (kind, 0) if self.read_chunk(at.chunk()) => self.release_parsed(at, kind, stack, sides)?,
-                    (kind, 0) => self.release_record(at, kind, stack, sides)?,
+                    (kind, 0) if self.read_chunk(at.chunk()) => self.release_parsed(at, kind, walk, sides)?,
+                    (kind, 0) => self.release_record(at, kind, walk, sides)?,
                     (_, flags) => return Err(malformed("record flags", flags)),
                 }
             }
             Held::Run(at) => {
-                let items: Vec<CellWord> = ListCell::of_run(at, self)?.items(self, 1)?.map(|item| CellWord(item[0])).collect();
-                for item in items {
-                    self.drop_cell(item.address(), stack)?;
+                let mut items = std::mem::take(&mut walk.items);
+                items.clear();
+                items.extend(ListCell::of_run(at, self)?.items(self, 1)?.map(|item| CellWord(item[0])));
+                for &item in &items {
+                    self.drop_cell(item.address(), walk)?;
                 }
+                walk.items = items;
             }
             Held::Side(at) => {
                 let (side, _) = SideRecord::read_facts(self, at)?;
                 if let Some(source) = side.source {
                     if let Some(read) = super::source::Source::read_side_of(self, Address(source))? {
-                        self.drop_count(Held::Side(read), stack)?;
+                        self.drop_count(Held::Side(read), walk)?;
                     }
-                    self.drop_cell(Address(source), stack)?;
+                    self.drop_cell(Address(source), walk)?;
                 }
                 if let Some(sides) = side.sides {
-                    self.drop_cell(Address(sides.tree.0), stack)?;
+                    self.drop_cell(Address(sides.tree.0), walk)?;
                 }
             }
             Held::Text(at) => return Err(malformed("text entry on the release stack", at.0)),
@@ -602,31 +650,33 @@ impl BuiltChunks {
         Ok(())
     }
 
-    fn release_record(&mut self, at: Address, kind: KindId, stack: &mut Vec<Held>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
+    fn release_record(&mut self, at: Address, kind: KindId, walk: &mut Releasing, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
         let shape: RecordShape = (self.shape)(kind).ok_or(malformed("released record kind", u32::from(kind.0)))?;
-        let mut cells = Vec::with_capacity(shape.cells.len());
+        let mut cells = std::mem::take(&mut walk.cells);
+        cells.clear();
         built_cells(self, at, shape, Lists::Runs, |cell, _, word| {
             cells.push((cell.run.is_some(), word));
             Ok(())
         })?;
         let side = super::borrowed::side_of(self, at)?;
         if side != Address::NONE {
-            self.drop_count(Held::Side(side), stack)?;
+            self.drop_count(Held::Side(side), walk)?;
         }
-        for (list, word) in cells {
+        for &(list, word) in &cells {
             match (list, word) {
                 (true, CellWord(0)) => {}
-                (true, run) => self.drop_count(Held::Run(run.address()), stack)?,
-                (false, cell) => self.drop_cell(cell.address(), stack)?,
+                (true, run) => self.drop_count(Held::Run(run.address()), walk)?,
+                (false, cell) => self.drop_cell(cell.address(), walk)?,
             }
         }
+        walk.cells = cells;
         for entry in sides(at) {
-            self.drop_cell(entry, stack)?;
+            self.drop_cell(entry, walk)?;
         }
         Ok(())
     }
 
-    fn release_parsed(&mut self, at: Address, kind: KindId, stack: &mut Vec<Held>, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
+    fn release_parsed(&mut self, at: Address, kind: KindId, walk: &mut Releasing, sides: &mut dyn FnMut(Address) -> Vec<Address>) -> Result<(), ArenaError> {
         let (mut named, mut runs) = (Vec::new(), Vec::new());
         if let Some(shape) = (self.shape)(kind) {
             parsed_cell_walk(self, at, shape, self.kind_bits, |walked| {
@@ -654,13 +704,13 @@ impl BuiltChunks {
             self.retire(run)?;
         }
         for child in named.into_iter().chain(unnamed) {
-            self.drop_count(Held::Record(child), stack)?;
+            self.drop_count(Held::Record(child), walk)?;
         }
         if side != Address::NONE {
-            self.drop_count(Held::Side(side), stack)?;
+            self.drop_count(Held::Side(side), walk)?;
         }
         for entry in sides(at) {
-            self.drop_cell(entry, stack)?;
+            self.drop_cell(entry, walk)?;
         }
         Ok(())
     }
