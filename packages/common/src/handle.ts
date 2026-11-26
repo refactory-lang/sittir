@@ -59,7 +59,7 @@ export function handleDispose(this: { readonly $tree: TreeHandle; readonly $at?:
 export function releaseNothing(): void {}
 
 export function isHandle(value: object): boolean {
-	return Object.hasOwn(value, Symbol.dispose) && (value as { readonly [Symbol.dispose]?: unknown })[Symbol.dispose] === handleDispose;
+	return (value as { readonly [Symbol.dispose]?: unknown })[Symbol.dispose] === handleDispose;
 }
 
 export function isRecordPosition(value: unknown): value is RecordPosition {
