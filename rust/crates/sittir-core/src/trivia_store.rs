@@ -106,11 +106,13 @@ pub struct SideRows<K, E> {
     /// a table whose rows are writes alone marks none.
     marked: std::collections::BTreeSet<(K, TriviaSide)>,
     bytes: usize,
+    /// The range removals made (`remove_range`).
+    removals: u64,
 }
 
 impl<K, E> Default for SideRows<K, E> {
     fn default() -> Self {
-        Self { rows: BTreeMap::new(), marked: std::collections::BTreeSet::new(), bytes: 0 }
+        Self { rows: BTreeMap::new(), marked: std::collections::BTreeSet::new(), bytes: 0, removals: 0 }
     }
 }
 
@@ -164,6 +166,13 @@ impl<K: Ord, E> SideRows<K, E> {
     pub fn bytes(&self) -> usize {
         self.bytes
     }
+
+    /// The range removals the table has made (`remove_range`): a diagnostic
+    /// a test compares.
+    #[must_use]
+    pub fn removals(&self) -> u64 {
+        self.removals
+    }
 }
 
 impl<K: Ord, E: HeapBytes> SideRows<K, E> {
@@ -184,6 +193,16 @@ impl<K: Ord, E: HeapBytes> SideRows<K, E> {
             self.bytes -= row_bytes::<K, _>(removed);
         }
         removed
+    }
+
+    /// The rows whose keys `keys` holds, removed, in key order.
+    pub fn remove_range<R: std::ops::RangeBounds<(K, TriviaSide)>>(&mut self, keys: R) -> Vec<Vec<E>>
+    where
+        K: Copy,
+    {
+        self.removals += 1;
+        let held: Vec<_> = self.rows.range(keys).map(|(&key, _)| key).collect();
+        held.into_iter().filter_map(|key| self.remove(&key)).collect()
     }
 
     /// Marks `side` of the node at `key` as one a write gave in place of
@@ -1055,6 +1074,9 @@ impl<T: Clone> TriviaStore<T> {
     /// What `BuiltChunks::release` refuses.
     #[cfg(feature = "arena")]
     pub fn release(&self, held: crate::arena::count::Held, owned: bool) -> Result<(), ArenaError> {
+        if self.read().is_empty() {
+            return self.built_mut().release(held, owned, &mut |_| Vec::new());
+        }
         self.built_mut().release(held, owned, &mut |at| self.drop_record(at))
     }
 
@@ -1062,9 +1084,7 @@ impl<T: Clone> TriviaStore<T> {
     /// leaves it holds, answering the records and leaf entries they named.
     #[cfg(feature = "arena")]
     fn drop_record(&self, at: crate::arena::Address) -> Vec<crate::arena::Address> {
-        let mut sides = self.write();
-        let keys: Vec<_> = sides.range(Place::holding(at)).map(|(&key, _)| key).collect();
-        keys.into_iter().filter_map(|key| sides.remove(&key)).flatten().filter_map(CompactEntry::at).collect()
+        self.write().remove_range(Place::holding(at)).into_iter().flatten().filter_map(CompactEntry::at).collect()
     }
 
     /// A store over this one's built arena that holds `sides` alone, as the
@@ -1117,6 +1137,14 @@ impl<T: Clone> TriviaStore<T> {
     #[must_use]
     pub fn edit_walks(&self) -> u64 {
         self.edit_walks.load(Ordering::Relaxed)
+    }
+
+    /// The range removals the store's side rows have made so far
+    /// (`SideRows::removals`): a diagnostic a test compares.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn side_removals(&self) -> u64 {
+        self.read().removals()
     }
 
     /// Releases the built records the written `rows` of a dropped tree

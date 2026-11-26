@@ -447,3 +447,17 @@ fn a_renders_sources_hold_a_few_words_until_it_reads_one() {
     assert!(made <= UNREAD_SOURCES_BYTES, "a render's records of its sources take {made} bytes before it reads a source");
     assert!(read <= UNREAD_SOURCES_BYTES, "a render's sources read take {read} bytes before it reads one");
 }
+
+#[test]
+fn a_release_looks_up_no_record_s_sides_while_the_store_holds_none() {
+    let release = |engine: &Engine<sittir_rust::RustGrammar>, at: Address| {
+        let asked = engine.written().side_removals();
+        engine.written().release(sittir_core::arena::count::Held::Record(at), true).expect("a release");
+        engine.written().side_removals() - asked
+    };
+    let (engine, at) = rebuilding(Rebuilt::AlternatingWithCalls, 100);
+    assert_eq!(release(&engine, at), 0, "a release looked up sides in a store that holds none");
+    let (engine, at) = rebuilding(Rebuilt::AlternatingWithCalls, 100);
+    engine.written().write_kept(sittir_core::trivia_store::Place::RootLeaf, sittir_core::trivia_table::TriviaSide::Leading, Vec::new());
+    assert!(release(&engine, at) > 50, "a release looks up the sides of each record it drops while the store holds some");
+}
