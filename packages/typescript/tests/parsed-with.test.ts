@@ -34,7 +34,7 @@ function fieldName(ts: Engine, source: string) {
 }
 
 function editedBody(ts: Engine, source: string, edit: (statements: readonly unknown[]) => readonly unknown[]): string {
-	const file = ts.parse(source);
+	const file = ts.parse(source, { adoptStyle: true });
 	const declaration = file.statements()[0];
 	if (declaration === undefined || !ts.is.functionDeclaration(declaration)) throw new Error('expected a function');
 	const body = declaration.body();
@@ -44,8 +44,8 @@ function editedBody(ts: Engine, source: string, edit: (statements: readonly unkn
 
 const moved: readonly (readonly [string, (statements: readonly unknown[]) => readonly unknown[], string])[] = [
 	['reversed', (statements) => [...statements].reverse(), 'function f() {\n c()\n b++\n a();\n}\n'],
-	['the first dropped', (statements) => statements.slice(1), 'function f() {\n b++\n c() }\n'],
-	['the middle dropped', (statements) => [statements[0], ...statements.slice(2)], 'function f() { a();\n c() }\n']
+	['the first dropped', (statements) => statements.slice(1), 'function f() {\n b++\n c()\n}\n'],
+	['the middle dropped', (statements) => [statements[0], ...statements.slice(2)], 'function f() {\n a();\n c()\n}\n']
 ];
 
 describe('a parsed body whose statements move or go renders as it does under object storage', () => {

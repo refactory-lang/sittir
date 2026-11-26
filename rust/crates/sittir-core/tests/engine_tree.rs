@@ -7,7 +7,6 @@ use sittir_core::layout::LayoutWorkCounter;
 use sittir_core::nodes::{Nodes, TreeNodes};
 use sittir_core::read::{descendant_count, display_id, grammar_id, kind_named};
 use sittir_core::tree_sitter;
-use sittir_core::KindId;
 use sittir_core::types::{NodeIndex, Span};
 use sittir_core::{ErrorHolder, ErrorRegion, ErrorRegionKind};
 
@@ -61,7 +60,7 @@ fn node_at_span_finds_the_first_node_a_pre_order_walk_meets_with_that_span_and_k
                     .iter()
                     .find(|candidate| grammar_id(candidate) == kind || display_id(candidate) == kind)
                     .map(tree_sitter::Node::id);
-                let found = node_at_span(&mut navigation, span, kind).and_then(|found| node_at_index(&tree, found.index)).map(|found| found.id());
+                let found = node_at_span(&mut navigation, NodeIndex::ROOT, span, kind).and_then(|found| node_at_index(&tree, found.index)).map(|found| found.id());
                 assert_eq!(found, expected, "{} at {}..{}", node.kind(), span.start, span.end);
             }
         }
@@ -150,39 +149,3 @@ fn a_lone_error_token_holds_an_error() {
     }
 }
 
-/// The kind name of the last child, extras aside, of the list spelled `list` in `source`, its own kind `kind`.
-fn last_list_child_of(source: &str, list: &str, kind: u16) -> Option<String> {
-    let tree = parse_tree(&tree_sitter_rust::LANGUAGE.into(), source);
-    let start = sittir_core::types::narrow(source.find(list).unwrap());
-    let work = LayoutWorkCounter::default();
-    let child = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), Span { start, end: start + sittir_core::types::narrow(list.len()) }, KindId(kind))?;
-    node_at_index(&tree, child.index).map(|child| child.kind().to_string())
-}
-
-#[test]
-fn a_list_the_tree_holds_no_node_for_ends_in_its_holder_child_within_its_span() {
-    assert_eq!(last_list_child_of("fn f() { g(1, 2,); }\n", "1, 2,", u16::MAX - 1).as_deref(), Some(","));
-    assert_eq!(last_list_child_of("fn f() { g(1, 2); }\n", "1, 2", u16::MAX - 1).as_deref(), Some("integer_literal"));
-}
-
-#[test]
-fn a_comment_in_a_list_span_is_not_its_last_child() {
-    assert_eq!(last_list_child_of("fn f() { g(1, 2 // x,\n); }\n", "1, 2 // x,", u16::MAX - 1).as_deref(), Some("integer_literal"));
-    assert_eq!(last_list_child_of("fn f() { g(1, 2, /* x */); }\n", "1, 2, /* x */", u16::MAX - 1).as_deref(), Some(","));
-}
-
-#[test]
-fn a_single_item_list_spanning_its_item_ends_in_that_item() {
-    assert_eq!(last_list_child_of("fn f() { g(12); }\n", "12", u16::MAX - 1).as_deref(), Some("integer_literal"));
-}
-
-#[test]
-fn a_list_the_tree_holds_a_node_for_ends_in_that_node_child() {
-    let source = "fn f() { g(1, 2,); }\n";
-    let tree = parse_tree(&tree_sitter_rust::LANGUAGE.into(), source);
-    let arguments = tree.root_node().descendant_for_byte_range(10, 17).unwrap();
-    assert_eq!(arguments.kind(), "arguments");
-    let work = LayoutWorkCounter::default();
-    let last = sittir_core::engine::last_list_child(&mut TreeNodes::new(&tree, source, &work), Span { start: 10, end: 17 }, sittir_core::read::grammar_id(&arguments)).unwrap();
-    assert_eq!(node_at_index(&tree, last.index).unwrap().kind(), ")");
-}

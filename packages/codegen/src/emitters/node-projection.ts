@@ -9,6 +9,7 @@ import {
 	AssembledList,
 	AssembledSupertype,
 	concreteKindsOf,
+	fixedTextOfKind,
 	isFixedTextLeaf,
 	isNodeRef,
 	kindIdText,
@@ -218,12 +219,21 @@ function tokenGroup(id: number, ctx: ReadFactsCtx): string {
 
 const RENDER_MARKERS: ReadonlySet<string> = new Set([INDENT_TEXT, DEDENT_TEXT]);
 
+export interface LayoutToken {
+	readonly id: number;
+	readonly text: string | undefined;
+}
+
 export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCtx, slots: readonly AssembledNonterminal[]): number[] {
+	return [...new Set(layoutTokens(node, ctx, slots).map(({ id }) => id))];
+}
+
+export function layoutTokens(node: AbstractAssembledCompound, ctx: ReadFactsCtx, slots: readonly AssembledNonterminal[]): LayoutToken[] {
 	const slotFields = new Set(slots.map((slot) => slot.fieldName));
 	const slotKinds = new Set(slots.flatMap(slotKindNames));
-	const ids: number[] = [];
-	const add = (id: number): void => {
-		if (!ids.includes(id)) ids.push(id);
+	const tokens: LayoutToken[] = [];
+	const add = (id: number, text: string | undefined): void => {
+		if (!tokens.some((token) => token.id === id && token.text === text)) tokens.push({ id, text });
 	};
 	const layoutString = (rule: { readonly value: string; readonly resolvedKindId?: number }): number => {
 		const stamped = rule.resolvedKindId;
@@ -237,7 +247,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 		switch (rule.type) {
 			case STRING:
 				if (RENDER_MARKERS.has(rule.value)) return;
-				add(layoutString(rule));
+				add(layoutString(rule), rule.value);
 				return;
 			case SYMBOL: {
 				if (rule.nonterminal !== false) return;
@@ -247,7 +257,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 				if (fixed) {
 					const id = rule.kindId;
 					if (id === undefined) throw new Error(`node.rs: '${node.kind}' layout symbol '${rule.name}' has no stamped kind id`);
-					add(id);
+					add(id, rule.literal ?? fixedTextOfKind(referenced));
 				}
 				return;
 			}
@@ -259,7 +269,7 @@ export function layoutTokenIds(node: AbstractAssembledCompound, ctx: ReadFactsCt
 		}
 	};
 	if (!(node instanceof AssembledLexedPattern)) walk(node.renderRule);
-	return ids;
+	return tokens;
 }
 
 export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefined {
@@ -449,6 +459,7 @@ export function takesUntagged(slot: AssembledNonterminal, ctx: ReadFactsCtx): bo
 export interface PresenceKeyword {
 	readonly id: number;
 	readonly envelope: boolean;
+	readonly token?: number;
 }
 
 export function presenceKeyword(
@@ -458,7 +469,10 @@ export function presenceKeyword(
 	ctx: ReadFactsCtx
 ): PresenceKeyword {
 	const value = shape.kind === undefined ? slot.values.find((each) => 'value' in each && each.value === shape.text) : slot.values[0];
-	if (value?.parseKindId !== undefined && presenceIsAliased(value, ctx)) return { id: value.parseKindId, envelope: true };
+	if (value?.parseKindId !== undefined && presenceIsAliased(value, ctx)) {
+		const token = literalTokenOf(value, ctx);
+		return { id: value.parseKindId, envelope: true, ...(token === undefined ? {} : { token }) };
+	}
 	if (value !== undefined && shape.kind === undefined && value.parseKindId !== undefined) return { id: value.parseKindId, envelope: false };
 	const marker = shape.kind === undefined ? undefined : ctx.nodeMap.nodes.get(shape.kind.kind);
 	if (marker !== undefined && isFixedTextLeaf(marker) && marker.resolvedKindId !== undefined && isParserHiddenKind(marker.kind, ctx.kindEntries)) {
@@ -473,6 +487,21 @@ export function presenceKeyword(
 			message: `${owner.kind}.${slot.name}'s presence keyword has no parser symbol, so the reader cannot tell whether the slot is present`
 		});
 	return { id: keyword.id, envelope: false };
+}
+
+function literalTokenOf(value: AssembledNonterminal['values'][number], ctx: ReadFactsCtx): number | undefined {
+	return 'value' in value ? ctx.kindEntries.find((entry) => entry.anon === true && entry.literalText === value.value)?.id : undefined;
+}
+
+function listedTokens(slot: AssembledNonterminal, ctx: ReadFactsCtx): number[] {
+	const listed = slot.values.flatMap((value) => {
+		if (value.parseKindId === undefined || !presenceIsAliased(value, ctx)) return [];
+		const shown = ctx.kindEntries.find((entry) => entry.id === value.parseKindId);
+		if (shown === undefined || shown.anon === true || isParserHiddenKind(shown.kind, ctx.kindEntries)) return [];
+		const token = literalTokenOf(value, ctx);
+		return token === undefined ? [] : [token];
+	});
+	return [...new Set(listed)];
 }
 
 function presenceIsAliased(value: AssembledNonterminal['values'][number], ctx: ReadFactsCtx): boolean {
@@ -490,8 +519,11 @@ export function slotArgs(slot: AssembledNonterminal, owner: AssembledNode, shape
 	}
 	if (shape.tag === 'presence') {
 		const keyword = presenceKeyword(shape, owner, slot, ctx);
-		args.push(`presence = ${keyword.envelope ? `display(${ctx.names.kind(keyword.id)})` : tokenGroup(keyword.id, ctx)}`);
+		const shownToken = keyword.token === undefined ? '' : `, ${ctx.names.kind(keyword.token)}`;
+		args.push(`presence = ${keyword.envelope ? `display(${ctx.names.kind(keyword.id)}${shownToken})` : tokenGroup(keyword.id, ctx)}`);
 	}
+	const listed = shape.tag === 'presence' ? [] : listedTokens(slot, ctx);
+	if (listed.length > 0) args.push(`listed = ${oneOrList(listed.map((id) => ctx.names.kind(id)))}`);
 	const separators = slotDropKindIds(slot, owner, false);
 	if (owner instanceof AssembledList && slot === listItemSlot(owner)) {
 		for (const id of separatorCandidateIds(owner, ctx)) if (!separators.includes(id)) separators.push(id);

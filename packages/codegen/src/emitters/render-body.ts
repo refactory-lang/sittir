@@ -1,5 +1,5 @@
 import { NO_KINDS, SEPARATING_KINDS, TIGHT_KINDS, breakingKindsOfText, layoutKindsOfText } from '../compiler/model/layout-kinds.ts';
-import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
+import { isDepthText, DEDENT_TEXT, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import type { JoinArm } from '../compiler/model/join-seams/index.ts';
 import { rustStringLiteral } from '../util/string-literal.ts';
 
@@ -501,6 +501,89 @@ export function references(body: Body): BodyReferences {
 	return { tests, slots, seams };
 }
 
+function alternativesOf(node: IfNode): readonly Body[] {
+	return [...node.arms.map((arm) => arm.body), ...(node.fallback === undefined ? [] : [node.fallback])];
+}
+
+export function writesDepth(body: Body): boolean {
+	return body.some((node) => node.kind === 'indent' || node.kind === 'dedent' || (node.kind === 'if' && alternativesOf(node).some(writesDepth)));
+}
+
+export function bodySlotOrder(body: Body): string[] {
+	const order = [...new Set(references(body).slots)];
+	const rank = new Map(order.map((name, at) => [name, at]));
+	const check = (nodes: Body): void => {
+		nodes.forEach((node, at) => {
+			if (node.kind === 'if') alternativesOf(node).forEach(check);
+			const earlier = references([node]).slots;
+			for (const later of references(nodes.slice(at + 1)).slots) {
+				for (const name of earlier) {
+					if (name !== later && rank.get(name)! > rank.get(later)!) {
+						throw new Error(`render body writes slots '${later}' and '${name}' in both orders`);
+					}
+				}
+			}
+		});
+	};
+	check(body);
+	return order;
+}
+
+export type EdgePartSpec =
+	| { readonly token: string }
+	| { readonly cell: string }
+	| { readonly guarded: string; readonly token: string };
+
+export function bodyEdgeParts(body: Body, side: 'before' | 'after', optional: (slot: string) => boolean = () => false): EdgePartSpec[] {
+	const parts: EdgePartSpec[] = [];
+	const token = (name: string, guard: string | undefined): EdgePartSpec => (guard === undefined ? { token: name } : { guarded: guard, token: name });
+	const walk = (nodes: Body, guard: string | undefined): boolean => {
+		for (const node of side === 'before' ? nodes : [...nodes].reverse()) {
+			switch (node.kind) {
+				case 'text':
+					if (isWhitespaceOnly(node.text)) break;
+					parts.push(token(node.text, guard));
+					return true;
+				case 'tokenSeam':
+					parts.push(token(node.text, guard));
+					return true;
+				case 'indent':
+					parts.push(token(INDENT_TEXT, guard));
+					return true;
+				case 'dedent':
+					parts.push(token(DEDENT_TEXT, guard));
+					return true;
+				case 'slot':
+					parts.push({ cell: node.name });
+					if (node.name === guard || !optional(node.name)) return true;
+					break;
+				case 'if': {
+					const writes = (alternative: Body, test: string | undefined) => {
+						const at = parts.length;
+						const closes = walk(alternative, test);
+						return { closes, wrote: parts.length > at };
+					};
+					const arms = node.arms.map((arm) => ({ ...writes(arm.body, arm.test), gatedByKind: arm.kinds !== undefined }));
+					const otherwise = node.fallback === undefined ? undefined : writes(node.fallback, guard);
+					if (arms.some((arm) => arm.gatedByKind && arm.wrote)) {
+						throw new Error(`render body writes a token at its ${side} edge under an arm gated by a slot's kind`);
+					}
+					if (otherwise?.wrote === true && arms.some((arm) => !arm.wrote)) {
+						throw new Error(`render body's fallback writes at its ${side} edge beside an arm that writes nothing there`);
+					}
+					if (otherwise?.closes === true && arms.every((arm) => arm.closes)) return true;
+					break;
+				}
+				default:
+					break;
+			}
+		}
+		return false;
+	};
+	walk(body, undefined);
+	return parts;
+}
+
 export function slotMultiplicity(body: Body): ReadonlyMap<string, number> {
 	const counts = new Map<string, number>();
 	for (const node of body) {
@@ -509,9 +592,8 @@ export function slotMultiplicity(body: Body): ReadonlyMap<string, number> {
 			continue;
 		}
 		if (node.kind !== 'if') continue;
-		const alternatives = [...node.arms.map((arm) => arm.body), ...(node.fallback === undefined ? [] : [node.fallback])];
 		const widest = new Map<string, number>();
-		for (const alternative of alternatives) {
+		for (const alternative of alternativesOf(node)) {
 			for (const [name, count] of slotMultiplicity(alternative)) widest.set(name, Math.max(widest.get(name) ?? 0, count));
 		}
 		for (const [name, count] of widest) counts.set(name, (counts.get(name) ?? 0) + count);

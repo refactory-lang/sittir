@@ -8,24 +8,8 @@
 //! holding an extra, an `ERROR`, another slot's child or more than one
 //! separator, is no gap the slot spells.
 
-use crate::heap::HeapBytes;
 use crate::read::{Route, Routed};
 use std::collections::BTreeMap;
-
-/// The side of its separator a gap's run lies on.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum SlotSide {
-    Before,
-    After,
-}
-
-impl HeapBytes for SlotSide {
-    fn heap_bytes(&self) -> usize {
-        match self {
-            Self::Before | Self::After => 0,
-        }
-    }
-}
 
 /// A gap's separator: its grammar id and bytes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -36,14 +20,10 @@ pub struct Separator {
 }
 
 /// One separator gap between two items of a list slot: the items'
-/// descendant indexes, its runs before and after its separator by their
-/// ids among the runs the tree's trivia placement placed
-/// (`Placement::run_at`), where it placed one there, and its separator.
+/// descendant indexes and its separator.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SlotGap {
     pub items: (crate::types::NodeIndex, crate::types::NodeIndex),
-    pub before: Option<crate::types::RunId>,
-    pub after: Option<crate::types::RunId>,
     pub separator: Separator,
 }
 
@@ -54,9 +34,9 @@ pub struct SlotGaps {
     pub gaps: Vec<SlotGap>,
 }
 
-/// The list slots of a routed node, each with the separator gaps it spells;
-/// `run_at` finds the run from one byte to another.
-pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<crate::types::RunId>) -> Vec<SlotGaps> {
+/// The list slots of a routed node, each with the separator gaps it spells.
+#[must_use]
+pub fn slot_gaps(routed: &Routed) -> Vec<SlotGaps> {
     let mut items: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
     for (at, route) in routed.routes.iter().enumerate() {
         if let Route::Slot { slot, .. } = *route {
@@ -68,30 +48,112 @@ pub fn slot_gaps(routed: &Routed, run_at: impl Fn(u32, u32) -> Option<crate::typ
         .filter(|(_, at)| at.len() >= 2)
         .filter_map(|(slot, at)| {
             let key = *routed.keys.get(slot.index())?;
-            let gaps = at
-                .windows(2)
-                .filter_map(|pair| {
-                    let (first, last) = (&routed.children[pair[0]], &routed.children[pair[1]]);
-                    let mut separators = Vec::new();
-                    for between in pair[0] + 1..pair[1] {
-                        match routed.routes[between] {
-                            Route::Separator { slot: own, .. } if own == slot => separators.push(&routed.children[between]),
-                            Route::Trivia => {}
-                            _ => return None,
-                        }
-                    }
-                    let [separator] = separators.as_slice() else { return None };
-                    Some(SlotGap {
-                        items: (first.index, last.index),
-                        before: run_at(first.end, separator.start),
-                        after: run_at(separator.end, last.start),
-                        separator: Separator { kind: separator.grammar, start: separator.start, end: separator.end },
-                    })
-                })
-                .collect();
-            Some(SlotGaps { key, gaps })
+            Some(SlotGaps { key, gaps: gaps_between(&routed.children, &routed.routes, slot, &at) })
         })
         .collect()
+}
+
+/// The gaps of the slot `slot` whose items are the children at `at`.
+fn gaps_between(children: &[crate::read::Kid], routes: &[Route], slot: crate::types::SlotId, at: &[usize]) -> Vec<SlotGap> {
+    at.windows(2)
+        .filter_map(|pair| {
+            let (first, last) = (&children[pair[0]], &children[pair[1]]);
+            let mut separators = Vec::new();
+            for between in pair[0] + 1..pair[1] {
+                match routes[between] {
+                    Route::Separator { slot: own, .. } if own == slot => separators.push(&children[between]),
+                    Route::Trivia => {}
+                    _ => return None,
+                }
+            }
+            let [separator] = separators.as_slice() else { return None };
+            Some(SlotGap {
+                items: (first.index, last.index),
+                separator: Separator { kind: separator.grammar, start: separator.start, end: separator.end },
+            })
+        })
+        .collect()
+}
+
+/// The separator a list slot stores, of the kinds its gaps hold: the one
+/// most take, a tie going to `preferred`, the arm the options the tree was
+/// read with write there, and only where it differs from that arm. A kind
+/// with no separator preference stores none: it has the one separator its
+/// template writes.
+#[must_use]
+pub fn stored_separator(kinds: &[crate::types::KindId], preferred: Option<crate::types::KindId>) -> Option<crate::types::KindId> {
+    majority(kinds, preferred).filter(|&kind| preferred.is_some_and(|written| written != kind))
+}
+
+/// What `stored_separator` answers for the slot `slot` of a node with
+/// these routed children.
+#[must_use]
+pub fn parsed_separator(children: &[crate::read::Kid], routes: &[Route], slot: crate::types::SlotId, preferred: Option<crate::types::KindId>) -> Option<crate::types::KindId> {
+    preferred?;
+    let at: Vec<usize> = routes.iter().enumerate().filter_map(|(at, route)| matches!(*route, Route::Slot { slot: own, .. } if own == slot).then_some(at)).collect();
+    let kinds: Vec<crate::types::KindId> = gaps_between(children, routes, slot, &at).iter().map(|gap| gap.separator.kind).collect();
+    stored_separator(&kinds, preferred)
+}
+
+/// Each item of a routed node's list slots, in document order, with the
+/// blank-line kind the source sets the item after it apart from it with
+/// (`sets_apart`); a slot's last item never sets one apart.
+#[must_use]
+pub fn list_items(routed: &Routed, source: &str) -> Vec<(crate::types::NodeIndex, Option<crate::layout_kinds::LayoutKinds>)> {
+    let mut slots: BTreeMap<crate::types::SlotId, Vec<usize>> = BTreeMap::new();
+    for (at, route) in routed.routes.iter().enumerate() {
+        if let Route::Slot { slot, .. } = *route {
+            slots.entry(slot).or_default().push(at);
+        }
+    }
+    let mut items: Vec<(crate::types::NodeIndex, Option<crate::layout_kinds::LayoutKinds>)> = Vec::new();
+    for at in slots.values().filter(|at| at.len() >= 2) {
+        items.extend(at.windows(2).map(|pair| {
+            let (item, after) = (&routed.children[pair[0]], &routed.children[pair[1]]);
+            let extras = (pair[0] + 1..pair[1]).filter(|&between| routed.routes[between] == Route::Trivia).map(|between| routed.children[between].span());
+            (item.index, sets_apart(source, item.end, after.start, extras))
+        }));
+        items.extend(at.last().map(|&last| (routed.children[last].index, None)));
+    }
+    items.sort_unstable_by_key(|&(item, _)| item);
+    items
+}
+
+/// The blank-line kind the source between `from` (an item's end) and `to`
+/// (the next item's start), holding `extras` in document order, sets the
+/// next item apart with: the kind (`GeometryGap::kind`) of the first run of
+/// line breaks after the item and the extras on its last row, where it
+/// breaks two lines or more before the next extra, token or the item; none
+/// where it breaks fewer. A blank line between an extra on a row of its
+/// own and the item does not count: that extra leads the item. An extra
+/// whose bytes end in a line break ends its row.
+#[must_use]
+pub fn sets_apart(source: &str, from: u32, to: u32, extras: impl IntoIterator<Item = crate::types::Span>) -> Option<crate::layout_kinds::LayoutKinds> {
+    let apart = |breaks: u32| (breaks >= 2).then(|| crate::classify::GeometryGap { breaks, spaces: 0 }.kind());
+    let bytes = source.as_bytes();
+    let mut extras = extras.into_iter().filter(|extra| extra.start >= from && extra.end <= to).peekable();
+    let mut breaks = 0;
+    let mut at = from;
+    while at < to {
+        if let Some(extra) = extras.next_if(|extra| extra.start <= at) {
+            if breaks > 0 {
+                return apart(breaks);
+            }
+            if extra.end > extra.start && bytes.get(extra.end as usize - 1) == Some(&b'\n') {
+                breaks = 1;
+            }
+            at = at.max(extra.end);
+            continue;
+        }
+        match bytes.get(at as usize) {
+            Some(b'\n') => breaks += 1,
+            Some(&byte) if crate::points::blank(byte) => {}
+            Some(_) if breaks > 0 => return apart(breaks),
+            _ => {}
+        }
+        at += 1;
+    }
+    apart(breaks)
 }
 
 /// The value most of `values` take. On a tie, `preferred` when it is among
@@ -114,7 +176,7 @@ pub fn majority<T: Copy + PartialEq>(values: &[T], preferred: Option<T>) -> Opti
 mod tests {
     use super::*;
     use crate::read::Kid;
-    use crate::types::{KindId, RunId};
+    use crate::types::{KindId, NodeIndex};
 
     fn child(index: u32, start: u32, end: u32) -> Kid {
         let kind = KindId(u16::try_from(index).unwrap());
@@ -134,12 +196,11 @@ mod tests {
             ],
             keys: &["_item"],
             elided: &[false],
+            flags: &[false],
         };
-        let runs = [(1, 2), (3, 4), (5, 5), (6, 6)];
-        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(crate::types::narrow(at)));
-        let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert_eq!(slot.key, "_item");
-        assert_eq!(slot.gaps.iter().map(|gap| (gap.before, gap.after)).collect::<Vec<_>>(), vec![(Some(RunId(0)), Some(RunId(1))), (Some(RunId(2)), Some(RunId(3)))]);
+        assert_eq!(slot.gaps.iter().map(|gap| gap.items).collect::<Vec<_>>(), vec![(NodeIndex(1), NodeIndex(3)), (NodeIndex(3), NodeIndex(5))]);
         assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 2, end: 3 });
     }
 
@@ -150,8 +211,9 @@ mod tests {
             routes: vec![Route::Slot { slot: crate::types::SlotId(0), scalar: false }, Route::Slot { slot: crate::types::SlotId(0), scalar: false }],
             keys: &["_statements"],
             elided: &[false],
+            flags: &[false],
         };
-        let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
     }
 
@@ -170,13 +232,11 @@ mod tests {
             ],
             keys: &["_item"],
             elided: &[false],
+            flags: &[false],
         };
-        let runs = [(1, 1), (2, 9), (10, 11), (12, 12), (12, 13)];
-        let run_at = |start, end| runs.iter().position(|&run| run == (start, end)).map(|at| RunId(crate::types::narrow(at)));
-        let [slot] = slot_gaps(&routed, run_at).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert_eq!(slot.gaps.len(), 2, "{:?}", slot.gaps);
         assert_eq!(slot.gaps[0].separator, Separator { kind: KindId(2), start: 1, end: 2 });
-        assert_eq!((slot.gaps[0].before, slot.gaps[0].after), (Some(RunId(0)), Some(RunId(1))));
         assert_eq!(slot.gaps[1].separator, Separator { kind: KindId(6), start: 12, end: 12 });
     }
 
@@ -193,9 +253,53 @@ mod tests {
             ],
             keys: &["_item", "_other"],
             elided: &[false, false],
+            flags: &[false, false],
         };
-        let [slot] = slot_gaps(&routed, |_, _| Some(RunId(0))).try_into().unwrap();
+        let [slot] = slot_gaps(&routed).try_into().unwrap();
         assert!(slot.gaps.is_empty(), "{:?}", slot.gaps);
+    }
+
+    fn apart(source: &str, before: &str, item: &str, extras: &[&str]) -> bool {
+        let from = u32::try_from(source.find(before).unwrap() + before.len()).unwrap();
+        let to = u32::try_from(source.rfind(item).unwrap()).unwrap();
+        let spans: Vec<crate::types::Span> = extras
+            .iter()
+            .map(|extra| {
+                let start = u32::try_from(source.find(extra).unwrap()).unwrap();
+                crate::types::Span { start, end: start + u32::try_from(extra.len()).unwrap() }
+            })
+            .collect();
+        sets_apart(source, from, to, spans).is_some()
+    }
+
+    #[test]
+    fn a_blank_line_between_items_sets_the_second_apart_as_the_kind_its_run_is() {
+        assert!(apart("a();\n\nb();", "a();", "b();", &[]));
+        assert!(apart("a();\n\n\n\nb();", "a();", "b();", &[]));
+        assert_eq!(sets_apart("a();\n\nb();", 4, 6, []), Some(crate::layout_kinds::LayoutKinds::BLANKLINE));
+        assert_eq!(sets_apart("a();\n\n\nb();", 4, 7, []), Some(crate::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE));
+        assert_eq!(sets_apart("a();\n\n\n\n\nb();", 4, 9, []), Some(crate::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE));
+        assert!(apart("a();\n  \t\r\n  b();", "a();", "b();", &[]));
+        assert!(!apart("a();\nb();", "a();", "b();", &[]));
+        assert!(!apart("a(); b();", "a();", "b();", &[]));
+    }
+
+    #[test]
+    fn the_blank_line_is_measured_to_the_item_s_first_leading_extra() {
+        assert!(apart("a();\n\n// c\nb();", "a();", "b();", &["// c"]));
+        assert!(!apart("a();\n// d\n\nb();", "a();", "b();", &["// d"]));
+        assert!(apart("a();  // t\n\nb();", "a();", "b();", &["// t"]));
+        assert!(apart("a(); // t\n\n// c\nb();", "a();", "b();", &["// t", "// c"]));
+        assert!(!apart("a(); /* m\n\nn */\nb();", "a();", "b();", &["/* m\n\nn */"]));
+    }
+
+    #[test]
+    fn a_separator_or_an_extra_ending_its_row_counts_as_the_gap_does() {
+        assert!(apart("f(a,\n\n  b)", "a", "b)", &[]));
+        assert!(apart("a\n\nb", "a", "b", &[]));
+        assert!(!apart("a\n, b", "a", "b", &[]));
+        assert!(apart("a # t\n\nb", "a", "b", &["# t\n"]));
+        assert!(!apart("a # t\nb", "a", "b", &["# t\n"]));
     }
 
     #[test]

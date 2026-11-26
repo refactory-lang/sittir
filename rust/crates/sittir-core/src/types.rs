@@ -214,6 +214,314 @@ id_newtype! {
     TreeId(u32)
 }
 
+/// A node's name in arena storage: a record's address, or, for a node with
+/// no record of its own, the address of the record that holds it with the
+/// site of its cell there: the word the slot's cell starts at and, in a
+/// list slot, the item. A holder's id and its sites' ids lie between it and
+/// the next record's, so a holder's sides and those of the nodes at its
+/// sites are one range of ids. The JavaScript side keys a node by the one
+/// number the id packs to (`key`); on the wire it is `{ $node, $site? }`.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize)]
+#[serde(into = "NodeIdWire", try_from = "NodeIdWire")]
+pub struct NodeId(u64);
+
+#[derive(serde::Serialize, serde::Deserialize)]
+struct NodeIdWire {
+    #[serde(rename = "$node")]
+    node: u32,
+    #[serde(rename = "$site", default, skip_serializing_if = "Option::is_none")]
+    site: Option<[u32; 2]>,
+}
+
+impl NodeId {
+    /// The bits of a leaf's id that hold its site's word, lowest; those
+    /// that hold its item above them; and those that hold its holder's
+    /// address above both: 53 bits, so a key is a whole number a double
+    /// holds exactly. The record codec exports the three, and the
+    /// JavaScript side reads them from there.
+    ///
+    /// The word is the one a slot's cell starts at in its holder's parsed
+    /// record: words 1 to 31, 0 being an id with no site (a record's header
+    /// takes word 0, so no cell starts there). A record is therefore at most
+    /// `SITE_WORDS`, 32 words, header included, and each generated kind
+    /// asserts so (`refuse_wider_record`). The item is the slot's item, 0
+    /// for a slot that holds one value: items 0 to 262,143, so a list slot
+    /// names at most `SITE_ITEMS`, 262,144, leaf items, and a read or build
+    /// of a list holding a leaf past that is refused
+    /// (`ArenaError::LeafItemPastNames`).
+    pub const WORD_BITS: u32 = 5;
+    pub const ITEM_BITS: u32 = 18;
+    pub const HOLDER_BITS: u32 = 30;
+    /// The most words a record takes, header included: one past the last
+    /// word a site names.
+    pub const SITE_WORDS: u32 = 1 << Self::WORD_BITS;
+    /// The most leaf items a list slot holds: one past the last item a
+    /// site names.
+    pub const SITE_ITEMS: u32 = 1 << Self::ITEM_BITS;
+    /// The word of a record's inside site: the record's second word, which
+    /// holds no cell, so no slot's site names it, in every kind.
+    pub const INSIDE_WORD: u32 = 1;
+    const SITE_BITS: u32 = Self::ITEM_BITS + Self::WORD_BITS;
+
+    /// The record at the address `at`.
+    #[must_use]
+    pub const fn record(at: u32) -> Self {
+        Self((at as u64) << Self::SITE_BITS)
+    }
+
+    /// The node with no record of its own that the record at `holder` holds
+    /// in the cell at `word`, item `item`.
+    ///
+    /// # Panics
+    ///
+    /// For word 0, which no cell starts at, and for a holder, word or item
+    /// past its bits, which the reads and builds that make a site refuse
+    /// before they name it.
+    #[must_use]
+    pub const fn leaf(holder: u32, word: u32, item: u32) -> Self {
+        match Self::try_leaf(holder, word, item) {
+            Some(id) => id,
+            None => panic!("a site past what a node's id holds"),
+        }
+    }
+
+    /// The node `leaf` names; none for word 0 and for a holder, word or
+    /// item past its bits.
+    #[must_use]
+    pub const fn try_leaf(holder: u32, word: u32, item: u32) -> Option<Self> {
+        if word == 0 || word >> Self::WORD_BITS != 0 || item >> Self::ITEM_BITS != 0 || holder >> Self::HOLDER_BITS != 0 {
+            return None;
+        }
+        Some(Self(((holder as u64) << Self::SITE_BITS) | ((item as u64) << Self::WORD_BITS) | word as u64))
+    }
+
+    /// The address of the record this id names, or of the record that
+    /// holds the node it names.
+    #[must_use]
+    #[allow(clippy::cast_possible_truncation, reason = "an id holds a 32-bit address above its site bits")]
+    pub const fn address(self) -> u32 {
+        (self.0 >> Self::SITE_BITS) as u32
+    }
+
+    /// The address of the record this id names; none for a node with no
+    /// record of its own.
+    #[must_use]
+    pub const fn as_record(self) -> Option<u32> {
+        match self.site() {
+            None => Some(self.address()),
+            Some(_) => None,
+        }
+    }
+
+    /// The site, `[word, item]`, of the node this id names in its holder;
+    /// none for a record.
+    #[must_use]
+    #[allow(clippy::cast_possible_truncation, reason = "each field is masked to its bits first")]
+    pub const fn site(self) -> Option<[u32; 2]> {
+        let word = (self.0 & ((1 << Self::WORD_BITS) - 1)) as u32;
+        if word == 0 {
+            return None;
+        }
+        Some([word, ((self.0 >> Self::WORD_BITS) & ((1 << Self::ITEM_BITS) - 1)) as u32])
+    }
+
+    /// The inside site of the record this id names, whose leading side is
+    /// the record's inside; none for an id with a site, which names no
+    /// record.
+    #[must_use]
+    pub const fn inside(self) -> Option<NodeId> {
+        if self.site().is_some() {
+            return None;
+        }
+        Self::try_leaf(self.address(), Self::INSIDE_WORD, 0)
+    }
+
+    /// The record whose inside site this id names (`inside`); none for any
+    /// other id.
+    #[must_use]
+    pub const fn inside_of(self) -> Option<NodeId> {
+        match self.site() {
+            Some([Self::INSIDE_WORD, 0]) => Some(Self::record(self.address())),
+            _ => None,
+        }
+    }
+
+    /// Refuses, when a constant is evaluated, a kind whose record takes
+    /// `words` words, header included, past `SITE_WORDS`: the build stops
+    /// with `refusal`, which names the kind and its width.
+    ///
+    /// ```
+    /// const _: () = sittir_core::types::NodeId::refuse_wider_record(32, "a record of 32 words fits");
+    /// ```
+    ///
+    /// ```compile_fail,E0080
+    /// const _: () = sittir_core::types::NodeId::refuse_wider_record(33, "kind `wide` has a record of 33 words");
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// For `words` past `SITE_WORDS`, with `refusal`.
+    pub const fn refuse_wider_record(words: u32, refusal: &'static str) {
+        assert!(words <= Self::SITE_WORDS, "{}", refusal);
+    }
+
+    /// The id's site as one word, its item above its word; 0 for a record,
+    /// since a cell starts past its record's header.
+    #[must_use]
+    #[allow(clippy::cast_possible_truncation, reason = "the site bits are masked first")]
+    pub const fn packed_site(self) -> u32 {
+        (self.0 & ((1 << Self::SITE_BITS) - 1)) as u32
+    }
+
+    /// The id of the record at `at`, or, with a `packed` site
+    /// (`packed_site`), of the node it holds there; none for a site past
+    /// what an id holds.
+    #[must_use]
+    pub const fn of_packed(at: u32, packed: u32) -> Option<Self> {
+        if packed == 0 {
+            return Some(Self::record(at));
+        }
+        Self::try_leaf(at, packed & ((1 << Self::WORD_BITS) - 1), packed >> Self::WORD_BITS)
+    }
+
+    /// The id as one number, which JavaScript keys a node by: a record's
+    /// address, or, for a leaf, the negative of its 53 packed bits.
+    #[must_use]
+    #[allow(clippy::cast_precision_loss, reason = "a leaf's id takes 53 bits, which a double holds exactly")]
+    pub fn key(self) -> f64 {
+        match self.site() {
+            None => f64::from(self.address()),
+            Some(_) => -(self.0 as f64),
+        }
+    }
+
+    /// The id `key` spells (`key`); none for a number that is no key.
+    #[must_use]
+    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::cast_precision_loss, reason = "each value is checked whole and in range before it is narrowed, and the bound is a power of two")]
+    pub fn from_key(key: f64) -> Option<Self> {
+        if key.fract() != 0.0 {
+            return None;
+        }
+        if key >= 0.0 {
+            return (key <= f64::from(u32::MAX)).then_some(Self::record(key as u32));
+        }
+        if -key >= (1u64 << (Self::HOLDER_BITS + Self::SITE_BITS)) as f64 {
+            return None;
+        }
+        let packed = (-key) as u64;
+        Self::of_packed((packed >> Self::SITE_BITS) as u32, (packed & ((1 << Self::SITE_BITS) - 1)) as u32).filter(|id| id.site().is_some())
+    }
+}
+
+impl std::fmt::Debug for NodeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.site() {
+            None => write!(f, "NodeId({})", self.address()),
+            Some([word, item]) => write!(f, "NodeId({}, [{word}, {item}])", self.address()),
+        }
+    }
+}
+
+impl From<NodeId> for NodeIdWire {
+    fn from(id: NodeId) -> Self {
+        Self { node: id.address(), site: id.site() }
+    }
+}
+
+impl TryFrom<NodeIdWire> for NodeId {
+    type Error = String;
+
+    fn try_from(NodeIdWire { node, site }: NodeIdWire) -> Result<Self, Self::Error> {
+        match site {
+            None => Ok(Self::record(node)),
+            Some([word, item]) => Self::try_leaf(node, word, item).ok_or_else(|| format!("the site [{word}, {item}] in the record at {node} is past what a node's id holds")),
+        }
+    }
+}
+
+#[cfg(test)]
+mod name_tests {
+    use super::NodeId;
+
+    #[test]
+    fn an_id_and_its_key_are_found_from_each_other() {
+        let ids = [NodeId::record(0), NodeId::record(u32::MAX), NodeId::leaf(32_768, 2, 0), NodeId::leaf((1 << 30) - 1, 31, 262_143)];
+        for id in ids {
+            let key = id.key();
+            assert_eq!(key.fract(), 0.0);
+            assert!(key.abs() <= 9_007_199_254_740_991.0, "{key} is a whole number a double holds");
+            assert_eq!(NodeId::from_key(key), Some(id));
+        }
+        let mut keys: Vec<f64> = ids.iter().map(|id| id.key()).collect();
+        keys.dedup();
+        assert_eq!(keys.len(), ids.len());
+    }
+
+    #[test]
+    fn a_number_that_is_no_key_names_no_node() {
+        assert_eq!(NodeId::from_key(-0.5), None);
+        assert_eq!(NodeId::from_key(-(2f64.powi(53))), None);
+        assert_eq!(NodeId::from_key(f64::from(u32::MAX) + 1.0), None);
+        assert_eq!(NodeId::from_key(-f64::from(1u32 << 23)), None, "a site of word 0 names no cell");
+    }
+
+    #[test]
+    #[should_panic(expected = "past what a node's id holds")]
+    fn a_leaf_at_an_item_past_the_bits_has_no_id() {
+        let _ = NodeId::leaf(32_768, 2, 262_144);
+    }
+
+    #[test]
+    #[should_panic(expected = "past what a node's id holds")]
+    fn a_leaf_at_a_word_past_the_bits_has_no_id() {
+        let _ = NodeId::leaf(32_768, 32, 0);
+    }
+
+    #[test]
+    #[should_panic(expected = "past what a node's id holds")]
+    fn a_leaf_of_a_holder_past_the_bits_has_no_id() {
+        let _ = NodeId::leaf(1 << 30, 2, 0);
+    }
+
+    #[test]
+    fn a_leaf_id_gives_its_holder_30_bits_its_item_18_and_its_word_5() {
+        assert_eq!((NodeId::HOLDER_BITS, NodeId::ITEM_BITS, NodeId::WORD_BITS), (30, 18, 5));
+        assert_eq!(NodeId::SITE_WORDS, 32);
+        assert_eq!(NodeId::SITE_ITEMS, 262_144);
+        assert_eq!(NodeId::leaf(1, 3, 2).key(), -f64::from((1 << 23) | (2 << 5) | 3));
+        assert_eq!(NodeId::record(7).key(), 7.0);
+    }
+
+    #[test]
+    fn an_id_names_its_record_or_its_holder_and_site() {
+        assert_eq!((NodeId::record(9).address(), NodeId::record(9).site()), (9, None));
+        assert_eq!((NodeId::leaf(9, 4, 6).address(), NodeId::leaf(9, 4, 6).site()), (9, Some([4, 6])));
+        assert_eq!(NodeId::record(9).inside(), Some(NodeId::leaf(9, NodeId::INSIDE_WORD, 0)));
+        assert_eq!(NodeId::leaf(9, NodeId::INSIDE_WORD, 0).inside_of(), Some(NodeId::record(9)));
+        assert_eq!(NodeId::leaf(9, 4, 6).inside(), None);
+        assert_eq!(NodeId::leaf(9, 4, 6).inside_of(), None);
+    }
+
+    #[test]
+    fn a_holder_s_id_and_its_sites_ids_lie_between_it_and_the_next_record_s() {
+        let (holder, next) = (NodeId::record(9), NodeId::record(10));
+        for site in [NodeId::leaf(9, 1, 0), NodeId::leaf(9, 2, 0), NodeId::leaf(9, 31, 262_143)] {
+            assert!(holder < site && site < next, "{site:?}");
+        }
+    }
+
+    #[test]
+    fn the_wire_spells_an_id_as_its_node_and_its_site() {
+        for (id, wire) in [(NodeId::record(5), r#"{"$node":5}"#), (NodeId::leaf(5, 2, 3), r#"{"$node":5,"$site":[2,3]}"#)] {
+            assert_eq!(serde_json::to_string(&id).expect("written"), wire);
+            assert_eq!(serde_json::from_str::<NodeId>(wire).expect("read"), id);
+        }
+        for refused in [r#"{"$node":5,"$site":[0,0]}"#, r#"{"$node":5,"$site":[32,0]}"#, r#"{"$node":5,"$site":[2,262144]}"#] {
+            assert!(serde_json::from_str::<NodeId>(refused).is_err(), "{refused}");
+        }
+    }
+}
+
 id_newtype! {
     /// A node of a tree: its position in the tree's preorder, the
     /// `TreeCursor::descendant_index` of the node from the root.

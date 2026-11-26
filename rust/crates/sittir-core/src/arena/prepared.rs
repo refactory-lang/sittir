@@ -3,8 +3,8 @@
 //! never rewritten. One overlay is built for one render and dropped after it.
 //!
 //! A fact of a node itself is keyed by the node's place: its own kind's
-//! edges, its print settings, its defaulted units, its prepared sides and its
-//! slots' per-item separators. Every other fact of its layout is read where
+//! edges, its print settings, its defaulted units and its prepared sides.
+//! Every other fact of its layout is read where
 //! it is kept: its side record, the store of written sides, or its tree. A fact a holder writes about the child it
 //! holds at one site (a gap fill, a seat) is keyed by that site, so a node
 //! placed at two sites gets each site's facts, as each native copy does.
@@ -18,14 +18,11 @@ use crate::layout::UnitSides;
 use crate::options::Edges;
 use crate::slot::CoordinateEdges;
 use crate::trivia::NodeTrivia;
-use crate::read::Depth;
-use super::rows::NodeRows;
 use crate::trivia_store::{Place, Site};
 
 /// Where the overlay keeps a node's facts: the place the store keeps its
 /// sides at, or, for an envelope's content, which shares its envelope's row
-/// and has no place in the store, its cell's site in the envelope. A parsed
-/// content's key carries its tree, so no built record's address meets it.
+/// and has no place in the store, its cell's site in the envelope.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PrepPlace {
     Stored(Place),
@@ -43,14 +40,12 @@ impl PrepPlace {
         }
     }
 
-    /// The tree row of a parsed node: its own row, or for an envelope's
-    /// content its envelope's; none for a built node.
+    /// The id of a node a read left, as `reads` holds it: its own, or for
+    /// an envelope's content its envelope's; none for a built node.
     #[must_use]
-    pub fn row(self) -> Option<(crate::types::TreeId, crate::types::NodeIndex)> {
-        match self {
-            Self::Stored(Place::Row { tree, row }) | Self::Content(Site { holder: Place::Row { tree, row }, .. }) => Some((tree, row)),
-            _ => None,
-        }
+    pub fn read_node(self, reads: Option<&dyn super::ArenaRead>) -> Option<crate::types::NodeId> {
+        let (Self::Stored(Place::Node(id)) | Self::Content(Site { holder: Place::Node(id), .. })) = self else { return None };
+        reads?.read_record(super::Address(id.address())).then_some(id)
     }
 }
 
@@ -59,7 +54,7 @@ impl From<Place> for PrepPlace {
         Self::Stored(place)
     }
 }
-use crate::types::{Delimiter, KindId, NodeIndex, TreeId};
+use crate::types::{Delimiter, KindId};
 
 /// What prepare fills for one node, beside what its record stores. A stored
 /// value always wins over a filled one.
@@ -79,23 +74,12 @@ pub struct PreparedNode<T> {
     pub trivia: Option<NodeTrivia<T>>,
     /// Its unit children's sides, each entry prepared.
     pub units: Vec<UnitSides<T>>,
-    /// Its list slots' per-item separators (`SlotLayout::tokens`), by the
-    /// slot's wire key.
-    pub tokens: Vec<SlotTokens>,
 }
 
 impl<T> Default for PreparedNode<T> {
     fn default() -> Self {
-        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), trivia: None, units: Vec::new(), tokens: Vec::new() }
+        Self { edges: Edges::default(), delimiter: None, separator_kind: None, slots: Vec::new(), trivia: None, units: Vec::new() }
     }
-}
-
-/// The separator before each item of one list slot, by the item's place
-/// (`SlotLayout::tokens`).
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SlotTokens {
-    pub slot: String,
-    pub tokens: Vec<Option<KindId>>,
 }
 
 /// What prepare fills for one slot of a node: a list's separator spacing,
@@ -120,64 +104,17 @@ impl<T> PreparedNode<T> {
     pub fn slot(&self, word: u32) -> Option<&PreparedSlot> {
         self.slots.iter().find(|slot| slot.word == word)
     }
-
-    /// The per-item separators of the list slot `slot`; none where prepare
-    /// gave it none.
-    #[must_use]
-    pub fn tokens(&self, slot: &str) -> Option<&[Option<KindId>]> {
-        self.tokens.iter().find(|entry| entry.slot == slot).map(|entry| entry.tokens.as_slice())
-    }
-
-    /// `slot`'s per-item separators are `tokens`, in place of any it had.
-    pub fn set_tokens(&mut self, slot: &str, tokens: Vec<Option<KindId>>) {
-        match self.tokens.iter_mut().find(|entry| entry.slot == slot) {
-            Some(entry) => entry.tokens = tokens,
-            None => self.tokens.push(SlotTokens { slot: slot.to_owned(), tokens }),
-        }
-    }
-}
-
-/// The parsed nodes a recording render of a parsed record renders from
-/// their templates, as a read `depth` levels down from the node at `root` of
-/// `tree` reads them into nodes (`read::read_value`): each fewer than
-/// `depth` levels below `root`. A parsed node past them renders as its
-/// source, as a read keeps it a coordinate.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Templates {
-    pub tree: TreeId,
-    pub root: NodeIndex,
-    pub depth: Depth,
-}
-
-impl Templates {
-    /// Whether the node at `row` of `tree`, whose rows are `rows`, renders
-    /// from its template. A render of `root`'s record reaches only nodes
-    /// under it, so at every depth each does.
-    #[must_use]
-    pub fn reach(self, tree: TreeId, rows: &NodeRows, row: NodeIndex) -> bool {
-        tree == self.tree
-            && match self.depth {
-                Depth::All => true,
-                Depth::Levels(levels) => rows.levels_below(self.root, row, levels.get()).is_some(),
-            }
-    }
 }
 
 /// One render's prepared overlay.
 #[derive(Debug, Clone)]
 pub struct Prepared<T> {
-    /// What a recording render renders from its templates; none for any
-    /// other render.
-    templates: Option<Templates>,
     nodes: SmallMap<PrepPlace, PreparedNode<T>>,
     sites: SmallMap<Site<PrepPlace>, Edges>,
     /// The seams of the kind an untouched parsed child names, by its site:
     /// it renders its slice between them. A site prepare reached whose kind
     /// has no edge row holds none.
     coordinates: SmallMap<Site<PrepPlace>, Option<CoordinateEdges>>,
-    /// A unit child's own kind's edges, by its site: a unit has no place of
-    /// its own to key them by.
-    units: SmallMap<Site<PrepPlace>, Edges>,
     /// The derived delimiter facet a delimiter token takes, by its site in
     /// its composite (`delimiters::fill`): the token renders it in place of
     /// the facet it holds.
@@ -186,7 +123,7 @@ pub struct Prepared<T> {
 
 impl<T> Default for Prepared<T> {
     fn default() -> Self {
-        Self { templates: None, nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), units: SmallMap::new(), facets: SmallMap::new() }
+        Self { nodes: SmallMap::new(), sites: SmallMap::new(), coordinates: SmallMap::new(), facets: SmallMap::new() }
     }
 }
 
@@ -194,19 +131,6 @@ impl<T> Prepared<T> {
     #[must_use]
     pub fn new() -> Self {
         Self::default()
-    }
-
-    /// This overlay, for a render that renders `templates` from their
-    /// templates.
-    #[must_use]
-    pub fn with_templates(self, templates: Option<Templates>) -> Self {
-        Self { templates, ..self }
-    }
-
-    /// What the render renders from its templates (`Templates`).
-    #[must_use]
-    pub fn templates(&self) -> Option<Templates> {
-        self.templates
     }
 
     /// What prepare filled for the node at `place`, when it filled anything.
@@ -227,19 +151,12 @@ impl<T> Prepared<T> {
         self.sites.entry(site).or_insert(stored)
     }
 
-    /// The unit child at `site`'s own kind's edges, for prepare to fill.
-    pub fn unit_edges_mut(&mut self, site: Site<PrepPlace>) -> &mut Edges {
-        self.units.entry(site).or_default()
-    }
-
-    /// The edges the unit child at `site` renders with: on each side its
-    /// holder's fill there, else its own kind's. A unit stores none.
+    /// The edges the unit child at `site` renders with: its holder's fills
+    /// there, as a native unit holds the edges its holder's gap and seat
+    /// fills set. A unit stores none and prepares none of its own.
     #[must_use]
     pub fn unit_edges(&self, site: Option<Site<PrepPlace>>) -> Edges {
-        let Some(site) = site else { return Edges::default() };
-        let held = self.sites.get(&site).copied().unwrap_or_default();
-        let own = self.units.get(&site).copied().unwrap_or_default();
-        Edges { before: held.before.or(own.before), after: held.after.or(own.after) }
+        site.and_then(|site| self.sites.get(&site).copied()).unwrap_or_default()
     }
 
     /// The derived facet prepare gave the delimiter token at `site`.
@@ -289,7 +206,7 @@ mod tests {
     use crate::arena::Address;
     use crate::options::EdgeArm;
     use crate::trivia::TriviaText;
-    use crate::types::{ItemIndex, NodeIndex, TreeId};
+    use crate::types::ItemIndex;
 
     #[derive(Clone, Debug, PartialEq, Eq)]
     struct HashBomb(u32);
@@ -338,11 +255,11 @@ mod tests {
     }
 
     fn child() -> PrepPlace {
-        Place::Row { tree: TreeId(1), row: NodeIndex(4) }.into()
+        Place::Node(crate::types::NodeId::record(4)).into()
     }
 
     fn site(holder: u32, item: u32) -> Site<PrepPlace> {
-        Site { holder: Place::Record(Address(holder)).into(), word: 2, item: ItemIndex(item) }
+        Site { holder: Place::record(Address(holder)).into(), word: 2, item: ItemIndex(item) }
     }
 
     #[test]
@@ -356,7 +273,7 @@ mod tests {
         let node = prepared.node(child());
         assert_eq!(prepared.edges(stored, Some(site(5, 0)), node), Edges { before: Some(arm(9)), after: Some(arm(8)) }, "a holder's fill leaves a stored side alone");
         assert_eq!(prepared.edges(stored, None, node), Edges { before: Some(arm(9)), after: Some(arm(2)) }, "unheld, its own kind's fills what it stores nothing for");
-        assert_eq!(prepared.edges(Edges::default(), None, prepared.node(Place::Record(Address(6)).into())), Edges::default(), "a node prepare never reached has only what it stores");
+        assert_eq!(prepared.edges(Edges::default(), None, prepared.node(Place::record(Address(6)).into())), Edges::default(), "a node prepare never reached has only what it stores");
     }
 
     #[test]
@@ -389,19 +306,19 @@ mod tests {
         assert_eq!(node.slot(2), Some(&PreparedSlot { word: 2, space_before: Some(KindId(8)), space_after: Some(KindId(1)), ..PreparedSlot::default() }));
         assert_eq!(node.slot(4).and_then(|slot| slot.unit), Some(KindId(3)));
         assert_eq!(node.slot(6), None);
-        assert_eq!(prepared.node(Place::Record(Address(9)).into()), None);
+        assert_eq!(prepared.node(Place::record(Address(9)).into()), None);
     }
 
     #[test]
-    fn a_built_record_an_envelope_and_the_content_at_the_same_numbers_keep_their_own_facts() {
+    fn a_record_an_envelope_and_the_envelope_s_content_keep_their_own_facts() {
         let mut prepared = Prepared::<TriviaText>::new();
-        let envelope = Place::Row { tree: TreeId(1), row: NodeIndex(3) };
-        let places = [Place::Record(Address(3)).into(), envelope.into(), PrepPlace::Content(Site { holder: envelope, word: 2, item: ItemIndex(0) })];
+        let envelope = Place::Node(crate::types::NodeId::record(4));
+        let places = [Place::record(Address(3)).into(), envelope.into(), PrepPlace::Content(Site { holder: envelope, word: 2, item: ItemIndex(0) })];
         for (place, kind) in places.into_iter().zip(1..) {
             prepared.node_mut(place).edges.before = Some(arm(kind));
         }
         let kept: Vec<_> = places.into_iter().map(|place| prepared.node(place).and_then(|node| node.edges.before)).collect();
         assert_eq!(kept, [Some(arm(1)), Some(arm(2)), Some(arm(3))]);
-        assert_eq!(places.map(PrepPlace::stored), [Some(Place::Record(Address(3))), Some(envelope), None], "a content has no place in the store");
+        assert_eq!(places.map(PrepPlace::stored), [Some(Place::record(Address(3))), Some(envelope), None], "a content has no place in the store");
     }
 }

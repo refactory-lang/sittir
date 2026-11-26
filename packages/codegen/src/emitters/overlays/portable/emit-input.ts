@@ -3,7 +3,7 @@ export interface PortableEmitSlot {
 	readonly texts: readonly string[];
 	readonly unmapped: readonly string[];
 	readonly string: boolean;
-	readonly numbers: readonly ('bigint' | 'number')[];
+	readonly scalars: readonly ('bigint' | 'number' | 'true' | 'false')[];
 	readonly optional: boolean;
 }
 
@@ -31,6 +31,7 @@ export interface PortableEmitInput<Table> {
 	readonly textChoices?: Readonly<Record<string, readonly string[]>>;
 	readonly ownTextClaims?: Readonly<Record<string, Readonly<Record<number, PortableOwnTextClaim>>>>;
 	readonly decided: Readonly<Record<string, Readonly<Record<string, string>>>>;
+	readonly tails?: Readonly<Record<string, Readonly<Record<string, Readonly<Record<string, string>>>>>>;
 }
 
 export type PortableEmitCode = 'portable-emit-unplaced-path' | 'portable-emit-unplaced-arm' | 'portable-emit-unfit-slot' | 'portable-emit-pinned-gap' | 'portable-emit-type' | 'portable-emit-tail-is-path';

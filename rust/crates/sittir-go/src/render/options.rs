@@ -1718,10 +1718,6 @@ pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
     ("variadic_parameter_declaration", &[SiteId(702), SiteId(700), SiteId(701), SiteId(703)]),
 ];
 
-/// Per kind id, the stretches of its children its template indents one level, by their anchors.
-pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
-];
-
 #[must_use]
 pub fn spacing_text(kind: KindId) -> &'static str {
     match kind {

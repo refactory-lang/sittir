@@ -4950,7 +4950,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "declaration.type.interface: a preset at body.opening that is not one keyword or text"
+    "message": "declaration.type.interface: a preset at body.opening below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -5063,38 +5063,6 @@
     "severity": "warning",
     "canProceed": true,
     "message": "identifier.super: arm 280 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.false: arm 282 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.true: arm 281 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null: arm 283 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "typescript",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null.undefined: arm 110 builds through its holder"
   },
   {
     "scope": "grammar",

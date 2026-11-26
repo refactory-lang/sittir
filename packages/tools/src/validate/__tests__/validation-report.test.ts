@@ -138,8 +138,8 @@ describe('checkCodeCeilings', () => {
 	});
 
 	it('guards a trivia or layout code like any other', () => {
-		const built = buildValidationReport({}, { rust: [{ code: 'layout-unreached', severity: 'error', message: 'leading of 3 at 4..4', stage: 'layout-runs', label: 'entry' }] });
-		expect(checkCodeCeilings(built, { rust: { 'from-trivia': 0 } }, ['rust']).violations).toEqual([{ grammar: 'rust', code: 'layout-unreached', count: 1, ceiling: 0 }]);
+		const built = buildValidationReport({}, { rust: [{ code: 'layout-refused', severity: 'error', message: 'refused', stage: 'stored-layout', label: 'entry' }] });
+		expect(checkCodeCeilings(built, { rust: { 'from-trivia': 0 } }, ['rust']).violations).toEqual([{ grammar: 'rust', code: 'layout-refused', count: 1, ceiling: 0 }]);
 	});
 });
 

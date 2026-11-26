@@ -1,5 +1,9 @@
-# Usage: PHASE=<parse|render|edit> python3 run-phase-profile.py <out-dir> <grammar,...> <name>=<tree>[@<storage>]...
+# Usage: PHASE=<parse|render|edit|built> python3 run-phase-profile.py <out-dir> <grammar,...> <name>=<tree>[@<storage>]...
 # Where one corpus phase's time goes in arena storage, by function, per tree.
+# PHASE=built renders built Rust function items (phase-profile.mjs) and is
+# sampled as render is; its grammar is rust. PHASE=worker runs the paired
+# construction worker's whole timed loop as one batch, sampled the same way,
+# 20 timed batches after 2 untimed; its grammar is rust.
 # Each tree is profiled once per grammar, under the first name given for it and
 # in arena storage whatever its storage suffix: phase-profile.mjs (WARMUP
 # untimed batches, then BATCHES timed, a fresh engine every PER_ENGINE: 50
@@ -66,21 +70,17 @@
 import atexit, gzip, json, math, os, platform, re, shutil, subprocess, sys, tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
+from phase_trees import namedTrees, unstrippedCopy
 
 here = Path(__file__).resolve().parent
 checkout = here.parents[3]
 out = Path(sys.argv[1]).resolve()
 grammars = sys.argv[2].split(',')
-trees = {}
-for arg in sys.argv[3:]:
-    name, spec = arg.split('=', 1)
-    tree = Path(spec.partition('@')[0]).resolve()
-    if tree not in trees.values() or os.environ.get('REUSE') == '1':
-        trees[name] = tree
+trees = namedTrees(sys.argv[3:], everyName=os.environ.get('REUSE') == '1')
 names = list(trees)
 out.mkdir(parents=True, exist_ok=True)
 PHASE = os.environ.get('PHASE') or 'render'
-assert PHASE in ('parse', 'render', 'edit'), f'PHASE {PHASE} is not parse, render or edit'
+assert PHASE in ('parse', 'render', 'edit', 'built', 'worker'), f'PHASE {PHASE} is not parse, render, edit, built or worker'
 STORAGE = os.environ.get('STORAGE') or 'arena'
 assert STORAGE in ('arena', 'object'), f'STORAGE {STORAGE} is not arena or object'
 MEASURE = os.environ.get('MEASURE') or 'samples'
@@ -97,13 +97,12 @@ PERF_RECORD = NATIVE and not INTERPOSER
 for llvm in (os.environ.get('LLVM_BIN'), '/opt/homebrew/opt/llvm/bin', '/usr/local/opt/llvm/bin'):
     if shutil.which('llvm-symbolizer') is None and llvm and Path(llvm, 'llvm-symbolizer').exists():
         os.environ['PATH'] = f'{llvm}{os.pathsep}{os.environ["PATH"]}'
-WARMUP, BATCHES = (10, 20) if ALLOCS else (100, 2000)
+WARMUP, BATCHES = (2, 20) if PHASE == 'worker' else (10, 20) if ALLOCS else (100, 2000)
 PER_ENGINE = int(os.environ.get('PER_ENGINE') or 50) or WARMUP + BATCHES
 assert PER_ENGINE > 0, f'PER_ENGINE {PER_ENGINE} is not a count of batches'
 ENGINES = 'one engine for the whole run' if PER_ENGINE >= WARMUP + BATCHES else f'a fresh engine every {PER_ENGINE}'
 PERIOD_NS = 100_000
 JS_INTERVAL_US = 50
-FRESHNESS = 'packages/codegen/src/scripts/native-binary-freshness.ts'
 OUTSIDE = 'outside the addon'
 CALLBACK = re.compile(r'_c_callback$')
 FRAME = re.compile(r'^\s*[0-9a-f]+ (.+) \(([^()]*)\)$')
@@ -175,14 +174,6 @@ def addonCopy(tree, grammar):
         return unstrippedCopy(tree, grammar)
     except subprocess.CalledProcessError:
         return None
-
-
-def unstrippedCopy(tree, grammar):
-    script = ('const [root, grammar] = process.argv.slice(1); '
-              f'const stamps = await import(`${{root}}/{FRESHNESS}`); '
-              'console.log(stamps.unstrippedReleaseBinary(root, grammar, stamps.hostBinaryName(grammar)));')
-    found = subprocess.run(['node', '--input-type=module', '-e', script, str(tree), grammar], check=True, stdout=subprocess.PIPE, text=True)
-    return Path(found.stdout.strip()).resolve()
 
 
 def buildCounter():

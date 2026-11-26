@@ -336,7 +336,7 @@ describe('render options on nodes', () => {
 			'::sittir_core::prepare::Setting::fill(&mut parts.item_separator_space_after, overlay, ctx.options.site_arm(options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);'
 		);
 		expect(listFill).toMatch(
-			/let delimiter = ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::prepare::LayoutTarget::sides\(&parts\.layout, overlay\)\.as_deref\(\), ::sittir_core::types::KindId\(\d+\), &\[::sittir_core::types::KindId\(\d+\)\], ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\);\n    ::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, overlay, delimiter\);/
+			/let delimiter = ::sittir_core::prepare::source_trailing_delimiter\(::sittir_core::prepare::LayoutTarget::sides\(&parts\.layout, overlay\)\.as_ref\(\), ::sittir_core::types::KindId\(\d+\), ctx\.options\.delimiter_at\(options::DELIM_FORMAL_PARAMETERS_ELEMENTS_ITEM\), ctx\);\n\s*::sittir_core::prepare::Setting::fill\(&mut parts\.delimiter, overlay, delimiter\);/
 		);
 		expect(extractStructBody(src, 'FormalParametersElementsNode')).toMatch(
 			/    #\[space\(slot = \d+, side = before, site = options::SITE_FORMAL_PARAMETERS_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE\)\]\n    pub item_separator_space_before: Option<KindId>,/
@@ -409,7 +409,7 @@ describe('render options on nodes', () => {
 		expect(src).toContain("    ctx: &::sittir_core::prepare::RenderContext<'_>,");
 		const entry = src.slice(src.indexOf('pub fn render_node_parts('));
 		const prepare = entry.indexOf('    let rendered = match ::sittir_core::prepare::Prepare::prepare(&mut node, ctx) {');
-		const dispatch = entry.indexOf('        Ok(()) => render_node_dispatch(&node, ctx, recording),');
+		const dispatch = entry.indexOf('        Ok(()) => render_node_dispatch(&node, ctx),');
 		const release = entry.indexOf('    ::sittir_core::codec::release::<TriviaNode, _>(node);');
 		expect([prepare, dispatch, release].every((at) => at >= 0)).toBe(true);
 		expect(prepare < dispatch && dispatch < release).toBe(true);
@@ -476,7 +476,7 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'fn render_function_item<N: FunctionItemFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {'
 		);
 		expect(nodeRs).toContain(
-			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources)'
@@ -547,14 +547,14 @@ describe('the typed sink replaces the mark-based Display path', () => {
 		expect(nodeRs).toMatch(/::sittir_core::prepare::Setting::fill\(&mut parts\.\w+, overlay, ctx\.options\.site_arm\(options::/);
 		expect(nodeRs).toContain('        prepare_function_item(self, &mut (), ctx)\n');
 		expect(nodeRs).toContain(
-			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>, recording: Option<&mut ::sittir_core::baseline::Baseline>) -> Result<String, ::sittir_core::render::RenderError> {"
+			"pub fn render_node_dispatch(node: &RenderRoot, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<String, ::sittir_core::render::RenderError> {"
 		);
 		expect(nodeRs).toContain(
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'
 		);
-		expect(nodeRs).toContain('render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))');
-		expect(nodeRs).toContain('    with_record_node(root, templates, trees, built, store, ctx, |node, ctx| render_root(ctx, baseline, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))\n');
-		expect(nodeRs).toContain('    with_record_node(root, None, trees, built, store, ctx, |node, _| node.render(w))\n');
+		expect(nodeRs).toContain('render_root(ctx, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))');
+		expect(nodeRs).toContain('    with_record_node(root, reads, built, store, ctx, |node| render_root(ctx, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))\n');
+		expect(nodeRs).toContain('    with_record_node(root, reads, built, store, ctx, |node| node.render(w))\n');
 		expect(nodeRs).toContain('let prepared = ::sittir_core::arena::prepare_root::<');
 		expect(nodeRs).not.toContain('STAMPED_TRIVIA_KINDS');
 	});
@@ -923,9 +923,9 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 46, built_words = 10, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 27, built_words = 10, order = \[visibility_modifier, function_modifiers, name, type_parameters, parameters, return_type, where_clause, body\], edges = \(\[slot\(visibility_modifier\), slot\(function_modifiers\), token\(kind::FN_KEYWORD\)\], \[slot\(body\)\]\), fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
 		);
-		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 19, width = 7, inline = 6, forms = 9, built = 4\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 8, width = 3, forms = 1, built = 4\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
 	});
 
@@ -1012,7 +1012,7 @@ describe('the wire codec facts', () => {
 		expect(src).toContain('use ::sittir_core::VerbatimNode;');
 		const item = extractStructBody(src, 'FunctionItemNode');
 		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    #\[layout\]\n    pub layout: Option<Box<NodeLayout>>,/);
-		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 19, width = 7, inline = 6, forms = 9, built = 4\)\]\n    pub name: /);
+		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 8, width = 3, forms = 1, built = 4\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'IdentifierNode')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    #\[text\]\n    pub text: String,/);
 	});
 

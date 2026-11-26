@@ -28,7 +28,15 @@ describe('a list built over parsed items renders one separator when it chooses o
 		expect(rendered(source, { separator: ts.kinds.Semi })).toBe('a: string;\nb: number;\nc: boolean;');
 	});
 
-	it('keeps each item\'s source separator when no separator is chosen', () => {
-		expect(rendered(MIXED, {})).toBe('a: string,\nb: number;\nc: boolean;');
+});
+
+describe.each(['object', 'arena'] as const)('a list built over parsed items with no separator chosen (%s storage)', (nodeStorage) => {
+	it.each([
+		['mixed, one gap of each', MIXED, 'a: string;\nb: number;\nc: boolean;'],
+		['all commas', COMMAS, 'a: string;\nb: number;\nc: boolean;']
+	])('%s source: the list\'s separator, the options\', is every gap', async (_name, source, expected) => {
+		using engine = await createEngine(typescript, { nodeStorage });
+		const items = [...(engine.parse(source).statements()[0] as any).value().members()];
+		expect((engine.build.objectTypeContent({} as never, ...items) as { $render(): string }).$render()).toBe(expected);
 	});
 });

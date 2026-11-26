@@ -38,6 +38,7 @@ import {
 	listOption,
 	refuseReadStub,
 	hydrateStored,
+	elementsWith,
 	rebuilt,
 	renderText,
 	refuseJSON,
@@ -60,7 +61,7 @@ import {
 	restItems,
 	blankArmRead,
 	blankArmStored,
-	isNodeOfKind,
+	toElement,
 	admitAliasContent,
 	coerceKindEnumStorage,
 	kindIdStorage,
@@ -8880,9 +8881,7 @@ function _buildImportSpecs(
 	currentHandle()?.admit(TSKindId.ImportSpecs, elements);
 	const _mapped = elements.map(
 		(e): T.ImportSpec =>
-			(isNodeOfKind(e, TSKindId.ImportSpec)
-				? (e as unknown)
-				: buildImportSpec({ path: e } as Parameters<typeof buildImportSpec>[0])) as T.ImportSpec
+			toElement(e, { make: buildImportSpec, wrapper: { kind: TSKindId.ImportSpec, content: 'path' } }) as T.ImportSpec
 	);
 	const _item = _mapped;
 	const _separator = options.separator;
@@ -8952,10 +8951,15 @@ function buildImportSpecs$with(node: Held, setter: string, args: readonly unknow
 	const options = node[OPTIONS] as { separator?: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null };
 	switch (setter) {
 		case 'items':
-			return applySetter(
-				args,
-				(...vs: NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>) =>
-					rebuilt(node, handle, () => buildImportSpecs(options, ...vs))
+			return applySetter(args, (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					elementsWith(
+						args,
+						{ slot: 'items', make: buildImportSpec, wrapper: { kind: TSKindId.ImportSpec, content: 'path' } },
+						(...vs: NonEmptyArray<Admit<T.ImportSpec | T.RawStringLiteral | T.InterpretedStringLiteral>>) =>
+							buildImportSpecs(options, ...vs)
+					)
+				)
 			);
 		case 'separator':
 			return applySetter(args, (v: TSKindId.SourceFileText | TSKindId.Semi | TSKindId.Null) =>
@@ -10457,7 +10461,12 @@ function buildImportSpecListGroup$with(node: Held, setter: string, args: readonl
 						rebuilt(node, handle, () =>
 							listSlotWith(
 								args,
-								{ kind: TSKindId.ImportSpecs as const, optional: false, make: buildImportSpecs },
+								{
+									kind: TSKindId.ImportSpecs as const,
+									optional: false,
+									make: buildImportSpecs,
+									element: { make: buildImportSpec, wrapper: { kind: TSKindId.ImportSpec, content: 'path' } }
+								},
 								(value: Admit<NonNullable<T.ImportSpecListGroup.Config>['importSpecs']>) =>
 									buildImportSpecListGroup({ ...config, importSpecs: value })
 							)

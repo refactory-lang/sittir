@@ -264,7 +264,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -334,7 +336,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -371,7 +375,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -516,7 +522,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -527,7 +535,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -612,7 +622,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -677,7 +689,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -726,7 +740,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -788,7 +804,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -933,7 +951,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -944,7 +964,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1029,7 +1051,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1118,7 +1142,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1198,7 +1224,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1362,7 +1390,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -1373,7 +1403,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1458,7 +1490,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1503,7 +1537,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -1648,7 +1684,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -1659,7 +1697,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1744,7 +1784,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -1908,7 +1950,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -1919,7 +1963,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -2004,7 +2050,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -2288,7 +2336,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -2325,7 +2375,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -2371,7 +2423,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -2482,7 +2536,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -2569,7 +2625,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -2656,7 +2714,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -2687,7 +2747,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -2855,7 +2917,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -3000,7 +3064,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -3011,7 +3077,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -3072,7 +3140,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -3157,7 +3227,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -3314,7 +3386,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -3459,7 +3533,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -3470,7 +3546,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -3555,7 +3633,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -3723,7 +3803,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -3868,7 +3950,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -3879,7 +3963,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -3939,7 +4025,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -4024,7 +4112,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -4213,7 +4303,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -4358,7 +4450,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -4369,7 +4463,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -4430,7 +4526,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -4515,7 +4613,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -4741,7 +4841,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -4886,7 +4988,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -4897,7 +5001,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -4958,7 +5064,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -5043,7 +5151,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -5185,49 +5295,6 @@ export const build: PortableBuildTable = {
 							]
 						},
 						{
-							name: 'parameters',
-							steps: [
-								{
-									key: 'parameters',
-									stored: '_parameters'
-								}
-							],
-							multiple: false,
-							list: true,
-							seats: [
-								{
-									at: [361, 'parameters'],
-									kinds: []
-								},
-								{
-									at: [198, 'items'],
-									kinds: [1, 200, 202, 204, 205, 206, 207, 230, 263, 264],
-									leaf: 'identifier',
-									texts: [1],
-									tokens: {
-										'*': 264,
-										'/': 263
-									},
-									pattern: {
-										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
-										flags: 'u'
-									},
-									within: [
-										{
-											builder: 'parameters',
-											key: 'elements',
-											optional: true
-										},
-										{
-											builder: 'parametersElements',
-											key: 'items'
-										}
-									],
-									many: true
-								}
-							]
-						},
-						{
 							name: 'type',
 							steps: [
 								{
@@ -5267,7 +5334,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -5412,7 +5481,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -5423,7 +5494,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -5484,7 +5557,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -5569,15 +5644,38 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
 					owners: [
-						[0, 1, 2, 3, 4],
-						[0, 1, 2, 3, 5]
+						[0, 1, 2, 3],
+						[0, 1, 2, 4]
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'parameters',
+									stored: '_parameters',
+									builder: 'parameters'
+								},
+								{
+									key: 'elements',
+									stored: '_elements',
+									builder: 'parametersElements',
+									optional: true
+								},
+								{
+									key: 'items'
+								}
+							],
+							text: 'self',
+							builder: 'identifier'
+						}
+					],
 					flags: {
 						async: {
 							presets: [
@@ -5634,7 +5732,7 @@ export const build: PortableBuildTable = {
 					when: [
 						{
 							absent: [],
-							required: ['name', 'parameters']
+							required: ['name']
 						}
 					]
 				}
@@ -5786,7 +5884,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -5931,7 +6031,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -5942,7 +6044,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -6003,7 +6107,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -6088,7 +6194,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -6220,7 +6328,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -6303,7 +6413,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -6386,7 +6498,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -6417,7 +6531,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -6538,7 +6654,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -6682,7 +6800,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -6693,7 +6813,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -6753,7 +6875,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -6838,7 +6962,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -6958,7 +7084,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7042,7 +7170,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7197,7 +7327,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7275,7 +7407,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7353,7 +7487,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -7384,7 +7520,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7438,7 +7576,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7497,7 +7637,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7556,7 +7698,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7615,7 +7759,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7674,7 +7820,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7733,7 +7881,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7792,7 +7942,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7851,7 +8003,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7910,7 +8064,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -7969,7 +8125,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8028,7 +8186,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8087,7 +8247,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -8118,7 +8280,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8168,7 +8332,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8218,7 +8384,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8325,7 +8493,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8401,7 +8571,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8482,7 +8654,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8563,7 +8737,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8644,7 +8820,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8725,7 +8903,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8806,7 +8986,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8887,7 +9069,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -8968,7 +9152,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9049,7 +9235,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9130,7 +9318,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9211,7 +9401,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9292,7 +9484,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9373,7 +9567,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9432,7 +9628,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9486,7 +9684,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -9517,7 +9717,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9576,7 +9778,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -9607,7 +9811,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9666,7 +9872,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -9697,7 +9905,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9756,7 +9966,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -9787,7 +9999,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9846,7 +10060,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -9877,7 +10093,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -9936,7 +10154,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -9967,7 +10187,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10026,7 +10248,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10057,7 +10281,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10116,7 +10342,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10147,7 +10375,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10206,7 +10436,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10237,7 +10469,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10296,7 +10530,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10327,7 +10563,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10386,7 +10624,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10454,7 +10694,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10489,7 +10731,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10552,7 +10796,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10587,7 +10833,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10650,7 +10898,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10685,7 +10935,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10748,7 +11000,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10783,7 +11037,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10846,7 +11102,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10881,7 +11139,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -10944,7 +11204,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -10979,7 +11241,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11042,7 +11306,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11077,7 +11343,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11140,7 +11408,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11175,7 +11445,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11238,7 +11510,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11273,7 +11547,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11340,7 +11616,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11371,7 +11649,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11430,7 +11710,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11461,7 +11743,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11520,7 +11804,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11551,7 +11837,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11610,7 +11898,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11645,7 +11935,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11708,7 +12000,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11743,7 +12037,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11806,7 +12102,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11837,7 +12135,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11896,7 +12196,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -11927,7 +12229,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -11985,7 +12289,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -12031,7 +12337,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12112,7 +12420,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12184,7 +12494,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12285,7 +12597,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12348,7 +12662,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12395,7 +12711,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12465,7 +12783,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12530,7 +12850,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12590,7 +12912,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -12659,7 +12983,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -12738,7 +13064,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -12881,7 +13209,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -12960,7 +13290,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -12991,7 +13323,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -13022,7 +13356,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -13072,7 +13408,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -13174,7 +13512,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -13382,7 +13722,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -13477,7 +13819,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -13539,7 +13883,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -13622,7 +13968,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -13673,7 +14021,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -13705,7 +14055,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -13748,7 +14100,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -13793,7 +14147,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -13836,7 +14192,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -13890,7 +14248,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -13949,7 +14309,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -14008,7 +14370,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -14058,7 +14422,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -14118,7 +14484,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -14172,7 +14540,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -14338,7 +14708,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -14349,7 +14721,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -14494,7 +14868,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -16625,7 +17001,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -16975,7 +17353,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -17074,7 +17454,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -17101,7 +17483,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -17471,7 +17855,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -17539,7 +17925,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -17693,7 +18081,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -17835,7 +18225,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -17913,7 +18305,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -18097,7 +18491,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -18108,7 +18504,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -18257,7 +18655,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -18268,7 +18668,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -18360,7 +18762,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -18454,7 +18858,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -18540,7 +18946,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -18633,7 +19041,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -18796,7 +19206,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -18807,7 +19219,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -18892,7 +19306,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -19164,7 +19580,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -19327,7 +19745,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -19338,7 +19758,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -19423,7 +19845,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -19489,7 +19913,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -19652,7 +20078,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -19663,7 +20091,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -19748,7 +20178,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -19810,7 +20242,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -19945,7 +20379,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20014,7 +20450,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -20050,7 +20488,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20243,7 +20683,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -20254,7 +20696,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20339,7 +20783,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20406,7 +20852,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20452,7 +20900,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -20484,7 +20934,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20697,7 +21149,9 @@ export const build: PortableBuildTable = {
 													takers: {
 														integer: 'literal.number.integer',
 														float: 'literal.number.float',
-														bigint: 'literal.number.integer.big'
+														bigint: 'literal.number.integer.big',
+														true: 'literal.boolean.true',
+														false: 'literal.boolean.false'
 													}
 												}
 											]
@@ -20708,7 +21162,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20793,7 +21249,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20849,7 +21307,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -20891,7 +21351,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -20995,7 +21457,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -21065,7 +21529,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],
@@ -21195,7 +21661,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						},
 						{
@@ -21237,7 +21705,9 @@ export const build: PortableBuildTable = {
 							takers: {
 								integer: 'literal.number.integer',
 								float: 'literal.number.float',
-								bigint: 'literal.number.integer.big'
+								bigint: 'literal.number.integer.big',
+								true: 'literal.boolean.true',
+								false: 'literal.boolean.false'
 							}
 						}
 					],

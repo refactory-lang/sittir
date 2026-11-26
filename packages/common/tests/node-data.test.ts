@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { markEdited, detachCoordinates, carryPlace, holdReadTree, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf, type KindView } from '../src/node-data.ts';
+import { markEdited, detachCoordinates, carryPlace, holdReadTree, holdTree, PLAIN_KINDS, sideOf, toNodeData, treeHandleOf } from '../src/node-data.ts';
 import { mintTreeToken, registerTree, treeTokenOf } from '../src/tree-token.ts';
 
 // A coordinate crosses only while it holds its tree, so a copy of each
@@ -185,13 +185,12 @@ describe('the tree token a parsed object holds', () => {
 	});
 });
 
-const NO_SIBLINGS: readonly number[] = [0, 0, 0, 0, 0, 0, 0, 0];
 
-/** A live tree whose table answers each side as `<index>:<side>`, and whose siblings are `siblings`, eight words a node. */
-function tableTree(id: number, siblings: (index: number) => readonly number[] = () => NO_SIBLINGS) {
+/** A live tree whose table answers each side as `<index>:<side>`. */
+function tableTree(id: number) {
 	const token = mintTreeToken(id);
 	const written: string[] = [];
-	registerTree(token, { id, triviaSide: (index, side) => [{ side: `${index}:${side}` }], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings: (indexes) => indexes.flatMap(siblings) });
+	registerTree(token, { id, triviaSide: (index, side) => [{ side: `${index}:${side}` }], writeTriviaSide: (index, side) => written.push(`${index}:${side}`) });
 	return { token, written };
 }
 
@@ -250,43 +249,6 @@ describe('a built node rebuilt from a parsed one', () => {
 	});
 });
 
-describe("a rebuilt list item's changed edges", () => {
-	const ATTRIBUTED = 20;
-	const ALIAS_ENVELOPE = 21;
-	const OTHER = 30;
-	const { token } = tableTree(1, (index) => (index === 3 ? [1, OTHER, 1, 2, 0, 0, 0, 0] : NO_SIBLINGS));
-	const a = deep(1, 2, {});
-	const b = deep(3, 4, {});
-	const owner = deep(0, 5, {});
-	const other = deep(7, 8, {});
-	holdTree(a, token);
-	holdTree(b, token);
-	holdTree(owner, token);
-	holdTree(other, token);
-	const view: KindView = {
-		isWrapper: (kindId) => kindId === ATTRIBUTED || kindId === ALIAS_ENVELOPE
-	};
-	type Crossed = { $_layout?: { changed?: unknown }; _content?: Crossed; _name?: Crossed };
-	const second = (first: Record<string, unknown>, wrapper: Record<string, unknown>): Crossed =>
-		(toNodeData({ ...markEdited(owner), _item: [first, wrapper] } as never, view) as unknown as { _item: Crossed[] })._item[1]!;
-
-	it('judges a rebuilt group around one node by the node it holds', () => {
-		const wrapper = { $type: ATTRIBUTED, _attribute_item: [], _content: b };
-		expect(second(a, wrapper)._content?.$_layout?.changed).toBeUndefined();
-		expect(second(other, wrapper)._content?.$_layout?.changed).toEqual({ leading: true, trailing: false });
-	});
-
-	it('judges a rebuilt alias envelope by the node it holds, whatever its slot is called', () => {
-		const wrapper = { $type: ALIAS_ENVELOPE, _name: b };
-		expect(second(a, wrapper)._name?.$_layout?.changed).toBeUndefined();
-		expect(second(other, wrapper)._name?.$_layout?.changed).toEqual({ leading: true, trailing: false });
-	});
-
-	it('names the changed edge on the content a rebuilt wrapper holds, not on the wrapper', () => {
-		const wrapper = { $type: ATTRIBUTED, _content: b };
-		expect(second(other, wrapper).$_layout).toBeUndefined();
-	});
-});
 
 describe('holding a tree', () => {
 	const CYCLE = 'a node tree holds itself: a value is its own descendant';

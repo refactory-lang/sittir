@@ -92,7 +92,7 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
 			throw new Error(`parity-fixtures[${grammar}]: a render fixture input still carries a coordinate`);
 		}
 		try {
-			return replay(fx.input as AnyUntypedNode, fx.options) === fx.expectedOutput;
+			return replay(fx.input as AnyUntypedNode, fx.source) === fx.expectedOutput;
 		} catch {
 			return false;
 		}

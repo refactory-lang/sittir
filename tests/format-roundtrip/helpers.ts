@@ -42,9 +42,26 @@ export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
 	}
 }
 
-export function parseNativeFixture(engine: NativeEngine, source: string): { treeId: number; options: Readonly<Record<string, unknown>> } {
-	const parsed = JSON.parse(engine.parse(source)) as { treeId: number; options: Readonly<Record<string, unknown>> };
-	return { treeId: parsed.treeId, options: parsed.options };
+const COORDINATES = new Set(['$treeHandle', '$handle', '$parentHandle', '$layout', '$_layout', '$span']);
+
+function detached(node: unknown): unknown {
+	if (Array.isArray(node)) return node.map(detached);
+	if (node === null || typeof node !== 'object') return node;
+	return Object.fromEntries(Object.entries(node).filter(([key]) => !COORDINATES.has(key)).map(([key, value]) => [key, detached(value)]));
+}
+
+export function parseNativeFixture(engine: NativeEngine, source: string, adoptStyle = false): { treeId: number } {
+	const { treeId } = JSON.parse(engine.parse(source, { adoptStyle })) as { treeId: number };
+	return { treeId };
+}
+
+export function renderDetachedFixture(engine: NativeEngine, source: string, adoptStyle: boolean): string {
+	const { treeId } = parseNativeFixture(engine, source, adoptStyle);
+	return engine.render(detached(engine.read(treeId, 0, Infinity)) as never);
+}
+
+export function firstIndent(text: string): string | undefined {
+	return text.split('\n').find((line) => /^\s+\S/.test(line))?.match(/^\s+/)?.[0];
 }
 
 export function diffPositions(a: string, b: string): { start: number; end: number } | null {

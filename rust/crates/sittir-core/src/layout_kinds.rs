@@ -50,6 +50,42 @@ impl LayoutKinds {
         Self(self.0 & self.0.wrapping_neg())
     }
 
+    /// The widest kind of the set: the highest bit.
+    #[must_use]
+    pub const fn widest(self) -> Self {
+        match self.0.checked_ilog2() {
+            Some(bit) => Self(1 << bit),
+            None => Self::NONE,
+        }
+    }
+
+    /// The bits a layout code takes (`code`).
+    pub const CODE_BITS: u32 = 3;
+
+    /// One kind as a code of `CODE_BITS` bits: 0 for none, else its bit's
+    /// place from the narrowest kind up, from 1, so a wider kind has the
+    /// larger code. A set of more than one kind has none.
+    #[must_use]
+    pub const fn code(self) -> Option<u32> {
+        match self.0 {
+            0 => Some(0),
+            bits if bits.is_power_of_two() && bits <= Self::DOUBLE_BLANKLINE.0 => Some(bits.trailing_zeros() + 1),
+            _ => None,
+        }
+    }
+
+    /// The kind a code of `CODE_BITS` bits names (`code`); none past the
+    /// widest kind.
+    #[must_use]
+    pub const fn of_code(code: u32) -> Option<Self> {
+        match code {
+            0 => Some(Self::NONE),
+            #[allow(clippy::cast_possible_truncation, reason = "a code past the widest kind is refused above")]
+            1..=6 => Some(Self(1 << (code - 1) as u8)),
+            _ => None,
+        }
+    }
+
     /// The seam rank of one kind: a run of spaces, then no whitespace at all,
     /// then a run by how many lines it breaks. See [`crate::spacing::SeamRank`].
     #[must_use]
@@ -77,6 +113,12 @@ impl LayoutKinds {
             Self::DOUBLE_BLANKLINE => Self::BLANKLINE,
             _ => Self::NONE,
         }
+    }
+
+    /// The kinds of the set that do not break the line.
+    #[must_use]
+    pub const fn without_breaks(self) -> Self {
+        Self(self.0 & !Self::BREAKING.0)
     }
 
     /// The text of one kind when a writer holds no whitespace table.

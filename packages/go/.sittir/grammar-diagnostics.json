@@ -2531,294 +2531,6 @@
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.logical.or.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.parenthesized.expression: expression.call.member has no arm that fits expression's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.logical.or.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.logical.and.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.logical.and.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.not_equal.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.not_equal.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.less_equal.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.less_equal.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.less.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.less.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.greater_equal.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.greater_equal.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.greater.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.greater.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.equal.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.comparison.equal.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.xor.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.xor.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.or.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.or.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.and.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.bitwise.and.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.subtract.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.subtract.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.multiply.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.multiply.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.modulo.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.modulo.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.divide.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.divide.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.add.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.arithmetic.add.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.binary.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "type.array.length: expression.call.member has no arm that fits length's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
@@ -2907,10 +2619,10 @@
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "element.spread.expression: expression.call.member has no arm that fits expression's seats"
+    "message": "element.spread: 5 arms of literal.number.integer fit expression's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
@@ -2918,327 +2630,223 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment: operator has no exact set"
+    "message": "expression.assignment: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.add.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.assignment.compound.add: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.add.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.assignment.compound.bitwise_and: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.add.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.assignment.compound.bitwise_or: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.add.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.assignment.compound.bitwise_xor: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.assignment.compound.divide: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.assignment.compound.modulo: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.assignment.compound.multiply: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_and.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.assignment.compound.shift_left: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.assignment.compound.shift_right: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.assignment.compound.subtract: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_or.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.arithmetic.add: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.arithmetic.divide: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.arithmetic.modulo: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.arithmetic.multiply: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.bitwise_xor.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.arithmetic.subtract: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.divide.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.bitwise.and: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.divide.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.bitwise.or: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.divide.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.bitwise.xor: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.divide.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.comparison.equal: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.modulo.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.comparison.greater: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.modulo.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.comparison.greater_equal: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.modulo.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.comparison.less: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.modulo.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.comparison.less_equal: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.multiply.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.comparison.not_equal: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.multiply.left: expression.call.member has no arm that fits left's seats"
+    "message": "expression.binary.logical.and: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
     "grammar": "go",
-    "code": "portable-emit-unplaced-path",
+    "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "expression.assignment.compound.multiply.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.multiply.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_left.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_left.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_left.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_left.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_right.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_right.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_right.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.shift_right.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.subtract.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.subtract.left: expression.call.member has no arm that fits left's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.subtract.right: expression.call.member has no arm that fits right's seats"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unplaced-path",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "expression.assignment.compound.subtract.right: expression.call.member has no arm that fits right's seats"
+    "message": "expression.binary.logical.or: 5 arms of literal.number.integer fit left's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
@@ -3327,6 +2935,14 @@
     "severity": "warning",
     "canProceed": true,
     "message": "expression.member: operand has no exact set"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-emit-unfit-slot",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "expression.parenthesized: 5 arms of literal.number.integer fit expression's seats, and nothing picks arm 83 among them"
   },
   {
     "scope": "grammar",
@@ -3446,39 +3062,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "literal.boolean.false: arm 72 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.boolean.true: arm 71 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.null: arm 70 builds through its holder"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
     "message": "literal.number.float: literal.number.float's number arm 86 has no slots that spell its value"
-  },
-  {
-    "scope": "grammar",
-    "grammar": "go",
-    "code": "portable-emit-unfit-slot",
-    "severity": "warning",
-    "canProceed": true,
-    "message": "literal.number.integer: arm 82 builds through its holder"
   },
   {
     "scope": "grammar",
@@ -3590,7 +3174,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.boolean: a preset at  that is not one keyword or text"
+    "message": "type.primitive.boolean: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3598,7 +3182,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.character: a preset at  that is not one keyword or text"
+    "message": "type.primitive.character: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3606,7 +3190,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.floating.float32: a preset at  that is not one keyword or text"
+    "message": "type.primitive.floating.float32: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3614,7 +3198,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.floating.float64: a preset at  that is not one keyword or text"
+    "message": "type.primitive.floating.float64: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3622,7 +3206,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int16: a preset at  that is not one keyword or text"
+    "message": "type.primitive.integral.int16: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3630,7 +3214,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int32: a preset at  that is not one keyword or text"
+    "message": "type.primitive.integral.int32: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3638,7 +3222,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int64: a preset at  that is not one keyword or text"
+    "message": "type.primitive.integral.int64: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3646,7 +3230,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.int8: a preset at  that is not one keyword or text"
+    "message": "type.primitive.integral.int8: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3654,7 +3238,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.integral.size: a preset at  that is not one keyword or text"
+    "message": "type.primitive.integral.size: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3662,7 +3246,7 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.string: a preset at  that is not one keyword or text"
+    "message": "type.primitive.string: a preset at  below a holder with no builder"
   },
   {
     "scope": "grammar",
@@ -3670,6 +3254,14 @@
     "code": "portable-emit-unfit-slot",
     "severity": "warning",
     "canProceed": true,
-    "message": "type.primitive.unchecked: a preset at  that is not one keyword or text"
+    "message": "type.primitive.unchecked: a preset at  below a holder with no builder"
+  },
+  {
+    "scope": "grammar",
+    "grammar": "go",
+    "code": "portable-emit-type",
+    "severity": "warning",
+    "canProceed": true,
+    "message": "portable/build.ts:2080: TS2367 This comparison appears to be unintentional because the types 'number | bigint' and 'string' have no overlap."
   }
 ]

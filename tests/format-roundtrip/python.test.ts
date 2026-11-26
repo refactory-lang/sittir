@@ -1,6 +1,6 @@
 /**
- * Format roundtrip for the Python fixtures: the native reader records each
- * fixture's inferred render options, and an edit with `$with` changes only the slot it replaces.
+ * Format roundtrip for the Python fixtures: a parse that adopts each fixture's
+ * style renders it in the fixture's indentation, and an edit with `$with` changes only the slot it replaces.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -9,7 +9,8 @@ import python from '@sittir/python';
 import {
 	loadFixtureSource,
 	loadFormatCorpusEntries,
-	parseNativeFixture,
+	firstIndent,
+	renderDetachedFixture,
 	tryLoadNativeEngine
 } from './helpers.ts';
 
@@ -19,17 +20,14 @@ describe('format-roundtrip python fixtures', () => {
 	for (const entry of pyFixtures) {
 		it.todo(`${entry.fixture}: byte-equal roundtrip (Phase 2 — needs slot/indent restoration)`);
 
-		it(`${entry.fixture}: the parse records the indent unit its source infers`, () => {
+		it(`${entry.fixture}: a parse that adopts its style renders a detached copy in its indentation`, () => {
 			const engine = tryLoadNativeEngine('python');
 			if (!engine) return; // skip — native not built
 
 			const source = loadFixtureSource(entry.fixture);
-			const parsed = parseNativeFixture(engine, source);
-
+			expect(firstIndent(renderDetachedFixture(engine, source, true))).toBe(firstIndent(source));
 			if (entry.formatCategory !== 'canonical') {
-				expect(parsed.options).toHaveProperty(['layout', 'indent']);
-			} else {
-				expect(parsed.options).toEqual({});
+				expect(firstIndent(renderDetachedFixture(tryLoadNativeEngine('python')!, source, false))).not.toBe(firstIndent(source));
 			}
 		});
 	}
@@ -49,7 +47,7 @@ describe('US2 — edit isolation (python)', () => {
 		expect(edited.$render()).toBe(named.$render().replace('find_user', 'lookup_user'));
 	});
 
-	it('python-4space.py: rename find_user through the root\'s $with changes only the name\'s bytes', async () => {
+	it('python-4space.py: rename find_user through the root\'s $with changes the name\'s bytes alone, the rebuilt list keeping the blank lines the source set its items apart with', async () => {
 		const engine = await createEngine(python);
 		const source = loadFixtureSource('python-4space.py');
 		const root = engine.parse(source);
@@ -61,8 +59,8 @@ describe('US2 — edit isolation (python)', () => {
 		if (named === undefined || !engine.is.functionDefinition(named)) throw new Error('expected find_user');
 		const at = source.indexOf('def find_user(') + 'def '.length;
 		expect(source.indexOf('def find_user(', at)).toBe(-1);
-		const expected = `${source.slice(0, at)}lookup_user${source.slice(at + 'find_user'.length)}`;
-		const renamed = named.$with.name(engine.build.identifier('lookup_user'));
-		expect(root.$with.statements(...statements.map((statement, at) => (at === index ? renamed : statement))).$render()).toBe(expected);
+		const renamed = `${source.slice(0, at)}lookup_user${source.slice(at + 'find_user'.length)}`;
+		const edited = named.$with.name(engine.build.identifier('lookup_user'));
+		expect(root.$with.statements(...statements.map((statement, at) => (at === index ? edited : statement))).$render()).toBe(renamed);
 	});
 });

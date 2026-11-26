@@ -39,19 +39,19 @@ export const ORPHANS: Record<string, readonly (readonly [string, string])[]> = {
 		['x = (/* c */ undefined);', 'x = (/* c */ undefined);'],
 		['x = (/* c */ true);', 'x = (/* c */ true);'],
 		['x = (/* c */ null);', 'x = (/* c */ null);'],
-		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B { m() { (/* c */ super).m(); } }'],
-		['for (/* c */;;) {}', 'for (/* c */;;) {}'],
-		['x = (// c\n this);', 'x = (// c\n this);'],
+		['class A extends B { m() { (/* c */ super).m(); } }', 'class A extends B {\n  m() {\n    (/* c */ super).m();\n  }\n}'],
+		['for (/* c */;;) {}', 'for (/* c */ ;;) {}'],
+		['x = (// c\n this);', 'x = (// c\nthis);'],
 		['x = (this /* c */);', 'x = (this /* c */);']
 	],
 	rust: [
-		['fn f() { (/* c */ self); }', 'fn f() { (/* c */ self); }'],
-		['fn f() { (self /* c */); }', 'fn f() { (self /* c */); }'],
-		['fn f() { (// c\n self); }', 'fn f() { (// c\n self); }']
+		['fn f() { (/* c */ self); }', 'fn f() {\n    (/* c */ self);\n}'],
+		['fn f() { (self /* c */); }', 'fn f() {\n    (self /* c */);\n}'],
+		['fn f() { (// c\n self); }', 'fn f() {\n (// c\n self);\n}']
 	],
 	python: [
-		['x = (  # c\n    True)\n', 'x = ( # c\n    True)\n'],
-		['x = (  # c\n    True) + 1\n', 'x = ( # c\n    True) + 1\n'],
-		['a = 1; x = (  # c\n    True)\n', 'a = 1; x = ( # c\n    True)\n']
+		['x = (  # c\n    True)\n', 'x = ( # c\nTrue)\n'],
+		['x = (  # c\n    True) + 1\n', 'x = ( # c\nTrue) + 1\n'],
+		['a = 1; x = (  # c\n    True)\n', 'a = 1; x = ( # c\nTrue)\n']
 	]
 };

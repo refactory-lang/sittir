@@ -91,8 +91,8 @@ describe('a class method defaults to no terminator', () => {
 			const body = declaration.$query().$descendants.ofType(ts.kinds.ClassBody).at(0);
 			return ts.render(body.$with.members(...body.members())).toString();
 		};
-		expect(rebuilt('class A { foo() {} }\n')).toBe('{ foo() {} }');
-		expect(rebuilt('class A { foo() {}; }\n')).toBe('{ foo() {}; }');
+		expect(rebuilt('class A { foo() {} }\n')).toBe('{\n  foo() {}\n}');
+		expect(rebuilt('class A { foo() {}; }\n')).toBe('{\n  foo() {};\n}');
 	});
 });
 

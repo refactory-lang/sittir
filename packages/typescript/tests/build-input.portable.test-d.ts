@@ -1,5 +1,6 @@
 import type * as V from '../../types/src/vocabulary/index.ts';
 import type { TypeScriptMap } from '../src/portable/map.ts';
+import { TSKindId } from '../src/kinds.ts';
 
 type Element = NonNullable<V.BuildInput<TypeScriptMap, 'expression.collection.list'>['elements']>[number];
 
@@ -11,6 +12,10 @@ export const byText: Element = { $path: 'literal.number', $value: '1' };
 declare const callRead: V.Read<TypeScriptMap, 'expression.call'>;
 // @ts-expect-error an import type's source reads only as a string literal
 export const callImportSource: V.BuildInput<TypeScriptMap, 'type.import'>['source'] = callRead;
+
+type Getter = V.BuildInput<TypeScriptMap, 'declaration.member.property.getter'>;
+type Expect<X extends true> = X;
+export type GetterTakesNoParameters = Expect<'parameters' extends keyof Getter ? false : true>;
 
 export const classDecorators: V.BuildInput<TypeScriptMap, 'declaration.type.class'>['decorators'] = ['x'];
 // @ts-expect-error a decorator reads as its expression, so no path names the decorator
@@ -50,3 +55,10 @@ export const caseReadsNoVariable: [Extract<CaseStatementRead, { readonly $path: 
 
 export const bodilessModule: V.Read<TypeScriptMap, 'declaration.module.external'> = { $path: 'declaration.module.external', name: 'm' };
 export const emptyModule: V.BuildInput<TypeScriptMap, 'declaration.module'> = { $path: 'declaration.module', name: 'M', statements: [] };
+
+type ArgumentValue = V.BuildInput<TypeScriptMap, 'argument'>['value'];
+
+export const nullStructure: ArgumentValue = { $path: 'literal.null' };
+export const nullRead: V.Read<TypeScriptMap, 'argument'>['value'] = { $path: 'literal.null' };
+// @ts-expect-error a fixed word reads as its structure, never as a bare kind id
+export const nullKindId: V.Read<TypeScriptMap, 'argument'>['value'] = TSKindId.Null;

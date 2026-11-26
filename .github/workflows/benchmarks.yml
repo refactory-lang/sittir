@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark == 'oxc-reference' && format('oxc-reference {0}', inputs.feature-ref) || (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'phase-profile' || inputs.benchmark == 'alloc-count') && format('{0} {1} vs {2}{3}', inputs.benchmark == 'phase-profile' && format('{0}-phase-profile', inputs.phase) || inputs.benchmark == 'alloc-count' && format('{0}-allocs', inputs.phase) || inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
+run-name: Arena benchmarks (${{ inputs.benchmark == 'oxc-reference' && format('oxc-reference {0}', inputs.feature-ref) || (inputs.benchmark == 'paired-refs' || inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'phase-profile' || inputs.benchmark == 'phase-time' || inputs.benchmark == 'phase-flat' || inputs.benchmark == 'alloc-count') && format('{0} {1} vs {2}{3}', inputs.benchmark == 'phase-profile' && format('{0}-phase-profile', inputs.phase) || inputs.benchmark == 'phase-time' && format('{0}-phase-time', inputs.phase) || inputs.benchmark == 'phase-flat' && format('{0}-phase-flat', inputs.phase) || inputs.benchmark == 'alloc-count' && format('{0}-allocs', inputs.phase) || inputs.benchmark, inputs.feature-ref, inputs.master-ref, inputs.candidates && format(' + {0}', inputs.candidates) || '') || format('{0}, paired node backends', inputs.benchmark) }})
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, corpus, paired-refs, probe, profile, waiting, parse-profile, phase-profile, alloc-count, oxc-reference]
+        options: [all, corpus, paired-refs, probe, profile, waiting, parse-profile, phase-profile, phase-time, phase-flat, alloc-count, oxc-reference]
       baseline:
         description: all and corpus. A commit to measure beside this one in the same rounds. Empty takes the merge-base with master; none measures this one alone.
         type: string
@@ -35,10 +35,10 @@ on:
         type: string
         default: python regex typescript
       phase:
-        description: phase-profile and alloc-count. The corpus phase run. phase-profile samples parse or render natively under perf, or edit as JavaScript frames under the inspector's Profiler; alloc-count counts any phase's allocations natively.
+        description: phase-profile, phase-time, phase-flat and alloc-count. The corpus phase run; built, the render of built Rust function items; or worker, the paired construction worker's whole timed loop (both with grammars rust). phase-profile samples parse, render, built or worker natively under perf, or edit as JavaScript frames under the inspector's Profiler; alloc-count counts any phase's allocations natively; phase-time times any phase with no profiler, and phase-flat samples it by shared object and symbol with no call chains, both on the builds a paired run measures.
         type: choice
         default: render
-        options: [parse, render, edit]
+        options: [parse, render, edit, built, worker]
       storage:
         description: phase-profile and alloc-count. The node storage the phase runs in.
         type: choice
@@ -54,6 +54,10 @@ on:
         default: ''
       build-path:
         description: paired-refs and probe. A commit whose change to the build driver every tree's addons are built with. A tree it applies to is patched, any other tree is built as it is, and every tree's stamps must agree. Empty builds each tree with its own.
+        type: string
+        default: ''
+      rustflags:
+        description: paired-refs. RUSTFLAGS every tree's addons are built with, the same for every tree (for example -C llvm-args=-align-all-functions=6); empty builds them with none.
         type: string
         default: ''
       identity:
@@ -154,6 +158,7 @@ jobs:
       arena: ${{ inputs.arena }}
       candidates: ${{ inputs.candidates }}
       build-path: ${{ inputs.build-path }}
+      rustflags: ${{ inputs.rustflags }}
       identity: ${{ inputs.identity }}
   oxc-reference:
     permissions:
@@ -167,11 +172,11 @@ jobs:
   probe:
     permissions:
       contents: write
-    if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'phase-profile' || inputs.benchmark == 'alloc-count'
+    if: inputs.benchmark == 'probe' || inputs.benchmark == 'profile' || inputs.benchmark == 'waiting' || inputs.benchmark == 'parse-profile' || inputs.benchmark == 'phase-profile' || inputs.benchmark == 'phase-time' || inputs.benchmark == 'phase-flat' || inputs.benchmark == 'alloc-count'
     uses: ./.github/workflows/benchmark-probe.yml
     with:
       runner: ${{ inputs.runner }}
-      script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || inputs.benchmark == 'waiting' && 'run-waiting.py' || inputs.benchmark == 'parse-profile' && 'run-parse-profile.py' || (inputs.benchmark == 'phase-profile' || inputs.benchmark == 'alloc-count') && 'run-phase-profile.py' || 'run-probe.py' }}
+      script: ${{ inputs.benchmark == 'profile' && 'run-profile.py' || inputs.benchmark == 'waiting' && 'run-waiting.py' || inputs.benchmark == 'parse-profile' && 'run-parse-profile.py' || (inputs.benchmark == 'phase-profile' || inputs.benchmark == 'alloc-count') && 'run-phase-profile.py' || inputs.benchmark == 'phase-time' && 'run-phase-time.py' || inputs.benchmark == 'phase-flat' && 'run-phase-flat.py' || 'run-probe.py' }}
       native-profiler: ${{ inputs.benchmark == 'alloc-count' || inputs.benchmark == 'phase-profile' && inputs.phase != 'edit' }}
       phase: ${{ inputs.phase }}
       measure: ${{ inputs.benchmark == 'alloc-count' && 'allocs' || 'samples' }}

@@ -332,7 +332,7 @@ The cascade over a parsed record walks its parsed cells (child cells and list ru
 - A parsed read stores no offset and no row for a fixed token or a unit.
 - The four readers answer as today on every fixture, from positions, the render body and facts stamped at parse.
 - A parsed unit cell is the built unit cell.
-- Read words fall to the "stage one" column on every corpus, less the measured cost of the stamped separator choices.
+- Read words fall to the "stage one" column on every corpus, less the measured cost of the stamped separator choices and of each read's own side record. That record came after the census. It holds the read's spans, which navigation and the keying of written sides read, and its entry starts, which let a render skip a frame with no entry. It costs 5 words for a read of one chunk run with no starts, plus 2 for each further run and 1 for each start. (The maintainer, 2026-11-24, accepting it over cutting its encoding: python sat 73 words over stage one and regex 92, each only by this record.)
 
 ## Non-goals
 

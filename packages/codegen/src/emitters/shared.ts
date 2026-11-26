@@ -1339,16 +1339,6 @@ export function escForSource(s: string): string {
 		.replace(/\t/g, '\\t');
 }
 
-export function slotSeparatorTexts(f: AssembledNonterminal, elidedOnly: boolean): string[] {
-	return [
-		...new Set(
-			f.values
-				.filter((v) => (elidedOnly ? v.optionalElement === true : true) && v.separator !== undefined)
-				.map((v) => v.separator as string)
-		)
-	];
-}
-
 export const DELIMITER_IMPORT = "import { Delimiter } from '@sittir/common/utils';";
 
 const NAMED_IMPORT = /^(import (?:type )?)\{ (.*) \}( from .*)$/;

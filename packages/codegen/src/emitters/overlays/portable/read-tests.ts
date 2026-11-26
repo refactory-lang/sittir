@@ -223,7 +223,8 @@ export function portableFactOf(
 	};
 	const [container] = entry.claim.within;
 	if (container === undefined || container === WILDCARD) return refuse('its claim names no container');
-	if (placed.some((condition) => condition.up !== 1) || placed.length !== test.length) return refuse('its tests reach past its container or test the node itself');
+	if (placed.some((condition) => condition.up !== 1)) return refuse('its tests reach past its container');
+	const own = test.filter((condition) => condition.up === 0).map((condition) => loweredPlan(condition.via, condition.plan));
 	if (!sameJson(placed.map((condition) => condition.via[0]))) return refuse('its tests reach more than one slot of its container');
 	const site = entry.claim.predicates.find((predicate) => predicate.subject?.up === 1)?.subject?.down[0];
 	const held = site === undefined ? undefined : heldSteps(model, container, site);
@@ -248,6 +249,7 @@ export function portableFactOf(
 		slot,
 		items: { slots: placed[0]!.via[0]!.slots },
 		test: plans.length === 1 ? plans[0]! : { op: 'and', of: plans },
+		...(own.length === 0 ? {} : { own: own.length === 1 ? own[0]! : { op: 'and', of: own } }),
 		...(entered.every((spelled) => spelled !== undefined) && sameJson(entered) ? { spelled: entered[0]! } : {}),
 		...(same === undefined ? {} : { same })
 	};

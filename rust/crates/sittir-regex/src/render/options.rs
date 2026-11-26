@@ -326,10 +326,6 @@ pub const DEDENT_KIND: KindId = KindId(0);
 pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
 ];
 
-/// Per kind id, the stretches of its children its template indents one level, by their anchors.
-pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
-];
-
 #[must_use]
 pub fn spacing_text(kind: KindId) -> &'static str {
     match kind {
