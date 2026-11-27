@@ -16,7 +16,8 @@ import {
 	layoutNodeOf,
 	storageKindOfRef,
 	type AssembledNode,
-	type NodeOrTerminal
+	type NodeOrTerminal,
+	type SeparatorTokenArm
 } from './node-map.ts';
 import { spacingSitesOf, type EdgeArm, type RenderRules, type SeatedChild } from './render-rules.ts';
 import { readOptionsBlock, type OptionsConfig } from '../../dsl/wire/options-block.ts';
@@ -43,6 +44,7 @@ export type PreferenceSource = 'declared' | 'spacing' | 'delimiter' | 'separator
 export interface PreferenceArm {
 	readonly value: string;
 	readonly kind?: string;
+	readonly separatorArm?: SeparatorTokenArm;
 }
 
 export interface SitePreference {
@@ -152,14 +154,14 @@ function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boole
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
 		const slot = node.slots[0]?.name;
 		if (slot === undefined) continue;
-		const arms = separatorArmKinds(node, config);
+		const arms = separatorArms(node, config);
 		const address = `${slot}_${SEPARATOR_LABEL}`;
 		out.push({
 			kind,
 			slot,
 			address,
 			label: SEPARATOR_LABEL,
-			arms: arms.map((value) => ({ value, kind: value })),
+			arms,
 			defaultArm: UNDECLARED_ARM,
 			source: 'separator'
 		});
@@ -242,17 +244,22 @@ function registerSlot(nodeMap: NodeMap, site: SiteCandidate, arm: string, mode: 
 	if (mode === 'choice') slot.storageInfo = undefined;
 }
 
-function separatorArmKinds(node: AssembledList, config: SitePreferencesConfig): string[] {
+function separatorArms(node: AssembledList, config: SitePreferencesConfig): PreferenceArm[] {
 	return node.separatorTokenArms.map((arm) => {
-		if (arm.type === STRING) {
-			const name = tokenKind(arm.value, config);
-			if (name === undefined) throw emitShapeFailure({ code: 'separator-token-without-kind', message: `defaults: separator token '${arm.value}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog` });
-			return name;
-		}
-		const entry = arm.kindId === undefined ? undefined : config.kindEntries.find((candidate) => candidate.id === arm.kindId);
-		if (entry === undefined) throw emitShapeFailure({ code: 'separator-token-without-kind', message: `defaults: separator token '${arm.name}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog` });
-		return displayNameOfEntry(entry, config.kindEntries);
+		const kind = separatorArmKind(arm, node, config);
+		return { value: kind, kind, separatorArm: arm };
 	});
+}
+
+function separatorArmKind(arm: SeparatorTokenArm, node: AssembledList, config: SitePreferencesConfig): string {
+	if (arm.type === STRING) {
+		const name = tokenKind(arm.value, config);
+		if (name === undefined) throw emitShapeFailure({ code: 'separator-token-without-kind', message: `defaults: separator token '${arm.value}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog` });
+		return name;
+	}
+	const entry = arm.kindId === undefined ? undefined : config.kindEntries.find((candidate) => candidate.id === arm.kindId);
+	if (entry === undefined) throw emitShapeFailure({ code: 'separator-token-without-kind', message: `defaults: separator token '${arm.name}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog` });
+	return displayNameOfEntry(entry, config.kindEntries);
 }
 
 function tokenKind(text: string, config: SitePreferencesConfig): string | undefined {

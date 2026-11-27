@@ -17,6 +17,8 @@ import type {
 	LabelProvenance
 } from '../../types/rule.ts';
 import { isBlank, isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
+import { shortestPatternText } from '../../util/pattern-pieces.ts';
+import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import {
 	literalTextOf,
 	isLinkSymbol,
@@ -1713,10 +1715,21 @@ export interface SeparatorTextCtx {
 	readonly nodes: ReadonlyMap<string, AssembledNodeBase>;
 }
 
+export function separatorTextOfArm(arm: SeparatorTokenArm, owner: string, ctx: SeparatorTextCtx): string {
+	if (arm.type === STRING) return arm.value;
+	const node = ctx.nodes.get(arm.name);
+	const text = fixedTextOfKind(node) ?? (node instanceof AssembledPattern && node.pattern !== undefined ? shortestPatternText(node.pattern) || undefined : undefined);
+	if (text === undefined) {
+		throw emitShapeFailure({
+			code: 'separator-without-text',
+			message: `separator kind '${arm.name}' of ${owner} has no text: it is not a fixed-text kind, and its pattern has no one shortest text`
+		});
+	}
+	return text;
+}
+
 export function separatorCandidateTexts(list: AssembledList, ctx: SeparatorTextCtx): readonly { readonly name: string; readonly text: string }[] {
-	return list.separatorTokenArms.map((arm) =>
-		arm.type === STRING ? { name: arm.value, text: arm.value } : { name: arm.name, text: fixedTextOfKind(ctx.nodes.get(arm.name)) ?? arm.name }
-	);
+	return list.separatorTokenArms.map((arm) => ({ name: arm.type === STRING ? arm.value : arm.name, text: separatorTextOfArm(arm, list.kind, ctx) }));
 }
 
 export function isDepthLeaf(node: AssembledNode): boolean {

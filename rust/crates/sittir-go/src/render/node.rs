@@ -25075,7 +25075,7 @@ fn render_var_spec<N: VarSpecFields + ?Sized>(node: &N, w: &mut dyn ::sittir_cor
 }
 
 fn render_var_spec_list<N: VarSpecListFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let var_spec_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "source_file_text", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
+    let var_spec_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "\n", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
     let var_spec = ListView {
         items: node.var_spec(),
         template: "{}",
@@ -26562,7 +26562,7 @@ fn render_source_file_arm2<N: SourceFileArm2Fields + ?Sized>(node: &N, w: &mut d
 }
 
 fn render_import_specs<N: ImportSpecsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "source_file_text", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "\n", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
     let item = ListView {
         items: node.item(),
         template: "{}",
@@ -26623,7 +26623,7 @@ fn render_parameter_list_elements<N: ParameterListElementsFields + ?Sized>(node:
 }
 
 fn render_type_declaration_elements<N: TypeDeclarationElementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "source_file_text", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "\n", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
     let item = ListView {
         items: node.item(),
         template: "{}",
@@ -26664,7 +26664,7 @@ fn render_type_elems<N: TypeElemsFields + ?Sized>(node: &N, w: &mut dyn ::sittir
 }
 
 fn render_field_declarations<N: FieldDeclarationsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "source_file_text", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "\n", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
     let item = ListView {
         items: node.item(),
         template: "{}",
@@ -26685,7 +26685,7 @@ fn render_field_declarations<N: FieldDeclarationsFields + ?Sized>(node: &N, w: &
 }
 
 fn render_interface_elems<N: InterfaceElemsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "source_file_text", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "\n", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
     let item = ListView {
         items: node.item(),
         template: "{}",
@@ -26706,7 +26706,7 @@ fn render_interface_elems<N: InterfaceElemsFields + ?Sized>(node: &N, w: &mut dy
 }
 
 fn render_statements<N: StatementsFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "source_file_text", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "\n", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
     let item = ListView {
         items: node.item(),
         template: "{}",
@@ -26824,7 +26824,7 @@ fn render_import_spec_list_group<N: ImportSpecListGroupFields + ?Sized>(node: &N
 }
 
 fn render_const_declaration_arm<N: ConstDeclarationArmFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let const_spec_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "source_file_text", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
+    let const_spec_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(2) => "\n", KindId(13) => ";", KindId(14) => "\u{0}", _ => "\n" };
     let const_spec = ListView {
         items: node.const_spec(),
         template: "{}",

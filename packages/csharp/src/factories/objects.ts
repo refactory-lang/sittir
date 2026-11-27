@@ -79,7 +79,7 @@ export const _leafRe_buildStringLiteralEncoding = /^(?:(?:(u|U)8))$/u;
 export const _leafRe_buildRawStringLiteralText = _leafRe_buildStringLiteralEncoding;
 export const _leafRe_buildIdentifierToken =
 	/^(?:(?:@)?(?:(\p{XID_Start}|_|\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8})(\p{XID_Continue}|\\u[0-9A-Fa-f]{4}|\\U[0-9A-Fa-f]{8})*))$/u;
-export const _leafRe_buildPreprocIfText2 = /^(?:(?:\n))$/u;
+export const _leafRe_buildPreprocIfText2 = /^(?:(?:\n+))$/u;
 export const _leafRe_buildPreprocArg = /^(?:(?:[^\x09-\x0D\x20]([^/\n]|\/[^*]|\\\r?\n)*))$/u;
 export const _leafRe_buildIntegerLiteralArm1 = /^(?:(?:([0-9][0-9_]*[0-9]|[0-9]))(?:(?:([uU][lL]?|[lL][uU]?)))?)$/u;
 export const _leafRe_buildIntegerLiteralArm2 =

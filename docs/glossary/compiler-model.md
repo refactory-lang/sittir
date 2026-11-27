@@ -3308,9 +3308,9 @@ Where a site preference comes from: `declared` (a labelled slot arm),
 literal separator tokens). The options emitter groups by it: `delimiter`
 and `separator` sites are per-kind keys with no top-level label.
 
-### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArmKinds`
+### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArmKind`
 
-The catalog kinds of a list's separator token arms (`AssembledList.separatorTokenArms`): a string arm's token kind, a symbol arm's display name. A token with no catalog kind is a build error naming the list.
+The catalog kind of one of a list's separator token arms (`AssembledList.separatorTokenArms`): a string arm's token kind, or a symbol arm's display name. A token with no catalog kind is a build error naming the list.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig::renderRules`
 
@@ -5932,7 +5932,7 @@ The surface a render template exposes.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::separatorCandidateTexts`
 
-The candidate texts a separator may take.
+Each separator arm of a list with the text it writes (`separatorTextOfArm`), keyed by the arm's kind name, or by the value for a string arm. The render module's separator match and boundary rows read it, and so does the kind-literal table in `types.ts`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::SeparatorTextCtx`
 
@@ -5968,11 +5968,15 @@ A separator that is spaced by its render rule.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceArm`
 
-One arm of a site preference.
+One arm of a site preference. A separator site's arm carries `separatorArm`, the list's separator token arm it stands for. The arm's text is not stamped here: the diagnostics pass builds these sites before `stampIrSurface` stamps `renderAs` texts. At emit, `render-options-rs.ts::planRenderOptions` gets the default arm's text from `separatorArm` through `node-map.ts::separatorTextOfArm`.
 
 ### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig`
 
 The configuration of the site preferences.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::separatorArms`
+
+The arms of a list's separator site: for each separator token arm, its catalog kind (`separatorArmKind`) as value and kind, plus the token arm itself as `separatorArm` (`PreferenceArm`).
 
 ### `packages/codegen/src/compiler/model/sub-factories.ts::FlattenedSeat`
 
@@ -6321,6 +6325,10 @@ Which arms of one required choice hold a slot, and whether each arm requires it.
 ### `packages/codegen/src/compiler/model/node-map.ts::mergeArmsHeld`
 
 Joins the arm stamps of two same-named slots that merge into one, whether `mergeChoiceArms` merges them across a choice's arms or `mergedSlot` folds them: the merged slot holds every arm either held, an arm held by both keeping the first's requiredness. A slot with no stamp takes the other's.
+
+### `packages/codegen/src/compiler/model/node-map.ts::separatorTextOfArm`
+
+The text sittir writes for one separator arm of a list. A string arm writes its value. A fixed-text kind writes its literal (`fixedTextOfKind`). A pattern kind writes the one shortest text its pattern admits (`util/pattern-pieces.ts::shortestPatternText`), so Go's statement terminator `\n+` writes a newline. Any other separator kind halts emit with `separator-without-text`, naming the kind and its owner. This is the only derivation of a separator's text. `separatorCandidateTexts` maps a list's arms through it, and `planRenderOptions` runs the separator site's default arm (`site-preferences.ts::PreferenceArm`) through it. It is called at emit, after `stampIrSurface` has stamped `renderAs` texts: TypeScript's `_automatic_semicolon` has its text (`'\n'`) only from `renderAs`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

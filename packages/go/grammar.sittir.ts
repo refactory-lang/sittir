@@ -32,6 +32,9 @@ export default grammar(enrich(base), wire({
 			}
 		},
 		special_argument_list_group: { '2/0': field('trailing_comma') },
-		type_conversion_expression: { '3/0': field('trailing_comma') }
+		type_conversion_expression: { '3/0': field('trailing_comma') },
+		// The extras' `\s` also matches `\n`, so the lexer reads a whole run of
+		// line breaks as this terminator; the rule says what the lexer reads.
+		source_file_text: { '.': /\n+/ }
 	}
 }));

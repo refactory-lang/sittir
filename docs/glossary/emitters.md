@@ -12696,9 +12696,11 @@ and `DEDENT_KIND` are the ids of the kinds whose text is `INDENT_TEXT` and
 `DEDENT_TEXT`, zero when the grammar declares neither.
 
 A `source: 'separator'` site becomes a spacing-table row under its kind
-(`SITE_<KIND>_<SLOT>_SEPARATOR`) that fills `separator_kind`; its
-default's token text is stamped on the row as `defaultText` here, where
-the kind catalog is in hand, so the render emitter never re-derives it.
+(`SITE_<KIND>_<SLOT>_SEPARATOR`) that fills `separator_kind`. The
+default arm's text (`node-map.ts::separatorTextOfArm`, from the arm's
+`separatorArm`) is stamped on the row as `defaultText` here, so the render
+emitter never re-derives it. A default that names no arm of the site halts
+with `separator-default-without-text`.
 
 A row's strength is what the sink writes the site's default arm at:
 `SiteSpec` carries it into the resolved options, and `site_arm`/`edge_arm`

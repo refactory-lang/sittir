@@ -6,7 +6,7 @@ import type { KindEntryLike } from '../dsl/symbol-table.ts';
 import { rustStringLiteral } from '../util/string-literal.ts';
 import { findEntryForKindName } from '../dsl/symbol-table.ts';
 import { Delimiter } from '@sittir/common/delimiter';
-import { AssembledLeaf } from '../compiler/model/node-map.ts';
+import { AssembledLeaf, separatorTextOfArm } from '../compiler/model/node-map.ts';
 import { LAYOUT_KIND_BITS, leafEdgesOf, terminatorOnlyKinds } from '../compiler/model/layout-kinds.ts';
 import {
 	BLANK_ARM,
@@ -212,8 +212,9 @@ export function planRenderOptions(
 			continue;
 		}
 		if (site.source === 'separator') {
-			const defaultEntry = findEntryForKindName(kindEntries, site.defaultArm);
-			if (defaultEntry?.literalText === undefined) throw emitShapeFailure({ code: 'separator-default-without-text', message: `options.rs: ${at} separator default '${site.defaultArm}' has no token text` });
+			const defaultArm = site.arms.find((arm) => arm.value === site.defaultArm)?.separatorArm;
+			if (defaultArm === undefined) throw emitShapeFailure({ code: 'separator-default-without-text', message: `options.rs: ${at} separator default '${site.defaultArm}' has no token text` });
+			const defaultText = separatorTextOfArm(defaultArm, site.kind, nodeMap);
 			pushSpacing({
 				display,
 				source,
@@ -228,7 +229,7 @@ export function planRenderOptions(
 				allowedIds: site.arms.map((arm) => idOf(kindEntries, arm.kind ?? arm.value, at)),
 				strength: SEAM_DECLARED,
 				role: 'separator',
-				defaultText: defaultEntry.literalText
+				defaultText
 			}, site);
 			continue;
 		}

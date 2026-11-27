@@ -100,7 +100,7 @@ export const _reservedWordList_buildIdentifier = [
 ] as const;
 export type _ReservedWord_buildIdentifier = (typeof _reservedWordList_buildIdentifier)[number];
 export const _reservedWords_buildIdentifier: ReadonlySet<string> = new Set(_reservedWordList_buildIdentifier);
-export const _leafRe_buildSourceFileText = /^(?:(?:\n))$/u;
+export const _leafRe_buildSourceFileText = /^(?:(?:\n+))$/u;
 export const _leafRe_buildIdentifier = /^(?:(?:[_\p{XID_Start}][_\p{XID_Continue}]*))$/u;
 export const _leafRe_buildRawStringLiteralContent = /^(?:(?:[^`]*))$/u;
 export const _leafRe_buildInterpretedStringLiteralContent = /^(?:(?:[^"\n\\]+))$/u;
@@ -110,7 +110,7 @@ export const _leafRe_buildIntLiteralArm4 = /^(?:0(?:(?:o|O))?(?:_)?(?:[0-7])(?:(
 export const _leafRe_buildIntLiteralArm5 = /^(?:0(?:x|X)(?:_)?(?:[0-9a-fA-F])(?:(?:_)?(?:[0-9a-fA-F]))*)$/u;
 export const _leafRe_buildFloatLiteralArm2 =
 	/^(?:(?:[0-9])(?:(?:_)?(?:[0-9]))*(?:e|E)(?:(?:\+|-))?(?:[0-9])(?:(?:_)?(?:[0-9]))*)$/u;
-export const _leafRe_buildImportSpecListArm = /^(?:(?:(?:\n)|;|\0))$/u;
+export const _leafRe_buildImportSpecListArm = /^(?:(?:(?:\n+)|;|\0))$/u;
 export const _slotRe_buildEscapeSequenceArm1_content = /^(?:(?:[^xuU]))$/u;
 export const _slotRe_buildEscapeSequenceArm2_content = /^(?:(?:[0-9]{2,3}))$/u;
 export const _slotRe_buildEscapeSequenceArm3_content = /^(?:(?:x[0-9a-fA-F]{2,}))$/u;

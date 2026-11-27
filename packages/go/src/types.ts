@@ -761,7 +761,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 
 /** Reverse of a separatedList kind's own separator-candidate resolution (factories.ts's emitSeparatedListFactory) — the exact string each candidate resolves to, keyed by its resolved id. NOT a general anonymous-token→text map: entry.symbolName (tree-sitter's raw parser production name) is unreliable for that — it can be shared across many distinct catalog kinds aliased to one token-producing rule (e.g. rust's primitive_type family), so it is deliberately not used here. Built by walking every separatedList's separatorRule with the SAME resolver (findKindEntry) the forward direction (factories.ts) already uses, guaranteeing round-trip correctness by construction. Absent for kinds that never appear as a separator candidate. */
 export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([
-	[2, 'source_file_text'],
+	[2, '\n'],
 	[13, ';'],
 	[14, '\u0000']
 ]);

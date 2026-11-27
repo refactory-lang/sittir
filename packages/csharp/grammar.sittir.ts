@@ -93,7 +93,10 @@ export default grammar(enrich(base), wire({
 				const mode = () => optional(field('mode', prec.dynamic(1, choice('ref', $.ref_readonly, 'out', 'in'))));
 				return seq(choice(seq(flag('this'), optional(field('scoped', prec.dynamic(1, 'scoped'))), mode()), seq(mode(), flag('this'))), optional(field('type', $.type)));
 			}
-		}
+		},
+		// The extras' `\s` also matches `\n`, so the lexer reads a whole run of
+		// line breaks as this directive end; the rule says what the lexer reads.
+		preproc_if_text2: { '.': /\n+/ }
 	},
 	rules: {
 		ref_readonly: vocabulary(() => seq('ref', 'readonly')),

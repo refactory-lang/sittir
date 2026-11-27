@@ -1,6 +1,6 @@
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { AssembledList, AssembledPattern, type AssembledNode, type SeparatedListElementRule } from '../node-map.ts';
+import { AssembledList, AssembledPattern, separatorCandidateTexts, type AssembledNode, type SeparatedListElementRule } from '../node-map.ts';
 import type { RenderRule, SimplifiedRule } from '../../../types/rule.ts';
 import { makeNodeMapWith } from '../../../__tests__/helpers/node-map-fixtures.ts';
 import { collectSitePreferences, undeclaredSeparatorSites } from '../site-preferences.ts';
@@ -22,7 +22,7 @@ const kindEntries = [
 	{ kind: 'semi', member: 'Semi', id: 4, symbolName: ';', literalText: ';', anon: true }
 ];
 
-function listNodeMap(separatorRule: RenderRule | undefined) {
+function listNodeMap(separatorRule: RenderRule | undefined, newlinePattern = '\\n+') {
 	const rule: SeparatedListElementRule = {
 		type: SYMBOL,
 		name: 'member',
@@ -32,6 +32,7 @@ function listNodeMap(separatorRule: RenderRule | undefined) {
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set('member_list', new AssembledList('member_list', rule, { kindEntries }, { kindEntries, separatorRule, simplifiedRule: SIMPLIFIED, renderRule: RENDER }));
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
+	nodes.set('newline', new AssembledPattern('newline', { type: PATTERN, value: newlinePattern }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
@@ -70,8 +71,8 @@ describe('collectSitePreferences — separator sites', () => {
 			address: 'member_separator',
 			label: 'separator',
 			arms: [
-				{ value: 'comma', kind: 'comma' },
-				{ value: 'semi', kind: 'semi' }
+				{ value: 'comma', kind: 'comma', separatorArm: { type: STRING, value: ',' } },
+				{ value: 'semi', kind: 'semi', separatorArm: { type: STRING, value: ';' } }
 			],
 			defaultArm: 'semi',
 			origin: 'preference',
@@ -119,11 +120,32 @@ describe('collectSitePreferences — separator sites', () => {
 			options: { member_list: { 'member:/separator/kind': preference('newline') } } as never
 		});
 		expect(sites.find((s) => s.source === 'separator')?.arms).toEqual([
-			{ value: 'comma', kind: 'comma' },
-			{ value: 'newline', kind: 'newline' }
+			{ value: 'comma', kind: 'comma', separatorArm: { type: STRING, value: ',' } },
+			{ value: 'newline', kind: 'newline', separatorArm: { type: SYMBOL, name: 'newline', kindId: 5 } }
 		]);
 		expect(() => collectSitePreferences({ nodeMap: listNodeMap(withSymbolArm), kindEntries })).toThrow(
 			/separator token 'newline' of member_list has no kind in the catalog/
 		);
+	});
+});
+
+describe('separatorCandidateTexts', () => {
+	const withSymbolArm: RenderRule = { type: CHOICE, members: [{ type: STRING, value: ',' }, { type: SYMBOL, name: 'newline', kindId: 5 }] };
+	const list = (newlinePattern: string) => {
+		const nodeMap = listNodeMap(withSymbolArm, newlinePattern);
+		return { nodeMap, list: nodeMap.nodes.get('member_list') as AssembledList };
+	};
+
+	it("writes a string arm's value and a pattern kind's one shortest text", () => {
+		const { nodeMap, list: members } = list('\\n+');
+		expect(separatorCandidateTexts(members, nodeMap)).toEqual([
+			{ name: ',', text: ',' },
+			{ name: 'newline', text: '\n' }
+		]);
+	});
+
+	it('refuses a separator kind whose pattern has no one shortest text', () => {
+		const { nodeMap, list: members } = list('[\\r\\n]+');
+		expect(() => separatorCandidateTexts(members, nodeMap)).toThrow(/separator-without-text: separator kind 'newline' of member_list has no text/);
 	});
 });

@@ -7,6 +7,7 @@ import { makeSiteKindsNodeMap, displayFamilyNodeMap } from '../../__tests__/help
 import { collectKindEntries } from '../kind-discriminant.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
 import { EmitHaltedError } from '../../types/diagnostics.ts';
+import { STRING } from '../../types/rule-types.ts'; // @rule-type-consts
 
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
 const kindEntries = [
@@ -107,8 +108,8 @@ describe('planRenderOptions', () => {
 			address: 'content_separator',
 			label: 'separator',
 			arms: [
-				{ value: 'comma', kind: 'comma' },
-				{ value: 'semi', kind: 'semi' }
+				{ value: 'comma', kind: 'comma', separatorArm: { type: STRING, value: ',' } },
+				{ value: 'semi', kind: 'semi', separatorArm: { type: STRING, value: ';' } }
 			],
 			defaultArm: 'semi',
 			source: 'separator'

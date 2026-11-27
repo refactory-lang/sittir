@@ -12154,7 +12154,7 @@
     },
     "preproc_if_text2": {
       "type": "PATTERN",
-      "value": "\\n"
+      "value": "\\n+"
     },
     "preproc_if_text3": {
       "type": "PATTERN",

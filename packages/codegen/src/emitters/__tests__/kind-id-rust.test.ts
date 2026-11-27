@@ -1,4 +1,10 @@
 import { describe, expect, it } from 'vitest';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { evaluate } from '../../dsl/evaluate.ts';
+import { collectGeneratedKindEntries, predictedIdTablesOf } from '../../dsl/symbol-table.ts';
+import { NO_FILE_TYPES } from '../../compiler/upstream-file-types.ts';
 import { emitKindIdRust, relaxedKeywordIds } from '../kind-id-rust.ts';
 import { collectKindEntries } from '../kind-discriminant.ts';
 import { compileGrammar } from '../../compiler/compile.ts';
@@ -57,15 +63,17 @@ describe('facts the wrap layer owns', () => {
 		}
 	}, FULL_PIPELINE_TIMEOUT);
 
-	it(
-		'reads a rule whose pattern matches one string as a literal kind with that text',
-		async () => {
-			const { nodeMap, generatedIdTables } = await compileGrammar({ package: grammarPackage('go') });
-			const entry = collectKindEntries(nodeMap, generatedIdTables).find((each) => each.kind === 'source_file_text');
-			expect(entry?.literalText).toBe('\n');
-		},
-		FULL_PIPELINE_TIMEOUT
-	);
+	it('reads a rule whose pattern matches one string as a literal kind with that text', async () => {
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-literal-pattern-'));
+		const entry = join(dir, 'grammar.js');
+		writeFileSync(entry, "module.exports = grammar({ name: 'lines', rules: { source_file: ($) => repeat(seq('x', $.line_end)), line_end: (_) => /\\n/ } });\n");
+		try {
+			const kinds = collectGeneratedKindEntries(predictedIdTablesOf(await evaluate(entry, NO_FILE_TYPES)));
+			expect(kinds.find((each) => each.kind === 'line_end')?.literalText).toBe('\n');
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
 
 	it(
 		'writes a kind name that holds a control character as a Rust escape',

@@ -278,3 +278,11 @@ The one string a pattern's language holds, when `patternParts` reads it as a sin
 ### `packages/codegen/src/util/pattern-pieces.ts::PatternPart`
 
 One part of a pattern `patternParts` reads: a literal run (`lit`) or a named group with its name and inner pattern.
+
+### `packages/codegen/src/util/pattern-pieces.ts::shortestPatternText`
+
+The one shortest text a pattern admits, for a pattern of literal characters each followed by at most one `+`, `*` or `?`. A `+` character is written once, and a `*` or `?` character is left out: `\n+` gives a newline, and so does `\r?\n`. Literal characters are the ones `patternParts` reads as literal text: punctuation escapes and the control escapes. Any other piece returns nothing: a class, a class escape, an alternation, a group, a dot, an anchor, a counted quantifier (`{n}`) or a lazy one (`+?`). Because every piece is one fixed character, the shortest text is unique: each character takes its least count. A separator kind that is a pattern takes its text from here (`compiler/model/node-map.ts::separatorTextOfArm`).
+
+### `packages/codegen/src/util/pattern-pieces.ts::literalAtom`
+
+The one character a pattern piece stands for when it is literal text. A punctuation escape is the punctuation, and a control escape (`\n \r \t \f \v \0`) is its control character. A plain character that is not a regex special is itself. For any other piece it returns nothing: a class, a class escape, a group opening, or a special character. `patternParts` and `shortestPatternText` both read pieces through it, so the two agree on what literal text is.
