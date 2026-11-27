@@ -71,6 +71,19 @@ describe("a read's text is read through one view of the string chunk its source 
 		expect(long.statements()[1999].name().$text()).toBe('f1999');
 	});
 
+	it('reads the same span of a source again as it read it first, and refuses a span past its end or splitting a character', async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const plain = rs.parse('fn alpha() {}\n');
+		const wide = rs.parse('fn é() {}\n');
+		const arena = arenaOf(plain);
+		const [a, b] = [plain, wide].map((root) => recordOf(root)!);
+		expect([arena.readText(a!, { start: 3, end: 8 }), arena.readText(a!, { start: 3, end: 8 }), arena.readText(a!, { start: 0, end: 2 })]).toEqual(['alpha', 'alpha', 'fn']);
+		expect([arena.readText(b!, { start: 3, end: 5 }), arena.readText(b!, { start: 3, end: 5 })]).toEqual(['é', 'é']);
+		expect(() => arena.readText(a!, { start: 3, end: 99 })).toThrow(/is not a span/);
+		expect(() => arena.readText(a!, { start: 8, end: 3 })).toThrow(/is not a span/);
+		expect(() => arena.readText(b!, { start: 3, end: 4 })).toThrow(/is not a span/);
+	});
+
 	it("refuses a released read's text once its chunk is freed, and reads a later read's text", async () => {
 		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
 		const alpha = rs.parse('fn alpha() {}\n');

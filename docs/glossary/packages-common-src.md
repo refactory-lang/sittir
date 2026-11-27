@@ -1271,7 +1271,7 @@ Arena storage's parse. The native side writes the source's records into the buil
 
 ### `packages/common/src/built-arena.ts::BuiltArena::readText`
 
-A read node's text, decoded from its source's entry (`sourceOf`) through the view of the string chunk the read put the source in (`BuiltRecords.read`), with no native call. A node with no record of its own (`readLeaf`) and a text cell read their text through it each time they are asked, so no copy of the text is held in JavaScript. A span past the source's end, reversed, or splitting a character is refused, and so is a read whose chunk is freed.
+A read node's text, from its source's entry (`sourceOf`) through the view of the string chunk the read put the source in (`BuiltRecords.read`), with no native call. A node with no record of its own (`readLeaf`) and a text cell read their text through it each time they are asked. The first read of a source decodes it whole and keeps it beside its chunk's view, by source entry, until `#sweep` drops the chunk; when the decoded text is as long as its bytes the source is ASCII, every byte offset is a character offset, and a span is a slice of that text. Any other source decodes each span from its bytes. A span past the source's end, reversed, or splitting a character is refused, and so is a read whose chunk is freed.
 
 ### `packages/common/src/built-arena.ts::BuiltArena::reads`
 

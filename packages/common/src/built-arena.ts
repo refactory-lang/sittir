@@ -319,6 +319,7 @@ export class BuiltArena {
 	readonly #errors = new Map<number, readonly unknown[]>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
+	readonly #sourceTexts: (Map<number, string | null> | undefined)[] = [];
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 	readonly #parkedBy = new WeakMap<object, object>();
@@ -445,6 +446,7 @@ export class BuiltArena {
 			this.#cells[chunk] = undefined;
 			this.#heads[chunk] = undefined;
 			this.#entryAt[chunk] = undefined;
+			this.#sourceTexts[chunk] = undefined;
 			this.#deferredCount -= this.#deferred[chunk]?.size ?? 0;
 			this.#deferred[chunk] = undefined;
 		}
@@ -1131,9 +1133,9 @@ export class BuiltArena {
 	}
 
 	#readMemory(chunk: number): WritableWords | Uint8Array | undefined {
-		if (chunk === 0 || this.#words.has(chunk) || this.#bytes.has(chunk)) return undefined;
 		const held = this.#reads[chunk];
 		if (held !== undefined && held.length !== 0) return held;
+		if (chunk === 0 || this.#words.has(chunk) || this.#bytes.has(chunk)) return undefined;
 		const read = this.#read(chunk);
 		if (read === undefined) return held;
 		if (held !== undefined) this.#sweep([chunk]);
@@ -1294,12 +1296,24 @@ export class BuiltArena {
 	/** The text `span` covers in the source the read's record at `node` was read from. */
 	readText(node: number, span: { readonly start: number; readonly end: number }): string {
 		const source = this.sourceOf(node);
-		const bytes = this.#readBytes(chunkOf(source, this.format));
+		const chunk = chunkOf(source, this.format);
+		const bytes = this.#readBytes(chunk);
 		if (bytes === undefined || bytes.length === 0) throw new Error(releasedRecord(node));
 		const at = wordOf(source, this.format);
 		const text = at + this.format.sourceEntry.headBytes;
 		const len = (bytes[at]! | (bytes[at + 1]! << 8) | (bytes[at + 2]! << 16) | (bytes[at + 3]! << 24)) >>> 0;
 		const { start, end } = span;
+		const texts = (this.#sourceTexts[chunk] ??= new Map());
+		let whole = texts.get(source);
+		if (whole === undefined) {
+			const decoded = decoder.decode(bytes.subarray(text, text + len));
+			whole = decoded.length === len ? decoded : null;
+			texts.set(source, whole);
+		}
+		if (whole !== null) {
+			if (!(start <= end && end <= len)) throw new Error(`${start}..${end} is not a span of the source of the record at ${node}`);
+			return whole.slice(start, end);
+		}
 		const boundary = (n: number): boolean => n === len || (bytes[text + n]! & 0xc0) !== 0x80;
 		if (!(start <= end && end <= len && boundary(start) && boundary(end))) throw new Error(`${start}..${end} is not a span of the source of the record at ${node}`);
 		return decoder.decode(bytes.subarray(text + start, text + end));
