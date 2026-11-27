@@ -10,6 +10,7 @@ import {
 	floatOf,
 	holderOf,
 	holdsKey,
+	holdsOpaque,
 	integerOf,
 	integerValue,
 	isNode,
@@ -18,6 +19,7 @@ import {
 	kindIn,
 	kindOf,
 	nodeText,
+	opaque,
 	present,
 	rowItems,
 	slotOf,
@@ -6417,6 +6419,175 @@ const ROW32: QuerySlotEntry = ['parameters', 4, undefined, '_parameters'];
 const ROW33: QuerySlotEntry = ['elements', 0, undefined, '_elements'];
 const ROW34: QuerySlotEntry = ['receiver', 0, undefined, '_receiver'];
 const KINDS118 = new Set([231]);
+const ROW35: QuerySlotEntry = ['shebang', 0, undefined, '_shebang'];
+const ROW36: QuerySlotEntry = ['name', 0, undefined, '_name'];
+const ROW37: QuerySlotEntry = ['tokenPatterns', 0, undefined, '_token_patterns'];
+const ROW38: QuerySlotEntry = ['tokens', 0, undefined, '_tokens'];
+const ROW39: QuerySlotEntry = ['path', 0, undefined, '_path'];
+const ROW40: QuerySlotEntry = ['value', 3, undefined, '_value'];
+const ROW41: QuerySlotEntry = ['type', 2, undefined, '_type'];
+const ROW42: QuerySlotEntry = ['type', 4, undefined, '_type'];
+const ROW43: QuerySlotEntry = ['value', 5, undefined, '_value'];
+const ROW44: QuerySlotEntry = ['value', 4, undefined, '_value'];
+const ROW45: QuerySlotEntry = ['name', 2, undefined, '_name'];
+const ROW46: QuerySlotEntry = ['returnType', 5, undefined, '_return_type'];
+const ROW47: QuerySlotEntry = ['bounds', 0, undefined, '_bounds'];
+const ROW48: QuerySlotEntry = ['type', 1, undefined, '_type'];
+const ROW49: QuerySlotEntry = ['type', 0, undefined, '_type'];
+const ROW50: QuerySlotEntry = ['default', 2, undefined, '_default'];
+const ROW51: QuerySlotEntry = ['argument', 1, undefined, '_argument'];
+const ROW52: QuerySlotEntry = ['pattern', 1, undefined, '_pattern'];
+const ROW53: QuerySlotEntry = ['alias', 1, undefined, '_alias'];
+const ROW54: QuerySlotEntry = ['element', 0, undefined, '_element'];
+const ROW55: QuerySlotEntry = ['length', 1, undefined, '_length'];
+const ROW56: QuerySlotEntry = ['returnType', 3, undefined, '_return_type'];
+const ROW57: QuerySlotEntry = ['left', 0, undefined, '_left'];
+const ROW58: QuerySlotEntry = ['right', 1, undefined, '_right'];
+const ROW59: QuerySlotEntry = ['qualifier', 0, undefined, '_qualifier'];
+const ROW60: QuerySlotEntry = ['argument', 0, undefined, '_argument'];
+const ROW61: QuerySlotEntry = ['right', 2, undefined, '_right'];
+const ROW62: QuerySlotEntry = ['expression', 0, undefined, '_expression'];
+const ROW63: QuerySlotEntry = ['value', 2, undefined, '_value'];
+const ROW64: QuerySlotEntry = ['value', 0, undefined, '_value'];
+const ROW65: QuerySlotEntry = ['condition', 0, undefined, '_condition'];
+const ROW66: QuerySlotEntry = ['pattern', 0, undefined, '_pattern'];
+const ROW67: QuerySlotEntry = ['value', 1, undefined, '_value'];
+const ROW68: QuerySlotEntry = ['rights', 1, undefined, '_right'];
+const ROW69: QuerySlotEntry = ['subject', 0, undefined, '_subject'];
+const ROW70: QuerySlotEntry = ['condition', 1, undefined, '_condition'];
+const ROW71: QuerySlotEntry = ['left', 1, undefined, '_left'];
+const ROW72: QuerySlotEntry = ['expression', 1, undefined, '_expression'];
+const ROW73: QuerySlotEntry = ['object', 0, undefined, '_object'];
+const ROW74: QuerySlotEntry = ['index', 1, undefined, '_index'];
+const ROW75: QuerySlotEntry = ['property', 1, undefined, '_property'];
+const ROW76: QuerySlotEntry = ['trailingExpression', 2, undefined, '_trailing_expression'];
+const ROW77: QuerySlotEntry = ['elements', 1, undefined, '_elements'];
+const ROW78: QuerySlotEntry = ['rawStringLiteralEnd', 2, undefined, '_raw_string_literal_end'];
+const ROW79: QuerySlotEntry = ['items', 0, undefined, '_item'];
+const ROW80: QuerySlotEntry = ['returnType', 4, undefined, '_return_type'];
+const ROW81: QuerySlotEntry = ['body', 4, undefined, '_body'];
+const ROW82: QuerySlotEntry = ['type', 3, undefined, '_type'];
+const ROW83: QuerySlotEntry = ['right', 0, undefined, '_right'];
+const ROW84: QuerySlotEntry = ['start', 0, undefined, '_start'];
+const ROW85: QuerySlotEntry = ['end', 2, undefined, '_end'];
+const ROW86: QuerySlotEntry = ['end', 0, undefined, '_end'];
+const ROW87: QuerySlotEntry = ['pattern', 3, undefined, '_pattern'];
+const ROW88: QuerySlotEntry = ['end', 1, undefined, '_end'];
+const TOKENS0: Readonly<Record<number, readonly QuerySlotEntry[]>> = {
+	'176': [ROW35],
+	'184': [ROW36],
+	'185': [ROW37],
+	'188': [ROW38],
+	'189': [ROW2],
+	'192': [ROW39],
+	'200': [ROW40],
+	'202': [ROW41],
+	'205': [ROW41, ROW40],
+	'206': [ROW42, ROW43],
+	'207': [ROW44],
+	'208': [ROW45, ROW46],
+	'209': [ROW45, ROW46],
+	'216': [ROW47],
+	'217': [ROW48],
+	'218': [ROW49],
+	'220': [ROW48, ROW50],
+	'221': [ROW50],
+	'223': [ROW12, ROW41, ROW40],
+	'224': [ROW51],
+	'226': [ROW39],
+	'228': [ROW36],
+	'232': [ROW52],
+	'233': [ROW12, ROW41],
+	'237': [ROW49],
+	'238': [ROW49, ROW53],
+	'240': [ROW54, ROW55],
+	'242': [ROW56],
+	'248': [ROW57, ROW58],
+	'251': [ROW41],
+	'252': [ROW41],
+	'263': [ROW59],
+	'264': [ROW59],
+	'265': [ROW59],
+	'267': [ROW51],
+	'268': [ROW60],
+	'270': [ROW57, ROW61],
+	'271': [ROW57, ROW58],
+	'272': [ROW57, ROW61],
+	'273': [ROW62, ROW48],
+	'274': [ROW62],
+	'275': [ROW62],
+	'276': [ROW18],
+	'279': [ROW62],
+	'285': [ROW12, ROW63],
+	'286': [ROW64],
+	'287': [ROW65],
+	'288': [ROW66, ROW67],
+	'289': [ROW57, ROW68],
+	'292': [ROW69],
+	'295': [ROW4],
+	'296': [ROW66, ROW70],
+	'297': [ROW70],
+	'299': [ROW71, ROW61],
+	'304': [ROW72],
+	'306': [ROW73, ROW74],
+	'307': [ROW62],
+	'308': [ROW73, ROW75],
+	'313': [ROW76],
+	'322': [ROW66],
+	'324': [ROW66],
+	'325': [ROW52],
+	'326': [ROW52],
+	'330': [ROW64],
+	'332': [ROW77],
+	'333': [ROW22, ROW78],
+	'348': [ROW79],
+	'351': [ROW79],
+	'356': [ROW79],
+	'357': [ROW79],
+	'359': [ROW39],
+	'363': [ROW72],
+	'364': [ROW79],
+	'365': [ROW79],
+	'368': [ROW64],
+	'369': [ROW80],
+	'370': [ROW81],
+	'371': [ROW60],
+	'372': [ROW60],
+	'373': [ROW60],
+	'374': [ROW60],
+	'377': [ROW82],
+	'378': [ROW82],
+	'379': [ROW39],
+	'386': [ROW57, ROW58],
+	'387': [ROW83],
+	'388': [ROW49],
+	'389': [ROW49],
+	'390': [ROW84, ROW85],
+	'391': [ROW84],
+	'392': [ROW86],
+	'394': [ROW62],
+	'397': [ROW4],
+	'405': [ROW37],
+	'406': [ROW37],
+	'407': [ROW37],
+	'408': [ROW38],
+	'409': [ROW38],
+	'410': [ROW38],
+	'415': [ROW87],
+	'419': [ROW88],
+	'420': [ROW84, ROW85],
+	'421': [ROW84],
+	'428': [ROW13],
+	'429': [ROW13],
+	'430': [ROW72],
+	'431': [ROW41],
+	'432': [ROW2],
+	'434': [ROW54, ROW55],
+	'438': [ROW48],
+	'475': [ROW2],
+	'479': [ROW45, ROW46],
+	'482': [ROW45, ROW46]
+};
 const seats1 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats1(item) ?? { found: item, many: false }));
 	if (fits(KINDS0, value)) return { found: value, many: false };
@@ -24594,7 +24765,7 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 		return tokenText(value, seats) ?? value;
 	}
 	if (!isNode(value)) return value;
-	if (erred(value)) return value;
+	if (erred(value) || opaque(value) || holdsOpaque(value, TOKENS0)) return value;
 	switch (value.$type) {
 		case K.Identifier:
 			return readIdentifier(value, seats);

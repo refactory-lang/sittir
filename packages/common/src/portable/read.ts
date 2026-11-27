@@ -7,7 +7,7 @@ import { containerSlots, isNumberSlots, meaningfulText, rebuilds, setsOn, spelle
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
-import { erred, templated } from './project.ts';
+import { erred, opaque, templated } from './project.ts';
 
 type Node = { readonly $type: number };
 
@@ -36,8 +36,6 @@ export interface PortableReadContext {
 	readonly readSlots: (node: Node, path: string, flags: readonly string[]) => ReadonlySet<string>;
 	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 }
-
-const opaque = (item: unknown): boolean => hasKind(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';
 
 const present = (value: unknown): boolean => value !== undefined && value !== null && !(Array.isArray(value) && value.length === 0);
 

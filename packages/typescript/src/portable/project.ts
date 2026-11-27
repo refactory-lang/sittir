@@ -10,6 +10,7 @@ import {
 	flagsSetOn,
 	holderOf,
 	holdsKey,
+	holdsOpaque,
 	integerOf,
 	integerValue,
 	isNode,
@@ -19,6 +20,7 @@ import {
 	kindOf,
 	nodeText,
 	only,
+	opaque,
 	present,
 	rowItems,
 	slotOf,
@@ -6029,6 +6031,109 @@ const MEANING0: Readonly<Record<number, readonly string[]>> = {};
 const PRESETS59: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'abstract', optional: true }], kind: 134, presence: true }
 ];
+const ROW53: QuerySlotEntry = ['shebang', 0, undefined, '_shebang'];
+const ROW54: QuerySlotEntry = ['initializer', 0, undefined, '_initializer'];
+const ROW55: QuerySlotEntry = ['condition', 1, undefined, '_condition'];
+const ROW56: QuerySlotEntry = ['increment', 2, undefined, '_increment'];
+const ROW57: QuerySlotEntry = ['value', 0, undefined, '_value'];
+const ROW58: QuerySlotEntry = ['right', 1, undefined, '_right'];
+const ROW59: QuerySlotEntry = ['body', 2, undefined, '_body'];
+const ROW60: QuerySlotEntry = ['object', 0, undefined, '_object'];
+const ROW61: QuerySlotEntry = ['index', 2, undefined, '_index'];
+const ROW62: QuerySlotEntry = ['right', 2, undefined, '_right'];
+const ROW63: QuerySlotEntry = ['condition', 0, undefined, '_condition'];
+const ROW64: QuerySlotEntry = ['consequence', 1, undefined, '_consequence'];
+const ROW65: QuerySlotEntry = ['alternative', 2, undefined, '_alternative'];
+const ROW66: QuerySlotEntry = ['argument', 1, undefined, '_argument'];
+const ROW67: QuerySlotEntry = ['expressions', 0, undefined, '_expression'];
+const ROW68: QuerySlotEntry = ['value', 1, undefined, '_value'];
+const ROW69: QuerySlotEntry = ['expression', 1, undefined, '_expression'];
+const ROW70: QuerySlotEntry = ['value', 6, undefined, '_value'];
+const ROW71: QuerySlotEntry = ['property', 1, undefined, '_property'];
+const ROW72: QuerySlotEntry = ['content', 0, undefined, '_content'];
+const ROW73: QuerySlotEntry = ['left', 0, undefined, '_left'];
+const ROW74: QuerySlotEntry = ['argument', 0, undefined, '_argument'];
+const ROW75: QuerySlotEntry = ['value', 2, undefined, '_value'];
+const ROW76: QuerySlotEntry = ['right', 3, undefined, '_right'];
+const ROW77: QuerySlotEntry = ['right', 4, undefined, '_right'];
+const ROW78: QuerySlotEntry = ['value', 10, undefined, '_value'];
+const ROW79: QuerySlotEntry = ['value', 7, undefined, '_value'];
+const ROW80: QuerySlotEntry = ['value', 5, undefined, '_value'];
+const TOKENS0: Readonly<Record<number, readonly QuerySlotEntry[]>> = {
+	'190': [ROW53],
+	'206': [ROW4],
+	'215': [ROW54, ROW55, ROW56],
+	'225': [ROW4],
+	'226': [ROW4],
+	'230': [ROW57],
+	'237': [ROW4],
+	'240': [ROW58],
+	'241': [ROW58],
+	'242': [ROW22],
+	'252': [ROW59],
+	'257': [ROW20],
+	'258': [ROW4],
+	'259': [ROW60, ROW8],
+	'260': [ROW60, ROW61],
+	'262': [ROW58],
+	'264': [ROW62],
+	'267': [ROW4],
+	'268': [ROW63, ROW64, ROW65],
+	'270': [ROW66],
+	'272': [ROW67],
+	'274': [ROW22],
+	'275': [ROW4],
+	'284': [ROW22],
+	'294': [ROW11, ROW68],
+	'295': [ROW11],
+	'297': [ROW4],
+	'300': [ROW4],
+	'305': [ROW69],
+	'306': [ROW4],
+	'307': [ROW4],
+	'308': [ROW20],
+	'311': [ROW57],
+	'324': [ROW31, ROW68],
+	'328': [ROW70],
+	'329': [ROW70],
+	'335': [ROW71],
+	'354': [ROW8],
+	'355': [ROW61],
+	'362': [ROW72],
+	'371': [ROW17],
+	'388': [ROW31],
+	'403': [ROW57],
+	'405': [ROW73, ROW58],
+	'406': [ROW73, ROW62],
+	'414': [ROW4],
+	'418': [ROW4],
+	'421': [ROW57],
+	'423': [ROW20],
+	'424': [ROW20],
+	'425': [ROW20],
+	'426': [ROW22],
+	'427': [ROW22],
+	'428': [ROW74],
+	'429': [ROW66],
+	'439': [ROW57],
+	'440': [ROW75],
+	'444': [ROW62],
+	'445': [ROW68, ROW76],
+	'446': [ROW77],
+	'447': [ROW77],
+	'458': [ROW35],
+	'459': [ROW36],
+	'460': [ROW36],
+	'461': [ROW35],
+	'462': [ROW36],
+	'463': [ROW36],
+	'464': [ROW36],
+	'465': [ROW40],
+	'466': [ROW40],
+	'467': [ROW48, ROW78],
+	'468': [ROW52, ROW79],
+	'473': [ROW80]
+};
 const seats0 = (value: unknown): Found | undefined => {
 	if (Array.isArray(value)) return joined(value.map((item) => seats0(item) ?? { found: item, many: false }));
 	return undefined;
@@ -20238,7 +20343,7 @@ export const project = (value: unknown, seats?: Seats): unknown => {
 		return tokenText(value, seats) ?? value;
 	}
 	if (!isNode(value)) return value;
-	if (erred(value)) return value;
+	if (erred(value) || opaque(value) || holdsOpaque(value, TOKENS0)) return value;
 	switch (value.$type) {
 		case K.Identifier:
 			return readIdentifier(value, seats);

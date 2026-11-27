@@ -1869,3 +1869,11 @@ Whether a parse error sits on a node. An `ERROR` node does; a node of a parse wi
 ### `packages/common/src/portable/project.ts::unread`
 
 Whether a slot's items (`rowItems`, with the slot's query row) hold something a read would lose: a node with meaningful text (`facts.ts::meaningfulText`, with the grammar's delimiter meanings), or a token's kind id when another path's test reads the slot (`otherTested`). A keyword (`classify.ts::Keyword`) is neither, so a keyword slot loses nothing. A generated projection checks each slot that its read of a path leaves unread, and keeps the node when one holds something, as today's read carries it with reason unread.
+
+### `packages/common/src/portable/project.ts::opaque`
+
+Whether an item is a node holding verbatim text (`$verbatim`), as a parse gives a token whose text its interior doesn't read (python's `bf"a"` prefix). No read rebuilds it. Today's read keeps such a node, or one whose token slots hold one (`holdsOpaque`), whole as an `opaque` carry, and a generated projection's `project` checks both before reading any node.
+
+### `packages/common/src/portable/project.ts::holdsOpaque`
+
+Whether a node's slots that can hold a token read by its interior hold an opaque item (`opaque`). `tokens` gives those slots' query rows by kind id. A generated projection writes it from the build table's `tokens` (`PortableBuildTable::tokens`), the same slots today's read checks by accessor.

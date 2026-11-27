@@ -67,6 +67,7 @@ const IMPORTS = [
 	'floatOf',
 	'holderOf',
 	'holdsKey',
+	'holdsOpaque',
 	'integerOf',
 	'integerValue',
 	'isNode',
@@ -78,6 +79,7 @@ const IMPORTS = [
 	'nodeText',
 	'one',
 	'only',
+	'opaque',
 	'place',
 	'placedPath',
 	'present',
@@ -209,6 +211,11 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 	const textsCall = (items: Expression) => call(id('texts'), items, id('FIXED'));
 
 	const slotEntry = (kind: number, number: number) => querySlots[kind]?.find(([, n]) => n === number);
+	const slotNamed = (kind: number, accessor: string): QuerySlotEntry => {
+		const entry = querySlots[kind]?.find(([name]) => name === accessor);
+		if (entry === undefined) throw new Error(`portable projection: ${input.kinds[kind]} has no query slot ${accessor}`);
+		return entry;
+	};
 	const slotItemsOf = (value: Primary, subject: SlotSubject): Expression => {
 		const arms = Object.entries(subject.slots).flatMap(([kind, number]) => {
 			const entry = slotEntry(Number(kind), number);
@@ -580,11 +587,9 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		if (lost.length > 0) {
 			const meaning = Object.fromEntries(Object.entries(table.delimiters ?? {}).map(([at, token]) => [at, token.meaning] as const));
 			const meanings = intern('MEANING', meaning, (name) => declare(name, numberRecord(t.readonlyType(t.arrayType('string'))), literal(meaning)));
-			const unreadIn = lost.map(({ accessor, otherTested, flags: reading }) => {
-				const entry = (querySlots[kind] ?? []).find(([name]) => name === accessor);
-				if (entry === undefined) throw new Error(`portable projection: ${input.kinds[kind]} has no query slot ${accessor}`);
-				return and([call(id('unread'), call(id('rowItems'), id('node'), rowOf(entry)), truth(otherTested), meanings, id('FIXED')), ...reading.map((flag) => not(call(dot(id('flags'), 'includes'), str(flag))))]);
-			});
+			const unreadIn = lost.map(({ accessor, otherTested, flags: reading }) =>
+				and([call(id('unread'), call(id('rowItems'), id('node'), rowOf(slotNamed(kind, accessor))), truth(otherTested), meanings, id('FIXED')), ...reading.map((flag) => not(call(dot(id('flags'), 'includes'), str(flag))))])
+			);
 			statements.push(when(or(unreadIn), ret(id('node'))));
 		}
 		statements.push(ret(id('structure')));
@@ -712,6 +717,9 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		const value = table.paths[path]?.arms.find((arm) => arm.kind === Number(kind) && arm.literal !== undefined)?.literal;
 		return value === undefined ? [] : [t.switchCase({ value: kindRef(Number(kind)), bodies: [ret(obj([['$path', str(path)], ...(value.value === undefined ? [] : [['$value', value.value ? t.true : t.false] as const])]))] })];
 	});
+	const tokenRows = Object.entries(table.tokens ?? {}).map(([kind, accessors]) => [kind, t.array(...accessors.map((accessor) => rowOf(slotNamed(Number(kind), accessor))))] as const);
+	const holdsOpaque =
+		tokenRows.length === 0 ? [] : [call(id('holdsOpaque'), id('value'), intern('TOKENS', table.tokens, (name) => declare(name, numberRecord(t.readonlyType(t.arrayType(typeName('QuerySlotEntry')))), obj(tokenRows))))];
 	const project = t.exportStatementDefaultDeclaration({ content: constant(
 		'project',
 		typed(
@@ -722,7 +730,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 					block(...(tokens.length === 0 ? [] : [t.switchStatement({ value: paren(id('value')), body: t.switchBody(...tokens) })]), ret(binary(call(id('tokenText'), id('value'), id('seats')), '??', id('value'))))
 				),
 				when(not(call(id('isNode'), id('value'))), ret(id('value'))),
-				when(call(id('erred'), id('value')), ret(id('value'))),
+				when(or([call(id('erred'), id('value')), call(id('opaque'), id('value')), ...holdsOpaque]), ret(id('value'))),
 				t.switchStatement({ value: paren(dot(id('value'), '$type')), body: t.switchBody(...readKinds.map((kind) => t.switchCase({ value: kindRef(kind), bodies: [ret(call(id(fnName(kind)), id('value'), id('seats')))] }))) }),
 				ret(binary(call(id('unclaimedText'), id('value'), id('seats'), id('FIXED')), '??', id('value')))
 			),

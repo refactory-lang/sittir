@@ -17,7 +17,7 @@ const LISTED: Readonly<Record<(typeof GRAMMARS)[number], Readonly<Record<string,
 };
 
 const SOURCES: Readonly<Record<(typeof GRAMMARS)[number], readonly { readonly name: string; readonly source: string }[]>> = {
-	python: [],
+	python: [{ name: 'string prefixes the prefix token does not read', source: 'x = bf"a"\ny = rr"a"\nz = ub"a"\n' }],
 	rust: [],
 	typescript: [{ name: 'a receiver with an accessibility modifier', source: 'function f(public this: T[]) {}\n' }]
 };
