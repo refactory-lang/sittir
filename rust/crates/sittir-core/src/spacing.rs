@@ -256,6 +256,11 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// The edge chain of the coordinate whose boundary is being placed
     /// (`RenderSink::boundary`), kept to reuse its allocation.
     edge_levels: Vec<crate::render::EdgeLevel>,
+    /// The indentation a line the writer breaks inside a hole takes: the
+    /// source's, of the line the text after the hole sits on, moved as the
+    /// node's lines are (`slice`), and the levels open when the hole's fill
+    /// began, past which each level a template opens inside it indents.
+    hole_indent: Option<(String, usize)>,
     /// The free-text leaves whose built text is checked (`with_leaf_probe`).
     probe: Option<LeafProbe<'a>>,
     /// The kind of the leaf whose text comes next, while a probe is attached.
@@ -384,6 +389,189 @@ struct HeldContext {
     tail: Option<String>,
 }
 
+/// The table a render that counts a hole's levels reads through
+/// (`SpacingWriter::levels_toward`): `sources`' answers, except that a
+/// write lies in a node exactly when it holds `node` (`edited_within`), so
+/// the render writes each node holding `node` through its template and
+/// every other as its source, reading no templates beyond those; and the
+/// slice of `node`, or of a node holding it that renders as its source,
+/// ends the render (`holes`), which it notes in `reached`.
+struct MeasuringTable<'a> {
+    sources: &'a dyn crate::render::SourceTable,
+    node: crate::slot::NodeIdOrCoordinate<'a>,
+    span: crate::types::Span,
+    reached: std::cell::Cell<bool>,
+}
+
+impl MeasuringTable<'_> {
+    fn is_node(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        use crate::slot::NodeIdOrCoordinate::{Coordinate, NodeId};
+        match (at, self.node) {
+            (NodeId { id, .. }, NodeId { id: node, .. }) => id == node || self.sources.same_node(id, node),
+            (Coordinate(at), Coordinate(node)) => at.tree == node.tree && at.index == node.index,
+            _ => false,
+        }
+    }
+
+    fn holds(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        let same_source = match (self.sources.source_of(at), self.sources.source_of(self.node)) {
+            (Some(one), Some(other)) => std::ptr::eq(one, other),
+            _ => false,
+        };
+        same_source && !self.is_node(at) && at.span(self.sources).is_some_and(|span| span.start <= self.span.start && self.span.end <= span.end)
+    }
+}
+
+impl crate::render::SourceTable for MeasuringTable<'_> {
+    fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
+        self.sources.source_of(at)
+    }
+
+    fn breaks_spelled_lf(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.sources.breaks_spelled_lf(at)
+    }
+
+    fn kind_of(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        self.sources.kind_of(coord)
+    }
+
+    fn for_each_descendant(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, visit: &mut dyn FnMut(crate::types::KindId, &str) -> bool) {
+        self.sources.for_each_descendant(coord, visit);
+    }
+
+    fn line_starts_inside_tokens(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<u32> {
+        self.sources.line_starts_inside_tokens(coord)
+    }
+
+    fn list_delimiter(&self, at: crate::slot::NodeIdOrCoordinate<'_>, kind: crate::types::KindId) -> Option<crate::types::Delimiter> {
+        self.sources.list_delimiter(at, kind)
+    }
+
+    fn for_each_edge_level(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
+        self.sources.for_each_edge_level(coord, side, f);
+    }
+
+    fn spelled_end_kind(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        self.sources.spelled_end_kind(coord)
+    }
+
+    fn depth_move(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> i32 {
+        self.sources.depth_move(coord)
+    }
+
+    fn sides(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.sources.sides(coord)
+    }
+
+    fn frames(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> crate::trivia::Frames {
+        self.sources.frames(coord)
+    }
+
+    fn holes(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, crate::render::RenderError> {
+        if self.is_node(coord) || self.holds(coord) {
+            self.reached.set(true);
+            return Err(coord.unknown().into());
+        }
+        Ok(Vec::new())
+    }
+
+    fn slot_layouts(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
+        self.sources.slot_layouts(coord)
+    }
+
+    fn framed_span(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
+        self.sources.framed_span(coord)
+    }
+
+    fn edited_within(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.holds(coord)
+    }
+
+    fn renders_as_source(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        !self.holds(coord)
+    }
+
+    fn seat_through(&self, coord: crate::slot::NodeIdOrCoordinate<'_>, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(crate::types::KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+        self.sources.seat_through(coord, wrappers, seat)
+    }
+
+    fn read_node(&self, coord: &crate::slot::NodeCoordinate, read: &mut dyn FnMut(&mut crate::tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>)) -> bool {
+        self.sources.read_node(coord, read)
+    }
+
+    fn span_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::Span> {
+        self.sources.span_of(at)
+    }
+
+    fn stamp_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<crate::types::KindId> {
+        self.sources.stamp_of(at)
+    }
+
+    fn same_node(&self, one: crate::types::NodeId, other: crate::types::NodeId) -> bool {
+        self.sources.same_node(one, other)
+    }
+
+    fn is_source_root(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        self.sources.is_source_root(at)
+    }
+
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        self.sources.render_record_entry(record, held, options, w)
+    }
+
+    fn render_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>, options: &crate::options::ResolvedOptions, table: &dyn crate::render::SourceTable, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        self.sources.render_through_template(at, options, table, w)
+    }
+}
+
+/// How a slice moves a node's lines (`SpacingWriter::shift_of`): a line
+/// that starts with `base`, the source indentation of the node's first line,
+/// takes `target` in its place.
+struct Shift {
+    base: String,
+    target: String,
+}
+
+impl Shift {
+    /// The bytes of `range` of a node over `span` of `source` with its lines
+    /// moved: each line after the node's first that holds text, starts with
+    /// `base` and does not start inside a token (`inside`, the source
+    /// offsets of such lines) takes `target` for `base`. A line's text is
+    /// judged whole, though `range` holds only part of it.
+    fn moved(&self, source: &str, span: crate::types::Span, range: std::ops::Range<usize>, inside: &[u32]) -> String {
+        let end = span.range().end;
+        let mut out = String::with_capacity(range.len());
+        let mut at = range.start;
+        while at < range.end {
+            let stop = source[at..range.end].find('\n').map_or(range.end, |found| at + found + 1);
+            let starts_line = at > span.range().start && source.as_bytes()[at - 1] == b'\n';
+            let line = &source[at..source[at..end].find('\n').map_or(end, |found| at + found)];
+            let moved = starts_line && !line.trim().is_empty() && line.starts_with(&self.base) && inside.binary_search(&crate::types::narrow(at)).is_err();
+            if moved && stop >= at + self.base.len() {
+                out.push_str(&self.target);
+                out.push_str(&source[at + self.base.len()..stop]);
+            } else {
+                out.push_str(&source[at..stop]);
+            }
+            at = stop;
+        }
+        out
+    }
+
+    /// The indentation of the source line that holds `at`, moved as a line
+    /// starting with `base` is.
+    fn line_indent(shift: Option<&Self>, source: &str, at: usize) -> String {
+        let line_start = source[..at].rfind('\n').map_or(0, |found| found + 1);
+        let line = &source[line_start..];
+        let indent = &line[..line.len() - line.trim_start_matches([' ', '\t']).len()];
+        match shift {
+            Some(shift) if indent.starts_with(&shift.base) => [shift.target.as_str(), &indent[shift.base.len()..]].concat(),
+            _ => indent.to_owned(),
+        }
+    }
+}
+
 impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     pub fn new(inner: &'a mut W, word: &'a WordMatcher) -> Self {
         Self {
@@ -418,6 +606,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             trailing_accepts: LayoutKinds::ALL,
             document: false,
             frames: Vec::new(),
+            hole_indent: None,
             excess: 0,
             glued: None,
             glued_open: None,
@@ -547,9 +736,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         }
         self.indent_pending = false;
         self.line_depth = self.levels();
-        let indent = self.indent.repeat(self.line_depth);
+        let indent = self.indent_of(self.line_depth);
         self.emit(&indent)?;
-        if let Some(last) = self.indent_last() {
+        if let Some(last) = indent.chars().next_back() {
             self.last = Some(last);
         }
         Ok(())
@@ -557,8 +746,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
 
     /// The last character of the current line's indentation: its unit's,
     /// when the line indents.
-    fn indent_last(&self) -> Option<char> {
-        self.indent.chars().next_back().filter(|_| self.line_depth > 0)
+    /// The indentation of a line `levels` deep: that many units, or inside
+    /// a hole, the hole's indentation and a unit for each level opened since
+    /// its fill began (`hole_indent`).
+    fn indent_of(&self, levels: usize) -> String {
+        match self.hole_indent.as_ref() {
+            Some((base, from)) => [base.as_str(), &self.indent.repeat(levels.saturating_sub(*from))].concat(),
+            None => self.indent.repeat(levels),
+        }
     }
 
     /// The levels the next line indents: the template's depth and the
@@ -580,34 +775,153 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             return std::borrow::Cow::Borrowed(text);
         }
         let (Some(source), Some(span)) = (sources.source_of(coord), coord.span(sources)) else { return std::borrow::Cow::Borrowed(text) };
+        let Some(shift) = self.shift_of(source, span) else { return std::borrow::Cow::Borrowed(text) };
+        let inside = sources.line_starts_inside_tokens(coord);
+        std::borrow::Cow::Owned(shift.moved(source, span, span.range(), &inside))
+    }
+
+    /// How `reindented` moves the lines of a node over `span` of `source`:
+    /// from the source indentation of its first line to the indentation the
+    /// writer gives the line it starts on; none where the two are the same.
+    fn shift_of(&mut self, source: &str, span: crate::types::Span) -> Option<Shift> {
         let start = span.range().start;
         let line_start = source[..start].rfind('\n').map_or(0, |at| at + 1);
         let base = &source[line_start..start];
         let base = &base[..base.len() - base.trim_start_matches([' ', '\t']).len()];
         let levels = if self.indent_pending || (self.held_breaks() && !self.held_seam_dropped()) { self.levels() } else { self.line_depth };
-        let unit = self.indent;
-        let at_target = base.len() == unit.len().saturating_mul(levels) && (unit.is_empty() || base.as_bytes().chunks_exact(unit.len()).all(|chunk| chunk == unit.as_bytes()));
-        if at_target {
-            return std::borrow::Cow::Borrowed(text);
-        }
-        let mut target: Option<String> = None;
+        let target = self.indent_of(levels);
+        (base != target).then(|| Shift { base: base.to_owned(), target })
+    }
+
+    /// A node's bytes with the holes `holes` lists filled: its source runs
+    /// between them, moved as `reindented` moves a whole slice, and each
+    /// hole's side written through this writer between them. The source's
+    /// whitespace at the end of a run is the gap before its hole: it is
+    /// written before the side's first text, no seam is written there
+    /// unless a whitespace entry writes it (`Glued`), and a whitespace entry
+    /// takes its place (`tail`). Before a trailing side, the line a line-terminated
+    /// end of its node's bytes holds is kept. A line the writer breaks
+    /// inside a hole takes the indentation of the line the hole's node
+    /// starts on, moved as that line is.
+    fn spliced(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>, holes: &[crate::trivia::Hole], sources: &dyn crate::render::SourceTable) -> crate::render::RenderResult {
+        let source = sources.source_of(coord).ok_or_else(|| coord.unknown())?;
+        let span = coord.span(sources).ok_or_else(|| coord.unknown())?;
+        let shift = self.shift_of(source, span);
         let inside = sources.line_starts_inside_tokens(coord);
-        let mut out = String::with_capacity(text.len());
-        let mut at = span.start;
-        for (index, line) in text.split('\n').enumerate() {
-            if index > 0 {
-                out.push('\n');
-            }
-            let shifted = index > 0 && !line.trim().is_empty() && line.starts_with(base) && inside.binary_search(&at).is_err();
-            if shifted {
-                out.push_str(target.get_or_insert_with(|| unit.repeat(levels)));
-                out.push_str(&line[base.len()..]);
+        let lf = sources.breaks_spelled_lf(coord);
+        let swallowed = source.as_bytes().get(span.end as usize) == Some(&b'\n');
+        let run = |range: std::ops::Range<usize>, last: bool| -> String {
+            let moved = match &shift {
+                Some(shift) => shift.moved(source, span, range, &inside),
+                None => source[range].to_owned(),
+            };
+            let moved = if last && swallowed { crate::line_endings::without_swallowed_cr(&moved).to_owned() } else { moved };
+            if lf { moved } else { crate::line_endings::to_internal(&moved).into_owned() }
+        };
+        let kind = crate::render::RenderSink::kind_of(self, coord);
+        let mut at = span.range().start;
+        for (index, hole) in holes.iter().enumerate() {
+            let text = run(at..(hole.range.start as usize).max(at), false);
+            let text = if index == 0 {
+                self.open_leaf(kind, &text)?;
+                text.as_str()
             } else {
-                out.push_str(line);
+                self.after_hole(&text)
+            };
+            let body = text.trim_end_matches([' ', '\t', '\n']);
+            self.write_chunk(body)?;
+            if let Some(kind) = hole.ends_in {
+                crate::render::RenderSink::end_line_after(self, kind);
             }
-            at += crate::types::narrow(line.len()) + 1;
+            if body.len() < text.len() {
+                let gap = &text[body.len()..];
+                if body.is_empty() {
+                    self.meet_text_break(gap);
+                }
+                self.tail = Some(gap.to_owned());
+                self.glued = Some(Glued::InLine);
+            }
+            let levels = self.levels();
+            let toward = match &hole.from {
+                Some(from) => self.levels_toward(from, &hole.node)?,
+                None => 0,
+            };
+            self.hole_indent = Some(([Shift::line_indent(shift.as_ref(), source, hole.line as usize), self.indent.repeat(toward)].concat(), levels));
+            hole.fill(self)?;
+            at = at.max(hole.range.end as usize);
         }
-        std::borrow::Cow::Owned(out)
+        let text = run(at..span.range().end, true);
+        let last = self.after_hole(&text);
+        let closed = self.close_leaf(kind, last);
+        self.hole_indent = None;
+        closed
+    }
+
+    /// The levels the templates from the node `from` names down to the node
+    /// `node` names open: `from` written through its template by a writer
+    /// of its own, under this writer's options, table and indentation unit,
+    /// through a table that writes each node holding `node` through its
+    /// template (`MeasuringTable`), and ended at the slice of `node`; none
+    /// when that render never slices `node`.
+    fn levels_toward(&self, from: &crate::slot::NodeIdOrOwnedCoordinate, node: &crate::slot::NodeIdOrOwnedCoordinate) -> Result<usize, crate::render::RenderError> {
+        let (Some(sources), Some(options), Some(table)) = (self.sources, self.options, self.table) else { return Ok(0) };
+        let at = node.at();
+        let span = at.span(sources).ok_or_else(|| at.unknown())?;
+        let measuring = MeasuringTable { sources, node: at, span, reached: std::cell::Cell::new(false) };
+        let mut text = String::new();
+        let mut w = SpacingWriter::new(&mut text, self.word).with_table(table).with_indent(self.indent).with_sources(&measuring).with_options(options);
+        match crate::render::RenderSink::render_through_template(&mut w, from.at()) {
+            Err(_) if measuring.reached.get() => Ok(w.levels()),
+            Err(error) => Err(error),
+            Ok(()) => Ok(0),
+        }
+    }
+
+    /// Text that starts with a line break breaks the line itself: a held
+    /// line-break seam no whitespace entry wrote yields to it, and so does
+    /// the break a line-terminated text left.
+    fn meet_text_break(&mut self, s: &str) {
+        if s.starts_with('\n') && self.seam == Some(1) && self.seam_token.is_none() {
+            self.clear_payload();
+        }
+        if s.starts_with('\n') && self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks() {
+            self.take_written_break();
+            self.line_end_held = None;
+        }
+    }
+
+    /// The run after a hole as it is written: the source's whitespace at
+    /// its start spells the gap after the hole, so the seam its side left
+    /// writes nothing, save that a whitespace entry's seam takes the place
+    /// of the gap, and a line break its side left, or one its text ended
+    /// in, the place of an in-line gap.
+    fn after_hole<'t>(&mut self, text: &'t str) -> &'t str {
+        let gap = text.len() - text.trim_start_matches([' ', '\t', '\n']).len();
+        if gap == 0 {
+            return text;
+        }
+        if (self.seam_token == Some(SeamToken::Whitespace) && !self.seam_is_join) || ((self.held_breaks() || self.at_line_start()) && !text[..gap].contains('\n')) {
+            return &text[gap..];
+        }
+        self.clear_payload();
+        text
+    }
+
+    /// The depth move a slice of `coord` makes after its text: held for a
+    /// tree root's slice that wrote text, made now for any other.
+    fn moved_depth(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>, sources: &dyn crate::render::SourceTable, wrote: bool) {
+        if wrote && sources.is_source_root(coord) {
+            self.depth.hold(coord, self.sources);
+            return;
+        }
+        let moved = sources.depth_move(coord);
+        for _ in 0..moved.unsigned_abs() {
+            if moved > 0 {
+                crate::render::RenderSink::indent(self);
+            } else {
+                crate::render::RenderSink::dedent(self, LayoutKinds::NONE);
+            }
+        }
     }
 
     fn at_line_start(&self) -> bool {
@@ -1131,13 +1445,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         if self.breaks_line(s) {
             self.write_deferred(Some(s))?;
         }
-        if s.starts_with('\n') && self.seam == Some(1) && self.seam_token.is_none() {
-            self.clear_payload();
-        }
-        if s.starts_with('\n') && self.line_end_held == Some(crate::render::LineHold::Terminated) && self.held_breaks() {
-            self.take_written_break();
-            self.line_end_held = None;
-        }
+        self.meet_text_break(s);
         let seam_held = self.seam.is_some() && self.seam_pick != LayoutKinds::TIGHT;
         self.flush_seam()?;
         if std::mem::take(&mut self.indent_lazy) && seam_held {
@@ -1385,11 +1693,28 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         Ok(frames)
     }
 
+    fn holes(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, crate::render::RenderError> {
+        let Some(sources) = self.sources else { return Ok(Vec::new()) };
+        let mut holes = sources.holes(coord)?;
+        if let Some(options) = self.options {
+            let ctx = crate::prepare::RenderContext { options, sources };
+            for hole in &mut holes {
+                hole.fill.prepare(&ctx)?;
+            }
+        }
+        Ok(holes)
+    }
+
     #[cfg(feature = "arena")]
     fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> crate::render::RenderResult {
         let unreachable = || crate::render::RenderError::Record(crate::render::NO_ARENA);
         let (sources, options) = (self.sources.ok_or_else(unreachable)?, self.options.ok_or_else(unreachable)?);
         sources.render_record_entry(record, held, options, self)
+    }
+
+    fn render_through_template(&mut self, at: crate::slot::NodeIdOrCoordinate<'_>) -> crate::render::RenderResult {
+        let (Some(sources), Some(options)) = (self.sources, self.options) else { return Err(at.unknown().into()) };
+        sources.render_through_template(at, options, sources, self)
     }
 
     fn end_lines_after(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>) {
@@ -1441,6 +1766,12 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn slice(&mut self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> crate::render::RenderResult {
         let sources = self.sources.ok_or_else(|| coord.unknown())?;
+        let holes = crate::render::RenderSink::holes(self, coord)?;
+        if !holes.is_empty() {
+            self.spliced(coord, &holes, sources)?;
+            self.moved_depth(coord, sources, true);
+            return Ok(());
+        }
         let raw = coord.resolve(sources)?;
         let end = coord.span(sources).ok_or_else(|| coord.unknown())?.end;
         let swallowed = sources.source_of(coord).is_some_and(|source| source.as_bytes().get(end as usize) == Some(&b'\n'));
@@ -1457,20 +1788,10 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.open_leaf(kind, text)?;
         self.probe_slice(coord);
         self.close_leaf(kind, text)?;
-        if !text.is_empty() && sources.is_source_root(coord) {
-            self.depth.hold(coord, self.sources);
-            return Ok(());
-        }
-        let moved = sources.depth_move(coord);
-        for _ in 0..moved.unsigned_abs() {
-            if moved > 0 {
-                crate::render::RenderSink::indent(self);
-            } else {
-                crate::render::RenderSink::dedent(self, LayoutKinds::NONE);
-            }
-        }
+        self.moved_depth(coord, sources, !text.is_empty());
         Ok(())
     }
+
 
     fn unit_text(&mut self, kind: crate::types::KindId, text: &str) -> crate::render::RenderResult {
         self.open_leaf(Some(kind), text)?;

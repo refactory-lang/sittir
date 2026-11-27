@@ -235,8 +235,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	readSlotLayouts?(node: number): SlotLayoutWire[];
 	/** `slotSeparator` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readSlotSeparator?(node: number): number | null;
-	/** `editedWithin` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
-	readEditedWithin?(node: number, ownSides: boolean): boolean;
 	/** `isEmpty` for the node a read left in the built arena that the key `node` names. Present when the addon carries the record codec. */
 	readIsEmpty?(node: number): boolean;
 	/** The address of the source entry each node a read left in the built arena that the keys `nodes` name was read from. Present when the addon carries the record codec. */
@@ -387,7 +385,6 @@ const ENGINE_FUNCTIONS = [
 	'readSides',
 	'readSlotLayouts',
 	'readSlotSeparator',
-	'readEditedWithin',
 	'readIsEmpty',
 	'readSources',
 	'builtMemory',
@@ -844,7 +841,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readEditedWithin, readIsEmpty, readSources } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readIsEmpty, readSources } = engine;
 	if (
 		holdSaturated === undefined ||
 		releaseBuilt === undefined ||
@@ -869,7 +866,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		readUnitSides === undefined ||
 		readSlotLayouts === undefined ||
 		readSlotSeparator === undefined ||
-		readEditedWithin === undefined ||
 		readIsEmpty === undefined ||
 		readSources === undefined
 	)
@@ -894,7 +890,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 			writeTriviaSide: (node, side, entries) => writeReadTriviaSide.call(engine, node, side, entries),
 			slotLayouts: (node) => readSlotLayouts.call(engine, node),
 			slotSeparator: (node) => readSlotSeparator.call(engine, node) ?? undefined,
-			editedWithin: (node, ownSides) => readEditedWithin.call(engine, node, ownSides),
 			isEmpty: (node) => readIsEmpty.call(engine, node),
 			sources: (nodes) => readSources.call(engine, nodes)
 		},

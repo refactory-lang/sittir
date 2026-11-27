@@ -275,6 +275,10 @@ impl EngineGrammar for ${v.Name}Grammar {
         <AnyNode as sittir_core::read::ReadNode>::admits(grammar, display)
     }
 
+    fn render_read_node(self, at: sittir_core::slot::NodeIdOrCoordinate<'_>, ctx: &sittir_core::prepare::RenderContext<'_>, w: &mut dyn sittir_core::render::RenderSink) -> sittir_core::render::RenderResult {
+        sittir_core::prepare::render_read_node::<AnyNode>(at, ctx, w)
+    }
+
     fn unit_id(self, nodes: &mut dyn sittir_core::nodes::Nodes<'_>, at: &sittir_core::nodes::Kid) -> Option<sittir_core::types::KindId> {
         <AnyNode as sittir_core::read::ReadNode>::unit_id(nodes, at)
     }

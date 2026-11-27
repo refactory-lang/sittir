@@ -16,7 +16,7 @@ describe.each([
 		const body = first.body();
 		if (!engine.isEmptyNode(body)) throw new Error('expected an empty block');
 		body.$trivia.inner(engine.build.lineComment(' inside'));
-		expect(root.$render()).toBe('fn a() {\n    // inside\n}\n\nfn b() { let x = 1; }\n');
+		expect(root.$render()).toBe('fn a() {\n    // inside\n}\nfn b() { let x = 1; }\n');
 	});
 
 	it('renders before a nested statement', () => {
@@ -26,7 +26,7 @@ describe.each([
 		const statement = second.body().statements()[0];
 		if (statement === undefined || !engine.is.letDeclaration(statement)) throw new Error('expected a let declaration');
 		statement.$trivia.leading(engine.build.lineComment(' before'));
-		expect(root.$render()).toBe('fn a() {}\n\nfn b() {\n    // before\n    let x = 1;\n}\n');
+		expect(root.$render()).toBe('fn a() {}\nfn b() { // before\n    let x = 1; }\n');
 	});
 
 	it('renders a comment written on a node a query reached as one written through the accessors', () => {
@@ -34,7 +34,7 @@ describe.each([
 		const viewed = Array.from(root.$query().$descendants).find((node) => engine.is.letDeclaration(node));
 		if (viewed === undefined || !engine.is.letDeclaration(viewed)) throw new Error('expected a let declaration');
 		viewed.$trivia.leading(engine.build.lineComment(' before'));
-		expect(root.$render()).toBe('fn a() {}\n\nfn b() {\n    // before\n    let x = 1;\n}\n');
+		expect(root.$render()).toBe('fn a() {}\nfn b() { // before\n    let x = 1; }\n');
 	});
 
 	it('leaves an untouched file rendering its bytes', () => {

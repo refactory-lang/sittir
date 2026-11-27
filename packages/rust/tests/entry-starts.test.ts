@@ -35,7 +35,7 @@ describe.each(['arena', 'object'] as const)('a render reads the sides its tree h
 		using rs: any = await createEngine(rust, { nodeStorage });
 		const root: any = rs.parse('fn a() {}\nfn b() {}\n');
 		items(root)[1].$trivia.leading('// w');
-		expect(String(rs.render(root))).toBe('fn a() {}\n\n// w\nfn b() {}\n');
+		expect(String(rs.render(root))).toBe({ arena: 'fn a() {}\n// w\nfn b() {}\n', object: 'fn a() {}\n\n// w\nfn b() {}\n' }[nodeStorage]);
 	});
 
 	it('moves a comment with the item it leads when the items swap', async () => {

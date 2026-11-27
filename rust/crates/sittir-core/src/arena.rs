@@ -45,7 +45,7 @@ use crate::types::KindId;
 pub use admit::{admit, BodySlot, CellShape, EdgePart, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub(crate) use borrowed::{header_side_mask, header_word, record_words, rewrite_layout, set_side_of, side_of};
-pub use built::{render_entry_at, render_record_entry};
+pub use built::{render_entry_at, render_read_at, render_record_entry};
 pub use built_write::{BuiltWriter, ReadWriter};
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
 pub use hydrate::{hydrate_error, hydrate_whole, hydrate_wrapped, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateInto, HydrateNode, HydrateSlot, Hydrated, Hydration, Placed};

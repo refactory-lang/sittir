@@ -497,10 +497,11 @@ macro_rules! refuse_napi_codec {
 }
 
 /// Trivia that frames what a node renders: its leading entries before, its
-/// trailing entries after.
+/// trailing entries after, and its inner entries where its inner site is.
 pub trait Framing {
     fn frame_leading(&self, w: &mut dyn RenderSink) -> RenderResult;
     fn frame_trailing(&self, w: &mut dyn RenderSink) -> RenderResult;
+    fn frame_inner(&self, w: &mut dyn RenderSink) -> RenderResult;
 }
 
 impl<T: Render + TriviaSeam> Framing for NodeTrivia<T> {
@@ -510,6 +511,10 @@ impl<T: Render + TriviaSeam> Framing for NodeTrivia<T> {
 
     fn frame_trailing(&self, w: &mut dyn RenderSink) -> RenderResult {
         self.render_trailing(w)
+    }
+
+    fn frame_inner(&self, w: &mut dyn RenderSink) -> RenderResult {
+        self.render_inner(w)
     }
 }
 
@@ -542,6 +547,85 @@ impl Frames {
 
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut Box<dyn FramedTrivia>> {
         self.own.iter_mut().chain(self.items.iter_mut())
+    }
+}
+
+/// A parsed node, as what fills the hole of its inner side: the node,
+/// written through its template (`RenderSink::render_through_template`).
+#[derive(Debug, Clone)]
+pub struct ThroughTemplate {
+    pub at: crate::slot::NodeIdOrOwnedCoordinate,
+}
+
+impl Framing for ThroughTemplate {
+    fn frame_leading(&self, _: &mut dyn RenderSink) -> RenderResult {
+        Ok(())
+    }
+
+    fn frame_trailing(&self, _: &mut dyn RenderSink) -> RenderResult {
+        Ok(())
+    }
+
+    fn frame_inner(&self, w: &mut dyn RenderSink) -> RenderResult {
+        w.render_through_template(self.at.at())
+    }
+}
+
+impl FramedTrivia for ThroughTemplate {
+    fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
+        Ok(())
+    }
+
+    fn boxed_clone(&self) -> Box<dyn FramedTrivia> {
+        Box::new(self.clone())
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    fn into_any(self: Box<Self>) -> Box<dyn std::any::Any> {
+        self
+    }
+
+    fn same_as(&self, other: &dyn FramedTrivia) -> bool {
+        other.as_any().downcast_ref::<Self>().is_some_and(|other| other.at == self.at)
+    }
+}
+
+/// A range of a parsed node's source that a side of the read's list of
+/// replaced ranges replaces, and what fills it through the writer: a
+/// leading or trailing side's written entries, with that side's seams; for
+/// an inner side, the node that holds it, whose bytes are the range,
+/// through its template, whose seams an inner side's are.
+///
+/// `line` is where the node whose side it is starts, whose line a line the
+/// writer breaks inside the hole indents to; `ends_in` the kind that node's
+/// bytes end in, where the text before a trailing side's hole is that
+/// kind's. `node` names that node, and `from` the first node of its line
+/// within the sliced node when that is another node: a line the writer
+/// breaks inside the hole indents one unit more for each level the
+/// templates from `from` down to `node` open.
+#[derive(Debug)]
+pub struct Hole {
+    pub range: std::ops::Range<u32>,
+    pub side: crate::trivia_table::TriviaSide,
+    pub fill: Box<dyn FramedTrivia>,
+    pub line: u32,
+    pub ends_in: Option<KindId>,
+    pub node: crate::slot::NodeIdOrOwnedCoordinate,
+    pub from: Option<crate::slot::NodeIdOrOwnedCoordinate>,
+}
+
+impl Hole {
+    /// Writes what fills the range, as its side's owner frames it
+    /// (`Framing`).
+    pub fn fill(&self, w: &mut dyn RenderSink) -> RenderResult {
+        match self.side {
+            crate::trivia_table::TriviaSide::Leading => self.fill.frame_leading(w),
+            crate::trivia_table::TriviaSide::Trailing => self.fill.frame_trailing(w),
+            crate::trivia_table::TriviaSide::Inner => self.fill.frame_inner(w),
+        }
     }
 }
 

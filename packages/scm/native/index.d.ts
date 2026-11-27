@@ -416,9 +416,6 @@ export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | 
  */
 export declare function readDescendants(engine: object, from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<ChildPosition> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
 
-/** r" `editedWithin` for the node a read left that the key `node` names. */
-export declare function readEditedWithin(engine: object, node: number, ownSides: boolean): boolean
-
 /** r" `isEmpty` for the node a read left that the key `node` names. */
 export declare function readIsEmpty(engine: object, node: number): boolean
 

@@ -1165,10 +1165,6 @@ Bound as `ReadNodes.slotLayouts`: a read node's stored slot layouts, with no tre
 
 Bound as `ReadNodes.slotSeparator`, null mapped to `undefined`: the separator a read list's source spelled.
 
-### `packages/common/src/engine.ts::NativeEngineLike::readEditedWithin`
-
-Bound as `ReadNodes.editedWithin`: whether a write has changed anything under a read node, its own sides counted when asked.
-
 ### `packages/common/src/engine.ts::NativeEngineLike::readIsEmpty`
 
 Bound as `ReadNodes.isEmpty`: whether a read node spans nothing but trivia.

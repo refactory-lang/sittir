@@ -103,8 +103,8 @@ describe.each(['arena', 'object'] as const)('a whitespace entry written beside a
 	});
 
 	it.each([
-		['a line break where the source keeps the line', 'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n', 'fn f() {\n    let x = [1, 2, $\n    3, 4,];\n}\n', newline],
-		['a space where the source breaks the line', 'fn f() {\n    let x = [\n        1,\n        2, $\n        3,\n        4,\n    ];\n}\n', 'fn f() {\n    let x = [1, 2, $ 3, 4,];\n}\n', space]
+		['a line break where the source keeps the line', 'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n', { arena: 'fn f() {\n    let x = [\n        1,\n        2, $\n        3,\n        4,\n    ];\n}\n', object: 'fn f() {\n    let x = [1, 2, $\n    3, 4,];\n}\n' }, newline],
+		['a space where the source breaks the line', 'fn f() {\n    let x = [\n        1,\n        2, $\n        3,\n        4,\n    ];\n}\n', { arena: 'fn f() {\n    let x = [\n        1,\n        2, $ 3,\n        4,\n    ];\n}\n', object: 'fn f() {\n    let x = [1, 2, $ 3, 4,];\n}\n' }, space]
 	] as const)('renders %s after it in a list separator gap, written beside the ERROR on the next item', (_, source, expected, entry) => {
 		const root = engine.parse(source);
 		const next = items(root)[2];
@@ -112,6 +112,6 @@ describe.each(['arena', 'object'] as const)('a whitespace entry written beside a
 		const error = next.$trivia.leading().find(isErrorNode);
 		if (error === undefined) throw new Error('expected the ERROR on the item');
 		next.$trivia.leading(error, entry);
-		expect(engine.render(root).toString()).toBe(expected);
+		expect(engine.render(root).toString()).toBe(expected[storage]);
 	});
 });

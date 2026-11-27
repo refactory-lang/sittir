@@ -632,16 +632,45 @@ pub(crate) fn read_edited<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContex
     if !edited && !ctx.sources.reads_templates() {
         return Ok(None);
     }
+    read_one_level::<T>(coord, ctx, |grammar, display| edited || T::reads_record(grammar, display))
+}
+
+/// The node `coord` names, read one level into `T` when `admits` takes its
+/// grammar and display ids, its changed edges carried into the read
+/// (`ReadCtx::with_changed`); `None` when `admits` refuses it or `T` reads
+/// nothing.
+fn read_one_level<T: Prepare>(coord: &NodeCoordinate, ctx: &RenderContext<'_>, admits: impl Fn(KindId, KindId) -> bool) -> Result<Option<T>, CoordinateError> {
     let mut node = None;
     ctx.sources.read_node(coord, &mut |cursor, read| {
         let at = cursor.node();
-        if !edited && !T::reads_record(crate::read::grammar_id(&at), crate::read::display_id(&at)) {
+        if !admits(crate::read::grammar_id(&at), crate::read::display_id(&at)) {
             return;
         }
         read.changed = Some((coord.index, coord.changed()));
         node = T::read_coordinate(cursor, read);
     });
     node.transpose().map_err(|error| unread(coord, &error))
+}
+
+/// The parsed node `at` names, written into `w` as a render writes a node a
+/// write lies in: read one level into `T`, prepared, and rendered from its
+/// template, each node under it as the render's table decides; as its
+/// source bytes when the table says it renders as them
+/// (`SourceTable::renders_as_source`), as a record's render writes it
+/// (`RecordGrammar::render_entry`).
+///
+/// # Errors
+///
+/// A node no tree of the table reads, and what its read, prepare or render
+/// refuses.
+pub fn render_read_node<T: Prepare + crate::render::Render>(at: crate::slot::NodeIdOrCoordinate<'_>, ctx: &RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> Result<(), RenderError> {
+    if ctx.sources.renders_as_source(at) {
+        return crate::slot::write_coordinate(at, false, w);
+    }
+    let crate::slot::NodeIdOrCoordinate::Coordinate(coord) = at else { return Err(at.unknown().into()) };
+    let mut node = read_one_level::<T>(coord, ctx, |_, _| true)?.ok_or_else(|| at.unknown())?;
+    node.prepare(ctx)?;
+    node.render(w)
 }
 
 /// The refusal of a render whose edited coordinate `coord` its read refused.

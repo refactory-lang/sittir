@@ -95,7 +95,7 @@ export interface ReadChunk {
 	readonly meta: Uint8Array;
 }
 
-export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'editedWithin' | 'isEmpty' | 'unitSides'>> & { sides(node: number): ReadSides; sources(nodes: readonly number[]): readonly number[] };
+export type ReadNodes = Required<Pick<TreeHandle, 'snapshotLayouts' | 'writeTriviaSide' | 'slotLayouts' | 'slotSeparator' | 'isEmpty' | 'unitSides'>> & { sides(node: number): ReadSides; sources(nodes: readonly number[]): readonly number[] };
 
 export type ReadSides = Readonly<Record<TriviaSideName, readonly WireNode[]>>;
 
@@ -392,7 +392,6 @@ export class BuiltArena {
 			snapshotLayouts: reads.snapshotLayouts,
 			slotLayouts: reads.slotLayouts,
 			slotSeparator: reads.slotSeparator,
-			editedWithin: reads.editedWithin,
 			isEmpty: reads.isEmpty,
 			triviaSide: (at, side) => {
 				if (at < 0 || this.reads(at)) return readEntries(this.tree, sidesOf(at)[side].slice());

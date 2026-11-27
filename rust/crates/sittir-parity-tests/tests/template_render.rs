@@ -3,18 +3,24 @@
 //! source bytes (`ThroughTemplates`). For every round-trip source of each
 //! grammar, the root renders alike from its templates both ways: as its
 //! coordinate, read from its tree (object), and as the record a read of the
-//! source left it, with no tree (arena).
+//! source left it, with no tree (arena). So does each node under the root
+//! that a writer writes through its template where it stands
+//! (`SourceTable::render_through_template`).
 #![cfg(feature = "arena")]
 
 use sittir_core::engine::Backing as _;
 use sittir_core::arena::{HydrateNode, RecordCells, RecordGrammar};
-use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
+use sittir_core::engine::{claim_tree_id, Engine, ParsedTree, ReadSources, SourceRecords, Trees as _};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
 use sittir_core::read::ReadNode;
 use sittir_core::render::{RenderError, SourceTable, ThroughTemplates};
-use sittir_core::slot::ChangedEdges;
-use sittir_core::types::NodeIndex;
+use sittir_core::nodes::Nodes as _;
+use sittir_core::read::NodeNames as _;
+use sittir_core::render::RenderSink as _;
+use sittir_core::slot::{ChangedEdges, NodeIdOrCoordinate};
+use sittir_core::spacing::{SpacingWriter, WordMatcher};
+use sittir_core::types::{NodeId, NodeIndex};
 use sittir_core::SlotValue;
 use sittir_parity_tests::OverRead;
 use sittir_parity_tests::{load_fixtures, ParityFixture};
@@ -93,6 +99,65 @@ impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
                 Ok(if object == source { Outcome::AsSource } else { Outcome::Rendered })
             }
         }
+    }
+}
+
+impl<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells> Renders<G, N> {
+    /// The node `at` written through its template where a writer stands
+    /// (`RenderSink::render_through_template`), reading templates through
+    /// `sources`, under `options`.
+    fn through_template(&self, sources: &dyn SourceTable, at: NodeIdOrCoordinate<'_>, options: &ResolvedOptions) -> Result<String, String> {
+        let mut text = String::new();
+        let mut w = SpacingWriter::new(&mut text, WordMatcher::default_ident()).with_table(self.grammar.whitespace().0).with_indent(&options.indent).with_sources(sources).with_options(options);
+        w.render_through_template(at).map_err(|e| e.to_string())?;
+        w.finish().map_err(|e| e.to_string())?;
+        Ok(text)
+    }
+
+    /// Each named child of the root of `source` that has a record, written
+    /// through its template in object storage and in arena storage, by its
+    /// index; none for a source the parser rejects whole.
+    fn children_through_templates(&self, source: &str) -> Result<Vec<(NodeIndex, String, String)>, String> {
+        let (tree, options) = self.parse(source);
+        if tree.tree().root_node().is_error() {
+            return Ok(Vec::new());
+        }
+        let mut children = Vec::new();
+        {
+            let mut index = 1u32;
+            let root = tree.tree().root_node();
+            let mut cursor = root.walk();
+            for child in root.children(&mut cursor) {
+                let at = NodeIndex::new(index);
+                index += sittir_core::read::descendant_count(&child);
+                if child.is_named() && !child.is_extra() {
+                    children.push((at, sittir_core::types::Span::of(&child)));
+                }
+            }
+        }
+        let tree_id = tree.tree_id();
+        let live = std::collections::HashMap::from([(tree_id, tree)]);
+        let object_sources = ReadSources::new(&live);
+        let object_through = ThroughTemplates(&object_sources);
+        let mut engine = Engine::new(self.grammar, (self.options)()).expect("an engine");
+        let root = engine.parse_records::<N>(source)?.root.ok_or("records: no root")?;
+        let built = engine.written().built();
+        let trees = SourceRecords::new(&engine, &built, |_| Ok(()));
+        let arena_sources = ReadSources::over(&trees);
+        let arena_through = ThroughTemplates(&arena_sources);
+        let records = trees.holding(NodeIdOrCoordinate::of(NodeId::record(root.0))).ok_or("records: no tree over the root")?;
+        let root_index = records.index_named(NodeId::record(root.0)).ok_or("records: no index for the root")?;
+        let kids = records.nodes().kids(root_index);
+        let mut rendered = Vec::new();
+        for kid in kids.iter().filter(|kid| kid.named && !kid.extra) {
+            let Some(name) = records.name(kid.index).filter(|name| name.as_record().is_some()) else { continue };
+            let Some(&(at, _)) = children.iter().find(|(_, span)| span.start == kid.start && span.end == kid.end) else { return Err(format!("records: no object node spans {}..{}", kid.start, kid.end)) };
+            let coordinate = live[&tree_id].row_coordinate(at).ok_or("no child coordinate")?;
+            let object = self.through_template(&object_through, (&coordinate).into(), &options)?;
+            let arena = self.through_template(&arena_through, NodeIdOrCoordinate::of(name), &options)?;
+            rendered.push((at, object, arena));
+        }
+        Ok(rendered)
     }
 }
 
@@ -198,6 +263,81 @@ fn every_regex_source_renders_alike_from_its_templates() {
 #[test]
 fn every_scm_source_renders_alike_from_its_templates() {
     corpus("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts }, Pins { panicking: 0, unread: 0 });
+}
+
+fn children_alike<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>) {
+    let mut differ = Vec::new();
+    let mut written = 0;
+    for (i, fixture) in load_fixtures(name).into_iter().enumerate() {
+        let ParityFixture::RoundTrip(fixture) = fixture else { continue };
+        let source = fixture.source_in;
+        for (at, object, arena) in grammar.children_through_templates(&source).unwrap_or_else(|e| panic!("{name} source {i}: {e}")) {
+            written += 1;
+            if object != arena && !(name == "rust" && apart_only_beside_a_quote(&object, &arena)) && !grammar.apart_only_inside_a_unit(&source, &object, &arena) {
+                differ.push(format!("{name} source {i} node {}:\n object {object:?}\n arena  {arena:?}", at.0));
+            }
+        }
+    }
+    eprintln!("{name}: {written} nodes written through their templates, {} apart", differ.len());
+    assert!(written > 0, "{name} writes some node through its template");
+    assert!(differ.is_empty(), "{} nodes render apart between the two storages:\n{}", differ.len(), differ.join("\n"));
+}
+
+#[test]
+fn each_node_under_a_root_written_through_its_template_renders_alike_in_both_storages() {
+    children_alike("rust", &rust_renders());
+    children_alike("typescript", &typescript_renders());
+    children_alike("python", &python_renders());
+    children_alike("regex", &Renders { grammar: sittir_regex::RegexGrammar, options: sittir_regex::render::options::defaults, native: sittir_regex::render::render_node_parts });
+    children_alike("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts });
+}
+
+/// A break inside a range a side of a parsed node replaces indents by the
+/// levels the templates from the first node of its line down to that node
+/// open, which a render counts by writing each node holding it through its
+/// template (`SpacingWriter::levels_toward`). Only a node with a record has
+/// a template in arena storage, so a node holding a named node with no
+/// record would end that count early there alone. Every node the grammar
+/// reads through a template (`ReadNode::router`) that holds a named node
+/// has a record; a kind it reads as its source, an `ERROR` and an extra,
+/// with what lies in them, both storages write as their source.
+fn holders_have_records<G: RecordGrammar, N: ReadNode + HydrateNode + RecordCells>(name: &str, grammar: &Renders<G, N>) {
+    let (mut holders, mut missing) = (0, Vec::new());
+    for (i, fixture) in load_fixtures(name).into_iter().enumerate() {
+        let ParityFixture::RoundTrip(fixture) = fixture else { continue };
+        let mut engine = Engine::new(grammar.grammar, (grammar.options)()).expect("an engine");
+        let Some(root) = engine.parse_records::<N>(&fixture.source_in).expect("a parse").root else { continue };
+        let built = engine.written().built();
+        let trees = SourceRecords::new(&engine, &built, |_| Ok(()));
+        let records = trees.holding(NodeIdOrCoordinate::of(NodeId::record(root.0))).expect("records over the root");
+        let mut nodes = records.nodes();
+        let mut pending = vec![nodes.kid(records.index_named(NodeId::record(root.0)).expect("a root index"))];
+        while let Some(node) = pending.pop() {
+            if node.error() || node.extra {
+                continue;
+            }
+            let kids = nodes.kids(node.index);
+            if N::router(node.grammar, node.display).is_some() && kids.iter().any(|kid| kid.named && !kid.extra) {
+                holders += 1;
+                if records.name(node.index).and_then(NodeId::as_record).is_none() {
+                    missing.push(format!("{name} source {i}: {}..{} (kind {}) holds a named node and has no record", node.start, node.end, node.display.0));
+                }
+            }
+            pending.extend(kids.iter().copied());
+        }
+    }
+    eprintln!("{name}: {holders} nodes read through a template hold a named node, {} without a record", missing.len());
+    assert!(holders > 0, "{name} has nodes read through a template that hold a named node");
+    assert!(missing.is_empty(), "{}", missing.join("\n"));
+}
+
+#[test]
+fn every_node_that_holds_a_named_node_has_a_record() {
+    holders_have_records("rust", &rust_renders());
+    holders_have_records("typescript", &typescript_renders());
+    holders_have_records("python", &python_renders());
+    holders_have_records("regex", &Renders { grammar: sittir_regex::RegexGrammar, options: sittir_regex::render::options::defaults, native: sittir_regex::render::render_node_parts });
+    holders_have_records("scm", &Renders { grammar: sittir_scm::ScmGrammar, options: sittir_scm::render::options::defaults, native: sittir_scm::render::render_node_parts });
 }
 
 /// Each `(source, what its whitespace spells, what a built node writes)`

@@ -267,9 +267,9 @@ fn a_side_written_to_a_read_s_node_is_read_by_every_later_call() {
     let mut nodes = records.nodes();
     let (at, first, second) = (at_path(&mut nodes, &path), at_path(&mut nodes, &[0]), at_path(&mut nodes, &[1]));
     assert!(records.side_entries(at, side, false).is_empty(), "the written side is the one read");
-    assert!(records.edited_within(NodeIndex::ROOT, false));
-    assert!(records.edited_within(first, false) || first == at);
-    assert!(records.edited_within(at, true));
+    assert!(!records.edited_within(NodeIndex::ROOT, false), "a write below a node leaves it rendering as its source");
+    assert!(!records.edited_within(first, false) || first == at);
+    assert_eq!(records.edited_within(at, true), side == TriviaSide::Inner, "a node renders through its template for its own inner side alone");
     assert_eq!(records.edited_within(at, false), side == TriviaSide::Inner, "a node's own leading and trailing are not within it");
     assert!(!records.edited_within(second, true), "the second function holds no write");
 }

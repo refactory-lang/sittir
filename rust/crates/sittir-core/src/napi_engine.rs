@@ -1047,12 +1047,6 @@ macro_rules! napi_engine {
                 with_read_node(engine, node, |tree, index| Ok(tree.slot_separator(index)))
             }
 
-            /// `editedWithin` for the node a read left that the key `node` names.
-            #[::napi_derive::napi]
-            pub fn read_edited_within(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, node: f64, own_sides: bool) -> ::napi::Result<bool> {
-                with_read_node(engine, node, |tree, index| Ok(tree.edited_within(index, own_sides)))
-            }
-
             /// The address of the source entry each node a read left that
             /// the keys `nodes` name was read from, in order. Refuses an
             /// engine already disposed and a number that is no key.
@@ -2183,6 +2177,10 @@ where
         self.trees.frames(at)
     }
 
+    fn holes(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, crate::render::RenderError> {
+        self.trees.holes(at)
+    }
+
     fn slot_layouts(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
         crate::render::SourceTable::slot_layouts(self.trees, at)
     }
@@ -2232,6 +2230,10 @@ where
         let built = store.built();
         let arena = built.readable().map_err(RenderError::Record)?;
         crate::arena::render_record_entry(self.grammar, arena, record, store, self.trees, &crate::prepare::RenderContext::new(options, self), w)
+    }
+
+    fn render_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>, options: &crate::options::ResolvedOptions, table: &dyn crate::render::SourceTable, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        crate::render::SourceTable::render_through_template(self.trees, at, options, table, w)
     }
 }
 

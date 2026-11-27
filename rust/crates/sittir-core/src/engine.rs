@@ -93,6 +93,17 @@ pub trait EngineGrammar: Copy {
         let _ = (grammar, display);
         None
     }
+    /// Writes the parsed node `at` names into `w` as a render writes a node
+    /// a write lies in, read from its tree one level into the grammar's
+    /// node (`prepare::render_read_node`); a grammar with no nodes refuses.
+    ///
+    /// # Errors
+    ///
+    /// What the node's read, prepare or render refuses.
+    fn render_read_node(self, at: crate::slot::NodeIdOrCoordinate<'_>, ctx: &crate::prepare::RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        let _ = (ctx, w);
+        Err(at.unknown().into())
+    }
     /// Whether the read takes a node with these ids (`ReadNode::admits`);
     /// every node for a grammar with no nodes.
     fn admits(self, grammar: KindId, display: KindId) -> bool {
@@ -461,6 +472,36 @@ pub trait Backing<G: EngineGrammar>: Sized {
     /// Whether a write lies on the node at `index`, on a side `own_sides`
     /// counts, or under it, and how many written sides that walked.
     fn edited_in(&self, nodes: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> (bool, u64);
+
+    /// Each side the list of replaced ranges of the read this backer is over
+    /// names: its node, by the id this call gives it, its side, and where its
+    /// range starts in the source; none for a backer over no read.
+    fn replaced_sides(&self) -> Vec<(NodeIndex, TriviaSide, u32)> {
+        Vec::new()
+    }
+
+    /// Whether the read this backer is over has a list of replaced ranges,
+    /// answered without reading it or naming a node; never for a backer over
+    /// no read.
+    fn replaces_ranges(&self) -> bool {
+        false
+    }
+
+    /// Whether the node at `index` lies under the node at `holder`, or is
+    /// it, through `nodes`.
+    fn under(&self, nodes: &mut dyn Nodes<'_>, holder: NodeIndex, index: NodeIndex) -> bool {
+        if index == holder {
+            return true;
+        }
+        let mut at = index;
+        while let Some(parent) = nodes.parent(at) {
+            if parent == holder {
+                return true;
+            }
+            at = parent;
+        }
+        false
+    }
 
     /// The blank-line kind the parse set the list item after the node at
     /// `index` apart from it with, as the parse stamped it on the node
@@ -1156,6 +1197,20 @@ impl<'a, G: EngineGrammar> Records<'a, G> {
         Some(std::borrow::Cow::Owned(starts))
     }
 
+    /// The id this call gives the node `name` names; none for a name no
+    /// record of the source holds a node of.
+    #[must_use]
+    pub fn index_named(&self, name: crate::types::NodeId) -> Option<NodeIndex> {
+        self.index_at(self.named(name)?)
+    }
+
+    /// The id this call gives the node kept at `site`; none for a site no
+    /// record of the source holds.
+    #[must_use]
+    pub fn index_at(&self, site: crate::arena::NodeSite) -> Option<NodeIndex> {
+        crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape).index_at(site)
+    }
+
     /// Where each side a write gave a node of the source is kept: its read's
     /// list of replaced ranges (`TriviaStore::written`).
     fn written_sites(&self) -> Option<Vec<(crate::arena::NodeSite, TriviaSide)>> {
@@ -1302,18 +1357,29 @@ impl<G: EngineGrammar> Backing<G> for Records<'_, G> {
         None
     }
 
-    fn edited_in(&self, _: &mut dyn Nodes<'_>, index: NodeIndex, own_sides: bool) -> (bool, u64) {
-        let Some(written) = self.written_sites() else { return (false, 0) };
-        let mut runs = crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape);
-        let mut walked = 0;
-        let edited = written.into_iter().any(|(site, side)| {
-            walked += 1;
-            if runs.keeps(index, site) {
-                return own_sides || side == TriviaSide::Inner;
-            }
-            runs.under(index, site)
-        });
-        (edited, walked)
+    /// A read's node renders through its template only where its read's
+    /// list replaces its own inner side; every other side the list holds is
+    /// a hole in the bytes of a node above it (`Lookups::holes`).
+    fn edited_in(&self, _: &mut dyn Nodes<'_>, index: NodeIndex, _: bool) -> (bool, u64) {
+        let replaced = self.replaced_sides();
+        (replaced.iter().any(|&(at, side, _)| at == index && side == TriviaSide::Inner), u64::try_from(replaced.len()).unwrap_or(u64::MAX))
+    }
+
+    fn under(&self, _: &mut dyn Nodes<'_>, holder: NodeIndex, index: NodeIndex) -> bool {
+        let Some(site) = crate::read::NodeNames::name(self, index).and_then(|name| self.named(name)) else { return false };
+        crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape).under(holder, site)
+    }
+
+    fn replaces_ranges(&self) -> bool {
+        self.replaced_list() != crate::arena::CellWord(0)
+    }
+
+    fn replaced_sides(&self) -> Vec<(NodeIndex, TriviaSide, u32)> {
+        let list = self.replaced_list();
+        if list == crate::arena::CellWord(0) {
+            return Vec::new();
+        }
+        crate::arena::Replaced::read(self.built, list).ok().into_iter().flatten().filter_map(|entry| Some((self.index_named(entry.node)?, entry.side, entry.offset))).collect()
     }
 
     fn set_apart(&self, index: NodeIndex) -> Option<crate::layout_kinds::LayoutKinds> {
@@ -1460,20 +1526,6 @@ impl<'a, G: crate::arena::RecordGrammar> Records<'a, G> {
     #[must_use]
     pub fn name_at(&self, index: NodeIndex) -> Option<crate::types::NodeId> {
         crate::read::NodeNames::name(self, index)
-    }
-
-    /// The id this call gives the node `name` names; none for a name no
-    /// record of the source holds a node of.
-    #[must_use]
-    pub fn index_named(&self, name: crate::types::NodeId) -> Option<NodeIndex> {
-        self.index_at(self.named(name)?)
-    }
-
-    /// The id this call gives the node kept at `site`; none for a site no
-    /// record of the source holds.
-    #[must_use]
-    pub fn index_at(&self, site: crate::arena::NodeSite) -> Option<NodeIndex> {
-        crate::arena::RunNodes::over(self.built, self.text, &self.table, self.shape).index_at(site)
     }
 }
 
@@ -2323,6 +2375,128 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
         !self.edited_within(index)
     }
 
+    /// What `SourceTable::holes` answers for `at`: each side the read's
+    /// list names of a node under it that none of its frames holds
+    /// (`framed_items`), over its range of the source, filled by its written
+    /// entries; none for a coordinate over other bytes than its node's, as
+    /// an extra its node holds is. A leading side's range runs
+    /// from where the list says it starts to where its node starts; a
+    /// trailing side's from where its node ends to where the last record
+    /// its parse placed on it ends. At one offset a trailing side comes
+    /// before a leading one, an inner node's trailing side before an outer
+    /// node's, and an outer node's leading side before an inner node's.
+    fn holes(&mut self, at: Named) -> Vec<crate::trivia::Hole> {
+        let replaced = self.tree.replaced_sides();
+        if replaced.is_empty() {
+            return Vec::new();
+        }
+        let Some(holder) = self.kid(at.index).filter(|holder| holder.span() == at.span) else { return Vec::new() };
+        let framed = self.framed_items(holder.index);
+        let mut holes = Vec::new();
+        for (index, side, offset) in replaced {
+            if index == holder.index || framed.contains(&(index, side)) || !self.tree.under(&mut self.nodes, holder.index, index) {
+                continue;
+            }
+            let Some(node) = self.kid(index) else { continue };
+            let (range, trivia) = match side {
+                TriviaSide::Inner => {
+                    let Some(through) = self.through_template(index) else { continue };
+                    (node.start..node.end, through)
+                }
+                TriviaSide::Leading => (offset..node.start, Box::new(crate::trivia::NodeTrivia { leading: Some(self.side_entries(index, side, false).into_iter().map(SideEntry::into_entry).collect()), trailing: None, inner: None }) as Box<dyn crate::trivia::FramedTrivia>),
+                TriviaSide::Trailing => {
+                    let end = self.placed_end(index, side).map_or(node.end, |end| end.max(node.end));
+                    (node.end..end, Box::new(crate::trivia::NodeTrivia { leading: None, trailing: Some(self.side_entries(index, side, false).into_iter().map(SideEntry::into_entry).collect()), inner: None }) as Box<dyn crate::trivia::FramedTrivia>)
+                }
+            };
+            let ends_in = if side == TriviaSide::Trailing { self.end_kind(node) } else { None };
+            let Some(name) = self.render_name(index) else { continue };
+            let line = self.line_node(holder, node);
+            let from = if line == index { None } else { self.render_name(line) };
+            holes.push((index, crate::trivia::Hole { range, side, fill: trivia, line: node.start, ends_in, node: name, from }));
+        }
+        let templates: Vec<_> = holes.iter().filter(|(_, hole)| hole.side == TriviaSide::Inner).map(|(_, hole)| hole.range.clone()).collect();
+        holes.retain(|(_, hole)| hole.side == TriviaSide::Inner || !templates.iter().any(|range| range.start <= hole.range.start && hole.range.end <= range.end && range.start < range.end));
+        let tree = self.tree;
+        let nodes = &mut self.nodes;
+        holes.sort_by(|(one, a), (other, b)| {
+            let order = |side: TriviaSide| u8::from(side != TriviaSide::Trailing);
+            let outer_first = if tree.under(nodes, *one, *other) { std::cmp::Ordering::Less } else if tree.under(nodes, *other, *one) { std::cmp::Ordering::Greater } else { std::cmp::Ordering::Equal };
+            let nested = if a.side == TriviaSide::Trailing { outer_first.reverse() } else { outer_first };
+            a.range.start.cmp(&b.range.start).then(order(a.side).cmp(&order(b.side))).then(nested)
+        });
+        holes.into_iter().map(|(_, hole)| hole).collect()
+    }
+
+    /// The sides of the items under the node at `index` that its frames
+    /// hold (`frame_levels`): the leading side of each item a list at its
+    /// start passes that edge's entries to, and the trailing side of each at
+    /// its end.
+    fn framed_items(&mut self, index: NodeIndex) -> Vec<(NodeIndex, TriviaSide)> {
+        let mut framed = Vec::new();
+        for side in [TriviaSide::Leading, TriviaSide::Trailing] {
+            let mut item = self.edge_item(index, side);
+            while let Some(at) = item {
+                framed.push((at, side));
+                item = self.edge_item(at, side);
+            }
+        }
+        framed
+    }
+
+    /// The node at `index` as an entry that renders it through its template:
+    /// its record, with the store its sides are read from; none for a node
+    /// with no record of its own.
+    fn through_template(&mut self, index: NodeIndex) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        Some(Box::new(crate::trivia::ThroughTemplate { at: self.render_name(index)? }))
+    }
+
+    /// What a render names the node at `index` by: its id, where the
+    /// backer's nodes keep names past a call, else its coordinate.
+    fn render_name(&mut self, index: NodeIndex) -> Option<crate::slot::NodeIdOrOwnedCoordinate> {
+        match self.tree.node_names() {
+            Some(names) => names.name(index).map(crate::slot::NodeIdOrOwnedCoordinate::NodeId),
+            None => self.coordinate(index).map(crate::slot::NodeIdOrOwnedCoordinate::Coordinate),
+        }
+    }
+
+    /// The outermost node from `holder` down to `node` that starts on the
+    /// line `node` starts on: the first node of that line within `holder`,
+    /// from which a break inside one of `node`'s ranges counts the levels
+    /// its template opens; `node` itself when it starts that line.
+    fn line_node(&mut self, holder: Kid, node: Kid) -> NodeIndex {
+        let line = crate::types::narrow(self.tree.source()[..node.start as usize].rfind('\n').map_or(0, |at| at + 1));
+        let tree = self.tree;
+        let mut at = holder;
+        while at.index != node.index && at.start < line {
+            let kids = self.nodes.kids(at.index);
+            let Some(next) = kids.iter().find(|kid| kid.start <= node.start && node.end <= kid.end && tree.under(&mut self.nodes, kid.index, node.index)) else { return node.index };
+            at = *next;
+        }
+        at.index
+    }
+
+    /// Where the last record the parse placed on `side` of the node at
+    /// `index` ends, the list's writes aside; none where it placed none.
+    fn placed_end(&mut self, index: NodeIndex, side: TriviaSide) -> Option<u32> {
+        #[cfg(feature = "arena")]
+        {
+            let tree = self.tree;
+            let place = tree.place(index)?;
+            let arena = tree.reads()?;
+            let stored = tree.store().side_in(place, side, crate::arena::CellWord(0), arena).ok().flatten()?;
+            stored.into_iter().filter_map(|entry| match self.parse_placed(entry, true)? {
+                SideEntry::Source { span, .. } => Some(span.end),
+                _ => None,
+            }).max()
+        }
+        #[cfg(not(feature = "arena"))]
+        {
+            let _ = (&self, index, side);
+            None
+        }
+    }
+
     /// What `SourceTable::for_each_descendant` answers for the node at
     /// `index`: each node of its subtree in preorder, below a node `visit`
     /// refuses none.
@@ -2373,6 +2547,12 @@ impl<G: EngineGrammar, B: Backing<G>> Lookups<'_, G, B> {
 
     fn spelled_end_kind(&mut self, at: Named) -> Option<KindId> {
         let kid = self.kid(at.index).filter(|kid| kid.span() == at.span)?;
+        self.end_kind(kid)
+    }
+
+    /// The kind the bytes of `kid` end in, where a node under it spells
+    /// them (`nodes::spelled_end`).
+    fn end_kind(&mut self, kid: Kid) -> Option<KindId> {
         let end = crate::nodes::spelled_end(&mut self.nodes, &kid);
         (end.index != kid.index).then_some(end.grammar)
     }
@@ -2561,6 +2741,13 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for Seating<'_, G, B> {
 
     fn frames(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> crate::trivia::Frames {
         self.own(at).map_or_else(crate::trivia::Frames::default, |(mut lookups, named)| frames_of(lookups.side_levels(named)))
+    }
+
+    fn holes(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, crate::render::RenderError> {
+        if !self.tree().replaces_ranges() {
+            return Ok(Vec::new());
+        }
+        Ok(self.own(at).map_or_else(Vec::new, |(mut lookups, named)| lookups.holes(named)))
     }
 
     fn framed_span(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<Span> {
@@ -2954,6 +3141,19 @@ pub trait Trees<G: EngineGrammar, B: Backing<G> = ParsedTree<G>> {
         let _ = (record, held, options, table, w);
         Err(crate::render::RenderError::Record(crate::render::NO_ARENA))
     }
+
+    /// Writes the parsed node `at` names into `w` through its template,
+    /// under `options` over `table` (`SourceTable::render_through_template`):
+    /// read from the tree that holds it, by its grammar
+    /// (`EngineGrammar::render_read_node`).
+    ///
+    /// # Errors
+    ///
+    /// A node no tree here holds, and what its render refuses.
+    fn render_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>, options: &crate::options::ResolvedOptions, table: &dyn SourceTable, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        let tree = self.holding(at).ok_or_else(|| at.unknown())?;
+        tree.grammar().render_read_node(at, &crate::prepare::RenderContext::new(options, table), w)
+    }
 }
 
 impl<G: EngineGrammar, H: std::hash::BuildHasher> Trees<G, ParsedTree<G>> for HashMap<TreeId, ParsedTree<G>, H> {
@@ -3061,6 +3261,12 @@ impl<'a, G: crate::arena::RecordGrammar> Trees<G, Records<'a, G>> for SourceReco
         crate::arena::render_entry_at(self.engine.grammar(), self.built, record, store, &crate::prepare::RenderContext::new(options, table), w)
     }
 
+    fn render_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>, options: &crate::options::ResolvedOptions, table: &dyn SourceTable, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        let records = self.holding(at).ok_or_else(|| at.unknown())?;
+        let record = at.key().ok().and_then(crate::types::NodeId::as_record).ok_or_else(|| at.unknown())?;
+        crate::arena::render_read_at(self.engine.grammar(), self.built, crate::arena::Address(record), records.store(), &crate::prepare::RenderContext::new(options, table), w)
+    }
+
     fn tree(&self, _: TreeId) -> Option<&Records<'a, G>> {
         None
     }
@@ -3160,6 +3366,10 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for ReadSources<'_, G, B> {
         self.trees.render_record_entry(record, held, options, self, w)
     }
 
+    fn render_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>, options: &crate::options::ResolvedOptions, table: &dyn SourceTable, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        self.trees.render_through_template(at, options, table, w)
+    }
+
     fn source_of(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Option<&str> {
         Some(self.holding(at)?.source())
     }
@@ -3188,6 +3398,10 @@ impl<G: EngineGrammar, B: Backing<G>> SourceTable for ReadSources<'_, G, B> {
 
     fn frames(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> crate::trivia::Frames {
         self.seating(at).map_or_else(crate::trivia::Frames::default, |seating| seating.frames(at))
+    }
+
+    fn holes(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, crate::render::RenderError> {
+        self.seating(at).map_or_else(|| Ok(Vec::new()), |seating| seating.holes(at))
     }
 
     fn slot_layouts(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {

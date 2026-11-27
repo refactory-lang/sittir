@@ -240,6 +240,19 @@ pub trait SourceTable {
         crate::trivia::Frames { own: self.sides(coord), items: Vec::new() }
     }
 
+    /// The ranges of a coordinate's bytes that the sides of its read's list
+    /// of replaced ranges replace, each with the side that fills it, in the
+    /// order a template writes them; none where the list names no side of a
+    /// node inside it. A table of bare sources knows no list.
+    ///
+    /// # Errors
+    ///
+    /// A table that ends the render at the coordinate's slice refuses.
+    fn holes(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, RenderError> {
+        let _ = coord;
+        Ok(Vec::new())
+    }
+
     /// The stored layout of each list slot of the node a coordinate names
     /// (`layout::SlotLayout`), as its tree measures it; none for a table of
     /// bare sources.
@@ -344,6 +357,20 @@ pub trait SourceTable {
         let _ = (record, held, options, w);
         Err(RenderError::Record(NO_ARENA))
     }
+
+    /// Writes the parsed node `at` names into `w` as a render writes a node
+    /// a write lies in, under `options` over `table`: through its template,
+    /// each node under it as `table` decides, which no side admits as an
+    /// entry; as its source bytes when `table` says it renders as them
+    /// (`renders_as_source`). A table that reads no node refuses.
+    ///
+    /// # Errors
+    ///
+    /// A node this table reads no template of, and what its render refuses.
+    fn render_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>, options: &crate::options::ResolvedOptions, table: &dyn SourceTable, w: &mut dyn RenderSink) -> RenderResult {
+        let _ = (options, table, w);
+        Err(at.unknown().into())
+    }
 }
 
 /// The table `0`, read by a render that renders each parsed node with a
@@ -397,6 +424,10 @@ impl SourceTable for ThroughTemplates<'_> {
         self.0.frames(coord)
     }
 
+    fn holes(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, RenderError> {
+        self.0.holes(coord)
+    }
+
     fn slot_layouts(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
         self.0.slot_layouts(coord)
     }
@@ -444,6 +475,10 @@ impl SourceTable for ThroughTemplates<'_> {
     #[cfg(feature = "arena")]
     fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
         self.0.render_record_entry(record, held, options, w)
+    }
+
+    fn render_through_template(&self, at: crate::slot::NodeIdOrCoordinate<'_>, options: &crate::options::ResolvedOptions, table: &dyn SourceTable, w: &mut dyn RenderSink) -> RenderResult {
+        self.0.render_through_template(at, options, table, w)
     }
 }
 
@@ -703,6 +738,13 @@ pub trait RenderSink {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
     }
+    /// The holes in a coordinate's bytes, from the tree table this writer
+    /// holds (`SourceTable::holes`), each fill prepared as a frame is; a sink
+    /// with no table answers none.
+    fn holes(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, RenderError> {
+        let _ = coord;
+        Ok(Vec::new())
+    }
     /// Writes the built record `record`, which the store `held` answered, as
     /// a trivia entry here, through this sink's tree table
     /// (`SourceTable::render_record_entry`). Refuses a sink that holds no
@@ -716,6 +758,16 @@ pub trait RenderSink {
     fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> RenderResult {
         let _ = (record, held);
         Err(RenderError::Record(NO_ARENA))
+    }
+    /// Writes the parsed node `at` names through its template, through this
+    /// sink's tree table (`SourceTable::render_through_template`). Refuses
+    /// a sink that holds no table or no options.
+    ///
+    /// # Errors
+    ///
+    /// What the node's render refuses.
+    fn render_through_template(&mut self, at: crate::slot::NodeIdOrCoordinate<'_>) -> RenderResult {
+        Err(at.unknown().into())
     }
     /// The kind a read stamped on the node `coord` names, from the tree table
     /// this writer holds; a coordinate carries its own.

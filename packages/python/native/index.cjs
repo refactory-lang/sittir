@@ -740,7 +740,6 @@ module.exports.parseRecords = nativeBinding.parseRecords
 module.exports.planHolds = nativeBinding.planHolds
 module.exports.read = nativeBinding.read
 module.exports.readDescendants = nativeBinding.readDescendants
-module.exports.readEditedWithin = nativeBinding.readEditedWithin
 module.exports.readIsEmpty = nativeBinding.readIsEmpty
 module.exports.readPlanHolds = nativeBinding.readPlanHolds
 module.exports.readRenderAt = nativeBinding.readRenderAt

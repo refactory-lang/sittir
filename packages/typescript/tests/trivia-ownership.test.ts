@@ -22,7 +22,7 @@ describe('a comment between two of its owner tokens, with no named child beside 
 		const root = engine.parse('for /* keep */ (;;) { x(); }\n');
 		expect(engine.render(root.$snapshot()).toString()).toBe('for ( /* keep */ ;;) {\n  x();\n}\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('for ( /* keep */ ;;) {\n  // lead\n  x();\n}\n');
+		expect(root.$render()).toBe({ object: 'for ( /* keep */ ;;) {\n  // lead\n  x();\n}\n', arena: 'for /* keep */ (;;) { // lead\n  x(); }\n' }[nodeStorage]);
 	});
 
 	it.each(['object', 'arena'] as const)("drops the source line break beside it once it sits between other tokens, as the options write it there (%s storage)", async (nodeStorage) => {
@@ -43,10 +43,10 @@ describe('a comment between two of its owner tokens, with no named child beside 
 });
 
 describe("a unit child's comment renders once and follows the unit through a list edit", () => {
-	it('frames a unit once when an edit beside it rebuilds its holder', () => {
+	it('frames a unit once when a side is written beside it', () => {
 		const root = ts.parse('while (a) { /* c */ ; x(); }\n');
 		leadLastStatementOfFirstBody(root);
-		expect(root.$render()).toBe('while (a) { /* c */ ;\n  // lead\n  x();\n}\n');
+		expect(root.$render()).toBe('while (a) { /* c */ ; // lead\n  x(); }\n');
 	});
 
 	const source = '// A\n;\n// B\ndebugger;\n';

@@ -33,8 +33,6 @@ struct Case<G: EngineGrammar, N> {
     bare: fn(&mut N),
     source: &'static str,
     edited: &'static str,
-    /// The root's render once its edited node's inner side is written back.
-    codemod: &'static str,
 }
 
 impl<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells> Case<G, N> {
@@ -112,7 +110,6 @@ fn rust() -> Case<sittir_rust::RustGrammar, sittir_rust::render::AnyNode> {
         },
         source: "// a file\nfn f(a: i32,  b: i32) -> i32 {\n    // leading\n    let x = g(a, b);\n    if x > 0 {\n        h(x, /* inside */ 1);\n    }\n    x\n}\n\nstruct S { a: i32, b: u8 }\n",
         edited: "expression_statement:0",
-        codemod: "// a file\nfn f(a: i32,  b: i32) -> i32 {\n    // leading\n    let x = g(a, b);\n    if x > 0 {\n        h(x, /* inside */ 1);\n    }\n    x\n}\n\nstruct S { a: i32, b: u8 }\n",
     }
 }
 
@@ -132,7 +129,6 @@ fn python() -> Case<sittir_python::PythonGrammar, sittir_python::render::AnyNode
         },
         source: "class C:\n    # comment\n    def f(self, a,  b):\n        if a:\n            return [a, b]\n        return None\n\n\ndef g():\n    while x:\n        y(1, 2)\n",
         edited: "expression_statement:0",
-        codemod: "class C:\n    # comment\n    def f(self, a,  b):\n        if a:\n            return [a, b]\n        return None\n\n\ndef g():\n    while x:\n        y(1, 2)\n",
     }
 }
 
@@ -152,13 +148,13 @@ fn typescript() -> Case<sittir_typescript::TypeScriptGrammar, sittir_typescript:
         },
         source: "const a = [1, 2,  3]\nfunction f(x: number, y: number) {\n  // note\n  if (x) {\n    g(x, y)\n  }\n  return { x, y }\n}\nclass K {\n  m() { return 1 }\n}\n",
         edited: "expression_statement:0",
-        codemod: "const a = [1, 2,  3]\nfunction f(x: number, y: number) {\n  // note\n  if (x) {\n    g(x, y)\n  }\n  return { x, y }\n}\n\nclass K {\n  m() { return 1 }\n}\n",
     }
 }
 
 /// The case's root rendered from its read's records untouched; rebuilt
 /// from its read, beside its native render; and again after its edited
-/// node's own inner side is written back.
+/// node's own inner side is written back, as its source still: the node
+/// renders through its template, and every other byte as it was read.
 fn renders_from_records<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell<G::Trivia> + HydrateNode + RecordCells>(case: &Case<G, N>) {
     let options = (case.options)();
     let (tree, over) = case.read();
@@ -166,7 +162,7 @@ fn renders_from_records<G: RecordGrammar + Copy, N: ReadNode + Clone + WriteCell
     let (rebuilt, native) = case.rebuilt(&tree);
     assert_eq!(rebuilt, native, "{}: rebuilt", case.name);
     over.edit_in_place(nth_of_kind(&tree, case.edited));
-    assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.codemod, "{}: codemod", case.name);
+    assert_eq!(over.render_at(over.root, sittir_core::slot::ChangedEdges::default(), &options, false).expect("a record render"), case.source, "{}: codemod", case.name);
 }
 
 #[test]

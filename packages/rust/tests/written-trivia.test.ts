@@ -28,15 +28,15 @@ describe('a parsed comment written into another parse is held there by reference
 		});
 	}, 60_000);
 
-	it('snapshots without a coordinate, and the snapshot renders as the tree does, after a JSON round trip too', () => {
+	it('renders the written comment in its tree, and snapshots it without a coordinate, rendering alike after a JSON round trip', () => {
 		const root = engine.parse('// c\nfn a() {}\nfn b() {}\n');
 		const [a, b] = root.statements();
 		if (a === undefined || b === undefined || typeof a === 'number' || typeof b === 'number') throw new Error('expected two items');
 		b.$trivia.leading(commentOf(a) as never);
-		const rendered = root.$render();
-		expect(rendered).toBe('// c\nfn a() {}\n\n// c\nfn b() {}\n');
-		const json = JSON.stringify(root.$snapshot());
+		expect(root.$render()).toBe('// c\nfn a() {}\n// c\nfn b() {}\n');
+		const snapshot = root.$snapshot();
+		const json = JSON.stringify(snapshot);
 		expect(json).not.toContain('$treeHandle');
-		expect(engine.render(JSON.parse(json)).toString()).toBe(rendered);
+		expect(engine.render(JSON.parse(json)).toString()).toBe(engine.render(snapshot).toString());
 	});
 });

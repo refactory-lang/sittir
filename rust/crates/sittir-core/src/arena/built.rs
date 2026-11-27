@@ -432,6 +432,20 @@ pub fn render_entry_at<G: RecordGrammar>(grammar: G, built: &super::BuiltChunks,
     G::render_entry(grammar, root, Some(built), built, store, ctx, w)
 }
 
+/// The record at `at` of the engine's built arena `built`, a node a read
+/// left, written into `w` as a render writes a node a write lies in, under
+/// `ctx`, from the arena alone (`root_at`): through its template, as the
+/// record its grammar renders where `w` stands (`RecordGrammar::render_entry`),
+/// its sides from `store`.
+///
+/// # Errors
+///
+/// `RenderError::Record` for an address naming no record, else what the
+/// record's render refuses.
+pub fn render_read_at<G: RecordGrammar>(grammar: G, built: &super::BuiltChunks, at: Address, store: &TriviaStore<G::Trivia>, ctx: &RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult {
+    G::render_entry(grammar, root_at::<G>(built, at, ChangedEdges::default())?, Some(built), built, store, ctx, w)
+}
+
 /// The record at `at` of the engine's built arena `built` as a render root
 /// whose `changed` edges have no neighbour: a record a read left names its
 /// source, and a built one is admitted.
