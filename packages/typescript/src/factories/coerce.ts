@@ -10237,18 +10237,18 @@ export function coerceToFormalParametersSetAccessorSignature(
 		);
 	if (isNodeOfKind(input, TSKindId.FormalParametersSetAccessorSignature))
 		return input as unknown as ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
-	if (isNodeOfKind(input, TSKindId.FormalParametersElementsSetAccessorSignature) && options[0] !== undefined)
+	const _child = configFieldOr(input, 'elements', () => input, TSKindId.FormalParametersSetAccessorSignature);
+	if (
+		_child !== undefined &&
+		isNodeOfKind(_child, TSKindId.FormalParametersElementsSetAccessorSignature) &&
+		options[0] !== undefined
+	)
 		throw new TypeError(
 			'FormalParametersSetAccessorSignature: a built node carries its own options; pass them when the node is built'
 		);
 	return F.buildFormalParametersSetAccessorSignature(
 		coerceToFormalParametersElementsSetAccessorSignature(
-			configFieldOr(
-				input,
-				'elements',
-				() => input,
-				TSKindId.FormalParametersSetAccessorSignature
-			) as T.FormalParametersElementsSetAccessorSignature.Loose,
+			_child as T.FormalParametersElementsSetAccessorSignature.Loose,
 			...options
 		)
 	);

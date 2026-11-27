@@ -89,6 +89,17 @@ const emptyInner = {
 	options: "options: { inner: { 'inner_comma:': preference('blank') } }"
 };
 
+const optionalInner = {
+	rules: [
+		'source: ($) => repeat($.outer)',
+		"outer: ($) => optional(field('inner', $.inner))",
+		"inner: ($) => seq(field('base', $.base), optional(field('inner_comma', $.comma)))",
+		"base: ($) => seq(field('name', $.identifier), optional(field('base_bang', $.bang)))",
+		...tokens
+	],
+	options: "options: { inner: { 'inner_comma:': preference('blank') } }"
+};
+
 const transparentOverTwoLevel = {
 	rules: [
 		'source: ($) => repeat($.top)',
@@ -258,4 +269,56 @@ describe('the generated package of the two-level fixture is refused; the generat
 		const diagnostics = await typeProbe(pkg, 'export {};');
 		expect(diagnostics.map((d) => d.head)).toEqual([]);
 	}, 300_000);
+});
+
+describe('a loose input that forwards options to an optional child', () => {
+	let from: string;
+
+	beforeAll(async () => {
+		from = (await emitted(optionalInner)).pkg.from;
+	});
+
+	function callCoerce(args: readonly unknown[]): { result: unknown; forwarded: readonly (readonly unknown[])[] } {
+		const forwarded: unknown[][] = [];
+		const F = { buildOuter: (...callArgs: unknown[]) => ({ $type: 'Outer', args: callArgs }) };
+		const coerceToInner = (...callArgs: unknown[]) => {
+			forwarded.push(callArgs);
+			return { $type: 'Inner', args: callArgs };
+		};
+		const isNodeOfKind = (value: unknown, kind: unknown) => (value as { $type?: unknown } | undefined)?.$type === kind;
+		const configFieldOr = (input: unknown, name: string, fallback: () => unknown) =>
+			input !== null && typeof input === 'object' && (input as { $type?: unknown }).$type === undefined
+				? (input as Record<string, unknown>)[name]
+				: fallback();
+		const kinds = new Proxy({}, { get: (_target, key) => String(key) });
+		const coerceToOuter = new Function(
+			'F',
+			'coerceToInner',
+			'isNodeOfKind',
+			'configFieldOr',
+			'TSKindId',
+			`${emittedFunction(from, 'coerceToOuter')}\nreturn coerceToOuter;`
+		)(F, coerceToInner, isNodeOfKind, configFieldOr, kinds) as (...a: unknown[]) => unknown;
+		return { result: coerceToOuter(...args), forwarded };
+	}
+
+	it('leaves the child absent when the input is omitted and no options are given', () => {
+		const { result, forwarded } = callCoerce([undefined]);
+		expect(forwarded).toEqual([]);
+		expect((result as { args: unknown[] }).args[0]).toBeUndefined();
+	});
+
+	it('refuses options given with an omitted input, since they would have no node to belong to', () => {
+		expect(() => callCoerce([undefined, { innerComma: ',' }])).toThrow('options were given with no inner');
+	});
+
+	it('forwards the options with a config that carries the child', () => {
+		const { forwarded } = callCoerce([{ inner: { base: 'x' } }, { innerComma: ',' }]);
+		expect(forwarded).toEqual([[{ base: 'x' }, { innerComma: ',' }]]);
+	});
+
+	it('refuses options given with a built child, whether passed directly or inside a config', () => {
+		expect(() => callCoerce([{ $type: 'Inner' }, { innerComma: ',' }])).toThrow('carries its own options');
+		expect(() => callCoerce([{ inner: { $type: 'Inner' } }, { innerComma: ',' }])).toThrow('carries its own options');
+	});
 });

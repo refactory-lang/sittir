@@ -540,12 +540,6 @@ function emitBranchFrom(
 					);
 				}
 				body.push(`  if (${builtTest}) return input as unknown as ${spelledType ?? returnType};`);
-				if (forwardedTarget !== undefined) {
-					const targetTest = `${inputOptional ? 'input !== undefined && ' : ''}isNodeOfKind(input, ${kindDiscriminantCheck(forwardedTarget.kind, kindEntries, nodeMap)})`;
-					body.push(
-						`  if (${targetTest} && options[0] !== undefined) throw new TypeError('${typeName}: a built node carries its own options; pass them when the node is built');`
-					);
-				}
 			}
 		} else {
 			const bareKind =
@@ -593,10 +587,20 @@ function emitBranchFrom(
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) body.push(`  const _value = ${inputExpr};`);
+			if (forwardedTarget !== undefined) {
+				body.push(`  const _child = ${inputExpr};`);
+				if (!isRequired(soleField)) {
+					body.push(`  if (_child === undefined && options[0] !== undefined) throw new TypeError('${typeName}: options were given with no ${soleField.propertyName}; they belong to the node that ${soleField.propertyName} builds');`);
+				}
+				body.push(`  if (_child !== undefined && isNodeOfKind(_child, ${kindDiscriminantCheck(forwardedTarget.kind, kindEntries, nodeMap)}) && options[0] !== undefined) throw new TypeError('${typeName}: a built node carries its own options; pass them when the node is built');`);
+			}
+			const forwardedChild = forwardedTarget === undefined ? '' : `coerceTo${forwardedTarget.typeName}((_child) as T.${forwardedTarget.typeName}.Loose, ...options)`;
 			const resolved =
 				forwardedTarget === undefined
 					? resolveFieldCall(numeric ? '_value' : inputExpr, soleField, isMultiple(soleField), nodeMap, intern, true, undefined, kindEntries)
-					: `coerceTo${forwardedTarget.typeName}((${numeric ? '_value' : inputExpr}) as T.${forwardedTarget.typeName}.Loose, ...options)`;
+					: isRequired(soleField)
+						? forwardedChild
+						: `(_child === undefined ? undefined : ${forwardedChild})`;
 			const call = soleShape === undefined ? resolved : `(${numberInputTest(soleShape, '_value')} ? _value : ${resolved})`;
 			const directDefault = hoistedSlotDefault(soleField, nodeMap, kindEntries);
 			const guardedCall = directDefault ? `${call} ?? ${directDefault}` : call;
