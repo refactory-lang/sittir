@@ -461,11 +461,23 @@ The generated grammar bindings use it: each derived kind rename (§2.4) is a `re
     - the helper's body references that rule, or another helper that serves it (otherwise `vocabulary-serves-unrelated`). The link runs from the helper to the served rule only.
 
     Rust's `block` is reauthored with `accepts-invalid-syntax` to drop the label rustc rejects on a body. `label_block_expression` serves it: the labelled block the reauthoring moves out of `block`. `_block_or_label_block_expression` serves it too, admitting both where an expression ends with a block.
-  - An `alias-shape` reauthoring is verified when the gate proves it a regrouping: its language is upstream's, regrouped into helpers. A provoking code still only justifies the cause; only the proof verifies it.
+  - An `alias-shape` reauthoring may be proved a regrouping: its language is upstream's, regrouped into helpers. The proof both justifies the cause and verifies the rule.
+    - **Justified.** A rule no `PROVOKING_CODES` code provokes is justified by a passing proof. A failing proof leaves `rule-reauthored-without-cause`, and its message says the proof failed. A provoked rule is justified by its codes as before. It raises nothing either way.
+    - **Verified.** A passing proof verifies the rule. A failing one leaves it counted by the hand-written rule ratchet.
     - **What is compared.** The rule's final body, its `edits:` applied, against the enriched upstream body of the same rule.
-    - **Expansion.** The authored side is expanded through the authored helpers it references, each by its final body, a copy's own edits included. Both sides are then flattened through nested choices. So a narrowing on a copy, which splits the arms between helpers, moves arms without changing the set.
-    - **What may differ.** Both sides drop what names a node without changing what parses: aliases, fields and their metadata. A copy's name reads as its source's. So an alias edit on an arm that moved into a copy reads as the arm it wraps.
-    - **What must match.** Everything else, arm for arm, as a set in any order: precedence wrappers, token and immediate-token wrappers, strings, patterns and symbols. A `prec` dropped or moved in the regrouping fails as `alias-shape-not-regrouping`, and the rule counts. Whether the regrouping adds conflicts is the conflict-resolution gate's question, not this one's.
+    - **Expansion.** The authored side is expanded through the hidden rules it references.
+      - A helper, a copy or a mint is expanded by its final body, a copy's own edits included. A variant an edit placed is expanded by its body.
+      - A hidden rule upstream also has is expanded by its upstream body, on both sides: its own changes are its own declaration's to justify.
+      - A visible helper is not expanded. It shows its arms as a kind of its own, so it stays a symbol and fails the match.
+
+      Both sides are then flattened through nested choices and nested seqs. So arms a narrowing on a copy splits between helpers, and the items of a sequence a helper holds, read as upstream's.
+    - **What may differ.** Labels nobody wrote by hand. An alias, field or variant an edit placed carries the edit's site, the owner kind and path stamped where the edit resolves; a field enrich derived is marked as enrich's. Both read as their content. A copy's name reads as its source's. So an alias edit on an arm that moved into a copy reads as the arm it wraps.
+    - **What must match.** Everything else, arm for arm, as a set in any order:
+      - aliases and fields written by hand in a redefinition or a helper, since they name kinds and slots, public surface no witness covers;
+      - precedence wrappers, token and immediate-token wrappers, strings, patterns and symbols. A `prec` dropped or moved in the regrouping fails.
+
+      Whether the regrouping adds conflicts is the conflict-resolution gate's question, not this one's.
+    - **Known limit.** An edit that replaces an alias or field upstream already has fails the proof, since the upstream side keeps the old label. The failure is conservative: the rule counts.
   - A `vocabulary` entry without `serves` is verified when every authored or upstream rule that reaches it is a witness-verified `reauthored` rule or a verified helper. The hand-written rule ratchet counts every other entry and every undeclared rule.
   - They are layer-1 only, since a generated layer has no `rules:`.
 - **`role(symbol, 'indent' | 'dedent' | 'newline')`,** in the `externals` callback, is unchanged. The pass calls that callback, so it records the roles in the layer record.
