@@ -7,7 +7,7 @@ import { containerSlots, isNumberSlots, meaningfulText, rebuilds, setsOn, spelle
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
-import { erred, opaque, templated } from './project.ts';
+import { checksFrame, erred, opaque, templated } from './project.ts';
 
 export type PortableCarry =
 	| { readonly reason: 'unclaimed' | 'scalar' | 'text' | 'preset' | 'opaque' | 'readOnly' }
@@ -270,7 +270,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		frames.push(new Map());
 		try {
 			const result = readValue(value, carried, seats);
-			if (typeof result !== 'object' || result === null || !('$path' in result) || '$value' in result) return result;
+			if (!checksFrame(result)) return result;
 			const carry = unreadIn(frames.at(-1)!);
 			return carry === undefined ? result : kept(value, carry, carried);
 		} finally {

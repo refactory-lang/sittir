@@ -42,6 +42,8 @@ const holders = new WeakMap<object, Node>();
 
 const containerFlags = new WeakMap<object, readonly string[]>();
 
+let touched = false;
+
 const missingHolders = new WeakMap<readonly ErrorRegion[], ReadonlySet<string>>();
 
 const holderKey = (kind: number, span: { readonly start: number; readonly end: number }): string => `${kind}:${span.start}:${span.end}`;
@@ -94,6 +96,7 @@ export const only = <T>(items: readonly T[]): readonly T[] => (items.length === 
 export const step = (at: unknown, read: (node: Node) => unknown, kinds: ReadonlySet<number> | undefined): unknown => {
 	if (Array.isArray(at)) return at.flatMap((item) => [step(item, read, kinds) ?? []].flat());
 	if (!hasKind(at)) return undefined;
+	touch(at);
 	const reached = read(at);
 	if (reached === undefined || reached === null || kinds === undefined) return reached ?? undefined;
 	return Array.isArray(reached) ? reached.filter((item) => kinds.has(kindOf(item) ?? -1)) : kinds.has(kindOf(reached) ?? -1) ? reached : undefined;
@@ -250,6 +253,7 @@ export const contradicted = (node: Node, presets: readonly PortablePreset[], spe
 	});
 
 const facetText = (item: unknown, facet: string, fixed: Readonly<Record<number, string>>): string | undefined => {
+	touch(item);
 	const held = slotOf(item, facet);
 	return typeof held === 'string' ? held : textOf(held, fixed);
 };
@@ -313,3 +317,21 @@ export const unread = (items: readonly unknown[], otherTested: boolean, meaning:
 	items.some((item) => (hasKind(item) ? meaningfulText(item, meaning[item.$type], (value) => textOf(value, fixed)) !== '' : typeof item === 'number' && otherTested));
 
 export const opaque = (item: unknown): boolean => hasKind(item) && typeof (item as { readonly $verbatim?: unknown }).$verbatim === 'string';
+
+export const checksFrame = (result: unknown): boolean => typeof result === 'object' && result !== null && '$path' in result && !('$value' in result);
+
+export const touch = (node: unknown): void => {
+	if (!touched && hasKind(node) && erred(node)) touched = true;
+};
+
+export const openFrame = (): boolean => {
+	const outer = touched;
+	touched = false;
+	return outer;
+};
+
+export const closeFrame = (outer: boolean, node: Node, result: unknown): unknown => {
+	const kept = touched && checksFrame(result);
+	touched = outer;
+	return kept ? node : result;
+};

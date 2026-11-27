@@ -54,6 +54,7 @@ const seatText = (seat: PortableSeat): Readonly<Record<string, unknown>> => Obje
 
 const IMPORTS = [
 	'atOf',
+	'closeFrame',
 	'closersInto',
 	'closerTexts',
 	'contradicted',
@@ -79,6 +80,7 @@ const IMPORTS = [
 	'one',
 	'only',
 	'opaque',
+	'openFrame',
 	'place',
 	'placedPath',
 	'present',
@@ -94,6 +96,7 @@ const IMPORTS = [
 	'textOf',
 	'texts',
 	'tokenText',
+	'touch',
 	'unclaimedText',
 	'unread',
 	'untaken'
@@ -308,7 +311,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 			statements.push(ret(id('undefined')));
 		} else {
 			const emptyAt = new Set(keys.filter((k) => pending.some(({ seat, containers }) => seat.many === true && containers[0]?.key === k)));
-			statements.push(when(not(call(id('hasKind'), id('value'))), ret(id('undefined'))));
+			statements.push(when(not(call(id('hasKind'), id('value'))), ret(id('undefined'))), t.expressionStatement(call(id('touch'), id('value'))));
 			if (emptyAt.size > 0) statements.push(t.lexicalDeclaration({ kind: 'let', declarators: [t.variableDeclaratorPlain({ name: 'empty', value: t.false })] }));
 			statements.push(t.lexicalDeclaration({ kind: 'let', declarators: [t.variableDeclaratorPlain({ name: 'vacant', value: t.false })] }));
 			keys.forEach((k, i) => {
@@ -718,6 +721,18 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		const value = table.paths[path]?.arms.find((arm) => arm.kind === Number(kind) && arm.literal !== undefined)?.literal;
 		return value === undefined ? [] : [t.switchCase({ value: kindRef(Number(kind)), bodies: [ret(obj([['$path', str(path)], ...(value.value === undefined ? [] : [['$value', value.value ? t.true : t.false] as const])]))] })];
 	});
+	const projectNode = constant(
+		'projectNode',
+		typed(
+			block(
+				t.switchStatement({ value: paren(dot(id('value'), '$type')), body: t.switchBody(...readKinds.map((kind) => t.switchCase({ value: kindRef(kind), bodies: [ret(call(id(fnName(kind)), id('value'), id('seats')))] }))) }),
+				ret(binary(call(id('unclaimedText'), id('value'), id('seats'), id('FIXED')), '??', id('value')))
+			),
+			'unknown',
+			['value', 'Node'],
+			['seats', 'Seats', true]
+		)
+	);
 	const project = t.exportStatementDefaultDeclaration({ content: constant(
 		'project',
 		typed(
@@ -729,8 +744,8 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 				),
 				when(not(call(id('hasKind'), id('value'))), ret(id('value'))),
 				when(or([call(id('erred'), id('value')), call(id('opaque'), id('value'))]), ret(id('value'))),
-				t.switchStatement({ value: paren(dot(id('value'), '$type')), body: t.switchBody(...readKinds.map((kind) => t.switchCase({ value: kindRef(kind), bodies: [ret(call(id(fnName(kind)), id('value'), id('seats')))] }))) }),
-				ret(binary(call(id('unclaimedText'), id('value'), id('seats'), id('FIXED')), '??', id('value')))
+				constant('outer', call(id('openFrame'))),
+				ret(call(id('closeFrame'), id('outer'), id('value'), call(id('projectNode'), id('value'), id('seats'))))
 			),
 			'unknown',
 			['value', 'unknown'],
@@ -759,6 +774,7 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 			...kindFunctions,
 			...classifiers,
 			...(refinedKinds.size === 0 ? [] : [classify]),
+			projectNode,
 			project
 		]
 	});

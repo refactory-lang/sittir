@@ -17,9 +17,20 @@ const LISTED: Readonly<Record<(typeof GRAMMARS)[number], Readonly<Record<string,
 };
 
 const SOURCES: Readonly<Record<(typeof GRAMMARS)[number], readonly { readonly name: string; readonly source: string }[]>> = {
-	python: [{ name: 'string prefixes the prefix token does not read', source: 'x = bf"a"\ny = rr"a"\nz = ub"a"\n' }],
-	rust: [],
-	typescript: [{ name: 'a receiver with an accessibility modifier', source: 'function f(public this: T[]) {}\n' }]
+	python: [
+		{ name: 'string prefixes the prefix token does not read', source: 'x = bf"a"\ny = rr"a"\nz = ub"a"\n' },
+		{ name: 'a parse error in a walked function body', source: 'def f():\n    x = 1 @\n' },
+		{ name: 'a parse error in a walked if body', source: 'if x:\n    y $\n' },
+		{ name: 'a parse error in a resolved case pattern', source: 'match x:\n    case [a @]:\n        pass\n' },
+		{ name: 'a parse error in resolved list elements', source: 'x = [1, @]\n' },
+		{ name: 'a missing delimiter in resolved parameters', source: 'def f(a:\n    pass\n' }
+	],
+	rust: [{ name: 'a missing delimiter in resolved arguments', source: 'fn f() { g(a }\n' }],
+	typescript: [
+		{ name: 'a receiver with an accessibility modifier', source: 'function f(public this: T[]) {}\n' },
+		{ name: 'a parse error in a walked statement block', source: 'function f() { @ }\n' },
+		{ name: 'a parse error in a resolved array pattern', source: 'let [a, @] = b;\n' }
+	]
 };
 
 const generatedProjection = async (grammar: (typeof GRAMMARS)[number]): Promise<(value: unknown) => unknown> =>

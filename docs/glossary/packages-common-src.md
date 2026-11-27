@@ -1700,7 +1700,7 @@ A list of exactly one item as itself, any other list as the empty list: the `onl
 
 ### `packages/common/src/portable/project.ts::step`
 
-One step of a slot route's walk: reads the slot from a node, or from each node of a list, flattening what the list's nodes reach. When the step names kinds, it keeps only the items of those kinds, and a single value of another kind reaches nothing.
+One step of a slot route's walk: reads the slot from a node, or from each node of a list, flattening what the list's nodes reach. When the step names kinds, it keeps only the items of those kinds, and a single value of another kind reaches nothing. Each node it reads from is touched (`touch`), as today's read adds a walked node to its frame.
 
 ### `packages/common/src/portable/project.ts::joined`
 
@@ -1869,3 +1869,19 @@ Whether a slot's items (`rowItems`, with the slot's query row) hold something a 
 ### `packages/common/src/portable/project.ts::opaque`
 
 Whether an item is a node holding verbatim text (`$verbatim`), as a parse gives a token whose text its interior doesn't read (python's `bf"a"` prefix). No read rebuilds it. Today's read keeps such a node whole as an `opaque` carry, and likewise a node whose slots that can hold a token read by its interior (the build table's `tokens`) hold one. A generated projection's `project` checks the node itself, and each kind's `read<Kind>` checks those slots first.
+
+### `packages/common/src/portable/project.ts::checksFrame`
+
+Whether a read result is a structure without a `$value`: the only result today's read checks its frame for, and the only one a generated projection's `closeFrame` gives up for its node.
+
+### `packages/common/src/portable/project.ts::touch`
+
+Notes that a read touched a node, where today's read adds a node to its frame: when the node is `erred`, the frame the read opened (`openFrame`) keeps its node. A generated projection touches each node `step` reads from, each container a seat resolver reads a key of, and each token whose facet it reads (closers and the read-only check), the places today's read calls `accessed`.
+
+### `packages/common/src/portable/project.ts::openFrame`
+
+Starts the frame of one node's read, as today's read pushes a frame: returns whether the enclosing read had touched an `erred` node so far, and clears that for this read. The generated `project` opens one for each node it reads and closes it with `closeFrame`.
+
+### `packages/common/src/portable/project.ts::closeFrame`
+
+Ends the frame `openFrame` started. When the read touched an `erred` node (`touch`) and its result is a structure without a `$value` (`checksFrame`), the node takes the result's place, as today's read keeps it with reason error. Either way, the enclosing read's state comes back.
