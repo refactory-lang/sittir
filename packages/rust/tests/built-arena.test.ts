@@ -3,7 +3,6 @@ import { BuiltArena, builtCell, cellFormatOf, chunkOf, decodeBuiltCell, unitCell
 import { builtRecordOf, childSlot, handleDispose, LEAF_SITES, positionWords, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
 import type { BuiltText, LeafSite, TreeHandle } from '@sittir/common/utils';
 import { patchCell, sideEntryOf } from '../../common/src/built-arena.ts';
-import type { UnitSidesWire } from '@sittir/types';
 import type { RecordHandle } from '../../common/src/handle.ts';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
@@ -15,10 +14,8 @@ type Records = ConstructorParameters<typeof BuiltArena>[0];
 type SideStore = Records['trivia'];
 const NO_SIDES: SideStore = {
 	writeTriviaSide: () => undefined,
-	unitSides: () => [],
 	writeUnitSides: () => undefined,
 	writeLeafSide: () => undefined,
-	leafSide: () => undefined,
 	copySites: () => undefined
 };
 const noRead = (): never => {
@@ -120,39 +117,6 @@ describe('a built arena', () => {
 		first.data[first.base + 3] = 5;
 		expect(placed(arena, arena.view(first), 4)).toEqual([7, 0, 0, 5]);
 		expect(placed(arena, arena.view(wide), 5000).slice(0, 4)).toEqual([6, 0, 0, 0]);
-	});
-
-	it('asks its native side store only about the unit sides of a record a write gave them', () => {
-		const asked: string[] = [];
-		const storedUnits = new Map<number, readonly UnitSidesWire[]>();
-		const arena = arenaOf({
-			...NO_SIDES,
-			unitSides: (at) => (asked.push(`units of ${at}`), [...(storedUnits.get(at) ?? [])]),
-			writeUnitSides: (at, units) => void storedUnits.set(at, units)
-		});
-		const a = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
-		const b = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
-		expect([arena.tree.triviaSide(a, 'leading'), arena.tree.triviaSide(b, 'inner'), arena.tree.unitSides(a)]).toEqual([undefined, undefined, []]);
-		expect(asked).toEqual([]);
-		arena.tree.writeUnitSides(b, [{ slot: '_items', item: 0, leading: [4] }]);
-		expect(arena.tree.unitSides(a)).toEqual([]);
-		expect(arena.tree.unitSides(b)).toEqual([{ slot: '_items', item: 0, leading: [4] }]);
-		expect(asked).toEqual([`units of ${b}`]);
-	});
-
-	it('copies the sites of a record after the work waiting on it, so the copy holds the unit sides that work writes', () => {
-		const stored = new Map<number, readonly UnitSidesWire[]>();
-		const arena = arenaOf({
-			...NO_SIDES,
-			unitSides: (at) => [...(stored.get(at) ?? [])],
-			writeUnitSides: (at, units) => void stored.set(at, units),
-			copySites: (from, to) => void stored.set(to, stored.get(from) ?? [])
-		});
-		const source = builtRecordOf(arena.view(arena.draft(7, 2)), arena)!;
-		const units = [{ slot: '_items', item: 0, leading: [4] }];
-		arena.defer(source, () => arena.tree.writeUnitSides(source, units));
-		const copy = builtRecordOf(arena.view(arena.draft(7, 2, source)), arena)!;
-		expect(arena.tree.unitSides(copy)).toEqual(units);
 	});
 
 	it('runs the work waiting in its arena before it names one of its records as a side entry', () => {
@@ -488,12 +452,11 @@ describe('a built arena', () => {
 		expect(() => arena.record(8)).toThrow(/no width/);
 	});
 
-	it('copies a record rebuilt from a node a read left, naming it by its holder, which it holds, and packed site beside its list settings, and copies its sites natively', () => {
-		const copied: [number, number, readonly number[]][] = [];
+	it('copies a record rebuilt from a node a read left, naming it by its holder, which it holds, and packed site beside its list settings', () => {
 		const leafSided: number[][] = [];
 		const holder = readRecordIn(50);
 		const arena = arenaOf(
-			{ ...NO_SIDES, copySites: (from, to, skip) => void copied.push([from, to, [...skip]]), writeLeafSide: (sites) => void leafSided.push([...sites]) },
+			{ ...NO_SIDES, writeLeafSide: (sites) => void leafSided.push([...sites]) },
 			{ ...NO_VIEWS, words: { 9: 13 } },
 			writeLeafSites,
 			chunksOf(),
@@ -520,7 +483,6 @@ describe('a built arena', () => {
 		expect(holder.counts[0]).toBe(2);
 		expect(leafSitesOf(leaf)).toEqual([at, 11, 0]);
 		expect(leafSided).toEqual([[at, 11, 0]]);
-		expect(copied).toEqual([[at, copiedAt, []]]);
 	});
 
 	it('answers the handle of a record by its address', () => {

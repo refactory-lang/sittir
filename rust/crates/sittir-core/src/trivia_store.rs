@@ -431,11 +431,12 @@ const fn side_index(side: TriviaSide) -> usize {
 #[cfg(feature = "arena")]
 type Header = (crate::arena::cell::HeaderLayout, u32);
 
-/// The side a site's key holds `side` as (`RowFields::site_key`): 0 for
-/// leading, 1 for trailing.
+/// The side a site's key holds `side` as (`RowFields::site_key`): its
+/// trailing side's code for a trailing side, else its leading side's. A
+/// site has no inner side.
 #[cfg(feature = "arena")]
 fn site_side(side: TriviaSide) -> u32 {
-    u32::from(side == TriviaSide::Trailing)
+    if side == TriviaSide::Trailing { TriviaSide::Trailing.code() } else { TriviaSide::Leading.code() }
 }
 
 impl<T> TriviaStore<T> {

@@ -614,15 +614,7 @@ impl Replaced {
     /// Its words: the record's address, the key, the offset and the row.
     #[must_use]
     pub fn words(self) -> [u32; field::REPLACED_WORDS as usize] {
-        [self.node.address(), self.node.packed_site() << Self::PART_BITS | Self::side_code(self.side), self.offset, self.row.0]
-    }
-
-    const fn side_code(side: TriviaSide) -> u32 {
-        match side {
-            TriviaSide::Leading => 0,
-            TriviaSide::Trailing => 1,
-            TriviaSide::Inner => 2,
-        }
+        [self.node.address(), self.node.packed_site() << Self::PART_BITS | self.side.code(), self.offset, self.row.0]
     }
 
     /// `entries` as a list placed through `space`, by offset, then node,
@@ -635,7 +627,7 @@ impl Replaced {
         if entries.is_empty() {
             return Ok(CellWord(0));
         }
-        entries.sort_by_key(|entry| (entry.offset, entry.node, Self::side_code(entry.side)));
+        entries.sort_by_key(|entry| (entry.offset, entry.node, entry.side.code()));
         let mut words = Vec::with_capacity(1 + entries.len() * field::REPLACED_WORDS as usize);
         words.push(u32::try_from(entries.len()).map_err(|_| ArenaError::Full)?);
         words.extend(entries.iter().flat_map(|entry| entry.words()));
@@ -649,12 +641,7 @@ impl Replaced {
     /// `ArenaError::Malformed` for a slot's key, which no write makes, and
     /// for a key naming no side or no site.
     pub fn of_words([at, key, offset, row]: [u32; field::REPLACED_WORDS as usize]) -> Result<Self, ArenaError> {
-        let side = match key & ((1 << Self::PART_BITS) - 1) {
-            0 => TriviaSide::Leading,
-            1 => TriviaSide::Trailing,
-            2 => TriviaSide::Inner,
-            _ => return Err(malformed("replaced range part", key)),
-        };
+        let side = TriviaSide::of_code(key & ((1 << Self::PART_BITS) - 1)).ok_or(malformed("replaced range side", key))?;
         let node = crate::types::NodeId::of_packed(at, key >> Self::PART_BITS).ok_or(malformed("replaced range node", key))?;
         Ok(Self { node, side, offset, row: CellWord(row) })
     }

@@ -134,26 +134,10 @@ export declare function builtBump(engine: object, address: number, more: number)
 export declare function builtBytes(engine: object, least: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }
 
 /**
- * r" The entries a write gave `side` (`leading`, `trailing` or
- * r" `inner`) of the built leaf at the site `holder`, `word`,
- * r" `item`, or `null` when no write did. Refuses holder 0 and
- * r" any other side.
- */
-export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): import('@sittir/types').WireNode[] | null
-
-/**
  * r" The bytes the built arena's chunks take, and of them the
  * r" bytes their counts take: `{ chunks, counts }`. A diagnostic.
  */
 export declare function builtMemory(engine: object): { chunks: number; counts: number; live: number }
-
-/**
- * r" The sides writes gave each unit the record at `address` in
- * r" the arena this engine built holds: `{ slot, item, leading?,
- * r" trailing?, inner? }`. Refuses an arena this engine no
- * r" longer holds and an address naming no record in it.
- */
-export declare function builtUnitSides(engine: object, address: number): import('@sittir/types').UnitSidesWire[]
 
 /**
  * r" A new chunk of `length` words of the built arena this
@@ -655,6 +639,19 @@ export declare const SIDE_FIELD_SPAN: number
 
 export declare const SIDE_FIELD_TRAILING: number
 
+export declare const SIDE_INNER: number
+
+/**
+ * r" The code a key word holds each side as
+ * r" (`TriviaSide::code`), and the bits a site's key gives its
+ * r" side, below its item (`RowFields::SIDE_BITS`).
+ */
+export declare const SIDE_LEADING: number
+
+export declare const SIDE_SITE_SIDE_BITS: number
+
+export declare const SIDE_TRAILING: number
+
 export declare const SIDE_WORDS_AT: number
 
 export declare const SIDE_WORDS_EDGES: number
@@ -763,8 +760,9 @@ export declare function writeBuiltTriviaSide(engine: object, address: number, si
  * r" leading?, trailing?, inner? }`), in place of every unit
  * r" side it had; `renderBuilt` then writes them, and a built
  * r" record among them renders as `writeTriviaSide` says.
- * r" Refuses as `builtUnitSides` does, and a slot the record's
- * r" kind has no cell for.
+ * r" Refuses an arena this engine no longer holds, an address
+ * r" naming no record in it, and a slot the record's kind has no
+ * r" cell for.
  */
 export declare function writeBuiltUnitSides(engine: object, address: number, units: import('@sittir/types').UnitSidesWire[]): void
 

@@ -57,6 +57,10 @@ export interface RecordCodecConstants {
 	readonly SIDE_FIELD_INNER: number;
 	readonly SIDE_FIELD_SITES: number;
 	readonly SIDE_WORDS_SITE: number;
+	readonly SIDE_LEADING: number;
+	readonly SIDE_TRAILING: number;
+	readonly SIDE_INNER: number;
+	readonly SIDE_SITE_SIDE_BITS: number;
 	readonly NODE_ID_HOLDER_BITS: number;
 	readonly NODE_ID_ITEM_BITS: number;
 	readonly NODE_ID_WORD_BITS: number;
@@ -91,6 +95,15 @@ export interface SideRowFields {
 	readonly inner: number;
 	readonly sites: number;
 	readonly siteWords: number;
+	/** The bits a site's key gives its side, below its item. */
+	readonly siteSideBits: number;
+}
+
+/** The code a key word holds each side as. */
+export interface SideCodes {
+	readonly leading: number;
+	readonly trailing: number;
+	readonly inner: number;
 }
 
 /** The forms a parsed cell holds, as a slot's `forms` stamp names them. */
@@ -133,6 +146,7 @@ export interface CellFormat {
 	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
 	readonly sideSeparatorKind: number;
 	readonly sideRows: SideRowFields;
+	readonly sideCodes: SideCodes;
 	readonly nodeId: NodeIdFormat;
 }
 
@@ -229,6 +243,10 @@ const CODEC_KEYS = [
 	'SIDE_FIELD_INNER',
 	'SIDE_FIELD_SITES',
 	'SIDE_WORDS_SITE',
+	'SIDE_LEADING',
+	'SIDE_TRAILING',
+	'SIDE_INNER',
+	'SIDE_SITE_SIDE_BITS',
 	'NODE_ID_HOLDER_BITS',
 	'NODE_ID_ITEM_BITS',
 	'NODE_ID_WORD_BITS'
@@ -275,7 +293,8 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
 		sideChanged: { leading: codec.SIDE_FIELD_CHANGED_LEADING, trailing: codec.SIDE_FIELD_CHANGED_TRAILING },
 		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND,
-		sideRows: { next: codec.SIDE_FIELD_NEXT, leading: codec.SIDE_FIELD_LEADING, trailing: codec.SIDE_FIELD_TRAILING, inner: codec.SIDE_FIELD_INNER, sites: codec.SIDE_FIELD_SITES, siteWords: codec.SIDE_WORDS_SITE },
+		sideRows: { next: codec.SIDE_FIELD_NEXT, leading: codec.SIDE_FIELD_LEADING, trailing: codec.SIDE_FIELD_TRAILING, inner: codec.SIDE_FIELD_INNER, sites: codec.SIDE_FIELD_SITES, siteWords: codec.SIDE_WORDS_SITE, siteSideBits: codec.SIDE_SITE_SIDE_BITS },
+		sideCodes: { leading: codec.SIDE_LEADING, trailing: codec.SIDE_TRAILING, inner: codec.SIDE_INNER },
 		nodeId: { holderBits: codec.NODE_ID_HOLDER_BITS, itemBits: codec.NODE_ID_ITEM_BITS, wordBits: codec.NODE_ID_WORD_BITS }
 	};
 }
@@ -466,6 +485,19 @@ export function decodeSideRows(records: RecordWords, side: number): SideRows | u
 	const table = count === 0 ? head : records.words(side, at - start + count * rows.siteWords);
 	const sites = Array.from({ length: count }, (_, n) => [table[at + n * rows.siteWords]!, table[at + n * rows.siteWords + 1]!] as const);
 	return { next, leading, trailing, inner, sites };
+}
+
+/** The key of `side` of the unit or leaf at item `item` of the slot whose stamped word is `word`, as native's `RowFields::site_key` makes it; `undefined` for an inner side, which a site has none of. */
+export function siteKey(word: number, item: number, side: 'leading' | 'trailing' | 'inner', format: CellFormat): number | undefined {
+	if (side === 'inner') return undefined;
+	return (((word << format.nodeId.itemBits) | item) << format.sideRows.siteSideBits) | format.sideCodes[side];
+}
+
+/** The slot word, the item and the side a site's key holds (`siteKey`). */
+export function siteOfKey(key: number, format: CellFormat): { readonly word: number; readonly item: number; readonly side: 'leading' | 'trailing' } {
+	const site = key >>> format.sideRows.siteSideBits;
+	const side = key & ((1 << format.sideRows.siteSideBits) - 1);
+	return { word: site >>> format.nodeId.itemBits, item: site & ((1 << format.nodeId.itemBits) - 1), side: side === format.sideCodes.trailing ? 'trailing' : 'leading' };
 }
 
 export function sideUnderRows(records: RecordWords, side: number): number {

@@ -136,7 +136,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		return { tail, patchTail, slotTail, optionsTail, after: [] };
 	}
 	const setters = spec.setters ?? [];
-	const rows = [...placed.map(({ place }) => placeRow(place)), ...(sided ? [`['side', ${options.delimiter}, ${options.separator}]`] : [])];
+	const rows = [...placed.map(({ place, local }) => placeRow(place, local)), ...(sided ? [`['side', ${options.delimiter}, ${options.separator}]`] : [])];
 	return {
 		tail,
 		patchTail: setters.length === 0 ? undefined : patchTail,
@@ -254,8 +254,8 @@ export class BuiltViewTable {
 	}
 }
 
-function placeRow(place: RecordPlace): string {
-	return 'bit' in place ? `[${place.word}, ${place.bit}]` : `[${place.word}, ${place.built}, ${place.width}, ${place.forms}, ${place.run ?? 0}]`;
+function placeRow(place: RecordPlace, storageKey: string): string {
+	return 'bit' in place ? `[${place.word}, ${place.bit}]` : `[${place.word}, ${place.built}, ${place.width}, ${place.forms}, ${place.run ?? 0}, ${JSON.stringify(storageKey)}]`;
 }
 
 function viewKindId(node: ViewKind): number {

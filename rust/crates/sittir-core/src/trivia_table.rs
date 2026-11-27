@@ -45,6 +45,29 @@ pub enum TriviaSide {
     Inner,
 }
 
+impl TriviaSide {
+    /// The side as a key word holds it: 0 leading, 1 trailing, 2 inner.
+    #[must_use]
+    pub const fn code(self) -> u32 {
+        match self {
+            Self::Leading => 0,
+            Self::Trailing => 1,
+            Self::Inner => 2,
+        }
+    }
+
+    /// The side `code` names (`code`); none for any other value.
+    #[must_use]
+    pub const fn of_code(code: u32) -> Option<Self> {
+        match code {
+            0 => Some(Self::Leading),
+            1 => Some(Self::Trailing),
+            2 => Some(Self::Inner),
+            _ => None,
+        }
+    }
+}
+
 impl HeapBytes for TriviaSide {
     fn heap_bytes(&self) -> usize {
         match self {

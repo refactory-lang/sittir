@@ -270,10 +270,8 @@ export interface NativeEngineLike<TNode = unknown> {
 		options?: object
 	): boolean;
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly WireNode[]): void;
-	builtUnitSides?(address: number): UnitSidesWire[];
 	writeBuiltUnitSides?(address: number, units: readonly UnitSidesWire[]): void;
 	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void;
-	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): WireNode[] | null;
 	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
 	/**
 	 * How much of its layout tree `treeId` stores apart from the options in effect when it was read:
@@ -388,10 +386,8 @@ const ENGINE_FUNCTIONS = [
 	'readSources',
 	'builtMemory',
 	'writeBuiltTriviaSide',
-	'builtUnitSides',
 	'writeBuiltUnitSides',
 	'writeBuiltLeafSide',
-	'builtLeafSide',
 	'copyBuiltSites'
 ] as const satisfies readonly (keyof NativeEngineLike)[];
 
@@ -839,16 +835,14 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readIsEmpty, readSources } = engine;
+	const { writeBuiltTriviaSide, writeBuiltUnitSides, writeBuiltLeafSide, copyBuiltSites, builtWords, builtBytes, holdSaturated, releaseBuilt, crossReleases, parseRecords, readWords, readText, readDescendants, readPlanHolds, readSnapshotLayouts, writeReadTriviaSide, readSides, readUnitSides, readSlotLayouts, readSlotSeparator, readIsEmpty, readSources } = engine;
 	if (
 		holdSaturated === undefined ||
 		releaseBuilt === undefined ||
 		crossReleases === undefined ||
 		writeBuiltTriviaSide === undefined ||
-		builtUnitSides === undefined ||
 		writeBuiltUnitSides === undefined ||
 		writeBuiltLeafSide === undefined ||
-		builtLeafSide === undefined ||
 		copyBuiltSites === undefined ||
 		builtWords === undefined ||
 		builtBytes === undefined ||
@@ -892,10 +886,8 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		},
 		trivia: {
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
-			unitSides: (at) => builtUnitSides.call(engine, at),
 			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units),
 			writeLeafSide: (sites, side, entries) => writeBuiltLeafSide.call(engine, sites, side, entries),
-			leafSide: (holder, word, item, side) => builtLeafSide.call(engine, holder, word, item, side) ?? undefined,
 			copySites: (from, to, skip) => copyBuiltSites.call(engine, from, to, skip)
 		}
 	};

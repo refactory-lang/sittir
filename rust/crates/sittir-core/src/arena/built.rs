@@ -176,17 +176,6 @@ impl<G: RecordGrammar> Engine<G> {
         Ok(Some(f(&tree, index)))
     }
 
-    /// The entries a write gave `side` of the built leaf at `site`, or `None`
-    /// when no write did.
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` for a site whose holder is address 0.
-    pub fn built_leaf_side(&self, site: Site<Address>, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
-        site.holder.record()?;
-        self.written().side(Place::site(site), side, &*self.written().built())
-    }
-
     /// The sides of every unit and leaf site of the built record at `from`,
     /// written at the same site of the record at `to`, except a site at a
     /// word `skip` names.
@@ -217,25 +206,6 @@ impl<G: RecordGrammar> Engine<G> {
 }
 
 impl<G: RecordGrammar> Engine<G> {
-    /// The sides writes gave each unit the built record at `at` in `arena`
-    /// holds: by the unit's slot and its item there.
-    ///
-    /// # Errors
-    ///
-    /// What `ArenaRead::header_kind` refuses, and `ArenaError::Malformed` for
-    /// a unit at a word the record's kind holds no slot at.
-    pub fn built_unit_sides(&self, arena: &impl ArenaRead, at: Address) -> Result<Vec<crate::layout::UnitSides<G::Trivia>>, ArenaError> {
-        let kind = arena.header_kind(at, G::KIND_BITS)?;
-        let units = self.written().units(at, arena)?;
-        units
-            .into_iter()
-            .map(|(word, item, trivia)| {
-                let slot = G::slot_key(kind, word).ok_or(ArenaError::Malformed { what: "unit slot word", word })?;
-                Ok(crate::layout::UnitSides { slot: slot.to_owned(), item, trivia })
-            })
-            .collect()
-    }
-
     /// The units the built record at `at` holds have the sides `units`
     /// gives, in place of every unit side it had; its render then writes
     /// them. For a record a read left, whose records stay as its parse left

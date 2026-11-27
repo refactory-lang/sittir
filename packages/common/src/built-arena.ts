@@ -8,7 +8,7 @@ import type { ChunkWords, TreeHandle, TriviaSideName } from './read.ts';
 import type { TreeQuery } from './query.ts';
 import { BLANK_KIND_ID } from './blank-arm.ts';
 import { checkedKindId } from './kind-id.ts';
-import { addressOf, chunkOf, decodeListCell, decodeSideRows, headerGapKinds, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
+import { addressOf, chunkOf, decodeListCell, decodeSideRows, headerGapKinds, headerKind, headerOf, kindField, leafItemPastNames, sideUnderRows, siteKey, siteOfKey, withKind, wordOf, type CellFormat, type CellSite, type RecordCell } from './record-cell.ts';
 import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, liveRecordAt, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { cacheOf, freedRecord, recordDelimiter, recordFlag, recordSeparator, recordSlot, recordSlots, readLeaf, readPosition } from './record-view.ts';
 import { isParsedPosition, isRecordPosition, type LeafMaker, type RecordHandle, type RecordPosition } from './handle.ts';
@@ -76,10 +76,8 @@ export interface BuiltRecords {
 	readonly reads: ReadNodes;
 	readonly trivia: {
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly WireNode[]): void;
-		unitSides(at: number): UnitSidesWire[];
 		writeUnitSides(at: number, units: readonly UnitSidesWire[]): void;
 		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void;
-		leafSide(holder: number, word: number, item: number, side: TriviaSideName): WireNode[] | undefined;
 		copySites(from: number, to: number, skip: readonly number[]): void;
 	};
 }
@@ -287,7 +285,7 @@ export type BuiltWith = (node: object, name: string, args: readonly unknown[]) =
 export type BuiltPlaceRow =
 	| readonly [word: number, bit: number]
 	| readonly [side: 'side', delimiter: boolean, separator: boolean]
-	| readonly [word: number, built: number, width: number, forms: number, run: number];
+	| readonly [word: number, built: number, width: number, forms: number, run: number, storageKey: string];
 
 export interface BuiltViews {
 	readonly withs: Readonly<Record<number, BuiltWith>>;
@@ -327,8 +325,6 @@ export class BuiltArena {
 	readonly #errors = new Map<number, readonly unknown[]>();
 	readonly #entries: (Map<string, BuiltText> | undefined)[] = [];
 	readonly #entryAt: (Map<number, BuiltText> | undefined)[] = [];
-	readonly #unitSided: (Set<number> | undefined)[] = [];
-	readonly #leafSited: (Set<number> | undefined)[] = [];
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 	readonly #parkedBy = new WeakMap<object, object>();
@@ -406,14 +402,12 @@ export class BuiltArena {
 			unitSides: (at) => {
 				if (at < 0) return readUnits(this.tree, unitsOf(at));
 				this.settle(at);
-				if (this.#unitSided[chunkOf(at, format)]?.has(at) === true) return readUnits(this.tree, trivia.unitSides(at));
-				return this.reads(at) ? readUnits(this.tree, unitsOf(at)) : [];
+				return readUnits(this.tree, this.reads(at) ? unitsOf(at) : this.#ownUnits(at));
 			},
 			writeUnitSides: (at, units) => {
 				this.#undefer(at);
 				this.#forgetReadSides(at);
 				trivia.writeUnitSides(at, units);
-				(this.#unitSided[chunkOf(at, format)] ??= new Set()).add(at);
 			}
 		};
 		registerTree(this.token, this.tree);
@@ -459,8 +453,6 @@ export class BuiltArena {
 			this.#cells[chunk] = undefined;
 			this.#heads[chunk] = undefined;
 			this.#entryAt[chunk] = undefined;
-			this.#unitSided[chunk] = undefined;
-			this.#leafSited[chunk] = undefined;
 			this.#deferredCount -= this.#deferred[chunk]?.size ?? 0;
 			this.#deferred[chunk] = undefined;
 		}
@@ -973,7 +965,7 @@ export class BuiltArena {
 		const source = record.copyOfParsed;
 		if (source === undefined) return;
 		const kind = headerKind(record.data[record.base]!, this.format);
-		const place = this.#placesOf(kind).find((row) => row.length === 5 && row[0] === word);
+		const place = this.#placesOf(kind).find((row) => row.length === 6 && row[0] === word);
 		if (place === undefined) throw new Error(`a kind ${kind} record keeps no cell at word ${word}`);
 		this.#carryPlace(source, record, place);
 	}
@@ -1237,25 +1229,58 @@ export class BuiltArena {
 	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly WireNode[]): void {
 		this.#forgetReadSides();
 		this.#trivia.writeLeafSide(sites, side, entries);
-		for (let n = 0; n < sites.length; n += 3) (this.#leafSited[chunkOf(sites[n]!, this.format)] ??= new Set()).add(sites[n]!);
 	}
 
-	/** The entries a write gave `side` of the built leaf at the site `holder`, `word`, `item`, `undefined` for none. */
+	/** The entries a write gave `side` of the built leaf at the site `holder`, `word`, `item`, from its holder's sites; `undefined` for none. */
 	leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined {
-		if (this.#leafSited[chunkOf(holder, this.format)]?.has(holder) !== true) return undefined;
-		const entries = this.#trivia.leafSide(holder, word, item, side);
-		return entries === undefined ? undefined : readEntries(this.tree, entries);
+		const key = siteKey(word, item, side, this.format);
+		const cell = key === undefined ? undefined : this.#sitesOf(holder).find(([site]) => site === key)?.[1];
+		return cell === undefined ? undefined : readEntries(this.tree, this.#rowEntries(cell));
 	}
 
 	#copySites(from: number, to: number, skip: readonly number[]): void {
 		this.settle(from);
-		const units = this.#unitSided[chunkOf(from, this.format)]?.has(from) === true;
-		const leaves = this.#leafSited[chunkOf(from, this.format)]?.has(from) === true;
-		if (!units && !leaves) return;
+		if (this.#sitesOf(from).length === 0) return;
 		this.#trivia.copySites(from, to, skip);
-		const chunk = chunkOf(to, this.format);
-		if (units) (this.#unitSided[chunk] ??= new Set()).add(to);
-		if (leaves) (this.#leafSited[chunk] ??= new Set()).add(to);
+	}
+
+	/** The sites the record at `at` holds rows for, by key in key order: none when its side record holds no rows. */
+	#sitesOf(at: number): readonly (readonly [key: number, cell: number])[] {
+		return decodeSideRows(this, this.words(at, 2)[wordOf(at, this.format) + 1]!)?.sites ?? [];
+	}
+
+	/** The sides of the units the built record at `at` holds, by slot and item, as their wires: each of its sites whose cell is a unit cell. */
+	#ownUnits(at: number): UnitSidesWire[] {
+		const sites = this.#sitesOf(at);
+		if (sites.length === 0) return [];
+		const kind = this.kindAt(at);
+		const units: { slot: string; item: number; leading?: WireNode[]; trailing?: WireNode[] }[] = [];
+		let last: { readonly word: number; readonly item: number } | undefined;
+		for (const [key, cell] of sites) {
+			const { word, item, side } = siteOfKey(key, this.format);
+			const place = this.#cellPlace(kind, word);
+			if (!this.#holdsUnit(at, place, item)) continue;
+			if (last?.word !== word || last.item !== item) units.push({ slot: place[5], item });
+			last = { word, item };
+			units[units.length - 1]![side] = this.#rowEntries(cell);
+		}
+		return units;
+	}
+
+	/** The place row of the cell a record of `kind` holds at the stamped word `word`. */
+	#cellPlace(kind: number, word: number): Extract<BuiltPlaceRow, { readonly length: 6 }> {
+		const place = this.#placesOf(kind).find((row): row is Extract<BuiltPlaceRow, { readonly length: 6 }> => row.length === 6 && row[0] === word);
+		if (place === undefined) throw new Error(`a kind ${kind} record holds no cell at word ${word}, so a site there names no unit`);
+		return place;
+	}
+
+	/** Whether the cell `place` names in the built record at `at`, at `item` of a list, is a unit's. */
+	#holdsUnit(at: number, place: Extract<BuiltPlaceRow, { readonly length: 6 }>, item: number): boolean {
+		const [, built, , , run] = place;
+		const cell = this.words(at, built + 1)[wordOf(at, this.format) + built]!;
+		if (run === 0) return item === 0 && decodeBuiltCell(this, cell).form === 'unit';
+		const list = decodeListCell(this, cell);
+		return item < list.len && decodeBuiltCell(this, this.words(list.run, list.len)[wordOf(list.run, this.format) + item]!).form === 'unit';
 	}
 
 	/** The handle of the compound record at `at`. */

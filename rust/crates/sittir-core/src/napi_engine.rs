@@ -897,6 +897,17 @@ macro_rules! napi_engine {
             pub const SIDE_FIELD_SITES: u32 = $crate::arena::side::field::SITES;
             #[::napi_derive::napi]
             pub const SIDE_WORDS_SITE: u32 = $crate::arena::side::field::SITE_WORDS;
+            /// The code a key word holds each side as
+            /// (`TriviaSide::code`), and the bits a site's key gives its
+            /// side, below its item (`RowFields::SIDE_BITS`).
+            #[::napi_derive::napi]
+            pub const SIDE_LEADING: u32 = $crate::trivia_table::TriviaSide::Leading.code();
+            #[::napi_derive::napi]
+            pub const SIDE_TRAILING: u32 = $crate::trivia_table::TriviaSide::Trailing.code();
+            #[::napi_derive::napi]
+            pub const SIDE_INNER: u32 = $crate::trivia_table::TriviaSide::Inner.code();
+            #[::napi_derive::napi]
+            pub const SIDE_SITE_SIDE_BITS: u32 = $crate::arena::side::RowFields::SIDE_BITS;
 
             /// Whether the records a read of `source` leaves answer its nodes
             /// as the tree a parse of it gives does (`Engine::backer_parity`):
@@ -1348,19 +1359,6 @@ macro_rules! napi_engine {
                 $crate::napi_engine::read_text(engine.written(), $crate::napi_engine::checked_whole(node, "node")?, $crate::napi_engine::checked_whole(start, "start")?, $crate::napi_engine::checked_whole(end, "end")?)
             }
 
-            /// The entries a write gave `side` (`leading`, `trailing` or
-            /// `inner`) of the built leaf at the site `holder`, `word`,
-            /// `item`, or `null` when no write did. Refuses holder 0 and
-            /// any other side.
-            #[::napi_derive::napi(ts_return_type = "import('@sittir/types').WireNode[] | null")]
-            pub fn built_leaf_side(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, holder: f64, word: u32, item: u32, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
-                let engine = engine_of(engine)?;
-                let holder = $crate::arena::Address($crate::napi_engine::checked_whole(holder, "holder")?);
-                let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                let site = $crate::trivia_store::Site { holder, word, item: $crate::types::ItemIndex(item) };
-                engine.built_leaf_side(site, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
-            }
-
             /// Writes the sides of every unit and leaf site of the built
             /// record at `from` at the same site of the record at `to`,
             /// except a site at a word `skip` names. Refuses address 0
@@ -1397,26 +1395,14 @@ macro_rules! napi_engine {
                 $crate::napi_engine::settle(&env, engine.written())
             }
 
-            /// The sides writes gave each unit the record at `address` in
-            /// the arena this engine built holds: `{ slot, item, leading?,
-            /// trailing?, inner? }`. Refuses an arena this engine no
-            /// longer holds and an address naming no record in it.
-            #[::napi_derive::napi(ts_args_type = "engine: object, address: number", ts_return_type = "import('@sittir/types').UnitSidesWire[]")]
-            pub fn built_unit_sides(engine: &::napi::bindgen_prelude::External<EngineCell>, address: f64) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
-                let engine = engine_of(engine)?;
-                let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                let chunks = engine.written().built();
-                let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                engine.built_unit_sides(arena, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))
-            }
-
             /// The units the record at `address` in the arena this engine
             /// built holds have the sides `units` gives (`{ slot, item,
             /// leading?, trailing?, inner? }`), in place of every unit
             /// side it had; `renderBuilt` then writes them, and a built
             /// record among them renders as `writeTriviaSide` says.
-            /// Refuses as `builtUnitSides` does, and a slot the record's
-            /// kind has no cell for.
+            /// Refuses an arena this engine no longer holds, an address
+            /// naming no record in it, and a slot the record's kind has no
+            /// cell for.
             #[::napi_derive::napi(ts_args_type = "engine: object, address: number, units: import('@sittir/types').UnitSidesWire[]")]
             pub fn write_built_unit_sides(
                 engine: &::napi::bindgen_prelude::External<EngineCell>,

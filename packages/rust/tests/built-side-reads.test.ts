@@ -1,6 +1,8 @@
 import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
+import { unitSidesOf } from '../../common/src/node-data.ts';
 import rust from '../src/index.ts';
 
 const addon = createRequire(import.meta.url)('../native/index.cjs') as Record<string, unknown>;
@@ -57,5 +59,48 @@ describe("a built record's side is read from its record in the arena, with no na
 		const read = crossings(() => block.$trivia.inner());
 		expect(shape(read.value)).toEqual(['/* c */', rs.kinds.Newline]);
 		expect(read.calls).toBe(0);
+	});
+});
+
+describe("a built record's unit and leaf sites are read from its record in the arena, with no native call", () => {
+	it("reads a rebuilt record's unit sides, by slot and item", async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const root = rs.parse('fn a() {}\n/* c */ ;\nfn b() {}\n');
+		const copy = root.$with.statements(...root.statements());
+		const read = crossings(() => unitSidesOf(copy)!);
+		expect(read.value.map((unit) => ({ ...unit, leading: unit.leading === undefined ? undefined : shape(unit.leading) }))).toEqual([{ slot: '_statements', item: 1, leading: ['/* c */'] }]);
+		expect(read.calls).toBe(0);
+	});
+
+	it("reads a built leaf's written side from the site its holder keeps", async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const leaf = rs.build.identifier('a');
+		rs.build.expressionStatement(leaf);
+		const [holder, word, item] = leafSitesOf(leaf)!;
+		leaf.$trivia.leading('/* c */');
+		const arena = builtRefOf(leaf)!.arena;
+		const read = crossings(() => [arena.leafSide(holder!, word!, item!, 'leading'), arena.leafSide(holder!, word!, item!, 'trailing')]);
+		expect([shape(read.value[0]!), read.value[1]]).toEqual([['/* c */'], undefined]);
+		expect(read.calls).toBe(0);
+	});
+
+	it("reads a copy's unit sides, once the work waiting on its source has run", async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const root = rs.parse('fn a() {}\n/* c */ ;\nfn b() {}\n');
+		const rebuilt = root.$with.statements(...root.statements());
+		const copy = rebuilt.$with.statements(...rebuilt.statements());
+		expect(unitSidesOf(copy)!.map((unit) => ({ ...unit, leading: unit.leading === undefined ? undefined : shape(unit.leading) }))).toEqual([{ slot: '_statements', item: 1, leading: ['/* c */'] }]);
+	});
+
+	it("reads a copy's leaf site at a word the copy left alone", async () => {
+		using rs: any = await createEngine(rust, { nodeStorage: 'arena' });
+		const leaf = rs.build.identifier('a');
+		const assignment = rs.build.assignmentExpression({ left: leaf, right: rs.build.identifier('b') });
+		const [, word, item] = leafSitesOf(leaf)!;
+		leaf.$trivia.leading('/* c */');
+		const copy = assignment.$with.right(rs.build.identifier('c'));
+		const { arena, at } = builtRefOf(copy)!;
+		expect(shape(arena.leafSide(at!, word!, item!, 'leading')!)).toEqual(['/* c */']);
+		expect(String(copy.$render())).toBe('/* c */ a = c');
 	});
 });

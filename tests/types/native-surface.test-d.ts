@@ -107,8 +107,6 @@ type WireTypes = {
 	readonly triviaSide: WireNode[];
 	readonly unitSides: UnitSidesWire[];
 	readonly slotLayouts: SlotLayoutWire[];
-	readonly builtLeafSide: WireNode[] | null;
-	readonly builtUnitSides: UnitSidesWire[];
 };
 type Misdeclared = { [K in keyof WireTypes]-?: Same<Ret<Declared[K]>, WireTypes[K]> extends true ? never : K }[keyof WireTypes];
 type ObjectOnlyUnit<Node extends object> = Omit<UnitSidesWire<Node>, keyof NodeTrivia> & TriviaSides<Node>;

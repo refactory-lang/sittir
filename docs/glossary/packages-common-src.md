@@ -997,7 +997,7 @@ The required numeric codec exports supplied by each native addon. JavaScript val
 
 ### `packages/common/src/record-cell.ts::CellFormat`
 
-The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing, ordered side fields, the fields of a side record of rows (`sideRows`, `SideRowFields`), and the header's layout codes (`layout`, `HeaderLayoutFormat`). Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
+The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing, ordered side fields, the fields of a side record of rows (`sideRows`, `SideRowFields`), the side codes key words hold (`sideCodes`, `SideCodes`), and the header's layout codes (`layout`, `HeaderLayoutFormat`). Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
 
 ### `packages/common/src/record-cell.ts::RecordCell`
 
@@ -1025,7 +1025,7 @@ The one refusal for a leaf at an item a node's name cannot hold, shared by the a
 
 ### `packages/common/src/record-cell.ts::SideRowFields`
 
-The mask bits of a side record of rows' fields (NEXT, LEADING, TRAILING, INNER and SITES) and the words one site takes in its table. They are read from the addon's `SIDE_FIELD_*` and `SIDE_WORDS_SITE` exports, napi consts over `arena::side::field`, so the native side is their one source. A side record of rows sits over a record's own side record. Word 1 of a record whose sides were written names it, and its NEXT names the side record under it. JavaScript reads these bits for two jobs: to step past the rows (`sideUnderRows`), and to copy them when it rebuilds a record in place. It never writes rows into a read record's side record.
+The mask bits of a side record of rows' fields (NEXT, LEADING, TRAILING, INNER and SITES), the words one site takes in its table, and the bits a site's key gives its side (`siteSideBits`, the addon's `SIDE_SITE_SIDE_BITS`). They are read from the addon's `SIDE_FIELD_*` and `SIDE_WORDS_SITE` exports, napi consts over `arena::side::field`, so the native side is their one source. A side record of rows sits over a record's own side record. Word 1 of a record whose sides were written names it, and its NEXT names the side record under it. JavaScript reads these bits for two jobs: to step past the rows (`sideUnderRows`), and to copy them when it rebuilds a record in place. It never writes rows into a read record's side record.
 
 ### `packages/common/src/record-cell.ts::sideUnderRows`
 
@@ -1055,6 +1055,18 @@ What a side record of rows holds, each row as its list cell: the side record it 
 ### `packages/common/src/record-cell.ts::decodeSideRows`
 
 The rows of the side record at an address (`SideRows`), `undefined` for address 0 and for a side record that holds no rows. It reads the fields in the order native writes them (`RowFields::read_after`): NEXT, LEADING, TRAILING, INNER, then SITES' count and its pairs. `sideUnderRows` reads NEXT through it, so the layout of a side record of rows is read in one place.
+
+### `packages/common/src/record-cell.ts::SideCodes`
+
+The code a key word holds each side as, from the addon's `SIDE_LEADING`, `SIDE_TRAILING` and `SIDE_INNER` (native's `TriviaSide::code`): 0, 1 and 2. A site's key (`siteKey`) and a read's replaced range both hold a side by these codes. A site has no inner side.
+
+### `packages/common/src/record-cell.ts::siteKey`
+
+The key of one side of a unit or leaf site in its holder's side record of rows (`SideRows.sites`): `((word << itemBits) | item) << siteSideBits | side`, the slot's stamped word, the item and the side's code (`SideCodes`), as native's `RowFields::site_key` makes it. An inner side has no key, so it answers `undefined`: a site's inner side holds nothing, as native's `TriviaStore::keeps` has it.
+
+### `packages/common/src/record-cell.ts::siteOfKey`
+
+`siteKey` read back: the slot's stamped word, the item and the side a site's key holds, as native's `RowFields::site_of` reads it. Sites sort by key, so a holder's sites come grouped by word, then item, then side.
 
 ### `packages/common/src/source-stamp.ts::sourceOf`
 

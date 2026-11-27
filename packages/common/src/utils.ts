@@ -372,7 +372,7 @@ export function setSlot(source: object, kind: number, kindName: string, at: numb
 		const record = arena.copy(source, kind, at);
 		const place = arena.placeAt(kind, at);
 		if (place.length === 2) patchFlag(record, place[0], 2 ** place[1], value);
-		else if (place.length === 5) {
+		else if (place.length === 6) {
 			if (place[4] === 0) patchCell(arena, record, place[1], place[0], carriedSlot(source, accessor, value));
 			else patchList(arena, record, place[1], place[0], value as readonly unknown[]);
 		}
