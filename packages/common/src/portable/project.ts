@@ -2,7 +2,7 @@ import type { ErrorRegion, PortableContainer, PortableDecimalParts, PortablePres
 import { spelledMember } from '../spelled.ts';
 import { nodeText, parseErrorsOf, sidesOf, spanOf } from '../node-data.ts';
 import { isErrorNode } from '../utils.ts';
-import { rebuilds, setsOn, spelledText, tokenText, type SeatText } from './facts.ts';
+import { meaningfulText, rebuilds, setsOn, spelledText, tokenText, type SeatText } from './facts.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
 import { Keyword, rowItems, sameText, textOf } from './classify.ts';
@@ -312,3 +312,6 @@ export const readOnlySpelled = (items: readonly unknown[], readOnly: Readonly<Re
 			return text !== undefined && slots.includes(spelledMember(text, spellings[item.$type]?.[facet]));
 		});
 	});
+
+export const unread = (items: readonly unknown[], otherTested: boolean, meaning: Readonly<Record<number, readonly string[]>>, fixed: Readonly<Record<number, string>>): boolean =>
+	items.some((item) => (isNode(item) ? meaningfulText(item, meaning[item.$type], (value) => textOf(value, fixed)) !== '' : typeof item === 'number' && otherTested));

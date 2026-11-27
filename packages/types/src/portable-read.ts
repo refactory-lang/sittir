@@ -132,6 +132,12 @@ export interface PortableRows {
  * each path's arms that build as text (by index), the seats each kind is read through when no path of its own claims it, the
  * path each fixed token reads as, and the slots (by accessor) of each kind that can hold a delimiter token with read-only spellings.
  */
+export interface PortableUnreadSlot {
+	readonly accessor: string;
+	readonly otherTested: boolean;
+	readonly flags: readonly string[];
+}
+
 export interface PortableProjectRows<Seat> {
 	readonly querySlots: QuerySlots;
 	readonly flags: QueryFlags;
@@ -142,4 +148,5 @@ export interface PortableProjectRows<Seat> {
 	readonly unwrap: Readonly<Record<number, readonly Seat[]>>;
 	readonly numbers: Readonly<Record<number, string>>;
 	readonly readOnlyHolders: Readonly<Record<number, readonly string[]>>;
+	readonly unread: Readonly<Record<number, Readonly<Record<string, readonly PortableUnreadSlot[]>>>>;
 }

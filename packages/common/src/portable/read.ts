@@ -3,7 +3,7 @@ import { nodeText } from '../node-data.ts';
 import { integerValue } from '../number.ts';
 import { spelledMember } from '../spelled.ts';
 import { hasKind, type HoldingFact, type PortableClassifier } from './classify.ts';
-import { containerSlots, isNumberSlots, rebuilds, setsOn, spelledText, textBuilt, tokenText } from './facts.ts';
+import { containerSlots, isNumberSlots, meaningfulText, rebuilds, setsOn, spelledText, textBuilt, tokenText } from './facts.ts';
 import { slotItems } from '../query-holds.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
@@ -385,15 +385,6 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 		);
 		return structure;
 	};
-	const meaningfulText = (item: Node): string => {
-		const facets = table.delimiters?.[item.$type]?.meaning;
-		if (facets === undefined) return textOf(item) ?? '';
-		return facets.map((facet) => {
-			const held = (item as unknown as Record<string, unknown>)[facet];
-			const value = typeof held === 'function' ? (held as () => unknown).call(item) : held;
-			return typeof value === 'string' ? value : (textOf(value) ?? '');
-		}).join('');
-	};
 	const unreadIn = (frame: ReadonlyMap<object, Read>): PortableCarry | undefined => {
 		for (const [node, { path, flags, extra }] of frame) {
 			if (erred(node as Node)) return { reason: 'error' };
@@ -403,7 +394,7 @@ export function portableReader({ table, classify, factsOf, flagHolds, flagsOf, t
 			const meaning = path === undefined ? new Set<string>() : otherTested(node as Node, path);
 			for (const [slot, items] of slotsOf(node as Node)) {
 				if (keys.has(slot) || tested.has(slot)) continue;
-				const lost = items.some((item) => (hasKind(item) ? meaningfulText(item) !== '' : typeof item === 'number' && meaning.has(slot)));
+				const lost = items.some((item) => (hasKind(item) ? meaningfulText(item, table.delimiters?.[item.$type]?.meaning, textOf) !== '' : typeof item === 'number' && meaning.has(slot)));
 				if (lost) return { reason: 'unread', slot };
 			}
 		}

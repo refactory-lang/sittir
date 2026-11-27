@@ -100,6 +100,17 @@ export const containerSlots = (table: PortableBuildTable): ReadonlyMap<number, r
 	return new Map([...out].map(([kind, slots]) => [kind, [...slots]]));
 };
 
+export const meaningfulText = (item: object, facets: readonly string[] | undefined, textOf: (value: unknown) => string | undefined): string => {
+	if (facets === undefined) return textOf(item) ?? '';
+	return facets
+		.map((facet) => {
+			const held = (item as Record<string, unknown>)[facet];
+			const value = typeof held === 'function' ? (held as () => unknown).call(item) : held;
+			return typeof value === 'string' ? value : (textOf(value) ?? '');
+		})
+		.join('');
+};
+
 export const isNumberSlots = (numeric: PortableBuildArm['numeric']): numeric is readonly string[] => Array.isArray(numeric);
 
 const tokenTexts = new WeakMap<Pick<PortableSeat, 'tokens'>, ReadonlyMap<number, string>>();

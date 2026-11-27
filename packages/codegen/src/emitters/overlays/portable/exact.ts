@@ -1,5 +1,5 @@
 import { nullaryBuilt, readableEntries, textBuilt, type PathTests, type PortableCarry } from '@sittir/common/engine';
-import type { PortableBuildArm } from '@sittir/types';
+import type { PortableBuildArm, PortableUnreadSlot } from '@sittir/types';
 import { type ModelNode, type ModelSlot } from '../../../bindings/facts.ts';
 import { derive, levelSlots, type Derivation, type Scalar } from '../../../bindings/derive.ts';
 import { capturedKinds, concreteKinds, entryRoutes, guaranteedBy, modelNode, readEntriesLookup, valueTokensOf, type ReadEntry } from '../../../bindings/routes.ts';
@@ -50,6 +50,12 @@ export interface ExactReads {
 	readonly valueOf: (path: string, kind: string) => ValueRead | undefined;
 	readonly viewClassOf: (kind: string) => ViewClass;
 	readonly readsIn: (kinds: readonly string[]) => RouteReads;
+	readonly kindReads: (kind: string) => KindReads;
+}
+
+export interface KindReads {
+	readonly cases: HeldReads | undefined;
+	readonly unread: ReadonlyMap<string, readonly PortableUnreadSlot[]>;
 }
 
 export interface RouteReads {
@@ -64,7 +70,7 @@ export type ViewClass = 'text' | 'claimed' | 'refined' | 'never' | 'token' | 'va
 
 export type ValueRead = 'text' | 'true' | 'false' | 'float' | 'integer' | 'bigint';
 
-export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, table, covered }: PortableTypedInput): ExactReads {
+export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, table, covered, tested, flagsReading }: PortableTypedInput): ExactReads {
 	const typed = (kind: string): boolean => findKindEntry(kindEntries, kind) !== undefined;
 	const { model } = input;
 	const own = derive([input]);
@@ -88,7 +94,7 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, ta
 		const parent = own.refinements.get(path)?.parent ?? (path.includes('.') ? path.slice(0, path.lastIndexOf('.')) : undefined);
 		return parent === undefined ? undefined : slotLevelOf(parent, slot);
 	};
-	const token = (kind: string): boolean => nodeOf(kind)?.modelType === 'enum' || fixedText.has(kind);
+	const token = (kind: string): boolean => nodeOf(kind)?.modelType === 'enum' || literalTextsOf(kind) !== undefined;
 	const literals = valueTokensOf(routes, fixedText);
 	const textual = (kind: string): boolean => token(kind) && !literals.has(kind);
 	const textTypeOf = (kind: string): string | undefined => {
@@ -153,41 +159,49 @@ export function exactReadsOf({ routes, input, nodeMap, kindEntries, readTest, ta
 		visit(kinds);
 		return { paths: [...paths].sort(), texts: [...texts].sort(), unmapped: [...unmapped].sort(), varies: varying, claimed: [...claimed].sort() };
 	};
-	return { own, entries, readPathsOf, readPaths, entriesFor, literalTextsOf, slotLevelOf, token, textual, textTypeOf, claimersOf, viewed, textPaths, varies, valueOf, viewClassOf, readsIn };
+	const kindReadsCache = new Map<string, KindReads>();
+	const kindReads = (kind: string): KindReads => {
+		const known = kindReadsCache.get(kind);
+		if (known !== undefined) return known;
+		const list = entriesFor(kind) ?? [];
+		const cases = heldReadsOf(kind, list, nodeMap, readTest);
+		const node = nodeOf(kind);
+		const id = findKindEntry(kindEntries, kind)?.id;
+		const tests = id === undefined ? new Map<string, PathTests>() : tested(id);
+		const accessorOf = new Map((nodeMap.nodes.get(kind)?.slots ?? []).map((slot) => [slot.name, slot.propertyName] as const));
+		const unread = new Map(
+			node === undefined || id === undefined
+				? []
+				: readPathsOf(list).map((path) => {
+						const stepped = new Set(list.filter((entry) => entry.vocab === path).flatMap((entry) => entryRoutes(entry).flatMap((route) => (route.path ?? []).flatMap((step) => (step.owner === kind ? [step.slot] : [])))));
+						const { own, others } = tests.get(path) ?? NO_TESTS;
+						const lost = node.slots.flatMap((slot): PortableUnreadSlot[] => {
+							const accessor = accessorOf.get(slot.name) ?? slot.name;
+							if (cases !== undefined && cases.varied.has(slot.name) && cases.held.get(path)?.has(slot.name) !== true) return [];
+							if (stepped.has(slot.name) || own.has(accessor)) return [];
+							return others.has(accessor) || concreteKinds(model, slot.kinds).some((k) => !token(k)) ? [{ accessor, otherTested: others.has(accessor), flags: flagsReading(id, accessor) }] : [];
+						});
+						return [path, lost] as const;
+					})
+		);
+		const reads = { cases, unread };
+		kindReadsCache.set(kind, reads);
+		return reads;
+	};
+	return { own, entries, readPathsOf, readPaths, entriesFor, literalTextsOf, slotLevelOf, token, textual, textTypeOf, claimersOf, viewed, textPaths, varies, valueOf, viewClassOf, readsIn, kindReads };
 }
 
 export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exactReadsOf(input)): ExactSlots {
 	const { routes, input: grammarInput, kindEntries, table, presetCarried, totalIntegerReads, freeTextClosedBy, flags } = input;
 	const { model, vocabulary } = grammarInput;
-	const { own, readPaths, entriesFor, readPathsOf, literalTextsOf, slotLevelOf, readsIn } = reads;
+	const { own, readPaths, entriesFor, readPathsOf, slotLevelOf, readsIn, token, kindReads } = reads;
 	const nodeOf = (kind: string): ModelNode | undefined => modelNode(model, kind);
 	const idOf = (kind: string): number | undefined => findKindEntry(kindEntries, kind)?.id;
-	const token = (kind: string): boolean => nodeOf(kind)?.modelType === 'enum' || literalTextsOf(kind) !== undefined;
 	const armsOfKind = (kind: string): readonly PortableBuildArm[] => {
 		const id = idOf(kind);
 		const list = entriesFor(kind);
 		if (id === undefined || list === undefined) return [];
 		return readPathsOf(list).flatMap((path) => (table.paths[path]?.arms ?? []).filter((arm) => arm.kind === id));
-	};
-	const lostAt = (kind: string, heldReads: HeldReads | undefined): ReadonlyMap<string, readonly string[]> => {
-		const node = nodeOf(kind);
-		const id = idOf(kind);
-		if (node === undefined || id === undefined) return new Map();
-		const list = entriesFor(kind) ?? [];
-		const tests = input.tested(id);
-		const accessorOf = new Map((input.nodeMap.nodes.get(kind)?.slots ?? []).map((slot) => [slot.name, slot.propertyName] as const));
-		return new Map(
-			readPathsOf(list).map((path) => {
-				const stepped = new Set(list.filter((entry) => entry.vocab === path).flatMap((entry) => entryRoutes(entry).flatMap((route) => (route.path ?? []).flatMap((step) => (step.owner === kind ? [step.slot] : [])))));
-				const { own, others } = tests.get(path) ?? NO_TESTS;
-				const lost = node.slots.filter((slot) => {
-					const accessor = accessorOf.get(slot.name) ?? slot.name;
-					if (heldReads !== undefined && heldReads.varied.has(slot.name) && heldReads.held.get(path)?.has(slot.name) !== true) return false;
-					return !stepped.has(slot.name) && !own.has(accessor) && (others.has(accessor) || concreteKinds(model, slot.kinds).some((k) => !token(k)));
-				});
-				return [path, lost.map((slot) => slot.name)] as const;
-			})
-		);
 	};
 	const reasonsCache = new Map<string, readonly RawReason[]>();
 	const reasonsOf = (kind: string): readonly RawReason[] => {
@@ -219,9 +233,9 @@ export function exactSlotsOf(input: PortableTypedInput, reads: ExactReads = exac
 		const readable = new Set(structural.flatMap((arm) => arm.readableFlags ?? []));
 		if ((flags.get(kind) ?? []).some((flag) => !readable.has(flag))) out.push('flags');
 		if (structural.length > 0) {
-			const heldReads = heldReadsOf(kind, entriesFor(kind) ?? [], input.nodeMap, input.readTest);
-			if ([...lostAt(kind, heldReads).values()].some((lost) => lost.length > 0)) out.push('unread');
-			if (routes.containers.get(kind)?.refined !== true && (heldReads === undefined || heldReads.unclaimed.length > 0)) out.push('unclaimed');
+			const { cases, unread } = kindReads(kind);
+			if ([...unread.values()].some((lost) => lost.length > 0)) out.push('unread');
+			if (routes.containers.get(kind)?.refined !== true && (cases === undefined || cases.unclaimed.length > 0)) out.push('unclaimed');
 		}
 		reasonsCache.set(kind, out);
 		return out;

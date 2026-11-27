@@ -39,7 +39,7 @@ export type {
 	ParsedRoot
 } from './engine.ts';
 export { builtFlags, builtSlots, buildsOnlyItem, containerSetFlags, containerSlots, nullaryBuilt, portablePathHasFacts, portableRowHasFacts, readableEntries, takesTextValue, textBuilt } from './portable/facts.ts';
-export { classifierOf, testedSlots, type PathTests } from './portable/classify.ts';
+export { classifierOf, flagSlots, testedSlots, type PathTests } from './portable/classify.ts';
 export { holds } from './query-holds.ts';
 export { portableRuntime, portableRuntimeTree, type PortableRuntime } from './portable/runtime.ts';
 export type { PortableCarry, PortableCarried } from './portable/read.ts';

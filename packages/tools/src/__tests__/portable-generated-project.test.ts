@@ -16,6 +16,12 @@ const LISTED: Readonly<Record<(typeof GRAMMARS)[number], Readonly<Record<string,
 	typescript: { 'identifier.qualified': ['name', 'qualifier'] }
 };
 
+const SOURCES: Readonly<Record<(typeof GRAMMARS)[number], readonly { readonly name: string; readonly source: string }[]>> = {
+	python: [],
+	rust: [],
+	typescript: [{ name: 'a receiver with an accessibility modifier', source: 'function f(public this: T[]) {}\n' }]
+};
+
 const generatedProjection = async (grammar: (typeof GRAMMARS)[number]): Promise<(value: unknown) => unknown> =>
 	((await import(`../../../${grammar}/src/portable/project.ts`)) as { readonly project: (value: unknown) => unknown }).project;
 
@@ -131,7 +137,7 @@ describe.each(GRAMMARS)('the generated portable projection of %s', (grammar) => 
 		const runtime = await portableRuntime(engine);
 		const project = await generatedProjection(grammar);
 		const found: Found = { differences: [], rows: [] };
-		for (const { name, source } of loadCorpusEntries(grammar)) {
+		for (const { name, source } of [...loadCorpusEntries(grammar), ...SOURCES[grammar]]) {
 			const root = engine.parse(source);
 			compare(plain(runtime.read(root as never)), plain(project(root)), LISTED[grammar], name, found);
 		}

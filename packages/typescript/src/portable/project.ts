@@ -29,7 +29,8 @@ import {
 	textOf,
 	texts,
 	tokenText,
-	unclaimedText
+	unclaimedText,
+	unread
 } from '@sittir/common/portable/utils';
 import type { Found, Node, Routed, Seats, Spellings } from '@sittir/common/portable/utils';
 import type { PortablePreset, QuerySlotEntry } from '@sittir/types';
@@ -6024,6 +6025,7 @@ const ROW49: QuerySlotEntry = ['abstract', 3, 'abstract', '_abstract', 134];
 const ROW50: QuerySlotEntry = ['static', 2, 'static', '_static', 52];
 const ROW51: QuerySlotEntry = ['override', 4, 'override', '_override', 327];
 const ROW52: QuerySlotEntry = ['name', 5, undefined, '_name'];
+const MEANING0 = {};
 const PRESETS59: ReadonlyArray<PortablePreset> = [
 	{ steps: [{ key: 'abstract', optional: true }], kind: 134, presence: true }
 ];
@@ -19755,6 +19757,7 @@ const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown =
 				);
 				if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 				if (extra !== undefined) return node;
+				if (unread(rowItems(node, ROW49), true, MEANING0, FIXED)) return node;
 				return structure;
 			}
 			return node;
@@ -19786,6 +19789,7 @@ const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown =
 				);
 				if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 				if (extra !== undefined) return node;
+				if (unread(rowItems(node, ROW49), true, MEANING0, FIXED)) return node;
 				return structure;
 			}
 			return node;
@@ -19817,6 +19821,7 @@ const readPublicFieldDefinitionAccessor = (node: Node, seats?: Seats): unknown =
 				);
 				if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 				if (extra !== undefined) return node;
+				if (unread(rowItems(node, ROW49), true, MEANING0, FIXED)) return node;
 				return structure;
 			}
 			return node;
@@ -20121,6 +20126,7 @@ const readReceiverParameterDeclaration = (node: Node, seats?: Seats): unknown =>
 			);
 			if (!holdsKey(structure, 'decorators')) structure['decorators'] = [];
 			if (extra !== undefined) return node;
+			if (unread(rowItems(node, ROW16), true, MEANING0, FIXED)) return node;
 			return structure;
 		}
 	}

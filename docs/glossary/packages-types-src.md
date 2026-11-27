@@ -1026,6 +1026,26 @@ The flag query for a portable row.
 
 `emitPortable` builds it once per grammar for the projection emitter, each field from the fact's own source: the query slots from the node map, the flag plans, the facts and entries from the read rows (`portableReadRowsOf`), the entries kept by common's `readableEntries` with `refinedBy` from `portablePathHasFacts`, the fixed texts from the fixed-text kinds, `textBuilt` from common's `textBuilt`, `unwrap` from `containerSlots`, `numbers` from `classifierOf`, and `readOnlyHolders` from the node map's slots whose kinds include a delimiter with read-only spellings. The seat type is a parameter, so this module names no build shape.
 
+### `packages/types/src/portable-read.ts::PortableUnreadSlot`
+
+A slot that a read of a kind as one path leaves unread (`exact.ts::KindReads::unread`). A generated projection keeps the node when the slot holds something (`project.ts::unread`) and none of `flags` holds, as today's read carries it with reason unread.
+
+### `packages/types/src/portable-read.ts::PortableUnreadSlot::accessor`
+
+The accessor the slot is read through, as its query row names it.
+
+### `packages/types/src/portable-read.ts::PortableUnreadSlot::otherTested`
+
+Whether another path's test reads the slot (`PathTests::others`), so a token's kind id in it counts as lost.
+
+### `packages/types/src/portable-read.ts::PortableUnreadSlot::flags`
+
+The flags whose plan reads the slot (common's `flagSlots`). While one of them holds, the read reads the slot through the flag and loses nothing.
+
+### `packages/types/src/portable-read.ts::PortableProjectRows::unread`
+
+Each kind's unread slots, by kind id and then by path (`PortableUnreadSlot`), from the typed emitter (`typed.ts::PortableTypedOutput::unread`).
+
 ### `packages/types/src/portable.ts::PortableNamespace`
 
 The value the shared kind tree holds at a vocabulary namespace, a prefix of kind paths that is no kind itself (`vocabularyNamespaces`): `{ $namespace: path }`, frozen and the same object in every language, beside a kind's `PortableKind`. It has no `$path`, since no node reads as a namespace itself; a namespace names the kinds beneath it. `ofType` takes it as it takes a portable kind and selects what the namespace's guard holds for (`ofTypeSteps`), and each grammar's generated `PortableKindsAt` stamps it on the namespace's entry (`emitPortableSurface`).

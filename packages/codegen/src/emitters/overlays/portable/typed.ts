@@ -4,12 +4,12 @@ import { textValued } from '../../../bindings/vocabulary.ts';
 import { stringLiteral as q } from '../../../util/string-literal.ts';
 import { PORTABLE_MAP_FILE, PORTABLE_TYPE_TESTS } from '../../../grammars.ts';
 import { capturedKinds, concreteKinds, guaranteedBy, modelNode, portableClaims, readsList, type ContainerUnwrap, type GrammarInput, type GrammarRoutes, type Guaranteed, type SlotRoute, type ReadEntry, type SlotStep } from '../../../bindings/routes.ts';
-import type { PortableBuildTable, PortableCondition } from '@sittir/types';
+import type { PortableBuildTable, PortableCondition, PortableUnreadSlot } from '@sittir/types';
 import type { PathTests } from '@sittir/common/engine';
 import type { NodeMap } from '../../../compiler/types.ts';
 import { wrapperChainFor } from '../../../compiler/model/wrapper-chain.ts';
 import { storageKeyOf } from '../../../compiler/model/node-map.ts';
-import { hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
+import { findKindEntry, hasCatalogEntry, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { exactReadsOf, exactSlotsOf, type ExactReads, type ExactSet, type ExactSlots, type ValueRead } from './exact.ts';
 import { emitGrammarMap, grammarMapName, mapNeverOf, unmappedKindsBlock, unmappedName, type MapDecided, type MapTails, type UnformedTest } from './grammar-map.ts';
 
@@ -20,6 +20,7 @@ export interface PortableTypedInput {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly readTest: (entry: ReadEntry) => readonly PortableCondition[];
 	readonly tested: (kind: number) => ReadonlyMap<string, PathTests>;
+	readonly flagsReading: (kind: number, accessor: string) => readonly string[];
 	readonly table: PortableBuildTable;
 	readonly presetCarried: ReadonlySet<ReadEntry>;
 	readonly covered: ReadonlySet<ReadEntry>;
@@ -49,6 +50,7 @@ export interface PortableTypedOutput {
 	readonly facts: readonly (readonly [path: string, facts: readonly string[]])[];
 	readonly decided: MapDecided;
 	readonly tails: MapTails;
+	readonly unread: Readonly<Record<number, Readonly<Record<string, readonly PortableUnreadSlot[]>>>>;
 }
 
 export const PORTABLE_TYPED_FILE = 'portable.typed.ts';
@@ -459,5 +461,13 @@ export function emitPortableTyped(typedInput: PortableTypedInput): PortableTyped
 	}
 	emit('', ...unmappedKindsBlock(VOCABULARY_INDEX, input.grammar, nodeMap, unmappedViews));
 	const grammarMap = emitGrammarMap(typedInput, exact);
-	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues, flags: grammarMap.flags, facts: grammarMap.facts, decided: grammarMap.decided, tails: grammarMap.tails };
+	const unread = Object.fromEntries(
+		concrete.flatMap(({ kind }) => {
+			const id = findKindEntry(kindEntries, kind)?.id;
+			if (id === undefined || (entriesFor(kind) ?? []).length === 0) return [];
+			const at = [...reads.kindReads(kind).unread].filter(([, slots]) => slots.length > 0);
+			return at.length === 0 ? [] : [[id, Object.fromEntries(at)] as const];
+		})
+	);
+	return { source: `${lines.join('\n').trimEnd()}\n`, map: grammarMap.source, unemitted, exact, unformed: grammarMap.unformed, slots: grammarMap.slots, reads, textInputs: grammarMap.textInputs, textValues: grammarMap.textValues, flags: grammarMap.flags, facts: grammarMap.facts, decided: grammarMap.decided, tails: grammarMap.tails, unread };
 }

@@ -1476,6 +1476,10 @@ Whether a node's text, read as that text, builds the node's kind again in the se
 
 A node's text as its read: the text itself where it rebuilds in its seats (`rebuilds`); else, when a path builds the kind as text (`built`), that path with the text as `$value`; else none, and the reader keeps the node. Today's read and a generated projection both read a text through it.
 
+### `packages/common/src/portable/facts.ts::meaningfulText`
+
+The text of a slot item that counts toward a read losing it. For a delimiter token, that is the facets carrying its meaning (`PortableDelimiterToken::meaning`), each read as a string or through the given `textOf`, joined; for any other node, its text. Today's read (`read.ts::portableReader`) and a generated projection's `unread` both call this one function, so a delimiter whose meaning facets are empty loses nothing in either.
+
 ### `packages/common/src/portable/read.ts::PortableCarry`
 
 What a read carries past the structure: unclaimed, a scalar or text, or a set of flags.
@@ -1861,3 +1865,7 @@ The accessors that the given flag plans read for a kind. The classifier counts t
 ### `packages/common/src/portable/project.ts::erred`
 
 Whether a parse error sits on a node. An `ERROR` node does; a node of a parse with no error regions (`parseErrorsOf` is empty) doesn't. Otherwise a node does when one of its sides holds an `ERROR` node, or when its parse's regions record it as the holder of a missing token (matched by kind and span). Today's read keeps such a node whole as an `error` carry, and a generated projection's `project` checks it before reading any node, so the build keeps the source text the parse could not place.
+
+### `packages/common/src/portable/project.ts::unread`
+
+Whether a slot's items (`rowItems`, with the slot's query row) hold something a read would lose: a node with meaningful text (`facts.ts::meaningfulText`, with the grammar's delimiter meanings), or a token's kind id when another path's test reads the slot (`otherTested`). A keyword (`classify.ts::Keyword`) is neither, so a keyword slot loses nothing. A generated projection checks each slot that its read of a path leaves unread, and keeps the node when one holds something, as today's read carries it with reason unread.

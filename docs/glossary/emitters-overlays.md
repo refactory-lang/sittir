@@ -363,6 +363,14 @@ The text of the tsconfig that type-checks the typed module together with the gra
 
 For a kind id, each read path's tested slots (`classify.ts::testedSlots`) over the read rows the grammar ships. `emitPortable` builds it from the same rows the projection and the classifier read. `exact.ts`'s unread reason counts a slot as covered on a path when the path's routes step on it or its own test reads it.
 
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedInput::flagsReading`
+
+The flags of a kind (by kind id) whose plan reads a slot (by its accessor): common's `flagSlots` over each flag's plan in the grammar's flag tables, the same tables the projection rows carry.
+
+### `packages/codegen/src/emitters/overlays/portable/typed.ts::PortableTypedOutput::unread`
+
+Each claimed concrete kind's unread slots, by kind id and then by path (`exact.ts::ExactReads::kindReads`). A path with no unread slots is left out, and so is a kind with none. `emitPortable` passes it to the projection rows (`PortableProjectRows::unread`).
+
 ### `packages/codegen/src/emitters/overlays/portable/grammar-map.ts::mapFlagsOf`
 
 Per path in the portable map, the sorted unique flags of its build arms, in codepoint order. Paths are listed in codepoint order, so the output is stable across runs.
@@ -586,7 +594,7 @@ Writes a grammar's projection through the pinned builders: a module exporting `p
 - a text arm's text (`spelledText`);
 - otherwise a structure of `$path`, the flags its arms read plus those its container sets (`flagsSetOn`), `$at`, and each slot from its routes' candidates (`fill`), then the routes its container holds for it, the empty lists, the closing delimiters (`closersInto`) and the flag templates (`templated`).
 
-A flag its arms can't read, or a candidate that reached more than one item for a one-item slot, keeps the node. When no path case returns, a container kind read outside any seat reads as its one element in the seats its container slot gives, and any other node as its unclaimed text or itself. The module keeps no node for an opaque token or an unread slot.
+A flag its arms can't read, or a candidate that reached more than one item for a one-item slot, keeps the node. When no path case returns, a container kind read outside any seat reads as its one element in the seats its container slot gives, and any other node as its unclaimed text or itself. A structure case also keeps the node when a slot that the path's read leaves unread holds something (`unread`, over `PortableProjectRows::unread`) and no flag that reads the slot holds. The module keeps no node for an opaque token.
 
 What would repeat is written once and shared. Kind sets (`KINDS<n>`), query rows (`ROW<n>`), seats (`SEATS<n>`), container sets, presets, templates, closers and facets are interned constants. Seat resolvers (`seats<n>`) and route functions (`route<n>`) are named by what they read, not by kind, path and slot. A seat that takes only a refinement of a path tests a value through `classify`, which goes to a `classify<Kind>` for each kind such a seat can hold. Within `read<Kind>` the node's kind is known, so its slot reads take that kind's query row with no kind test, each once (`slot<n>`).
 
@@ -595,3 +603,19 @@ A path case is written once for each set of its preset arms, so n arms with pres
 ### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::emitPortableProjectionInProcess`
 
 Runs `emitPortableProjection` in this process: loads the pinned build, makes an engine on its typescript grammar, emits with the engine's builders and the pin, and renders the program to text.
+
+### `packages/codegen/src/emitters/overlays/portable/exact.ts::ExactReads::kindReads`
+
+One kind's reads, worked out once per kind: its cases (`covered.ts::heldReadsOf`) and, for each read path, the slots a read as that path leaves unread. The raw reasons unread and unclaimed (`exactSlotsOf`) and the projection's unread checks all read this one result.
+
+### `packages/codegen/src/emitters/overlays/portable/exact.ts::KindReads`
+
+What `ExactReads::kindReads` finds for one kind.
+
+### `packages/codegen/src/emitters/overlays/portable/exact.ts::KindReads::cases`
+
+The kind's cases (`covered.ts::HeldReads`), or undefined when they can't be decided.
+
+### `packages/codegen/src/emitters/overlays/portable/exact.ts::KindReads::unread`
+
+Each read path of the kind with its unread slots (`PortableUnreadSlot`). An unread slot is one that no route of the path steps through on the kind itself and no test of the path reads; it can hold a kind that is not a token, or another path's test reads it; and, when the cases vary it, some case reading as the path holds it.

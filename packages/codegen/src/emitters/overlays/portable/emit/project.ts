@@ -94,6 +94,7 @@ const IMPORTS = [
 	'texts',
 	'tokenText',
 	'unclaimedText',
+	'unread',
 	'untaken'
 ] as const;
 
@@ -574,6 +575,17 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 		);
 		if (Object.keys(templates).length > 0) statements.push(t.expressionStatement(call(id('templated'), id('structure'), str(path), id('flags'), templatesOf(templates))));
 		if (candidates.length > 0) statements.push(when(binary(id('extra'), '!==', id('undefined')), ret(id('node'))));
+		const lost = value === undefined ? (input.rows.unread[kind]?.[path] ?? []) : [];
+		if (lost.length > 0) {
+			const meaning = Object.fromEntries(Object.entries(table.delimiters ?? {}).map(([at, token]) => [at, token.meaning] as const));
+			const meanings = intern('MEANING', meaning, (name) => declare(name, undefined, literal(meaning)));
+			const unreadIn = lost.map(({ accessor, otherTested, flags: reading }) => {
+				const entry = (querySlots[kind] ?? []).find(([name]) => name === accessor);
+				if (entry === undefined) throw new Error(`portable projection: ${input.kinds[kind]} has no query slot ${accessor}`);
+				return and([call(id('unread'), call(id('rowItems'), id('node'), rowOf(entry)), truth(otherTested), meanings, id('FIXED')), ...reading.map((flag) => not(call(dot(id('flags'), 'includes'), str(flag))))]);
+			});
+			statements.push(when(or(unreadIn), ret(id('node'))));
+		}
 		statements.push(ret(id('structure')));
 		return statements;
 	};
