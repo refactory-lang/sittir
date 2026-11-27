@@ -5,6 +5,7 @@
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
 
+use super::cell::CellWord;
 use super::{Address, ArenaError, ArenaRead, RecordSpace};
 use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
@@ -33,6 +34,12 @@ pub mod field {
     pub const CHANGED_TRAILING: u32 = super::mask::CHANGED_TRAILING;
     pub const DELIMITER: u32 = super::mask::DELIMITER;
     pub const SEPARATOR_KIND: u32 = super::mask::SEPARATOR_KIND;
+    pub const LEADING: u32 = super::mask::LEADING;
+    pub const TRAILING: u32 = super::mask::TRAILING;
+    pub const INNER: u32 = super::mask::INNER;
+    pub const SITES: u32 = super::mask::SITES;
+    pub const SITE_WORDS: u32 = 2;
+    pub const NEXT: u32 = super::mask::NEXT;
 }
 
 pub(crate) mod mask {
@@ -55,7 +62,153 @@ pub(crate) mod mask {
     pub const STARTS: u32 = 1 << 16;
     pub const CONTENT: u32 = 1 << 17;
     pub const HELD_BY_ERROR: u32 = 1 << 18;
-    pub const ALL: u32 = (1 << 19) - 1;
+    pub const LEADING: u32 = 1 << 19;
+    pub const TRAILING: u32 = 1 << 20;
+    pub const INNER: u32 = 1 << 21;
+    pub const SITES: u32 = 1 << 22;
+    pub const NEXT: u32 = 1 << 23;
+    /// The fields of a side record of rows (`RowFields`), which holds no
+    /// other field.
+    pub const ROWS: u32 = LEADING | TRAILING | INNER | SITES | NEXT;
+    pub const ALL: u32 = (1 << 24) - 1;
+}
+
+/// A side record of rows: the side record it was written over, which holds
+/// the record's other side fields, and the record's rows, each the list cell
+/// of a run of the cells a list holds (a record cell for a comment record,
+/// a leaf entry's cell for a leaf comment, a unit cell for a layout member;
+/// 0 for an empty row): its leading, trailing and inner rows, and the rows
+/// of its unit and leaf sites, each by its key (`RowFields::site_key`), in
+/// key order. It holds a count of each run it names and of the side record
+/// under it, and nothing else, so a write of a row copies it alone.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct RowFields {
+    pub next: Option<Address>,
+    pub leading: Option<CellWord>,
+    pub trailing: Option<CellWord>,
+    pub inner: Option<CellWord>,
+    pub sites: Vec<(u32, CellWord)>,
+}
+
+impl RowFields {
+    /// The bits of a site's key that hold its side, below its item.
+    pub const SIDE_BITS: u32 = 1;
+
+    /// The key of the `side` (0 leading, 1 trailing) of the unit or leaf at
+    /// item `item` of the slot whose stamped word is `word`.
+    #[must_use]
+    pub const fn site_key(word: u32, item: u32, side: u32) -> u32 {
+        ((word << crate::types::NodeId::ITEM_BITS) | item) << Self::SIDE_BITS | side
+    }
+
+    /// Whether the side record holds no row and names no side record.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        *self == RowFields::default()
+    }
+
+    /// Each row's list cell, the sites' among them, empty rows included.
+    pub fn cells(&self) -> impl Iterator<Item = CellWord> + '_ {
+        [self.leading, self.trailing, self.inner].into_iter().flatten().chain(self.sites.iter().map(|&(_, cell)| cell))
+    }
+
+    /// The side record's words: its mask, then `next`, `leading`,
+    /// `trailing`, `inner` and `sites` (a count, then each key and cell)
+    /// where present.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a side record that holds nothing or
+    /// names address 0, `ArenaError::Malformed` for sites out of key order,
+    /// and `ArenaError::Full` for a count past a word.
+    pub fn words(&self) -> Result<Vec<u32>, ArenaError> {
+        if self.is_empty() {
+            return Err(ArenaError::Unwritable("a side record of rows that holds no row and names no side record"));
+        }
+        if self.next == Some(Address::NONE) {
+            return Err(ArenaError::Unwritable("a side record of rows naming address 0"));
+        }
+        if let Some(pair) = self.sites.windows(2).find(|pair| pair[0].0 >= pair[1].0) {
+            return Err(malformed("side record site key order", pair[1].0));
+        }
+        let mut words = vec![0];
+        let mut flags = 0;
+        if let Some(next) = self.next {
+            flags |= mask::NEXT;
+            words.push(next.0);
+        }
+        for (bit, row) in [(mask::LEADING, self.leading), (mask::TRAILING, self.trailing), (mask::INNER, self.inner)] {
+            if let Some(cell) = row {
+                flags |= bit;
+                words.push(cell.0);
+            }
+        }
+        if !self.sites.is_empty() {
+            flags |= mask::SITES;
+            words.push(u32::try_from(self.sites.len()).map_err(|_| ArenaError::Full)?);
+            words.extend(self.sites.iter().flat_map(|&(key, cell)| [key, cell.0]));
+        }
+        words[0] = flags;
+        Ok(words)
+    }
+
+    /// The side record of rows at `at`; `None` for a side record of other
+    /// fields.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a mask that holds rows beside other
+    /// fields, a row cell that marks changed edges, a `next` of address 0 or
+    /// sites out of key order; and what reading its words refuses.
+    pub fn read(arena: &dyn ArenaRead, at: Address) -> Result<Option<RowFields>, ArenaError> {
+        let mut fields = Fields::of(arena, at);
+        let [flags] = fields.array()?;
+        Self::read_after(&mut fields, flags)
+    }
+
+    fn read_after(fields: &mut Fields<'_>, flags: u32) -> Result<Option<RowFields>, ArenaError> {
+        if flags & mask::ROWS == 0 {
+            return Ok(None);
+        }
+        if flags & !mask::ROWS != 0 {
+            return Err(malformed("side record rows beside other fields", flags));
+        }
+        let mut rows = RowFields::default();
+        if flags & mask::NEXT != 0 {
+            let [next] = fields.array()?;
+            if next == Address::NONE.0 {
+                return Err(malformed("side record of rows next", next));
+            }
+            rows.next = Some(Address(next));
+        }
+        let row = |fields: &mut Fields<'_>| -> Result<CellWord, ArenaError> {
+            let [cell] = fields.array()?;
+            if cell & 3 != 0 {
+                return Err(malformed("side record row cell", cell));
+            }
+            Ok(CellWord(cell))
+        };
+        for (bit, slot) in [(mask::LEADING, &mut rows.leading), (mask::TRAILING, &mut rows.trailing), (mask::INNER, &mut rows.inner)] {
+            if flags & bit != 0 {
+                *slot = Some(row(fields)?);
+            }
+        }
+        if flags & mask::SITES != 0 {
+            let [count] = fields.array()?;
+            let words = fields.take(count.checked_mul(field::SITE_WORDS).filter(|&words| words != 0).ok_or(malformed("side record site count", count))?)?;
+            let (pairs, _) = words.as_chunks::<{ field::SITE_WORDS as usize }>();
+            for &[key, cell] in pairs {
+                if cell & 3 != 0 {
+                    return Err(malformed("side record row cell", cell));
+                }
+                if rows.sites.last().is_some_and(|&(last, _)| last >= key) {
+                    return Err(malformed("side record site key order", key));
+                }
+                rows.sites.push((key, CellWord(cell)));
+            }
+        }
+        Ok(Some(rows))
+    }
 }
 
 /// The bits of a node's packed facts that hold its field id.
@@ -321,6 +474,11 @@ pub struct SideRecord {
     /// side of; none for a read that does not keep them. Only
     /// `SideRecord::starts_at` reads them back.
     pub starts: Option<Vec<u32>>,
+    /// The record's rows, from the side record of rows its word 1 names,
+    /// whose `next` is the side record that holds the fields above. A
+    /// write never writes them: they are a side record of their own
+    /// (`RowFields::words`).
+    pub rows: RowFields,
 }
 
 /// The words of one slot entry: word, before, after, separator and the two
@@ -452,6 +610,9 @@ impl SideRecord {
     /// Hands `put` each word after the flags word, in field order, and
     /// answers the flags word.
     fn fields(&self, put: &mut dyn FnMut(u32)) -> Result<u32, ArenaError> {
+        if !self.rows.is_empty() {
+            return Err(ArenaError::Unwritable("a side record's rows, which are a side record of their own"));
+        }
         let mut flags = 0;
         let mut words = |words: &[u32]| words.iter().for_each(|&word| put(word));
         if let Some(Row { kind, span }) = self.at {
@@ -602,6 +763,17 @@ impl SideRecord {
         let [flags] = fields.array()?;
         if flags & !mask::ALL != 0 || flags == 0 {
             return Err(malformed("side record mask", flags));
+        }
+        if let Some(rows) = RowFields::read_after(&mut fields, flags)? {
+            let found = match rows.next {
+                Some(next) => record.read_into(arena, next, slots, entries)?,
+                None => ListsAt::default(),
+            };
+            if !record.rows.is_empty() {
+                return Err(malformed("side record of rows over another", flags));
+            }
+            record.rows = rows;
+            return Ok(found);
         }
         let has = |bit: u32| flags & bit != 0;
         record.changed = ChangedEdges { leading: has(mask::CHANGED_LEADING), trailing: has(mask::CHANGED_TRAILING) };
@@ -925,6 +1097,7 @@ mod tests {
             ],
             spans: vec![Address(5)..Address(40), Address(3 << crate::arena::CHUNK_SHIFT)..Address(5 << crate::arena::CHUNK_SHIFT)],
             starts: Some(vec![0, 4, 11]),
+            rows: RowFields::default(),
         }
     }
 
@@ -936,6 +1109,36 @@ mod tests {
         assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { spans: Vec::new(), starts: None, ..record.clone() }), "a read leaves the spans and the starts where they lie");
         assert_eq!(SideRecord::spans_at(&arena, at), Ok(record.spans));
         assert_eq!(SideRecord::starts_at(&arena, at), Ok(record.starts.as_deref()));
+    }
+
+    #[test]
+    fn a_side_record_of_rows_reads_as_its_rows_over_the_fields_of_the_side_record_under_it() {
+        let mut arena = Arena::new();
+        let under = full().write(&mut |words| arena.push(words)).expect("room");
+        let rows = RowFields { next: Some(under), leading: Some(CellWord(8 << 2)), inner: Some(CellWord(0)), sites: vec![(RowFields::site_key(2, 0, 0), CellWord(9 << 2)), (RowFields::site_key(2, 0, 1), CellWord(10 << 2))], ..RowFields::default() };
+        let at = arena.push(&rows.words().expect("its words")).expect("room");
+        assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { rows: rows.clone(), ..SideRecord::read(&arena, under).expect("the side record under it") }));
+        let (facts, run) = SideRecord::read_facts(&arena, at).expect("its facts");
+        assert_eq!(run, SideRecord::read_facts(&arena, under).expect("its facts").1, "its run lies where the side record under it holds it");
+        assert_eq!(facts.rows, rows);
+        assert_eq!(RowFields::read(&arena, under), Ok(None), "a side record of other fields holds no rows");
+        let alone = RowFields { trailing: Some(CellWord(0)), ..RowFields::default() };
+        let at = arena.push(&alone.words().expect("its words")).expect("room");
+        assert_eq!(SideRecord::read(&arena, at), Ok(SideRecord { rows: alone, ..SideRecord::default() }), "a side record of rows naming none stands alone");
+    }
+
+    #[test]
+    fn a_side_record_of_rows_beside_other_fields_over_another_or_out_of_key_order_is_refused() {
+        let mut arena = Arena::new();
+        let under = arena.push(&[mask::SEPARATOR_KIND, 7]).expect("room");
+        let rows = arena.push(&RowFields { next: Some(under), leading: Some(CellWord(0)), ..RowFields::default() }.words().expect("its words")).expect("room");
+        for words in [vec![mask::LEADING | mask::SEPARATOR_KIND, 0, 7], vec![mask::NEXT, rows.0], vec![mask::NEXT, 0], vec![mask::LEADING, 1], vec![mask::SITES, 2, 4, 0, 2, 0], vec![mask::SITES, 0]] {
+            let at = arena.push(&words).expect("room");
+            assert!(matches!(SideRecord::read(&arena, at), Err(ArenaError::Malformed { .. })), "{words:?}");
+        }
+        assert!(RowFields { sites: vec![(4, CellWord(0)), (2, CellWord(0))], ..RowFields::default() }.words().is_err(), "sites out of key order");
+        assert!(RowFields::default().words().is_err(), "a side record of rows that holds nothing");
+        assert!(SideRecord { rows: RowFields { leading: Some(CellWord(0)), ..RowFields::default() }, ..SideRecord::default() }.write(&mut |words| arena.push(words)).is_err(), "rows are a side record of their own");
     }
 
     #[test]

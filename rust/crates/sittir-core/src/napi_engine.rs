@@ -2072,14 +2072,15 @@ pub fn dispose<G: crate::engine::EngineGrammar>(_env: &napi::Env, tree: crate::e
 #[cfg(feature = "arena")]
 pub fn released_entries(batch: &[f64]) -> napi::Result<Vec<(crate::arena::count::Held, bool)>> {
     use crate::arena::count::{held, Held};
-    let pairs = batch.chunks_exact(2);
-    if !pairs.remainder().is_empty() {
+    let (pairs, rest) = batch.as_chunks::<2>();
+    if !rest.is_empty() {
         return Err(napi::Error::from_reason(format!("a release batch holds pairs, not {} numbers", batch.len())));
     }
     pairs
-        .map(|pair| {
-            let at = crate::arena::Address(checked_whole(pair[0], "address")?);
-            let form: u32 = checked_whole(pair[1], "held")?;
+        .iter()
+        .map(|&[at, form]| {
+            let at = crate::arena::Address(checked_whole(at, "address")?);
+            let form: u32 = checked_whole(form, "held")?;
             let entry = Held::of(form & !held::DROPPED, at).map_err(|e| napi::Error::from_reason(e.to_string()))?;
             Ok((entry, form & held::DROPPED != 0))
         })

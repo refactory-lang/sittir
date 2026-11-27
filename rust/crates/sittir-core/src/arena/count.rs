@@ -24,7 +24,7 @@ use std::sync::Arc;
 
 use super::cell::{built_cells, flag, header_of, parsed_cell_walk, Cell, CellWord, ListCell, Lists, ParsedCell};
 use super::memory::ChunkMem;
-use super::side::{RunEntry, SideRecord};
+use super::side::{RowFields, RunEntry, SideRecord};
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, RecordShape, ARENA_RELEASED};
 use crate::types::KindId;
 
@@ -619,15 +619,24 @@ impl BuiltChunks {
                 walk.items = items;
             }
             Held::Side(at) => {
-                let (side, _) = SideRecord::read_facts(self, at)?;
-                if let Some(source) = side.source {
-                    if let Some(read) = super::source::Source::read_side_of(self, Address(source))? {
-                        self.drop_count(Held::Side(read), walk)?;
+                if let Some(rows) = RowFields::read(self, at)? {
+                    for cell in rows.cells().filter(|cell| cell.0 != 0) {
+                        self.drop_count(Held::Run(cell.address()), walk)?;
                     }
-                    self.drop_cell(Address(source), walk)?;
-                }
-                if let Some(sides) = side.sides {
-                    self.drop_cell(Address(sides.tree.0), walk)?;
+                    if let Some(next) = rows.next {
+                        self.drop_count(Held::Side(next), walk)?;
+                    }
+                } else {
+                    let (side, _) = SideRecord::read_facts(self, at)?;
+                    if let Some(source) = side.source {
+                        if let Some(read) = super::source::Source::read_side_of(self, Address(source))? {
+                            self.drop_count(Held::Side(read), walk)?;
+                        }
+                        self.drop_cell(Address(source), walk)?;
+                    }
+                    if let Some(sides) = side.sides {
+                        self.drop_cell(Address(sides.tree.0), walk)?;
+                    }
                 }
             }
             Held::Text(at) => return Err(malformed("text entry on the release stack", at.0)),
@@ -933,6 +942,22 @@ mod tests {
         assert!(built.arena.released(root) && built.arena.released(side), "a record a side names");
         assert_eq!(built.arena.text_count(text.chunk()), Some(0), "a leaf entry a side names gives back its string count");
         assert_eq!(built.arena.count_of(read), Ok(1), "a read's record a side names gives back the side's count");
+    }
+
+    #[test]
+    fn a_released_record_drops_its_side_record_of_rows_what_its_rows_name_and_the_side_record_under_it() {
+        use crate::arena::side::{mask, RowFields};
+        let mut built = Builder::new();
+        let (comment, site_comment) = (built.leaf(), built.leaf());
+        let (row, site_row) = (built.run(&[comment]), built.run(&[site_comment]));
+        let under = built.place(&[mask::SEPARATOR_KIND, 7], 1);
+        let rows = RowFields { next: Some(under), leading: Some(ListCell::word(row).expect("a cell")), inner: Some(CellWord(0)), sites: vec![(RowFields::site_key(2, 0, 1), ListCell::word(site_row).expect("a cell"))], ..RowFields::default() };
+        let rows = built.place(&rows.words().expect("its words"), 1);
+        let root = built.place(&[with_kind(LEAF, BITS).expect("a kind"), rows.0], OWNED | 1);
+        built.release(root, true).expect("released");
+        for (at, what) in [(root, "the record"), (rows, "its side record of rows"), (under, "the side record under it"), (row, "its leading row"), (comment, "what its leading row names"), (site_row, "a site's row"), (site_comment, "what a site's row names")] {
+            assert!(built.arena.released(at), "{what}");
+        }
     }
 
     #[test]
