@@ -103,14 +103,14 @@ pub(crate) fn header_side_mask(arena: &dyn ArenaRead, at: Address) -> Result<(u3
     Ok((header_word(header), side, mask))
 }
 
-/// Names `side` as the side record of the record at `at` in `chunks`: its
-/// header's second word (`side_of`).
+/// Names `side` as the side record of the record at `at`, written through
+/// `space`: its header's second word (`side_of`).
 ///
 /// # Errors
 ///
 /// As `side_of`.
-pub(crate) fn set_side_of(chunks: &mut super::BuiltChunks, at: Address, side: Address) -> Result<(), ArenaError> {
-    chunks.words_mut(at.record()?, HEADER_WORDS)?[1] = side.0;
+pub(crate) fn set_side_of(space: &mut dyn super::RecordSpace, at: Address, side: Address) -> Result<(), ArenaError> {
+    space.words_mut(at.record()?, HEADER_WORDS)?[1] = side.0;
     Ok(())
 }
 

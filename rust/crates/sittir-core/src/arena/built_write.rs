@@ -73,6 +73,11 @@ impl<'a> ReadWriter<'a> {
         self.read_side = Some(at);
     }
 
+    /// The chunks this writer writes into.
+    pub fn chunks_mut(&mut self) -> &mut BuiltChunks {
+        self.chunks
+    }
+
     /// Ends the read whose source's entry is `source` and whose root's
     /// record is `root`: each side record that names the source holds a
     /// count of it in place of the read's own, and a count of the read's

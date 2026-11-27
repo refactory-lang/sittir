@@ -202,20 +202,20 @@ impl RowFields {
         Ok(super::ListCell::of_word(cell, arena)?.items(arena, 1)?.map(|item| CellWord(item[0])))
     }
 
-    /// The row of `cells` placed in `chunks` as a run, held once by the
+    /// The row of `cells` placed through `space` as a run, held once by the
     /// cell answered; the empty row for none.
     ///
     /// # Errors
     ///
     /// What placing the run refuses.
-    pub fn place_row(chunks: &mut super::BuiltChunks, cells: &[CellWord]) -> Result<CellWord, ArenaError> {
+    pub fn place_row(space: &mut dyn RecordSpace, cells: &[CellWord]) -> Result<CellWord, ArenaError> {
         if cells.is_empty() {
             return Ok(CellWord(0));
         }
         let mut words = Vec::with_capacity(cells.len() + 1);
         words.push(u32::try_from(cells.len()).map_err(|_| ArenaError::Full)?);
         words.extend(cells.iter().map(|cell| cell.0));
-        super::ListCell::word(super::ReadWriter::new(chunks).push(&words)?)
+        super::ListCell::word(space.push(&words)?)
     }
 
     /// The record at `at`, whose header names the side record `side` with
@@ -225,13 +225,14 @@ impl RowFields {
     /// held. One held only by `at` and of the same fields is rewritten in
     /// place; any other is written anew, holding once more each run it
     /// keeps and the side record under it, and `at`'s count of the old one
-    /// given back. A run the record no longer names is released.
+    /// given back. A run the record no longer names is released. Each
+    /// entry is placed through `writer`.
     ///
     /// # Errors
     ///
     /// What reading or releasing the entries refuses, and what `words`
     /// refuses.
-    pub fn write_over(chunks: &mut super::BuiltChunks, at: Address, side: Address, old: Option<&RowFields>, mut rows: RowFields) -> Result<(), ArenaError> {
+    pub fn write_over(writer: &mut super::ReadWriter<'_>, at: Address, side: Address, old: Option<&RowFields>, mut rows: RowFields) -> Result<(), ArenaError> {
         use super::count::Held;
         rows.next = match old {
             Some(old) => old.next,
@@ -239,35 +240,35 @@ impl RowFields {
         };
         let Some(old) = old else {
             if rows.holds_rows() {
-                let new = super::ReadWriter::new(chunks).push(&rows.words()?)?;
-                super::set_side_of(chunks, at, new)?;
+                let new = writer.push(&rows.words()?)?;
+                super::set_side_of(writer, at, new)?;
             }
             return Ok(());
         };
         if !rows.holds_rows() {
             let under = rows.next.unwrap_or(Address::NONE);
             if under != Address::NONE {
-                chunks.hold(under)?;
+                writer.chunks_mut().hold(under)?;
             }
-            super::set_side_of(chunks, at, under)?;
-            return chunks.release(Held::Side(side), false);
+            super::set_side_of(writer, at, under)?;
+            return writer.chunks_mut().release(Held::Side(side), false);
         }
         let words = rows.words()?;
         let same_fields = words.len() == old.words()?.len() && old.sites.iter().map(|&(key, _)| key).eq(rows.sites.iter().map(|&(key, _)| key)) && [old.leading, old.trailing, old.inner].map(|row| row.is_some()) == [rows.leading, rows.trailing, rows.inner].map(|row| row.is_some());
-        if same_fields && chunks.count_of(side)? == 1 {
+        if same_fields && writer.chunks_mut().count_of(side)? == 1 {
             let dropped: Vec<CellWord> = old.cells().zip(rows.cells()).filter(|&(was, now)| was != now && was.0 != 0).map(|(was, _)| was).collect();
-            chunks.words_mut(side, u32::try_from(words.len()).map_err(|_| ArenaError::Full)?)?.copy_from_slice(&words);
-            return chunks.release_batch(dropped.into_iter().map(|run| (Held::Run(run.address()), false)));
+            writer.words_mut(side, u32::try_from(words.len()).map_err(|_| ArenaError::Full)?)?.copy_from_slice(&words);
+            return writer.chunks_mut().release_batch(dropped.into_iter().map(|run| (Held::Run(run.address()), false)));
         }
         for kept in rows.cells().filter(|&cell| cell.0 != 0 && old.cells().any(|was| was == cell)) {
-            chunks.hold(kept.address())?;
+            writer.chunks_mut().hold(kept.address())?;
         }
         if let Some(next) = rows.next {
-            chunks.hold(next)?;
+            writer.chunks_mut().hold(next)?;
         }
-        let new = super::ReadWriter::new(chunks).push(&words)?;
-        super::set_side_of(chunks, at, new)?;
-        chunks.release(Held::Side(side), false)
+        let new = writer.push(&words)?;
+        super::set_side_of(writer, at, new)?;
+        writer.chunks_mut().release(Held::Side(side), false)
     }
 
     /// The side record's words: its mask, then `next`, `leading`,

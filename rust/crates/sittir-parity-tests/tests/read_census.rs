@@ -651,6 +651,15 @@ fn the_side_words_a_census_attributes_are_the_words_their_encoder_writes() {
 }
 
 #[test]
+fn a_read_writes_the_sides_it_placed_on_a_record_once_leaving_no_word_unattributed() {
+    let source = "fn f() {\n    /* l */ g(); /* t */\n    // before\n    let x = 1; // after\n}\n";
+    let tally = census::<_, sittir_rust::render::AnyNode>(sittir_rust::RustGrammar, sittir_rust::render::options::defaults, "rust", "guard", &[("guard".to_string(), source.to_string())]);
+    let attributed = tally.records.words + tally.side_records.words + tally.side_rows.words + tally.side_row_runs.words + tally.list_runs.words + tally.link_records.words + tally.read_sides.words;
+    assert_eq!(tally.side_rows.n, 2, "each statement's two comments are rows of one side record of rows");
+    assert_eq!(attributed, tally.chunk_words, "every word the read wrote is a live entry's");
+}
+
+#[test]
 #[ignore = "a census over corpora named by the environment, run by hand"]
 fn read_census() {
     let grammar = std::env::var("SITTIR_CENSUS_GRAMMAR").expect("SITTIR_CENSUS_GRAMMAR");

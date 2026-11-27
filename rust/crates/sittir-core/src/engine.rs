@@ -2745,8 +2745,10 @@ impl<G: EngineGrammar> Engine<G> {
     /// (`trivia_table::beyond_own_break`). The rest are the gaps a parent
     /// writes. On the trailing side of each list item the parse set apart
     /// from the item after it (`apart`, or a record's header) the member of
-    /// the blank-line kind it set it apart with comes last.
-    fn place_extras(&self, placed: Vec<crate::arena::Placed>, apart: Vec<(crate::arena::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<(), crate::arena::ArenaError> {
+    /// the blank-line kind it set it apart with comes last. Each side is
+    /// written through the read's `writer`, before the read finishes
+    /// (`TriviaStore::write_read_sides`).
+    fn place_extras(&self, writer: &mut crate::arena::ReadWriter<'_>, placed: Vec<crate::arena::Placed>, apart: Vec<(crate::arena::NodeSite, crate::layout_kinds::LayoutKinds)>) -> Result<(), crate::arena::ArenaError> {
         use crate::layout_kinds::LayoutKinds;
         use crate::trivia_store::CompactEntry;
         let gaps = self.grammar.whitespace().0;
@@ -2755,13 +2757,12 @@ impl<G: EngineGrammar> Engine<G> {
         met.extend(apart.into_iter().map(|(site, kind)| ((site, TriviaSide::Trailing), Err(kind))));
         met.extend(placed.into_iter().map(|extra| ((extra.site, extra.side), Ok(extra))));
         met.sort_by_key(|&(key, _)| key);
-        let mut chunks = self.written.built_mut();
-        let mut known = crate::arena::site::RowSites::default();
+        let mut sides = Vec::new();
         for run in met.chunk_by(|(one, _), (other, _)| one == other) {
             let ((site, side), _) = run[0];
             let mut kept = Vec::with_capacity(2 * run.len());
             let header_apart = match (site, side) {
-                (crate::arena::NodeSite::Record(at), TriviaSide::Trailing) => Some(crate::arena::cell::HeaderLayout::of(crate::arena::ArenaRead::word(&*chunks, at)?, G::KIND_BITS)?.trailing).filter(|kind| [LayoutKinds::BLANKLINE, LayoutKinds::DOUBLE_BLANKLINE].contains(kind)),
+                (crate::arena::NodeSite::Record(at), TriviaSide::Trailing) => Some(crate::arena::cell::HeaderLayout::of(crate::arena::ArenaRead::word(&*writer, at)?, G::KIND_BITS)?.trailing).filter(|kind| [LayoutKinds::BLANKLINE, LayoutKinds::DOUBLE_BLANKLINE].contains(kind)),
                 _ => None,
             };
             let extras = run.iter().filter_map(|&(_, met)| met.ok()).map(|extra| (CompactEntry::Record { kind: extra.kind, at: extra.extra }, (extra.before, crate::trivia_table::beyond_own_break(extra.after, self.options.ends_line(extra.kind)))));
@@ -2769,9 +2770,9 @@ impl<G: EngineGrammar> Engine<G> {
             if let Some(kind) = header_apart.or_else(|| run.iter().find_map(|(_, met)| met.err())) {
                 kept.extend(member(kind));
             }
-            self.written.write_placed(&mut chunks, site, side, kept, &mut known)?;
+            sides.push((site, side, kept));
         }
-        Ok(())
+        self.written.write_read_sides(writer, sides)
     }
 
     #[cfg(feature = "arena")]
@@ -2829,14 +2830,13 @@ impl<G: EngineGrammar> Engine<G> {
                 Ok(root) => root,
                 Err(refusal) => return Err(refused(writer, refusal)),
             };
-            writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
-            drop(built);
             if let Some(kept) = kept {
                 kept.extend_from_slice(&placed);
             }
-            if let Err(refusal) = self.place_extras(placed, apart) {
-                return Err(Self::given_back(refusal.to_string(), root.map_or(Ok(()), |root| self.written.release(crate::arena::count::Held::Record(root), true))));
+            if let Err(refusal) = self.place_extras(&mut writer, placed, apart) {
+                return Err(Self::given_back(refusal.to_string(), writer.abandon(entry)));
             }
+            writer.finish(entry, root).map_err(|refusal| refusal.to_string())?;
             root
         };
         Ok(ParsedRecords { root, source: entry, errors })
