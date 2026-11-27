@@ -64,7 +64,6 @@ interface RowsReader {
 	readonly otherTested: (node: Node, path: string) => ReadonlySet<string>;
 	readonly flagHolds: (value: Node | number, flag: string) => boolean;
 	readonly builtReadsAs: (path: string, node: Node) => boolean;
-	readonly textOf: (value: unknown) => string | undefined;
 }
 
 const readers = new WeakMap<PortableRows, RowsReader>();
@@ -132,7 +131,7 @@ export function builtReadsAs(rows: PortableRows, path: string, node: Node): bool
 }
 
 export function portableTextOf(rows: PortableRows, value: unknown): string | undefined {
-	return readerOf(rows).textOf(value);
+	return textOf(value, rows.table.fixedText);
 }
 
 const itemsOf = (node: object, [accessor, , keyword, storage, , blank, spellings]: QuerySlotEntry): readonly unknown[] => {
@@ -149,36 +148,43 @@ export const rowItems = (node: object, slot: QuerySlotEntry): readonly unknown[]
 	return items.flatMap((item) => (item === true ? [present] : []));
 };
 
+const rendered = new WeakMap<object, string>();
+
+export const renderedText = (node: Node): string | undefined => {
+	if (treeOf(node) !== undefined) return undefined;
+	const engine = engineOf(node);
+	if (engine === undefined || !isLive(engine)) return undefined;
+	let text = rendered.get(node);
+	if (text === undefined) {
+		const output = engine.render(node);
+		try {
+			rendered.set(node, (text = output.toString()));
+		} finally {
+			output[Symbol.dispose]();
+		}
+	}
+	return text;
+};
+
+export const textOf = (item: unknown, fixed: Readonly<Record<number, string>>): string | undefined => {
+	if (typeof item === 'string') return item;
+	if (item instanceof Keyword) return item.text;
+	if (typeof item === 'number') return fixed[item];
+	return hasKind(item) ? (sourceTextOf(item) ?? renderedText(item)) : undefined;
+};
+
+export const sameText = (a: readonly string[], b: readonly string[]): boolean => a.length === 1 && b.length === 1 && a[0] === b[0];
+
 function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const itemsIn = (node: Node, subject: SlotSubject): readonly unknown[] => {
 		const number = subject.slots[node.$type];
 		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
 		return slot === undefined ? [] : rowItems(node, slot);
 	};
-	const rendered = new WeakMap<object, string>();
-	const renderedText = (node: Node): string | undefined => {
-		if (treeOf(node) !== undefined) return undefined;
-		const engine = engineOf(node);
-		if (engine === undefined || !isLive(engine)) return undefined;
-		let text = rendered.get(node);
-		if (text === undefined) {
-			const output = engine.render(node);
-			try {
-				rendered.set(node, (text = output.toString()));
-			} finally {
-				output[Symbol.dispose]();
-			}
-		}
-		return text;
-	};
-	const textOf = (item: unknown): string | undefined => {
-		if (item instanceof Keyword || typeof item === 'string') return typeof item === 'string' ? item : item.text;
-		if (typeof item === 'number') return table.fixedText[item];
-		return hasKind(item) ? (sourceTextOf(item) ?? renderedText(item)) : undefined;
-	};
+	const itemText = (item: unknown): string | undefined => textOf(item, table.fixedText);
 	const typeOf = (item: unknown): readonly number[] =>
 		item instanceof Keyword ? (item.kind === undefined ? [] : [item.kind]) : typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];
-	const items: PlanItems<Node> = { isNode: hasKind, itemsIn, textOf, typeOf, delimiterOf };
+	const items: PlanItems<Node> = { isNode: hasKind, itemsIn, textOf: itemText, typeOf, delimiterOf };
 	const subjectsOf = (reached: readonly unknown[]): PlanSubjects => planSubjects(reached, items);
 	const entriesWhere = (keep: (entry: PortableReadEntry) => boolean): ReadonlyMap<number, readonly PortableReadEntry[]> =>
 		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), readableEntries(entries).filter(keep)]));
@@ -186,8 +192,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const kindIdEntries = entriesWhere(decidesKindId);
 	const classify: PortableClassifier = (value) =>
 		entriesHolding((typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type)) ?? [], value, items)[0]?.path;
-	const textsAt = (node: Node, steps: readonly PortableStep[]): readonly string[] => reachedBy([node], steps, items).flatMap((item) => textOf(item) ?? []);
-	const sameText = (a: readonly string[], b: readonly string[]): boolean => a.length === 1 && b.length === 1 && a[0] === b[0];
+	const textsAt = (node: Node, steps: readonly PortableStep[]): readonly string[] => reachedBy([node], steps, items).flatMap((item) => itemText(item) ?? []);
 	const factsOf = (node: Node, container: Node): readonly HoldingFact[] => {
 		const facts = (table.facts?.[node.$type] ?? []).filter((fact) => fact.container === container.$type);
 		const holding: HoldingFact[] = [];
@@ -260,5 +265,5 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		if (entries.length === 0 || !entries.every(unplaced)) return true;
 		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node, items)));
 	};
-	return { classify, factsOf, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs, textOf };
+	return { classify, factsOf, slotsOf, readSlots, otherTested, flagHolds, builtReadsAs };
 }

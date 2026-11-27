@@ -1,11 +1,11 @@
 import type { ErrorRegion, PortableContainer, PortableDecimalParts, PortablePreset, PortableSlotStep, PortableTemplate, QuerySlotEntry } from '@sittir/types';
 import { spelledMember } from '../spelled.ts';
-import { nodeText, parseErrorsOf, sidesOf, sourceTextOf, spanOf } from '../node-data.ts';
+import { nodeText, parseErrorsOf, sidesOf, spanOf } from '../node-data.ts';
 import { isErrorNode } from '../utils.ts';
 import { rebuilds, setsOn, spelledText, tokenText, type SeatText } from './facts.ts';
 import { slotReader } from '../record-view.ts';
 import { storedSlotRead } from '../stored-slot.ts';
-import { Keyword, rowItems } from './classify.ts';
+import { Keyword, rowItems, sameText, textOf } from './classify.ts';
 
 export type Node = { readonly $type: number };
 
@@ -87,10 +87,7 @@ export const slotOf = (node: unknown, key: string): unknown => {
 	return typeof read === 'function' ? (read as () => unknown).call(node) : read;
 };
 
-export { nodeText, rowItems, spelledText, storedSlotRead, tokenText };
-
-export const textOf = (value: unknown, fixed: Readonly<Record<number, string>>): string | undefined =>
-	typeof value === 'string' ? value : value instanceof Keyword ? value.text : typeof value === 'number' ? fixed[value] : isNode(value) ? sourceTextOf(value) : undefined;
+export { nodeText, rowItems, sameText, spelledText, storedSlotRead, textOf, tokenText };
 
 export const texts = (items: readonly unknown[], fixed: Readonly<Record<number, string>>): readonly string[] => items.flatMap((item) => textOf(item, fixed) ?? []);
 
@@ -315,5 +312,3 @@ export const readOnlySpelled = (items: readonly unknown[], readOnly: Readonly<Re
 			return text !== undefined && slots.includes(spelledMember(text, spellings[item.$type]?.[facet]));
 		});
 	});
-
-export const sameText = (a: readonly string[], b: readonly string[]): boolean => a.length === 1 && b.length === 1 && a[0] === b[0];

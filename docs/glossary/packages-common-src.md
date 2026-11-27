@@ -1682,9 +1682,9 @@ Whether a slot's value is there: not `undefined`, not `null`, and not an empty l
 
 A node's slot by its key, through `slotReader`, so it reads the same over either storage; a reader that is a function is called on the node. A value that isn't a node has no slots.
 
-### `packages/common/src/portable/project.ts::textOf`
+### `packages/common/src/portable/classify.ts::textOf`
 
-A value's text: a string is itself, a `Keyword` its keyword's text, a fixed token (a kind id) its text in the grammar's fixed-text table, a node its source text (`sourceTextOf`); anything else has none. The table is the generated module's `FIXED`, so a token a slot holds as its kind id reads the text today's read gives it.
+A value's text: a string is itself, a `Keyword` its keyword's text, a fixed token (a kind id) its text in the fixed-text table given, a node its source text (`sourceTextOf`), and a built node, which has no source, its rendered text (`renderedText`); anything else has none. The classifier and today's read take their texts through it with the grammar's table, and a generated projection with its module's `FIXED`, so a claim test reads a built node's text the same way in both.
 
 ### `packages/common/src/portable/project.ts::texts`
 
@@ -1830,9 +1830,13 @@ Whether any item is a node whose `delimiter` stamp shares a bit with the given d
 
 Whether any item is a delimiter spelled read-only: for an item whose kind has read-only facets, one facet's text, as the delimiter spells it (`spelledMember`), names one of that facet's read-only slots. A generated read checks the slots that can hold such a delimiter first and keeps the node when one does, as today's read returns a `readOnly` carry.
 
-### `packages/common/src/portable/project.ts::sameText`
+### `packages/common/src/portable/classify.ts::sameText`
 
 Whether two lists of texts are each exactly one text, and the same one: a `same` fact's test, comparing the text an item's steps reach with the text the node's steps reach (a python setter's decorator names the property it sets).
+
+### `packages/common/src/portable/classify.ts::renderedText`
+
+A built node's text, rendered by the engine that built it and kept per node. A parsed node (one with a tree) has its source text instead and gets none here, as does a node whose engine is gone or disposed. A claim test that compares text reads a built node's through it, so a rebuilt `r"…"` string still reads as raw.
 
 ### `packages/common/src/portable/project.ts::erred`
 

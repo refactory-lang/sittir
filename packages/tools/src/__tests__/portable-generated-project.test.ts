@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util';
 import { createEngine } from '@sittir/common';
 import { portableRuntime } from '@sittir/common/engine';
-import { isNode, textOf } from '@sittir/common/portable/utils';
+import { isNode, textOf, type Node } from '@sittir/common/portable/utils';
 import { describe, expect, it } from 'vitest';
 import { languageByName } from '../languages.ts';
 import { loadCorpusEntries } from '../validate/common.ts';
@@ -51,7 +51,70 @@ const compare = (today: unknown, generated: unknown, listed: Readonly<Record<str
 	found.differences.push(`${at}: today ${JSON.stringify(today)?.slice(0, 200)}, generated ${JSON.stringify(generated)?.slice(0, 200)}`);
 };
 
+type Builder = (config: Readonly<Record<string, unknown>>) => unknown;
+
+const slotKeys = (node: object): readonly string[] =>
+	Object.keys(node).filter((key) => !key.startsWith('$') && key !== 'toString' && key !== 'toJSON' && !(key in Array.prototype) && typeof Reflect.get(node, key) === 'function');
+
+const held = (value: unknown): boolean => value !== undefined && value !== null && value !== false && !(Array.isArray(value) && value.length === 0);
+
+const slotValues = (node: object): Record<string, unknown> =>
+	Object.fromEntries(
+		slotKeys(node).flatMap((key) => {
+			const value: unknown = Reflect.apply(Reflect.get(node, key) as () => unknown, node, []);
+			return held(value) ? [[key, value]] : [];
+		})
+	);
+
+const nodesUnder = (value: unknown, into: Node[] = []): Node[] => {
+	if (Array.isArray(value)) for (const item of value) nodesUnder(item, into);
+	else if (isNode(value)) {
+		into.push(value);
+		for (const member of Object.values(slotValues(value))) nodesUnder(member, into);
+	}
+	return into;
+};
+
+const configBuilders = async (grammar: (typeof GRAMMARS)[number], build: object): Promise<ReadonlyMap<number, Builder>> => {
+	const { TSKindId } = (await import(`../../../${grammar}/src/kinds.ts`)) as { readonly TSKindId: Readonly<Record<number, string>> };
+	const { build: table } = (await import(`../../../${grammar}/src/portable/table.ts`)) as { readonly build: { readonly builders: Readonly<Record<string, string>> } };
+	const builders = new Map<number, Builder>();
+	for (const [id, name] of Object.entries(TSKindId)) {
+		if (!/^\d+$/.test(id) || typeof name !== 'string') continue;
+		const builder = `${name[0]!.toLowerCase()}${name.slice(1)}`;
+		const call: unknown = Reflect.get(build, builder);
+		if (table.builders[builder] === 'config' && typeof call === 'function') builders.set(Number(id), (config) => Reflect.apply(call, build, [config]));
+	}
+	return builders;
+};
+
 describe.each(GRAMMARS)('the generated portable projection of %s', (grammar) => {
+	it.each(STORAGES)('projects every corpus node rebuilt through its strict builder as today’s read does, in %s storage', async (nodeStorage) => {
+		using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });
+		const runtime = await portableRuntime(engine);
+		const project = await generatedProjection(grammar);
+		const builders = await configBuilders(grammar, engine.build);
+		const found: Found = { differences: [], rows: [] };
+		let rebuilt = 0;
+		for (const { name, source } of loadCorpusEntries(grammar)) {
+			for (const node of nodesUnder(engine.parse(source))) {
+				const builder = builders.get(node.$type);
+				if (builder === undefined) continue;
+				let built: unknown;
+				try {
+					built = builder(slotValues(node));
+				} catch {
+					continue;
+				}
+				rebuilt++;
+				compare(plain(runtime.read(built as never)), plain(project(built)), LISTED[grammar], `${name} (rebuilt kind ${node.$type})`, found);
+			}
+		}
+		expect(rebuilt).toBeGreaterThan(0);
+		expect(found.differences.slice(0, 20)).toEqual([]);
+		expect(found.differences.length).toBe(0);
+	}, 600_000);
+
 	it.each(STORAGES)('projects every corpus node as today’s read does, in %s storage', async (nodeStorage) => {
 		using engine = await createEngine(await languageByName(grammar), { api: 'strict', nodeStorage });
 		const runtime = await portableRuntime(engine);
