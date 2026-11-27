@@ -15,7 +15,7 @@ export {
 	stdLibrariesLinkedBy,
 	targetSuffix
 } from './native-binding.ts';
-export { addressOf, cellFormatOf, chunkOf, decodeListCell, decodeParsedCell, decodeSideDelimiter, decodeSideRow, isTagged, wordOf } from './record-cell.ts';
+export { addressOf, cellFormatOf, chunkOf, decodeListCell, decodeParsedCell, decodeSideDelimiter, decodeSideRow, decodeSideSource, isTagged, wordOf } from './record-cell.ts';
 export type { CellFormat, CellForms, RecordCell, RecordCodecConstants, RecordListCell, SideField, SideRow } from './record-cell.ts';
 export { BuiltArena, builtCell, decodeBuiltCell, unitCell } from './built-arena.ts';
 export type { HostPlatform, NativeBindingSpec } from './native-binding.ts';

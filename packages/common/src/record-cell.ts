@@ -47,6 +47,8 @@ export interface RecordCodecConstants {
 	readonly SIDE_WORDS_SPAN: number;
 	readonly SIDE_FIELD_SIDES: number;
 	readonly SIDE_WORDS_SIDES: number;
+	readonly SIDE_FIELD_SOURCE: number;
+	readonly SIDE_WORDS_SOURCE: number;
 	readonly SIDE_FIELD_CHANGED_LEADING: number;
 	readonly SIDE_FIELD_CHANGED_TRAILING: number;
 	readonly SIDE_FIELD_DELIMITER: number;
@@ -61,6 +63,13 @@ export interface RecordCodecConstants {
 	readonly SIDE_TRAILING: number;
 	readonly SIDE_INNER: number;
 	readonly SIDE_SITE_SIDE_BITS: number;
+	readonly SIDE_FIELD_REPLACED: number;
+	readonly SIDE_WORDS_REPLACED: number;
+	readonly SIDE_REPLACED_SIDE_BITS: number;
+	readonly SIDE_REPLACED_SLOT: number;
+	readonly SIDE_REPLACED_SITE_SHIFT: number;
+	readonly SOURCE_HEAD_BYTES: number;
+	readonly SOURCE_READ_SIDE_BYTE: number;
 	readonly NODE_ID_HOLDER_BITS: number;
 	readonly NODE_ID_ITEM_BITS: number;
 	readonly NODE_ID_WORD_BITS: number;
@@ -142,6 +151,9 @@ export interface CellFormat {
 	readonly sideDelimiter: number;
 	/** The side record's `sides`: the parsed node a built one stands for, by its tree, rows and byte span. */
 	readonly sideSides: SideField;
+	readonly sideSource: SideField;
+	readonly sideReplaced: { readonly bit: number; readonly entryWords: number; readonly sideBits: number; readonly slot: number; readonly siteShift: number };
+	readonly sourceEntry: { readonly headBytes: number; readonly readSideByte: number };
 	readonly sideChanged: { readonly leading: number; readonly trailing: number };
 	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
 	readonly sideSeparatorKind: number;
@@ -233,6 +245,8 @@ const CODEC_KEYS = [
 	'SIDE_WORDS_SPAN',
 	'SIDE_FIELD_SIDES',
 	'SIDE_WORDS_SIDES',
+	'SIDE_FIELD_SOURCE',
+	'SIDE_WORDS_SOURCE',
 	'SIDE_FIELD_CHANGED_LEADING',
 	'SIDE_FIELD_CHANGED_TRAILING',
 	'SIDE_FIELD_DELIMITER',
@@ -247,6 +261,13 @@ const CODEC_KEYS = [
 	'SIDE_TRAILING',
 	'SIDE_INNER',
 	'SIDE_SITE_SIDE_BITS',
+	'SIDE_FIELD_REPLACED',
+	'SIDE_WORDS_REPLACED',
+	'SIDE_REPLACED_SIDE_BITS',
+	'SIDE_REPLACED_SLOT',
+	'SIDE_REPLACED_SITE_SHIFT',
+	'SOURCE_HEAD_BYTES',
+	'SOURCE_READ_SIDE_BYTE',
 	'NODE_ID_HOLDER_BITS',
 	'NODE_ID_ITEM_BITS',
 	'NODE_ID_WORD_BITS'
@@ -287,10 +308,20 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 			{ bit: codec.SIDE_FIELD_AT, words: codec.SIDE_WORDS_AT },
 			{ bit: codec.SIDE_FIELD_EDGES, words: codec.SIDE_WORDS_EDGES },
 			{ bit: codec.SIDE_FIELD_SPAN, words: codec.SIDE_WORDS_SPAN },
-			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES }
+			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
+			{ bit: codec.SIDE_FIELD_SOURCE, words: codec.SIDE_WORDS_SOURCE }
 		],
 		sideDelimiter: codec.SIDE_FIELD_DELIMITER,
 		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
+		sideSource: { bit: codec.SIDE_FIELD_SOURCE, words: codec.SIDE_WORDS_SOURCE },
+		sideReplaced: {
+			bit: codec.SIDE_FIELD_REPLACED,
+			entryWords: codec.SIDE_WORDS_REPLACED,
+			sideBits: codec.SIDE_REPLACED_SIDE_BITS,
+			slot: codec.SIDE_REPLACED_SLOT,
+			siteShift: codec.SIDE_REPLACED_SITE_SHIFT
+		},
+		sourceEntry: { headBytes: codec.SOURCE_HEAD_BYTES, readSideByte: codec.SOURCE_READ_SIDE_BYTE },
 		sideChanged: { leading: codec.SIDE_FIELD_CHANGED_LEADING, trailing: codec.SIDE_FIELD_CHANGED_TRAILING },
 		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND,
 		sideRows: { next: codec.SIDE_FIELD_NEXT, leading: codec.SIDE_FIELD_LEADING, trailing: codec.SIDE_FIELD_TRAILING, inner: codec.SIDE_FIELD_INNER, sites: codec.SIDE_FIELD_SITES, siteWords: codec.SIDE_WORDS_SITE, siteSideBits: codec.SIDE_SITE_SIDE_BITS },
@@ -513,8 +544,27 @@ export function decodeSideSeparatorKind(words: ArrayLike<number>, at: number, fo
 }
 
 export function sideListSettingOffset(mask: number, format: CellFormat, bit: number): number {
-	const before = format.sideBeforeDelimiter.reduce((sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words), 1);
+	const before = sideFieldOffset(mask, format, format.sideDelimiter);
 	return bit === format.sideDelimiter || (mask & format.sideDelimiter) === 0 ? before : before + 1;
+}
+
+function sideFieldOffset(mask: number, format: CellFormat, bit: number): number {
+	let offset = 1;
+	for (const field of format.sideBeforeDelimiter) {
+		if (field.bit === bit) break;
+		if ((mask & field.bit) !== 0) offset += field.words;
+	}
+	return offset;
+}
+
+export function decodeSideSource(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {
+	const mask = words[at];
+	if (mask === undefined) throw new Error(`no side record at word ${at}`);
+	if ((mask & format.sideSource.bit) === 0) return undefined;
+	const offset = sideFieldOffset(mask, format, format.sideSource.bit);
+	const source = words[at + offset];
+	if (source === undefined) throw new Error(`a side record's source ends at word ${at + offset}`);
+	return source;
 }
 
 function sideListSetting(words: ArrayLike<number>, at: number, format: CellFormat, bit: number, what: string): number | undefined {

@@ -629,11 +629,20 @@ export declare const SIDE_FIELD_LEADING: number
  */
 export declare const SIDE_FIELD_NEXT: number
 
+/**
+ * r" A read's own side record's list of replaced ranges: its mask
+ * r" bit, the words of one entry, and its key word's layout
+ * r" (`arena::side::Replaced`).
+ */
+export declare const SIDE_FIELD_REPLACED: number
+
 export declare const SIDE_FIELD_SEPARATOR_KIND: number
 
 export declare const SIDE_FIELD_SIDES: number
 
 export declare const SIDE_FIELD_SITES: number
+
+export declare const SIDE_FIELD_SOURCE: number
 
 export declare const SIDE_FIELD_SPAN: number
 
@@ -648,6 +657,12 @@ export declare const SIDE_INNER: number
  */
 export declare const SIDE_LEADING: number
 
+export declare const SIDE_REPLACED_SIDE_BITS: number
+
+export declare const SIDE_REPLACED_SITE_SHIFT: number
+
+export declare const SIDE_REPLACED_SLOT: number
+
 export declare const SIDE_SITE_SIDE_BITS: number
 
 export declare const SIDE_TRAILING: number
@@ -656,9 +671,13 @@ export declare const SIDE_WORDS_AT: number
 
 export declare const SIDE_WORDS_EDGES: number
 
+export declare const SIDE_WORDS_REPLACED: number
+
 export declare const SIDE_WORDS_SIDES: number
 
 export declare const SIDE_WORDS_SITE: number
+
+export declare const SIDE_WORDS_SOURCE: number
 
 export declare const SIDE_WORDS_SPAN: number
 
@@ -690,6 +709,14 @@ export declare function slotSeparator(treeId: TreeId, index: NodeIndex): import(
  * and a `holderByte` after the first byte the snapshot measures.
  */
 export declare function snapshotLayouts(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): [number, object][]
+
+/**
+ * r" A source entry's head bytes, and where in it the address of
+ * r" the read's own side record starts (`arena::source`).
+ */
+export declare const SOURCE_HEAD_BYTES: number
+
+export declare const SOURCE_READ_SIDE_BYTE: number
 
 /**
  * How much of its layout the live tree `treeId` stores apart from

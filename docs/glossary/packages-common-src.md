@@ -997,7 +997,7 @@ The required numeric codec exports supplied by each native addon. JavaScript val
 
 ### `packages/common/src/record-cell.ts::CellFormat`
 
-The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing, ordered side fields, the fields of a side record of rows (`sideRows`, `SideRowFields`), the side codes key words hold (`sideCodes`, `SideCodes`), and the header's layout codes (`layout`, `HeaderLayoutFormat`). Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
+The checked JavaScript decoder format derived from native codec exports. It carries cell tags, the inline-record header size, packed chunk addressing, ordered side fields, the fields of a side record of rows (`sideRows`, `SideRowFields`), the side codes key words hold (`sideCodes`, `SideCodes`), a read record's `source` field (`sideSource`), the layout of a read's list of replaced ranges (`sideReplaced`: its mask bit, the words of one entry, and its key word's side bits, slot bit and site shift), the head of a source entry (`sourceEntry`: its bytes, and where the address of the read's own side record starts), and the header's layout codes (`layout`, `HeaderLayoutFormat`). Slot capacities remain literal arguments from generated accessors rather than runtime format lookups.
 
 ### `packages/common/src/record-cell.ts::RecordCell`
 
@@ -1067,6 +1067,10 @@ The key of one side of a unit or leaf site in its holder's side record of rows (
 ### `packages/common/src/record-cell.ts::siteOfKey`
 
 `siteKey` read back: the slot's stamped word, the item and the side a site's key holds, as native's `RowFields::site_of` reads it. Sites sort by key, so a holder's sites come grouped by word, then item, then side.
+
+### `packages/common/src/record-cell.ts::decodeSideSource`
+
+Reads the address of a read record's source entry from its side record: the string chunk entry that holds the read's text, and names the read's own side record. Native writes `source` right after `sides`, so its offset is the mask-selected sum of the fixed-width fields before it (`at`, `edges`, `span`, `sides`), with no walk past the slots or the node facts, whose widths vary. It returns undefined when the field is absent, as in every built record, and rejects a truncated record.
 
 ### `packages/common/src/source-stamp.ts::sourceOf`
 

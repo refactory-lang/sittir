@@ -8,6 +8,7 @@ import {
 	decodeParsedCell,
 	decodeSideDelimiter,
 	decodeSideRow,
+	decodeSideSource,
 	wordOf,
 	type RecordCell
 } from '@sittir/common/engine';
@@ -34,6 +35,7 @@ const fixture = JSON.parse(
 			readonly endByte: number;
 		} | null;
 		readonly delimiter: number | null;
+		readonly source: number | null;
 		readonly words: readonly number[];
 	}[];
 	readonly addresses: readonly { readonly chunk: number; readonly word: number; readonly address: number }[];
@@ -92,10 +94,11 @@ describe('the record cell decoder reads what the native codec writes', () => {
 		}
 	});
 
-	it("reads each side record's row and delimiters setting past the fields before it", () => {
+	it("reads each side record's row, source and delimiters setting past the fields before it", () => {
 		for (const side of fixture.sides) {
 			const row = side.row === null ? undefined : { kind: side.row.kind, span: { start: side.row.start, end: side.row.endByte } };
 			expect(decodeSideRow(side.words, 0, format!)).toEqual(row);
+			expect(decodeSideSource(side.words, 0, format!)).toBe(side.source ?? undefined);
 			expect(decodeSideDelimiter(side.words, 0, format!)).toBe(side.delimiter ?? undefined);
 		}
 	});

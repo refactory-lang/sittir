@@ -876,6 +876,10 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub const SIDE_WORDS_SIDES: u32 = $crate::arena::side::field::SIDES_WORDS;
             #[::napi_derive::napi]
+            pub const SIDE_FIELD_SOURCE: u32 = $crate::arena::side::field::SOURCE;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_SOURCE: u32 = $crate::arena::side::field::SOURCE_WORDS;
+            #[::napi_derive::napi]
             pub const SIDE_FIELD_CHANGED_LEADING: u32 = $crate::arena::side::field::CHANGED_LEADING;
             #[::napi_derive::napi]
             pub const SIDE_FIELD_CHANGED_TRAILING: u32 = $crate::arena::side::field::CHANGED_TRAILING;
@@ -908,6 +912,25 @@ macro_rules! napi_engine {
             pub const SIDE_INNER: u32 = $crate::trivia_table::TriviaSide::Inner.code();
             #[::napi_derive::napi]
             pub const SIDE_SITE_SIDE_BITS: u32 = $crate::arena::side::RowFields::SIDE_BITS;
+            /// A read's own side record's list of replaced ranges: its mask
+            /// bit, the words of one entry, and its key word's layout
+            /// (`arena::side::Replaced`).
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_REPLACED: u32 = $crate::arena::side::field::REPLACED;
+            #[::napi_derive::napi]
+            pub const SIDE_WORDS_REPLACED: u32 = $crate::arena::side::field::REPLACED_WORDS;
+            #[::napi_derive::napi]
+            pub const SIDE_REPLACED_SIDE_BITS: u32 = $crate::arena::side::Replaced::SIDE_BITS;
+            #[::napi_derive::napi]
+            pub const SIDE_REPLACED_SLOT: u32 = $crate::arena::side::Replaced::SLOT;
+            #[::napi_derive::napi]
+            pub const SIDE_REPLACED_SITE_SHIFT: u32 = $crate::arena::side::Replaced::SITE_SHIFT;
+            /// A source entry's head bytes, and where in it the address of
+            /// the read's own side record starts (`arena::source`).
+            #[::napi_derive::napi]
+            pub const SOURCE_HEAD_BYTES: u32 = $crate::arena::source::HEAD_BYTES;
+            #[::napi_derive::napi]
+            pub const SOURCE_READ_SIDE_BYTE: u32 = $crate::arena::source::READ_SIDE_BYTE;
 
             /// Whether the records a read of `source` leaves answer its nodes
             /// as the tree a parse of it gives does (`Engine::backer_parity`):

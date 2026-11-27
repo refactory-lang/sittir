@@ -14,8 +14,10 @@
 
 use super::{Address, ArenaError, ArenaRead, BuiltChunk, BuiltChunks, ChunkMem, STRING_CHUNK_BYTES};
 
-const HEAD_BYTES: u32 = 12;
-const READ_SIDE_BYTE: usize = 8;
+/// The bytes of an entry's head, `[len][found][read]`, before its text.
+pub const HEAD_BYTES: u32 = 12;
+/// Where an entry's `read` word starts, in bytes from the entry.
+pub const READ_SIDE_BYTE: u32 = 8;
 const BREAKS_LF: u32 = 1 << 31;
 const WRITTEN: u32 = 1 << 30;
 
@@ -141,7 +143,7 @@ impl BuiltChunks {
     pub fn name_read_side(&mut self, source: Address, read: Address) -> Result<(), ArenaError> {
         Source::read(self, source)?;
         let mem = self.bytes_mem(source.chunk()).ok_or(malformed("source chunk", source))?;
-        let byte = source.word() as usize + READ_SIDE_BYTE;
+        let byte = source.word() as usize + READ_SIDE_BYTE as usize;
         // SAFETY: as `write_source`.
         let out = unsafe { &mut mem.slice_mut()[byte..byte + 4] };
         out.copy_from_slice(&read.0.to_le_bytes());

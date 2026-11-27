@@ -96,10 +96,17 @@
 		{
 			"row": { "kind": 4, "start": 3, "endByte": 8 },
 			"delimiter": 2,
+			"source": null,
 			"words": [143, 4, 3, 8, 0, 2147483679, 1, 2, 3, 0, 2, 5, 6, 10, 14, 2]
 		},
-		{ "row": null, "delimiter": 0, "words": [128, 0] },
-		{ "row": { "kind": 4, "start": 3, "endByte": 8 }, "delimiter": null, "words": [1, 4, 3, 8] }
+		{ "row": null, "delimiter": 0, "source": null, "words": [128, 0] },
+		{ "row": { "kind": 4, "start": 3, "endByte": 8 }, "delimiter": null, "source": null, "words": [1, 4, 3, 8] },
+		{
+			"row": { "kind": 4, "start": 3, "endByte": 8 },
+			"delimiter": 2,
+			"source": 3,
+			"words": [4233, 4, 3, 8, 2, 5, 6, 10, 14, 3, 2]
+		}
 	],
 	"addresses": [
 		{ "chunk": 0, "word": 2, "address": 2 },

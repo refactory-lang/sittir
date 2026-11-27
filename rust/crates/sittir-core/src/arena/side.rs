@@ -1,7 +1,8 @@
 //! A record's side record: the layout facts beside its slots. Word 0 is a
 //! mask of the fields present, and the fields follow in a fixed order:
-//! `at` (kind, byte start, byte end), `edges`, `span`, `sides`, `delimiter`,
-//! `separator_kind`, `flanks`, `slots`. `changed` is two bits of the mask.
+//! `at` (kind, byte start, byte end), `edges`, `span`, `sides`, `source`,
+//! `delimiter`, `separator_kind`, `flanks`, `slots`. `changed` is two bits
+//! of the mask.
 //! The record's sides and its unit and leaf sites' are in a side record of
 //! rows (`RowFields`) written over it, which names it.
 
@@ -18,8 +19,8 @@ use crate::types::{Delimiter, FieldId, KindId, NodeIndex, Span, TreeId};
 /// setting, in the order the side record holds them after its mask word:
 /// each one's mask bit and the words it takes, then the list settings a
 /// builder writes, the delimiters and the chosen separator, one word each.
-/// The addon exports them: JavaScript reads a parsed record's row and a
-/// list's delimiters setting through them, and writes a built list's
+/// The addon exports them: JavaScript reads a parsed record's row, its
+/// source and a list's delimiters setting through them, and writes a built list's
 /// settings and the edges a copied leaf's one holder changed, two flags
 /// that take no words.
 pub mod field {
@@ -31,6 +32,8 @@ pub mod field {
     pub const SPAN_WORDS: u32 = 4;
     pub const SIDES: u32 = super::mask::SIDES;
     pub const SIDES_WORDS: u32 = 5;
+    pub const SOURCE: u32 = super::mask::SOURCE;
+    pub const SOURCE_WORDS: u32 = 1;
     pub const CHANGED_LEADING: u32 = super::mask::CHANGED_LEADING;
     pub const CHANGED_TRAILING: u32 = super::mask::CHANGED_TRAILING;
     pub const DELIMITER: u32 = super::mask::DELIMITER;
@@ -607,14 +610,18 @@ pub struct Replaced {
 }
 
 impl Replaced {
+    /// The bits of the key word that hold the side (`TriviaSide::code`).
+    pub const SIDE_BITS: u32 = 2;
     /// The bit of the key word that names a slot rather than a side.
-    pub const SLOT: u32 = 1 << 2;
-    const PART_BITS: u32 = 3;
+    pub const SLOT: u32 = 1 << Self::SIDE_BITS;
+    /// Where the node's packed site starts in the key word, above the side
+    /// and the slot bit.
+    pub const SITE_SHIFT: u32 = Self::SIDE_BITS + 1;
 
     /// Its words: the record's address, the key, the offset and the row.
     #[must_use]
     pub fn words(self) -> [u32; field::REPLACED_WORDS as usize] {
-        [self.node.address(), self.node.packed_site() << Self::PART_BITS | self.side.code(), self.offset, self.row.0]
+        [self.node.address(), self.node.packed_site() << Self::SITE_SHIFT | self.side.code(), self.offset, self.row.0]
     }
 
     /// `entries` as a list placed through `space`, by offset, then node,
@@ -641,8 +648,8 @@ impl Replaced {
     /// `ArenaError::Malformed` for a slot's key, which no write makes, and
     /// for a key naming no side or no site.
     pub fn of_words([at, key, offset, row]: [u32; field::REPLACED_WORDS as usize]) -> Result<Self, ArenaError> {
-        let side = TriviaSide::of_code(key & ((1 << Self::PART_BITS) - 1)).ok_or(malformed("replaced range side", key))?;
-        let node = crate::types::NodeId::of_packed(at, key >> Self::PART_BITS).ok_or(malformed("replaced range node", key))?;
+        let side = TriviaSide::of_code(key & ((1 << Self::SITE_SHIFT) - 1)).ok_or(malformed("replaced range side", key))?;
+        let node = crate::types::NodeId::of_packed(at, key >> Self::SITE_SHIFT).ok_or(malformed("replaced range node", key))?;
         Ok(Self { node, side, offset, row: CellWord(row) })
     }
 
@@ -893,6 +900,10 @@ impl SideRecord {
             flags |= mask::SIDES;
             words(&[sides.tree.0, sides.index.0, sides.end.0, sides.span.start, sides.span.end]);
         }
+        if let Some(source) = self.source {
+            flags |= mask::SOURCE;
+            words(&[source]);
+        }
         if self.changed.leading {
             flags |= mask::CHANGED_LEADING;
         }
@@ -938,10 +949,6 @@ impl SideRecord {
         if let Some(node) = self.node {
             flags |= mask::NODE;
             node.put(&mut |word| words(&[word]))?;
-        }
-        if let Some(source) = self.source {
-            flags |= mask::SOURCE;
-            words(&[source]);
         }
         if self.depth != 0 {
             flags |= mask::DEPTH;
@@ -1067,6 +1074,10 @@ impl SideRecord {
             }
             record.sides = Some(Sides { tree: TreeId(tree), index: NodeIndex(index), end: NodeIndex(end), span: Span { start, end: stop } });
         }
+        if has(mask::SOURCE) {
+            let [source] = fields.array()?;
+            record.source = Some(source);
+        }
         if has(mask::DELIMITER) {
             let [delimiter] = fields.array()?;
             record.delimiter = Some(read_delimiter(delimiter)?);
@@ -1116,10 +1127,6 @@ impl SideRecord {
                 None
             };
             record.node = Some(NodeFacts::of_word(word, alias));
-        }
-        if has(mask::SOURCE) {
-            let [source] = fields.array()?;
-            record.source = Some(source);
         }
         if has(mask::DEPTH) {
             let [depth] = fields.array()?;
@@ -1532,7 +1539,8 @@ mod tests {
             ..SideRecord::default()
         };
         let row = every.at;
-        for (n, record) in [every, SideRecord { delimiter: Some(Delimiter::NONE), ..SideRecord::default() }, SideRecord { at: row, ..SideRecord::default() }].into_iter().enumerate() {
+        let read = SideRecord { at: row, sides: every.sides, source: Some(3), delimiter: Some(Delimiter::TRAILING), ..SideRecord::default() };
+        for (n, record) in [every, SideRecord { delimiter: Some(Delimiter::NONE), ..SideRecord::default() }, SideRecord { at: row, ..SideRecord::default() }, read].into_iter().enumerate() {
             let mut arena = Arena::new();
             let at = record.write(&mut |words| arena.push(words)).expect("room");
             let expected = words_of(n);
