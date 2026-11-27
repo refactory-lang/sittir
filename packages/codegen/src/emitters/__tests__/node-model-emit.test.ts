@@ -13,6 +13,7 @@ import type { RenderRule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel, printNodeModel } from '../node-model.ts';
 import { makeNodeMapWith, withGeneratedIdTables, withParseName, type NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { flatten } from '../../compiler/flatten.ts';
+import { admittedLineEndings } from '../../compiler/model/line-endings.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
 describe('node-model emitter', () => {
@@ -24,6 +25,19 @@ describe('node-model emitter', () => {
 				)
 			)
 		);
+	it("stamps a pattern leaf that admits only the grammar's whitespace, and no other", () => {
+		const { nodeMap, generatedIdTables } = withGeneratedIdTables((kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>([
+					['line_end', new AssembledPattern('line_end', { type: PATTERN, value: '\\n+' }, { kindEntries })],
+					['name', new AssembledPattern('name', { type: PATTERN, value: '[a-z]+' }, { kindEntries })]
+				])
+			)
+		);
+		const lineEndings = admittedLineEndings({ name: 'lines', rules: {}, extras: [{ type: PATTERN, value: '\\s' }] }, null);
+		const stamped = Object.fromEntries(buildNodeModel({ ...nodeMap, lineEndings }, generatedIdTables).nodes.map((node) => [node.kind, 'admitsOnlyWhitespace' in node ? node.admitsOnlyWhitespace : undefined]));
+		expect(stamped).toEqual({ line_end: true, name: undefined });
+	});
 	it('serializes the canonical display family without deriving aliases again', () => {
 		const { nodeMap, generatedIdTables } = patternNodes(['string_content', 'raw_string_literal_content']);
 		const family = [

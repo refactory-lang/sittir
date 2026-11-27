@@ -262,6 +262,7 @@ export interface AstTolerance {
 	readonly normalized?: string[];
 	readonly reordered?: string[];
 	readonly ownSideExtras?: readonly Extra[];
+	readonly admitsOnlyWhitespace?: ReadonlySet<string>;
 }
 
 export function ownRenderTolerance(delimiters: Readonly<Record<string, DelimiterSpelling>>, ownSideExtras: readonly Extra[]): AstTolerance {
@@ -321,6 +322,10 @@ function structuralDiff(
 		const delimiter = tolerance?.delimiters?.[a.type];
 		if (delimiter !== undefined && sameSpelledMeaning(a.text, b.text, a.type, delimiter)) {
 			tolerance?.normalized?.push(`${path || a.type}: spelling ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`);
+			return null;
+		}
+		if (tolerance?.admitsOnlyWhitespace?.has(a.type) === true) {
+			tolerance.normalized?.push(`${path || a.type}: whitespace ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`);
 			return null;
 		}
 		return `${path || a.type}: text ${JSON.stringify(a.text)} ≠ ${JSON.stringify(b.text)}`;
@@ -1042,6 +1047,7 @@ export async function validateReadRenderParse(
 	const flagReordered: FlagReorderedCandidate[] = [];
 	const delimiters = await loadDelimiterSpellings(grammar);
 	const flags = await loadFlagTokens(grammar);
+	const { admitsOnlyWhitespace } = await loadNodeModel(grammar);
 	// A read refused while an entry is walked or a candidate materialized
 	// fails that entry: no refusal is a warning.
 	let refused: AccessorThrowRecord[] = [];
@@ -1218,7 +1224,7 @@ export async function validateReadRenderParse(
 							shouldStop = options.stopOnFirstFailure === true;
 						};
 						const ownSideExtras = ownSideExtrasOf(cand.node, (span) => spans.slice(span));
-						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, flags, normalized: [], reordered: [], ...(data === undefined ? { ownSideExtras } : {}) };
+						const tolerance: AstTolerance = { listSeparators: {}, tolerated: [], delimiters, flags, normalized: [], reordered: [], admitsOnlyWhitespace, ...(data === undefined ? { ownSideExtras } : {}) };
 						const outcome = reparse(data ?? (() => nativeEngine.diagnostics.renderTemplates(cand.node as AnyUntypedNode)), tolerance);
 						if (outcome.status === 'excluded') {
 							excluded.push({ entry: entry.name, kind, reason: outcome.reason, input: inputSource });

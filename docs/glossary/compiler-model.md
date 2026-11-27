@@ -6406,6 +6406,10 @@ Returns the `LineEndings` a node map carries. It throws when the node map carrie
 
 Derives a grammar's admitted line endings from its layout, its whitespace and its extras. A declared newline arm is admitted when no lexed pattern swallows it and, when a parser probe is given, the parser reads it back the same as the preferred newline; with no admitted arm the preferred newline stands in. A `null` parser skips the probe.
 
+### `packages/codegen/src/compiler/model/line-endings.ts::admitsOnlyWhitespace`
+
+Whether every text a pattern admits is the grammar's whitespace: every character on its DFA's edges lies in the whitespace set (`LineEndings.whitespace`, from the extras). The pattern is the rule tree-sitter sees. The node model stamps such a pattern leaf `admitsOnlyWhitespace` (`emitters/node-model.ts`). The validator's comparison then reads two runs of that token as one: Go's statement terminator `\n+` holds a blank line as `"\n\n"`, while a built list writes `"\n"`. A grammar with no whitespace extras admits no such pattern. Only Go's `source_file_text` and C#'s `preproc_if_text2` are stamped today.
+
 ### `packages/codegen/src/compiler/model/join-seams/closure.ts::ConcreteSeam::sightings`
 
 The sightings the closure records for one concrete seam pair, as a readonly list of `ConcreteSighting` values, one per place the pair is observed.

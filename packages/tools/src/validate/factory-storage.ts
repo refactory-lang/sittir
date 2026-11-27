@@ -486,7 +486,7 @@ export async function validateFactoryStorage(
 				: undefined;
 		};
 	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar), options.profile);
-	const { listSeparators } = await loadNodeModel(grammar);
+	const { listSeparators, admitsOnlyWhitespace } = await loadNodeModel(grammar);
 	const delimiters = await loadDelimiterSpellings(grammar);
 	const flags = await loadFlagTokens(grammar);
 	const render = emptyBuiltRenderRun();
@@ -675,7 +675,7 @@ export async function validateFactoryStorage(
 					render.errors.push(renderFailure('built node carries source identity'));
 				} else {
 					try {
-						const tolerance: AstTolerance = { listSeparators, tolerated: [], delimiters, flags, normalized: [], reordered: [] };
+						const tolerance: AstTolerance = { listSeparators, tolerated: [], delimiters, flags, normalized: [], reordered: [], admitsOnlyWhitespace };
 						const outcome = renderReparse(
 							builtTree,
 							kind,

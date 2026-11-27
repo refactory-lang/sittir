@@ -46,6 +46,11 @@ export function lineEndingsOf(nodeMap: NodeMap): LineEndings {
 	return nodeMap.lineEndings;
 }
 
+export function admitsOnlyWhitespace(pattern: string, whitespace: CharSet): boolean {
+	const dfa = patternDfa(pattern);
+	return dfa !== undefined && whitespace.covers(edgeChars(dfa));
+}
+
 export function admittedLineEndings(grammar: LineGrammar, parser: TreeShape | null): LineEndings {
 	const layout = layoutMembersOf(grammar);
 	const whitespace = extrasChars(grammar);

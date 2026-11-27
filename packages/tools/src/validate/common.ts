@@ -546,6 +546,7 @@ export interface LoadedNodeModel {
 	readonly delimiterTokens: ReadonlySet<string>;
 	readonly delimiterFacets: Record<string, Readonly<Record<string, DelimiterFacet>>>;
 	readonly flagTokens: Record<string, FlagTokens>;
+	readonly admitsOnlyWhitespace: ReadonlySet<string>;
 	/** Whether a node with these grammar and display ids is a relaxed keyword: the model's table read as the generated reader reads it. */
 	readonly relaxes: (grammar: number, display: number) => boolean;
 }
@@ -617,6 +618,7 @@ interface ParsedNodeModel {
 		defaultDelimiter?: string;
 		separatorCandidates?: readonly string[];
 		leafPattern?: string;
+		admitsOnlyWhitespace?: true;
 		fullForm?: ModelFullForm;
 		delimiterOf?: string;
 		preference?: { readonly name: string; readonly slot: string; readonly open: string; readonly default: string };
@@ -675,6 +677,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	delimiterTokens: new Set(),
 	delimiterFacets: {},
 	flagTokens: {},
+	admitsOnlyWhitespace: new Set(),
 	relaxes: () => false
 };
 
@@ -782,6 +785,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const delimiterTokens = new Set<string>();
 	const delimiterFacets: Record<string, Readonly<Record<string, DelimiterFacet>>> = {};
 	const flagTokens: Record<string, FlagTokens> = {};
+	const admitsOnlyWhitespace = new Set<string>();
 	const factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	for (const node of model.nodes ?? []) {
 		if (node.irKey !== undefined) irKeys[node.kind] = node.irKey;
@@ -792,6 +796,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.renamedFrom !== undefined) renamedFrom[node.kind] = node.renamedFrom;
 		if (node.splitFrom !== undefined) splitFrom[node.kind] = node.splitFrom;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
+		if (node.admitsOnlyWhitespace === true) admitsOnlyWhitespace.add(node.kind);
 		if (node.seated === true) hoistedKinds.add(node.kind);
 		if (node.unit === true) unitKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
@@ -893,6 +898,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		delimiterTokens,
 		delimiterFacets,
 		flagTokens,
+		admitsOnlyWhitespace,
 		relaxes: relaxesOf(model.relaxes)
 	};
 }

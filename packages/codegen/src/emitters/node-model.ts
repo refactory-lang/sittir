@@ -26,6 +26,7 @@ import { buildFactoryMap } from './factory-map.ts';
 import { printRecordLines } from './record-lines.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
+import { admitsOnlyWhitespace, lineEndingsOf } from '../compiler/model/line-endings.ts';
 import { collectKindEntries } from './kind-discriminant.ts';
 import { relaxationTable, type RelaxationTable } from './kind-id-rust.ts';
 import { bareAcceptClosure, transparentEnvelopeTextLeaves } from './from.ts';
@@ -111,6 +112,7 @@ interface SerializedLeaf extends SerializedNodeBase {
 	pattern?: string;
 	leafPattern?: string;
 	text?: string;
+	admitsOnlyWhitespace?: true;
 }
 
 interface SerializedFixedText extends SerializedNodeBase {
@@ -284,7 +286,8 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 				modelType: 'pattern',
 				pattern: node.pattern,
 				leafPattern: anchoredLeafRegexLiteral(node.kind, node.textPattern),
-				text: node.fixedLiteralText
+				text: node.fixedLiteralText,
+				...(node.pattern !== undefined && admitsOnlyWhitespace(node.pattern, lineEndingsOf(nodeMap).whitespace) ? { admitsOnlyWhitespace: true as const } : {})
 			};
 		case 'keyword':
 		case 'punctuation':

@@ -1775,6 +1775,10 @@ The text the candidate renders to.
 
 The spellings that normalize the render to the input.
 
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance::admitsOnlyWhitespace`
+
+The kinds whose token admits only whitespace, loaded per grammar from the node model (`LoadedNodeModel::admitsOnlyWhitespace`). Two leaves of such a kind with different text compare equal, and the comparison records the pair in `normalized`. A built or rebuilt list writes its separator's one text and takes its gaps from options, so a blank line the lexer folded into the token (Go's `"\n\n"` terminator) is layout, not content. Only the read-render-parse and built-render-parse comparisons carry it.
+
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::unitKinds`
 
 The kinds that are units in the loaded node model.
@@ -1866,6 +1870,10 @@ A grammar's engine of the named node storage, built with `createEngine`'s defaul
 ### `packages/tools/src/validate/common.ts::loadAdoptingEngine`
 
 The cached native engine the read-render-parse check uses. Its parses adopt each source's style as the engine's options (`adoptStyle`), so it is cached apart from `loadNativeEngine`'s engine, whose options the other validators rely on.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::admitsOnlyWhitespace`
+
+The kinds whose pattern leaf the node model stamps `admitsOnlyWhitespace` (`compiler/model/line-endings.ts::admitsOnlyWhitespace`, from the rule tree-sitter sees). Empty when the grammar has no node model.
 
 ### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
 

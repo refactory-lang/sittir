@@ -14,6 +14,8 @@ const GRAMMAR_IDS: Record<string, number> = {
 	property_identifier: 7,
 	object_type_content: 8,
 	property_signature: 9,
+	statements: 10,
+	source_file_text: 11,
 	generic_type: 245,
 	generic_type_with_turbofish: 246
 };
@@ -53,6 +55,22 @@ describe('astStructuralDiff tolerates another of a list separator only where ask
 
 	it('stays strict without a tolerance', () => {
 		expect(astStructuralDiff(list(','), list(';'))).toBe('object_type_content[1]: anon "," ≠ ";"');
+	});
+});
+
+describe('astStructuralDiff reads two runs of a token that admits only whitespace as one, where the model says so', () => {
+	const statements = (terminator: string) =>
+		node('statements', `a${terminator}b`, [node('identifier', 'a'), node('source_file_text', terminator), node('identifier', 'b')]);
+	const stamped = (kinds: readonly string[]): AstTolerance => ({ listSeparators: {}, tolerated: [], normalized: [], admitsOnlyWhitespace: new Set(kinds) });
+
+	it('accepts another run and records it', () => {
+		const tolerance = stamped(['source_file_text']);
+		expect(astStructuralDiff(statements('\n\n'), statements('\n'), '', undefined, tolerance)).toBeNull();
+		expect(tolerance.normalized).toEqual(['statements[1].source_file_text: whitespace "\\n\\n" ≠ "\\n"']);
+	});
+
+	it('stays strict for a kind the model does not stamp', () => {
+		expect(astStructuralDiff(statements('\n\n'), statements('\n'), '', undefined, stamped(['identifier']))).toBe('statements[1].source_file_text: text "\\n\\n" ≠ "\\n"');
 	});
 });
 
