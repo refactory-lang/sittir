@@ -12,7 +12,7 @@ import type { AnyRule, ChoiceRule, RuleBase, RuleId, Multiplicity, SeqRule, Simp
 import { isLiteralChoiceContent } from '../dsl/rule-patterns.ts';
 import type { RuleMetadata } from '../types/rule-metadata-brand.ts';
 import { reservedWordsetsOf, withReservedWordsets } from '../dsl/rule-metadata.ts';
-import { sharedArmAttrs } from '../dsl/rule-attrs.ts';
+import { ownRuleIds, sharedArmAttrs } from '../dsl/rule-attrs.ts';
 import {
 	AssembledNonterminal,
 	type AssembleDiagnosticsCollector,
@@ -292,9 +292,8 @@ function buildSlot(
 		optionalElement: (rule as { optionalElement?: boolean }).optionalElement
 	});
 
-	const memberIds =
-		rule.type === CHOICE ? rule.members.flatMap((m) => [...(m.id ? [m.id] : []), ...(m.absorbedIds ?? [])]) : [];
-	const sourceRuleIds = [...new Set([...(rule.id ? [rule.id] : []), ...(rule.absorbedIds ?? []), ...memberIds])];
+	const memberIds = rule.type === CHOICE ? rule.members.flatMap(ownRuleIds) : [];
+	const sourceRuleIds = [...new Set([...ownRuleIds(rule), ...memberIds])];
 
 	return new AssembledNonterminal({
 		values,

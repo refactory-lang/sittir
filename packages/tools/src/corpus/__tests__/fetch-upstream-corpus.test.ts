@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 
 const root = vi.hoisted(() => ({ dir: '' }));
-vi.mock('../layout.ts', () => ({
+vi.mock('@sittir/codegen/corpus', () => ({
 	get CORPUS_ROOT() {
 		return root.dir;
 	},

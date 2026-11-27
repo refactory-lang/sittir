@@ -3,7 +3,7 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { REPO_ROOT } from '@sittir/codegen/grammars';
 import { codegenModuleFiles, load } from './codegen-surface.ts';
-import { CORPUS_ROOT } from './corpus/layout.ts';
+import { CORPUS_ROOT } from '@sittir/codegen/corpus';
 
 const EXTRACTOR = relative(REPO_ROOT, fileURLToPath(new URL('./post-generate.ts', import.meta.url)));
 const LOCKFILE = 'pnpm-lock.yaml';

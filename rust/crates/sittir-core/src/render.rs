@@ -625,7 +625,9 @@ pub trait RenderSink {
     }
     /// One side of a kind's edge: the node's stamp when it carries one, else
     /// the kind's edge row (`ResolvedOptions::edge_arm`). A kind with no edge
-    /// site on that side writes nothing.
+    /// site on that side writes nothing, and neither does a node of the root
+    /// kind inside another node on a side whose edge is a flank only
+    /// (`KindFlags::flank`).
     fn edge(&mut self, kind: KindId, side: crate::options::Side, stamped: Option<crate::options::EdgeArm>);
     /// One side of a node's stamped edge, written around the node itself when
     /// its kind has no edge site on that side, so that no stamp goes unwritten.

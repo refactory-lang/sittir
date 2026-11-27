@@ -6614,7 +6614,10 @@ It applies only the lifts `validateGroupsConfig` keeps and returns the issues of
  *  the alias's `aliasedToId`. The literal also carries `resolvedKindId`:
  *  the id of `symbol`'s own kind entry, since the parser issues that
  *  symbol at the site whatever text it renders as; `layoutTokenIds`
- *  reads it, because the reader keys layout tokens on grammar ids. */
+ *  reads it, because the reader keys layout tokens on grammar ids. It
+ *  lowers through `literalReplacing`, so the literal keeps the stamped
+ *  rule's id and absorbs the ids of the rules in `replaced` (the symbol,
+ *  or the field and its content around one). */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::rewriteRuleForStamp`
@@ -7904,11 +7907,15 @@ Collects the subtypes of a choice, as symbol refs. A bare symbol is its own subt
 
 ### `packages/codegen/src/compiler/link.ts::resolveRule`
 
-Resolves a rule's references at link, recursively. SEQ, CHOICE, OPTIONAL, REPEAT, FIELD and TOKEN resolve their members or content. REPEAT1 goes through `resolveRepeat1PreservingNonEmpty`. A named ALIAS whose value is not a parser-hidden kind keeps its ALIAS wrapper when its content is a string or wraps an aliased symbol, or when the value has no rule of its own; otherwise it becomes a SYMBOL reference to the value. An unnamed alias whose value is a non-empty, not-hidden string that `ctx.isWordShaped` does not accept becomes that STRING, wrapped in a TOKEN with `immediate` when `aliasesImmediateToken` says so; other unnamed aliases resolve their content. A SYMBOL with `inline` set resolves through `resolveSymbolRoleOrPass`. STRING, PATTERN, SUPERTYPE, INDENT, DEDENT and NEWLINE pass through unchanged.
+Resolves a rule's references at link, recursively. SEQ, CHOICE, OPTIONAL, REPEAT, FIELD and TOKEN resolve their members or content. REPEAT1 goes through `resolveRepeat1PreservingNonEmpty`. A named ALIAS whose value is not a parser-hidden kind keeps its ALIAS wrapper when its content is a string or wraps an aliased symbol, or when the value has no rule of its own; otherwise it becomes a SYMBOL reference to the value. An unnamed alias whose value is a non-empty, not-hidden string that `ctx.isWordShaped` does not accept becomes that STRING through `literalReplacing`, wrapped in a TOKEN with `immediate` when `aliasesImmediateToken` says so, keeping the alias id and absorbing its content's; other unnamed aliases resolve their content. A SYMBOL with `inline` set resolves through `resolveSymbolRoleOrPass`. STRING, PATTERN, SUPERTYPE, INDENT, DEDENT and NEWLINE pass through unchanged.
 
 ### `packages/codegen/src/compiler/link.ts::stampStaticRenderAs`
 
 Stamps the grammar's render-as literals and blanks into the rule map. It takes the `RenderAsStamps` table, which `LinkCtx` derives once from the render-as bodies (`literals` and `blanks`), and the kind entries. A symbol is a literal stamp when its name is a literal key, or when its string body matches a literal and its name ends with that key; this covers the names an evaluate-time rename gives a field's hidden rule. Each rule is rewritten through `rewriteRuleForStamp`: a stamped SYMBOL, or a FIELD around one, becomes the literal; a blank stamp becomes an empty CHOICE, and a choice member that is blank collapses to an OPTIONAL. Blank rules are dropped from the map. When the table has no literals and no blanks, the input is returned unchanged.
+
+### `packages/codegen/src/compiler/link.ts::literalReplacing`
+
+The literal that takes the place of the rules in `replaced`: wrapped in an immediate `TOKEN` when `immediate`, carrying `id` on the outermost rule, and absorbing the own ids of every replaced rule (`absorbIds`). A fact keyed by any of those ids, such as a join seam's tight record or join arm, then still finds the position after the lowering. `literalRuleForStamp` (a renderAs stamp) and `resolveRule` (an anonymous alias of a token) both lower through it, so the two lowerings cannot keep different ids.
 
 ### `packages/codegen/src/compiler/rule-catalog.ts::reownedRuleId`
 

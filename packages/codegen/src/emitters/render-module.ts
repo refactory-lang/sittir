@@ -1056,7 +1056,8 @@ function planRenderOptionsFor(
 		whitespaceTextOf(inputs.renderAs, nodeMap),
 		declaredIndent,
 		lang,
-		seatWrappersOf(nodeMap, generatedIdTables)
+		seatWrappersOf(nodeMap, generatedIdTables),
+		inputs.renderRules.rootFlankOnly
 	);
 	const addresses = inputs.addresses ?? addressTablesFor(nodeMap, kindEntries, sites, inputs.options);
 	return { plan, addresses, kindEntries };
@@ -3353,8 +3354,7 @@ function rootEdgeStamp(plan: RenderPlan, node: AssembledNode, fillFields: readon
 	}
 	const allowedOf = (side: 'before' | 'after'): string => {
 		const site = sites.get(side);
-		if (site === undefined) throw new Error(`render: the grammar root '${node.kind}' has no ${side} edge site`);
-		return `options::allowed(options::${site.constName})`;
+		return site === undefined ? '&[]' : `options::allowed(options::${site.constName})`;
 	};
 	const items = (end: 'first' | 'last'): string =>
 		`[${(end === 'first' ? fillFields : [...fillFields].reverse()).map((f) => `::sittir_core::prepare::EdgeItems::${end}_item(&parts.${f}, overlay)`).join(', ')}].into_iter().flatten().next()`;

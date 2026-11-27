@@ -1,15 +1,19 @@
-import type { BuiltParser } from '../../../dsl/symbol-table.ts';
+import { existsSync } from 'node:fs';
+import { corpusDir, loadCorpusEntries } from '../../../corpus.ts';
+import { collectGeneratedKindEntries, type BuiltParser, type GeneratedIdTables } from '../../../dsl/symbol-table.ts';
 import type { GrammarRule } from '../../../grammar-shapes/grammar-json.ts';
 import { canonical } from '../../../transpile/evaluate-for-derivation.ts';
 import type { ExternalRole } from '../../../types/ir.ts';
 import type { AnyRule, Rule, RuleId } from '../../../types/rule.ts';
-import { ruleIdsWithin } from '../../../dsl/rule-attrs.ts';
+import { ownRuleIds, ruleIdsWithin } from '../../../dsl/rule-attrs.ts';
 import { sha256 } from '../../../util/content-hash.ts';
+import { compareOrdinal } from '../../../emitters/shared.ts';
 import type { NodeMap } from '../../types.ts';
 import { lineEndingsOf } from '../line-endings.ts';
 import type { CharSet } from '../pattern-automaton.ts';
 import { lineTerminated } from '../trivia.ts';
 import { SeamClosure, type ConcreteSeam, type ConcreteSighting } from './closure.ts';
+import { corpusWitnesses, type SeamWitness } from './corpus-witness.ts';
 import {
 	joinSeamsFileOf,
 	unprovenArms,
@@ -19,11 +23,27 @@ import {
 	type JoinSeamFacts,
 	type JoinSeamRecord,
 	type JoinSeamsFile,
-	type JoinStamp
+	type DisagreeingSeamRecord,
+	type SpacedWitness,
+	type JoinStamp,
+	type TightSeamRecord
 } from './file.ts';
-import { forEachSeamKey, GrammarView, type ViewRule } from './grammar-view.ts';
+import { forEachSeamKey, GrammarView, type SpaceRead, type ViewRule } from './grammar-view.ts';
 import { type Context, type Instance, InstanceBuilder, render } from './instances.ts';
-import { errorNear, leavesOf, ParseOracle, sameTree } from './oracle.ts';
+import {
+	absorbedAt,
+	errorNear,
+	leavesOf,
+	lexStatesOf,
+	memberBefore,
+	ParseOracle,
+	parsesAsBuilt,
+	sameTree,
+	SEAM_SPACE,
+	SPACE_IN_HIDDEN_TOKEN,
+	SPACE_IS_PARSE_ERROR,
+	spaceIsPadding
+} from './oracle.ts';
 import { readParserTables } from './parser-tables.ts';
 import { isRuleIdUnder } from '../../rule-catalog.ts';
 import { alignRuleIds, rebasedIdsOf } from './rule-ids.ts';
@@ -31,14 +51,17 @@ import { SeamWalk } from './walk.ts';
 
 type JoinVerdict = 'differs' | 'same' | 'unbuildable' | 'tight-only' | 'inseparable';
 
+
 interface JoinCheck {
 	readonly seam: string;
 	readonly state: number;
 	readonly symbol: number;
 	readonly previous: string;
 	readonly next: string;
+	readonly whitespace?: true;
 	verdict: JoinVerdict;
 	reason?: string;
+	after?: string;
 }
 
 export interface JoinSeamInput {
@@ -50,9 +73,14 @@ export interface JoinSeamInput {
 	readonly whitespace: CharSet;
 	readonly lineEnds: ReadonlySet<string>;
 	readonly spliced: (name: string) => boolean;
+	readonly corpus: readonly string[];
+	readonly tokenRules: ReadonlyMap<number, GrammarRule>;
 }
 
-export type JoinInputs = Pick<JoinSeamInput, 'externalRoles' | 'externalBodies' | 'wordMatcher' | 'whitespace' | 'lineEnds'>;
+export type JoinInputs = Pick<
+	JoinSeamInput,
+	'externalRoles' | 'externalBodies' | 'wordMatcher' | 'whitespace' | 'lineEnds' | 'corpus' | 'tokenRules'
+>;
 
 export interface JoinArm {
 	readonly previous: boolean;
@@ -65,6 +93,8 @@ export interface JoinFacts {
 	readonly joinsNextKinds: ReadonlySet<string>;
 	readonly pairs: readonly string[];
 	readonly seamIds: ReadonlyMap<string, ReadonlySet<RuleId>>;
+	readonly tight: ReadonlySet<RuleId>;
+	readonly tightAfter: ReadonlyMap<RuleId, ReadonlySet<RuleId>>;
 }
 
 export interface ResolvedJoins extends JoinFacts {
@@ -76,7 +106,9 @@ export const NO_JOINS: JoinFacts = {
 	joinsPrevious: new Set(),
 	joinsNextKinds: new Set(),
 	pairs: [],
-	seamIds: new Map()
+	seamIds: new Map(),
+	tight: new Set(),
+	tightAfter: new Map()
 };
 
 export function unreachedJoinSeams(
@@ -122,7 +154,7 @@ export function ruleJoinArm(
 	joins: JoinFacts,
 	rule: { readonly id?: RuleId; readonly absorbedIds?: readonly RuleId[] }
 ): JoinArm {
-	return joinArmOf(joins, [rule.id, ...(rule.absorbedIds ?? [])]);
+	return joinArmOf(joins, ownRuleIds(rule));
 }
 
 interface SeamArms {
@@ -152,8 +184,11 @@ function kindsJoiningNext(view: GrammarView, joining: ReadonlySet<number>): Set<
 export function joinSeamInputOf(
 	nodeMap: NodeMap,
 	evaluated: Readonly<Record<string, Rule<'evaluate'>>>,
-	parser: BuiltParser
+	idTables: GeneratedIdTables,
+	grammar: string
 ): JoinSeamInput {
+	const parser = idTables.parser;
+	if (parser === null) throw new Error(`join seams: ${grammar} has no built parser to read its join seams from`);
 	const externalRoles = new Map<string, ExternalRole['role']>();
 	for (const [kind, node] of nodeMap.nodes)
 		if (node.externalRole !== undefined) externalRoles.set(kind, node.externalRole);
@@ -171,8 +206,27 @@ export function joinSeamInputOf(
 		wordMatcher: nodeMap.wordMatcher,
 		whitespace: lineEndingsOf(nodeMap).whitespace,
 		lineEnds: new Set([...nodeMap.nodes.keys()].filter((kind) => lineTerminated(nodeMap, kind) === true)),
-		spliced: (name) => !nodeMap.nodes.has(name)
+		spliced: (name) => !nodeMap.nodes.has(name),
+		corpus: corpusSourcesOf(grammar),
+		tokenRules: tokenRulesOf(parser, idTables)
 	};
+}
+
+function corpusSourcesOf(grammar: string): readonly string[] {
+	if (existsSync(corpusDir(grammar))) return loadCorpusEntries(grammar).map((entry) => entry.source);
+	console.warn(`[codegen] join seams: ${grammar} has no corpus at ${corpusDir(grammar)}; its seams are derived without corpus witnesses`);
+	return [];
+}
+
+function tokenRulesOf(parser: BuiltParser, idTables: GeneratedIdTables): Map<number, GrammarRule> {
+	const externals = new Set((parser.grammar.externals ?? []).flatMap((rule) => (rule.type === 'SYMBOL' ? [rule.name] : [])));
+	const out = new Map<number, GrammarRule>();
+	for (const entry of collectGeneratedKindEntries(idTables)) {
+		if (entry.terminal !== true) continue;
+		if (parser.grammar.rules[entry.kind] !== undefined || externals.has(entry.kind)) out.set(entry.id, { type: 'SYMBOL', name: entry.kind });
+		else if (entry.literalText !== undefined) out.set(entry.id, { type: 'STRING', value: entry.literalText });
+	}
+	return out;
 }
 
 export function joinInputsHash(inputs: JoinInputs): string {
@@ -183,7 +237,9 @@ export function joinInputsHash(inputs: JoinInputs): string {
 				externalBodies: inputs.externalBodies,
 				wordMatcher: inputs.wordMatcher === undefined ? null : [inputs.wordMatcher.source, inputs.wordMatcher.flags],
 				whitespace: inputs.whitespace.ranges,
-				lineEnds: inputs.lineEnds
+				lineEnds: inputs.lineEnds,
+				corpus: inputs.corpus,
+				tokenRules: inputs.tokenRules
 			})
 		)
 	);
@@ -203,7 +259,8 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 		{ roles: input.externalRoles, bodies: input.externalBodies },
 		input.wordMatcher,
 		input.whitespace,
-		(kind) => input.lineEnds.has(kind)
+		(kind) => input.lineEnds.has(kind),
+		input.tokenRules
 	);
 	const walk = new SeamWalk(view);
 	walk.run();
@@ -265,6 +322,7 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 			const state = walk.sourceOfPair(pair);
 			const symbol = walk.symbolOfPair(pair);
 			const previous = textOf(symbol);
+			if (!view.isPunct(previous)) continue;
 			for (const next of nexts) {
 				if (!joins(state, previous, next)) continue;
 				const check: JoinCheck = { seam: seam.key, state, symbol, previous, next, verdict: 'unbuildable' };
@@ -273,7 +331,47 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 			}
 		}
 	}
+	const checked = new Set(checks.map((check) => `${check.seam}|${check.state}|${check.symbol}|${check.next}`));
+	const strongest = (reads: readonly SpaceRead[]): SpaceRead =>
+		reads.includes('space') ? 'space' : reads.includes('unknown') ? 'unknown' : 'other';
+	const stateLeading = new Map<number, SpaceRead>();
+	const leadingAt = (state: number): SpaceRead => {
+		let known = stateLeading.get(state);
+		if (known === undefined) stateLeading.set(state, (known = strongest([...tables.valid[state]!].map((id) => view.readsSpace(id, '')))));
+		return known;
+	};
+	const leadingOfSeam = (seam: ConcreteSeam): SpaceRead => strongest([...seam.lexed].map(leadingAt));
+	const trailingOf = (symbol: number): SpaceRead => view.readsSpace(symbol, textOf(symbol));
+	const readsAt = (seam: ConcreteSeam, symbol: number): SpaceRead => strongest([leadingOfSeam(seam), trailingOf(symbol)]);
+	const readOfSeam = (seam: ConcreteSeam): SpaceRead =>
+		strongest([leadingOfSeam(seam), ...[...seam.pairs].map((pair) => trailingOf(walk.symbolOfPair(pair)))]);
+	const spaceable = seams.filter((seam) => readOfSeam(seam) === 'space');
+	const unknown = seams.filter((seam) => readOfSeam(seam) === 'unknown');
+	for (const seam of spaceable) {
+		const firsts = new Set([...view.firstLiterals(seam.node), ...builder.firstLeaves(seam.node).flatMap((leaf) => view.sampleStartingWith(leaf, '') ?? [])]);
+		for (const pair of seam.pairs) {
+			const state = walk.sourceOfPair(pair);
+			const symbol = walk.symbolOfPair(pair);
+			if (readsAt(seam, symbol) !== 'space') continue;
+			const previous = textOf(symbol);
+			for (const next of firsts) {
+				const key = `${seam.key}|${state}|${symbol}|${next}`;
+				if (checked.has(key)) continue;
+				checked.add(key);
+				const check: JoinCheck = { seam: seam.key, state, symbol, previous, next, whitespace: true, verdict: 'unbuildable' };
+				checks.push(check);
+				bySeam.set(check, seam);
+			}
+		}
+	}
 	using oracle = new ParseOracle(language);
+	const { rules } = view;
+	const memberAt = (root: Parameters<typeof leavesOf>[0], at: number, seam: string): string | undefined => {
+		const leaves = leavesOf(root);
+		const k = leaves.findIndex((leaf) => leaf.endIndex === at && leaf.startIndex < at);
+		const next = leaves[k + 1];
+		return k < 0 || next === undefined || next.startIndex !== at ? undefined : memberBefore(rules, seam, leaves[k]!, next);
+	};
 	const resolved = new Map<string, 'differs' | 'same'>();
 	const checkKey = (seam: string, state: number, symbol: number, next: string): string =>
 		`${seam}|${state}|${symbol}|${next}`;
@@ -284,6 +382,7 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 		respell?: readonly [number, string]
 	): void => {
 		check.reason = undefined;
+		check.after = undefined;
 		const built = builder.build(sighting, bySeam.get(check)!.node, check.next, override);
 		if (typeof built === 'string') return fail(check, built);
 		const instance: Instance =
@@ -300,32 +399,29 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 		}
 		const missing = instance.tokens.find((token) => token.text === null);
 		if (missing !== undefined) return fail(check, `token without text: ${tables.names[missing.symbol] ?? '?'}`);
-		const spaced = render(instance.tokens, instance.seamAt, ' ');
+		const spaced = render(instance.tokens, instance.seamAt, SEAM_SPACE);
 		const tight = render(instance.tokens, instance.seamAt, '');
 		if (spaced === null || tight === null) return fail(check, 'seam not renderable');
+		using tightTree = oracle.parse(tight.text);
+		const asBuilt = parsesAsBuilt(tightTree.root, tight.seam, check.previous, check.next);
 		using spacedTree = oracle.parse(spaced.text);
 		const leaves = leavesOf(spacedTree.root);
-		const absorbing = leaves.find(
-			(leaf) =>
-				leaf.startIndex <= spaced.seam &&
-				leaf.endIndex > spaced.seam &&
-				(leaf.startIndex === spaced.seam || leaf.startIndex === spaced.seam - check.previous.length)
-		);
-		if (absorbing !== undefined) {
+		const absorbed = absorbedAt(leaves, spaced.seam);
+		if (absorbed !== undefined) {
+			if (!asBuilt) return fail(check, 'the tight text does not parse as built');
 			check.verdict = 'inseparable';
-			check.reason =
-				absorbing.startIndex === spaced.seam
-					? 'the space lexes into the next token'
-					: 'the space lexes into the previous token';
+			check.reason = absorbed;
+			check.after = memberAt(tightTree.root, tight.seam, check.seam);
 			return;
 		}
-		if (spacedTree.root.hasError)
-			return fail(
-				check,
-				errorNear(spacedTree.root, spaced.seam, spaced.seam + 1)
-					? 'spaced text has a parse error at the seam'
-					: 'spaced text has a parse error away from the seam'
-			);
+		if (spacedTree.root.hasError) {
+			if (!errorNear(spacedTree.root, spaced.seam, spaced.seam + 1)) return fail(check, 'spaced text has a parse error away from the seam');
+			if (!asBuilt) return fail(check, 'spaced text has a parse error at the seam');
+			check.verdict = 'inseparable';
+			check.reason = SPACE_IS_PARSE_ERROR;
+			check.after = memberAt(tightTree.root, tight.seam, check.seam);
+			return;
+		}
 		const at = leaves.findIndex((leaf) => leaf.endIndex === spaced.seam);
 		const before = leaves[at];
 		const after = leaves[at + 1];
@@ -337,15 +433,22 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 			after.text !== check.next
 		)
 			return fail(check, 'seam tokens not where built');
-		using tightTree = oracle.parse(tight.text);
 		const same = !tightTree.root.hasError && sameTree(spacedTree.root, tightTree.root);
-		const hits = oracle.lexStatesAt(spaced.text, leaves[at - 1]?.endIndex ?? 0, tables.names[check.symbol]!);
+		const events = oracle.lexEvents(spaced.text);
+		if (!spaceIsPadding(events, spaced.seam, after)) {
+			check.verdict = 'inseparable';
+			check.reason = SPACE_IN_HIDDEN_TOKEN;
+			check.after = memberBefore(rules, check.seam, before, after);
+			return;
+		}
+		const hits = lexStatesOf(events, before.endIndex, undefined, tables.names[check.symbol]!);
 		hits.add(before.parseState);
 		for (const hit of hits) {
 			const key = checkKey(check.seam, hit, check.symbol, check.next);
 			if (!resolved.has(key)) resolved.set(key, same ? 'same' : 'differs');
 		}
 		const own = resolved.get(checkKey(check.seam, check.state, check.symbol, check.next));
+		if (hits.has(check.state)) check.after = memberBefore(rules, check.seam, before, after);
 		if (hits.has(check.state) || own !== undefined)
 			check.verdict = hits.has(check.state) ? (same ? 'same' : 'differs') : own!;
 		else fail(check, walk.forkStates.has(check.state) ? FORK_REASON : 'the instance lexed the token in another state');
@@ -394,8 +497,37 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 		}
 		if (check.verdict === 'unbuildable') check.reason = first;
 	}
+	const leafNames = (leaf: GrammarRule): readonly string[] =>
+		leaf.type === 'SYMBOL'
+			? view.nodeTypesOf(leaf.name)
+			: leaf.type === 'ALIAS'
+				? [leaf.value, ...(leaf.content.type === 'SYMBOL' ? view.nodeTypesOf(leaf.content.name) : [])]
+				: [];
+	const corpus = corpusWitnesses(input.corpus, oracle, walk, [...spaceable, ...unknown], seams, (seam) => [
+		...view.firstLiterals(seam.node),
+		...builder.firstLeaves(seam.node, true).flatMap(leafNames)
+	]);
+	const witnesses: SeamWitness[] = [
+		...checks.flatMap(({ seam, previous, next, verdict, reason, after }): SeamWitness[] =>
+			verdict === 'same' || verdict === 'differs' || verdict === 'inseparable'
+				? [{ seam, previous, next, verdict, ...(reason === undefined ? {} : { reason }), ...(after === undefined ? {} : { after }), witness: 'built' }]
+				: []
+		),
+		...corpus.spaced,
+		...corpus.merged
+	];
+	const { tight, disagreeing } = tightSeamsOf(witnesses);
 	const pairOf = (check: JoinCheck): string => `${check.previous.at(-1)}${check.next[0]}`;
-	const kept = checks.filter((check) => check.verdict === 'differs' || check.verdict === 'unbuildable');
+	const joinChecks: JoinCheck[] = [
+		...checks.filter((check) => check.whitespace !== true),
+		...corpus.merged.flatMap(({ seam, state, symbol, previous, next, verdict }): JoinCheck[] =>
+			verdict === 'differs' ? [{ seam, state, symbol, previous, next, verdict }] : []
+		)
+	];
+	const tightSeams = new Set(tight.flatMap((record) => (record.after === undefined ? [record.seam] : [])));
+	const kept = joinChecks.filter(
+		(check) => (check.verdict === 'differs' || check.verdict === 'unbuildable') && !tightSeams.has(check.seam)
+	);
 	const pairKeys = (list: readonly JoinCheck[]): Set<string> =>
 		new Set(list.map((check) => `${check.state}|${check.symbol}`));
 	const joinsNextOf = (pairs: ReadonlySet<string>): Set<string> => {
@@ -420,7 +552,7 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 		pairs: new Set(list.map(pairOf))
 	});
 	const keptArms = armsOf(kept);
-	const provenArms = armsOf(checks.filter((check) => check.verdict === 'differs'));
+	const provenArms = armsOf(joinChecks.filter((check) => check.verdict === 'differs'));
 	const proofOf = (arm: keyof SeamArms, key: string): JoinProof => (provenArms[arm].has(key) ? 'proven' : 'unproven');
 	const armed = [...new Set([...keptArms.joinsPrevious, ...keptArms.joinsNext])].map(
 		(seam): JoinSeamRecord => ({
@@ -433,23 +565,78 @@ export function deriveJoinSeams(input: JoinSeamInput): JoinSeamsFile {
 	const unproven = unprovenArms({ seams: armed, pairs });
 	const unprovenPrevious = new Set(unproven.previous);
 	const unprovenPairs = new Set(unproven.pairs);
-	const blocked = checks
-		.filter((check) => check.verdict === 'unbuildable' && (unprovenPrevious.has(check.seam) || unprovenPairs.has(pairOf(check))))
-		.map(
-			({ seam, state, previous, next, reason }): BlockedJoinCheck => ({
-				seam,
-				state,
-				previous,
-				next,
-				...(reason === undefined ? {} : { reason })
-			})
-		);
+	const seamPairOf = (check: JoinCheck): string => `${check.seam}|${pairOf(check)}`;
+	const decided = new Set(joinChecks.filter((check) => check.verdict !== 'unbuildable').map(seamPairOf));
+	const blockedBy = new Map<string, { readonly seam: string; readonly pair: string; readonly states: Set<number>; readonly reasons: Set<string> }>();
+	for (const check of joinChecks) {
+		if (tightSeams.has(check.seam) || check.verdict !== 'unbuildable' || decided.has(seamPairOf(check))) continue;
+		if (!unprovenPrevious.has(check.seam) && !unprovenPairs.has(pairOf(check))) continue;
+		let gap = blockedBy.get(seamPairOf(check));
+		if (gap === undefined) blockedBy.set(seamPairOf(check), (gap = { seam: check.seam, pair: pairOf(check), states: new Set(), reasons: new Set() }));
+		gap.states.add(check.state);
+		if (check.reason !== undefined) gap.reasons.add(check.reason);
+	}
+	const blocked = [...blockedBy.values()].map(
+		({ seam, pair, states, reasons }): BlockedJoinCheck => ({
+			seam,
+			pair,
+			states: [...states].sort((a, b) => a - b),
+			reasons: [...reasons].sort(compareOrdinal)
+		})
+	);
 	return joinSeamsFileOf(joinStampOf(input), {
 		seams: armed,
 		pairs,
 		joinsNextKinds: [...kindsJoiningNext(view, new Set(kept.map((check) => check.symbol)))],
-		blocked
+		blocked,
+		tight,
+		disagreeing
 	});
+}
+
+function tightSeamsOf(witnesses: readonly SeamWitness[]): {
+	readonly tight: TightSeamRecord[];
+	readonly disagreeing: DisagreeingSeamRecord[];
+} {
+	const bySeam = new Map<string, SeamWitness[]>();
+	for (const witness of witnesses) {
+		const list = bySeam.get(witness.seam);
+		if (list === undefined) bySeam.set(witness.seam, [witness]);
+		else list.push(witness);
+	}
+	const tightOf = ({ previous, next, witness, reason, after }: SeamWitness): Omit<TightSeamRecord, 'seam'> => ({
+		previous,
+		next,
+		witness,
+		reason: reason!,
+		...(after === undefined ? {} : { after })
+	});
+	const spacedOf = ({ previous, next, verdict, witness, after }: SeamWitness): SpacedWitness => ({
+		previous,
+		next,
+		verdict: verdict as SpacedWitness['verdict'],
+		witness,
+		...(after === undefined ? {} : { after })
+	});
+	const tight: TightSeamRecord[] = [];
+	const disagreeing: DisagreeingSeamRecord[] = [];
+	for (const [seam, list] of bySeam) {
+		const inseparable = list.filter((witness) => witness.verdict === 'inseparable');
+		const spaced = list.filter((witness) => witness.verdict !== 'inseparable');
+		if (inseparable.length === 0) continue;
+		if (spaced.length === 0) {
+			const { after: _, ...record } = tightOf(inseparable[0]!);
+			tight.push({ seam, ...record });
+			continue;
+		}
+		for (const after of new Set(inseparable.map((witness) => witness.after))) {
+			const own = inseparable.find((witness) => witness.after === after)!;
+			const against = spaced.find((witness) => after === undefined || witness.after === undefined || witness.after === after);
+			if (against === undefined) tight.push({ seam, ...tightOf(own) });
+			else disagreeing.push({ seam, reason: 'disagree', tight: tightOf(own), spaced: spacedOf(against) });
+		}
+	}
+	return { tight, disagreeing };
 }
 
 export function joinFactsOf(facts: JoinSeamFacts, input: Pick<JoinSeamInput, 'parser' | 'evaluated' | 'spliced'>): ResolvedJoins {
@@ -465,8 +652,9 @@ export function joinFactsOf(facts: JoinSeamFacts, input: Pick<JoinSeamInput, 'pa
 	});
 	const unmapped = [...alignment.unaligned];
 	const rebased = rebasedIdsOf(input.evaluated, input.spliced);
+	const resolvedIds = new Map<string, ReadonlySet<RuleId>>();
 	const seamIds = new Map<string, ReadonlySet<RuleId>>();
-	const idsOf = (keys: readonly string[]): Set<RuleId> => {
+	const idsOf = (keys: readonly string[], record?: Map<string, ReadonlySet<RuleId>>): Set<RuleId> => {
 		const out = new Set<RuleId>();
 		for (const key of keys) {
 			const ids = idsOfKey.get(key);
@@ -474,20 +662,36 @@ export function joinFactsOf(facts: JoinSeamFacts, input: Pick<JoinSeamInput, 'pa
 				unmapped.push(`${key}: no rule id`);
 				continue;
 			}
-			let all = seamIds.get(key);
-			if (all === undefined) seamIds.set(key, (all = new Set([...ids].flatMap((id) => [id, ...rebased(id)]))));
+			let all = resolvedIds.get(key);
+			if (all === undefined) resolvedIds.set(key, (all = new Set([...ids].flatMap((id) => [id, ...rebased(id)]))));
+			record?.set(key, all);
 			for (const id of all) out.add(id);
 		}
 		return out;
 	};
-	const joinsNext = idsOf(facts.seams.filter((record) => record.next !== undefined).map((record) => record.seam));
-	const joinsPrevious = idsOf(facts.seams.filter((record) => record.previous !== undefined).map((record) => record.seam));
+	const joinsNext = idsOf(facts.seams.filter((record) => record.next !== undefined).map((record) => record.seam), seamIds);
+	const joinsPrevious = idsOf(
+		facts.seams.filter((record) => record.previous !== undefined).map((record) => record.seam),
+		seamIds
+	);
+	const tightAfter = new Map<RuleId, Set<RuleId>>();
+	for (const { seam, after } of facts.tight) {
+		if (after === undefined) continue;
+		const previous = idsOf([after]);
+		for (const id of idsOf([seam])) {
+			let set = tightAfter.get(id);
+			if (set === undefined) tightAfter.set(id, (set = new Set()));
+			for (const member of previous) set.add(member);
+		}
+	}
 	return {
 		joinsNext,
 		joinsPrevious,
 		joinsNextKinds: new Set(facts.joinsNextKinds),
 		pairs: facts.pairs.map((record) => record.pair),
 		seamIds,
+		tight: idsOf(facts.tight.flatMap((record) => (record.after === undefined ? [record.seam] : []))),
+		tightAfter,
 		unmapped
 	};
 }

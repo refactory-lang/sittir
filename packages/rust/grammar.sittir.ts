@@ -187,8 +187,6 @@ export default grammar(enrich(base), wire({
 		delim_token_tree_paren: { before: preference('tight') },
 		token_tree_paren: { before: preference('tight') },
 		token_binding_pattern: { '":"/after': preference('tight'), 'fragment:/before': preference('tight') },
-		token_repetition: { 'operator:/before': preference('tight') },
-		token_repetition_pattern: { 'operator:/before': preference('tight') },
 
 		block: { before: preference('space'), 'statements:/end': preference('newline') },
 		match_block: { before: preference('space') },

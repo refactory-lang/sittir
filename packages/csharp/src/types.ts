@@ -18338,8 +18338,6 @@ export interface OptionsHintMap {
 	awaitExpression: AwaitExpression.Hints;
 	throwExpression: ThrowExpression.Hints;
 	elementAccessExpression: ElementAccessExpression.Hints;
-	interpolatedStringExpression: InterpolatedStringExpression.Hints;
-	interpolation: Interpolation.Hints;
 	interpolationAlignmentClause: InterpolationAlignmentClause.Hints;
 	memberAccessExpression: MemberAccessExpression.Hints;
 	memberBindingExpression: MemberBindingExpression.Hints;
@@ -18433,7 +18431,6 @@ export interface OptionsHintMap {
 	constructorConstraint: ConstructorConstraint.Hints;
 	breakStatement: BreakStatement.Hints;
 	continueStatement: ContinueStatement.Hints;
-	interpolationFormatClause: InterpolationFormatClause.Hints;
 	refReadonly: RefReadonly.Hints;
 	typeParameterConstraintClass: TypeParameterConstraintClass.Hints;
 	typeArgumentListUnbound: TypeArgumentListUnbound.Hints;
@@ -18868,7 +18865,6 @@ export namespace ConversionOperatorDeclaration {
 export namespace DeclarationList {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly declarations?: {
 				readonly classDeclaration?: { readonly after?: LayoutKindId };
@@ -20422,25 +20418,9 @@ export namespace ElementAccessExpression {
 	}
 }
 
-export namespace InterpolatedStringExpression {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly dquote?: { readonly before?: LayoutKindId } };
-	}
-}
-
-export namespace Interpolation {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-	}
-}
-
 export namespace InterpolationAlignmentClause {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly comma?: { readonly after?: LayoutKindId };
-		};
+		readonly __optionsHint__?: { readonly before?: LayoutKindId; readonly comma?: { readonly after?: LayoutKindId } };
 	}
 }
 
@@ -20774,7 +20754,7 @@ export namespace CharacterLiteral {
 		readonly __optionsHint__?: {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
-			readonly squote?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly squote?: { readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -21776,11 +21756,7 @@ export namespace EnumDeclarationWithoutBody {
 
 export namespace DeclarationListBodyWithBody {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly semi?: { readonly before?: LayoutKindId };
-		};
+		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 	}
 }
 
@@ -21904,12 +21880,6 @@ export namespace ContinueStatement {
 			readonly continueKeyword?: { readonly after?: LayoutKindId };
 			readonly semi?: { readonly before?: LayoutKindId };
 		};
-	}
-}
-
-export namespace InterpolationFormatClause {
-	export interface Hints {
-		readonly __optionsHint__?: { readonly colon?: { readonly after?: LayoutKindId } };
 	}
 }
 

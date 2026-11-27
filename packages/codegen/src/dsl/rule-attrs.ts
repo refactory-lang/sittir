@@ -20,11 +20,12 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	return absorbIds(withPatch, { ...original, id: original.id === withPatch.id ? undefined : original.id });
 }
 
+export function ownRuleIds(rule: { readonly id?: RuleId; readonly absorbedIds?: readonly RuleId[] }): RuleId[] {
+	return [...(rule.id === undefined ? [] : [rule.id]), ...(rule.absorbedIds ?? [])];
+}
+
 export function absorbIds<R extends AnyRule>(host: R, ...absorbed: readonly AnyRule[]): R {
-	return withAbsorbedIds(
-		host,
-		absorbed.flatMap((r) => [...(r.id === undefined ? [] : [r.id]), ...(r.absorbedIds ?? [])])
-	);
+	return withAbsorbedIds(host, absorbed.flatMap(ownRuleIds));
 }
 
 export function absorbDroppedIds<R extends AnyRule>(result: R, ...inputs: readonly AnyRule[]): R {
@@ -45,11 +46,7 @@ function withAbsorbedIds<R extends AnyRule>(host: R, absorbed: readonly RuleId[]
 const idWalker = new RuleWalker();
 
 export function ruleIdsWithin(rule: AnyRule): RuleId[] {
-	return [
-		...(rule.id === undefined ? [] : [rule.id]),
-		...(rule.absorbedIds ?? []),
-		...idWalker.childrenOf(rule).flatMap(ruleIdsWithin)
-	];
+	return [...ownRuleIds(rule), ...idWalker.childrenOf(rule).flatMap(ruleIdsWithin)];
 }
 
 type RuleBag = {

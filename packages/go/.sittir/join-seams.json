@@ -3,7 +3,7 @@
 		"source": "f55b55473e4e6a2d6f692bac83fcc17514a011cf84d607f74dbd649744563da2",
 		"wasm": "c9760a48eaefd4c7510c2dda4e5b8bad455413788821f8ab1cf7eea30555fe2c"
 	},
-	"inputs": "fe8f59fd5debafce6a7bd4ad6949ae4f0195a900f74e9c1a89ec4eaf4986f191",
+	"inputs": "2da1234b66a5dcafe4b5e4fae6801d7f0a6ebccdbea9c940b3c47c6eae50275c",
 	"seams": [
 		{"seam":"binary_expression:members.0/members.1","next":"proven"},
 		{"seam":"binary_expression:members.0/members.1/members.5","next":"proven"},
@@ -30,5 +30,13 @@
 		"-",
 		"<"
 	],
-	"blocked": []
+	"blocked": [],
+	"tight": [
+		{"seam":"interpreted_string_literal:members.1/content","previous":"\"","next":"hi","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"interpreted_string_literal:members.1","previous":"\"","next":"hi","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"interpreted_string_literal:members.2","previous":"hi","next":"\"","witness":"corpus","reason":"the space lexes into the previous token"},
+		{"seam":"raw_string_literal:members.1","previous":"`","next":"json:\"h\"","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"raw_string_literal:members.2","previous":"json:\"h\"","next":"`","witness":"corpus","reason":"the space lexes into the previous token"}
+	],
+	"disagreeing": []
 }

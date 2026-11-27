@@ -31069,7 +31069,6 @@ impl ::sittir_core::prepare::Prepare for InterpolationNode {
 fn prepare_interpolation<N: InterpolationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(441), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.interpolation_open_brace, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.expression, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.interpolation_alignment_clause, overlay, ctx)?;
@@ -52464,7 +52463,6 @@ fn render_declaration_list<N: DeclarationListFields + ?Sized>(node: &N, w: &mut 
     declarations.render(w)?;
     w.site_at(options::SITE_DECLARATION_LIST_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(292), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -54835,21 +54833,26 @@ fn render_interpolated_string_expression<N: InterpolatedStringExpressionFields +
     let interpolation_verbatim_start = View::new(node.interpolation_verbatim_start(), "{}");
     if interpolated_string_contents.is_present() {
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_regular_start", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_regular_start.render(w))?;
-        w.site_at(options::SITE_INTERPOLATED_STRING_EXPRESSION_DQUOTE_BEFORE);
         w.text("\"")?;
+        w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
         interpolated_string_contents.render(w)?;
         w.text("\"")?;
     }
     if interpolated_verbatim_string_contents.is_present() {
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_verbatim_start", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_verbatim_start.render(w))?;
-        w.site_at(options::SITE_INTERPOLATED_STRING_EXPRESSION_DQUOTE_BEFORE);
         w.text("\"")?;
+        w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
         interpolated_verbatim_string_contents.render(w)?;
         w.text("\"")?;
     }
     if interpolated_raw_string_contents.is_present() {
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_raw_start", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_raw_start.render(w))?;
-        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_start_quote", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_start_quote.render(w))?;
+        if interpolation_start_quote.is_present() {
+            ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_start_quote", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_start_quote.render(w))?;
+            if interpolation_start_quote.is_present() {
+                w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+            }
+        }
         interpolated_raw_string_contents.render(w)?;
         ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_end_quote", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_end_quote.render(w))?;
     }
@@ -54862,15 +54865,17 @@ fn render_interpolation<N: InterpolationFields + ?Sized>(node: &N, w: &mut dyn :
     let interpolation_close_brace = node.interpolation_close_brace();
     let interpolation_format_clause = View::new(node.interpolation_format_clause(), "{}");
     let interpolation_open_brace = node.interpolation_open_brace();
-    w.edge(::sittir_core::types::KindId(441), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_open_brace", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_open_brace.render(w))?;
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_alignment_clause", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_alignment_clause.render(w))?;
-    if interpolation_format_clause.is_present() { w.join_arm(::sittir_core::render::JoinArm::NEXT); }
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_format_clause", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_format_clause.render(w))?;
+    if interpolation_format_clause.is_present() {
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_format_clause", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_format_clause.render(w))?;
+        if interpolation_format_clause.is_present() {
+            w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+        }
+    }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_interpolation_close_brace", ::sittir_core::types::ItemIndex(0), w, |w| interpolation_close_brace.render(w))?;
-    w.edge(::sittir_core::types::KindId(441), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -54881,7 +54886,6 @@ fn render_interpolation_alignment_clause<N: InterpolationAlignmentClauseFields +
     w.site_at(options::SITE_INTERPOLATION_ALIGNMENT_CLAUSE_COMMA_AFTER);
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(442), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -55347,7 +55351,7 @@ fn render_character_literal<N: CharacterLiteralFields + ?Sized>(node: &N, w: &mu
     let content = node.content();
     w.edge(::sittir_core::types::KindId(479), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("'")?;
-    w.site_at(options::SITE_CHARACTER_LITERAL_SQUOTE_AFTER);
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.site_at(options::SITE_CHARACTER_LITERAL_SQUOTE_BEFORE);
     w.text("'")?;
@@ -55412,8 +55416,9 @@ fn render_raw_string_literal<N: RawStringLiteralFields + ?Sized>(node: &N, w: &m
     let raw_string_start = node.raw_string_start();
     w.edge(::sittir_core::types::KindId(484), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_raw_string_start", ::sittir_core::types::ItemIndex(0), w, |w| raw_string_start.render(w))?;
-    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_raw_string_content", ::sittir_core::types::ItemIndex(0), w, |w| raw_string_content.render(w))?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_raw_string_end", ::sittir_core::types::ItemIndex(0), w, |w| raw_string_end.render(w))?;
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_raw_string_literal_text", ::sittir_core::types::ItemIndex(0), w, |w| raw_string_literal_text.render(w))?;
     w.edge(::sittir_core::types::KindId(484), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -56611,7 +56616,6 @@ fn render_declaration_list_body_with_body<N: DeclarationListBodyWithBodyFields +
     let body = node.body();
     w.edge(::sittir_core::types::KindId(553), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
-    w.site_at(options::SITE_DECLARATION_LIST_BODY_WITH_BODY_SEMI_BEFORE);
     w.text(";")?;
     w.edge(::sittir_core::types::KindId(553), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -58186,7 +58190,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_join_pairs(&[(33, 61), (34, 34), (38, 38), (42, 61), (43, 43), (45, 45), (58, 58), (63, 63)]); // "!=" "\"\"" "&&" "*=" "++" "--" "::" "??"
+.with_join_pairs(&[(33, 61), (38, 38), (42, 61), (43, 43), (45, 45), (63, 63)]); // "!=" "&&" "*=" "++" "--" "??"
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single `SpacingWriter`

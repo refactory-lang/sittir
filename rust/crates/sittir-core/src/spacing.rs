@@ -1294,9 +1294,10 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         };
         let Some(seam) = options.edge_arm(kind, side, stamped, None) else {
             return;
-        };        if options.kind_has(kind, crate::options::KindFlags::ROOT) && self.frames.len() <= 1 {
+        };
+        if options.kind_has(kind, crate::options::KindFlags::ROOT) && self.frames.len() <= 1 {
             self.root_edge(side, seam.arm, seam.strength);
-        } else {
+        } else if !options.kind_has(kind, crate::options::KindFlags::flank(side)) {
             self.seam_arm(seam);
         }
     }

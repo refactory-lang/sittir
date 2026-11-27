@@ -1819,8 +1819,7 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				!isParserHiddenKind(rule.value, ctx.kindEntries) &&
 				!ctx.isWordShaped(rule.value)
 			) {
-				const literal: StringRule<'link'> = { type: STRING, value: rule.value };
-				return aliasesImmediateToken(rule.content, ctx) ? { type: TOKEN, content: literal, immediate: true } : literal;
+				return literalReplacing({ type: STRING, value: rule.value }, aliasesImmediateToken(rule.content, ctx), rule.id, [rule, rule.content]);
 			}
 			return resolveRule(rule.content, ctx, currentName);
 		}
@@ -2498,7 +2497,22 @@ interface RenderAsStampCtx {
 	readonly blankStamps: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
 }
-function literalRuleForStamp(stamp: RenderAsLiteralStamp, symbol: string, id: RuleId | undefined, ctx: RenderAsStampCtx): Rule<'link'> {
+function literalReplacing(
+	literal: StringRule<'link'>,
+	immediate: boolean,
+	id: RuleId | undefined,
+	replaced: readonly Rule<'link'>[]
+): Rule<'link'> {
+	const lowered: Rule<'link'> = immediate ? { type: TOKEN, content: literal, immediate: true } : literal;
+	return absorbIds(withId(lowered, id), ...replaced);
+}
+function literalRuleForStamp(
+	stamp: RenderAsLiteralStamp,
+	symbol: string,
+	id: RuleId | undefined,
+	replaced: readonly Rule<'link'>[],
+	ctx: RenderAsStampCtx
+): Rule<'link'> {
 	const parsedAs = findEntryForKindName(ctx.kindEntries, symbol);
 	const literal: StringRule<'link'> = {
 		type: STRING,
@@ -2506,14 +2520,14 @@ function literalRuleForStamp(stamp: RenderAsLiteralStamp, symbol: string, id: Ru
 		...(parsedAs === undefined ? {} : { resolvedKindId: parsedAs.id }),
 		...(isParserHiddenKind(symbol, ctx.kindEntries) ? {} : { aliasedTo: symbol })
 	};
-	return stamp.immediate ? withId({ type: TOKEN, content: literal, immediate: true }, id) : withId(literal, id);
+	return literalReplacing(literal, stamp.immediate, id, replaced);
 }
 function rewriteRuleForStamp(rule: Rule<'link'>, ctx: RenderAsStampCtx): Rule<'link'> {
 	const { symToLit, blankStamps } = ctx;
 	switch (rule.type) {
 		case SYMBOL: {
 			const stamp = symToLit[rule.name];
-			if (stamp !== undefined) return literalRuleForStamp(stamp, rule.name, rule.id, ctx);
+			if (stamp !== undefined) return literalRuleForStamp(stamp, rule.name, rule.id, [rule], ctx);
 			if (blankStamps.has(rule.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			return rule;
 		}
@@ -2522,7 +2536,7 @@ function rewriteRuleForStamp(rule: Rule<'link'>, ctx: RenderAsStampCtx): Rule<'l
 			const inner = unwrapAliasForCheck(rule.content);
 			if (inner.type === SYMBOL) {
 				const stamp = symToLit[inner.name];
-				if (stamp !== undefined) return literalRuleForStamp(stamp, inner.name, rule.id ?? inner.id, ctx);
+				if (stamp !== undefined) return literalRuleForStamp(stamp, inner.name, rule.id ?? inner.id, [rule, rule.content, inner], ctx);
 				if (blankStamps.has(inner.name)) return withId({ type: CHOICE, members: [] }, rule.id);
 			}
 			return { ...rule, content: rewriteRuleForStamp(rule.content, ctx) };

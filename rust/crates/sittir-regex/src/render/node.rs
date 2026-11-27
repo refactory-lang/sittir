@@ -1811,12 +1811,6 @@ pub struct AlternationNode {
     #[wire(key = "_terms")]
     #[slot(field = field::TERMS, separator = kind::PIPE, word = 2, width = 1, run = 3, forms = 1, built = 2)]
     pub terms: ::sittir_core::NonEmptyVec<Option<::sittir_core::SlotValue<TermNode>>>,
-    #[wire(key = "_terms_separator_space_before")]
-    #[space(slot = 2, side = before, site = options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE)]
-    pub terms_separator_space_before: Option<KindId>,
-    #[wire(key = "_terms_separator_space_after")]
-    #[space(slot = 2, side = after, site = options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER)]
-    pub terms_separator_space_after: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for AlternationNode {
@@ -1877,8 +1871,6 @@ fn prepare_alternation<N: AlternationPrepare + ?Sized>(node: &mut N, overlay: &m
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_terms"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.terms, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.terms_separator_space_before, overlay, ctx.options.site_arm(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE).arm);
-    ::sittir_core::prepare::Setting::fill(&mut parts.terms_separator_space_after, overlay, ctx.options.site_arm(options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_AFTER).arm);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.terms, overlay, ctx)?;
     Ok(())
 }
@@ -1892,11 +1884,8 @@ pub struct TermNode {
     #[height]
     height: u16,
     #[wire(key = "_term_group")]
-    #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
+    #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2)]
     pub term_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TermGroupNode>>,
-    #[wire(key = "_term_group_separator_space")]
-    #[space(slot = 2, side = after, site = options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE)]
-    pub term_group_separator_space: Option<KindId>,
 }
 
 impl ::sittir_core::view::KindOf for TermNode {
@@ -1957,8 +1946,6 @@ fn prepare_term<N: TermPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay,
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_term_group"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.term_group, overlay, slot.as_deref()); }
-    ::sittir_core::prepare::Setting::fill(&mut parts.term_group_separator_space, overlay, ctx.options.site_arm(options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE).arm);
-    ::sittir_core::prepare::SeatSlot::fill_seats(&mut parts.term_group, overlay, options::SEATS_TERM_TERM_GROUP, ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.term_group, overlay, ctx)?;
     Ok(())
 }
@@ -2265,7 +2252,6 @@ impl ::sittir_core::prepare::Prepare for LookaheadAssertionNode {
 fn prepare_lookahead_assertion<N: LookaheadAssertionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(56), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
@@ -2344,7 +2330,6 @@ impl ::sittir_core::prepare::Prepare for LookbehindAssertionNode {
 fn prepare_lookbehind_assertion<N: LookbehindAssertionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(57), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
@@ -2500,7 +2485,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassNode {
 fn prepare_character_class<N: CharacterClassPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(58), (None, None), ctx);
     { let slot = ::sittir_core::prepare::LayoutTarget::slot(&parts.layout, overlay, "_class_atoms"); ::sittir_core::prepare::SlotTarget::fill_gaps(&mut parts.class_atoms, overlay, slot.as_deref()); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.class_atoms, overlay, ctx)?;
     Ok(())
@@ -2576,7 +2560,6 @@ impl ::sittir_core::prepare::Prepare for PosixCharacterClassNode {
 fn prepare_posix_character_class<N: PosixCharacterClassPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(59), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.posix_class_name, overlay, ctx)?;
     Ok(())
 }
@@ -2725,7 +2708,6 @@ impl ::sittir_core::prepare::Prepare for ClassRangeNode {
 fn prepare_class_range<N: ClassRangePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(61), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.start, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.end, overlay, ctx)?;
     Ok(())
@@ -2872,7 +2854,6 @@ impl ::sittir_core::prepare::Prepare for AnonymousCapturingGroupNode {
 fn prepare_anonymous_capturing_group<N: AnonymousCapturingGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(62), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
 }
@@ -2953,7 +2934,6 @@ impl ::sittir_core::prepare::Prepare for NamedCapturingGroupNode {
 fn prepare_named_capturing_group<N: NamedCapturingGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    { let arms = (::sittir_core::prepare::ArmOf::arm_among(&parts.operator, overlay, ctx, ctx.options.edge_arm_sites(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before)), None); ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(63), arms, ctx); }
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.operator, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.group_name, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
@@ -3030,7 +3010,6 @@ impl ::sittir_core::prepare::Prepare for NonCapturingGroupNode {
 fn prepare_non_capturing_group<N: NonCapturingGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(64), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.pattern, overlay, ctx)?;
     Ok(())
 }
@@ -3174,7 +3153,6 @@ impl ::sittir_core::prepare::Prepare for ZeroOrMoreNode {
 fn prepare_zero_or_more<N: ZeroOrMorePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(67), (None, None), ctx);
     Ok(())
 }
 
@@ -3246,7 +3224,6 @@ impl ::sittir_core::prepare::Prepare for OneOrMoreNode {
 fn prepare_one_or_more<N: OneOrMorePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(68), (None, None), ctx);
     Ok(())
 }
 
@@ -3318,7 +3295,6 @@ impl ::sittir_core::prepare::Prepare for OptionalNode {
 fn prepare_optional<N: OptionalPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(69), (None, None), ctx);
     Ok(())
 }
 
@@ -3395,7 +3371,6 @@ impl ::sittir_core::prepare::Prepare for CountQuantifierNode {
 fn prepare_count_quantifier<N: CountQuantifierPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(70), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     Ok(())
 }
@@ -3470,7 +3445,6 @@ impl ::sittir_core::prepare::Prepare for BackreferenceEscapeNode {
 fn prepare_backreference_escape<N: BackreferenceEscapePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(71), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.group_name, overlay, ctx)?;
     Ok(())
 }
@@ -3545,7 +3519,6 @@ impl ::sittir_core::prepare::Prepare for NamedGroupBackreferenceNode {
 fn prepare_named_group_backreference<N: NamedGroupBackreferencePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(72), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.group_name, overlay, ctx)?;
     Ok(())
 }
@@ -4522,7 +4495,6 @@ impl ::sittir_core::prepare::Prepare for TermGroupNode {
 fn prepare_term_group<N: TermGroupPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(78), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.quantifier, overlay, ctx)?;
     Ok(())
@@ -4755,7 +4727,6 @@ impl ::sittir_core::prepare::Prepare for CharacterClassEscapeArmNode {
 fn prepare_character_class_escape_arm<N: CharacterClassEscapeArmPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(81), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.character_class_escape_text2, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.unicode_property_value_expression, overlay, ctx)?;
     Ok(())
@@ -6038,24 +6009,6 @@ impl ::sittir_core::render::Render for ColonNode {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for TermGroupNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(78)) {
-            return Some((self.layout.edges_mut(), site));
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for AnyNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match self {
-            Self::TermGroup(t) => t.seat_target(table, ctx),
-            Self::Pattern { .. } | Self::Alternation { .. } | Self::Term { .. } | Self::LookaroundAssertion { .. } | Self::LookaheadAssertion { .. } | Self::LookbehindAssertion { .. } | Self::PatternCharacter { .. } | Self::CharacterClass { .. } | Self::PosixCharacterClass { .. } | Self::PosixClassName { .. } | Self::ClassRange { .. } | Self::ClassCharacter { .. } | Self::AnonymousCapturingGroup { .. } | Self::NamedCapturingGroup { .. } | Self::NonCapturingGroup { .. } | Self::Flags { .. } | Self::ZeroOrMore { .. } | Self::OneOrMore { .. } | Self::Optional { .. } | Self::CountQuantifier { .. } | Self::BackreferenceEscape { .. } | Self::NamedGroupBackreference { .. } | Self::DecimalEscape { .. } | Self::CharacterClassEscape { .. } | Self::CharacterClassEscapeText1 { .. } | Self::CharacterClassEscapeText2 { .. } | Self::UnicodeCharacterEscape { .. } | Self::UnicodePropertyValueExpression { .. } | Self::UnicodePropertyValue { .. } | Self::ControlEscape { .. } | Self::ControlLetterEscape { .. } | Self::IdentityEscape { .. } | Self::GroupName { .. } | Self::DecimalDigits { .. } | Self::CountQuantifierGroup { .. } | Self::CountQuantifierArm { .. } | Self::CharacterClassEscapeArm { .. } | Self::UnicodePropertyValueExpressionGroup { .. } | Self::InlineFlagsGroupEnable { .. } | Self::InlineFlagsGroupToggle { .. } | Self::InlineFlagsGroupDisable { .. } | Self::UnicodePropertyName { .. } | Self::AnyCharacter { .. } | Self::StartAssertion { .. } | Self::EndAssertion { .. } | Self::BoundaryAssertion { .. } | Self::NonBoundaryAssertion { .. } | Self::Lazy { .. } | Self::Negation { .. } | Self::Tight { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Caret { .. } | Self::LparenQmark { .. } | Self::Eq { .. } | Self::Bang { .. } | Self::Rparen { .. } | Self::LparenQmarkLt { .. } | Self::Lbrack { .. } | Self::Dash { .. } | Self::BslashDash { .. } | Self::Rbrack { .. } | Self::LbrackColon { .. } | Self::ColonRbrack { .. } | Self::Lparen { .. } | Self::LparenQmarkPLt { .. } | Self::Gt { .. } | Self::LparenQmarkColon { .. } | Self::Star { .. } | Self::Plus { .. } | Self::Qmark { .. } | Self::Lbrace { .. } | Self::Comma { .. } | Self::Rbrace { .. } | Self::Bslashk { .. } | Self::Lt { .. } | Self::LparenQmarkPEq { .. } | Self::Colon { .. } | Self::Verbatim { .. } => None,
-        }
-    }
-}
-
 
 
 fn render_pattern<N: PatternFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -6071,8 +6024,8 @@ fn render_alternation<N: AlternationFields + ?Sized>(node: &N, w: &mut dyn ::sit
         items: node.terms(),
         template: "{}",
         token: "|",
-        before: node.terms_separator_space_before().unwrap_or(KindId::BLANK),
-        after: node.terms_separator_space_after().unwrap_or(KindId::BLANK),
+        before: KindId::BLANK,
+        after: KindId::BLANK,
         leading: false,
         trailing: false,
         head: None,
@@ -6090,7 +6043,7 @@ fn render_term<N: TermFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::rend
         template: "{}",
         token: "",
         before: KindId::BLANK,
-        after: node.term_group_separator_space().unwrap_or(KindId::BLANK),
+        after: KindId::BLANK,
         leading: false,
         trailing: false,
         head: None,
@@ -6111,36 +6064,26 @@ fn render_lookaround_assertion<N: LookaroundAssertionFields + ?Sized>(node: &N, 
 fn render_lookahead_assertion<N: LookaheadAssertionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let operator = node.operator();
     let pattern = node.pattern();
-    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?")?;
-    w.site_at(options::SITE_LOOKAHEAD_ASSERTION_LPAREN_QMARK_AFTER);
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_BEFORE); }
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_BEFORE); }
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_EQ_AFTER); }
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKAHEAD_ASSERTION_BANG_AFTER); }
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.site_at(options::SITE_LOOKAHEAD_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(56), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_lookbehind_assertion<N: LookbehindAssertionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let operator = node.operator();
     let pattern = node.pattern();
-    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?<")?;
     w.site_at(options::SITE_LOOKBEHIND_ASSERTION_LPAREN_QMARK_LT_AFTER);
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_BEFORE); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_EQ_AFTER); }
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_LOOKBEHIND_ASSERTION_BANG_AFTER); }
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.site_at(options::SITE_LOOKBEHIND_ASSERTION_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(57), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6165,33 +6108,27 @@ fn render_character_class<N: CharacterClassFields + ?Sized>(node: &N, w: &mut dy
     let leading = View::new(node.leading(), "-");
     let negation = View::new(::sittir_core::view::Presence::new(node.negation(), NegationNode::Negation), "{}");
     let trailing = View::new(node.trailing(), "-");
-    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[")?;
-    w.site_at(options::SITE_CHARACTER_CLASS_LBRACK_AFTER);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
-    if negation.is_present() {
-        w.site_at(options::SITE_CHARACTER_CLASS_CARET_BEFORE);
-        negation.render(w)?;
-        w.site_at(options::SITE_CHARACTER_CLASS_CARET_AFTER);
+    negation.render(w)?;
+    if leading.is_present() {
+        leading.render(w)?;
+        if leading.is_present() {
+            w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+        }
     }
-    leading.render(w)?;
     class_atoms.render(w)?;
     trailing.render(w)?;
-    w.site_at(options::SITE_CHARACTER_CLASS_RBRACK_BEFORE);
     w.text("]")?;
-    w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_posix_character_class<N: PosixCharacterClassFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let posix_class_name = node.posix_class_name();
-    w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("[:")?;
     w.site_at(options::SITE_POSIX_CHARACTER_CLASS_LBRACK_COLON_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_posix_class_name", ::sittir_core::types::ItemIndex(0), w, |w| posix_class_name.render(w))?;
-    w.site_at(options::SITE_POSIX_CHARACTER_CLASS_COLON_RBRACK_BEFORE);
     w.text(":]")?;
-    w.edge(::sittir_core::types::KindId(59), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6202,17 +6139,10 @@ fn render_posix_class_name<N: PosixClassNameFields + ?Sized>(t: &N, w: &mut dyn 
 fn render_class_range<N: ClassRangeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let end = node.end();
     let start = node.start();
-    w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_start", ::sittir_core::types::ItemIndex(0), w, |w| start.render(w))?;
-    if start.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
-    w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE);
     w.text("-")?;
-    w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER);
-    if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_BEFORE); }
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_end", ::sittir_core::types::ItemIndex(0), w, |w| end.render(w))?;
-    if end.kind_in(&*w, &[::sittir_core::types::KindId(14)]) { w.site_at(options::SITE_CLASS_RANGE_DASH_AFTER); }
-    w.edge(::sittir_core::types::KindId(61), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6223,13 +6153,10 @@ fn render_class_character<N: ClassCharacterFields + ?Sized>(t: &N, w: &mut dyn :
 
 fn render_anonymous_capturing_group<N: AnonymousCapturingGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = node.pattern();
-    w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(")?;
-    w.site_at(options::SITE_ANONYMOUS_CAPTURING_GROUP_LPAREN_AFTER);
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.site_at(options::SITE_ANONYMOUS_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(62), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6237,32 +6164,24 @@ fn render_named_capturing_group<N: NamedCapturingGroupFields + ?Sized>(node: &N,
     let group_name = node.group_name();
     let operator = node.operator();
     let pattern = node.pattern();
-    w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_BEFORE); }
-    if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_BEFORE); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(11)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_LT_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(22)]) { w.site_at(options::SITE_NAMED_CAPTURING_GROUP_LPAREN_QMARK_P_LT_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
-    w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_AFTER);
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.site_at(options::SITE_NAMED_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_non_capturing_group<N: NonCapturingGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let pattern = node.pattern();
-    w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?:")?;
-    w.site_at(options::SITE_NON_CAPTURING_GROUP_LPAREN_QMARK_COLON_AFTER);
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    w.site_at(options::SITE_NON_CAPTURING_GROUP_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(64), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6272,47 +6191,28 @@ fn render_flags<N: FlagsFields + ?Sized>(t: &N, w: &mut dyn ::sittir_core::rende
 
 fn render_zero_or_more<N: ZeroOrMoreFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lazy = View::new(::sittir_core::view::Presence::new(node.lazy(), LazyNode::Lazy), "{}");
-    w.edge(::sittir_core::types::KindId(67), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("*")?;
-    w.site_at(options::SITE_ZERO_OR_MORE_STAR_AFTER);
-    if lazy.is_present() {
-        w.site_at(options::SITE_ZERO_OR_MORE_QMARK_BEFORE);
-        lazy.render(w)?;
-    }
-    w.edge(::sittir_core::types::KindId(67), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    lazy.render(w)?;
     Ok(())
 }
 
 fn render_one_or_more<N: OneOrMoreFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lazy = View::new(::sittir_core::view::Presence::new(node.lazy(), LazyNode::Lazy), "{}");
-    w.edge(::sittir_core::types::KindId(68), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("+")?;
-    w.site_at(options::SITE_ONE_OR_MORE_PLUS_AFTER);
-    if lazy.is_present() {
-        w.site_at(options::SITE_ONE_OR_MORE_QMARK_BEFORE);
-        lazy.render(w)?;
-    }
-    w.edge(::sittir_core::types::KindId(68), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    lazy.render(w)?;
     Ok(())
 }
 
 fn render_optional<N: OptionalFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let lazy = View::new(::sittir_core::view::Presence::new(node.lazy(), LazyNode::Lazy), "{}");
-    w.edge(::sittir_core::types::KindId(69), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("?")?;
-    w.site_at(options::SITE_OPTIONAL_QMARK_AFTER);
-    if lazy.is_present() {
-        w.site_at(options::SITE_OPTIONAL_QMARK_BEFORE);
-        lazy.render(w)?;
-    }
-    w.edge(::sittir_core::types::KindId(69), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    lazy.render(w)?;
     Ok(())
 }
 
 fn render_count_quantifier<N: CountQuantifierFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
     let lazy = View::new(::sittir_core::view::Presence::new(node.lazy(), LazyNode::Lazy), "{}");
-    w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_LBRACE_AFTER);
     if content.kind_in(&*w, &[::sittir_core::types::KindId(45)]) {
@@ -6323,18 +6223,12 @@ fn render_count_quantifier<N: CountQuantifierFields + ?Sized>(node: &N, w: &mut 
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     w.site_at(options::SITE_COUNT_QUANTIFIER_RBRACE_BEFORE);
     w.text("}")?;
-    w.site_at(options::SITE_COUNT_QUANTIFIER_RBRACE_AFTER);
-    if lazy.is_present() {
-        w.site_at(options::SITE_COUNT_QUANTIFIER_QMARK_BEFORE);
-        lazy.render(w)?;
-    }
-    w.edge(::sittir_core::types::KindId(70), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
+    lazy.render(w)?;
     Ok(())
 }
 
 fn render_backreference_escape<N: BackreferenceEscapeFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let group_name = node.group_name();
-    w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("\\k")?;
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_BSLASHK_AFTER);
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_LT_BEFORE);
@@ -6343,19 +6237,16 @@ fn render_backreference_escape<N: BackreferenceEscapeFields + ?Sized>(node: &N, 
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_BACKREFERENCE_ESCAPE_GT_BEFORE);
     w.text(">")?;
-    w.edge(::sittir_core::types::KindId(71), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
 fn render_named_group_backreference<N: NamedGroupBackreferenceFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let group_name = node.group_name();
-    w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?P=")?;
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_LPAREN_QMARK_P_EQ_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_GROUP_BACKREFERENCE_RPAREN_BEFORE);
     w.text(")")?;
-    w.edge(::sittir_core::types::KindId(72), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6422,15 +6313,8 @@ fn render_decimal_digits<N: DecimalDigitsFields + ?Sized>(t: &N, w: &mut dyn ::s
 fn render_term_group<N: TermGroupFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = node.content();
     let quantifier = View::new(node.quantifier(), "{}");
-    w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    if content.kind_in(&*w, &[::sittir_core::types::KindId(3), ::sittir_core::types::KindId(54)]) { w.site_at(options::SITE_TERM_GROUP_CARET_AFTER); }
-    if content.kind_in(&*w, &[::sittir_core::types::KindId(4)]) { w.site_at(options::SITE_TERM_GROUP_END_ASSERTION_AFTER); }
-    if content.kind_in(&*w, &[::sittir_core::types::KindId(5)]) { w.site_at(options::SITE_TERM_GROUP_BOUNDARY_ASSERTION_AFTER); }
-    if content.kind_in(&*w, &[::sittir_core::types::KindId(6)]) { w.site_at(options::SITE_TERM_GROUP_NON_BOUNDARY_ASSERTION_AFTER); }
-    if content.kind_in(&*w, &[::sittir_core::types::KindId(2)]) { w.site_at(options::SITE_TERM_GROUP_ANY_CHARACTER_AFTER); }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_quantifier", ::sittir_core::types::ItemIndex(0), w, |w| quantifier.render(w))?;
-    w.edge(::sittir_core::types::KindId(78), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6457,7 +6341,6 @@ fn render_count_quantifier_arm<N: CountQuantifierArmFields + ?Sized>(node: &N, w
 fn render_character_class_escape_arm<N: CharacterClassEscapeArmFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let character_class_escape_text2 = node.character_class_escape_text2();
     let unicode_property_value_expression = node.unicode_property_value_expression();
-    w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_character_class_escape_text2", ::sittir_core::types::ItemIndex(0), w, |w| character_class_escape_text2.render(w))?;
     w.site_at(options::SITE_CHARACTER_CLASS_ESCAPE_ARM_LBRACE_BEFORE);
     w.text("{")?;
@@ -6465,7 +6348,6 @@ fn render_character_class_escape_arm<N: CharacterClassEscapeArmFields + ?Sized>(
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_unicode_property_value_expression", ::sittir_core::types::ItemIndex(0), w, |w| unicode_property_value_expression.render(w))?;
     w.site_at(options::SITE_CHARACTER_CLASS_ESCAPE_ARM_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(81), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -6481,18 +6363,12 @@ fn render_unicode_property_value_expression_group<N: UnicodePropertyValueExpress
 
 fn render_inline_flags_group_enable<N: InlineFlagsGroupEnableFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let enabled = node.enabled();
-    let pattern = View::new(node.pattern(), "{}");
+    let pattern = View::new(node.pattern(), ":{}");
     w.edge(::sittir_core::types::KindId(84), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_LPAREN_QMARK_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_enabled", ::sittir_core::types::ItemIndex(0), w, |w| enabled.render(w))?;
-    if pattern.is_present() {
-        w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_BEFORE);
-        w.text(":")?;
-        w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_COLON_AFTER);
-        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    }
-    w.site_at(options::SITE_INLINE_FLAGS_GROUP_ENABLE_RPAREN_BEFORE);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(84), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -6501,21 +6377,15 @@ fn render_inline_flags_group_enable<N: InlineFlagsGroupEnableFields + ?Sized>(no
 fn render_inline_flags_group_toggle<N: InlineFlagsGroupToggleFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let disabled = node.disabled();
     let enabled = node.enabled();
-    let pattern = View::new(node.pattern(), "{}");
+    let pattern = View::new(node.pattern(), ":{}");
     w.edge(::sittir_core::types::KindId(85), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_LPAREN_QMARK_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_enabled", ::sittir_core::types::ItemIndex(0), w, |w| enabled.render(w))?;
-    w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_BEFORE);
     w.text("-")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_DASH_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_disabled", ::sittir_core::types::ItemIndex(0), w, |w| disabled.render(w))?;
-    if pattern.is_present() {
-        w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_BEFORE);
-        w.text(":")?;
-        w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_COLON_AFTER);
-        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    }
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_TOGGLE_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(85), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -6524,21 +6394,14 @@ fn render_inline_flags_group_toggle<N: InlineFlagsGroupToggleFields + ?Sized>(no
 
 fn render_inline_flags_group_disable<N: InlineFlagsGroupDisableFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let disabled = node.disabled();
-    let pattern = View::new(node.pattern(), "{}");
+    let pattern = View::new(node.pattern(), ":{}");
     w.edge(::sittir_core::types::KindId(86), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("(?")?;
-    w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_LPAREN_QMARK_AFTER);
-    w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_BEFORE);
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     w.text("-")?;
     w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_DASH_AFTER);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_disabled", ::sittir_core::types::ItemIndex(0), w, |w| disabled.render(w))?;
-    if pattern.is_present() {
-        w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_BEFORE);
-        w.text(":")?;
-        w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_COLON_AFTER);
-        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
-    }
-    w.site_at(options::SITE_INLINE_FLAGS_GROUP_DISABLE_RPAREN_BEFORE);
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(86), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -7207,7 +7070,7 @@ const _: () = assert!(::core::mem::size_of::<ZeroOrMoreNode>() <= 256, "ZeroOrMo
 
 ::sittir_core::grammar_nodes!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionOperatorNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupOperatorNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, LazyNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, PlusNode, QmarkNode, LbraceNode, CommaNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, ColonNode, TriviaNode);
 #[cfg(target_pointer_width = "64")]
-const _: () = assert!(::core::mem::size_of::<AlternationNode>() == 48, "AlternationNode is not the 48 bytes the byte rule in boxed-payloads.ts sizes it");
+const _: () = assert!(::core::mem::size_of::<AlternationNode>() == 40, "AlternationNode is not the 40 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]
 const _: () = assert!(::core::mem::size_of::<AnonymousCapturingGroupNode>() == 80, "AnonymousCapturingGroupNode is not the 80 bytes the byte rule in boxed-payloads.ts sizes it");
 #[cfg(target_pointer_width = "64")]

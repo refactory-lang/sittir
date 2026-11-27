@@ -319,13 +319,10 @@ export class SeamWalk {
 
 	private joinable(symbol: number, token: Token): boolean {
 		const { view } = this;
-		if (
-			!view.tables.isTerminal(symbol) ||
-			token.text === null ||
-			!view.isPunct(token.text) ||
-			view.endsLine(view.tables.names[symbol]!)
-		)
-			return false;
+		if (!view.tables.isTerminal(symbol) || view.endsLine(view.tables.names[symbol]!)) return false;
+		const read = view.readsSpace(symbol, token.text ?? '');
+		if (token.text === null) return read === 'unknown';
+		if (!view.isPunct(token.text) && read === 'other') return false;
 		this.joinText.set(symbol, token.text);
 		return true;
 	}
@@ -499,7 +496,7 @@ export class SeamWalk {
 				const inner = rule.type === 'PATTERN' ? rule : unwrap(rule.content);
 				if (inner.type === 'STRING')
 					return this.shiftAll(positions, view.literalIds(inner.value), inner, rule.type === 'IMMEDIATE_TOKEN');
-				return this.shiftAll(positions, view.auxTokens(view.ownerOf.get(rule)!), rule, false);
+				return this.shiftAll(positions, view.auxTokensOf(rule), rule, false);
 			}
 			case 'SYMBOL':
 				return this.symbol(rule, positions, cont);

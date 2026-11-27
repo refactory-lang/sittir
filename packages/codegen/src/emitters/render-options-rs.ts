@@ -123,6 +123,8 @@ const KIND_LINE_BREAK_TERMINATED = 4;
 const KIND_ROOT = 8;
 const KIND_JOINS_NEXT = 16;
 const KIND_TERMINATOR_ONLY = 32;
+const KIND_FLANK_BEFORE = 64;
+const KIND_FLANK_AFTER = 128;
 
 const DELIMITER_BITS: Readonly<Record<string, number>> = Object.fromEntries(
 	Object.entries(Delimiter).map(([member, bits]) => [`Delimiter.${member}`, bits])
@@ -152,15 +154,23 @@ function screaming(s: string): string {
 	return toScreamingSnakeCase(s, s);
 }
 
-function kindFlagsOf(kindEntries: readonly IdEntry[], nodeMap: NodeMap, joins: JoinFacts): { readonly id: number; readonly flags: number }[] {
+function kindFlagsOf(
+	kindEntries: readonly IdEntry[],
+	nodeMap: NodeMap,
+	joins: JoinFacts,
+	rootFlankOnly: ReadonlySet<SeparatorSide>
+): { readonly id: number; readonly flags: number }[] {
 	const flags = new Map<number, number>();
 	for (const entry of kindEntries) {
 		if (entry.id === undefined) continue;
+		const root = nodeMap.nodes.get(entry.kind)?.grammarRoot === true;
 		const bits =
 			(entry.anon === true ? KIND_ANON : 0) |
 			(lineTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_TERMINATED : 0) |
 			(lineBreakTerminatedKinds(nodeMap).has(entry.kind) ? KIND_LINE_BREAK_TERMINATED : 0) |
-			(nodeMap.nodes.get(entry.kind)?.grammarRoot === true ? KIND_ROOT : 0) |
+			(root ? KIND_ROOT : 0) |
+			(root && rootFlankOnly.has('before') ? KIND_FLANK_BEFORE : 0) |
+			(root && rootFlankOnly.has('after') ? KIND_FLANK_AFTER : 0) |
 			([entry.kind, entry.symbolName, entry.parseName].some((name) => name !== undefined && joins.joinsNextKinds.has(name)) ? KIND_JOINS_NEXT : 0) |
 			(terminatorOnlyKinds(nodeMap).has(entry.kind) ? KIND_TERMINATOR_ONLY : 0);
 		if (bits !== 0) flags.set(entry.id, (flags.get(entry.id) ?? 0) | bits);
@@ -187,7 +197,8 @@ export function planRenderOptions(
 	whitespaceText: ReadonlyMap<string, string>,
 	declaredIndent: string | undefined,
 	grammar: string,
-	seatWrappers: readonly SeatWrapper[] = []
+	seatWrappers: readonly SeatWrapper[] = [],
+	rootFlankOnly: ReadonlySet<SeparatorSide> = new Set()
 ): RenderOptionsPlan {
 	const spacing: SpacingSite[] = [];
 	const delimiters: DelimiterSite[] = [];
@@ -288,7 +299,7 @@ export function planRenderOptions(
 		whitespaceText: [...whitespaceText]
 			.map(([kind, text]) => ({ id: idOf(kindEntries, kind, 'renderAs'), text }))
 			.sort((a, b) => a.id - b.id),
-		kindFlags: kindFlagsOf(kindEntries, nodeMap, joins),
+		kindFlags: kindFlagsOf(kindEntries, nodeMap, joins, rootFlankOnly),
 		leafEdges: leafEdgesTable(kindEntries, nodeMap),
 		seatWrappers: [...seatWrappers].sort((a, b) => a.id - b.id),
 		gaps: [...whitespaceText.keys()]

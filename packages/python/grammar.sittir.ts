@@ -264,8 +264,6 @@ export default grammar(enrich(base), wire({
 		type_param_param_spec: { '"**"/after': preference('tight') },
 		unary_operator: { 'operator:/after': preference('tight') },
 		interpolation: {
-			before: preference('tight'),
-			after: preference('tight'),
 			'debug:/before': preference('tight'),
 			'debug:/after': preference('tight')
 		},

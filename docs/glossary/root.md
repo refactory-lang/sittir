@@ -875,3 +875,53 @@ The real directory of the upstream package a grammar package depends on, found b
 ### `packages/codegen/src/grammars.ts::GRAMMAR_SHAPE_EMIT_SCRIPT`
 
 The script that writes a grammar's shape and upstream declaration, relative to the repository root. It takes grammar names as arguments (`shapePackages`).
+
+### `packages/codegen/src/corpus.ts::CORPUS_ROOT`
+
+`packages/codegen/fixtures/`. Each grammar owns `<grammar>/upstream/` (the
+upstream `test/corpus/*.txt` files, verbatim, plus `SOURCE.json`) and
+`<grammar>/local.txt` (entries sittir authored, in the same format). Nothing
+under `upstream/` is edited by hand; a fix to an upstream entry is a
+`local.txt` entry or a refetch. The reader lives in codegen because the
+join-seams derivation reads corpus sources as witnesses; the validators and
+the fetch tool import it from `@sittir/codegen/corpus`.
+
+### `packages/codegen/src/corpus.ts::parseCorpus`
+
+Splits a tree-sitter test corpus file into entries exactly as the
+`tree-sitter test` harness (cli/src/test.rs) does, so the validators see the
+bytes the parser was tested on:
+
+- A header is a `===` line, the name line (plus attribute lines), and a
+  closing `===` line. Only headers whose suffix (text after the `=` run)
+  equals the first header's suffix count, and only dividers with that
+  suffix split input from expected tree.
+- When a body holds several matching `---` dividers, the one with the most
+  hyphens splits it (the line ending doesn't count); on a tie, the last, as
+  the harness's `max_by_key` returns the last of equal maxima.
+- The input is the bytes from the header's end to the divider, minus one
+  trailing `\n` (and a `\r` before it). A typical entry therefore reads as
+  `"\n<source>\n"`; the leading newline stays, and a token that needs its
+  line end (a shebang) keeps it.
+
+Entries are dropped, not counted, when they carry `:error`, when their
+expected tree holds `(ERROR` or `(MISSING` (intentional error tests), when
+`:language(x)` names a grammar other than `grammar` (the validator loads a
+single parser per grammar), or when the input is blank.
+
+### `packages/codegen/src/corpus.ts::loadCorpusEntries`
+
+A grammar's corpus: every `upstream/*.txt` under
+`packages/codegen/fixtures/<grammar>/` in name order, then that directory's
+`local.txt` (sittir-authored entries). A grammar with no entries throws,
+naming `sittir tool fetch-corpus --grammar <grammar>`; an empty corpus
+would otherwise report a passing 0/0 run.
+
+### `packages/codegen/src/corpus.ts::CorpusEntry`
+
+One corpus test: its header name and its input bytes as `parseCorpus`
+cuts them (the expected tree is not kept).
+
+### `packages/codegen/src/corpus.ts::corpusDir`
+
+The directory that holds `grammar`'s corpus: its fetched upstream files (`upstreamCorpusDir`) and its sittir-authored entries (`localCorpusPath`), both derived from it. Generation reads no corpus for a grammar without one (`join-seams/index.ts::corpusSourcesOf`).

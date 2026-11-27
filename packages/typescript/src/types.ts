@@ -13149,7 +13149,6 @@ export namespace TemplateString {
 export namespace TemplateSubstitution {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
 			readonly dollarLbrace?: { readonly after?: LayoutKindId };
 			readonly rbrace?: { readonly before?: LayoutKindId };
 		};
@@ -13779,7 +13778,6 @@ export namespace ConstructorType {
 export namespace TemplateType {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
 			readonly dollarLbrace?: { readonly after?: LayoutKindId };
 			readonly rbrace?: { readonly before?: LayoutKindId };
 		};

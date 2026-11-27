@@ -111,7 +111,7 @@ function emitStages(config: EmitAllConfig, collector: EmitCollector): EmitAllRes
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const resolvedRules = resolveRenderRules(
-		{ nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(renderAs, nodeMap) },
+		{ nodeMap, kindEntries, options: optionsBlock, whitespaceText: whitespaceTextOf(renderAs, nodeMap), tight: joins.tight, tightAfter: joins.tightAfter },
 		(spaced) => stampStaticSpacing(nodeMap, grammar, spaced, kindEntries, joins)
 	);
 

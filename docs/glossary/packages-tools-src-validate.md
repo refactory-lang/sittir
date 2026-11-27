@@ -105,45 +105,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** Validator-only facts; read ONLY via `readFacts` (never branched on by the compiler). */
 ```
 
-### `packages/tools/src/validate/common.ts::CorpusEntry`
-
-```text
-// ---------------------------------------------------------------------------
-// Corpus parser — tree-sitter test corpus format
-// ---------------------------------------------------------------------------
-```
-
-### `packages/tools/src/validate/common.ts::parseCorpus`
-
-Splits a tree-sitter test corpus file into entries exactly as the
-`tree-sitter test` harness (cli/src/test.rs) does, so the validators see the
-bytes the parser was tested on:
-
-- A header is a `===` line, the name line (plus attribute lines), and a
-  closing `===` line. Only headers whose suffix (text after the `=` run)
-  equals the first header's suffix count, and only dividers with that
-  suffix split input from expected tree.
-- When a body holds several matching `---` dividers, the one with the most
-  hyphens splits it (the line ending doesn't count); on a tie, the last, as
-  the harness's `max_by_key` returns the last of equal maxima.
-- The input is the bytes from the header's end to the divider, minus one
-  trailing `\n` (and a `\r` before it). A typical entry therefore reads as
-  `"\n<source>\n"`; the leading newline stays, and a token that needs its
-  line end (a shebang) keeps it.
-
-Entries are dropped, not counted, when they carry `:error`, when their
-expected tree holds `(ERROR` or `(MISSING` (intentional error tests), when
-`:language(x)` names a grammar other than `grammar` (the validator loads a
-single parser per grammar), or when the input is blank.
-
-### `packages/tools/src/validate/common.ts::loadCorpusEntries`
-
-A grammar's corpus: every `upstream/*.txt` under
-`packages/codegen/fixtures/<grammar>/` in name order, then that directory's
-`local.txt` (sittir-authored entries). A grammar with no entries throws,
-naming `sittir tool fetch-corpus --grammar <grammar>`; an empty corpus
-would otherwise report a passing 0/0 run.
-
 ### `packages/tools/src/validate/common.ts::NativeEngine`
 
 The public engine a validator reads and renders through, typed for any grammar: `Engine<LanguageAPI>`. One engine per grammar per process, because a coordinate names the tree by the tag its engine minted.

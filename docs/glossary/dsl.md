@@ -6303,6 +6303,10 @@ family's display.
 The content under a chain of named aliases.
 ```
 
+### `packages/codegen/src/dsl/rule-transforms.ts::tokenBodyOwners`
+
+Token rules grouped by body (`tokenBodyKey`), in the order given: for each body, the rules that write it. tree-sitter's `extract_tokens` gives a token body several rules share one hidden `<first owner>_token<n>` symbol and makes those rules nonterminals, so the first owner in a list names the auxiliary tokens of every rule in it. The catalog coverage check and `GrammarView.auxTokensOf` both read it.
+
 ### `packages/codegen/src/dsl/builders.ts::collapsedInto`
 
 A wrapper that collapses into its one survivor: a sequence of one member, or a choice whose one non-blank arm became optional. The wrapper's attributes merge onto the survivor by the composition rules every collapse uses: `rule-attrs.ts::withAttrsFrom`'s absent-only transfer for the identity and flag attributes, and the multiplicity lattice for the composing one (`withWrapperMultiplicity`), so a survivor `optional` inside an `array` sequence is `array`. The one collapse for `buildSeq` and simplify's sequence and choice collapses (`compiler/simplify.ts::collapseSingleMemberSeq`, `simplifySeqRule`, `simplifyChoiceRule`).
@@ -9215,6 +9219,10 @@ A rule's identity and facts without its structure and the six position attribute
 ### `packages/codegen/src/dsl/rule-attrs.ts::factoredAtRoot`
 
 Runs a factoring over a kind's root so each root fact ends up on one node. `hidden` and `annotations` belong to the kind: the factoring runs without them and they go back on whatever replaces the root, so a factored root's inner choice does not read as `hoisted`. `inlinedFrom` stays on what the choice became, the inner choice or the `optional` a one-body factoring leaves, because `fanOutSeqChoices` leaves a nested choice at the root with its own id and `inlinedFrom`, and `buildSlot` names the slot from it. When a node with the root's id and `inlinedFrom` remains below the result, the result does not take a copy. When none does, as when identical arms collapse, the result keeps `inlinedFrom`, so the fact is never lost. A root the factoring leaves unchanged is returned as it was.
+
+### `packages/codegen/src/dsl/rule-attrs.ts::ownRuleIds`
+
+A rule's own id followed by the ids it absorbed (`absorbedIds`): every id that names this rule, without looking into its content. `absorbIds` gives a host the own ids of the rules it replaces, and the render reads them to match a join fact keyed by an id the rule absorbed.
 
 ### `packages/codegen/src/dsl/rule-metadata.ts::aliasStorageOf`
 

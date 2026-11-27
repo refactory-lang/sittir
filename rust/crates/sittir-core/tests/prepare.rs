@@ -576,6 +576,37 @@ fn a_node_of_the_root_kind_inside_another_meets_its_neighbours_as_any_node() {
     assert_eq!(group(false), "(b\n)");
 }
 
+static ROOT_FLANK_FLAGS: &[sittir_core::options::KindFlags] = &[
+    sittir_core::options::KindFlags::NONE,
+    sittir_core::options::KindFlags::NONE,
+    sittir_core::options::KindFlags::NONE,
+    sittir_core::options::KindFlags(
+        sittir_core::options::KindFlags::ROOT.0 | sittir_core::options::KindFlags::FLANK_BEFORE.0 | sittir_core::options::KindFlags::FLANK_AFTER.0,
+    ),
+];
+
+#[test]
+fn a_root_kind_whose_edges_are_flanks_only_writes_no_edge_inside_another_node() {
+    let nested = root_render(ROOT_FLANK_FLAGS, |w| {
+        w.open_frame(None);
+        w.text("(").unwrap();
+        w.open_frame(None);
+        w.edge(KindId(3), Side::Before, Some(wire(4)));
+        w.text("b").unwrap();
+        w.edge(KindId(3), Side::After, None);
+        w.close_frame();
+        w.text(")").unwrap();
+        w.close_frame();
+    });
+    assert_eq!(nested, "(b)");
+    let root = root_render(ROOT_FLANK_FLAGS, |w| {
+        w.edge(KindId(3), Side::Before, Some(wire(4)));
+        w.text("a").unwrap();
+        w.edge(KindId(3), Side::After, None);
+    });
+    assert_eq!(root, "\n\na\n");
+}
+
 #[test]
 fn a_root_edge_decides_its_gap_and_only_a_terminated_break_floors_it() {
     let replaced = root_render(ROOT_FLAGS, |w| {

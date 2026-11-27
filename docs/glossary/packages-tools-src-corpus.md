@@ -4,14 +4,6 @@ The pinned upstream test corpus each grammar's validators read.
 
 ---
 
-### `packages/tools/src/corpus/layout.ts::CORPUS_ROOT`
-
-`packages/codegen/fixtures/`. Each grammar owns `<grammar>/upstream/` (the
-upstream `test/corpus/*.txt` files, verbatim, plus `SOURCE.json`) and
-`<grammar>/local.txt` (entries sittir authored, in the same format). Nothing
-under `upstream/` is edited by hand; a fix to an upstream entry is a
-`local.txt` entry or a refetch.
-
 ### `packages/tools/src/corpus/fetch.ts::githubRepoOf`
 
 The GitHub owner and repo named by a package.json `repository` field, as a

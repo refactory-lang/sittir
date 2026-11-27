@@ -1,6 +1,7 @@
 import type * as TS from 'web-tree-sitter';
 
 export const NO_STATE = 0;
+export const END_SYMBOL = 0;
 
 export interface ParserTables {
 	readonly stateCount: number;

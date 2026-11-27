@@ -87,3 +87,53 @@ b = f"pre{val:.2f}post"
                 (string_fragment))
               (string_end))))))
     (newline)))
+
+================================================================================
+F-string interpolations that open with a set or a dictionary
+================================================================================
+
+a = f"{ {1} }"
+b = f"{ {'k': 1}['k']}"
+
+--------------------------------------------------------------------------------
+
+(module
+  (simple_statements
+    (simple_statements_elements
+      (expression_statement
+        (assignment_eq
+          (identifier)
+          (string
+            (string_start)
+            (interpolation
+              (set
+                (collection_elements
+                  (integer_decimal_plain))))
+            (string_end)))))
+    (newline))
+  (simple_statements
+    (simple_statements_elements
+      (expression_statement
+        (assignment_eq
+          (identifier)
+          (string
+            (string_start)
+            (interpolation
+              (subscript
+                (dictionary
+                  (dictionary_elements
+                    (pair
+                      (string
+                        (string_start)
+                        (string_content
+                          (string_fragment))
+                        (string_end))
+                      (integer_decimal_plain))))
+                (subscripts
+                  (string
+                    (string_start)
+                    (string_content
+                      (string_fragment))
+                    (string_end)))))
+            (string_end)))))
+    (newline)))

@@ -11,6 +11,7 @@ import {
 	SYMBOL,
 	TOKEN
 } from '../types/rule-types.ts'; // @rule-type-consts
+import type { GrammarRule } from '../grammar-shapes/grammar-json.ts';
 import { isTokenWrapperType, type RuntimeRule } from '../types/runtime-shapes.ts';
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, DelimiterMode } from '../types/rule.ts';
 import { RuleWalker, SyntacticRuleWalker } from './rule-walker.ts';
@@ -90,10 +91,21 @@ export function isLiteralOnlyRule(rule: AnyRule): boolean {
 	return false;
 }
 
-export function tokenBodyKey(rule: AnyRule): string {
+export function tokenBodyKey(rule: AnyRule | GrammarRule): string {
 	return JSON.stringify(rule, (key, value: unknown) =>
 		key === 'annotations' || key === 'metadata' || key === 'id' || key === 'hidden' ? undefined : value
 	);
+}
+
+export function tokenBodyOwners(tokens: Iterable<readonly [string, AnyRule | GrammarRule]>): Map<string, string[]> {
+	const owners = new Map<string, string[]>();
+	for (const [owner, rule] of tokens) {
+		const key = tokenBodyKey(rule);
+		const named = owners.get(key);
+		if (named === undefined) owners.set(key, [owner]);
+		else named.push(owner);
+	}
+	return owners;
 }
 
 export interface TextTokenMintCtx<R> {

@@ -14,10 +14,7 @@ describe('the committed join seams', () => {
 			async () => {
 				const pkg = grammarPackage(grammar);
 				const { nodeMap, evaluated, generatedIdTables } = await compileGrammar({ package: pkg });
-				if (generatedIdTables.parser === null) throw new Error(`${grammar} has no built parser`);
-				const derived = printJoinSeams(
-					deriveJoinSeams(joinSeamInputOf(nodeMap, evaluated.rules, generatedIdTables.parser))
-				);
+				const derived = printJoinSeams(deriveJoinSeams(joinSeamInputOf(nodeMap, evaluated.rules, generatedIdTables, grammar)));
 				expect(
 					derived,
 					`${grammar}: delete packages/${grammar}/.sittir/${JOIN_SEAMS_FILE} and regenerate ${grammar}`

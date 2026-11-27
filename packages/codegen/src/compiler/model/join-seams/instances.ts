@@ -420,10 +420,19 @@ export class InstanceBuilder {
 		return go(rule, 0) ? out : null;
 	}
 
-	firstLeaves(rule: GrammarRule): GrammarRule[] {
+	firstLeaves(rule: GrammarRule, externals = false): GrammarRule[] {
 		const out: GrammarRule[] = [];
 		const seen = new Set<string>();
+		const scanned = (at: GrammarRule): string | undefined => {
+			const inner = at.type === 'ALIAS' ? at.content : at;
+			return externals && inner.type === 'SYMBOL' && this.view.externals.has(inner.name) ? inner.name : undefined;
+		};
 		const go = (at: GrammarRule): boolean => {
+			const external = scanned(at);
+			if (external !== undefined) {
+				out.push(at);
+				return (this.lengths.get(external) ?? INF) === 0;
+			}
 			if (this.view.isLeaf(at)) {
 				if (at.type !== 'STRING') out.push(at);
 				return at.type === 'STRING' && at.value === '';

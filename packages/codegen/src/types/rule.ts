@@ -83,6 +83,7 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 			readonly immediate?: boolean;
 
 			readonly staticSeamBefore?: 'glued' | 'spaced';
+			readonly inAbsentBranch?: true;
 
 			readonly prec?: {
 				readonly kind: 'left' | 'right' | 'dynamic' | undefined;

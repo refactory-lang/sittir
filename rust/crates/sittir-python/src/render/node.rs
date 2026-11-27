@@ -22620,7 +22620,6 @@ impl ::sittir_core::prepare::Prepare for InterpolationNode {
 fn prepare_interpolation<N: InterpolationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(255), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.expression, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_conversion, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.format_specifier, overlay, ctx)?;
@@ -35830,8 +35829,11 @@ fn render_string<N: StringFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::
     let string_start = node.string_start();
     w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_start", ::sittir_core::types::ItemIndex(0), w, |w| string_start.render(w))?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     content.render(w)?;
-    w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
+    if content.is_present() {
+        w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+    }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_end", ::sittir_core::types::ItemIndex(0), w, |w| string_end.render(w))?;
     w.edge(::sittir_core::types::KindId(253), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
@@ -35860,7 +35862,6 @@ fn render_interpolation<N: InterpolationFields + ?Sized>(node: &N, w: &mut dyn :
     let expression = node.expression();
     let format_specifier = View::new(node.format_specifier(), "{}");
     let type_conversion = View::new(node.type_conversion(), "{}");
-    w.edge(::sittir_core::types::KindId(255), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("{")?;
     w.site_at(options::SITE_INTERPOLATION_LBRACE_AFTER);
     w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
@@ -35871,10 +35872,12 @@ fn render_interpolation<N: InterpolationFields + ?Sized>(node: &N, w: &mut dyn :
         w.site_at(options::SITE_INTERPOLATION_DEBUG_AFTER);
     }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type_conversion", ::sittir_core::types::ItemIndex(0), w, |w| type_conversion.render(w))?;
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_format_specifier", ::sittir_core::types::ItemIndex(0), w, |w| format_specifier.render(w))?;
-    w.site_at(options::SITE_INTERPOLATION_RBRACE_BEFORE);
+    if format_specifier.is_present() {
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_format_specifier", ::sittir_core::types::ItemIndex(0), w, |w| format_specifier.render(w))?;
+    } else {
+        w.site_at(options::SITE_INTERPOLATION_RBRACE_BEFORE);
+    }
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(255), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -35894,8 +35897,8 @@ fn render_format_specifier<N: FormatSpecifierFields + ?Sized>(node: &N, w: &mut 
     };
     w.edge(::sittir_core::types::KindId(259), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text(":")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     elements.render(w)?;
-    w.edge(::sittir_core::types::KindId(259), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -37931,7 +37934,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_join_pairs(&[(42, 42), (92, 34), (92, 39), (92, 92), (123, 123)]); // "**" "\\\"" "\\'" "\\\\" "{{"
+.with_join_pairs(&[(42, 42), (123, 123)]); // "**" "{{"
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single `SpacingWriter`

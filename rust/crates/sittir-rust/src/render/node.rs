@@ -46777,9 +46777,12 @@ fn render_token_repetition_pattern<N: TokenRepetitionPatternFields + ?Sized>(nod
     token_patterns.render(w)?;
     w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
-    w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_RPAREN_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
-    w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_OPERATOR_BEFORE);
+    if separator.is_present() {
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
+        if separator.is_present() {
+            w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+        }
+    }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_PLUS_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_PATTERN_STAR_AFTER); }
@@ -46823,9 +46826,12 @@ fn render_token_repetition<N: TokenRepetitionFields + ?Sized>(node: &N, w: &mut 
     tokens.render(w)?;
     w.site_at(options::SITE_TOKEN_REPETITION_RPAREN_BEFORE);
     w.text(")")?;
-    w.site_at(options::SITE_TOKEN_REPETITION_RPAREN_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
-    w.site_at(options::SITE_TOKEN_REPETITION_OPERATOR_BEFORE);
+    if separator.is_present() {
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_separator", ::sittir_core::types::ItemIndex(0), w, |w| separator.render(w))?;
+        if separator.is_present() {
+            w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
+        }
+    }
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_operator", ::sittir_core::types::ItemIndex(0), w, |w| operator.render(w))?;
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(8)]) { w.site_at(options::SITE_TOKEN_REPETITION_PLUS_AFTER); }
     if operator.kind_in(&*w, &[::sittir_core::types::KindId(9)]) { w.site_at(options::SITE_TOKEN_REPETITION_STAR_AFTER); }
@@ -48666,6 +48672,7 @@ fn render_string_literal<N: StringLiteralFields + ?Sized>(node: &N, w: &mut dyn 
     let string_open = node.string_open();
     w.edge(::sittir_core::types::KindId(332), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_open", ::sittir_core::types::ItemIndex(0), w, |w| string_open.render(w))?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     elements.render(w)?;
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(332), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -48682,7 +48689,9 @@ fn render_raw_string_literal<N: RawStringLiteralFields + ?Sized>(node: &N, w: &m
     let string_content = node.string_content();
     w.edge(::sittir_core::types::KindId(333), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_raw_string_literal_start", ::sittir_core::types::ItemIndex(0), w, |w| raw_string_literal_start.render(w))?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_string_content", ::sittir_core::types::ItemIndex(0), w, |w| string_content.render(w))?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_raw_string_literal_end", ::sittir_core::types::ItemIndex(0), w, |w| raw_string_literal_end.render(w))?;
     w.edge(::sittir_core::types::KindId(333), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())

@@ -605,6 +605,9 @@
 			"name": "prefix"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "name"
 		},

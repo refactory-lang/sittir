@@ -2387,12 +2387,11 @@
 			"text": ":"
 		},
 		{
-			"kind": "slot",
-			"name": "elements"
+			"kind": "adjacent"
 		},
 		{
-			"kind": "seam",
-			"field": "format_specifier_after"
+			"kind": "slot",
+			"name": "elements"
 		}
 	],
 	"function_definition": [
@@ -2910,10 +2909,6 @@
 	],
 	"interpolation": [
 		{
-			"kind": "seam",
-			"field": "interpolation_before"
-		},
-		{
 			"kind": "text",
 			"text": "{"
 		},
@@ -2977,19 +2972,17 @@
 						}
 					]
 				}
+			],
+			"fallback": [
+				{
+					"kind": "seam",
+					"field": "rbrace_before"
+				}
 			]
-		},
-		{
-			"kind": "seam",
-			"field": "rbrace_before"
 		},
 		{
 			"kind": "text",
 			"text": "}"
-		},
-		{
-			"kind": "seam",
-			"field": "interpolation_after"
 		}
 	],
 	"key_value_pattern": [
@@ -4328,16 +4321,18 @@
 			"name": "string_start"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "content"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
-			"name": "string_end",
-			"join": {
-				"previous": true,
-				"next": false
-			}
+			"name": "string_end"
 		},
 		{
 			"kind": "seam",

@@ -7526,8 +7526,6 @@ export namespace Program {
 export namespace StringInterpolation {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
 			readonly bslashLbrace?: { readonly after?: LayoutKindId };
 			readonly rbrace?: { readonly before?: LayoutKindId };
 		};

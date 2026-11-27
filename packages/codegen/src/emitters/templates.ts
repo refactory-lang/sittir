@@ -668,10 +668,10 @@ function withinTrailingGate(body: Body, tail: Body): Body {
 
 function joinStaticSeam(body: Body, segment: Body, spaced: boolean, seams: Body = EMPTY): Body {
 	if (spaced) return concat(body, seams.length > 0 ? seams : SPACE, segment);
-	if (seams.length === 0 && isExpression(segment) && segment[0]!.kind !== 'tokenSeam') {
-		return concat(withinTrailingGate(body, ADJACENT), segment);
-	}
-	return concat(body, seams, segment);
+	if (seams.length > 0) return concat(body, seams, segment);
+	if (body.at(-1)?.kind === 'text' && segment[0]?.kind === 'text') return concat(body, ADJACENT, segment);
+	if (isExpression(segment) && segment[0]!.kind !== 'tokenSeam') return concat(withinTrailingGate(body, ADJACENT), segment);
+	return concat(body, segment);
 }
 
 export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
@@ -709,6 +709,17 @@ function emitRuleShape(rule: RenderRule, ctx: EmitCtx): Body {
 			const partIndices: number[] = [];
 			rule.members.forEach((m, i) => {
 				const part = isSeamChoice(m) ? seam(seamPartOf(m).fieldName) : emitRule(m, ctx);
+				if (m.inAbsentBranch === true) {
+					const gated = parts.at(-1);
+					const [only] = gated ?? [];
+					if (gated?.length !== 1 || only?.kind !== 'if' || only.fallback !== undefined)
+						throw emitShapeFailure({
+							code: 'tight-boundary-shape',
+							message: `emitRule: ${ctx.ownerKind ?? '(unknown)'} (${rule.id ?? 'no id'}): the seam ${seamPartOf(m).fieldName} is written only when the member before it is absent, but that member renders no single presence gate`
+						});
+					parts[parts.length - 1] = [{ ...only, fallback: part }];
+					return;
+				}
 				if (part.length === 0) return;
 				parts.push(part);
 				partRules.push(m);

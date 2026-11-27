@@ -4611,10 +4611,6 @@
 	],
 	"string_interpolation": [
 		{
-			"kind": "seam",
-			"field": "string_interpolation_before"
-		},
-		{
 			"kind": "text",
 			"text": "\\{"
 		},
@@ -4637,10 +4633,6 @@
 		{
 			"kind": "text",
 			"text": "}"
-		},
-		{
-			"kind": "seam",
-			"field": "string_interpolation_after"
 		}
 	],
 	"string_literal_line": [
@@ -4651,6 +4643,9 @@
 		{
 			"kind": "text",
 			"text": "\""
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -4673,6 +4668,9 @@
 		{
 			"kind": "text",
 			"text": "\"\"\""
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",

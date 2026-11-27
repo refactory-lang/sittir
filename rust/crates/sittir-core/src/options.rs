@@ -147,6 +147,24 @@ impl KindFlags {
     /// of its list ends with (an empty statement): no line break goes
     /// before it, whatever the options' arm for the list's gaps.
     pub const TERMINATOR_ONLY: Self = Self(1 << 5);
+    /// The grammar root's edge before it is a flank only: written at the
+    /// start of a render, and nothing where a node of the root kind meets
+    /// the token before it inside another node, since a space there would
+    /// change the parse.
+    pub const FLANK_BEFORE: Self = Self(1 << 6);
+    /// The grammar root's edge after it is a flank only: written at the end
+    /// of a render, and nothing where a node of the root kind meets the
+    /// token after it inside another node.
+    pub const FLANK_AFTER: Self = Self(1 << 7);
+
+    /// The flag that makes a kind's edge on `side` a flank only.
+    #[must_use]
+    pub const fn flank(side: Side) -> Self {
+        match side {
+            Side::Before => Self::FLANK_BEFORE,
+            Side::After => Self::FLANK_AFTER,
+        }
+    }
 
     /// Whether the set holds any flag of `other`.
     #[must_use]

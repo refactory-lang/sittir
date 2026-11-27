@@ -3400,8 +3400,11 @@ with `inline: true`, since an inlined body prints into the referencing
 kind's node, which holds no field for it. Finishes by validating the
 declared defaults over every site of the result. Then every compound kind
 that owns its edges (`ownsKindEdges`) gets its kind edge seams
-(`withKindEdges`). A grammar with no layout kinds gets the spaced rules
-back untouched.
+(`withKindEdges`), except on a side `tightKindEdgesOf` finds tight; a
+seated unit whose after side is tight gets no unit edge either. The
+grammar root keeps its edges on its tight sides, and the result carries
+those sides as `rootFlankOnly` for the kind flag table. A grammar
+with no layout kinds gets the spaced rules back untouched.
 
 #### token interior
 
@@ -3426,8 +3429,12 @@ list kind whose array is flanked), the edges go around the wrapper, which
 must stay a three-member seq to be read as flanks. The bracket that opens a kind is that rule's
 first member, so no seq boundary holds the seam before it; these two
 choices are where it lives, and naming them by the kind reaches keyword
-edges (`else_clause_before`) as well. A rule that is not a seq holds no
-literal of its own and is returned unchanged.
+edges (`else_clause_before`) as well. A side where the kind meets its
+neighbour tight (`tightEdgeSides`) gets no edge choice and records no
+arms, except on the grammar root: the file's start and end are gaps of
+their own, so the root keeps both edge choices to classify and write its
+source flanks, and its tight sides become flanks only (`rootFlankOnly`). A rule that is not a seq holds no literal of its own and
+is returned unchanged.
 
 The kind's edge terminal cascades onto the edge: when the seq opens (or
 closes) with a literal token, or with a choice whose every arm is a token,
@@ -3547,7 +3554,14 @@ the group, first for a `_before`, last for an `_after`, so an optional
 clause such as `optional(seq('=', value))` carries `eq_before` and renders
 it only when the clause does. The default arm is still the parent
 boundary's stamp. A boundary `admitsNoSeam` answers yes for gets no seam,
-on the members or on their choice arms.
+on the members or on their choice arms, and its right member is stamped
+glued (`gluedBefore`), so the emitter never falls back to spacing two
+literals there. A boundary where the right member is tight only after the
+left one (`tightAfter`) gets the same stamp when the left member is
+required; when the left member is optional, the right token's before seam
+goes in the absent branch (`inAbsentBranch`), rendering only when the left
+member is absent; a left member of any other multiplicity fails generation
+(`tight-boundary-shape`).
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::edgeMember`
 
@@ -3789,8 +3803,9 @@ The user-facing address of a site: `<kind>.<slot>_<side>` for a flank,
 
 ```text
 /** Whether a repeat forbids whitespace between its elements. A separated
- *  repeat admits it unless the rule itself is tokenized or immediate or
- *  its separator token is immediate: the elements are separate nodes
+ *  repeat admits it unless the rule itself is tokenized or admits only a
+ *  tight join, or its separator token does (`admitsOnlyTight`: immediate,
+ *  or proven tight by the join-seams derivation): the elements are separate nodes
  *  whatever kinds they may be, so a choice element that may be a token
  *  (a typescript enum member may be a `number`) does not glue the list.
  *  An unseparated repeat is glued when the rule or anything beneath its
@@ -4630,9 +4645,11 @@ Whether a choice arm starts immediate: the choice does (a `token.immediate(choic
 ### `packages/codegen/src/compiler/model/render-rules.ts::isImmediateWhenPresent`
 
 Whether the boundary before a seq member is immediate: the member, when it is
-present, starts with an immediate token (`startsImmediateWhenPresent`). Such a
-boundary is not a site: `withTokenSeams` writes neither the left token's after
-face nor the member's before face there. When a nullable member is absent, the
+present, starts with an immediate token or with a rule the join-seams
+derivation proves tight (`startsImmediateWhenPresent` over the config's
+`tight` ids, `admitsOnlyTight`). Such a boundary is not a site:
+`withTokenSeams` writes neither the left token's after face nor the member's
+before face there, and stamps the member glued (`gluedBefore`). When a nullable member is absent, the
 member after it keeps its own before face, so the absent case is never left
 without a seam of its own.
 
@@ -5916,7 +5933,7 @@ The node a layout is taken from.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::LeftmostWalkCtx`
 
-The context of a walk that finds the leftmost node.
+The context of a walk that finds the leftmost node: the normalized rules a symbol resolves through, the symbols on the current path, and, from `AdmitsOnlyTightCtx`, `tight`, the rule ids the join-seams derivation proves tight. A rule holding one of those ids starts tight the way an immediate token does (`admitsOnlyTight`).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::ListSlotFactsCtx`
 
@@ -6334,6 +6351,14 @@ Joins the arm stamps of two same-named slots that merge into one, whether `merge
 
 The text sittir writes for one separator arm of a list. A string arm writes its value. A fixed-text kind writes its literal (`fixedTextOfKind`). A pattern kind writes the one shortest text its pattern admits (`pattern-automaton.ts::uniqueShortestAccepted`, read from the pattern's DFA), so Go's statement terminator `\n+` writes a newline. Any other separator kind halts emit with `separator-without-text`, naming the kind and its owner. This is the only derivation of a separator's text. `separatorCandidateTexts` maps a list's arms through it, and `planRenderOptions` runs the separator site's default arm (`site-preferences.ts::PreferenceArm`) through it. It is called at emit, after `stampIrSurface` has stamped `renderAs` texts: TypeScript's `_automatic_semicolon` has its text (`'\n'`) only from `renderAs`.
 
+### `packages/codegen/src/compiler/model/node-map.ts::admitsOnlyTight`
+
+Whether a rule admits only a tight join before it: it is an immediate token, or one of its own ids (`ownRuleIds`, so a lowered literal answers for the rules it absorbed) is in `tight`, the ids the join-seams derivation proves tight. The leftmost walks (`LeftmostWalkCtx`) and `admitsNoExtras` both read it, so a derived tight seam and an authored `token.immediate` decide a boundary the same way.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AdmitsOnlyTightCtx`
+
+The context `admitsOnlyTight` reads: `tight`, the rule ids the join-seams derivation proves tight, absent when the caller has no join facts. `LeftmostWalkCtx` extends it, so the leftmost walks pass their own context, and `admitsNoExtras` passes just the set.
+
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 
 Whether a render rule has a seam at the first or last edge of its arms.
@@ -6349,6 +6374,22 @@ The choices a seam on this side of a rule would sit beside: walking through wrap
 ### `packages/codegen/src/compiler/model/render-rules.ts::mixedSeamChoices`
 
 The kind and side of every seam boundary whose neighbour is a choice with some arms holding a list that admits no extras and some not. `admitsNoSeam` answers such a choice for all its arms, so the other arm would lose its seam and could fuse with its neighbour's tokens, and neither answer is right for both. No grammar has this shape, and a test over every grammar fails if one gains it. Normalized rules hold no blank arm, because an optional is a multiplicity on the member, so every arm of a choice counts.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::TightKindEdges`
+
+Per side, each kind with the positions where it meets its neighbour with no seam: `before` keys a kind whose first token is on the right of a tight boundary, `after` a kind whose last token is on the left of one. A position is `<owner>:<member id>`, or `<owner>:<id> repeated` for the gap between iterations of a list that admits no extras.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::tightKindEdgesOf`
+
+Every tight boundary of the render rules, by the kinds on each side of it. A boundary between two members of a `SEQ` is tight when it admits no seam or the right member is tight after the left one (`tightAfter`); the gap between iterations of a list in `noExtrasLists` is tight too. The kinds that end the left side and start the right side are found through nullable members and through symbols that own no kind edges, then a fixpoint carries each kind's tight positions down to the kinds that start or end it. `withKindEdges` drops a kind's edge on a side when the kind has any tight position on that side.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::gluedBefore`
+
+The member `rule` stamped `staticSeamBefore: 'glued'`. `withTokenSeams` stamps the member after a boundary that admits no seam, or that is tight after the required member before it, so the template emitter reads the gap from the stamp before any character test and no boundary between two literals falls through to the spaced default.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::tightEdgeSides`
+
+The sides on which `kind` meets its neighbours tight: before, when its rule starts immediate or `tightKindEdgesOf` lists it there; after, when `tightKindEdgesOf` does. `withKindEdges` drops the edge site on those sides for every kind but the grammar root, whose edges are the render's flanks; `seamRenderRules` records the root's tight sides as `rootFlankOnly`.
 
 ### `packages/codegen/src/compiler/model/accessor-classes.ts::accessorValueClassOf`
 
@@ -6533,3 +6574,147 @@ The `slotChoiceTextFailure` of every slot-claimed choice, by owner kind. Assembl
 ### `packages/codegen/src/compiler/model/join-seams/index.ts::joinsOutsideLists`
 
 The join facts a render reads: `joinsNext` and `joinsPrevious` without the rule ids of the lists that admit no extras. A space inside such a list is content, so the join guard must not write one there even when two items' characters would lex as one token. Python's `f"a {{{b}"` holds `{{` then `{b}`, and a separating space would change the string's value. The pairs, kinds and seam ids are unchanged, and the facts come back as given when no lists are stamped. The unreached-seam check keeps reading the full facts, since a seam inside such a list is still held by its rule.
+
+### `packages/codegen/src/compiler/model/join-seams/index.ts::JoinInputs`
+
+The parts of a `JoinSeamInput` other than the parser that the derivation reads: the external roles and bodies, the word matcher, the whitespace, the line-ended kinds, the corpus sources and the token rules. `joinInputsHash` hashes them into the stamp beside the parser record, so a change to any of them re-derives the facts. The derivation's own code is not in the stamp; the fresh-derive test catches a code change that moves the facts.
+
+### `packages/codegen/src/compiler/model/join-seams/index.ts::tokenRulesOf`
+
+The grammar rule each terminal symbol id stands for, read from the generated kind entries: a `SYMBOL` rule for a token that is a grammar rule or an external, a `STRING` rule for a literal with text. `GrammarView.symbolDfa` reads a token's pattern through it, and `GrammarView.nodeTypesOf` maps a rule name back to its ids.
+
+### `packages/codegen/src/compiler/model/join-seams/index.ts::tightSeamsOf`
+
+The tight and disagreeing records of every witnessed seam. A seam with no inseparable witness records nothing. One whose witnesses are all inseparable gets one record for the whole seam, without `after`. Otherwise each member before the seam that an inseparable witness names (`after`, or none) is weighed alone: tight when no spaced witness at the same member, or one that names no member, contradicts it; disagreeing, with both witnesses, when one does.
+
+### `packages/codegen/src/compiler/model/join-seams/index.ts::corpusSourcesOf`
+
+The corpus sources the derivation's witnesses read for `grammar` (`loadCorpusEntries`). A grammar with no corpus directory (`corpusDir`) gets none, and generation says so in one warning naming the grammar and the path, so a wrong path is visible. The empty corpus is still an input in the join stamp, so adding a corpus re-derives the facts. The validators keep throwing on a grammar with no corpus entries.
+
+### `packages/codegen/src/compiler/model/join-seams/file.ts::WitnessKind`
+
+Where a seam witness came from: `built`, an instance the builder made from the grammar, or `corpus`, a corpus source the parser read. Tight and disagreeing records carry it, so a reader can tell a fact proven on built text from one that rests on the corpus alone.
+
+### `packages/codegen/src/compiler/model/join-seams/file.ts::TightSeamRecord`
+
+A seam that admits no space: a space inserted there lexes into a token beside it, or is a parse error (`reason`), shown on the witness's `previous` and `next` texts. Without `after` the record holds for the whole seam, and the render drops the seam's site. With `after` it holds only when the token before the seam comes from that member of the same owner (`owner:members.i`): the render makes the boundary between the two members tight (`JoinFacts.tightAfter`), and keeps the site where another member comes before. A seam with no spaced witness at all gets one record without `after`.
+
+### `packages/codegen/src/compiler/model/join-seams/file.ts::SpacedWitness`
+
+One witness that a seam takes a space: the tokens beside it, whether the spaced text parsed to the same tree (`same`) or another (`differs`), where the witness came from, and the member before the seam when the witness aligned to its owner (`after`). A disagreeing record holds one beside the tight witness it contradicts.
+
+### `packages/codegen/src/compiler/model/join-seams/file.ts::DisagreeingSeamRecord`
+
+A seam, or a seam after one member (`tight.after`), with both a tight witness and a spaced one whose `after` is the same or unknown. Both are recorded instead of one being picked; nothing tight is derived from it, so the seam keeps its site.
+
+### `packages/codegen/src/compiler/model/join-seams/file.ts::BlockedJoinCheck`
+
+One evidence gap: a seam and a joined character pair (`pair`, the previous token's last character and the next token's first) that only unbuildable checks reach, behind an arm or pair they leave unproven. `states` lists every parse state a check was tried in, `reasons` why each could not be built. A seam and pair that some buildable check decides records nothing, however many of its other checks failed. The join seam ratchet counts these records.
+
+### `packages/codegen/src/compiler/model/join-seams/grammar-view.ts::SpaceRead`
+
+What a token's pattern says about a space at a seam (`GrammarView.readsSpace`): `space`, the pattern accepts some text that goes on with the space after the given prefix; `other`, it accepts none, or the symbol is a nonterminal, the end of input or an external with a layout role; `unknown`, the token comes from the external scanner and has no pattern to ask. One predicate serves both sides of a seam: the next token with an empty prefix, the previous token with its own text as the prefix.
+
+### `packages/codegen/src/compiler/model/join-seams/grammar-view.ts::GrammarView::nodeTypesOf`
+
+The names a parse tree can give a token of grammar rule `name`: the rule name, then the parser's node type for each token id the generated kind entries stamp for that rule (`tokenRules`). tree-sitter renames a token that is aliased the same way at every use, so the tree shows the alias where the rule is named: C#'s `interpolation_start_quote` is `"`, typescript's `_template_chars` is `string_fragment`. The corpus witnesses index seams by these names; matching on the rule name alone never reaches such a token's seams.
+
+### `packages/codegen/src/compiler/model/join-seams/grammar-view.ts::GrammarView::auxTokensOf`
+
+The parser's auxiliary token ids for a token rule's body: the `<owner>_token<n>` symbols named after the body's first owner (`tokenBodyOwners`), since tree-sitter extracts a body several rules share once, under the first rule's name. Empty when the body has none.
+
+### `packages/codegen/src/compiler/model/join-seams/grammar-view.ts::GrammarView::readsSpace`
+
+What `symbol`'s pattern says about a space after `prefix` (`SpaceRead`), memoized per symbol and prefix: `other` for a nonterminal, the end of input (`END_SYMBOL`) or an external with a layout role; `unknown` when `symbolDfa` has no pattern for the symbol, as for a scanner token; otherwise `space` when the pattern accepts some text that starts with `prefix` and `SEAM_SPACE`, and `other` when it accepts none.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::LexEvent`
+
+One token the parser lexed, read from its debug log: the byte span from where lexing began (`offset`, before any skipped whitespace) to the token's end (`end`), the parse state it was lexed in, and the symbol name the log prints.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::absorbedAt`
+
+Whether the space inserted at `seam` ended up inside a token: when a leaf of the reparse covers the seam, the reason (into the next token when the leaf starts at the seam, into the previous one otherwise); undefined when none does. Any covering leaf counts as content, whatever kind of token it is.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::unwrapped`
+
+A rule with its single-content wrappers (precedence, token) taken off, stopping at a repeat, a field or an alias: the shapes `memberBefore` aligns tree children on.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::matchesMember`
+
+Whether `child` of an owner node can be the parse of one member of the owner's rule: a field by the child's field name, a string by an anonymous child with that text, a symbol by the child's grammar type or type, an alias by its type, and a choice or repeat when one of its arms matches.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::nullableMember`
+
+Whether a member of an owner's rule can match no child at all, so the alignment in `memberBefore` may pass over it.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::ownerNode`
+
+The nearest ancestor of `next` whose grammar type is the owner the seam key names, or null when there is none. A corpus witness counts for a seam only when that owner is above the leaf; an owner the tree never shows (a hidden rule) is exempt, since no node can be found for it.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::memberBefore`
+
+The member of the seam's owner that holds the token before the seam, as `owner:members.i`. It finds the owner node above `next` and walks its children against the owner rule's `SEQ` members in order: a field by name, a literal by text, a symbol or alias by type, passing over nullable members, a repeat taking a run of children. The result is the member holding `previous`, when `next` starts the member the seam key names and the previous member comes before it. A seam key that is not a member of a `SEQ` root, or children that do not align, give undefined: the witness then counts for the whole seam.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::parsesAsBuilt`
+
+Whether a built instance's tight text parsed as it was built: no error, and the two leaves that meet at the seam carry the `previous` and `next` texts.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::lexStatesOf`
+
+The parse states the log shows a token lexed in: those of the events ending at `end`, narrowed to the ones that began at `offset` and to `symbol` when either is given.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::spaceIsPadding`
+
+Whether the space inserted at `seam` was skipped as layout: the log shows the next token lexed from the seam, so the lexer passed over the space before it. When no event begins there, a hidden token took the space.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::SEAM_SPACE`
+
+The one character a witness inserts at a seam to test whether the seam takes a space, and the character `GrammarView.readsSpace` asks a token's pattern about. The built and the corpus witnesses insert the same text, so their verdicts compare.
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::SPACE_IS_PARSE_ERROR`
+
+The reason a tight record gives when the text with `SEAM_SPACE` inserted at the seam fails to parse there (`errorNear` the seam).
+
+### `packages/codegen/src/compiler/model/join-seams/oracle.ts::SPACE_IN_HIDDEN_TOKEN`
+
+The reason a tight record gives when the inserted space was neither skipped as layout nor taken into a visible leaf: the next token was not lexed from right after it (`spaceIsPadding`), so a hidden token took it.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::SpacedVerdict`
+
+What a space inserted at a seam did to the parse: the `same` tree, a tree that `differs`, or `inseparable`, when the space lexed into a token or was a parse error at the seam.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::SeamWitness`
+
+One witness for a seam, built or from the corpus: the seam key, the token texts beside it, the verdict with its reason, the member before the seam when the witness aligned to its owner (`after`), and where it came from. `tightSeamsOf` turns the witnesses into the tight and disagreeing records.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::MergeWitness`
+
+A seam a corpus source spelled with spaces or tabs between its tokens, tested by removing the gap: a `SeamWitness` plus the lex state and symbol of the token before the gap, so a removal that changes the parse becomes a join check for that pair.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::CorpusWitnesses`
+
+The corpus witnesses of one derivation: `spaced`, seams found with the tokens touching and tested by inserting a space; `merged`, seams found with a gap and tested by removing it.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::corpusWitnesses`
+
+Reads each error-free corpus source as a witness for seams the built instances cannot reach. A leaf that touches the leaf before it is matched to a spaced seam (`spaceSeams`: its tokens can read a space, or a scanner token can't be asked) when the leaf's names index the seam (`firstNames`), the leaf was lexed in one of the seam's states, a token ending at the leaf's start forms one of the seam's pairs, and the seam's owner is above the leaf (`ownerNode`). A space is then inserted and `spacedOutcome` gives the verdict. A leaf with spaces or tabs before it is matched to any seam the same way, and each matched pair is tested by removing the gap (`mergedOutcome`). A seam is witnessed once for each member before it and verdict; a removal once for each pair and the two characters it joins.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::spacedOutcome`
+
+Inserts `SEAM_SPACE` at `at` and reparses. `inseparable` when a leaf covers the space (`absorbedAt`), when the reparse has an error at the seam, or when the next token was not lexed from right after the space (a hidden token took it); no outcome when the only error lies elsewhere; otherwise `same` or `differs` by comparing the trees.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::mergedOutcome`
+
+Removes the gap from `from` to `to` and reparses: `differs` when that is a parse error or changes the tree, `same` otherwise.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::byFirstName`
+
+An index from leaf names to the seams whose first token can carry that name (`firstNames`). A leaf looks up both its type and its grammar type, since an alias gives a token a type its rule name does not show.
+
+### `packages/codegen/src/compiler/model/join-seams/corpus-witness.ts::Outcome`
+
+A spaced or merge test's verdict with its reason.
+
+### `packages/codegen/src/compiler/model/join-seams/parser-tables.ts::END_SYMBOL`
+
+The symbol id tree-sitter gives the end of input (`ts_builtin_sym_end`), always 0. It is a terminal with no text, so no space can lex into it (`GrammarView.readsSpace` answers `other`).

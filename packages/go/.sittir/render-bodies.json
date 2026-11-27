@@ -2127,6 +2127,9 @@
 			"text": "\""
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
 		},
@@ -2689,16 +2692,11 @@
 			"text": "`"
 		},
 		{
-			"kind": "seam",
-			"field": "bquote_after"
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
 			"name": "raw_string_literal_content"
-		},
-		{
-			"kind": "seam",
-			"field": "bquote_before"
 		},
 		{
 			"kind": "text",

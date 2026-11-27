@@ -12681,10 +12681,9 @@ export namespace TokenRepetitionPattern {
 			readonly before?: LayoutKindId;
 			readonly dollar?: { readonly after?: LayoutKindId };
 			readonly lparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly operator?: { readonly before?: LayoutKindId };
 			readonly plus?: { readonly after?: LayoutKindId };
 			readonly qmark?: { readonly after?: LayoutKindId };
-			readonly rparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly rparen?: { readonly before?: LayoutKindId };
 			readonly star?: { readonly after?: LayoutKindId };
 			readonly tokenPatterns?: {
 				readonly crate?: { readonly after?: LayoutKindId };
@@ -12712,10 +12711,9 @@ export namespace TokenRepetition {
 			readonly before?: LayoutKindId;
 			readonly dollar?: { readonly after?: LayoutKindId };
 			readonly lparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-			readonly operator?: { readonly before?: LayoutKindId };
 			readonly plus?: { readonly after?: LayoutKindId };
 			readonly qmark?: { readonly after?: LayoutKindId };
-			readonly rparen?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly rparen?: { readonly before?: LayoutKindId };
 			readonly star?: { readonly after?: LayoutKindId };
 			readonly tokens?: {
 				readonly crate?: { readonly after?: LayoutKindId };

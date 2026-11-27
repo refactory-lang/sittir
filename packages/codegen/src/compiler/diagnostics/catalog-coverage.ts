@@ -1,5 +1,5 @@
 import type { NodeMap } from '../types.ts';
-import { tokenBodyKey } from '../../dsl/rule-transforms.ts';
+import { tokenBodyOwners } from '../../dsl/rule-transforms.ts';
 import { isTerminalRootRule } from '../../dsl/rule-patterns.ts';
 import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import type { AnyRule } from '../../types/rule.ts';
@@ -51,12 +51,7 @@ export function catalogCoverage(nodeMap: NodeMap): CatalogCoverage {
 }
 
 export function auxTokenKinds(kindEntries: readonly GeneratedKindEntry[], rules: Readonly<Record<string, AnyRule>>): string[] {
-	const owners = new Map<string, string[]>();
-	for (const [name, rule] of Object.entries(rules)) {
-		if (!isTerminalRootRule(rule)) continue;
-		const key = tokenBodyKey(rule);
-		owners.set(key, [...(owners.get(key) ?? []), name]);
-	}
+	const owners = tokenBodyOwners(Object.entries(rules).filter(([, rule]) => isTerminalRootRule(rule)));
 	const shared = new Set([...owners.values()].filter((names) => names.length > 1).map(([first]) => `${first}_token1`));
 	return kindEntries
 		.filter((entry) => entry.aux === true && entry.terminal === true && !shared.has(entry.kind))

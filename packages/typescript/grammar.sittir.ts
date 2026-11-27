@@ -212,11 +212,6 @@ export default grammar(enrich(base), wire({
 			'_/separator/","/before': preference('tight')
 		},
 
-		// A space after the substitution's `}` changes the template text. The edge
-		// sits in every string-interior context, so no neighbour immediacy reaches it.
-		template_substitution: { after: preference('tight') },
-		template_type: { after: preference('tight') },
-
 		literal_type_negative_number: { 'operator:/after': preference('tight') },
 		unary_expression: { 'operator:/after': preference('tight') },
 		update_expression_postfix: { 'operator:/before': preference('tight') },

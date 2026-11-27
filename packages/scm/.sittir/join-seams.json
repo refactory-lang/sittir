@@ -3,9 +3,19 @@
 		"source": "719fb7b109f820a27d2520b665bd6e8802144ee091cc36ae0df95e9ec20e3a1f",
 		"wasm": "74f36eb09a7b37e66852673969189712ce6eb62881bc33527479ead311cd4a96"
 	},
-	"inputs": "5d5dc04222b9506bddeced7d9bdc79590f9125f6e4a6b6e3e8087ca96907b9b4",
+	"inputs": "f4e9c03da132eb82a18a70dad92f9325863afe38aa5e4cfe7c2011b3a834aaa4",
 	"seams": [],
 	"pairs": [],
 	"joinsNextKinds": [],
-	"blocked": []
+	"blocked": [],
+	"tight": [
+		{"seam":"_immediate_string:members.1/members.0","previous":"\"","next":"anonymous subtype","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_immediate_string:members.1","previous":"\"","next":"anonymous subtype","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_immediate_string:members.2","previous":"ting","next":"\"","witness":"corpus","reason":"the space lexes into the previous token"},
+		{"seam":"string:members.1/members.0","previous":"\"","next":"it","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"string:members.1","previous":"\"","next":"it","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"string:members.2","previous":"it","next":"\"","witness":"corpus","reason":"the space lexes into the previous token"},
+		{"seam":"string_content:content","previous":"test","next":"\\\"","witness":"corpus","reason":"the space lexes into the previous token"}
+	],
+	"disagreeing": []
 }

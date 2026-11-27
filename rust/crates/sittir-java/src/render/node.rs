@@ -12860,7 +12860,6 @@ impl ::sittir_core::prepare::Prepare for StringInterpolationNode {
 fn prepare_string_interpolation<N: StringInterpolationPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(167), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.expression, overlay, ctx)?;
     Ok(())
 }
@@ -31959,14 +31958,12 @@ fn render_multiline_string_fragment<N: MultilineStringFragmentFields + ?Sized>(t
 
 fn render_string_interpolation<N: StringInterpolationFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = node.expression();
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("\\{")?;
     w.site_at(options::SITE_STRING_INTERPOLATION_BSLASH_LBRACE_AFTER);
     w.join_arm(::sittir_core::render::JoinArm::NEXT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.site_at(options::SITE_STRING_INTERPOLATION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(167), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -34660,6 +34657,7 @@ fn render_string_literal_line<N: StringLiteralLineFields + ?Sized>(node: &N, w: 
     };
     w.edge(::sittir_core::types::KindId(327), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("\"")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     elements.render(w)?;
     w.text("\"")?;
@@ -34683,6 +34681,7 @@ fn render_string_literal_text_block<N: StringLiteralTextBlockFields + ?Sized>(no
     };
     w.edge(::sittir_core::types::KindId(328), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("\"\"\"")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_inner(node.layout(), w)?;
     elements.render(w)?;
     w.text("\"\"\"")?;

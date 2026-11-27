@@ -37,6 +37,12 @@
 			"import": "./dist/run-codegen.js",
 			"default": "./dist/run-codegen.js"
 		},
+		"./corpus": {
+			"types": "./src/corpus.ts",
+			"source": "./src/corpus.ts",
+			"import": "./dist/corpus.js",
+			"default": "./dist/corpus.js"
+		},
 		"./grammars": {
 			"types": "./src/grammars.ts",
 			"source": "./src/grammars.ts",

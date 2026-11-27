@@ -3,7 +3,7 @@
 		"source": "557f175162b471d956fcfcf8852cdb33e0f032f4b4e1dcb50193b510d00fdcbe",
 		"wasm": "2d654a5c4fc71498d4e5551d6e1cb04c5855b2227351e79fa7f5f61e72818c68"
 	},
-	"inputs": "aa4ef9667a9fd2b855822439158d4655f15899b6fb427206703d6c337983933a",
+	"inputs": "72508777f657911559e7cd2c7e0dda273674abfd641a3f83d5d8152b2e584a27",
 	"seams": [
 		{"seam":"_expressions:members.0","next":"proven"},
 		{"seam":"_expressions:members.1","next":"proven"},
@@ -410,22 +410,23 @@
 		"|"
 	],
 	"blocked": [
-		{"seam":"flow_maybe_type:members.1","state":198,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":198,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":2,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":2,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":216,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":216,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":221,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":221,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":223,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":223,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":231,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":231,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":241,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":241,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":3,"previous":"?","next":".0","reason":"spaced text has a parse error at the seam"},
-		{"seam":"flow_maybe_type:members.1","state":3,"previous":"?","next":"?","reason":"spaced text has a parse error at the seam"},
-		{"seam":"regex:members.1","state":119,"previous":"/","next":"=","reason":"spaced text has a parse error at the seam"}
-	]
+		{"seam":"flow_maybe_type:members.1","pair":"?.","states":[2,3,198,216,221,223,231,241],"reasons":["spaced text has a parse error at the seam"]},
+		{"seam":"flow_maybe_type:members.1","pair":"??","states":[2,3,198,216,221,223,231,241],"reasons":["spaced text has a parse error at the seam"]},
+		{"seam":"regex:members.1","pair":"/=","states":[2,3,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,163,164,165,166,167,593,594,595,596],"reasons":["spaced text has a parse error at the seam","the tight text does not parse as built"]}
+	],
+	"tight": [
+		{"seam":"string_double:members.1/content","previous":"\"","next":"\\a","witness":"built","reason":"the space lexes into the next token"},
+		{"seam":"string_double:members.1","previous":"\"","next":"\\a","witness":"built","reason":"the space lexes into the next token"},
+		{"seam":"string_double:members.2","previous":"baz","next":"\"","witness":"corpus","reason":"the space lexes into the previous token"},
+		{"seam":"string_single:members.1/content","previous":"'","next":"\\a","witness":"built","reason":"the space lexes into the next token"},
+		{"seam":"string_single:members.1","previous":"'","next":"\\a","witness":"built","reason":"the space lexes into the next token"},
+		{"seam":"string_single:members.2","previous":"string","next":"'","witness":"corpus","reason":"the space lexes into the previous token"},
+		{"seam":"template_literal_type:members.1/content","previous":"`","next":"hello","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"template_literal_type:members.1","previous":"`","next":"hello","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"template_literal_type:members.2","previous":"hello","next":"`","witness":"corpus","reason":"the space lexes into the previous token"},
+		{"seam":"template_string:members.1/content","previous":"`","next":"pre","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"template_string:members.1","previous":"`","next":"pre","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"template_string:members.2","previous":"post","next":"`","witness":"corpus","reason":"the space lexes into the previous token"}
+	],
+	"disagreeing": []
 }

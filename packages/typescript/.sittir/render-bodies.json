@@ -8154,6 +8154,9 @@
 			"text": "/"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "pattern",
 			"join": {
@@ -8666,6 +8669,9 @@
 			"text": "\""
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
 		},
@@ -8686,6 +8692,9 @@
 		{
 			"kind": "text",
 			"text": "'"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -8914,6 +8923,9 @@
 			"text": "`"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
 		},
@@ -8934,6 +8946,9 @@
 		{
 			"kind": "text",
 			"text": "`"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -8972,10 +8987,6 @@
 		{
 			"kind": "text",
 			"text": "}"
-		},
-		{
-			"kind": "seam",
-			"field": "template_substitution_after"
 		}
 	],
 	"template_type": [
@@ -9002,10 +9013,6 @@
 		{
 			"kind": "text",
 			"text": "}"
-		},
-		{
-			"kind": "seam",
-			"field": "template_type_after"
 		}
 	],
 	"ternary_expression": [

@@ -17,6 +17,7 @@ import type {
 	LabelProvenance
 } from '../../types/rule.ts';
 import { isBlank, isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
+import { ownRuleIds } from '../../dsl/rule-attrs.ts';
 import { patternDfa, uniqueShortestAccepted } from './pattern-automaton.ts';
 import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import {
@@ -2809,21 +2810,32 @@ export function isLeftImmediateKind(kind: string, ctx: LeftImmediateCtx): boolea
 	return leftmostTerminalImmediate(rules[kind], { rules, visiting: new Set([kind]) });
 }
 
-export interface LeftmostWalkCtx {
+export interface AdmitsOnlyTightCtx {
+	readonly tight?: ReadonlySet<RuleId>;
+}
+
+export interface LeftmostWalkCtx extends AdmitsOnlyTightCtx {
 	readonly rules: Record<string, RenderRule>;
 	readonly visiting: Set<string>;
 }
 
+export function admitsOnlyTight(
+	rule: { readonly immediate?: boolean; readonly id?: RuleId; readonly absorbedIds?: readonly RuleId[] },
+	{ tight }: AdmitsOnlyTightCtx
+): boolean {
+	return rule.immediate === true || (tight !== undefined && ownRuleIds(rule).some((id) => tight.has(id)));
+}
+
 function coreLeftmostImmediate(rule: RenderRule | undefined, ctx: LeftmostWalkCtx): boolean {
 	if (!rule) return false;
-	if (rule.immediate === true) return true;
+	if (admitsOnlyTight(rule, ctx)) return true;
 	switch (rule.type) {
 		case 'SEQ':
 			return rule.members.length > 0 && coreLeftmostImmediate(rule.members[0], ctx);
 		case 'CHOICE':
 			return (
 				rule.members.length > 0 &&
-				rule.members.every((m) => coreLeftmostImmediate(m, { rules: ctx.rules, visiting: new Set(ctx.visiting) }))
+				rule.members.every((m) => coreLeftmostImmediate(m, { ...ctx, visiting: new Set(ctx.visiting) }))
 			);
 		case 'SYMBOL': {
 			if (ctx.visiting.has(rule.name)) return false;

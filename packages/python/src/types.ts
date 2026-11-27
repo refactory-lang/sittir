@@ -8305,8 +8305,6 @@ export namespace String {
 export namespace Interpolation {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly after?: WhitespaceKindId;
-			readonly before?: WhitespaceKindId;
 			readonly debug?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 			readonly lbrace?: { readonly after?: WhitespaceKindId };
 			readonly rbrace?: { readonly before?: WhitespaceKindId };
@@ -8316,7 +8314,7 @@ export namespace Interpolation {
 
 export namespace FormatSpecifier {
 	export interface Hints {
-		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+		readonly __optionsHint__?: { readonly before?: WhitespaceKindId };
 	}
 }
 

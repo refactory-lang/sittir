@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { REPO_ROOT, grammarPackageDir, upstreamPackage } from '@sittir/codegen/grammars';
-import { corpusSourcePath, upstreamCorpusDir } from './layout.ts';
+import { corpusSourcePath, upstreamCorpusDir } from '@sittir/codegen/corpus';
 
 export interface FetchCorpusOptions {
 	readonly grammar: string;

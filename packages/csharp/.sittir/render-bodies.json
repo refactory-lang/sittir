@@ -1251,8 +1251,7 @@
 			"text": "'"
 		},
 		{
-			"kind": "seam",
-			"field": "squote_after"
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -1896,10 +1895,6 @@
 		{
 			"kind": "text",
 			"text": "}"
-		},
-		{
-			"kind": "seam",
-			"field": "declaration_list_after"
 		}
 	],
 	"declaration_list_body_with_body": [
@@ -1910,10 +1905,6 @@
 		{
 			"kind": "slot",
 			"name": "body"
-		},
-		{
-			"kind": "seam",
-			"field": "semi_before"
 		},
 		{
 			"kind": "text",
@@ -3950,12 +3941,11 @@
 							]
 						},
 						{
-							"kind": "seam",
-							"field": "dquote_before"
-						},
-						{
 							"kind": "text",
 							"text": "\""
+						},
+						{
+							"kind": "adjacent"
 						},
 						{
 							"kind": "slot",
@@ -3990,12 +3980,11 @@
 							]
 						},
 						{
-							"kind": "seam",
-							"field": "dquote_before"
-						},
-						{
 							"kind": "text",
 							"text": "\""
+						},
+						{
+							"kind": "adjacent"
 						},
 						{
 							"kind": "slot",
@@ -4038,6 +4027,9 @@
 										{
 											"kind": "slot",
 											"name": "interpolation_start_quote"
+										},
+										{
+											"kind": "adjacent"
 										}
 									]
 								}
@@ -4067,10 +4059,6 @@
 		}
 	],
 	"interpolation": [
-		{
-			"kind": "seam",
-			"field": "interpolation_before"
-		},
 		{
 			"kind": "slot",
 			"name": "interpolation_open_brace"
@@ -4105,11 +4093,10 @@
 					"body": [
 						{
 							"kind": "slot",
-							"name": "interpolation_format_clause",
-							"join": {
-								"previous": false,
-								"next": true
-							}
+							"name": "interpolation_format_clause"
+						},
+						{
+							"kind": "adjacent"
 						}
 					]
 				}
@@ -4118,10 +4105,6 @@
 		{
 			"kind": "slot",
 			"name": "interpolation_close_brace"
-		},
-		{
-			"kind": "seam",
-			"field": "interpolation_after"
 		}
 	],
 	"interpolation_alignment_clause": [
@@ -4144,10 +4127,6 @@
 				"previous": false,
 				"next": true
 			}
-		},
-		{
-			"kind": "seam",
-			"field": "interpolation_alignment_clause_after"
 		}
 	],
 	"invocation_expression": [
@@ -7453,12 +7432,14 @@
 			"name": "raw_string_start"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
-			"name": "raw_string_content",
-			"join": {
-				"previous": true,
-				"next": false
-			}
+			"name": "raw_string_content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",

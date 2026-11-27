@@ -194,5 +194,5 @@ fn the_edge_item_rule_gives_what_the_placement_publishes_for_every_list_a_layout
         found.extend(differences.into_iter().map(|difference| format!("{name}: {difference}")));
     }
     assert!(found.is_empty(), "{} differences:\n{}", found.len(), found.iter().take(40).cloned().collect::<Vec<_>>().join("\n"));
-    assert_eq!(edges, [("python", 5764), ("regex", 0), ("rust", 5212), ("scm", 0), ("typescript", 1202)], "the edge items the placement publishes");
+    assert_eq!(edges, [("python", 5782), ("regex", 0), ("rust", 5212), ("scm", 0), ("typescript", 1202)], "the edge items the placement publishes");
 }

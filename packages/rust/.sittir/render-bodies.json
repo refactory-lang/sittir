@@ -5845,8 +5845,14 @@
 			"name": "raw_string_literal_start"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "string_content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -6922,6 +6928,9 @@
 			"name": "string_open"
 		},
 		{
+			"kind": "adjacent"
+		},
+		{
 			"kind": "slot",
 			"name": "elements"
 		},
@@ -7308,10 +7317,6 @@
 			"text": ")"
 		},
 		{
-			"kind": "seam",
-			"field": "rparen_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
@@ -7320,14 +7325,13 @@
 						{
 							"kind": "slot",
 							"name": "separator"
+						},
+						{
+							"kind": "adjacent"
 						}
 					]
 				}
 			]
-		},
-		{
-			"kind": "seam",
-			"field": "operator_before"
 		},
 		{
 			"kind": "slot",
@@ -7380,10 +7384,6 @@
 			"text": ")"
 		},
 		{
-			"kind": "seam",
-			"field": "rparen_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
@@ -7392,14 +7392,13 @@
 						{
 							"kind": "slot",
 							"name": "separator"
+						},
+						{
+							"kind": "adjacent"
 						}
 					]
 				}
 			]
-		},
-		{
-			"kind": "seam",
-			"field": "operator_before"
 		},
 		{
 			"kind": "slot",

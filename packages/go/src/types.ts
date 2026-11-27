@@ -6260,11 +6260,7 @@ export namespace QualifiedType {
 
 export namespace RawStringLiteral {
 	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly bquote?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-		};
+		readonly __optionsHint__?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 	}
 }
 

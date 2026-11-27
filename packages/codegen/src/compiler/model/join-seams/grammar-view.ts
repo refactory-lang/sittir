@@ -1,8 +1,10 @@
+import { tokenBodyKey, tokenBodyOwners } from '../../../dsl/rule-transforms.ts';
 import type { GrammarJson, GrammarRule } from '../../../grammar-shapes/grammar-json.ts';
 import type { ExternalRole } from '../../../types/ir.ts';
 import type { Rule } from '../../../types/rule.ts';
 import { matchesWordShape, ruleToRegexSource, wordCharClass } from '../../../util/word-matcher.ts';
 import {
+	acceptsSomeStartingWith,
 	type CharSet,
 	dfaAccepts,
 	longestAcceptedPrefix,
@@ -10,7 +12,10 @@ import {
 	shortestPrintableAccepted,
 	type PatternDfa
 } from '../pattern-automaton.ts';
-import type { ParserTables } from './parser-tables.ts';
+import { SEAM_SPACE } from './oracle.ts';
+import { END_SYMBOL, type ParserTables } from './parser-tables.ts';
+
+export type SpaceRead = 'space' | 'unknown' | 'other';
 
 export type ViewRule = GrammarRule | Rule<'evaluate'>;
 
@@ -41,6 +46,7 @@ const WRAPPERS = new Set<GrammarRule['type']>([
 	'RESERVED'
 ]);
 const LEXICAL = new Set<GrammarRule['type']>(['TOKEN', 'IMMEDIATE_TOKEN', 'PATTERN', 'STRING']);
+const TOKEN_TYPES = new Set<GrammarRule['type']>(['TOKEN', 'IMMEDIATE_TOKEN', 'PATTERN']);
 const MAX_TEXT_DEPTH = 60;
 const MAX_SPELLINGS = 8;
 
@@ -89,16 +95,18 @@ export class GrammarView {
 	readonly ownerOf = new Map<GrammarRule, string>();
 	readonly isWordChar: (char: string) => boolean;
 	private readonly auxTokensByOwner = new Map<string, number[]>();
+	private readonly tokenIdsByRule = new Map<string, number[]>();
+	private readonly tokenOwners: ReadonlyMap<string, readonly string[]>;
 	private readonly auxRepeatsByOwner = new Map<string, number[]>();
 	private readonly auxRepeatsAll: number[] = [];
 	private readonly literalIdsCache = new Map<string, readonly number[]>();
 	private readonly punctCache = new Map<string, boolean>();
+	private readonly spaceReads = new Map<string, SpaceRead>();
 	private readonly namedIdsCache = new Map<string, readonly number[]>();
 	private readonly lexicalCache = new Map<string, boolean>();
 	private readonly textCache = new Map<ViewRule, string | null>();
 	private readonly spellingsCache = new Map<ViewRule, readonly string[]>();
 	private readonly dfaCache = new Map<GrammarRule, PatternDfa | null>();
-	private readonly symbolReferences = new Map<number, GrammarRule>();
 	private readonly firstCache = new Map<GrammarRule, readonly string[]>();
 	private readonly ruleFirst = new Map<string, Set<string>>();
 	private readonly ruleNullable = new Set<string>();
@@ -111,7 +119,8 @@ export class GrammarView {
 		readonly externalTokens: ExternalTokens,
 		readonly wordMatcher: RegExp | undefined,
 		readonly whitespace: CharSet,
-		readonly endsLine: (kind: string) => boolean
+		readonly endsLine: (kind: string) => boolean,
+		private readonly tokenRules: ReadonlyMap<number, GrammarRule>
 	) {
 		this.rules = grammar.rules;
 		this.startRule = Object.keys(grammar.rules)[0]!;
@@ -119,10 +128,14 @@ export class GrammarView {
 		this.conflicted = new Set((grammar.conflicts ?? []).flat());
 		this.externals = new Set((grammar.externals ?? []).flatMap((rule) => (rule.type === 'SYMBOL' ? [rule.name] : [])));
 		this.isWordChar = wordCharClass(wordMatcher);
+		const tokens: [string, GrammarRule][] = [];
 		forEachSeamKey(grammar.rules, (rule, owner, key) => {
 			this.keyOf.set(rule, key);
 			this.ownerOf.set(rule, owner);
+			if (TOKEN_TYPES.has(rule.type)) tokens.push([owner, rule]);
 		});
+		this.tokenOwners = tokenBodyOwners(tokens);
+		for (const [id, rule] of tokenRules) if (rule.type === 'SYMBOL') this.push(this.tokenIdsByRule, rule.name, id);
 		const fromStart = this.reachable([this.startRule]);
 		const extraRoots = (grammar.extras ?? []).flatMap((rule) => (rule.type === 'SYMBOL' ? [rule.name] : []));
 		this.extrasOnly = new Set([...this.reachable(extraRoots)].filter((name) => !fromStart.has(name)));
@@ -233,8 +246,8 @@ export class GrammarView {
 		return this.inline.has(name) || (!this.isLexical(name) && this.namedIds(name).length === 0);
 	}
 
-	auxTokens(owner: string): readonly number[] {
-		return this.auxTokensByOwner.get(owner) ?? [];
+	auxTokensOf(rule: GrammarRule): readonly number[] {
+		return this.auxTokensByOwner.get(this.tokenOwners.get(tokenBodyKey(rule))![0]!) ?? [];
 	}
 
 	auxRepeats(owner: string): readonly number[] {
@@ -349,11 +362,28 @@ export class GrammarView {
 		return dfa;
 	}
 
+	nodeTypesOf(name: string): readonly string[] {
+		return [...new Set([name, ...(this.tokenIdsByRule.get(name) ?? []).map((id) => this.tables.names[id]!)])];
+	}
+
 	symbolDfa(symbol: number): PatternDfa | undefined {
-		let reference = this.symbolReferences.get(symbol);
-		if (reference === undefined)
-			this.symbolReferences.set(symbol, (reference = { type: 'SYMBOL', name: this.tables.names[symbol]! }));
-		return this.leafDfa(reference);
+		const rule = this.tokenRules.get(symbol);
+		if (rule === undefined || (rule.type === 'SYMBOL' && this.externals.has(rule.name))) return undefined;
+		return this.leafDfa(rule);
+	}
+
+	readsSpace(symbol: number, prefix: string): SpaceRead {
+		const key = `${symbol}|${prefix}`;
+		let read = this.spaceReads.get(key);
+		if (read === undefined) {
+			if (!this.tables.isTerminal(symbol) || symbol === END_SYMBOL || this.externalTokens.roles.has(this.tables.names[symbol]!)) read = 'other';
+			else {
+				const dfa = this.symbolDfa(symbol);
+				read = dfa === undefined ? 'unknown' : acceptsSomeStartingWith(dfa, prefix + SEAM_SPACE) ? 'space' : 'other';
+			}
+			this.spaceReads.set(key, read);
+		}
+		return read;
 	}
 
 	accepts(rule: GrammarRule, text: string): boolean {

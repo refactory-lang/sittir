@@ -3,7 +3,7 @@
 		"source": "d521da341f3dff554a97a2750b5bb71311e10e6d963aa1c577d6250eeaf55592",
 		"wasm": "5570f88f7daf784a891e01685f226d06b76e480d0dd7f78a2a515fbc9613531c"
 	},
-	"inputs": "5d203b996016f9326c2a4e754d6c06c99cc1f4729a9eab665b9c46b5dda1bd02",
+	"inputs": "87b2105bcfc63a35f7577a9fb610ef53a32275094a12627bbfc63fd1461d4150",
 	"seams": [
 		{"seam":"_argument_list_optional1:members.0","next":"proven"},
 		{"seam":"_argument_list_optional1:members.1/content/members.1","next":"proven"},
@@ -109,5 +109,14 @@
 		"+",
 		"-"
 	],
-	"blocked": []
+	"blocked": [],
+	"tight": [
+		{"seam":"_multiline_string_literal:members.1/content","previous":"\"\"\"","next":"\n        StringTemplate result = RAW.","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_multiline_string_literal:members.1","previous":"\"\"\"","next":"\n        StringTemplate result = RAW.","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_multiline_string_literal:members.2","previous":"\"\"\"","next":"\"\"\"","witness":"built","reason":"the space lexes into the next token"},
+		{"seam":"_string_literal:members.1/content","previous":"\"","next":"Provide time-travel functionality","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_string_literal:members.1","previous":"\"","next":"Provide time-travel functionality","witness":"corpus","reason":"the space lexes into the next token"},
+		{"seam":"_string_literal:members.2","previous":"\"","next":"\"","witness":"built","reason":"the space lexes into the next token"}
+	],
+	"disagreeing": []
 }

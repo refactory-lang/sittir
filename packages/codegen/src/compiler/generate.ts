@@ -132,16 +132,15 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 		nodeMap.scc = computeNodeSCC(nodeMap);
 
-		if (generatedIdTables.parser === null) throw new Error(`generate: ${cfg.grammar} has no built parser to read its join seams from`);
-		const joinInput = joinSeamInputOf(nodeMap, compilation.evaluated.rules, generatedIdTables.parser);
+		const joinInput = joinSeamInputOf(nodeMap, compilation.evaluated.rules, generatedIdTables, cfg.grammar);
 		const settled = settleJoinSeams(
-			readJoinSeams(generatedIdTables.parser.sittirDir),
+			readJoinSeams(joinInput.parser.sittirDir),
 			joinStampOf(joinInput),
 			cfg.rederiveJoinSeams === true,
 			() => deriveJoinSeams(joinInput)
 		);
 		if ('stale' in settled) {
-			const stale = fromStaleJoinSeams(cfg.grammar, relative(REPO_ROOT, join(generatedIdTables.parser.sittirDir, JOIN_SEAMS_FILE)), settled.stale);
+			const stale = fromStaleJoinSeams(cfg.grammar, relative(REPO_ROOT, join(joinInput.parser.sittirDir, JOIN_SEAMS_FILE)), settled.stale);
 			throw new GrammarDiagnosticError([stale], [stale]);
 		}
 		const joins = joinFactsOf(settled.file, joinInput);

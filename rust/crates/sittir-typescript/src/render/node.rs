@@ -25805,7 +25805,6 @@ impl ::sittir_core::prepare::Prepare for TemplateSubstitutionNode {
 fn prepare_template_substitution<N: TemplateSubstitutionPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(275), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.expression, overlay, ctx)?;
     Ok(())
 }
@@ -30578,7 +30577,6 @@ impl ::sittir_core::prepare::Prepare for TemplateTypeNode {
 fn prepare_template_type<N: TemplateTypePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::RenderError> {
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(347), (None, None), ctx);
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.type_, overlay, ctx)?;
     Ok(())
 }
@@ -50344,6 +50342,7 @@ fn render_template_string<N: TemplateStringFields + ?Sized>(node: &N, w: &mut dy
     };
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("`")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     elements.render(w)?;
     w.text("`")?;
     w.edge(::sittir_core::types::KindId(274), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -50358,7 +50357,6 @@ fn render_template_substitution<N: TemplateSubstitutionFields + ?Sized>(node: &N
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
     w.site_at(options::SITE_TEMPLATE_SUBSTITUTION_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(275), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -50367,6 +50365,7 @@ fn render_regex<N: RegexFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::re
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(276), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("/")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     w.join_arm(::sittir_core::render::JoinArm::PREVIOUS);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_pattern", ::sittir_core::types::ItemIndex(0), w, |w| pattern.render(w))?;
     w.text("/")?;
@@ -51212,7 +51211,6 @@ fn render_template_type<N: TemplateTypeFields + ?Sized>(node: &N, w: &mut dyn ::
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.site_at(options::SITE_TEMPLATE_TYPE_RBRACE_BEFORE);
     w.text("}")?;
-    w.edge(::sittir_core::types::KindId(347), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
 
@@ -51232,6 +51230,7 @@ fn render_template_literal_type<N: TemplateLiteralTypeFields + ?Sized>(node: &N,
     };
     w.edge(::sittir_core::types::KindId(348), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("`")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     elements.render(w)?;
     w.text("`")?;
     w.edge(::sittir_core::types::KindId(348), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -52433,6 +52432,7 @@ fn render_string_double<N: StringDoubleFields + ?Sized>(node: &N, w: &mut dyn ::
     };
     w.edge(::sittir_core::types::KindId(426), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("\"")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     elements.render(w)?;
     w.text("\"")?;
     w.edge(::sittir_core::types::KindId(426), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -52455,6 +52455,7 @@ fn render_string_single<N: StringSingleFields + ?Sized>(node: &N, w: &mut dyn ::
     };
     w.edge(::sittir_core::types::KindId(427), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text("'")?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     elements.render(w)?;
     w.text("'")?;
     w.edge(::sittir_core::types::KindId(427), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);

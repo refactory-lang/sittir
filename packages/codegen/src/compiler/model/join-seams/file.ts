@@ -26,10 +26,35 @@ export interface JoinPairRecord {
 
 export interface BlockedJoinCheck {
 	readonly seam: string;
-	readonly state: number;
+	readonly pair: string;
+	readonly states: readonly number[];
+	readonly reasons: readonly string[];
+}
+
+export type WitnessKind = 'built' | 'corpus';
+
+export interface TightSeamRecord {
+	readonly seam: string;
 	readonly previous: string;
 	readonly next: string;
-	readonly reason?: string;
+	readonly witness: WitnessKind;
+	readonly reason: string;
+	readonly after?: string;
+}
+
+export interface SpacedWitness {
+	readonly previous: string;
+	readonly next: string;
+	readonly verdict: 'same' | 'differs';
+	readonly witness: WitnessKind;
+	readonly after?: string;
+}
+
+export interface DisagreeingSeamRecord {
+	readonly seam: string;
+	readonly reason: 'disagree';
+	readonly tight: Omit<TightSeamRecord, 'seam'>;
+	readonly spaced: SpacedWitness;
 }
 
 export interface JoinSeamFacts {
@@ -37,6 +62,8 @@ export interface JoinSeamFacts {
 	readonly pairs: readonly JoinPairRecord[];
 	readonly joinsNextKinds: readonly string[];
 	readonly blocked: readonly BlockedJoinCheck[];
+	readonly tight: readonly TightSeamRecord[];
+	readonly disagreeing: readonly DisagreeingSeamRecord[];
 }
 
 export interface JoinSeamsFile extends JoinStamp, JoinSeamFacts {}
@@ -68,7 +95,9 @@ export function joinSeamsFileOf(stamp: JoinStamp, facts: JoinSeamFacts): JoinSea
 		seams: sortedBy(facts.seams, (record) => record.seam),
 		pairs: sortedBy(facts.pairs, (record) => record.pair),
 		joinsNextKinds: sortedBy(facts.joinsNextKinds, (kind) => kind),
-		blocked: sortedBy(facts.blocked, (check) => JSON.stringify(check))
+		blocked: sortedBy(facts.blocked, (check) => JSON.stringify(check)),
+		tight: sortedBy(facts.tight, (record) => `${record.seam}|${record.after ?? ''}`),
+		disagreeing: sortedBy(facts.disagreeing, (record) => `${record.seam}|${record.tight.after ?? ''}`)
 	};
 }
 
@@ -88,7 +117,10 @@ export function settleJoinSeams(
 	derive: () => JoinSeamsFile
 ): SettledJoinSeams {
 	if (saved !== undefined) {
-		const stale = STAMP_PARTS.filter(([, part]) => part(saved) !== part(stamp)).map(([name]) => name);
+		const stale = [
+			...STAMP_PARTS.filter(([, part]) => part(saved) !== part(stamp)).map(([name]) => name),
+			...(saved.tight === undefined || saved.disagreeing === undefined ? ['tight seams'] : [])
+		];
 		if (stale.length === 0) return { file: saved, derived: false };
 		if (!rederive) return { stale };
 	}

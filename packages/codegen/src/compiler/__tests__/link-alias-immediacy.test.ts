@@ -1,6 +1,6 @@
 import { ALIAS, IMMEDIATE_TOKEN, REPEAT, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import type { Rule } from '../../types/rule.ts';
+import type { Rule, RuleId } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 
@@ -48,5 +48,23 @@ describe('an anonymous alias of an immediate token', () => {
 
 	it('is plain text when nothing declares the aliased external immediate', () => {
 		expect(closeOf(raw({ type: SYMBOL, name: 'close' }))).toMatchObject({ type: STRING, value: '"' });
+	});
+});
+
+describe('an anonymous alias lowered to its literal', () => {
+	const aliasId = 'rule:text:members.1' as RuleId;
+	const contentId = 'rule:text:members.1/content' as RuleId;
+	const text = (close: Rule<'evaluate'>): Record<string, Rule<'evaluate'>> => ({
+		text: { type: SEQ, members: [{ type: STRING, value: '"' }, { type: ALIAS, content: close, named: false, value: '"', id: aliasId } as Rule<'evaluate'>] }
+	});
+
+	it('keeps the alias id on the immediate token and absorbs the content id', () => {
+		const close = { ...immediateQuote, id: contentId } as Rule<'evaluate'>;
+		expect(closeOf(raw(close, undefined, text(close)))).toMatchObject({ type: TOKEN, immediate: true, id: aliasId, absorbedIds: [contentId] });
+	});
+
+	it('keeps the alias id on the plain literal and absorbs the content id', () => {
+		const close = { type: SYMBOL, name: 'close', id: contentId } as Rule<'evaluate'>;
+		expect(closeOf(raw(close, undefined, text(close)))).toMatchObject({ type: STRING, value: '"', id: aliasId, absorbedIds: [contentId] });
 	});
 });
