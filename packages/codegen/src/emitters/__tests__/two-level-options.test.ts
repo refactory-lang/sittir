@@ -236,6 +236,75 @@ describe('a two-level forwarder whose forwarded input is optional', () => {
 	});
 });
 
+const transparentChain = {
+	rules: [
+		"source: ($) => repeat($.top)",
+		"top: ($) => field('wrapped', $.outer)",
+		"outer: ($) => field('inner', $.inner)",
+		"inner: ($) => seq(field('base', $.base), optional(field('inner_comma', $.comma)))",
+		"base: ($) => seq(field('name', $.identifier), optional(field('base_bang', $.bang)))",
+		...tokens
+	],
+	options: "options: { inner: { 'inner_comma:': preference('blank') } }"
+};
+
+describe('two transparent wrappers above an option-bearing node', () => {
+	let factories: string;
+
+	beforeAll(async () => {
+		({ factories } = await emitted(transparentChain));
+	});
+
+	it('declares no overload that passes a built inner with options', () => {
+		const declared = [...factories.matchAll(/export function buildTop[\s\S]*?;\n/g)].map((match) => match[0]).join('\n');
+		expect(declared).not.toMatch(/<V extends Admit<T\.Inner>>\(value: V & RefuseUndeclared<V>,\s*options\?: T\.Inner\.Options/);
+		expect(declared).toMatch(/options\?: T\.Inner\.Options/);
+	});
+
+	function topWithStubs(recorded: Recorded[]): (...args: unknown[]) => unknown {
+		const innerBuilder = (...args: unknown[]) => {
+			recorded.push({ builder: 'buildInner', args });
+			return { $type: 'Inner', args };
+		};
+		const outerBuilder = (...args: unknown[]) => {
+			recorded.push({ builder: '_buildOuter', args });
+			return { $type: 'Outer', args };
+		};
+		const topBuilder = (...args: unknown[]) => {
+			recorded.push({ builder: '_buildTop', args });
+			return { $type: 'Top', args };
+		};
+		const source = `${emittedFunction(factories, 'buildOuter')}\n${emittedFunction(factories, 'buildTop')}\nreturn buildTop;`;
+		return new Function('_buildOuter', 'buildInner', '_buildTop', 'TSKindId', source)(outerBuilder, innerBuilder, topBuilder, {
+			Top: 'Top',
+			Outer: 'Outer',
+			Inner: 'Inner',
+			Base: 'Base'
+		}) as (...args: unknown[]) => unknown;
+	}
+
+	it('gives the inner options to the inner builder for a config', () => {
+		const recorded: Recorded[] = [];
+		topWithStubs(recorded)({ name: 'x' }, innerOptsOf());
+		expect(recorded.map((r) => r.builder)).toEqual(['buildInner', '_buildOuter', '_buildTop']);
+		expect(recorded[0]!.args[1]).toEqual(innerOptsOf());
+	});
+
+	it('builds from a built inner alone', () => {
+		const recorded: Recorded[] = [];
+		topWithStubs(recorded)({ $type: 'Inner' });
+		expect(recorded.map((r) => r.builder)).toEqual(['_buildOuter', '_buildTop']);
+	});
+
+	it('refuses a built inner with options, as the built-node refusal does', () => {
+		expect(() => topWithStubs([])({ $type: 'Inner' }, innerOptsOf())).toThrow('carries its own options');
+	});
+});
+
+function innerOptsOf(): { innerComma: string } {
+	return { innerComma: ',' };
+}
+
 describe('a three-level forwarder with options on each level', () => {
 	it('refuses the chain at emit with a named diagnostic on the outer kind', async () => {
 		await expect(emitted(threeLevel)).rejects.toMatchObject({

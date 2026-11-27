@@ -1930,11 +1930,23 @@ function forwardedConstruction(
 		const extra = trailingFor(entry.params);
 		return extra === undefined ? entry : withTrailingParam(entry, extra);
 	});
+	const publicTargetDeclarations = isAuthoredCompound(targetNode)
+		? forwardedConstruction(targetNode, resolveFactorySurface(targetNode, nodeMap, kindEntries), nodeMap, kindEntries)?.overloads
+		: undefined;
+	const forwardingTargetDeclarations = publicTargetDeclarations?.map((entry) => {
+		const extra = trailingFor(entry.params);
+		return extra === undefined ? entry : withTrailingParam(entry, extra);
+	});
+	const uniqueForwardingDeclarations = forwardingTargetDeclarations && [
+		...new Map(forwardingTargetDeclarations.map((entry) => [JSON.stringify(entry), entry])).values()
+	];
 	const targetDeclarations = withheld
 		? []
 		: targetSurface === undefined
 			? undefined
-			: (twoLevelDeclarations ?? [...new Map([...targetSurface.declarations, ...chainedDeclarations].map((entry) => [JSON.stringify(entry), entry])).values()]);
+			: (twoLevelDeclarations ??
+				uniqueForwardingDeclarations ??
+				[...new Map([...targetSurface.declarations, ...chainedDeclarations].map((entry) => [JSON.stringify(entry), entry])).values()]);
 	const ownSurface = forwardedOptionsTarget(node, nodeMap) === undefined ? surface : resolveConfigFactorySurface(node, nodeMap, kindEntries);
 	const ordered = <E>(all: readonly E[], paramsOf: (entry: E) => string): E[] => [
 		...all.filter((entry) => paramsOf(entry) === ''),
