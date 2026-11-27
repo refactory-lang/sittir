@@ -566,7 +566,7 @@ A flag its arms can't read, or a candidate that reached more than one item for a
 
 What would repeat is written once and shared. Kind sets (`KINDS<n>`), query rows (`ROW<n>`), seats (`SEATS<n>`), container sets, presets, templates, closers and facets are interned constants. Seat resolvers (`seats<n>`) and route functions (`route<n>`) are named by what they read, not by kind, path and slot. A seat that takes only a refinement of a path tests a value through `classify`, which goes to a `classify<Kind>` for each kind such a seat can hold. Within `read<Kind>` the node's kind is known, so its slot reads take that kind's query row with no kind test, each once (`slot<n>`).
 
-A kind that reads as a path through more than three arms with presets is refused, naming the kind and the path, since a case is written for each set of them.
+A path case is written once for each set of its preset arms, so n arms with presets on one kind and path give 2^n cases, each the full read of its set. A jump in a module's size against the interpreter points here first. In the three grammars each kind reads every path through at most one arm with presets.
 
 ### `packages/codegen/src/emitters/overlays/portable/emit/project.ts::emitPortableProjectionInProcess`
 

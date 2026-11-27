@@ -632,7 +632,6 @@ export function emitPortableProjection(builders: B, input: ProjectInput, pin: st
 	const pathCase = (kind: number, path: string): Statement[] => {
 		const arms = table.paths[path]!.arms.filter((arm) => arm.kind === kind);
 		const preset = arms.filter((arm) => arm.presets.length > 0);
-		if (preset.length > 3) throw new Error(`portable projection: ${input.kinds[kind]} reads as ${path} through ${preset.length} arms with presets, and the projection writes one case for each set of them that holds, so it takes at most 3`);
 		const variant = (i: number, kept: readonly PortableBuildArm[]): Statement[] => {
 			if (i === preset.length) {
 				const survivors = arms.filter((arm) => arm.presets.length === 0 || kept.includes(arm));
