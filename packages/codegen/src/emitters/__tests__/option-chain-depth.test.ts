@@ -247,7 +247,7 @@ describe('an omitted outer input still forwards the inner options, in both stora
 			const buildOuter = new Function('_buildOuter', 'buildInner', 'TSKindId', source)(stub('_buildOuter'), stub('buildInner'), kinds) as (...args: unknown[]) => unknown;
 			buildOuter(undefined, { innerComma: ',' });
 			expect(recorded.map((r) => r.builder)).toEqual(['buildInner', '_buildOuter']);
-			expect(recorded[0]!.args).toEqual([{ innerComma: ',' }]);
+			expect(recorded[0]!.args).toEqual([undefined, { innerComma: ',' }]);
 		}
 	});
 });

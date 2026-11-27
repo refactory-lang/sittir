@@ -2476,7 +2476,8 @@ function fieldCarryingFactoryText(
 		const targetEmpty = targetIsConstant ? targetFn : `${targetFn}()`;
 		const targetTakesNoArgs =
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
-		const splicedEnvelope = surface.singleField === undefined ? undefined : splicedEnvelopeOf(surface.singleField, nodeMap);
+		const omittedInputArgs = targetNode !== undefined && classifyFactoryShape(targetNode, nodeMap) === 'spread' ? '...args.slice(1)' : '...args';
+			const splicedEnvelope = surface.singleField === undefined ? undefined : splicedEnvelopeOf(surface.singleField, nodeMap);
 		const prebuiltTest = [forwardTarget, ...(splicedEnvelope === undefined ? [] : [splicedEnvelope.kind])]
 			.map((kind) => `(args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(kind, nodeMap, kindEntries)})`)
 			.join(' || ');
@@ -2516,7 +2517,7 @@ function fieldCarryingFactoryText(
 			);
 		} else {
 			if (!directParamOptional && targetTakesNoArgs) {
-				wrapper.push(`  if (args.length === 0 || args[0] === undefined) {`, `    return _${fn}(${targetBuilt('...args.slice(1)')} as Parameters<typeof _${fn}>[0]);`, `  }`);
+				wrapper.push(`  if (args.length === 0 || args[0] === undefined) {`, `    return _${fn}(${targetBuilt(omittedInputArgs)} as Parameters<typeof _${fn}>[0]);`, `  }`);
 			}
 			wrapper.push(
 				`  if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {`,
