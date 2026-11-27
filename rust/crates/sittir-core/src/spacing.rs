@@ -897,13 +897,15 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         let kind = crate::render::RenderSink::kind_of(self, coord);
         let toward = self.levels_toward_holes(holes)?;
         let mut at = span.range().start;
+        let mut filled = None;
         for (index, hole) in holes.iter().enumerate() {
             let text = run(at..(hole.range.start as usize).max(at), false);
-            let text = if index == 0 {
-                self.open_leaf(kind, &text)?;
-                text.as_str()
-            } else {
-                self.after_hole(&text)
+            let text = match filled {
+                None => {
+                    self.open_leaf(kind, &text)?;
+                    text.as_str()
+                }
+                Some(side) => self.after_hole(&text, side),
             };
             let body = text.trim_end_matches([' ', '\t', '\n']);
             self.write_chunk(body)?;
@@ -921,10 +923,14 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             let levels = self.levels();
             self.hole_indent = Some(([Shift::line_indent(shift.as_ref(), source, hole.line as usize), self.indent.repeat(toward[index])].concat(), levels));
             hole.fill(self)?;
+            filled = Some(hole.side);
             at = at.max(hole.range.end as usize);
         }
         let text = run(at..span.range().end, true);
-        let last = self.after_hole(&text);
+        let last = match filled {
+            Some(side) => self.after_hole(&text, side),
+            None => text.as_str(),
+        };
         let closed = self.close_leaf(kind, last);
         self.hole_indent = None;
         closed
@@ -1001,10 +1007,13 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// its start spells the gap after the hole, so the seam its side left
     /// writes nothing, save that a whitespace entry's seam takes the place
     /// of the gap, and a line break its side left, or one its text ended
-    /// in, the place of an in-line gap.
-    fn after_hole<'t>(&mut self, text: &'t str) -> &'t str {
+    /// in, the place of an in-line gap. A hole past its node, a trailing or
+    /// inner side's, leaves such a gap where the source wrote no whitespace
+    /// too; a leading side's hole ends where its node starts, so the seam to
+    /// its node is the side's own.
+    fn after_hole<'t>(&mut self, text: &'t str, side: crate::trivia_table::TriviaSide) -> &'t str {
         let gap = text.len() - text.trim_start_matches([' ', '\t', '\n']).len();
-        if gap == 0 {
+        if gap == 0 && side == crate::trivia_table::TriviaSide::Leading {
             return text;
         }
         if (self.seam_token == Some(SeamToken::Whitespace) && !self.seam_is_join) || ((self.held_breaks() || self.at_line_start()) && !text[..gap].contains('\n')) {

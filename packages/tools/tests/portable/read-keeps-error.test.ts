@@ -1,9 +1,10 @@
 // A parse ERROR is source content: wherever the parse puts it, the portable
 // read carries the node that holds it, and that node builds back as its
 // source, in both storages. An ERROR before a flag's keyword is passed to the
-// slot the flag qualifies, so every render writes it, an edit inside its
-// holder included, and the rebuild writes it after the keyword. A comment is
-// trivia and keeps its own placement.
+// slot the flag qualifies, so every render writes it. A side written inside
+// its holder renders the holder's source around the side, so the ERROR stays
+// where the source has it, while a rebuild writes it after the keyword. A
+// comment is trivia and keeps its own placement.
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { portableRuntime, type PortableCarry, type PortableRuntime } from '@sittir/common/engine';
@@ -34,9 +35,14 @@ const ROWS: readonly (readonly [Grammar, string, number])[] = [
 ];
 
 const MOVED: readonly (readonly [string, string, string, string])[] = [
-	['fn f() {\n    let y = & @ mut x;\n}\n', 'x', 'fn f() {\n    let y = &mut @ x;\n}\n', 'fn f() {\n    let y = &mut @ x /* r */;\n}\n'],
-	['fn f() {\n    let @ mut x = 1;\n}\n', 'x', 'fn f() {\n    let mut @ x = 1;\n}\n', 'fn f() {\n    let mut @ x /* r */ = 1;\n}\n'],
-	['static @ mut X: i32 = 1;\n', 'X', 'static mut @ X: i32 = 1;\n', 'static mut @ X /* r */: i32 = 1;\n']
+	['fn f() {\n    let y = & @ mut x;\n}\n', 'x', 'fn f() {\n    let y = &mut @ x;\n}\n', 'fn f() {\n    let y = & @ mut x /* r */;\n}\n'],
+	['fn f() {\n    let @ mut x = 1;\n}\n', 'x', 'fn f() {\n    let mut @ x = 1;\n}\n', 'fn f() {\n    let @ mut x /* r */ = 1;\n}\n'],
+	['static @ mut X: i32 = 1;\n', 'X', 'static mut @ X: i32 = 1;\n', 'static @ mut X /* r */: i32 = 1;\n']
+];
+
+const BLOCK_COMMENTED: readonly (readonly [string, string])[] = [
+	['def f():\n    x = 1 @\n', 'def f():\n    x = 1 @ # r\n'],
+	['if x:\n    y $\n', 'if x:\n    y $ # r\n']
 ];
 
 type RoundTrip = { readonly carried: readonly (readonly [number, PortableCarry])[]; readonly built: string };
@@ -77,9 +83,15 @@ describe.each(['object', 'arena'] as const)('a read never drops an ERROR, in %s 
 		expect(String(root.$render())).toBe(edited);
 	});
 
-	for (const [source] of MOVED) it.todo(`${JSON.stringify(source)} builds back exactly once an edited parsed node's render writes its source runs, in both storages`);
-	for (const [, source] of ROWS.filter(([grammar]) => grammar === 'python'))
-		it.todo(`${JSON.stringify(source)} keeps the ERROR when a comment is written after its block once an edited parsed node's render writes its source runs, in both storages`);
+	it.each(BLOCK_COMMENTED)('%j keeps the ERROR when a comment is written after its block', (source, edited) => {
+		const root = py.engine.parse(source);
+		const block = root.$query().$descendants.ofType(python.kinds.Block).at(0);
+		if (block === undefined || typeof block !== 'object') throw new Error('expected a block');
+		block.$trivia.trailing(py.engine.build.comment(' r'));
+		expect(String(root.$render())).toBe(edited);
+	});
+
+	for (const [source] of MOVED) it.todo(`${JSON.stringify(source)} builds back exactly once a rebuilt node renders its source runs, in both storages`);
 
 	it("rebuilds a comment between a self parameter's tokens without it, carrying nothing", () => {
 		expect(roundTrip.rust('fn f(&mut /*c*/ self) {}\n')).toEqual({ carried: [], built: 'fn f(&mut self) {}\n' });

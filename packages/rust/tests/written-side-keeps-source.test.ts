@@ -38,6 +38,31 @@ describe.each(['object', 'arena'] as const)('a side written to a parsed node rep
 		rendersAs(root, 'fn f() {\n    a(); // t\n\n    b();\n}\n\n\nfn g() {}\n');
 	});
 
+	describe("the gap after a trailing side written to a parsed leaf, where the source wrote none", () => {
+		const leafIn = (root: Root, name: string) => {
+			const leaf = [...root.$query().$descendants.ofType(engine.kinds.Identifier)].find((node) => typeof node === 'object' && node.$text() === name);
+			if (leaf === undefined || typeof leaf !== 'object') throw new Error(`expected the identifier ${name}`);
+			return leaf;
+		};
+		const block = build.blockComment(build.blockCommentRegular(' r '));
+
+		it.each([
+			['fn f() {\n    let y = &mut x;\n}\n', 'fn f() {\n    let y = &mut x /* r */;\n}\n'],
+			['fn f() {\n    g(x, y);\n}\n', 'fn f() {\n    g(x /* r */, y);\n}\n'],
+			['static mut x: i32 = 1;\n', 'static mut x /* r */: i32 = 1;\n']
+		])('stays tight after a block comment: %j', (source, expected) => {
+			const root = engine.parse(source);
+			leafIn(root, 'x').$trivia.trailing(block);
+			rendersAs(root, expected);
+		});
+
+		it('breaks the line after a line comment, at its line indent', () => {
+			const root = engine.parse('fn f() {\n    let y = &mut x;\n}\n');
+			leafIn(root, 'x').$trivia.trailing(build.lineComment(' r'));
+			rendersAs(root, 'fn f() {\n    let y = &mut x // r\n    ;\n}\n');
+		});
+	});
+
 	it('replaces a leading side from where its first comment starts to where its node starts', () => {
 		const root = engine.parse('fn f() {\n    a();\n      // old\n    b();\n}\n');
 		statementAt(root, 0, 1).$trivia.leading(build.lineComment(' new'));
@@ -124,6 +149,12 @@ describe.each(['object', 'arena'] as const)('a side written to a parsed node rep
 			const root = engine.parse('fn f() {\n    x /* += */ +=  1;\n}\n');
 			writeUnitSides(assignmentIn(root), [{ slot: '_operator', item: 0, trailing: [block(' t ')] }]);
 			rendersAs(root, 'fn f() {\n    x /* += */ += /* t */  1;\n}\n');
+		});
+
+		it('keeps the gap after a trailing side tight where the source wrote none', () => {
+			const root = engine.parse('fn f() {\n    x +=1;\n}\n');
+			writeUnitSides(assignmentIn(root), [{ slot: '_operator', item: 0, trailing: [block(' t ')] }]);
+			rendersAs(root, 'fn f() {\n    x += /* t */1;\n}\n');
 		});
 
 		it("finds a list's unit by counting the list's items", () => {
