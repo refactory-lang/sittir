@@ -74,38 +74,16 @@ export function patternParts(source: string): readonly PatternPart[] | undefined
 			at = end + 1;
 			continue;
 		}
-		const atom = literalAtom(piece);
-		if (atom === undefined) return undefined;
-		pushLit(atom);
+		if (piece.kind === 'escape') {
+			const next = piece.text[1];
+			if (next === undefined) return undefined;
+			if (/[A-Za-z0-9]/.test(next) && CONTROL_ESCAPES[next] === undefined) return undefined;
+			pushLit(CONTROL_ESCAPES[next] ?? next);
+		} else if (piece.kind !== 'char' || REGEX_SPECIALS.includes(piece.text)) return undefined;
+		else pushLit(piece.text);
 		at += piece.text.length;
 	}
 	return parts;
-}
-
-function literalAtom(piece: PatternPiece): string | undefined {
-	if (piece.kind === 'escape') {
-		const next = piece.text[1];
-		if (next === undefined) return undefined;
-		if (/[A-Za-z0-9]/.test(next) && CONTROL_ESCAPES[next] === undefined) return undefined;
-		return CONTROL_ESCAPES[next] ?? next;
-	}
-	return piece.kind === 'char' && !REGEX_SPECIALS.includes(piece.text) ? piece.text : undefined;
-}
-
-const MINIMUM_REPEATS: Readonly<Record<string, number>> = { '+': 1, '*': 0, '?': 0 };
-
-export function shortestPatternText(source: string): string | undefined {
-	let text = '';
-	for (let at = 0; at < source.length; ) {
-		const piece = pieceAt(source, at);
-		const atom = literalAtom(piece);
-		if (atom === undefined) return undefined;
-		at += piece.text.length;
-		const repeats = MINIMUM_REPEATS[source.charAt(at)];
-		if (repeats !== undefined) at += 1;
-		text += atom.repeat(repeats ?? 1);
-	}
-	return text;
 }
 
 export function patternLiteral(source: string): string | undefined {

@@ -17,7 +17,7 @@ import type {
 	LabelProvenance
 } from '../../types/rule.ts';
 import { isBlank, isEnumChoiceRule, collectFixedLiteral } from '../../dsl/rule-patterns.ts';
-import { shortestPatternText } from '../../util/pattern-pieces.ts';
+import { patternDfa, uniqueShortestAccepted } from './pattern-automaton.ts';
 import { emitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
 import {
 	literalTextOf,
@@ -1718,7 +1718,8 @@ export interface SeparatorTextCtx {
 export function separatorTextOfArm(arm: SeparatorTokenArm, owner: string, ctx: SeparatorTextCtx): string {
 	if (arm.type === STRING) return arm.value;
 	const node = ctx.nodes.get(arm.name);
-	const text = fixedTextOfKind(node) ?? (node instanceof AssembledPattern && node.pattern !== undefined ? shortestPatternText(node.pattern) || undefined : undefined);
+	const dfa = node instanceof AssembledPattern && node.pattern !== undefined ? patternDfa(node.pattern) : undefined;
+	const text = fixedTextOfKind(node) ?? ((dfa === undefined ? undefined : uniqueShortestAccepted(dfa)) || undefined);
 	if (text === undefined) {
 		throw emitShapeFailure({
 			code: 'separator-without-text',

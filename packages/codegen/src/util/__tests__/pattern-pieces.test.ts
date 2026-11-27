@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asLexed, closingParen, patternLiteral, pieceAt, pieces, sameUpToGroups, shortestPatternText, withoutCaptures } from '../pattern-pieces.ts';
+import { asLexed, closingParen, patternLiteral, pieceAt, pieces, sameUpToGroups, withoutCaptures } from '../pattern-pieces.ts';
 
 const shape = (source: string) => [...pieces(source)].map((piece) => [piece.kind, piece.at, piece.text, 'group' in piece ? piece.group : undefined]);
 
@@ -143,18 +143,5 @@ describe('patternLiteral', () => {
 
 	it('reads no text from a pattern with a choice, a class, a quantifier, a class escape or a group', () => {
 		for (const source of ['a|b', '[ab]', 'a+', '\\d', '(?<x>a)', '(a)', '.']) expect(patternLiteral(source), source).toBeUndefined();
-	});
-});
-
-describe('shortestPatternText', () => {
-	it('reads the one shortest text of literal characters each repeated by one quantifier', () => {
-		expect(shortestPatternText('\\n+')).toBe('\n');
-		expect(shortestPatternText('\\r?\\n')).toBe('\n');
-		expect(shortestPatternText('a*b+c?d')).toBe('bd');
-		expect(shortestPatternText('\\/\\/')).toBe('//');
-	});
-
-	it('reads no text from a pattern with a choice, a class, a class escape, a group, a counted or lazy quantifier, or a dot', () => {
-		for (const source of ['a|b', '[ab]+', '\\s+', '(ab)+', '(?:a)', 'a{2}', 'a+?', 'a**', '.+', '+a']) expect(shortestPatternText(source), source).toBeUndefined();
 	});
 });

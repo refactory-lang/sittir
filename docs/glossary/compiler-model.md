@@ -5201,6 +5201,10 @@ The characters that label some edge of the automaton, as one set.
 
 Whether some text, the empty text included, is accepted by both patterns. It searches the pairs of states the two automata reach on a shared character.
 
+### `packages/codegen/src/compiler/model/pattern-automaton.ts::uniqueShortestAccepted`
+
+The shortest text a pattern's DFA accepts (`shortestAccepted`), returned only when exactly one string has that length. Otherwise nothing. It counts the accepted strings of that length by walking the DFA one length step at a time: each edge multiplies by its character set's size, and the count is capped at two. Because the automaton is deterministic, distinct paths are distinct strings. `\n+` and `\r?\n` give a newline; `[\r\n]+` and `\s+` give nothing. A separator kind that is a pattern takes its text from here (`node-map.ts::separatorTextOfArm`).
+
 ### `packages/codegen/src/compiler/model/ir-surface.ts::isFlatLeafOrKeyword`
 
 ```text
@@ -6328,7 +6332,7 @@ Joins the arm stamps of two same-named slots that merge into one, whether `merge
 
 ### `packages/codegen/src/compiler/model/node-map.ts::separatorTextOfArm`
 
-The text sittir writes for one separator arm of a list. A string arm writes its value. A fixed-text kind writes its literal (`fixedTextOfKind`). A pattern kind writes the one shortest text its pattern admits (`util/pattern-pieces.ts::shortestPatternText`), so Go's statement terminator `\n+` writes a newline. Any other separator kind halts emit with `separator-without-text`, naming the kind and its owner. This is the only derivation of a separator's text. `separatorCandidateTexts` maps a list's arms through it, and `planRenderOptions` runs the separator site's default arm (`site-preferences.ts::PreferenceArm`) through it. It is called at emit, after `stampIrSurface` has stamped `renderAs` texts: TypeScript's `_automatic_semicolon` has its text (`'\n'`) only from `renderAs`.
+The text sittir writes for one separator arm of a list. A string arm writes its value. A fixed-text kind writes its literal (`fixedTextOfKind`). A pattern kind writes the one shortest text its pattern admits (`pattern-automaton.ts::uniqueShortestAccepted`, read from the pattern's DFA), so Go's statement terminator `\n+` writes a newline. Any other separator kind halts emit with `separator-without-text`, naming the kind and its owner. This is the only derivation of a separator's text. `separatorCandidateTexts` maps a list's arms through it, and `planRenderOptions` runs the separator site's default arm (`site-preferences.ts::PreferenceArm`) through it. It is called at emit, after `stampIrSurface` has stamped `renderAs` texts: TypeScript's `_automatic_semicolon` has its text (`'\n'`) only from `renderAs`.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

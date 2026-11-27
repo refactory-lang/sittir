@@ -574,6 +574,19 @@ export function shortestAccepted(dfa: PatternDfa): string | undefined {
 	return shortestPathFrom(dfa, 0, lowestCode);
 }
 
+export function uniqueShortestAccepted(dfa: PatternDfa): string | undefined {
+	const shortest = shortestAccepted(dfa);
+	if (shortest === undefined) return undefined;
+	let ways = new Map<number, number>([[0, 1]]);
+	for (const _ of shortest) {
+		const next = new Map<number, number>();
+		for (const [at, count] of ways) for (const edge of dfa.states[at]!.edges) next.set(edge.to, Math.min(2, (next.get(edge.to) ?? 0) + count * edge.set.size()));
+		ways = next;
+	}
+	const accepted = [...ways].reduce((sum, [at, count]) => (dfa.states[at]!.accepting ? sum + count : sum), 0);
+	return accepted === 1 ? shortest : undefined;
+}
+
 export function shortestPrintableAccepted(dfa: PatternDfa, prefix: string = ''): string | undefined {
 	const at = readFrom(dfa, 0, prefix);
 	if (at === undefined) return undefined;

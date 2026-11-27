@@ -5,7 +5,7 @@ import { allGrammars, grammarPackage, sittirDirOf } from '../../../grammars.ts';
 import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { anchoredLeafRegex } from '../leaf-pattern.ts';
-import { acceptsSomeEndingWith, acceptsSomeStartingWith, admitsInside, armsThrough, CharSet, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, lineBreaksOf, opensLineEnd, patternDfa, patternsMeet, requiresNonSpace, shortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
+import { acceptsSomeEndingWith, acceptsSomeStartingWith, admitsInside, armsThrough, CharSet, dfaAccepts, endsWithLineBreak, includesNonEmpty, leadingChars, lineBreaksOf, opensLineEnd, patternDfa, patternsMeet, requiresNonSpace, shortestAccepted, uniqueShortestAccepted, type PatternDfa } from '../pattern-automaton.ts';
 import { lineTerminated, lineTerminatedKinds, triviaKinds } from '../trivia.ts';
 
 type NodeMap = Awaited<ReturnType<typeof compileGrammar>>['nodeMap'];
@@ -283,5 +283,21 @@ describe('acceptsSomeStartingWith and acceptsSomeEndingWith', () => {
 	it('finds the text anywhere a run of the pattern can stop', () => {
 		expect(acceptsSomeEndingWith(dfa('a(?:b|cL)'), 'L')).toBe(true);
 		expect(acceptsSomeEndingWith(dfa('a(?:b|cL)c'), 'L')).toBe(false);
+	});
+});
+
+describe('uniqueShortestAccepted', () => {
+	const dfa = (pattern: string): PatternDfa => patternDfa(pattern)!;
+
+	it('reads the shortest text a pattern admits when exactly one string has that length', () => {
+		expect(uniqueShortestAccepted(dfa('\\n+'))).toBe('\n');
+		expect(uniqueShortestAccepted(dfa('\\r?\\n'))).toBe('\n');
+		expect(uniqueShortestAccepted(dfa('a*b+c?d'))).toBe('bd');
+		expect(uniqueShortestAccepted(dfa('(ab)+'))).toBe('ab');
+		expect(uniqueShortestAccepted(dfa('ab|abc'))).toBe('ab');
+	});
+
+	it('reads nothing when two strings share the shortest length', () => {
+		for (const pattern of ['[\\r\\n]+', 'a|b', '\\s+', '.']) expect(uniqueShortestAccepted(dfa(pattern)), pattern).toBeUndefined();
 	});
 });
