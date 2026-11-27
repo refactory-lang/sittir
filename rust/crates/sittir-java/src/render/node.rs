@@ -32427,8 +32427,8 @@ fn render_dimensions<N: DimensionsFields + ?Sized>(node: &N, w: &mut dyn ::sitti
         after: node.annotations_separator_space().unwrap_or(KindId::BLANK),
         leading: false,
         trailing: false,
-        head: None,
-        tail: None,
+        head: Some(options::SITE_DIMENSIONS_ANNOTATIONS_START),
+        tail: Some(options::SITE_DIMENSIONS_ANNOTATIONS_END),
         units: ::sittir_core::layout::BodyLayout::list_units(node.layout(), "_annotations"),
         join: ::sittir_core::render::JoinArm::NONE,
     };

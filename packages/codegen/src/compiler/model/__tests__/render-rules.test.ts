@@ -680,6 +680,12 @@ describe('seamRenderRules', () => {
 			expect([...spaceRenderRules({ nodeMap, kindEntries }).noExtrasLists!].sort()).toEqual(['r8', 'r9']);
 		});
 
+		it('stamps no list at a repeated sequence, which writes no slot of its own', () => {
+			const group = { ...seq(str('['), str(']')), id: 'r8', multiplicity: 'array', immediate: true } as unknown as RenderRule;
+			const nodeMap = nodeMapOf({ dims: group }, { r8: 'annotations' });
+			expect([...spaceRenderRules({ nodeMap, kindEntries }).noExtrasLists!]).toEqual([]);
+		});
+
 		it('stamps a list whose elements the join seams prove tight', () => {
 			const nodeMap = nodeMapOf(quoted({ absorbedIds: ['r9'] }), { r8: 'elements' });
 			const tight = new Map([['r9', new Set(['element'] as const)]]);

@@ -7852,8 +7852,10 @@ export namespace Dimensions {
 			readonly after?: LayoutKindId;
 			readonly annotations?: {
 				readonly annotation?: { readonly after?: LayoutKindId };
+				readonly end?: LayoutKindId;
 				readonly markerAnnotation?: { readonly after?: LayoutKindId };
 				readonly separator?: WhitespaceKindId;
+				readonly start?: LayoutKindId;
 			};
 			readonly before?: LayoutKindId;
 			readonly lbrack?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };

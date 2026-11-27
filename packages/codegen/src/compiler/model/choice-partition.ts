@@ -3,7 +3,7 @@ import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { CHOICE, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import type { Multiplicity, RenderRule, RuleId } from '../../types/rule.ts';
 import type { EmitShapeFailure } from '../diagnostics/emit-diagnostics.ts';
-import { concreteKindsOf, isFixedTextLeaf, isMultiple, type AssembledNode, type AssembledNonterminal } from './node-map.ts';
+import { concreteKindsOf, isFixedTextLeaf, isMultiple, slotWrittenAt, type AssembledNode, type AssembledNonterminal } from './node-map.ts';
 import { isSeamChoice } from './render-rules.ts';
 
 export interface ArmTest {
@@ -129,8 +129,8 @@ function sharedSlotFailure(kind: string, rule: RuleId, groups: readonly ArmGroup
 }
 
 function partitionOfChoice(kind: string, choice: Extract<RenderRule, { type: 'CHOICE' }>, input: ChoicePartitionInput): ChoicePartition | undefined {
-	const owned = input.slotByRuleId.get(kind);
-	const slotOf = (rule: RenderRule): AssembledNonterminal | undefined => (rule.id === undefined ? undefined : owned?.get(rule.id));
+	const owned = { owned: input.slotByRuleId.get(kind) };
+	const slotOf = (rule: RenderRule): AssembledNonterminal | undefined => slotWrittenAt(rule, owned);
 	const multiplicityOf = (rule: RenderRule): Multiplicity | undefined => (rule as { multiplicity?: Multiplicity }).multiplicity;
 	const requiredParts = (rule: RenderRule): readonly (readonly string[])[] => {
 		const multiplicity = multiplicityOf(rule);
@@ -300,7 +300,7 @@ export function slotChoiceTextFailuresOf(input: ChoicePartitionInput): ReadonlyM
 		const own: EmitShapeFailure[] = [];
 		walker.fold(rule, undefined, (_, r) => {
 			if (r.type !== CHOICE || r.id === undefined || isSeamChoice(r)) return undefined;
-			const slot = input.slotByRuleId.get(kind)?.get(r.id);
+			const slot = slotWrittenAt(r, { owned: input.slotByRuleId.get(kind) });
 			const failure = slot === undefined ? undefined : slotChoiceTextFailure(kind, r, slot, input);
 			if (failure !== undefined) own.push(failure);
 			return undefined;
@@ -316,7 +316,7 @@ export function choicePartitionsOf(input: ChoicePartitionInput): ReadonlyMap<str
 		if (!input.nodes.has(kind)) continue;
 		const own = new Map<RuleId, ChoicePartition>();
 		walker.fold(rule, undefined, (_, r) => {
-			if (r.type !== CHOICE || r.id === undefined || isSeamChoice(r) || input.slotByRuleId.get(kind)?.has(r.id) === true) return undefined;
+			if (r.type !== CHOICE || r.id === undefined || isSeamChoice(r) || slotWrittenAt(r, { owned: input.slotByRuleId.get(kind) }) !== undefined) return undefined;
 			const partition = partitionOfChoice(kind, r, input);
 			if (partition !== undefined) own.set(r.id, partition);
 			return undefined;

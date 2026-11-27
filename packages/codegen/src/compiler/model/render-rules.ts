@@ -8,7 +8,7 @@ import { aliasTargetOf, type RenderRule, type Rule, type RuleAnnotations, type R
 import { ALIAS, CHOICE, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { RuleWalker } from '../../dsl/rule-walker.ts';
 import { matchesWordShape } from '../../util/word-matcher.ts';
-import { type AssembledNode, AbstractAssembledCompound, AssembledLexedPattern, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, layoutNodeOf, literalLeafText, admitsOnlyTight, elementsAdmitOnlyTight, startsImmediateWhenPresent, leftmostTerminalImmediate, type AdmitsOnlyTightCtx } from './node-map.ts';
+import { type AssembledNode, AbstractAssembledCompound, AssembledLexedPattern, AssembledEnum, AssembledKeyword, AssembledPolymorph, concreteKindsOf, isFixedTextLeaf, isVisiblePunctuationLeaf, layoutNodeOf, literalLeafText, admitsOnlyTight, elementsAdmitOnlyTight, startsImmediateWhenPresent, leftmostTerminalImmediate, slotWrittenAt, type AdmitsOnlyTightCtx } from './node-map.ts';
 import { slotElementKinds } from '../../emitters/node-common.ts';
 import { supertypeMembersByDisplayName } from './supertype-members.ts';
 import { lineTerminatedKinds, triviaKinds } from './trivia.ts';
@@ -238,7 +238,7 @@ function collectGaps(
 		walker.fold(rule, undefined, (_, r) => {
 			const id = bag(r).id;
 			if (id === undefined || !isRepeated(r) || gaps.has(id)) return undefined;
-			const slot = config.nodeMap.slotByRuleId.get(kind)?.get(id);
+			const slot = slotWrittenAt(r, { owned: config.nodeMap.slotByRuleId.get(kind) });
 			if (slot === undefined) return undefined;
 			if (admitsNoExtras(r, rules, externals, true, config.tight, elementsAdmitOnlyTight)) {
 				if (bag(r).tokenized === true || !spaceIsExtra || admitsNoExtras(r, rules, externals, false, config.tight, elementsAdmitOnlyTight)) for (const listed of [id, ...slot.sourceRuleIds]) noExtrasLists.add(listed);
@@ -647,7 +647,7 @@ function literalSlotOf(rule: RenderRule, kind: string, config: RenderRulesConfig
 	if (!texts.some((text) => text.trim() !== '')) return undefined;
 	const punctuated = texts.some((text) => text.trim() !== '' && !matchesWordShape(text, config.nodeMap.wordMatcher));
 	if (!punctuated && isOptionalRule(rule)) return undefined;
-	if (r.id !== undefined && config.nodeMap.slotByRuleId.get(kind)?.get(r.id)?.registeredOption === 'choice') {
+	if (slotWrittenAt(rule, { owned: config.nodeMap.slotByRuleId.get(kind) })?.registeredOption === 'choice') {
 		const spellings = new Set(texts.filter((text) => text.trim() !== ''));
 		return spellings.size === 1 ? tokenNameOfText([...spellings][0]!, config.kindEntries) : undefined;
 	}
@@ -1054,8 +1054,7 @@ function withKindEdges(
 	const recordArms = (side: SeparatorSide): void => {
 		if (r.type !== SEQ || r.members === undefined || flanksOf(rule) !== undefined) return;
 		const beside = side === 'before' ? r.members[0] : r.members[r.members.length - 1];
-		const slot = beside === undefined || bag(beside).multiplicity !== undefined ? undefined : bag(beside).id;
-		if (slot === undefined || !config.nodeMap.slotByRuleId.get(kind)?.has(slot)) return;
+		if (beside === undefined || bag(beside).multiplicity !== undefined || slotWrittenAt(beside, { owned: config.nodeMap.slotByRuleId.get(kind) }) === undefined) return;
 		const first = new Map<string, EdgeToken>();
 		for (const edgeToken of edgeTokensOf(rule, side === 'before' ? 'first' : 'last', config) ?? []) if (!first.has(edgeToken.token)) first.set(edgeToken.token, edgeToken);
 		if (first.size < 2) return;
@@ -1248,8 +1247,7 @@ export function spacingSitesOf(renderRules: RenderRules, nodeMap: NodeMap): Rule
 }
 
 function slotOf(kind: string, rule: RenderRule, nodeMap: NodeMap): string {
-	const id = bag(rule).id;
-	const slot = id === undefined ? undefined : nodeMap.slotByRuleId.get(kind)?.get(id)?.name;
+	const slot = slotWrittenAt(rule, { owned: nodeMap.slotByRuleId.get(kind) })?.name;
 	if (slot === undefined) throw new Error(`render rules: the spaced separator in '${kind}' belongs to no slot`);
 	return slot;
 }

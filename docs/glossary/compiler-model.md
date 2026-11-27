@@ -3464,8 +3464,8 @@ the seated sites from them and `seatedUnitKinds` finds the units they hold.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::slotOf`
 
-The slot a repeat's rule id maps to. A spaced separator outside any slot
-fails codegen.
+The name of the slot a repeat writes (`slotWrittenAt`). A spaced separator
+outside any slot fails codegen.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::renderedElementKinds`
 
@@ -6359,7 +6359,7 @@ What `tightSlotArmsOf` answers for one slot, per kind of arm: `kind` for an arm 
 
 ### `packages/codegen/src/compiler/model/node-map.ts::slotWrittenAt`
 
-The slot a rule of an owner kind writes: the slot its own id maps to in the owner's entry of `NodeMap.slotByRuleId`. A sequence writes no slot of its own, since its members write theirs, even when its id is among a slot's `sourceRuleIds`; neither does a rule with no id. This is the one answer to where a slot is written: the template emitter writes a slot reference there (`lookupSlot`), a minimal build fills it there (`armSeats`), and the arms of its per-slot child enum are judged tight there (`tightSlotArmsOf`).
+The slot a rule of an owner kind writes: the slot its own id maps to in the owner's entry of `NodeMap.slotByRuleId`. A sequence writes no slot of its own, since its members write theirs, even when its id is among a slot's `sourceRuleIds`; neither does a rule with no id. This is the one answer to where a slot is written, and every reader that asks which slot a rule holds reads it: the template emitter writes a slot reference there (`lookupSlot`), a minimal build fills it there (`armSeats`), the arms of its per-slot child enum are judged tight there (`tightSlotArmsOf`), the render rules find a list's slot, a spaced separator's slot, a literal's registered choice and a kind edge's slot there (`collectGaps`, `slotOf`, `literalSlotOf`, `withKindEdges`), and the choice partitions find the slot a choice or its arm holds there (`choicePartitionsOf`, `slotChoiceTextFailuresOf`).
 
 ### `packages/codegen/src/compiler/model/node-map.ts::OwnedSlotsCtx`
 
