@@ -261,6 +261,10 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// node's lines are (`slice`), and the levels open when the hole's fill
     /// began, past which each level a template opens inside it indents.
     hole_indent: Option<(String, usize)>,
+    /// The levels noted for each node a render that counts holes' levels
+    /// counted (`RenderSink::count_levels`), by its place in that render's
+    /// list, read once the render ends (`SpacingWriter::levels_toward`).
+    counted: Vec<(usize, usize)>,
     /// The free-text leaves whose built text is checked (`with_leaf_probe`).
     probe: Option<LeafProbe<'a>>,
     /// The kind of the leaf whose text comes next, while a probe is attached.
@@ -389,36 +393,105 @@ struct HeldContext {
     tail: Option<String>,
 }
 
-/// The table a render that counts a hole's levels reads through
+/// Whether `one` and `other` name the same node of `sources`.
+fn same_node(sources: &dyn crate::render::SourceTable, one: crate::slot::NodeIdOrCoordinate<'_>, other: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+    use crate::slot::NodeIdOrCoordinate::{Coordinate, NodeId};
+    match (one, other) {
+        (NodeId { id, .. }, NodeId { id: node, .. }) => id == node || sources.same_node(id, node),
+        (Coordinate(at), Coordinate(node)) => at.tree == node.tree && at.index == node.index,
+        _ => false,
+    }
+}
+
+/// Whether `span` holds the whole of `other`.
+fn spans_hold(span: crate::types::Span, other: crate::types::Span) -> bool {
+    span.start <= other.start && other.end <= span.end
+}
+
+/// The table a render that counts holes' levels reads through
 /// (`SpacingWriter::levels_toward`): `sources`' answers, except that a
-/// write lies in a node exactly when it holds `node` (`edited_within`), so
-/// the render writes each node holding `node` through its template and
-/// every other as its source, reading no templates beyond those; and the
-/// slice of `node`, or of a node holding it that renders as its source,
-/// ends the render (`holes`), which it notes in `reached`.
+/// write lies in a node exactly when it holds one of `nodes`
+/// (`edited_within`), so the render writes each node holding one through
+/// its template and every other as its source, reading no templates beyond
+/// those; and the slice of each of `nodes`, or of a node holding one that
+/// renders as its source, opens with a range `Counted` fills (`holes`),
+/// which notes the levels there. `starts` orders `nodes` by where they
+/// start; `given` marks each node a range was given for, and `left` counts
+/// the rest.
 struct MeasuringTable<'a> {
     sources: &'a dyn crate::render::SourceTable,
-    node: crate::slot::NodeIdOrCoordinate<'a>,
-    span: crate::types::Span,
-    reached: std::cell::Cell<bool>,
+    source: Option<&'a str>,
+    nodes: Vec<(crate::slot::NodeIdOrCoordinate<'a>, crate::types::Span)>,
+    starts: Vec<usize>,
+    given: Vec<std::cell::Cell<bool>>,
+    left: std::cell::Cell<usize>,
 }
 
 impl MeasuringTable<'_> {
-    fn is_node(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
-        use crate::slot::NodeIdOrCoordinate::{Coordinate, NodeId};
-        match (at, self.node) {
-            (NodeId { id, .. }, NodeId { id: node, .. }) => id == node || self.sources.same_node(id, node),
-            (Coordinate(at), Coordinate(node)) => at.tree == node.tree && at.index == node.index,
-            _ => false,
-        }
-    }
-
-    fn holds(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
-        let same_source = match (self.sources.source_of(at), self.sources.source_of(self.node)) {
+    /// The indexes of `nodes` within `span` of `at`'s source, its own
+    /// included.
+    fn within(&self, at: crate::slot::NodeIdOrCoordinate<'_>, span: crate::types::Span) -> impl Iterator<Item = usize> + '_ {
+        let same_source = match (self.sources.source_of(at), self.source) {
             (Some(one), Some(other)) => std::ptr::eq(one, other),
             _ => false,
         };
-        same_source && !self.is_node(at) && at.span(self.sources).is_some_and(|span| span.start <= self.span.start && self.span.end <= span.end)
+        let from = if same_source { self.starts.partition_point(|&node| self.nodes[node].1.start < span.start) } else { self.starts.len() };
+        self.starts[from..].iter().copied().take_while(move |&node| self.nodes[node].1.start <= span.end).filter(move |&node| spans_hold(span, self.nodes[node].1))
+    }
+
+    /// Whether `at` holds one of `nodes` other than itself.
+    fn holds(&self, at: crate::slot::NodeIdOrCoordinate<'_>) -> bool {
+        at.span(self.sources).is_some_and(|span| self.within(at, span).any(|node| !same_node(self.sources, at, self.nodes[node].0)))
+    }
+}
+
+/// What fills the range a measuring render opens the slice of a node it
+/// counts with (`MeasuringTable::holes`): the levels there noted for each
+/// of `nodes` (`RenderSink::count_levels`); the render ends after the
+/// `last` node it counts.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct Counted {
+    nodes: Vec<usize>,
+    last: bool,
+}
+
+impl crate::trivia::Framing for Counted {
+    fn frame_leading(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        w.count_levels(&self.nodes);
+        if self.last {
+            return Err(crate::render::RenderError::Measured);
+        }
+        Ok(())
+    }
+
+    fn frame_trailing(&self, _: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        Ok(())
+    }
+
+    fn frame_inner(&self, _: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        Ok(())
+    }
+}
+
+impl crate::trivia::FramedTrivia for Counted {
+    fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::RenderError> {
+        Ok(())
+    }
+
+    fn boxed_clone(&self) -> Box<dyn crate::trivia::FramedTrivia> {
+        Box::new(self.clone())
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
+
+    fn into_any(self: Box<Self>) -> Box<dyn std::any::Any> {
+        self
+    }
+
+    fn same_as(&self, other: &dyn crate::trivia::FramedTrivia) -> bool {
+        other.as_any().downcast_ref::<Self>() == Some(self)
     }
 }
 
@@ -468,11 +541,14 @@ impl crate::render::SourceTable for MeasuringTable<'_> {
     }
 
     fn holes(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Result<Vec<crate::trivia::Hole>, crate::render::RenderError> {
-        if self.is_node(coord) || self.holds(coord) {
-            self.reached.set(true);
-            return Err(coord.unknown().into());
+        let Some(span) = coord.span(self.sources) else { return Ok(Vec::new()) };
+        let nodes: Vec<usize> = self.within(coord, span).filter(|&node| !self.given[node].replace(true)).collect();
+        if nodes.is_empty() {
+            return Ok(Vec::new());
         }
-        Ok(Vec::new())
+        self.left.set(self.left.get() - nodes.len());
+        let fill = Counted { nodes, last: self.left.get() == 0 };
+        Ok(vec![crate::trivia::Hole { range: span.start..span.start, side: crate::trivia_table::TriviaSide::Leading, fill: Box::new(fill), line: span.start, ends_in: None, node: coord.into(), from: None }])
     }
 
     fn slot_layouts(&self, coord: crate::slot::NodeIdOrCoordinate<'_>) -> Vec<crate::layout::SlotLayout> {
@@ -607,6 +683,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             document: false,
             frames: Vec::new(),
             hole_indent: None,
+            counted: Vec::new(),
             excess: 0,
             glued: None,
             glued_open: None,
@@ -819,6 +896,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             if lf { moved } else { crate::line_endings::to_internal(&moved).into_owned() }
         };
         let kind = crate::render::RenderSink::kind_of(self, coord);
+        let toward = self.levels_toward_holes(holes)?;
         let mut at = span.range().start;
         for (index, hole) in holes.iter().enumerate() {
             let text = run(at..(hole.range.start as usize).max(at), false);
@@ -842,11 +920,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 self.glued = Some(Glued::InLine);
             }
             let levels = self.levels();
-            let toward = match &hole.from {
-                Some(from) => self.levels_toward(from, &hole.node)?,
-                None => 0,
-            };
-            self.hole_indent = Some(([Shift::line_indent(shift.as_ref(), source, hole.line as usize), self.indent.repeat(toward)].concat(), levels));
+            self.hole_indent = Some(([Shift::line_indent(shift.as_ref(), source, hole.line as usize), self.indent.repeat(toward[index])].concat(), levels));
             hole.fill(self)?;
             at = at.max(hole.range.end as usize);
         }
@@ -857,24 +931,58 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         closed
     }
 
-    /// The levels the templates from the node `from` names down to the node
-    /// `node` names open: `from` written through its template by a writer
-    /// of its own, under this writer's options, table and indentation unit,
-    /// through a table that writes each node holding `node` through its
-    /// template (`MeasuringTable`), and ended at the slice of `node`; none
-    /// when that render never slices `node`.
-    fn levels_toward(&self, from: &crate::slot::NodeIdOrOwnedCoordinate, node: &crate::slot::NodeIdOrOwnedCoordinate) -> Result<usize, crate::render::RenderError> {
-        let (Some(sources), Some(options), Some(table)) = (self.sources, self.options, self.table) else { return Ok(0) };
-        let at = node.at();
-        let span = at.span(sources).ok_or_else(|| at.unknown())?;
-        let measuring = MeasuringTable { sources, node: at, span, reached: std::cell::Cell::new(false) };
+    /// Each of `holes`' levels toward its node (`levels_toward`): one render
+    /// counts the holes whose breaks count from one node, save that a hole
+    /// whose node holds another's, or is held by it, is counted by a render
+    /// of its own; none for a hole whose node starts its line.
+    fn levels_toward_holes(&self, holes: &[crate::trivia::Hole]) -> Result<Vec<usize>, crate::render::RenderError> {
+        let mut toward = vec![0; holes.len()];
+        let Some(sources) = self.sources else { return Ok(toward) };
+        let spans = holes.iter().map(|hole| hole.node.at().span(sources).ok_or_else(|| hole.node.at().unknown())).collect::<Result<Vec<_>, _>>()?;
+        let nests = |one: usize, other: usize| !same_node(sources, holes[one].node.at(), holes[other].node.at()) && (spans_hold(spans[one], spans[other]) || spans_hold(spans[other], spans[one]));
+        let mut pending: Vec<usize> = (0..holes.len()).filter(|&hole| holes[hole].from.is_some()).collect();
+        while let Some(from) = pending.first().and_then(|&hole| holes[hole].from.as_ref()) {
+            let mut counted: Vec<usize> = Vec::new();
+            for &hole in &pending {
+                if holes[hole].from.as_ref() == Some(from) && counted.iter().all(|&other| !nests(hole, other)) {
+                    counted.push(hole);
+                }
+            }
+            let nodes: Vec<_> = counted.iter().map(|&hole| (holes[hole].node.at(), spans[hole])).collect();
+            for (&hole, levels) in counted.iter().zip(self.levels_toward(from, nodes)?) {
+                toward[hole] = levels;
+            }
+            pending.retain(|hole| !counted.contains(hole));
+        }
+        Ok(toward)
+    }
+
+    /// The levels the templates from the node `from` names down to each of
+    /// `nodes` open: `from` written through its template by a writer of its
+    /// own, under this writer's options, table and indentation unit,
+    /// through a table that writes each node holding one of `nodes` through
+    /// its template and notes the levels at each one's slice
+    /// (`MeasuringTable`), ended once each has them; none for a node that
+    /// render never slices.
+    fn levels_toward(&self, from: &crate::slot::NodeIdOrOwnedCoordinate, nodes: Vec<(crate::slot::NodeIdOrCoordinate<'_>, crate::types::Span)>) -> Result<Vec<usize>, crate::render::RenderError> {
+        let mut levels = vec![0; nodes.len()];
+        let (Some(sources), Some(options), Some(table)) = (self.sources, self.options, self.table) else { return Ok(levels) };
+        let mut starts: Vec<usize> = (0..nodes.len()).collect();
+        starts.sort_by_key(|&node| nodes[node].1.start);
+        let source = nodes.first().and_then(|&(node, _)| sources.source_of(node));
+        let given = nodes.iter().map(|_| std::cell::Cell::new(false)).collect();
+        let left = std::cell::Cell::new(nodes.len());
+        let measuring = MeasuringTable { sources, source, nodes, starts, given, left };
         let mut text = String::new();
         let mut w = SpacingWriter::new(&mut text, self.word).with_table(table).with_indent(self.indent).with_sources(&measuring).with_options(options);
         match crate::render::RenderSink::render_through_template(&mut w, from.at()) {
-            Err(_) if measuring.reached.get() => Ok(w.levels()),
-            Err(error) => Err(error),
-            Ok(()) => Ok(0),
+            Ok(()) | Err(crate::render::RenderError::Measured) => {}
+            Err(error) => return Err(error),
         }
+        for (node, at) in std::mem::take(&mut w.counted) {
+            levels[node] = at;
+        }
+        Ok(levels)
     }
 
     /// Text that starts with a line break breaks the line itself: a held
@@ -1871,6 +1979,11 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             self.merge_seam_with(LayoutKinds::NEWLINE, SeamStrength::Trivia);
         }
         self.line_end_held = self.line_end_held.max(Some(hold));
+    }
+
+    fn count_levels(&mut self, nodes: &[usize]) {
+        let at = self.levels();
+        self.counted.extend(nodes.iter().map(|&node| (node, at)));
     }
 
     fn drop_held_breaks(&mut self) {

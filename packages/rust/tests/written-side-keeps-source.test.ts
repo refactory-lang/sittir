@@ -67,6 +67,24 @@ describe('a side written to a parsed node replaces its range of the source, and 
 		rendersAs(root, 'impl X {\n    fn b() { // before\n        let x = 1; }\n}\n');
 	});
 
+	it('counts each range of a line at its own depth', () => {
+		const root = engine.parse('fn a() { let x = 1; } fn b() { if c { d(); } }\n');
+		statementAt(root, 0, 0).$trivia.leading(build.lineComment(' p'));
+		const call = root.$query().$descendants.ofType(engine.kinds.ExpressionStatement).at(1);
+		if (call === undefined || typeof call !== 'object') throw new Error('expected a call statement');
+		call.$trivia.leading(build.lineComment(' q'));
+		rendersAs(root, 'fn a() { // p\n    let x = 1; } fn b() { if c { // q\n        d(); } }\n');
+	});
+
+	it('counts a range whose node holds another range\'s node at its own depth', () => {
+		const root = engine.parse('fn a() { if c { d(); } }\n');
+		statementAt(root, 0, 0).$trivia.leading(build.lineComment(' p'));
+		const call = root.$query().$descendants.ofType(engine.kinds.ExpressionStatement).at(1);
+		if (call === undefined || typeof call !== 'object') throw new Error('expected a call statement');
+		call.$trivia.leading(build.lineComment(' q'));
+		rendersAs(root, 'fn a() { // p\n    if c { // q\n        d(); } }\n');
+	});
+
 	it('counts a level a site opens only where the template writes the site', () => {
 		const written = (source: string) => {
 			const root = indented.parse(source);

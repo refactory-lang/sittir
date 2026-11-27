@@ -22,6 +22,9 @@ pub enum RenderError {
     Record(crate::arena::ArenaError),
     /// No delimiter a composite derives fits its content.
     Delimiter(crate::delimiters::DelimiterRefusal),
+    /// The render that counts holes' levels has each count it asked for,
+    /// and goes no further.
+    Measured,
 }
 
 impl fmt::Display for RenderError {
@@ -33,6 +36,7 @@ impl fmt::Display for RenderError {
             #[cfg(feature = "arena")]
             Self::Record(e) => fmt::Display::fmt(e, f),
             Self::Delimiter(refusal) => fmt::Display::fmt(refusal, f),
+            Self::Measured => f.write_str("the render that counts holes' levels has each count"),
         }
     }
 }
@@ -896,6 +900,13 @@ pub trait RenderSink {
     /// body's start, and where it is a list's flank. A sink that holds no
     /// seam does nothing.
     fn drop_held_breaks(&mut self) {}
+    /// Notes, for each of `nodes`, the levels the next line indents: the
+    /// nodes a render that counts holes' levels counts here
+    /// (`SpacingWriter::levels_toward`), by their place in its list. A sink
+    /// that keeps no depth notes nothing.
+    fn count_levels(&mut self, nodes: &[usize]) {
+        let _ = nodes;
+    }
     /// Render trailing trivia that shares its owner's row, held until the
     /// anonymous tokens after the owner are written: the sink seats it before
     /// the next owner, coordinate or line break, or at the end of the render.
