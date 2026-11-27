@@ -104,6 +104,7 @@ interface Tested {
 	readonly longest: number;
 	readonly texts: readonly TextTest[];
 	readonly delimiters: readonly DelimiterTest[];
+	readonly types: ReadonlySet<number>;
 	readonly depth: number;
 	readonly readable: readonly Readable[];
 }
@@ -115,6 +116,7 @@ function testedOf(readable: readonly Readable[]): Tested {
 	let longest = 2;
 	const texts = new Map<string, TextTest>();
 	const delimiters = new Map<number, DelimiterTest>();
+	const types = new Set<number>();
 	const add = (subject: object): void => {
 		if (!('slots' in subject)) return;
 		for (const [kind, number] of Object.entries(subject.slots as Readonly<Record<number, number>>)) {
@@ -162,6 +164,10 @@ function testedOf(readable: readonly Readable[]): Tested {
 			case 'match':
 				add(plan);
 				return { ...plan, pattern: textTest(plan, deep).mark };
+			case 'is':
+				add(plan);
+				for (const type of plan.types) types.add(type);
+				return plan;
 			default:
 				add(plan);
 				return plan;
@@ -189,7 +195,7 @@ function testedOf(readable: readonly Readable[]): Tested {
 		return { ...condition, plan: visit(condition.plan, condition.via.length > 0) };
 	};
 	const tested = readable.map((entry) => ({ ...entry, test: entry.test.map(asTested) }));
-	return { slots, longest, texts: [...texts.values()], delimiters: [...delimiters.values()], depth, readable: tested };
+	return { slots, longest, texts: [...texts.values()], delimiters: [...delimiters.values()], types, depth, readable: tested };
 }
 
 const subsetsOf = <T>(items: readonly T[]): readonly (readonly T[])[] => {
@@ -216,6 +222,19 @@ function casesOf(kind: string, nodeMap: NodeMap, tested: Tested): readonly Case[
 	const deepTexts = texts.filter((test) => test.deep);
 	const deepDelimiters = delimiters.filter((test) => test.deep);
 	const textsAt = (site: string): readonly TextTest[] => texts.filter((test) => test.at.has(site));
+	const told = (id: number): boolean => tested.types.has(id) || testedSlots.has(id);
+	const keyOf = (item: Item): string =>
+		item instanceof Leaf
+			? `token ${item.answers.marks}`
+			: `${told(item.$type) ? item.$type : 'kind'} ${item.answers.marks} ${item.answers.delimiters.join(',')} {${[...item.slots].map(([number, { items }]) => `${number}: ${items.map(keyOf).join(', ')}`).join('; ')}}`;
+	const apart = (items: readonly Item[]): readonly Item[] => {
+		const byKey = new Map<string, Item>();
+		for (const item of items) {
+			const key = keyOf(item);
+			if (!byKey.has(key)) byKey.set(key, item);
+		}
+		return [...byKey.values()];
+	};
 	const of = (kind: string, depth: number, reading: readonly TextTest[], delimiting: readonly DelimiterTest[]): readonly Case[] => {
 		const node = nodeMap.nodes.get(kind);
 		if (node?.kindId === undefined) return undecided(`${kind} has no kind id`);
@@ -247,7 +266,7 @@ function casesOf(kind: string, nodeMap: NodeMap, tested: Tested): readonly Case[
 		return storages.length > 0 ? membershipKindsOf(storages, nodeMap) : [kind];
 	};
 	const listsOf = ({ slot, forceOptional }: StructSlot, depth: number, site: string): readonly (readonly Item[])[] => {
-		const alternatives = slot.values.flatMap((value) => alternativesOf(value, depth, site));
+		const alternatives = apart(slot.values.flatMap((value) => alternativesOf(value, depth, site)));
 		const multiple = isMultiple(slot);
 		const lists: (readonly Item[])[] = forceOptional || !(multiple ? isNonEmpty(slot) : isRequired(slot)) ? [[]] : [];
 		if (!multiple) return [...lists, ...alternatives.map((item) => [item])];
