@@ -362,7 +362,11 @@ struct Payload {
 
 struct DeferredRun {
     text: String,
-    end: Option<(SeamStrength, Payload)>,
+    /// The seam the run ends with, and whether it is a whitespace entry's
+    /// (`holds_entry`), which the run's seating holds again as one. A run
+    /// holds a side's entries up to its first line break, so a break it
+    /// ends with is the one a line comment leaves, never an entry's.
+    end: Option<(SeamStrength, Payload, bool)>,
     line_end: Option<crate::render::LineHold>,
     /// Whether the run opens with verbatim text, and how the verbatim text
     /// it ends with spells its after side (`RenderSink::verbatim`).
@@ -1125,7 +1129,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
                 if self.at_line_start() {
                     text = &text[run.open_before..];
                 }
-            } else if self.tail.is_none() && !self.at_line_start() {
+            } else if self.tail.is_none() && !self.at_line_start() && !text.starts_with([' ', '\t']) {
                 self.write_text(self.payload_text(Payload { set: LayoutKinds::SPACE, pick: LayoutKinds::SPACE }))?;
             }
             self.write_text(text)?;
@@ -1144,13 +1148,15 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             }
             return Ok(());
         };
-        if let Some(DeferredRun { end: Some((strength, mut payload)), line_end, .. }) = last {
+        if let Some(DeferredRun { end: Some((strength, mut payload, entry)), line_end, .. }) = last {
             if self.at_line_start() && payload.pick.breaks() {
                 payload.pick = payload.pick.without_first_break();
                 payload.set = payload.pick;
             }
             if !next.starts_with('\n') && payload.pick != LayoutKinds::NONE && payload.pick != LayoutKinds::TIGHT {
-                self.merge_payload(payload, strength, false);
+                if self.merge_payload(payload, strength, false) && entry {
+                    self.seam_token = Some(SeamToken::Whitespace);
+                }
                 if let Some(hold) = line_end {
                     crate::render::RenderSink::hold_line_end(self, hold);
                 }
@@ -2060,7 +2066,7 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         self.open_before = 0;
         let result = render(self);
         let run = self.deferring.take().unwrap_or_default();
-        let end = self.seam.map(|_| (self.seam_strength, self.held_payload()));
+        let end = self.seam.map(|_| (self.seam_strength, self.held_payload(), self.holds_entry() && !self.held_breaks()));
         let line_end = self.line_end_held.filter(|_| end.is_some());
         let glued = (self.glued_open.take() == Some(true), std::mem::take(&mut self.glued));
         let tail = self.tail.take();

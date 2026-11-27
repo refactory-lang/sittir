@@ -61,6 +61,22 @@ describe.each(['object', 'arena'] as const)('a side written to a parsed node rep
 			leafIn(root, 'x').$trivia.trailing(build.lineComment(' r'));
 			rendersAs(root, 'fn f() {\n    let y = &mut x // r\n    ;\n}\n');
 		});
+
+		describe('a whitespace entry written in the side is the gap it sits in', () => {
+			const { space, newline } = build.layout;
+			it.each([
+				['trailing', 'after its last comment, the gap the source left tight', 'fn f() {\n    let y = &mut x;\n}\n', [block, space], 'fn f() {\n    let y = &mut x /* r */ ;\n}\n'],
+				['trailing', 'after its last comment, the gap the source spaced', 'fn f() {\n    let y = &mut x  ;\n}\n', [block, space], 'fn f() {\n    let y = &mut x /* r */ ;\n}\n'],
+				['trailing', 'a line break after its last comment', 'fn f() {\n    let y = &mut x;\n}\n', [block, newline], 'fn f() {\n    let y = &mut x /* r */\n    ;\n}\n'],
+				['trailing', 'before its first comment, with no join added', 'fn f() {\n    let y = &mut x;\n}\n', [space, block], 'fn f() {\n    let y = &mut x /* r */;\n}\n'],
+				['leading', 'before its first comment', 'fn f() {\n    let y = &mut x;\n}\n', [space, block], 'fn f() {\n    let y = &mut /* r */ x;\n}\n'],
+				['leading', 'between its last comment and its node', 'fn f() {\n    let y = &mut x;\n}\n', [block, space], 'fn f() {\n    let y = &mut /* r */ x;\n}\n']
+			] as const)('%s: %s', (side, _where, source, entries, expected) => {
+				const root = engine.parse(source);
+				leafIn(root, 'x').$trivia[side](...entries);
+				rendersAs(root, expected);
+			});
+		});
 	});
 
 	it('replaces a leading side from where its first comment starts to where its node starts', () => {
