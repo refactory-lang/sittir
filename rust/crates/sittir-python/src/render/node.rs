@@ -11573,7 +11573,7 @@ impl ::sittir_core::render::Render for FormatSpecifierElementsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FormatSpecifierElementsNodeSlot::FormatSpecifierText(inner) => inner.render(w),
-            FormatSpecifierElementsNodeSlot::FormatExpression(inner) => inner.as_ref().render(w),
+            FormatSpecifierElementsNodeSlot::FormatExpression(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.as_ref().render(w) },
             FormatSpecifierElementsNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -11594,7 +11594,7 @@ impl ::sittir_core::render::Render for FormatSpecifierElementsNodeSlotRecord<'_>
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             FormatSpecifierElementsNodeSlotRecord::FormatSpecifierText(inner) => inner.render(w),
-            FormatSpecifierElementsNodeSlotRecord::FormatExpression(inner) => inner.render(w),
+            FormatSpecifierElementsNodeSlotRecord::FormatExpression(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             FormatSpecifierElementsNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }

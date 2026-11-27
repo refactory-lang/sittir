@@ -2,12 +2,12 @@ import type { AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { compileAnchoredPattern, samplePattern } from '../types/runtime-shapes.ts';
 import { CHOICE, SEQ, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
-import type { Multiplicity, RenderRule, RuleId } from '../types/rule.ts';
+import type { Multiplicity, RenderRule } from '../types/rule.ts';
 import { isSeamChoice } from '../compiler/model/render-rules.ts';
 import { patternDfa, shortestAccepted } from '../compiler/model/pattern-automaton.ts';
 import { wrapperChainOfSlot } from '../compiler/model/wrapper-chain.ts';
 import { isDelimiterToken, isFixedTextLeaf, isPatternValue } from '../compiler/model/node-map.ts';
-import { isBuilderTextLeaf } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, slotWrittenAt, type OwnedSlotsCtx } from '../compiler/model/node-map.ts';
 import type { AssembledNode, AssembledNonterminal } from '../compiler/model/node-map.ts';
 import {
 	AbstractAssembledCompound,
@@ -259,15 +259,11 @@ function pushRenderTest(
 	}
 }
 
-interface ArmSeatCtx {
-	readonly owned: ReadonlyMap<RuleId, AssembledNonterminal> | undefined;
-}
-
-function armSeats(rule: RenderRule, ctx: ArmSeatCtx): readonly AssembledNonterminal[] {
+function armSeats(rule: RenderRule, ctx: OwnedSlotsCtx): readonly AssembledNonterminal[] {
 	const { multiplicity } = rule as { multiplicity?: Multiplicity };
 	if (multiplicity === 'optional' || multiplicity === 'array' || isSeamChoice(rule)) return [];
 	if (rule.type === SEQ) return rule.members.flatMap((member) => armSeats(member as RenderRule, ctx));
-	const slot = rule.id === undefined ? undefined : ctx.owned?.get(rule.id);
+	const slot = slotWrittenAt(rule, ctx);
 	if (rule.type !== CHOICE) return slot === undefined ? [] : [slot];
 	const arms = rule.members.map((member) => armSeats(member as RenderRule, ctx));
 	if (arms.some((arm) => arm.every(isRequired))) return [];

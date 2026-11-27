@@ -2818,8 +2818,17 @@ export function elementsAdmitOnlyTight(rule: TightPosition, { tight }: AdmitsOnl
 	return rule.immediate === true || (tight !== undefined && ownRuleIds(rule).some((id) => tight.get(id)?.has('element') === true));
 }
 
+export interface OwnedSlotsCtx {
+	readonly owned: ReadonlyMap<RuleId, AssembledNonterminal> | undefined;
+}
+
+export function slotWrittenAt(rule: RenderRule, { owned }: OwnedSlotsCtx): AssembledNonterminal | undefined {
+	return rule.type === SEQ || rule.id === undefined ? undefined : owned?.get(rule.id);
+}
+
 export interface SlotArmsCtx extends AdmitsOnlyTightCtx, NodesCtx {
 	readonly rules: Record<string, RenderRule>;
+	readonly slotByRuleId: ReadonlyMap<string, ReadonlyMap<RuleId, AssembledNonterminal>>;
 }
 
 export interface TightSlotArms {
@@ -2832,11 +2841,11 @@ export function tightSlotArmsOf(
 	{ owner, slot }: { readonly owner: string; readonly slot: AssembledNonterminal | undefined },
 	ctx: SlotArmsCtx
 ): TightSlotArms {
-	const ids = new Set(slot?.sourceRuleIds ?? []);
+	const owned = { owned: ctx.slotByRuleId.get(owner) };
 	const positions: RenderRule[] = [];
 	const collect = (rule: RenderRule | undefined): void => {
 		if (rule === undefined) return;
-		if (ownRuleIds(rule).some((id) => ids.has(id))) positions.push(rule);
+		if (slot !== undefined && slotWrittenAt(rule, owned) === slot) positions.push(rule);
 		else for (const child of renderRuleWalker.childrenOf(rule)) collect(child);
 	};
 	collect(ctx.rules[owner]);

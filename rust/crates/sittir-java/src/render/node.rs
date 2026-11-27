@@ -11825,7 +11825,7 @@ impl ::sittir_core::render::Render for StringLiteralLineElementsNodeSlot {
             StringLiteralLineElementsNodeSlot::EscapeSequenceArm3(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             StringLiteralLineElementsNodeSlot::EscapeSequenceArm4(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             StringLiteralLineElementsNodeSlot::EscapeSequenceArm5(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringLiteralLineElementsNodeSlot::StringInterpolation(inner) => inner.render(w),
+            StringLiteralLineElementsNodeSlot::StringInterpolation(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             StringLiteralLineElementsNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -11856,7 +11856,7 @@ impl ::sittir_core::render::Render for StringLiteralLineElementsNodeSlotRecord<'
             StringLiteralLineElementsNodeSlotRecord::EscapeSequenceArm3(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             StringLiteralLineElementsNodeSlotRecord::EscapeSequenceArm4(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             StringLiteralLineElementsNodeSlotRecord::EscapeSequenceArm5(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
-            StringLiteralLineElementsNodeSlotRecord::StringInterpolation(inner) => inner.render(w),
+            StringLiteralLineElementsNodeSlotRecord::StringInterpolation(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
             StringLiteralLineElementsNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
@@ -11931,10 +11931,10 @@ impl ::sittir_core::view::KindOf for StringLiteralTextBlockElementsNodeSlot {
 impl ::sittir_core::render::Render for StringLiteralTextBlockElementsNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringLiteralTextBlockElementsNodeSlot::MultilineStringFragment(inner) => inner.render(w),
-            StringLiteralTextBlockElementsNodeSlot::MultilineStringLiteralArm1(inner) => inner.render(w),
-            StringLiteralTextBlockElementsNodeSlot::StringInterpolation(inner) => inner.render(w),
-            StringLiteralTextBlockElementsNodeSlot::Verbatim(inner) => inner.render(w),
+            StringLiteralTextBlockElementsNodeSlot::MultilineStringFragment(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralTextBlockElementsNodeSlot::MultilineStringLiteralArm1(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralTextBlockElementsNodeSlot::StringInterpolation(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralTextBlockElementsNodeSlot::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }
@@ -11954,10 +11954,10 @@ impl ::sittir_core::view::KindOf for StringLiteralTextBlockElementsNodeSlotRecor
 impl ::sittir_core::render::Render for StringLiteralTextBlockElementsNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            StringLiteralTextBlockElementsNodeSlotRecord::MultilineStringFragment(inner) => inner.render(w),
-            StringLiteralTextBlockElementsNodeSlotRecord::MultilineStringLiteralArm1(inner) => inner.render(w),
-            StringLiteralTextBlockElementsNodeSlotRecord::StringInterpolation(inner) => inner.render(w),
-            StringLiteralTextBlockElementsNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            StringLiteralTextBlockElementsNodeSlotRecord::MultilineStringFragment(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralTextBlockElementsNodeSlotRecord::MultilineStringLiteralArm1(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralTextBlockElementsNodeSlotRecord::StringInterpolation(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
+            StringLiteralTextBlockElementsNodeSlotRecord::Verbatim(inner) => { w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT); inner.render(w) },
         }
     }
 }

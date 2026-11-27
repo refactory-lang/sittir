@@ -4756,11 +4756,9 @@ its seams are decided from are the catalog's.
 
 ```text
 /**
- * The slot at a rule's position, within the kind being emitted (`ownerKind`).
- * `slotByRuleId` is scoped to its owner because kinds that share a hidden
- * rule's body hold the same rule ids in slots of their own. A rule with no id,
- * or an id its owner registers no slot for, has no slot here, and nothing
- * recovers one by name.
+ * The slot a rule writes (`slotWrittenAt`) within the kind being emitted
+ * (`ownerKind`). A rule with no id, or an id its owner registers no slot
+ * for, has no slot here, and nothing recovers one by name.
  */
 ```
 
@@ -14066,10 +14064,6 @@ The sample text of every leaf that ends a delimited composite: the shortest text
 ### `packages/codegen/src/emitters/test.ts::armSeats`
 
 The slots a build must fill so a rule writes one arm of each choice it requires. An optional or repeated position and a seam choice need nothing, and a sequence needs what each of its positions needs. A choice needs nothing when one arm is empty, writes only fixed text, or holds only required slots. Otherwise a choice a slot holds needs that slot, and a slotless choice needs the slots of its first arm.
-
-### `packages/codegen/src/emitters/test.ts::ArmSeatCtx`
-
-What `armSeats` reads: the owner kind's entry of `NodeMap.slotByRuleId`.
 
 ### `packages/codegen/src/emitters/test.ts::minimalSlots`
 

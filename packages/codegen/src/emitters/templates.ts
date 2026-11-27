@@ -2,7 +2,7 @@ import { flatOrderParses, flatSlotOrder, slotNameInBody, type ChoicePartition, t
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { emitShapeFailure } from '../compiler/diagnostics/emit-diagnostics.ts';
 import { CHOICE, DEDENT, EOF, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
-import { isBuilderTextLeaf, seamNeedsSpace, wordCharPredicate } from '../compiler/model/node-map.ts';
+import { isBuilderTextLeaf, seamNeedsSpace, slotWrittenAt, wordCharPredicate } from '../compiler/model/node-map.ts';
 import { isNonterminalRuleType, collectFixedLiteral, ruleListParts } from '../dsl/rule-patterns.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import {
@@ -890,7 +890,7 @@ function emitRuleShape(rule: RenderRule, ctx: EmitCtx): Body {
 }
 
 function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | undefined {
-	return rule.id === undefined || ctx.ownerKind === undefined ? undefined : ctx.nodeMap.slotByRuleId.get(ctx.ownerKind)?.get(rule.id);
+	return slotWrittenAt(rule, { owned: ctx.ownerKind === undefined ? undefined : ctx.nodeMap.slotByRuleId.get(ctx.ownerKind) });
 }
 
 function separatorTokenOf(rule: RenderRule): RenderRule | undefined {

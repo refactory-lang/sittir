@@ -6341,7 +6341,7 @@ Whether each element of a list rule admits only a tight join before it: the rule
 
 ### `packages/codegen/src/compiler/model/node-map.ts::SlotArmsCtx`
 
-The context `tightSlotArmsOf` reads: the node map's nodes, which a supertype member is expanded through (`concreteKindsOf`); the normalized rules, in which a slot's positions and a child kind's leftmost walk are read; and, from `AdmitsOnlyTightCtx`, `tight`.
+The context `tightSlotArmsOf` reads: the node map's nodes, which a supertype member is expanded through (`concreteKindsOf`); the normalized rules, in which a slot's positions and a child kind's leftmost walk are read; the node map's `slotByRuleId`, whose owner entry says which rules write the slot (`slotWrittenAt`); and, from `AdmitsOnlyTightCtx`, `tight`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::tightSlotArmsOf`
 
@@ -6351,11 +6351,19 @@ For a slot of an owner kind, which arms of its per-slot child enum start tight (
 - the arm's member of that position (`admitsOnlyTight`): the symbol referencing the child kind or a supertype holding it, or, for a literal, the string with its text or the symbol of its kind;
 - for a kind arm, the child kind's own leftmost token: a lexical token that is `immediate`, or a leftmost walk of the kind's rule that reads the derived tight facts (`leftmostTerminalImmediate`).
 
-A verbatim arm has only the slot's position. A slot's positions are the outermost rules of the owner holding one of its `sourceRuleIds`, and an arm is judged at the positions whose rule references it (at every position when none does). One arm writes every position, so an arm tight at all of them starts tight, one tight at none does not, and one tight at some and free at others fails codegen (`slot-tight-positions-disagree`) naming the slot, the arm and both sets of positions. Kind-level edge facts (`tightKindEdgesOf`, `tightSides`) are not read: they decide only whether a kind's edge site survives, and a kind tight before it in one list may be spaced in another.
+A verbatim arm has only the slot's position. A slot's positions are the outermost rules of the owner that write it (`slotWrittenAt`), so a sequence whose id the slot also holds is looked through to the list or holder inside it, the rule the template emitter writes the slot at. An arm is judged at the positions whose rule references it (at every position when none does). One arm writes every position, so an arm tight at all of them starts tight, one tight at none does not, and one tight at some and free at others fails codegen (`slot-tight-positions-disagree`) naming the slot, the arm and both sets of positions. Kind-level edge facts (`tightKindEdgesOf`, `tightSides`) are not read: they decide only whether a kind's edge site survives, and a kind tight before it in one list may be spaced in another.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::TightSlotArms`
 
 What `tightSlotArmsOf` answers for one slot, per kind of arm: `kind` for an arm holding a node or a fixed-text kind, `literal` for a literal the slot stores (its kind, text and hidden enum kind, as `NodeLiteral` carries them), and `verbatim` for the arm holding text with no kind. Each is asked lazily, so a slot fails on disagreeing positions only for an arm it has.
+
+### `packages/codegen/src/compiler/model/node-map.ts::slotWrittenAt`
+
+The slot a rule of an owner kind writes: the slot its own id maps to in the owner's entry of `NodeMap.slotByRuleId`. A sequence writes no slot of its own, since its members write theirs, even when its id is among a slot's `sourceRuleIds`; neither does a rule with no id. This is the one answer to where a slot is written: the template emitter writes a slot reference there (`lookupSlot`), a minimal build fills it there (`armSeats`), and the arms of its per-slot child enum are judged tight there (`tightSlotArmsOf`).
+
+### `packages/codegen/src/compiler/model/node-map.ts::OwnedSlotsCtx`
+
+What `slotWrittenAt` reads: the owner kind's entry of `NodeMap.slotByRuleId`, or nothing when there is no owner. `slotByRuleId` is scoped to its owner because kinds that share a hidden rule's body hold the same rule ids in slots of their own.
 
 ### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
 

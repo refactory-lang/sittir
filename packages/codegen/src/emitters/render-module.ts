@@ -1482,7 +1482,7 @@ function renderNodeSupport(
 
 	const perSlotEnums = collectPerSlotChildEnums(owned, nodeMap);
 	const choices = shareIdenticalChoices(perSlotEnums, (entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read, { nodes: nodeMap.nodes, rules: nodeMap.normalizedRules ?? {}, tight: joins.tight })
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, fixed, kindEntries, plan, read, { nodes: nodeMap.nodes, rules: nodeMap.normalizedRules ?? {}, tight: joins.tight, slotByRuleId: nodeMap.slotByRuleId })
 	);
 	for (const name of choices.folded) read.nodes.delete(name);
 	const perSlotEnumLines: string[] = choices.emitted.flatMap(({ lines }) => lines);
