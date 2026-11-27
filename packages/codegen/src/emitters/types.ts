@@ -473,6 +473,7 @@ function internalModule(internalLines: readonly string[], publicTypeNames: reado
 }
 
 const VOCABULARY_IMPORTS = [
+	'AnyUntypedNode',
 	'ConfigOf',
 	'LooseConfigOf',
 	'WidenSlots',

@@ -1808,6 +1808,7 @@ interface ForwardedConstruction {
 	readonly target: string;
 	readonly targetParams: string | undefined;
 	readonly overloads: readonly RefusingParams[];
+	readonly rowParams: readonly string[];
 	readonly rows: readonly string[];
 	readonly targetArity: number | undefined;
 	readonly hasOwnOptions: boolean;
@@ -1883,31 +1884,35 @@ function forwardedConstruction(
 			return extra === undefined ? params : appendParam(params, extra);
 		});
 	const twoLevelTargetNode = twoLevelTarget(node, nodeMap, kindEntries);
+	const innerConstruction =
+		twoLevelTargetNode !== undefined && isAuthoredCompound(twoLevelTargetNode)
+			? forwardedConstruction(twoLevelTargetNode, resolveFactorySurface(twoLevelTargetNode, nodeMap, kindEntries), nodeMap, kindEntries)
+			: undefined;
 	const innerOverloads: readonly RefusingParams[] =
 		twoLevelTargetNode === undefined
 			? []
-			: ((isAuthoredCompound(twoLevelTargetNode)
-					? forwardedConstruction(
-							twoLevelTargetNode,
-							resolveFactorySurface(twoLevelTargetNode, nodeMap, kindEntries),
-							nodeMap,
-							kindEntries
-						)?.overloads
-					: undefined) ?? (constructorSurface(target, nodeMap, kindEntries, { immediate: true })?.declarations ?? []));
-	const extendsShorter = (entry: RefusingParams): boolean =>
-		innerOverloads.some((other) => other.params.startsWith(`${entry.params}, `) && takesOptions(other.params.slice(entry.params.length + 2)));
+			: (innerConstruction?.overloads ?? constructorSurface(target, nodeMap, kindEntries, { immediate: true })?.declarations ?? []);
+	const innerRowOverloads: readonly RefusingParams[] =
+		twoLevelTargetNode === undefined
+			? []
+			: (innerConstruction?.rowParams ?? surfaceOverloads(constructorSurface(target, nodeMap, kindEntries, { immediate: true })) ?? []).map(plainParams);
 	const targetOptionsName =
 		twoLevelTargetNode === undefined ? 'options' : `${twoLevelTargetNode.typeName.charAt(0).toLowerCase()}${twoLevelTargetNode.typeName.slice(1)}Options`;
-	const innerForms = innerOverloads
-		.filter((entry) => !extendsShorter(entry))
-		.map((entry) =>
-			/\.\.\./.test(entry.params)
-				? entry
-				: takesOptions(entry.params)
-					? { typeParams: entry.typeParams, params: entry.params.replace(/\boptions\?: /, `${targetOptionsName}?: `) }
-					: withTrailingParam(entry, `${targetOptionsName}?: T.${twoLevelTargetNode!.typeName}.Options`)
-		);
-	if (twoLevelTargetNode !== undefined && /^\.\.\.value: \[value\?: /.test(publicParams(surface).params)) {
+	const innerFormsOf = (overloads: readonly RefusingParams[]): RefusingParams[] => {
+		const extendsShorter = (entry: RefusingParams): boolean =>
+			overloads.some((other) => other.params.startsWith(`${entry.params}, `) && takesOptions(other.params.slice(entry.params.length + 2)));
+		return overloads
+			.filter((entry) => !extendsShorter(entry))
+			.map((entry) =>
+				/\.\.\./.test(entry.params)
+					? entry
+					: takesOptions(entry.params)
+						? { typeParams: entry.typeParams, params: entry.params.replace(/\boptions\?: /, `${targetOptionsName}?: `) }
+						: withTrailingParam(entry, `${targetOptionsName}?: T.${twoLevelTargetNode!.typeName}.Options`)
+			);
+	};
+	const innerForms = innerFormsOf(innerOverloads);
+	if (twoLevelTargetNode !== undefined && surface.singleField !== undefined && slotFilledWhenOmitted(surface.singleField, nodeMap)) {
 		throw emitShapeFailure({
 			code: 'two-level-optional-input',
 			ownerKind: node.kind,
@@ -1915,16 +1920,18 @@ function forwardedConstruction(
 			details: { inner: twoLevelTargetNode.kind }
 		});
 	}
+	const withOuterOptions = (entry: RefusingParams): RefusingParams =>
+		/\.\.\./.test(entry.params) || trailingOptions === undefined ? entry : withTrailingParam(entry, trailingOptions);
 	const twoLevelDeclarations =
-		twoLevelTargetNode === undefined || trailingOptions === undefined
-			? undefined
-			: innerForms.map((entry) => (/\.\.\./.test(entry.params) ? entry : withTrailingParam(entry, trailingOptions)));
+		twoLevelTargetNode === undefined || trailingOptions === undefined ? undefined : innerForms.map(withOuterOptions);
+	const twoLevelRowParams =
+		twoLevelTargetNode === undefined || trailingOptions === undefined ? undefined : innerFormsOf(innerRowOverloads).map((entry) => withOuterOptions(entry).params);
 	const targetOverloads = withheld
 		? []
 		: targetSurface === undefined
 			? undefined
-			: twoLevelDeclarations !== undefined
-				? twoLevelDeclarations.map((entry) => entry.params)
+			: twoLevelRowParams !== undefined
+				? twoLevelRowParams
 				: [...new Set([...(surfaceOverloads(targetSurface) ?? []), ...(surfaceOverloads(chainedSurface, trailingFor) ?? [])])];
 	const chainedDeclarations = (chainedSurface?.declarations ?? []).map((entry) => {
 		const extra = trailingFor(entry.params);
@@ -1952,6 +1959,7 @@ function forwardedConstruction(
 		...all.filter((entry) => paramsOf(entry) === ''),
 		...all.filter((entry) => paramsOf(entry) !== '')
 	];
+	const rowParams = ordered([ownSurface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params);
 	return {
 		target,
 		targetParams,
@@ -1962,9 +1970,8 @@ function forwardedConstruction(
 			[publicParams(ownSurface), ...(targetDeclarations ?? [plainParams(`...args: Parameters<typeof ${targetNode.rawFactoryName!}>`)])].map(declarationOf),
 			(declared) => declared.params
 		),
-		rows: ordered([ownSurface.rowParams, ...(targetOverloads ?? [`...args: T.${targetNode.typeName}.BuildArgs`])].map(declarationParams), (params) => params).map(
-			(params) => `[${params}]`
-		)
+		rowParams,
+		rows: rowParams.map((params) => `[${params}]`)
 	};
 }
 

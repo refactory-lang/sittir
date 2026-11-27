@@ -1,15 +1,17 @@
 import { stripTypeScriptTypes } from 'node:module';
+import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { assemblePredicted, rawIdTablesOf, withFixtureLexicalRanks } from '../../__tests__/helpers/linked.ts';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
-import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import { computeNodeSCC } from '../../compiler/scc.ts';
 import { resolveRenderRules, whitespaceTextOf } from '../../compiler/model/render-rules.ts';
 import { collectSitePreferences } from '../../compiler/model/site-preferences.ts';
 import { collectKindEntries } from '../kind-discriminant.ts';
 import { stampStaticSpacing } from '../templates.ts';
 import { NO_JOINS } from '../../compiler/model/join-seams/index.ts';
+import { emitAll, type EmitAllResult } from '../emit.ts';
+import { probeDiagnostics, type TypeCheckDiagnostic } from '../../typecheck.ts';
+import { REPO_ROOT } from '../../grammars.ts';
 
 const tokens = [
 	"semi: () => ';'",
@@ -43,7 +45,7 @@ const threeLevel = {
 		"options: { outer: { 'outer_end:': preference('blank') }, middle: { 'middle_end:': preference('blank') }, inner: { 'inner_comma:': preference('blank') } }"
 };
 
-async function emitted(grammar: { rules: readonly string[]; options: string }): Promise<{ factories: string; loose: string }> {
+async function emitted(grammar: { rules: readonly string[]; options: string }): Promise<{ factories: string; loose: string; pkg: EmitAllResult }> {
 	const raw = await evaluateTempGrammar({ extras: '/\\s/', rules: grammar.rules.join(', ') }, grammar.options);
 	const { nodeMap, generatedIdTables } = assemblePredicted(raw, withFixtureLexicalRanks(rawIdTablesOf(raw)));
 	nodeMap.scc = computeNodeSCC(nodeMap);
@@ -51,10 +53,27 @@ async function emitted(grammar: { rules: readonly string[]; options: string }): 
 	const rulesConfig = { nodeMap, kindEntries, options: raw.options, whitespaceText: whitespaceTextOf(raw.renderAs, nodeMap) };
 	const renderRules = resolveRenderRules(rulesConfig, (spaced) => stampStaticSpacing(nodeMap, 'demo', spaced, kindEntries, NO_JOINS)).seamed;
 	collectSitePreferences({ nodeMap, kindEntries, renderRules, options: raw.options });
-	return {
-		factories: emitFactories({ grammar: 'demo', nodeMap, generatedIdTables }),
-		loose: emitFrom({ grammar: 'demo', nodeMap, generatedIdTables })
-	};
+	const pkg = emitAll({ grammar: 'demo', nodeMap, generatedIdTables, joins: NO_JOINS, options: raw.options, renderAs: raw.renderAs, triviaKinds: [] });
+	return { factories: pkg.factories, loose: pkg.from, pkg };
+}
+
+const flatSpecifiers = (text: string): string => text.replace(/from '(?:\.\.?\/)+([^']+)\.js'/g, "from './$1.ts'");
+
+async function typeProbe(pkg: EmitAllResult, probe: string): Promise<TypeCheckDiagnostic[]> {
+	return probeDiagnostics(
+		{
+			extends: join(REPO_ROOT, 'tsconfig.json'),
+			sources: {
+				'types.ts': flatSpecifiers(pkg.types),
+				'types-internal.ts': flatSpecifiers(pkg.typesInternal),
+				'kinds.ts': flatSpecifiers(pkg.kinds ?? ''),
+				'is.ts': flatSpecifiers(pkg.is),
+				'factories.ts': flatSpecifiers(pkg.factories),
+				'probe.ts': probe
+			}
+		},
+		REPO_ROOT
+	);
 }
 
 function emittedFunction(text: string, name: string): string {
@@ -250,16 +269,29 @@ const transparentChain = {
 
 describe('two transparent wrappers above an option-bearing node', () => {
 	let factories: string;
+	let pkg: EmitAllResult;
 
 	beforeAll(async () => {
-		({ factories } = await emitted(transparentChain));
+		({ factories, pkg } = await emitted(transparentChain));
 	});
 
-	it('declares no overload that passes a built inner with options', () => {
-		const declared = [...factories.matchAll(/export function buildTop[\s\S]*?;\n/g)].map((match) => match[0]).join('\n');
-		expect(declared).not.toMatch(/<V extends Admit<T\.Inner>>\(value: V & RefuseUndeclared<V>,\s*options\?: T\.Inner\.Options/);
-		expect(declared).toMatch(/options\?: T\.Inner\.Options/);
-	});
+	it('type-checks: a built inner through the top takes no options, the config form does', async () => {
+		const diagnostics = await typeProbe(
+			pkg,
+			[
+				"import { buildBase, buildComma, buildIdentifier, buildInner, buildTop } from './factories.ts';",
+				'const config = { name: buildIdentifier("x") };',
+				'const options = { innerComma: buildComma };',
+				'const built = buildInner(buildBase(config));',
+				'// @ts-expect-error a built inner carries its own options, so the top refuses them',
+				'export const refused = buildTop(built, options);',
+				'export const kept = buildTop(config, options);',
+				'// @ts-expect-error a number is no input the top admits',
+				'export const unrelated = buildTop(42);'
+			].join('\n')
+		);
+		expect(diagnostics.map((d) => d.head)).toEqual([]);
+	}, 300_000);
 
 	function topWithStubs(recorded: Recorded[]): (...args: unknown[]) => unknown {
 		const innerBuilder = (...args: unknown[]) => {
@@ -317,4 +349,12 @@ describe('a three-level forwarder with options on each level', () => {
 			blocking: [expect.objectContaining({ code: 'three-level-option-chain', ownerKind: 'top' })]
 		});
 	});
+});
+
+describe('the generated package of the two-level fixture', () => {
+	it('compiles: every emitted module type-checks with no diagnostics', async () => {
+		const { pkg } = await emitted(twoLevel);
+		const diagnostics = await typeProbe(pkg, 'export {};');
+		expect(diagnostics.map((d) => d.head)).toEqual([]);
+	}, 300_000);
 });
