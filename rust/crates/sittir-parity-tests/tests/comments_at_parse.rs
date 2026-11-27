@@ -63,7 +63,7 @@ fn placed_apart<G: sittir_core::arena::RecordGrammar, N: HydrateNode>(name: &str
                 for entry in placement.tables().flat_map(|table| table.side(kid.index, side).iter()) {
                     let held = theirs.kid(entry.index());
                     beside_fixed.insert((held.start, held.end));
-                    if !kinds.holds_inner(at.grammar) && !kinds.holds_inner(at.display) {
+                    if !kinds.holds_inner(at.grammar, at.display) {
                         in_no_inner.insert((held.start, held.end));
                     }
                     if !named_fixed_pairs(name).iter().any(|pair| [kid.grammar, kid.display].iter().any(|&kind| pair.token == G::kind_name(kind))) {
